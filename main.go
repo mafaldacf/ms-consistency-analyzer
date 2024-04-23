@@ -6,16 +6,49 @@ import (
 	"fmt"
 	goparser "go/parser"
 	"go/token"
+	"detection_tool/logger"
 )
 
 var appdir = "./apps/postnotification/workflow/postnotification"
+
+func main() {
+	
+	fmt.Println()
+	fmt.Println("###########################")
+	fmt.Println("UPLOAD SERVICE (UploadPost)")
+	fmt.Println("###########################")
+	fmt.Println()
+	computeServiceNode("UploadService.go", "UploadService", "UploadServiceImpl", "UploadPost")
+	
+	fmt.Println()
+	fmt.Println("#######################")
+	fmt.Println("NOTIFY SERVICE (Notify)")
+	fmt.Println("#######################")
+	fmt.Println()
+	computeServiceNode("NotifyService.go", "NotifyService", "NotifyServiceImpl", "Notify")
+	
+	fmt.Println()
+	fmt.Println("###########################")
+	fmt.Println("STORAGE SERVICE (StorePost)")
+	fmt.Println("###########################")
+	fmt.Println()
+	computeServiceNode("StorageService.go", "StorageService", "StorageServiceImpl", "StorePost")
+	
+	fmt.Println()
+	fmt.Println("##########################")
+	fmt.Println("STORAGE SERVICE (ReadPost)")
+	fmt.Println("##########################")
+	fmt.Println()
+	computeServiceNode("StorageService.go", "StorageService", "StorageServiceImpl", "ReadPost")
+
+}
 
 func parseServiceNode(filename string, name string, impl string) (*parser.ServiceNode, error) {
 	fset := token.NewFileSet()
 	filepath := fmt.Sprintf("%s/%s", appdir, filename)
 	file, err := goparser.ParseFile(fset, filepath, nil, goparser.ParseComments)
 	if err != nil {
-		fmt.Printf("error parsing file %s: %s", filepath, err.Error())
+		logger.Logger.Errorf("error parsing file %s: %s", filepath, err.Error())
 		return nil, err
 	}
 	node := &parser.ServiceNode{
@@ -34,21 +67,23 @@ func parseServiceNode(filename string, name string, impl string) (*parser.Servic
 	return node, nil
 }
 
-func main() {
-	fmt.Print("\n--------------\nUPLOAD SERVICE\n--------------\n\n")
-	computeServiceNode("UploadService.go", "UploadService", "UploadServiceImpl")
-	fmt.Print("\n--------------\nNOTIFY SERVICE\n--------------\n\n")
-	computeServiceNode("NotifyService.go", "NotifyService", "NotifyServiceImpl")
-
-}
-
-func computeServiceNode(serviceFilename string, serviceName string, serviceImplName string) {
+func computeServiceNode(serviceFilename string, serviceName string, serviceImplName string, targetMethodName string) {
 	serviceNode, err := parseServiceNode(serviceFilename, serviceName, serviceImplName)
 	if err != nil {
 		return
 	}
+	var targetMethod *parser.ParsedFuncDecl
+	for _, m := range serviceNode.Methods {
+		if m.Name == targetMethodName {
+			targetMethod = m
+			break
+		}
+	}
 
-	targetMethod := serviceNode.Methods[0]
+	if targetMethod == nil {
+		logger.Logger.Infoln("[ERROR] could not find target method with name ", targetMethodName)
+		return
+	}
 	// spew.Dump(serviceNode)
 
 	for _, m := range serviceNode.Methods {
@@ -69,11 +104,11 @@ func computeServiceNode(serviceFilename string, serviceName string, serviceImplN
 
 	basic_cfg, err := parser.GenerateMethodCFG(targetMethod, serviceNode.Filepath)
 	if err != nil {
-		fmt.Printf("error generating CFG for target method %s in %s: %s\n", targetMethod.Name, serviceNode.Filepath, err.Error())
+		logger.Logger.Infof("error generating CFG for target method %s in %s: %s\n", targetMethod.Name, serviceNode.Filepath, err.Error())
 		return
 	}
 	if basic_cfg == nil {
-		fmt.Printf("basic cfg is nil for target method %s in %s\n", targetMethod.Name, serviceNode.Filepath)
+		logger.Logger.Infof("basic cfg is nil for target method %s in %s\n", targetMethod.Name, serviceNode.Filepath)
 		return
 	}
 
@@ -82,39 +117,46 @@ func computeServiceNode(serviceFilename string, serviceName string, serviceImplN
 	filename := "cfg.dot"
 	err = os.WriteFile(filename, []byte(dot), 0644)
 	if err != nil {
-		fmt.Println("Error writing DOT to file:", err)
+		logger.Logger.Infoln("Error writing DOT to file:", err)
 		return
 	}
-	fmt.Printf("[INFO] cfg dot file saved to %s\n", filename) */
+	logger.Logger.Infof("cfg dot file saved to %s\n", filename) */
 
 	parsedCfg := parser.GenParsedCfg(basic_cfg, targetMethod)
-	fmt.Println("\n----------------------------------------------")
+	fmt.Println()
+
 	parser.VisitBasicBlockAssignments(parsedCfg)
-	fmt.Println("----------------------------------------------")
-	parser.VisitBasicBlockFuncCalls(parsedCfg, serviceNode.Methods[0])
-	fmt.Println("----------------------------------------------\n")
-	fmt.Println("[INFO] visiting database calls for service node target method")
-	visitCalls(serviceNode.Methods[0].DatabaseCalls)
-	fmt.Println("[INFO] visiting service calls for service node target method")
-	visitCalls(serviceNode.Methods[0].ServiceCalls)
+	fmt.Println()
+
+	parser.VisitBasicBlockFuncCalls(parsedCfg, targetMethod)
+	fmt.Println()
+
+	logger.Logger.Infof("visiting database calls for service node target method %s -> %s", targetMethod.Name, targetMethod.Params)
+	visitCalls(targetMethod.DatabaseCalls)
+	fmt.Println()
+	
+	logger.Logger.Infof("visiting service calls for service node target method %s -> %s", targetMethod.Name, targetMethod.Params)
+	visitCalls(targetMethod.ServiceCalls)
+	fmt.Println()
 
 }
 
 func visitCalls(parsedCalls map[token.Pos]*parser.ParsedCallExpr) {
 	for pos, call := range parsedCalls {
-		fmt.Printf("call %s [%d]\n", call.MethodName, pos)
-		fmt.Print("deps: ")
+		logger.Logger.Infof("call %s.%s [%d]\n", call.Selected, call.MethodName, pos)
+		logger.Logger.Info("> deps: ")
 		for _, dep := range call.Deps {
-			fmt.Printf("%s [%d], ", dep.Name, dep.Lineno)
-			visitDeps(dep)
+			r := visitDeps(dep)
+			logger.Logger.Infof("\t%s [%d], %s", dep.Name, dep.Lineno, r)
 		}
-		fmt.Printf("\n")
 	}
 }
 
-func visitDeps(v *parser.Variable) {
+func visitDeps(v *parser.Variable) string {
+	s := ""
 	for _, dep := range v.Deps {
-		fmt.Printf("-> %s [%d] ", dep.Name, dep.Lineno)
 		visitDeps(dep)
+		return s + fmt.Sprintf("-> %s [%d] ", dep.Name, dep.Lineno)
 	}
+	return ""
 }

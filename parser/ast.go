@@ -5,10 +5,11 @@ import (
 	"go/ast"
 	"go/token"
 	"strings"
+	"detection_tool/logger"
 )
 
 func InspectServiceImports(node *ServiceNode) {
-	fmt.Printf("[INFO] Inspecting imports for service %s\n", node.Name)
+	logger.Logger.Infof("inspecting imports for service %s\n", node.Name)
 
 	for _, imp := range node.File.Imports {
 		path := imp.Path.Value
@@ -27,7 +28,7 @@ func InspectServiceImports(node *ServiceNode) {
 				alias = items[len(items)-1]
 			}
 			node.Imports[alias] = &ParsedImportSpec{imp, alias, path, BLUEPRINT_RUNTIME_CORE_BACKEND}
-			fmt.Printf("> %s for %s\n", alias, path)
+			logger.Logger.Debugf("> %s for %s\n", alias, path)
 		}
 	}
 	fmt.Println()
@@ -39,7 +40,7 @@ func InspectServiceImports(node *ServiceNode) {
 // 	  service struct along with the name of the function, the receiver, and the parameters
 // 3. stores the function delc as parsed func decls in the methods of the service node
 func InspectServiceMethods(node *ServiceNode) {
-	fmt.Printf("[INFO] Inspecting exposed methods for service implementation %s\n", node.Impl)
+	logger.Logger.Infof("inspecting exposed methods for service implementation %s\n", node.Impl)
 
 	ast.Inspect(node.File, func(n ast.Node) bool {
 		// check if node is a function declaration
@@ -54,7 +55,7 @@ func InspectServiceMethods(node *ServiceNode) {
 						if len(funcDecl.Recv.List[0].Names) > 0 {
 							receiverName := funcDecl.Recv.List[0].Names[0]
 							// e.g. (f *FrontendImpl) UploadPost
-							fmt.Printf("> (%s *%s) %s\n", receiverName, ident.Name, funcDecl.Name.Name)
+							logger.Logger.Debugf("> (%s *%s) %s\n", receiverName, ident.Name, funcDecl.Name.Name)
 							
 							// get name of the params for function declaration
 							var params []string
@@ -96,7 +97,7 @@ func InspectServiceMethods(node *ServiceNode) {
 }
 
 func InspectServiceInterfaceMethods(file *ast.File) {
-	fmt.Printf("Inspecting service interface and methods \n")
+	logger.Logger.Debug("inspecting service interface and methods \n")
 
 	serviceMethods := []string{}
 	ast.Inspect(file, func(n ast.Node) bool {
@@ -104,7 +105,7 @@ func InspectServiceInterfaceMethods(file *ast.File) {
 			for _, field := range iface.Methods.List {
 				if methodName, ok := field.Names[0].Name, ok; ok {
 					serviceMethods = append(serviceMethods, methodName)
-					fmt.Printf("> %s\n", methodName)
+					logger.Logger.Debugf("> %s\n", methodName)
 				}
 			}
 		}
@@ -113,13 +114,13 @@ func InspectServiceInterfaceMethods(file *ast.File) {
 }
 
 func InspectServiceStructFields(node *ServiceNode) {
-	fmt.Printf("[INFO] Inspecting fields for service %s\n", node.Name)
+	logger.Logger.Infof("inspecting fields for service %s\n", node.Name)
 
 	ast.Inspect(node.File, func(n ast.Node) bool {
 		if str, ok := n.(*ast.StructType); ok {
 			for _, field := range str.Fields.List {
 				for _, ident := range field.Names {
-					fmt.Printf("> %s: %s\n", ident.Name, getFieldType(field))
+					logger.Logger.Debugf("> %s: %s\n", ident.Name, getFieldType(field))
 					saveFieldIfServiceOrDb(node, field, ident.Name)
 				}
 			}
@@ -145,12 +146,16 @@ func saveFieldIfServiceOrDb(node *ServiceNode, field *ast.Field, paramName strin
 			// check if package (e.g. backend) is in the imports
 			imp, found := node.Imports[ident.Name]
 			// check if the matched package is a package imported from blueprint
+			//FIXME: this should be more automated and we are still missing some types
 			if found && imp.Type == BLUEPRINT_RUNTIME_CORE_BACKEND {
 				if t.Sel.Name == "Queue" {
 					parsedField := &DatabaseField{Kind: BLUEPRINT_DB_QUEUE}
 					node.Databases[paramName] = parsedField
 				} else if t.Sel.Name == "NoSQLDatabase" {
 					parsedField := &DatabaseField{Kind: BLUEPRINT_DB_NO_SQL_DATABASE}
+					node.Databases[paramName] = parsedField
+				} else if t.Sel.Name == "Cache" {
+					parsedField := &DatabaseField{Kind: BLUEPRINT_DB_CACHE}
 					node.Databases[paramName] = parsedField
 				}
 			}

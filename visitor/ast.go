@@ -4,10 +4,11 @@ import (
 	"detection_tool/parser"
 	"fmt"
 	"go/ast"
+	"detection_tool/logger"
 )
 
 func VisitServiceMethod(parsedFuncDecl *parser.ParsedFuncDecl, node *parser.ServiceNode) {
-	fmt.Printf("[INFO] Visiting method %s\n", parsedFuncDecl.Ast.Name.Name)
+	logger.Logger.Infof("visiting method %s\n", parsedFuncDecl.Ast.Name.Name)
 
 	// e.g. f.queue.Push
 	//    ^ident2 ^ident ^method
@@ -30,24 +31,24 @@ func VisitServiceMethod(parsedFuncDecl *parser.ParsedFuncDecl, node *parser.Serv
 
 						// check if ident2 is the current service receiver being implemented by the method
 						if ident2.Name == parsedFuncDecl.Recv.Name {
+							funcCallStr := fmt.Sprintf("%s.%s.%s(", ident2.Name, parsedCallExpr.Selected, parsedCallExpr.MethodName)
+							for _, arg := range funcCall.Args {
+								if ident, ok := arg.(*ast.Ident); ok {
+									funcCallStr += fmt.Sprintf("%s, ", ident.Name)
+								}
+							}
+							funcCallStr += ")"
+
 							if _, exists := node.Services[ident.Sel.Name]; exists {
 								parsedFuncDecl.ServiceCalls[parsedCallExpr.Pos] = parsedCallExpr
-								fmt.Printf("> found service call:\t")
+								logger.Logger.Debugf("> found service call [%d]: %s \t", funcCall.Pos(), funcCallStr)
 
 							}
 							if _, exists := node.Databases[ident.Sel.Name]; exists {
 								parsedFuncDecl.DatabaseCalls[parsedCallExpr.Pos] = parsedCallExpr
-								fmt.Printf("> found database call:\t")
+								logger.Logger.Debugf("> found database call [%d]: %s \t", funcCall.Pos(), funcCallStr)
 
 							}
-
-							fmt.Printf("%s.%s.%s(", ident2.Name, parsedCallExpr.Selected, parsedCallExpr.MethodName)
-							for _, arg := range funcCall.Args {
-								if ident, ok := arg.(*ast.Ident); ok {
-									fmt.Printf("%s, ", ident.Name)
-								}
-							}
-							fmt.Printf(")\n")
 						}
 
 					}

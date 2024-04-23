@@ -1,7 +1,7 @@
 package parser
 
 import (
-	"fmt"
+	"detection_tool/logger"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -13,7 +13,7 @@ func GenerateMethodCFG(method *ParsedFuncDecl, filepath string) (*cfg.CFG, error
 	fset := token.NewFileSet()
 	file, err := parser.ParseFile(fset, filepath, nil, 0)
 	if err != nil {
-		fmt.Println("Error:", err)
+		logger.Logger.Error(err)
 		return nil, err
 	}
 

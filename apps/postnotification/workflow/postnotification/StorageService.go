@@ -2,10 +2,9 @@ package postnotification
 
 import (
 	"context"
-	"fmt"
+	"strconv"
 
 	"github.com/blueprint-uservices/blueprint/runtime/core/backend"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 type StorageService interface {
@@ -14,21 +13,17 @@ type StorageService interface {
 }
 
 type StorageServiceImpl struct {
-	database backend.NoSQLDatabase
+	cache backend.Cache
 }
 
-func NewStorageServiceImpl(ctx context.Context, database backend.NoSQLDatabase) (StorageService, error) {
-	u := &StorageServiceImpl{database: database}
+func NewStorageServiceImpl(ctx context.Context, cache backend.Cache) (StorageService, error) {
+	u := &StorageServiceImpl{cache: cache}
 	return u, nil
 }
 
 func (u *StorageServiceImpl) StorePost(ctx context.Context, reqID int64, post Post) error {
-	backend.GetLogger().Info(ctx, "entering StorePost for reqid %d", reqID)
-	collection, err := u.database.GetCollection(ctx, "post", "post")
-	if err != nil {
-		return err
-	}
-	err = collection.InsertOne(ctx, post)
+	postIDStr := strconv.FormatInt(post.PostID, 10)
+	err := u.cache.Put(ctx, postIDStr, post)
 	if err != nil {
 		return err
 	}
@@ -36,28 +31,11 @@ func (u *StorageServiceImpl) StorePost(ctx context.Context, reqID int64, post Po
 }
 
 func (u *StorageServiceImpl) ReadPost(ctx context.Context, reqID int64, postID int64) (Post, error) {
-	backend.GetLogger().Info(ctx, "entering ReadPost for reqid %d", reqID)
 	var post Post
-
-	collection, err := u.database.GetCollection(ctx, "post", "post")
+	postIDStr := strconv.FormatInt(postID, 10)
+	_, err := u.cache.Get(ctx, postIDStr, &post)
 	if err != nil {
 		return post, err
 	}
-
-	filter := bson.D{
-		{Key: "postid", Value: postID},
-	}
-	result, err := collection.FindOne(ctx, filter)
-	if err != nil {
-		backend.GetLogger().Error(ctx, "error reading post: %s", err.Error())
-		return post, err
-	}
-
-	res, err := result.One(ctx, &post)
-	if !res || err != nil {
-		backend.GetLogger().Error(ctx, "post %d not found", postID)
-		return post, fmt.Errorf("post not found")
-	}
-	backend.GetLogger().Info(ctx, "post found! %w", post)
 	return post, nil
 }
