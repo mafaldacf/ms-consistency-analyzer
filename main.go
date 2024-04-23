@@ -4,34 +4,41 @@ import (
 	"detection_tool/logger"
 	"detection_tool/parser"
 	"detection_tool/visitor"
+	"encoding/json"
 	"fmt"
 	goparser "go/parser"
 	"go/token"
+	"os"
 	"sort"
 )
 
 var appdir = "./apps/postnotification/workflow/postnotification"
 
+var allServiceNodes map[string]*parser.ServiceNode
+
 func main() {
+	allServiceNodes = make(map[string]*parser.ServiceNode)
+
 	uploadServiceNode, err := genServiceNode("UploadService.go", "UploadService", "UploadServiceImpl")
 	if err != nil {
 		logger.Logger.Error("error generating node for service", "UploadService")
 		return
 	}
+	allServiceNodes["UploadService"] = uploadServiceNode
+
 	notifyServiceNode, err := genServiceNode("NotifyService.go", "NotifyService", "NotifyServiceImpl")
 	if err != nil {
 		logger.Logger.Error("error generating node for service", "NotifyService")
 		return
 	}
+	allServiceNodes["NotifyService"] = notifyServiceNode
+
 	storageServiceNode, err := genServiceNode("StorageService.go", "StorageService", "StorageServiceImpl")
 	if err != nil {
 		logger.Logger.Error("error generating node for service", "StorageService")
 		return
 	}
-	// FIXME: this should be automated with the help of the blueprint IR technique even before we parse and generate CFGs
-	uploadServiceNode.Services["StorageService"] = storageServiceNode
-	uploadServiceNode.Services["NotifyService"] = notifyServiceNode
-	notifyServiceNode.Services["StorageService"] = storageServiceNode
+	allServiceNodes["StorageService"] = storageServiceNode
 	
 	fmt.Println()
 	fmt.Println("##############")
@@ -62,12 +69,42 @@ func main() {
 	fmt.Println()
 	visitServiceMethodCFG(storageServiceNode, "ReadPost")
 
-	targetMethod := uploadServiceNode.Methods["UploadPost"]
+	// FIXME: this should be automated
+	// BUT we can need to be caferul between storageService and StorageService
+	delete(uploadServiceNode.Services, "storageService")
+	delete(uploadServiceNode.Services, "notifyService")
+	uploadServiceNode.Services["storageService"] = storageServiceNode
+	uploadServiceNode.Services["notifyService"] = notifyServiceNode
+	delete(notifyServiceNode.Services, "storageService")
+	notifyServiceNode.Services["storageService"] = storageServiceNode
+
+	abstractGraph := start(uploadServiceNode, "UploadPost")
+
+	// print in JSON format
+	// https://omute.net/editor
+	file, err := os.Create("abstract_graph.json")
+	if err != nil {
+		fmt.Println("Error creating file:", err)
+		return
+	}
+	defer file.Close()
+	for _, node := range abstractGraph.Nodes {
+		data, err := json.MarshalIndent(node, "", "  ")
+		if err != nil {
+			logger.Logger.Error("error marshaling json:", err)
+			return
+		}
+		file.Write(data)
+		fmt.Println(string(data))
+	}
+}
+
+func start(serviceNode *parser.ServiceNode, targetMethodName string) (*parser.AbstractGraph) {
+	targetMethod := serviceNode.Methods[targetMethodName]
 
 	abstractGraph := parser.AbstractGraph {
 		Nodes: make([]*parser.AbstractNode, 0),
 	}
-	logger.Logger.Info(abstractGraph)
 
 	linenos := make([]token.Pos, 0, len(targetMethod.DatabaseCalls))
 	for k := range targetMethod.DatabaseCalls {
@@ -80,21 +117,83 @@ func main() {
 	sort.Slice(linenos, func(i, j int) bool {
 		return linenos[i] < linenos[j]
 	})
-
+	
+	abstractGraph.Nodes = append(abstractGraph.Nodes, &parser.AbstractNode{
+		NodeType: parser.KIND_ROOT,
+		Repr: fmt.Sprintf("%s.%s", serviceNode.Name, targetMethodName),
+	})
+	
 	for _, lineno := range linenos {
 		if targetMethod.DatabaseCalls[lineno] != nil {
-			abstractGraph.Nodes = append(abstractGraph.Nodes, &parser.AbstractNode{
-				ParsedCall: targetMethod.DatabaseCalls[lineno],
-				NodeType: 	parser.DATABASE_CALL,
+			dbCall := targetMethod.DatabaseCalls[lineno]
+			repr := fmt.Sprintf("%s.%s", dbCall.Type, dbCall.MethodName)
+			abstractGraph.Nodes[0].Children = append(abstractGraph.Nodes[0].Children, &parser.AbstractNode{
+				ParsedCall: 	dbCall,
+				CallerParams: 	dbCall.Deps,
+				NodeType: 		parser.KIND_DATABASE_CALL,
+				Repr: 			repr,
 			})
 		} else if targetMethod.ServiceCalls[lineno] != nil {
-			abstractGraph.Nodes = append(abstractGraph.Nodes, &parser.AbstractNode{
-				ParsedCall: targetMethod.ServiceCalls[lineno],
-				NodeType: 	parser.SERVICE_CALL,
+			svcCall := targetMethod.ServiceCalls[lineno]
+			//svcFuncDecl := allServiceNodes[svcCall.Type].ParsedCFGs[svcCall.MethodName].Vars
+			repr := fmt.Sprintf("%s.%s", svcCall.Type, svcCall.MethodName)
+			abstractGraph.Nodes[0].Children = append(abstractGraph.Nodes[0].Children, &parser.AbstractNode{
+				ParsedCall: 	svcCall,
+				CallerParams: 	svcCall.Deps,
+				//CalleeParams: 	svcFuncDecl,
+				NodeType: 		parser.KIND_SERVICE_CALL,
+				Repr: 			repr,
 			})
 		}
 	}
+	recurse(abstractGraph.Nodes[0])
+	return &abstractGraph
+}
 
+func recurse (parentNode *parser.AbstractNode) {
+	for _, node := range parentNode.Children {
+		// we need to unfold the service blocks from each service call
+		if node.NodeType == parser.KIND_SERVICE_CALL {
+			serviceNode := allServiceNodes[node.ParsedCall.Type]
+			methodName := node.ParsedCall.MethodName
+			targetMethod := serviceNode.Methods[methodName]
+
+			linenos := make([]token.Pos, 0, len(targetMethod.DatabaseCalls))
+
+			for k := range targetMethod.DatabaseCalls {
+				linenos = append(linenos, k)
+			}
+			for k := range targetMethod.ServiceCalls {
+				linenos = append(linenos, k)
+			}
+			// order by lineno
+			sort.Slice(linenos, func(i, j int) bool {
+				return linenos[i] < linenos[j]
+			})
+			for _, lineno := range linenos {
+				if targetMethod.DatabaseCalls[lineno] != nil {
+					dbCall := targetMethod.DatabaseCalls[lineno]
+					repr := fmt.Sprintf("%s.%s", dbCall.Type, dbCall.MethodName)
+					node.Children = append(node.Children, &parser.AbstractNode{
+						ParsedCall: 	dbCall,
+						CallerParams: 	dbCall.Deps,
+						NodeType: 		parser.KIND_DATABASE_CALL,
+						Repr:       	repr,
+					})
+				} else if targetMethod.ServiceCalls[lineno] != nil {
+					svcCall := targetMethod.ServiceCalls[lineno]
+					repr := fmt.Sprintf("%s.%s", svcCall.Type, svcCall.MethodName)
+					node.Children = append(node.Children, &parser.AbstractNode{
+						ParsedCall: 	svcCall,
+						CallerParams: 	svcCall.Deps,
+						NodeType: 		parser.KIND_SERVICE_CALL,
+						Repr:       	repr,
+					})
+				}
+			}
+			recurse(node)
+		}
+	}
 }
 
 func genServiceNode(filename string, name string, impl string) (*parser.ServiceNode, error) {
@@ -114,6 +213,7 @@ func genServiceNode(filename string, name string, impl string) (*parser.ServiceN
 		Databases: make(map[string]*parser.DatabaseField),
 		Services:  make(map[string]*parser.ServiceNode),
 		Methods:   make(map[string]*parser.ParsedFuncDecl),
+		ParsedCFGs: make(map[string]*parser.ParsedCFG),
 	}, nil
 }
 
@@ -143,6 +243,7 @@ func visitServiceMethodCFG(serviceNode *parser.ServiceNode, targetMethodName str
 
 	parsedCfg := parser.GenParsedCfg(basic_cfg, targetMethod)
 	fmt.Println()
+	serviceNode.ParsedCFGs[targetMethodName] = parsedCfg
 
 	parser.VisitBasicBlockAssignments(parsedCfg)
 	fmt.Println()
@@ -162,7 +263,7 @@ func visitServiceMethodCFG(serviceNode *parser.ServiceNode, targetMethodName str
 func visitCalls(parsedCalls map[token.Pos]*parser.ParsedCallExpr) {
 	for pos, call := range parsedCalls {
 		logger.Logger.Infof("call %s.%s [%d]\n", call.Selected, call.MethodName, pos)
-		logger.Logger.Info("> deps: ")
+		logger.Logger.Info("> params: ")
 		for _, dep := range call.Deps {
 			r := visitDeps(dep)
 			logger.Logger.Infof("\t%s [%d], %s", dep.Name, dep.Lineno, r)

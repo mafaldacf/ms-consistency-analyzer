@@ -134,10 +134,10 @@ func saveFieldIfServiceOrDb(node *ServiceNode, field *ast.Field, paramName strin
 	switch t := field.Type.(type) {
 	case *ast.Ident:
 		//REMOVE THIS: this is hard coded, can be in differente package and therefore be an ast.SelectorExpr
-		/* if t.Name == "StorageService" || t.Name == "NotifyService" || t.Name == "Frontend" || t.Name == "Notify" {
+		if t.Name == "StorageService" || t.Name == "NotifyService" || t.Name == "Frontend" || t.Name == "Notify" {
 			// TODO: get the service node from the graph and add here
 			node.Services[paramName] = &ServiceNode{Name: t.Name}
-		} */
+		}
 
 	case *ast.SelectorExpr:
 		// e.g. backend.Queue
@@ -148,14 +148,9 @@ func saveFieldIfServiceOrDb(node *ServiceNode, field *ast.Field, paramName strin
 			// check if the matched package is a package imported from blueprint
 			//FIXME: this should be more automated and we are still missing some types
 			if found && imp.Type == BLUEPRINT_RUNTIME_CORE_BACKEND {
-				if t.Sel.Name == "Queue" {
-					parsedField := &DatabaseField{Kind: BLUEPRINT_DB_QUEUE}
-					node.Databases[paramName] = parsedField
-				} else if t.Sel.Name == "NoSQLDatabase" {
-					parsedField := &DatabaseField{Kind: BLUEPRINT_DB_NO_SQL_DATABASE}
-					node.Databases[paramName] = parsedField
-				} else if t.Sel.Name == "Cache" {
-					parsedField := &DatabaseField{Kind: BLUEPRINT_DB_CACHE}
+				switch t.Sel.Name {
+				case "Queue", "NoSQLDatabase", "Cache":
+					parsedField := &DatabaseField{Type: t.Sel.Name}
 					node.Databases[paramName] = parsedField
 				}
 			}

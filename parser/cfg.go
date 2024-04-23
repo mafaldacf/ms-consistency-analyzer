@@ -26,6 +26,7 @@ func GenParsedCfg(cfg *cfg.CFG, method *ParsedFuncDecl) *ParsedCFG {
 	pos := parsedCfg.Cfg.Blocks[0].Stmt.Pos()
 	for _, param := range method.Params {
 		parsedCfg.Vars = append(parsedCfg.Vars, &Variable{
+			Id: 	len(parsedCfg.Vars),
 			Lineno: pos,
 			Name:   param,
 		})

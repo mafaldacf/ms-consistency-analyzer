@@ -39,8 +39,10 @@ func VisitServiceMethod(parsedFuncDecl *parser.ParsedFuncDecl, node *parser.Serv
 							}
 							funcCallStr += ")"
 
-							if _, exists := node.Services[parsedCallExpr.Selected]; exists {
+							if n, exists := node.Services[parsedCallExpr.Selected]; exists {
 								parsedFuncDecl.ServiceCalls[parsedCallExpr.Pos] = parsedCallExpr
+								parsedCallExpr.Type = n.Name
+								parsedCallExpr.Kind = parser.KIND_SERVICE_CALL
 								logger.Logger.Infof("> found service call [%d]: %s \t", funcCall.Pos(), funcCallStr)
 
 								// TODO: store the func decl in the call expr
@@ -54,8 +56,10 @@ func VisitServiceMethod(parsedFuncDecl *parser.ParsedFuncDecl, node *parser.Serv
 								} */
 
 							}
-							if _, exists := node.Databases[parsedCallExpr.Selected]; exists {
+							if n, exists := node.Databases[parsedCallExpr.Selected]; exists {
 								parsedFuncDecl.DatabaseCalls[parsedCallExpr.Pos] = parsedCallExpr
+								parsedCallExpr.Type = n.Type
+								parsedCallExpr.Kind = parser.KIND_DATABASE_CALL
 								logger.Logger.Infof("> found database call [%d]: %s \t", funcCall.Pos(), funcCallStr)
 
 							}

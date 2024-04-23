@@ -8,9 +8,10 @@ import (
 )
 
 type Variable struct {
-	Lineno token.Pos
-	Name   string
-	Deps   []*Variable
+	Lineno token.Pos 	`json:"lineno"`
+	Id 	   int 			`json:"id"`
+	Name   string 		`json:"name"`
+	Deps   []*Variable 	`json:"deps"`
 }
 
 // -------------------------
@@ -21,6 +22,7 @@ type Variable struct {
 type ParsedCFG struct {
 	Cfg        	*cfg.CFG
 	BlocksInfo 	[]*BlockInfo
+	// FIXME: this should actually belong to the (first) block of the CFG
 	Vars 		[]*Variable
 }
 type BlockInfo struct {
@@ -34,13 +36,25 @@ type BlockInfo struct {
 //	AST
 //
 // ------------------------
+type NodeKind int
+
+const (
+	KIND_ROOT 			NodeKind = iota
+	KIND_SERVICE_CALL
+	KIND_DATABASE_CALL
+)
+
 type ParsedCallExpr struct {
-	Ast        *ast.CallExpr
+	Ast        		*ast.CallExpr
 	// represents either the service or database being called
-	Selected   string
-	MethodName string
-	Pos        token.Pos
-	Deps       []*Variable
+	Selected   		string
+	// string of the type of service (e.g. PostStorageService) or database (Cache)
+	Kind 			NodeKind
+	Type 			string
+
+	MethodName 		string
+	Pos        		token.Pos
+	Deps       		[]*Variable
 }
 
 type ParsedFuncDecl struct {
@@ -69,15 +83,8 @@ type ParsedImportSpec struct {
 }
 
 type BlueprintDb int
-
-const (
-	BLUEPRINT_DB_NO_SQL_DATABASE BlueprintDb = iota
-	BLUEPRINT_DB_CACHE
-	BLUEPRINT_DB_QUEUE
-)
-
 type DatabaseField struct {
-	Kind BlueprintDb
+	Type string
 }
 
 type ServiceNode struct {
@@ -90,4 +97,6 @@ type ServiceNode struct {
 	Services  map[string]*ServiceNode
 	// safe because methods are unique since Golang does not allow overloading
 	Methods   map[string]*ParsedFuncDecl
+
+	ParsedCFGs map[string]*ParsedCFG
 }

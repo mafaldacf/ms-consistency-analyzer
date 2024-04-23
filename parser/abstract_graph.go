@@ -3,18 +3,15 @@ package parser
 import (
 )
 
-type NodeType int
-
-const (
-	DATABASE_CALL NodeType = iota
-	SERVICE_CALL
-)
-
 type AbstractNode struct {
-	ParsedCall 		*ParsedCallExpr
-	ParsedFuncDecl 	*ParsedFuncDecl
-	NodeType 		NodeType
-	Children 		[]*AbstractNode
+	// representation of the node (e.g. storageService.StorePost)
+	Repr 			string 				`json:"repr"`
+	CallerParams    []*Variable 		`json:"caller_params"`
+	CalleeParams    []*Variable 		`json:"-"`
+	NodeType 		NodeKind 			`json:"kind"` 		// omit from json
+	ParsedCall 		*ParsedCallExpr 	`json:"-"` 			// omit from json
+	ParsedFuncDecl 	*ParsedFuncDecl 	`json:"-"` 			// omit from json
+	Children 		[]*AbstractNode 	`json:"children"`
 }
 
 type AbstractGraph struct {
