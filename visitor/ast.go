@@ -7,7 +7,7 @@ import (
 )
 
 func VisitServiceMethod(parsedFuncDecl *parser.ParsedFuncDecl, node *parser.ServiceNode) {
-	fmt.Printf("Visiting method %s\n", parsedFuncDecl.Ast.Name.Name)
+	fmt.Printf("[INFO] Visiting method %s\n", parsedFuncDecl.Ast.Name.Name)
 
 	// e.g. f.queue.Push
 	//    ^ident2 ^ident ^method
@@ -25,17 +25,18 @@ func VisitServiceMethod(parsedFuncDecl *parser.ParsedFuncDecl, node *parser.Serv
 							Ast:        funcCall,
 							Selected:   ident.Sel.Name,
 							MethodName: method.Sel.Name,
+							Pos: 		funcCall.Pos(),
 						}
 
 						// check if ident2 is the current service receiver being implemented by the method
 						if ident2.Name == parsedFuncDecl.Recv.Name {
 							if _, exists := node.Services[ident.Sel.Name]; exists {
-								parsedFuncDecl.ServiceCalls = append(parsedFuncDecl.ServiceCalls, parsedCallExpr)
+								parsedFuncDecl.ServiceCalls[parsedCallExpr.Pos] = parsedCallExpr
 								fmt.Printf("> found service call:\t")
 
 							}
 							if _, exists := node.Databases[ident.Sel.Name]; exists {
-								parsedFuncDecl.DatabaseCalls = append(parsedFuncDecl.DatabaseCalls, parsedCallExpr)
+								parsedFuncDecl.DatabaseCalls[parsedCallExpr.Pos] = parsedCallExpr
 								fmt.Printf("> found database call:\t")
 
 							}

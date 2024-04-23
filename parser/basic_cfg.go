@@ -9,7 +9,7 @@ import (
 	"golang.org/x/tools/go/cfg"
 )
 
-func GenerateMethodCFG(method string, filepath string) (*cfg.CFG, error) {
+func GenerateMethodCFG(method *ParsedFuncDecl, filepath string) (*cfg.CFG, error) {
 	fset := token.NewFileSet()
 	file, err := parser.ParseFile(fset, filepath, nil, 0)
 	if err != nil {
@@ -19,7 +19,7 @@ func GenerateMethodCFG(method string, filepath string) (*cfg.CFG, error) {
 
 	for _, decl := range file.Decls {
 		if funcDecl, ok := decl.(*ast.FuncDecl); ok {
-			if funcDecl.Name.Name == method && funcDecl.Body != nil {
+			if funcDecl.Name.Name == method.Name && funcDecl.Body != nil {
 				return cfg.New(funcDecl.Body, mayReturn), nil
 			}
 		}

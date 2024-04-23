@@ -2,20 +2,54 @@ package parser
 
 import (
 	"go/ast"
+	"go/token"
+
+	"golang.org/x/tools/go/cfg"
 )
 
+type Variable struct {
+	Lineno token.Pos
+	Name   string
+	Deps   []*Variable
+}
+
+// -------------------------
+//
+//	CFG
+//
+// ------------------------
+type ParsedCFG struct {
+	Cfg        *cfg.CFG
+	BlocksInfo []*BlockInfo
+}
+type BlockInfo struct {
+	Gen []*Variable
+	In  []*Variable
+	Out []*Variable
+}
+
+// -------------------------
+//
+//	AST
+//
+// ------------------------
 type ParsedCallExpr struct {
 	Ast        *ast.CallExpr
 	Selected   string
 	MethodName string
+	Pos        token.Pos
+	Deps       []*Variable
 }
 
 type ParsedFuncDecl struct {
 	Ast           *ast.FuncDecl
 	Name          string
 	Recv          *ast.Ident
-	DatabaseCalls []*ParsedCallExpr
-	ServiceCalls  []*ParsedCallExpr
+	DatabaseCalls map[token.Pos]*ParsedCallExpr
+	ServiceCalls  map[token.Pos]*ParsedCallExpr
+	// used to fetch the params when generating the basic cfg
+	// to store in the variables array of the function
+	Params []string
 }
 
 type BlueprintPkg int

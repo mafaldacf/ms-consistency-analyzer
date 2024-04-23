@@ -3,11 +3,12 @@ package parser
 import (
 	"fmt"
 	"go/ast"
+	"go/token"
 	"strings"
 )
 
 func InspectServiceImports(node *ServiceNode) {
-	fmt.Printf("Inspecting imports for service %s\n", node.Name)
+	fmt.Printf("[INFO] Inspecting imports for service %s\n", node.Name)
 
 	for _, imp := range node.File.Imports {
 		path := imp.Path.Value
@@ -32,8 +33,13 @@ func InspectServiceImports(node *ServiceNode) {
 	fmt.Println()
 }
 
+// InspectServiceMethods:
+// 1. inspects the service node
+// 2. finds the function declarations that implement the 
+// 	  service struct along with the name of the function, the receiver, and the parameters
+// 3. stores the function delc as parsed func decls in the methods of the service node
 func InspectServiceMethods(node *ServiceNode) {
-	fmt.Printf("Inspecting exposed methods for service implementation %s\n", node.Impl)
+	fmt.Printf("[INFO] Inspecting exposed methods for service implementation %s\n", node.Impl)
 
 	ast.Inspect(node.File, func(n ast.Node) bool {
 		// check if node is a function declaration
@@ -49,10 +55,34 @@ func InspectServiceMethods(node *ServiceNode) {
 							receiverName := funcDecl.Recv.List[0].Names[0]
 							// e.g. (f *FrontendImpl) UploadPost
 							fmt.Printf("> (%s *%s) %s\n", receiverName, ident.Name, funcDecl.Name.Name)
+							
+							// get name of the params for function declaration
+							var params []string
+							for _, field := range funcDecl.Type.Params.List {
+								// TODO: any types with selector! e.g. model.Message
+								if _, ok := field.Type.(*ast.Ident); ok {
+									for _, ident := range field.Names {
+										params = append(params, ident.Name)
+									}
+								}
+								if _, ok := field.Type.(*ast.SelectorExpr); ok {
+									continue
+									// TODO: any types with selector! e.g. model.Message
+									// except any 'ctx' parameter
+									// FIXME: this cannot be hard coded
+									// we need to check if Context actually corresponds
+									// to context.Context from the Go library
+								}
+							}
+
+							// store parsed func decl in the methods of the service node
 							ParsedFuncDecl := ParsedFuncDecl{
-								Ast:  funcDecl,
-								Name: funcDecl.Name.Name,
-								Recv: receiverName,
+								Ast:  	funcDecl,
+								Name: 	funcDecl.Name.Name,
+								Recv: 	receiverName,
+								Params: params,
+								DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
+								ServiceCalls: make(map[token.Pos]*ParsedCallExpr),
 							}
 							node.Methods = append(node.Methods, &ParsedFuncDecl)
 						}
@@ -83,7 +113,7 @@ func InspectServiceInterfaceMethods(file *ast.File) {
 }
 
 func InspectServiceStructFields(node *ServiceNode) {
-	fmt.Printf("Inspecting fields for service %s\n", node.Name)
+	fmt.Printf("[INFO] Inspecting fields for service %s\n", node.Name)
 
 	ast.Inspect(node.File, func(n ast.Node) bool {
 		if str, ok := n.(*ast.StructType); ok {
@@ -103,7 +133,7 @@ func saveFieldIfServiceOrDb(node *ServiceNode, field *ast.Field, paramName strin
 	switch t := field.Type.(type) {
 	case *ast.Ident:
 		//FIXME: this is hard coded, can be in differente package and therefore be an ast.SelectorExpr
-		if t.Name == "StorageService" || t.Name == "Frontend" || t.Name == "Notify" {
+		if t.Name == "StorageService" || t.Name == "NotifyService" || t.Name == "Frontend" || t.Name == "Notify" {
 			// TODO: get the service node from the graph and add here
 			node.Services[paramName] = &ServiceNode{Name: t.Name}
 		}

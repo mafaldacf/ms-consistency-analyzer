@@ -1,0 +1,5 @@
+digraph CFG {
+  node [shape=box];
+  n0 [label="Body@L0\ntext = \"\"\npost := Post{ReqID: rand.Int63(), PostID: rand.Int63(), Text: text}\nu.storageService.StorePost(ctx, post.ReqID, post)\nmessage := Message{ReqID: Int64ToString(post.ReqID), PostID: Int64ToString(post.PostID)}\nu.notifyService.Notify(ctx, message)\nreturn post.PostID, nil"];
+  n1 [label="Unreachable@L0"];
+}
