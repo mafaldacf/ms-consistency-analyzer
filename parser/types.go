@@ -19,8 +19,9 @@ type Variable struct {
 //
 // ------------------------
 type ParsedCFG struct {
-	Cfg        *cfg.CFG
-	BlocksInfo []*BlockInfo
+	Cfg        	*cfg.CFG
+	BlocksInfo 	[]*BlockInfo
+	Vars 		[]*Variable
 }
 type BlockInfo struct {
 	Gen []*Variable
@@ -87,5 +88,6 @@ type ServiceNode struct {
 	Imports   map[string]*ParsedImportSpec
 	Databases map[string]*DatabaseField
 	Services  map[string]*ServiceNode
-	Methods   []*ParsedFuncDecl
+	// safe because methods are unique since Golang does not allow overloading
+	Methods   map[string]*ParsedFuncDecl
 }

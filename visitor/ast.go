@@ -39,14 +39,24 @@ func VisitServiceMethod(parsedFuncDecl *parser.ParsedFuncDecl, node *parser.Serv
 							}
 							funcCallStr += ")"
 
-							if _, exists := node.Services[ident.Sel.Name]; exists {
+							if _, exists := node.Services[parsedCallExpr.Selected]; exists {
 								parsedFuncDecl.ServiceCalls[parsedCallExpr.Pos] = parsedCallExpr
-								logger.Logger.Debugf("> found service call [%d]: %s \t", funcCall.Pos(), funcCallStr)
+								logger.Logger.Infof("> found service call [%d]: %s \t", funcCall.Pos(), funcCallStr)
+
+								// TODO: store the func decl in the call expr
+								// maybe not necessary ????
+								/* childServiceName := parsedCallExpr.Selected
+								service, found := node.Services[childServiceName]
+								if found {
+									service.Methods
+								} else {
+									logger.Logger.Warnf("child service (%s) not found in service dependencies for current node (%s)", childServiceName, node.Name)
+								} */
 
 							}
-							if _, exists := node.Databases[ident.Sel.Name]; exists {
+							if _, exists := node.Databases[parsedCallExpr.Selected]; exists {
 								parsedFuncDecl.DatabaseCalls[parsedCallExpr.Pos] = parsedCallExpr
-								logger.Logger.Debugf("> found database call [%d]: %s \t", funcCall.Pos(), funcCallStr)
+								logger.Logger.Infof("> found database call [%d]: %s \t", funcCall.Pos(), funcCallStr)
 
 							}
 						}

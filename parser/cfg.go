@@ -10,13 +10,12 @@ import (
 	"golang.org/x/tools/go/cfg"
 )
 
-var vars []*Variable
-
 func GenParsedCfg(cfg *cfg.CFG, method *ParsedFuncDecl) *ParsedCFG {
 	logger.Logger.Info("generating parsed config")
 	parsedCfg := ParsedCFG{
 		Cfg:        cfg,
 		BlocksInfo: make([]*BlockInfo, 0, len(cfg.Blocks)),
+		Vars: 		make([]*Variable, 0),
 	}
 	for _, info := range parsedCfg.BlocksInfo {
 		info.Gen = make([]*Variable, 0)
@@ -24,16 +23,15 @@ func GenParsedCfg(cfg *cfg.CFG, method *ParsedFuncDecl) *ParsedCFG {
 		info.Out = make([]*Variable, 0)
 	}
 
-	vars = make([]*Variable, 0)
 	pos := parsedCfg.Cfg.Blocks[0].Stmt.Pos()
 	for _, param := range method.Params {
-		vars = append(vars, &Variable{
+		parsedCfg.Vars = append(parsedCfg.Vars, &Variable{
 			Lineno: pos,
 			Name:   param,
 		})
 	}
 	logger.Logger.Debug("Variables")
-	for _, v := range vars {
+	for _, v := range parsedCfg.Vars {
 		logger.Logger.Debugf("\t%s [%d], ", v.Name, v.Lineno)
 	}
 	return &parsedCfg
@@ -44,11 +42,11 @@ func VisitBasicBlockAssignments(parsedCfg *ParsedCFG) {
 	logger.Logger.Info("visiting basic block assignments")
 	var visited = make(map[int32]bool)
 	for _, block := range parsedCfg.Cfg.Blocks {
-		visitBasicBlockAssignments(block, visited)
+		visitBasicBlockAssignments(parsedCfg, block, visited)
 	}
 }
 
-func visitBasicBlockAssignments(block *cfg.Block, visited map[int32]bool) {
+func visitBasicBlockAssignments(parsedCfg *ParsedCFG, block *cfg.Block, visited map[int32]bool) {
 	if !visited[block.Index] {
 		visited[block.Index] = true
 	} else {
@@ -62,7 +60,7 @@ func visitBasicBlockAssignments(block *cfg.Block, visited map[int32]bool) {
 			for _, lvalue := range lvalues {
 				var usedVars []*Variable
 				for _, rvalue := range rvalues {
-					for _, v := range vars {
+					for _, v := range parsedCfg.Vars {
 						if rvalue == v.Name {
 							// remove duplicates e.g.
 							// message := Message{
@@ -82,14 +80,14 @@ func visitBasicBlockAssignments(block *cfg.Block, visited map[int32]bool) {
 					Name:   lvalue,
 					Deps:   usedVars,
 				}
-				vars = append(vars, newVar)
+				parsedCfg.Vars = append(parsedCfg.Vars, newVar)
 			}
 		}
 	}
 
 	for _, child := range block.Succs {
 		//logger.Logger.Debug("in child of block", block, ":", child)
-		visitBasicBlockAssignments(child, visited)
+		visitBasicBlockAssignments(parsedCfg, child, visited)
 	}
 	//logger.Logger.Debug("- out block", block)
 }
@@ -98,11 +96,11 @@ func VisitBasicBlockFuncCalls(parsedCfg *ParsedCFG, parsedFuncDecl *ParsedFuncDe
 	logger.Logger.Info("visiting basic block func calls")
 	var visited = make(map[int32]bool)
 	for _, block := range parsedCfg.Cfg.Blocks {
-		visitBasicBlockFuncCalls(block, parsedFuncDecl, visited)
+		visitBasicBlockFuncCalls(parsedCfg, block, parsedFuncDecl, visited)
 	}
 }
 
-func visitBasicBlockFuncCalls(block *cfg.Block, parsedFuncDecl *ParsedFuncDecl, visited map[int32]bool) {
+func visitBasicBlockFuncCalls(parsedCfg *ParsedCFG, block *cfg.Block, parsedFuncDecl *ParsedFuncDecl, visited map[int32]bool) {
 	if !visited[block.Index] {
 		visited[block.Index] = true
 	} else {
@@ -111,12 +109,12 @@ func visitBasicBlockFuncCalls(block *cfg.Block, parsedFuncDecl *ParsedFuncDecl, 
 	//logger.Logger.Debug("+ in block", block, "with nodes", block.Nodes)
 
 	for _, node := range block.Nodes {
-		hasFuncCall(node, parsedFuncDecl)
+		hasFuncCall(parsedCfg, node, parsedFuncDecl)
 	}
 
 	for _, child := range block.Succs {
 		//logger.Logger.Debug("in child of block", block, ":", child)
-		visitBasicBlockFuncCalls(child, parsedFuncDecl, visited)
+		visitBasicBlockFuncCalls(parsedCfg, child, parsedFuncDecl, visited)
 	}
 	//logger.Logger.Debug("- out block", block)
 	//fmt.Println()
@@ -130,26 +128,26 @@ func visitBasicBlockFuncCalls(block *cfg.Block, parsedFuncDecl *ParsedFuncDecl, 
 // 2. AssignStmt - assignment like errors from the return values of the function
 // 3. ParenExpr  - e.g. when used as a bool value in an if statement (assumes it is inside a parentheses)
 // 				   in this case, the unfolded node from ParenExpr is a CallExpr
-func hasFuncCall(node ast.Node, parsedFuncDecl *ParsedFuncDecl) bool {
+func hasFuncCall(parsedCfg *ParsedCFG, node ast.Node, parsedFuncDecl *ParsedFuncDecl) bool {
 	switch n := node.(type) {
 	case *ast.ExprStmt:
 		if callExpr, ok := n.X.(*ast.CallExpr); ok {
-			return hasServiceOrDatabaseCall(callExpr, parsedFuncDecl)
+			return hasServiceOrDatabaseCall(parsedCfg, callExpr, parsedFuncDecl)
 		}
 	case *ast.AssignStmt:
 		found := false
 		for _, rvalue := range n.Rhs {
 			if callExpr, ok := rvalue.(*ast.CallExpr); ok {
-				if hasServiceOrDatabaseCall(callExpr, parsedFuncDecl) {
+				if hasServiceOrDatabaseCall(parsedCfg, callExpr, parsedFuncDecl) {
 					found = true
 				}
 			}
 		}
 		return found
 	case *ast.ParenExpr:
-		return hasFuncCall(n.X, parsedFuncDecl)
+		return hasFuncCall(parsedCfg, n.X, parsedFuncDecl)
 	case *ast.CallExpr:
-		return hasServiceOrDatabaseCall(n, parsedFuncDecl)
+		return hasServiceOrDatabaseCall(parsedCfg, n, parsedFuncDecl)
 	case *ast.ReturnStmt:
 		// nothing to do
 		// ignore warning ahead
@@ -168,7 +166,7 @@ func hasFuncCall(node ast.Node, parsedFuncDecl *ParsedFuncDecl) bool {
 // hasServiceOrDatabaseCall
 // 1. check if it is a database call or service call
 // 2. if so, we fetch the arguments and compare against the CFG variables
-func hasServiceOrDatabaseCall(node *ast.CallExpr, parsedFuncDecl *ParsedFuncDecl) bool {
+func hasServiceOrDatabaseCall(parsedCfg *ParsedCFG, node *ast.CallExpr, parsedFuncDecl *ParsedFuncDecl) bool {
 	logger.Logger.Debug("found CallExpr:", node.Pos())
 	var parsedCall *ParsedCallExpr
 	// check if it is a database call
@@ -194,7 +192,7 @@ func hasServiceOrDatabaseCall(node *ast.CallExpr, parsedFuncDecl *ParsedFuncDecl
 	}
 	if parsedCall != nil {
 		for _, arg := range args {
-			for _, v := range vars {
+			for _, v := range parsedCfg.Vars {
 				if arg == v.Name {
 					parsedCall.Deps = append(parsedCall.Deps, v)
 					break

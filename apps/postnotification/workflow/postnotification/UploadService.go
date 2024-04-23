@@ -3,7 +3,6 @@ package postnotification
 import (
 	"context"
 	"math/rand"
-	"time"
 
 	"github.com/blueprint-uservices/blueprint/runtime/core/backend"
 )

@@ -77,7 +77,7 @@ func InspectServiceMethods(node *ServiceNode) {
 							}
 
 							// store parsed func decl in the methods of the service node
-							ParsedFuncDecl := ParsedFuncDecl{
+							parsedFuncDecl := ParsedFuncDecl{
 								Ast:  	funcDecl,
 								Name: 	funcDecl.Name.Name,
 								Recv: 	receiverName,
@@ -85,7 +85,7 @@ func InspectServiceMethods(node *ServiceNode) {
 								DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
 								ServiceCalls: make(map[token.Pos]*ParsedCallExpr),
 							}
-							node.Methods = append(node.Methods, &ParsedFuncDecl)
+							node.Methods[parsedFuncDecl.Name] = &parsedFuncDecl
 						}
 					}
 				}
@@ -133,11 +133,11 @@ func InspectServiceStructFields(node *ServiceNode) {
 func saveFieldIfServiceOrDb(node *ServiceNode, field *ast.Field, paramName string) {
 	switch t := field.Type.(type) {
 	case *ast.Ident:
-		//FIXME: this is hard coded, can be in differente package and therefore be an ast.SelectorExpr
-		if t.Name == "StorageService" || t.Name == "NotifyService" || t.Name == "Frontend" || t.Name == "Notify" {
+		//REMOVE THIS: this is hard coded, can be in differente package and therefore be an ast.SelectorExpr
+		/* if t.Name == "StorageService" || t.Name == "NotifyService" || t.Name == "Frontend" || t.Name == "Notify" {
 			// TODO: get the service node from the graph and add here
 			node.Services[paramName] = &ServiceNode{Name: t.Name}
-		}
+		} */
 
 	case *ast.SelectorExpr:
 		// e.g. backend.Queue
