@@ -10,7 +10,7 @@ import (
 )
 
 func InspectServiceImports(node *models.ServiceNode) {
-	logger.Logger.Infof("inspecting imports for service %s\n", node.Name)
+	logger.Logger.Debugf("inspecting imports for service %s\n", node.Name)
 
 	for _, imp := range node.File.Imports {
 		path := imp.Path.Value
@@ -46,7 +46,7 @@ func InspectServiceImports(node *models.ServiceNode) {
 //     service struct along with the name of the function, the receiver, and the parameters
 //  3. stores the function delc as parsed func decls in the methods of the service node
 func InspectServiceMethods(node *models.ServiceNode) {
-	logger.Logger.Infof("inspecting exposed methods for service implementation %s\n", node.Impl)
+	logger.Logger.Debugf("inspecting exposed methods for service implementation %s\n", node.Impl)
 
 	ast.Inspect(node.File, func(n ast.Node) bool {
 		// check if node is a function declaration
@@ -119,7 +119,7 @@ func InspectServiceInterfaceMethods(file *ast.File) {
 }
 
 func InspectServiceStructFields(node *models.ServiceNode) {
-	logger.Logger.Infof("inspecting fields for service %s\n", node.Name)
+	logger.Logger.Debugf("inspecting fields for service %s\n", node.Name)
 
 	ast.Inspect(node.File, func(n ast.Node) bool {
 		if str, ok := n.(*ast.StructType); ok {

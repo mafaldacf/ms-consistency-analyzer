@@ -8,7 +8,7 @@ import (
 )
 
 func VisitServiceMethod(parsedFuncDecl *models.ParsedFuncDecl, node *models.ServiceNode) {
-	logger.Logger.Infof("visiting method %s\n", parsedFuncDecl.Ast.Name.Name)
+	logger.Logger.Debugf("visiting method %s\n", parsedFuncDecl.Ast.Name.Name)
 
 	// e.g. f.queue.Push
 	//    ^ident2 ^ident ^method

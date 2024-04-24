@@ -126,34 +126,27 @@ func visitServiceMethodCFG(serviceNode *models.ServiceNode, targetMethodName str
 		return
 	}
 
-	parsedCfg := parser.GenParsedCfg(basic_cfg, targetMethod)
-	fmt.Println()
+	parsedCfg := parser.GenParsedCfg(basic_cfg, targetMethod, serviceNode.Filepath)
 	serviceNode.ParsedCFGs[targetMethodName] = parsedCfg
 
 	visitor.VisitBasicBlockAssignments(parsedCfg)
-	fmt.Println()
-
 	visitor.VisitBasicBlockFuncCalls(parsedCfg, targetMethod)
-	fmt.Println()
 
-	logger.Logger.Infof("visiting database calls for service node target method %s -> %s", targetMethod.Name, targetMethod.Params)
 	visitCalls(targetMethod.DatabaseCalls)
-	fmt.Println()
-
-	logger.Logger.Infof("visiting service calls for service node target method %s -> %s", targetMethod.Name, targetMethod.Params)
 	visitCalls(targetMethod.ServiceCalls)
-	fmt.Println()
 }
 
 func visitCalls(parsedCalls map[token.Pos]*models.ParsedCallExpr) {
+	logger.Logger.Info("visiting database/service calls for service node target method")
 	for pos, call := range parsedCalls {
 		logger.Logger.Infof("call %s.%s [%d]\n", call.Selected, call.MethodName, pos)
-		logger.Logger.Info("> params: ")
+		logger.Logger.Info("> deps: ")
 		for _, dep := range call.Deps {
 			r := visitDeps(dep)
 			logger.Logger.Infof("\t%s [%d], %s", dep.Name, dep.Lineno, r)
 		}
 	}
+	fmt.Println()
 }
 
 func visitDeps(v *models.Variable) string {

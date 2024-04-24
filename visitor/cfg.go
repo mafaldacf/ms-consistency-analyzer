@@ -1,6 +1,7 @@
 package visitor
 
 import (
+	"fmt"
 	"go/ast"
 	"reflect"
 	"slices"
@@ -13,11 +14,12 @@ import (
 )
 
 func VisitBasicBlockAssignments(parsedCfg *models.ParsedCFG) {
-	logger.Logger.Info("visiting basic block assignments")
+	logger.Logger.Debug("visiting basic block assignments")
 	var visited = make(map[int32]bool)
 	for _, block := range parsedCfg.Cfg.Blocks {
 		visitBasicBlockAssignments(parsedCfg, block, visited)
 	}
+	fmt.Println()
 }
 
 func visitBasicBlockAssignments(parsedCfg *models.ParsedCFG, block *cfg.Block, visited map[int32]bool) {
@@ -50,6 +52,8 @@ func visitBasicBlockAssignments(parsedCfg *models.ParsedCFG, block *cfg.Block, v
 					}
 				}
 				newVar := &models.Variable{
+					//Id:     len(parsedCfg.Vars),
+					Id:     -1,
 					Lineno: node.Pos(),
 					Name:   lvalue,
 					Deps:   usedVars,
@@ -67,11 +71,12 @@ func visitBasicBlockAssignments(parsedCfg *models.ParsedCFG, block *cfg.Block, v
 }
 
 func VisitBasicBlockFuncCalls(parsedCfg *models.ParsedCFG, parsedFuncDecl *models.ParsedFuncDecl) {
-	logger.Logger.Info("visiting basic block func calls")
+	logger.Logger.Debug("visiting basic block func calls")
 	var visited = make(map[int32]bool)
 	for _, block := range parsedCfg.Cfg.Blocks {
 		visitBasicBlockFuncCalls(parsedCfg, block, parsedFuncDecl, visited)
 	}
+	fmt.Println()
 }
 
 func visitBasicBlockFuncCalls(parsedCfg *models.ParsedCFG, block *cfg.Block, parsedFuncDecl *models.ParsedFuncDecl, visited map[int32]bool) {
@@ -160,15 +165,46 @@ func hasServiceOrDatabaseCall(parsedCfg *models.ParsedCFG, node *ast.CallExpr, p
 		// gather all args used in the CallExpr
 		var args []string
 		for _, arg := range node.Args {
-			if ident, ok := arg.(*ast.Ident); ok {
-				args = append(args, ident.Name)
+			//FIXME: CREATE HELPER FUNCTION TO COVER MORE CASES BESIDES SELECTOR
+			// e.g. we can have multiple nested selectors: dummy.post.ReqID
+			switch e := arg.(type) {
+				case *ast.Ident:
+					args = append(args, e.Name)
+				
+				// post.ReqID
+				// ^ ident ^ selector
+				case *ast.SelectorExpr:
+					if ident, ok := e.X.(*ast.Ident); ok {
+						name := fmt.Sprintf("%s.%s", ident.Name, e.Sel.Name)
+
+						// now we have to get the actual dependency for ReqID with is postID
+						// REMINDER: this actually takes into account if the variable is assigned again
+						// because we are inside a block and we are using the last definition 
+						// before the current lineno
+						for i := len(parsedCfg.Vars) - 1; i >= 0; i-- {
+							v := parsedCfg.Vars[i]
+							if ident.Name == v.Name {
+								newInlineVariable := &models.Variable{
+									Id:     		-1,
+									Name:          	name,
+									Deps: 			[]*models.Variable{v},
+								}
+								parsedCall.Deps = append(parsedCall.Deps, newInlineVariable)
+								break
+							}
+						}
+					}
 			}
+			
 		}
 		// for each arg, check if it is in the block variables array
 		// if yes, then we add the arg to the dependencies of the parsed call
+		// REMINDER: this is not necessary for e.g. SelectorExpr
 		for _, arg := range args {
+			logger.Logger.Warnf("got arg '%s' for call '%s'", arg, parsedCall.MethodName)
 			for _, v := range parsedCfg.Vars {
 				if arg == v.Name {
+					logger.Logger.Warnf("add dep '%s':%d for call '%s'", v.Name, v.Lineno, parsedCall.MethodName)
 					parsedCall.Deps = append(parsedCall.Deps, v)
 				}
 			}
@@ -199,41 +235,57 @@ func isVarAssignment(node ast.Node) (bool, []string, []string) {
 	return false, nil, nil
 }
 
+/* func transverseSelectorExpr(selectorExpr *ast.SelectorExpr) string {
+	var repr string
+
+	switch e := selectorExpr.X.(type) {
+		case *ast.Ident:
+			//logger.Logger.Debug("- (ident) rvalue:", e.Name)
+			repr = repr + "." + e
+		case *ast.SelectorExpr:
+			repr = repr + "." + transverseSelectorExpr(e.X)
+		default:
+			nodeType := reflect.TypeOf(e).Elem().Name()
+			logger.Logger.Warn("[WARNING] unknown rvalue selector", nodeType)
+	}
+	return repr
+} */
+
 func transverseAssignmentExpr(expr ast.Expr) []string {
 	var identifiers []string
 
 	switch e := expr.(type) {
-	case *ast.Ident:
-		//logger.Logger.Debug("- (ident) rvalue:", e.Name)
-		identifiers = append(identifiers, e.Name)
-	case *ast.BasicLit:
-		//logger.Logger.Debug("- (basic) rvalue:", e.Value)
-	case *ast.CallExpr:
-		//logger.Logger.Debug("- (call) rvalue: Function call")
-		for _, arg := range e.Args {
-			identifiers = append(identifiers, transverseAssignmentExpr(arg)...)
-		}
-	case *ast.CompositeLit:
-		//logger.Logger.Debug("- (struct) rvalue:")
-		for _, elt := range e.Elts {
-			if kv, ok := elt.(*ast.KeyValueExpr); ok {
-				if _, ok := kv.Key.(*ast.Ident); ok {
-					//logger.Logger.Debug("    - field:", ident.Name)
-					identifiers = append(identifiers, transverseAssignmentExpr(kv.Value)...)
+		case *ast.Ident:
+			//logger.Logger.Debug("- (ident) rvalue:", e.Name)
+			identifiers = append(identifiers, e.Name)
+		case *ast.BasicLit:
+			//logger.Logger.Debug("- (basic) rvalue:", e.Value)
+		case *ast.CallExpr:
+			//logger.Logger.Debug("- (call) rvalue: Function call")
+			for _, arg := range e.Args {
+				identifiers = append(identifiers, transverseAssignmentExpr(arg)...)
+			}
+		case *ast.CompositeLit:
+			//logger.Logger.Debug("- (struct) rvalue:")
+			for _, elt := range e.Elts {
+				if kv, ok := elt.(*ast.KeyValueExpr); ok {
+					if _, ok := kv.Key.(*ast.Ident); ok {
+						//logger.Logger.Debug("    - field:", ident.Name)
+						identifiers = append(identifiers, transverseAssignmentExpr(kv.Value)...)
+					}
 				}
 			}
+		case *ast.SelectorExpr:
+			if ident, ok := e.X.(*ast.Ident); ok {
+				identifiers = append(identifiers, ident.Name)
+			}
+		case *ast.BinaryExpr:
+			//logger.Logger.Debug("- (binary) rvalue:")
+			identifiers = append(identifiers, transverseAssignmentExpr(e.X)...)
+			identifiers = append(identifiers, transverseAssignmentExpr(e.Y)...)
+		default:
+			nodeType := reflect.TypeOf(e).Elem().Name()
+			logger.Logger.Warn("[WARNING] unknown rvalue for node type", nodeType)
 		}
-	case *ast.SelectorExpr:
-		if ident, ok := e.X.(*ast.Ident); ok {
-			identifiers = append(identifiers, ident.Name)
-		}
-	case *ast.BinaryExpr:
-		//logger.Logger.Debug("- (binary) rvalue:")
-		identifiers = append(identifiers, transverseAssignmentExpr(e.X)...)
-		identifiers = append(identifiers, transverseAssignmentExpr(e.Y)...)
-	default:
-		nodeType := reflect.TypeOf(e).Elem().Name()
-		logger.Logger.Warn("[WARNING] unknown rvalue for node type", nodeType)
-	}
 	return identifiers
 }

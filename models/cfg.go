@@ -12,6 +12,7 @@ import (
 type ParsedCFG struct {
 	Cfg        	*cfg.CFG
 	BlocksInfo 	[]*BlockInfo
+	FileHash 	string 		 `json:"file_hash,omitempty"`
 	// FIXME: this should actually belong to the (first) block of the CFG
 	Vars 		[]*Variable
 }

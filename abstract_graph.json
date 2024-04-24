@@ -1,132 +1,159 @@
 {
   "repr": "UploadService.UploadPost",
-  "caller_params": null,
-  "kind": 0,
   "children": [
     {
-      "repr": "StorageService.StorePost",
+      "repr": "StorageService.StorePost (post.ReqID, post, )",
       "caller_params": [
         {
-          "lineno": 748,
-          "id": 0,
-          "name": "post",
+          "name": "post.ReqID",
+          "id": 1,
           "deps": [
             {
-              "lineno": 734,
-              "id": 1,
+              "name": "post",
+              "id": 2,
+              "deps": [
+                {
+                  "name": "text",
+                  "id": -1,
+                  "node_param": true,
+                  "node_param_idx": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "name": "post",
+          "id": 2,
+          "deps": [
+            {
               "name": "text",
-              "deps": null
+              "id": -1,
+              "node_param": true,
+              "node_param_idx": 2
             }
           ]
         }
       ],
-      "kind": 1,
       "children": [
         {
-          "repr": "Cache.Put",
+          "repr": "Cache.Put (postIDStr, post, )",
           "caller_params": [
             {
-              "lineno": 599,
-              "id": 0,
               "name": "postIDStr",
+              "id": 3,
               "deps": [
                 {
-                  "lineno": 596,
-                  "id": 1,
                   "name": "post",
-                  "deps": null
+                  "id": 2,
+                  "node_param": true,
+                  "node_param_idx": 2,
+                  "ref": {
+                    "name": "post",
+                    "id": 2,
+                    "origin": "StorageService"
+                  }
                 }
               ]
             },
             {
-              "lineno": 596,
-              "id": 1,
               "name": "post",
-              "deps": null
+              "id": 2,
+              "node_param": true,
+              "node_param_idx": 2,
+              "ref": {
+                "name": "post",
+                "id": 2,
+                "origin": "StorageService"
+              }
             }
-          ],
-          "kind": 2,
-          "children": null
+          ]
         }
       ]
     },
     {
-      "repr": "NotifyService.Notify",
+      "repr": "NotifyService.Notify (message, )",
       "caller_params": [
         {
-          "lineno": 891,
-          "id": 0,
           "name": "message",
+          "id": 6,
           "deps": [
             {
-              "lineno": 748,
-              "id": 0,
               "name": "post",
+              "id": 2,
               "deps": [
                 {
-                  "lineno": 734,
-                  "id": 1,
                   "name": "text",
-                  "deps": null
+                  "id": -1,
+                  "node_param": true,
+                  "node_param_idx": 2
                 }
               ]
             }
           ]
         }
       ],
-      "kind": 1,
       "children": [
         {
-          "repr": "StorageService.ReadPost",
+          "repr": "StorageService.ReadPost (reqID, postID, )",
           "caller_params": [
             {
-              "lineno": 795,
-              "id": 0,
               "name": "reqID",
+              "id": 8,
               "deps": [
                 {
-                  "lineno": 790,
-                  "id": 0,
                   "name": "message",
-                  "deps": null
+                  "id": 6,
+                  "node_param": true,
+                  "node_param_idx": 1,
+                  "ref": {
+                    "name": "message",
+                    "id": 6,
+                    "origin": "NotifyService"
+                  }
                 }
               ]
             },
             {
-              "lineno": 872,
-              "id": 0,
               "name": "postID",
+              "id": 9,
               "deps": [
                 {
-                  "lineno": 790,
-                  "id": 0,
                   "name": "message",
-                  "deps": null
+                  "id": 6,
+                  "node_param": true,
+                  "node_param_idx": 1,
+                  "ref": {
+                    "name": "message",
+                    "id": 6,
+                    "origin": "NotifyService"
+                  }
                 }
               ]
             }
           ],
-          "kind": 1,
           "children": [
             {
-              "repr": "Cache.Get",
+              "repr": "Cache.Get (postIDStr, )",
               "caller_params": [
                 {
-                  "lineno": 855,
-                  "id": 0,
                   "name": "postIDStr",
+                  "id": 10,
                   "deps": [
                     {
-                      "lineno": 837,
-                      "id": 1,
                       "name": "postID",
-                      "deps": null
+                      "id": 9,
+                      "node_param": true,
+                      "node_param_idx": 2,
+                      "ref": {
+                        "name": "postID",
+                        "id": 9,
+                        "origin": "StorageService"
+                      }
                     }
                   ]
                 }
-              ],
-              "kind": 2,
-              "children": null
+              ]
             }
           ]
         }
