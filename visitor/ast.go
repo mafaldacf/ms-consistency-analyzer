@@ -1,13 +1,13 @@
 package visitor
 
 import (
-	"detection_tool/parser"
 	"fmt"
 	"go/ast"
-	"detection_tool/logger"
+	"static_analyzer/logger"
+	"static_analyzer/models"
 )
 
-func VisitServiceMethod(parsedFuncDecl *parser.ParsedFuncDecl, node *parser.ServiceNode) {
+func VisitServiceMethod(parsedFuncDecl *models.ParsedFuncDecl, node *models.ServiceNode) {
 	logger.Logger.Infof("visiting method %s\n", parsedFuncDecl.Ast.Name.Name)
 
 	// e.g. f.queue.Push
@@ -22,11 +22,11 @@ func VisitServiceMethod(parsedFuncDecl *parser.ParsedFuncDecl, node *parser.Serv
 					// get second selector (e.g. f)
 					if ident2, ok := ident.X.(*ast.Ident); ok {
 						// store function call either as service call or database call
-						parsedCallExpr := &parser.ParsedCallExpr{
+						parsedCallExpr := &models.ParsedCallExpr{
 							Ast:        funcCall,
 							Selected:   ident.Sel.Name,
 							MethodName: method.Sel.Name,
-							Pos: 		funcCall.Pos(),
+							Pos:        funcCall.Pos(),
 						}
 
 						// check if ident2 is the current service receiver being implemented by the method
@@ -42,7 +42,7 @@ func VisitServiceMethod(parsedFuncDecl *parser.ParsedFuncDecl, node *parser.Serv
 							if n, exists := node.Services[parsedCallExpr.Selected]; exists {
 								parsedFuncDecl.ServiceCalls[parsedCallExpr.Pos] = parsedCallExpr
 								parsedCallExpr.Type = n.Name
-								parsedCallExpr.Kind = parser.KIND_SERVICE_CALL
+								parsedCallExpr.Kind = models.KIND_SERVICE_CALL
 								logger.Logger.Infof("> found service call [%d]: %s \t", funcCall.Pos(), funcCallStr)
 
 								// TODO: store the func decl in the call expr
@@ -59,7 +59,7 @@ func VisitServiceMethod(parsedFuncDecl *parser.ParsedFuncDecl, node *parser.Serv
 							if n, exists := node.Databases[parsedCallExpr.Selected]; exists {
 								parsedFuncDecl.DatabaseCalls[parsedCallExpr.Pos] = parsedCallExpr
 								parsedCallExpr.Type = n.Type
-								parsedCallExpr.Kind = parser.KIND_DATABASE_CALL
+								parsedCallExpr.Kind = models.KIND_DATABASE_CALL
 								logger.Logger.Infof("> found database call [%d]: %s \t", funcCall.Pos(), funcCallStr)
 
 							}

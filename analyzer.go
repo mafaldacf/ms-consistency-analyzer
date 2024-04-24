@@ -1,23 +1,24 @@
 package main
 
 import (
-	"detection_tool/logger"
-	"detection_tool/parser"
-	"detection_tool/visitor"
 	"encoding/json"
 	"fmt"
 	goparser "go/parser"
 	"go/token"
 	"os"
 	"sort"
+	"static_analyzer/logger"
+	"static_analyzer/models"
+	"static_analyzer/parser"
+	"static_analyzer/visitor"
 )
 
 var appdir = "./apps/postnotification/workflow/postnotification"
 
-var allServiceNodes map[string]*parser.ServiceNode
+var allServiceNodes map[string]*models.ServiceNode
 
 func main() {
-	allServiceNodes = make(map[string]*parser.ServiceNode)
+	allServiceNodes = make(map[string]*models.ServiceNode)
 
 	uploadServiceNode, err := genServiceNode("UploadService.go", "UploadService", "UploadServiceImpl")
 	if err != nil {
@@ -39,7 +40,7 @@ func main() {
 		return
 	}
 	allServiceNodes["StorageService"] = storageServiceNode
-	
+
 	fmt.Println()
 	fmt.Println("##############")
 	fmt.Println("UPLOAD SERVICE")
@@ -47,7 +48,7 @@ func main() {
 	fmt.Println()
 	parseServiceNode(uploadServiceNode)
 	visitServiceMethodCFG(uploadServiceNode, "UploadPost")
-	
+
 	fmt.Println()
 	fmt.Println("##############")
 	fmt.Println("NOTIFY SERVICE")
@@ -55,7 +56,7 @@ func main() {
 	fmt.Println()
 	parseServiceNode(notifyServiceNode)
 	visitServiceMethodCFG(notifyServiceNode, "Notify")
-	
+
 	fmt.Println()
 	fmt.Println("###############")
 	fmt.Println("STORAGE SERVICE")
@@ -99,11 +100,11 @@ func main() {
 	}
 }
 
-func start(serviceNode *parser.ServiceNode, targetMethodName string) (*parser.AbstractGraph) {
+func start(serviceNode *models.ServiceNode, targetMethodName string) *models.AbstractGraph {
 	targetMethod := serviceNode.Methods[targetMethodName]
 
-	abstractGraph := parser.AbstractGraph {
-		Nodes: make([]*parser.AbstractNode, 0),
+	abstractGraph := models.AbstractGraph{
+		Nodes: make([]*models.AbstractNode, 0),
 	}
 
 	linenos := make([]token.Pos, 0, len(targetMethod.DatabaseCalls))
@@ -117,32 +118,32 @@ func start(serviceNode *parser.ServiceNode, targetMethodName string) (*parser.Ab
 	sort.Slice(linenos, func(i, j int) bool {
 		return linenos[i] < linenos[j]
 	})
-	
-	abstractGraph.Nodes = append(abstractGraph.Nodes, &parser.AbstractNode{
-		NodeType: parser.KIND_ROOT,
-		Repr: fmt.Sprintf("%s.%s", serviceNode.Name, targetMethodName),
+
+	abstractGraph.Nodes = append(abstractGraph.Nodes, &models.AbstractNode{
+		NodeType: models.KIND_ROOT,
+		Repr:     fmt.Sprintf("%s.%s", serviceNode.Name, targetMethodName),
 	})
-	
+
 	for _, lineno := range linenos {
 		if targetMethod.DatabaseCalls[lineno] != nil {
 			dbCall := targetMethod.DatabaseCalls[lineno]
 			repr := fmt.Sprintf("%s.%s", dbCall.Type, dbCall.MethodName)
-			abstractGraph.Nodes[0].Children = append(abstractGraph.Nodes[0].Children, &parser.AbstractNode{
-				ParsedCall: 	dbCall,
-				CallerParams: 	dbCall.Deps,
-				NodeType: 		parser.KIND_DATABASE_CALL,
-				Repr: 			repr,
+			abstractGraph.Nodes[0].Children = append(abstractGraph.Nodes[0].Children, &models.AbstractNode{
+				ParsedCall:   dbCall,
+				CallerParams: dbCall.Deps,
+				NodeType:     models.KIND_DATABASE_CALL,
+				Repr:         repr,
 			})
 		} else if targetMethod.ServiceCalls[lineno] != nil {
 			svcCall := targetMethod.ServiceCalls[lineno]
 			//svcFuncDecl := allServiceNodes[svcCall.Type].ParsedCFGs[svcCall.MethodName].Vars
 			repr := fmt.Sprintf("%s.%s", svcCall.Type, svcCall.MethodName)
-			abstractGraph.Nodes[0].Children = append(abstractGraph.Nodes[0].Children, &parser.AbstractNode{
-				ParsedCall: 	svcCall,
-				CallerParams: 	svcCall.Deps,
+			abstractGraph.Nodes[0].Children = append(abstractGraph.Nodes[0].Children, &models.AbstractNode{
+				ParsedCall:   svcCall,
+				CallerParams: svcCall.Deps,
 				//CalleeParams: 	svcFuncDecl,
-				NodeType: 		parser.KIND_SERVICE_CALL,
-				Repr: 			repr,
+				NodeType: models.KIND_SERVICE_CALL,
+				Repr:     repr,
 			})
 		}
 	}
@@ -150,10 +151,10 @@ func start(serviceNode *parser.ServiceNode, targetMethodName string) (*parser.Ab
 	return &abstractGraph
 }
 
-func recurse (parentNode *parser.AbstractNode) {
+func recurse(parentNode *models.AbstractNode) {
 	for _, node := range parentNode.Children {
 		// we need to unfold the service blocks from each service call
-		if node.NodeType == parser.KIND_SERVICE_CALL {
+		if node.NodeType == models.KIND_SERVICE_CALL {
 			serviceNode := allServiceNodes[node.ParsedCall.Type]
 			methodName := node.ParsedCall.MethodName
 			targetMethod := serviceNode.Methods[methodName]
@@ -174,20 +175,20 @@ func recurse (parentNode *parser.AbstractNode) {
 				if targetMethod.DatabaseCalls[lineno] != nil {
 					dbCall := targetMethod.DatabaseCalls[lineno]
 					repr := fmt.Sprintf("%s.%s", dbCall.Type, dbCall.MethodName)
-					node.Children = append(node.Children, &parser.AbstractNode{
-						ParsedCall: 	dbCall,
-						CallerParams: 	dbCall.Deps,
-						NodeType: 		parser.KIND_DATABASE_CALL,
-						Repr:       	repr,
+					node.Children = append(node.Children, &models.AbstractNode{
+						ParsedCall:   dbCall,
+						CallerParams: dbCall.Deps,
+						NodeType:     models.KIND_DATABASE_CALL,
+						Repr:         repr,
 					})
 				} else if targetMethod.ServiceCalls[lineno] != nil {
 					svcCall := targetMethod.ServiceCalls[lineno]
 					repr := fmt.Sprintf("%s.%s", svcCall.Type, svcCall.MethodName)
-					node.Children = append(node.Children, &parser.AbstractNode{
-						ParsedCall: 	svcCall,
-						CallerParams: 	svcCall.Deps,
-						NodeType: 		parser.KIND_SERVICE_CALL,
-						Repr:       	repr,
+					node.Children = append(node.Children, &models.AbstractNode{
+						ParsedCall:   svcCall,
+						CallerParams: svcCall.Deps,
+						NodeType:     models.KIND_SERVICE_CALL,
+						Repr:         repr,
 					})
 				}
 			}
@@ -196,7 +197,7 @@ func recurse (parentNode *parser.AbstractNode) {
 	}
 }
 
-func genServiceNode(filename string, name string, impl string) (*parser.ServiceNode, error) {
+func genServiceNode(filename string, name string, impl string) (*models.ServiceNode, error) {
 	fset := token.NewFileSet()
 	filepath := fmt.Sprintf("%s/%s", appdir, filename)
 	file, err := goparser.ParseFile(fset, filepath, nil, goparser.ParseComments)
@@ -204,26 +205,26 @@ func genServiceNode(filename string, name string, impl string) (*parser.ServiceN
 		logger.Logger.Errorf("error parsing file %s: %s", filepath, err.Error())
 		return nil, err
 	}
-	return &parser.ServiceNode{
-		Name:      name,
-		Impl:      impl,
-		Filepath:  filepath,
-		File:      file,
-		Imports:   make(map[string]*parser.ParsedImportSpec),
-		Databases: make(map[string]*parser.DatabaseField),
-		Services:  make(map[string]*parser.ServiceNode),
-		Methods:   make(map[string]*parser.ParsedFuncDecl),
-		ParsedCFGs: make(map[string]*parser.ParsedCFG),
+	return &models.ServiceNode{
+		Name:       name,
+		Impl:       impl,
+		Filepath:   filepath,
+		File:       file,
+		Imports:    make(map[string]*models.ParsedImportSpec),
+		Databases:  make(map[string]*models.DatabaseField),
+		Services:   make(map[string]*models.ServiceNode),
+		Methods:    make(map[string]*models.ParsedFuncDecl),
+		ParsedCFGs: make(map[string]*models.ParsedCFG),
 	}, nil
 }
 
-func parseServiceNode(node *parser.ServiceNode) {
+func parseServiceNode(node *models.ServiceNode) {
 	parser.InspectServiceImports(node)
 	parser.InspectServiceStructFields(node)
 	parser.InspectServiceMethods(node)
 }
 
-func visitServiceMethodCFG(serviceNode *parser.ServiceNode, targetMethodName string) {
+func visitServiceMethodCFG(serviceNode *models.ServiceNode, targetMethodName string) {
 	targetMethod := serviceNode.Methods[targetMethodName]
 	if targetMethod == nil {
 		logger.Logger.Error("could not find target method with name ", targetMethodName)
@@ -245,22 +246,22 @@ func visitServiceMethodCFG(serviceNode *parser.ServiceNode, targetMethodName str
 	fmt.Println()
 	serviceNode.ParsedCFGs[targetMethodName] = parsedCfg
 
-	parser.VisitBasicBlockAssignments(parsedCfg)
+	visitor.VisitBasicBlockAssignments(parsedCfg)
 	fmt.Println()
 
-	parser.VisitBasicBlockFuncCalls(parsedCfg, targetMethod)
+	visitor.VisitBasicBlockFuncCalls(parsedCfg, targetMethod)
 	fmt.Println()
 
 	logger.Logger.Infof("visiting database calls for service node target method %s -> %s", targetMethod.Name, targetMethod.Params)
 	visitCalls(targetMethod.DatabaseCalls)
 	fmt.Println()
-	
+
 	logger.Logger.Infof("visiting service calls for service node target method %s -> %s", targetMethod.Name, targetMethod.Params)
 	visitCalls(targetMethod.ServiceCalls)
 	fmt.Println()
 }
 
-func visitCalls(parsedCalls map[token.Pos]*parser.ParsedCallExpr) {
+func visitCalls(parsedCalls map[token.Pos]*models.ParsedCallExpr) {
 	for pos, call := range parsedCalls {
 		logger.Logger.Infof("call %s.%s [%d]\n", call.Selected, call.MethodName, pos)
 		logger.Logger.Info("> params: ")
@@ -271,7 +272,7 @@ func visitCalls(parsedCalls map[token.Pos]*parser.ParsedCallExpr) {
 	}
 }
 
-func visitDeps(v *parser.Variable) string {
+func visitDeps(v *models.Variable) string {
 	s := ""
 	for _, dep := range v.Deps {
 		visitDeps(dep)

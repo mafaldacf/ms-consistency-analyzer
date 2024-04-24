@@ -1,35 +1,9 @@
-package parser
+package models
 
 import (
 	"go/ast"
 	"go/token"
-
-	"golang.org/x/tools/go/cfg"
 )
-
-type Variable struct {
-	Lineno token.Pos 	`json:"lineno"`
-	Id 	   int 			`json:"id"`
-	Name   string 		`json:"name"`
-	Deps   []*Variable 	`json:"deps"`
-}
-
-// -------------------------
-//
-//	CFG
-//
-// ------------------------
-type ParsedCFG struct {
-	Cfg        	*cfg.CFG
-	BlocksInfo 	[]*BlockInfo
-	// FIXME: this should actually belong to the (first) block of the CFG
-	Vars 		[]*Variable
-}
-type BlockInfo struct {
-	Gen []*Variable
-	In  []*Variable
-	Out []*Variable
-}
 
 // -------------------------
 //

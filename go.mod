@@ -1,4 +1,4 @@
-module detection_tool
+module static_analyzer
 
 go 1.21
 

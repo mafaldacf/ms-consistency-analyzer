@@ -4,11 +4,12 @@ import (
 	"fmt"
 	"go/ast"
 	"go/token"
+	"static_analyzer/logger"
+	"static_analyzer/models"
 	"strings"
-	"detection_tool/logger"
 )
 
-func InspectServiceImports(node *ServiceNode) {
+func InspectServiceImports(node *models.ServiceNode) {
 	logger.Logger.Infof("inspecting imports for service %s\n", node.Name)
 
 	for _, imp := range node.File.Imports {
@@ -27,7 +28,12 @@ func InspectServiceImports(node *ServiceNode) {
 				items := strings.Split(path, "/")
 				alias = items[len(items)-1]
 			}
-			node.Imports[alias] = &ParsedImportSpec{imp, alias, path, BLUEPRINT_RUNTIME_CORE_BACKEND}
+			node.Imports[alias] = &models.ParsedImportSpec{
+				Ast:   imp,
+				Alias: alias,
+				Path:  path,
+				Type:  models.BLUEPRINT_RUNTIME_CORE_BACKEND,
+			}
 			logger.Logger.Debugf("> %s for %s\n", alias, path)
 		}
 	}
@@ -35,11 +41,11 @@ func InspectServiceImports(node *ServiceNode) {
 }
 
 // InspectServiceMethods:
-// 1. inspects the service node
-// 2. finds the function declarations that implement the 
-// 	  service struct along with the name of the function, the receiver, and the parameters
-// 3. stores the function delc as parsed func decls in the methods of the service node
-func InspectServiceMethods(node *ServiceNode) {
+//  1. inspects the service node
+//  2. finds the function declarations that implement the
+//     service struct along with the name of the function, the receiver, and the parameters
+//  3. stores the function delc as parsed func decls in the methods of the service node
+func InspectServiceMethods(node *models.ServiceNode) {
 	logger.Logger.Infof("inspecting exposed methods for service implementation %s\n", node.Impl)
 
 	ast.Inspect(node.File, func(n ast.Node) bool {
@@ -56,7 +62,7 @@ func InspectServiceMethods(node *ServiceNode) {
 							receiverName := funcDecl.Recv.List[0].Names[0]
 							// e.g. (f *FrontendImpl) UploadPost
 							logger.Logger.Debugf("> (%s *%s) %s\n", receiverName, ident.Name, funcDecl.Name.Name)
-							
+
 							// get name of the params for function declaration
 							var params []string
 							for _, field := range funcDecl.Type.Params.List {
@@ -66,24 +72,23 @@ func InspectServiceMethods(node *ServiceNode) {
 										params = append(params, ident.Name)
 									}
 								}
-								if _, ok := field.Type.(*ast.SelectorExpr); ok {
-									continue
+								/* if _, ok := field.Type.(*ast.SelectorExpr); ok {
 									// TODO: any types with selector! e.g. model.Message
 									// except any 'ctx' parameter
 									// FIXME: this cannot be hard coded
 									// we need to check if Context actually corresponds
 									// to context.Context from the Go library
-								}
+								} */
 							}
 
 							// store parsed func decl in the methods of the service node
-							parsedFuncDecl := ParsedFuncDecl{
-								Ast:  	funcDecl,
-								Name: 	funcDecl.Name.Name,
-								Recv: 	receiverName,
-								Params: params,
-								DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
-								ServiceCalls: make(map[token.Pos]*ParsedCallExpr),
+							parsedFuncDecl := models.ParsedFuncDecl{
+								Ast:           funcDecl,
+								Name:          funcDecl.Name.Name,
+								Recv:          receiverName,
+								Params:        params,
+								DatabaseCalls: make(map[token.Pos]*models.ParsedCallExpr),
+								ServiceCalls:  make(map[token.Pos]*models.ParsedCallExpr),
 							}
 							node.Methods[parsedFuncDecl.Name] = &parsedFuncDecl
 						}
@@ -113,7 +118,7 @@ func InspectServiceInterfaceMethods(file *ast.File) {
 	})
 }
 
-func InspectServiceStructFields(node *ServiceNode) {
+func InspectServiceStructFields(node *models.ServiceNode) {
 	logger.Logger.Infof("inspecting fields for service %s\n", node.Name)
 
 	ast.Inspect(node.File, func(n ast.Node) bool {
@@ -130,13 +135,13 @@ func InspectServiceStructFields(node *ServiceNode) {
 	fmt.Println()
 }
 
-func saveFieldIfServiceOrDb(node *ServiceNode, field *ast.Field, paramName string) {
+func saveFieldIfServiceOrDb(node *models.ServiceNode, field *ast.Field, paramName string) {
 	switch t := field.Type.(type) {
 	case *ast.Ident:
 		//REMOVE THIS: this is hard coded, can be in differente package and therefore be an ast.SelectorExpr
 		if t.Name == "StorageService" || t.Name == "NotifyService" || t.Name == "Frontend" || t.Name == "Notify" {
 			// TODO: get the service node from the graph and add here
-			node.Services[paramName] = &ServiceNode{Name: t.Name}
+			node.Services[paramName] = &models.ServiceNode{Name: t.Name}
 		}
 
 	case *ast.SelectorExpr:
@@ -147,10 +152,10 @@ func saveFieldIfServiceOrDb(node *ServiceNode, field *ast.Field, paramName strin
 			imp, found := node.Imports[ident.Name]
 			// check if the matched package is a package imported from blueprint
 			//FIXME: this should be more automated and we are still missing some types
-			if found && imp.Type == BLUEPRINT_RUNTIME_CORE_BACKEND {
+			if found && imp.Type == models.BLUEPRINT_RUNTIME_CORE_BACKEND {
 				switch t.Sel.Name {
 				case "Queue", "NoSQLDatabase", "Cache":
-					parsedField := &DatabaseField{Type: t.Sel.Name}
+					parsedField := &models.DatabaseField{Type: t.Sel.Name}
 					node.Databases[paramName] = parsedField
 				}
 			}

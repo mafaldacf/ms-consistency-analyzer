@@ -1,15 +1,17 @@
 package parser
 
 import (
-	"detection_tool/logger"
 	"go/ast"
 	"go/parser"
 	"go/token"
+	"static_analyzer/logger"
+
+	"static_analyzer/models"
 
 	"golang.org/x/tools/go/cfg"
 )
 
-func GenerateMethodCFG(method *ParsedFuncDecl, filepath string) (*cfg.CFG, error) {
+func GenerateMethodCFG(method *models.ParsedFuncDecl, filepath string) (*cfg.CFG, error) {
 	fset := token.NewFileSet()
 	file, err := parser.ParseFile(fset, filepath, nil, 0)
 	if err != nil {
