@@ -154,21 +154,22 @@ func hasServiceOrDatabaseCall(parsedCfg *models.ParsedCFG, node *ast.CallExpr, p
 		parsedCall = svcCall
 		logger.Logger.Debug("- service call:", svcCall.MethodName)
 	}
-	// if database or service call
-	// we check if the variable is in the vars array
-	// if yes, then we add the variable to the dependencies of the call
-	var args []string
-	for _, arg := range node.Args {
-		if ident, ok := arg.(*ast.Ident); ok {
-			args = append(args, ident.Name)
-		}
-	}
+
+	// if we have database or service call, then we keep track of all arguments used
 	if parsedCall != nil {
+		// gather all args used in the CallExpr
+		var args []string
+		for _, arg := range node.Args {
+			if ident, ok := arg.(*ast.Ident); ok {
+				args = append(args, ident.Name)
+			}
+		}
+		// for each arg, check if it is in the block variables array
+		// if yes, then we add the arg to the dependencies of the parsed call
 		for _, arg := range args {
 			for _, v := range parsedCfg.Vars {
 				if arg == v.Name {
 					parsedCall.Deps = append(parsedCall.Deps, v)
-					break
 				}
 			}
 		}

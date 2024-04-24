@@ -1,45 +1,43 @@
 package main
 
 import (
-	"encoding/json"
 	"fmt"
 	goparser "go/parser"
 	"go/token"
-	"os"
-	"sort"
 	"static_analyzer/logger"
 	"static_analyzer/models"
 	"static_analyzer/parser"
 	"static_analyzer/visitor"
+	"static_analyzer/graph"
 )
 
 var appdir = "./apps/postnotification/workflow/postnotification"
 
-var allServiceNodes map[string]*models.ServiceNode
+var appServiceNodes map[string]*models.ServiceNode
 
 func main() {
-	allServiceNodes = make(map[string]*models.ServiceNode)
+	appServiceNodes = make(map[string]*models.ServiceNode)
 
 	uploadServiceNode, err := genServiceNode("UploadService.go", "UploadService", "UploadServiceImpl")
 	if err != nil {
 		logger.Logger.Error("error generating node for service", "UploadService")
 		return
 	}
-	allServiceNodes["UploadService"] = uploadServiceNode
+	appServiceNodes["UploadService"] = uploadServiceNode
 
 	notifyServiceNode, err := genServiceNode("NotifyService.go", "NotifyService", "NotifyServiceImpl")
 	if err != nil {
 		logger.Logger.Error("error generating node for service", "NotifyService")
 		return
 	}
-	allServiceNodes["NotifyService"] = notifyServiceNode
+	appServiceNodes["NotifyService"] = notifyServiceNode
 
 	storageServiceNode, err := genServiceNode("StorageService.go", "StorageService", "StorageServiceImpl")
 	if err != nil {
 		logger.Logger.Error("error generating node for service", "StorageService")
 		return
 	}
-	allServiceNodes["StorageService"] = storageServiceNode
+	appServiceNodes["StorageService"] = storageServiceNode
 
 	fmt.Println()
 	fmt.Println("##############")
@@ -79,122 +77,8 @@ func main() {
 	delete(notifyServiceNode.Services, "storageService")
 	notifyServiceNode.Services["storageService"] = storageServiceNode
 
-	abstractGraph := start(uploadServiceNode, "UploadPost")
-
-	// print in JSON format
-	// https://omute.net/editor
-	file, err := os.Create("abstract_graph.json")
-	if err != nil {
-		fmt.Println("Error creating file:", err)
-		return
-	}
-	defer file.Close()
-	for _, node := range abstractGraph.Nodes {
-		data, err := json.MarshalIndent(node, "", "  ")
-		if err != nil {
-			logger.Logger.Error("error marshaling json:", err)
-			return
-		}
-		file.Write(data)
-		fmt.Println(string(data))
-	}
-}
-
-func start(serviceNode *models.ServiceNode, targetMethodName string) *models.AbstractGraph {
-	targetMethod := serviceNode.Methods[targetMethodName]
-
-	abstractGraph := models.AbstractGraph{
-		Nodes: make([]*models.AbstractNode, 0),
-	}
-
-	linenos := make([]token.Pos, 0, len(targetMethod.DatabaseCalls))
-	for k := range targetMethod.DatabaseCalls {
-		linenos = append(linenos, k)
-	}
-	for k := range targetMethod.ServiceCalls {
-		linenos = append(linenos, k)
-	}
-	// order by lineno
-	sort.Slice(linenos, func(i, j int) bool {
-		return linenos[i] < linenos[j]
-	})
-
-	abstractGraph.Nodes = append(abstractGraph.Nodes, &models.AbstractNode{
-		NodeType: models.KIND_ROOT,
-		Repr:     fmt.Sprintf("%s.%s", serviceNode.Name, targetMethodName),
-	})
-
-	for _, lineno := range linenos {
-		if targetMethod.DatabaseCalls[lineno] != nil {
-			dbCall := targetMethod.DatabaseCalls[lineno]
-			repr := fmt.Sprintf("%s.%s", dbCall.Type, dbCall.MethodName)
-			abstractGraph.Nodes[0].Children = append(abstractGraph.Nodes[0].Children, &models.AbstractNode{
-				ParsedCall:   dbCall,
-				CallerParams: dbCall.Deps,
-				NodeType:     models.KIND_DATABASE_CALL,
-				Repr:         repr,
-			})
-		} else if targetMethod.ServiceCalls[lineno] != nil {
-			svcCall := targetMethod.ServiceCalls[lineno]
-			//svcFuncDecl := allServiceNodes[svcCall.Type].ParsedCFGs[svcCall.MethodName].Vars
-			repr := fmt.Sprintf("%s.%s", svcCall.Type, svcCall.MethodName)
-			abstractGraph.Nodes[0].Children = append(abstractGraph.Nodes[0].Children, &models.AbstractNode{
-				ParsedCall:   svcCall,
-				CallerParams: svcCall.Deps,
-				//CalleeParams: 	svcFuncDecl,
-				NodeType: models.KIND_SERVICE_CALL,
-				Repr:     repr,
-			})
-		}
-	}
-	recurse(abstractGraph.Nodes[0])
-	return &abstractGraph
-}
-
-func recurse(parentNode *models.AbstractNode) {
-	for _, node := range parentNode.Children {
-		// we need to unfold the service blocks from each service call
-		if node.NodeType == models.KIND_SERVICE_CALL {
-			serviceNode := allServiceNodes[node.ParsedCall.Type]
-			methodName := node.ParsedCall.MethodName
-			targetMethod := serviceNode.Methods[methodName]
-
-			linenos := make([]token.Pos, 0, len(targetMethod.DatabaseCalls))
-
-			for k := range targetMethod.DatabaseCalls {
-				linenos = append(linenos, k)
-			}
-			for k := range targetMethod.ServiceCalls {
-				linenos = append(linenos, k)
-			}
-			// order by lineno
-			sort.Slice(linenos, func(i, j int) bool {
-				return linenos[i] < linenos[j]
-			})
-			for _, lineno := range linenos {
-				if targetMethod.DatabaseCalls[lineno] != nil {
-					dbCall := targetMethod.DatabaseCalls[lineno]
-					repr := fmt.Sprintf("%s.%s", dbCall.Type, dbCall.MethodName)
-					node.Children = append(node.Children, &models.AbstractNode{
-						ParsedCall:   dbCall,
-						CallerParams: dbCall.Deps,
-						NodeType:     models.KIND_DATABASE_CALL,
-						Repr:         repr,
-					})
-				} else if targetMethod.ServiceCalls[lineno] != nil {
-					svcCall := targetMethod.ServiceCalls[lineno]
-					repr := fmt.Sprintf("%s.%s", svcCall.Type, svcCall.MethodName)
-					node.Children = append(node.Children, &models.AbstractNode{
-						ParsedCall:   svcCall,
-						CallerParams: svcCall.Deps,
-						NodeType:     models.KIND_SERVICE_CALL,
-						Repr:         repr,
-					})
-				}
-			}
-			recurse(node)
-		}
-	}
+	abstractGraph := graph.Build(uploadServiceNode, "UploadPost", appServiceNodes)
+	abstractGraph.Save()
 }
 
 func genServiceNode(filename string, name string, impl string) (*models.ServiceNode, error) {
