@@ -8,7 +8,7 @@ import (
 type Ref struct {
 	Name          string      `json:"name"`
 	Id            int64       `json:"id"`
-	Parent 		  string 	  `json:"origin"`
+	Origin 		  string 	  `json:"origin"`
 	Variable 	  *Variable   `json:"-"`
 }
 

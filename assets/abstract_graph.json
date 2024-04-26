@@ -2,7 +2,8 @@
   "repr": "UploadService.UploadPost",
   "children": [
     {
-      "repr": "StorageService.StorePost (post.ReqID, post, )",
+      "repr": "storageService.StorePost(ctx, post)",
+      "caller": "UploadService",
       "caller_params": [
         {
           "name": "post.ReqID",
@@ -37,7 +38,7 @@
       ],
       "children": [
         {
-          "repr": "Cache.Put (postIDStr, post, )",
+          "repr": "cache.Put(ctx, postIDStr, post)",
           "caller_params": [
             {
               "name": "postIDStr",
@@ -51,7 +52,7 @@
                   "ref": {
                     "name": "post",
                     "id": 2,
-                    "origin": "StorageService"
+                    "origin": "UploadService"
                   }
                 }
               ]
@@ -64,7 +65,7 @@
               "ref": {
                 "name": "post",
                 "id": 2,
-                "origin": "StorageService"
+                "origin": "UploadService"
               }
             }
           ]
@@ -72,7 +73,8 @@
       ]
     },
     {
-      "repr": "NotifyService.Notify (message, )",
+      "repr": "notifyService.Notify(ctx, message)",
+      "caller": "UploadService",
       "caller_params": [
         {
           "name": "message",
@@ -95,7 +97,8 @@
       ],
       "children": [
         {
-          "repr": "StorageService.ReadPost (reqID, postID, )",
+          "repr": "storageService.ReadPost(ctx, reqID, postID)",
+          "caller": "NotifyService",
           "caller_params": [
             {
               "name": "reqID",
@@ -109,7 +112,7 @@
                   "ref": {
                     "name": "message",
                     "id": 6,
-                    "origin": "NotifyService"
+                    "origin": "UploadService"
                   }
                 }
               ]
@@ -126,7 +129,7 @@
                   "ref": {
                     "name": "message",
                     "id": 6,
-                    "origin": "NotifyService"
+                    "origin": "UploadService"
                   }
                 }
               ]
@@ -134,7 +137,7 @@
           ],
           "children": [
             {
-              "repr": "Cache.Get (postIDStr, )",
+              "repr": "cache.Get(ctx, postIDStr, )",
               "caller_params": [
                 {
                   "name": "postIDStr",
@@ -148,7 +151,7 @@
                       "ref": {
                         "name": "postID",
                         "id": 9,
-                        "origin": "StorageService"
+                        "origin": "NotifyService"
                       }
                     }
                   ]

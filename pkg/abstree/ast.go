@@ -20,33 +20,54 @@ const (
 )
 
 type ParsedCallExpr struct {
-	Ast 			*ast.CallExpr
+	Ast *ast.CallExpr
 	// represents the name of the field for the interface
 	// that the method is implementing e.g. f in 'f.storageService.StorePost(...)'
-	Receiver 		string
+	Receiver string
 	// represents either the service or database being called
-	TargetField 	string
-	Kind        	NodeKind
-	// string of the type of service (e.g. PostStorageService) or database (Cache)
-	TargetType 		string
+	TargetField string
+	Kind        NodeKind
 
-	MethodName 		string
-	Pos        		token.Pos
-	Deps       		[]*models.Variable
+	// type of service calling (src) and being called (dest)
+	SrcType 	string
+	DestType 	string
+
+	MethodName string
+	Pos        token.Pos
+	Deps       []*models.Variable
 }
 
 func (call *ParsedCallExpr) String() string {
-    funcCallStr := fmt.Sprintf("%s.%s.%s(", call.Receiver, call.TargetField, call.MethodName)
-    for i, arg := range call.Ast.Args {
-        if ident, ok := arg.(*ast.Ident); ok {
-            funcCallStr += ident.Name
-            if i < len(call.Ast.Args)-1 {
-                funcCallStr += ", "
-            }
-        }
-    }
-    funcCallStr += ")"
-    return funcCallStr
+	var funcCallStr string
+	if call.Receiver != "" {
+		funcCallStr = fmt.Sprintf("%s.%s.%s(", call.Receiver, call.TargetField, call.MethodName)
+	} else {
+		funcCallStr = fmt.Sprintf("%s.%s(", call.TargetField, call.MethodName)
+	}
+	for i, arg := range call.Ast.Args {
+		if ident, ok := arg.(*ast.Ident); ok {
+			funcCallStr += ident.Name
+			if i < len(call.Ast.Args)-1 {
+				funcCallStr += ", "
+			}
+		}
+	}
+	funcCallStr += ")"
+	return funcCallStr
+}
+
+func (call *ParsedCallExpr) SimpleString() string {
+	funcCallStr := fmt.Sprintf("%s.%s(", call.TargetField, call.MethodName)
+	for i, arg := range call.Ast.Args {
+		if ident, ok := arg.(*ast.Ident); ok {
+			funcCallStr += ident.Name
+			if i < len(call.Ast.Args)-1 {
+				funcCallStr += ", "
+			}
+		}
+	}
+	funcCallStr += ")"
+	return funcCallStr
 }
 
 type ParsedFuncDecl struct {
@@ -83,7 +104,6 @@ type DatabaseField struct {
 	Lineno token.Pos
 	Ast    *ast.Field
 }
-
 
 type ServiceNode struct {
 	Name     string
@@ -337,14 +357,16 @@ func (node *ServiceNode) ParseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 								if serviceField, ok := field.(*ServiceField); ok {
 									serviceNode := node.Services[serviceField.Variable.Type.(*gocode.UserType).Name]
 									parsedFuncDecl.ServiceCalls[parsedCallExpr.Pos] = parsedCallExpr
-									parsedCallExpr.TargetType = serviceNode.Name
+									parsedCallExpr.SrcType 	= node.Name
+									parsedCallExpr.DestType = serviceNode.Name
 									parsedCallExpr.Kind = KIND_SERVICE_CALL
 								}
 								// if the field corresponds to a database field
 								if databaseField, ok := field.(*DatabaseField); ok {
 									databaseType := databaseField.Variable.Type.(*gocode.UserType).Name
 									parsedFuncDecl.DatabaseCalls[parsedCallExpr.Pos] = parsedCallExpr
-									parsedCallExpr.TargetType = databaseType
+									parsedCallExpr.SrcType 	= node.Name
+									parsedCallExpr.DestType = databaseType
 									parsedCallExpr.Kind = KIND_DATABASE_CALL
 								}
 							}

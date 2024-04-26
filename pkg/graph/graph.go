@@ -10,34 +10,60 @@ import (
 	"go/token"
 	"os"
 	"sort"
-	"strings"
 )
 
-type AbstractNode struct {
-	// representation of the node (e.g. storageService.StorePost)
-	Repr           string                 `json:"repr"`
-	CallerParams   []*models.Variable     `json:"caller_params,omitempty"`
-	CalleeParams   []*models.Variable     `json:"-"` // omit from json
-	Kind           abstree.NodeKind        `json:"-"` // omit from json
-	ParsedCall     *abstree.ParsedCallExpr `json:"-"` // omit from json
-	ParsedFuncDecl *abstree.ParsedFuncDecl `json:"-"` // omit from json
+type AbstractNode interface {
+	GetCallerParams() []*models.Variable
+	String() string
+}
+
+type AbstractServiceCall struct {
+	AbstractNode 						`json:"-"` // omit from json
+	Repr         string     			`json:"repr,omitempty"`
+	// name of the service calling e.g. StorageService
+	Caller       string                  `json:"caller,omitempty"`
+	CallerParams []*models.Variable      `json:"caller_params,omitempty"`
+	ParsedCall   *abstree.ParsedCallExpr `json:"-"` // omit from json
 	// nodes representing database calls cannot contain children as well
-	Children []*AbstractNode `json:"children,omitempty"` // omit from json
+	Children []AbstractNode 			`json:"children,omitempty"` // omit from json
+}
+
+func (svc *AbstractServiceCall) GetCallerParams() []*models.Variable {
+	return svc.CallerParams
+}
+
+func (svc *AbstractServiceCall) String() string {
+	return svc.ParsedCall.SimpleString()
+}
+
+type AbstractDatabaseCall struct {
+	AbstractNode `json:"-"`              // omit from json
+	Repr         string                  `json:"repr"`
+	CallerParams []*models.Variable      `json:"caller_params,omitempty"`
+	ParsedCall   *abstree.ParsedCallExpr `json:"-"` // omit from json
+}
+
+func (db *AbstractDatabaseCall) GetCallerParams() []*models.Variable {
+	return db.CallerParams
+}
+
+func (db *AbstractDatabaseCall) String() string {
+	return db.ParsedCall.SimpleString()
 }
 
 type AbstractGraph struct {
-	Nodes           []*AbstractNode
+	Nodes           []AbstractNode
 	AppServiceNodes map[string]*abstree.ServiceNode
 
 	// helpers
 	globalIdx        int64
-	visitedNodes     map[*AbstractNode]bool
-	nodesBlockParams map[*AbstractNode][]*models.Variable
+	visitedNodes     map[AbstractNode]bool
+	nodesBlockParams map[AbstractNode][]*models.Variable
 }
 
 func Build(app *app.App, entryPoints map[string][]string) *AbstractGraph {
 	abstractGraph := AbstractGraph{
-		Nodes:           make([]*AbstractNode, 0),
+		Nodes:           make([]AbstractNode, 0),
 		AppServiceNodes: app.Services,
 	}
 
@@ -58,18 +84,18 @@ func (ag *AbstractGraph) matchVarsIdentifiers() {
 	// cannot be 0 otherwise because default value in
 	// variable id parameter is 0 when not previously set
 	ag.globalIdx = 0
-	ag.visitedNodes = make(map[*AbstractNode]bool, 0)
-	ag.nodesBlockParams = make(map[*AbstractNode][]*models.Variable, 0)
+	ag.visitedNodes = make(map[AbstractNode]bool, 0)
+	ag.nodesBlockParams = make(map[AbstractNode][]*models.Variable, 0)
 
 	//FIXME: root node (e.g. UploadPost) must have callerParam args aswell
 	ag.matchVarsIdentifiersHelper(ag.Nodes[0])
 }
 
-func (ag *AbstractGraph) matchVarsIdentifiersHelper(node *AbstractNode) {
+func (ag *AbstractGraph) matchVarsIdentifiersHelper(node AbstractNode) {
 	// REMINDER: is it really necessary that we only have one node?
 	// should these always be the entry nodes????
-	for callerParamIdx, callerParam := range node.CallerParams {
-		log.Logger.Debugf("> caller %s", node.Repr)
+	for callerParamIdx, callerParam := range node.GetCallerParams() {
+		log.Logger.Debugf("> caller %s", node.String())
 		// assign id if not yet assigned (act as root variable for other child dependencies)
 		if callerParam.Id == -1 {
 			log.Logger.Debug("assigning id ", ag.globalIdx, " to caller param ", callerParam.Name, " :", callerParam.Lineno)
@@ -81,55 +107,59 @@ func (ag *AbstractGraph) matchVarsIdentifiersHelper(node *AbstractNode) {
 		// all the variables (even from the dependencies) that correspond to
 		// a parameter of the block i.e. the (remote) method parameter
 		// FIXME: FOR NOW BECAUSE WE ONLY SUPPORT 1 BLOCK PER REMOTE METHOD
-		for _, childNode := range node.Children {
-			log.Logger.Debug("visiting child node ", childNode.Repr)
-			if !ag.visitedNodes[childNode] {
-				// get all dependencies recursively within children
-				// (i think it is safe to have duplicates)
-				var deps []*models.Variable
-				for _, param := range childNode.CallerParams {
-					deps = append(deps, getAllCallerParamDeps(param)...)
-				}
+		if abstractService, ok := node.(*AbstractServiceCall); ok {
+			for _, childNode := range abstractService.Children {
+				log.Logger.Debug("visiting child node ", childNode.String())
+				if !ag.visitedNodes[childNode] {
+					// get all dependencies recursively within children
+					// (i think it is safe to have duplicates)
+					var deps []*models.Variable
+					for _, param := range childNode.GetCallerParams() {
+						deps = append(deps, getAllCallerParamDeps(param)...)
+					}
 
-				// block params is a subset of deps when a variable originates from
-				// the block parameter i.e. the (remote) method parameter
-				// FIXME: FOR NOW BECAUSE WE ONLY SUPPORT 1 BLOCK PER REMOTE METHOD
-				for _, dep := range deps {
-					if dep.IsBlockParam {
-						ag.nodesBlockParams[childNode] = append(ag.nodesBlockParams[childNode], dep)
-					} else if dep.Id == -1 {
-						log.Logger.Debug("assigning id ", ag.globalIdx, " to dep param ", callerParam.Name, " :", callerParam.Lineno)
-						callerParam.Id = ag.globalIdx
-						ag.globalIdx++
+					// block params is a subset of deps when a variable originates from
+					// the block parameter i.e. the (remote) method parameter
+					// FIXME: FOR NOW BECAUSE WE ONLY SUPPORT 1 BLOCK PER REMOTE METHOD
+					for _, dep := range deps {
+						if dep.IsBlockParam {
+							ag.nodesBlockParams[childNode] = append(ag.nodesBlockParams[childNode], dep)
+						} else if dep.Id == -1 {
+							log.Logger.Debug("assigning id ", ag.globalIdx, " to dep param ", callerParam.Name, " :", callerParam.Lineno)
+							callerParam.Id = ag.globalIdx
+							ag.globalIdx++
+						}
+					}
+					ag.visitedNodes[childNode] = true
+				}
+				// match the child parameter id to the caller parameter id
+				// if they correspond to the same index in the func call and func definition, resp.
+				for _, childParam := range ag.nodesBlockParams[childNode] {
+					log.Logger.Debugf("\t matching child (idx=%d) param %s:%d with caller (idx=%d) param %s:%d", childParam.BlockParamIdx, childParam.Name, childParam.Lineno, callerParamIdx+1, callerParam.Name, callerParam.Lineno)
+					if childParam.BlockParamIdx == callerParamIdx+1 &&
+						// ^ sanity check (-1 is when it was not yet set)
+						childParam.Id == -1 {
+
+						childParam.Id = callerParam.Id
+						// add reference
+						//TODO: add more stuff later
+						childParam.Ref = &models.Ref{
+							Name:     callerParam.Name,
+							Id:       callerParam.Id,
+							Origin:   abstractService.Caller,
+							Variable: callerParam,
+						}
 					}
 				}
-				ag.visitedNodes[childNode] = true
+				log.Logger.Debug()
 			}
-			// match the child parameter id to the caller parameter id
-			// if they correspond to the same index in the func call and func definition, resp.
-			for _, childParam := range ag.nodesBlockParams[childNode] {
-				log.Logger.Debugf("\t matching child (idx=%d) param %s:%d with caller (idx=%d) param %s:%d", childParam.BlockParamIdx, childParam.Name, childParam.Lineno, callerParamIdx+1, callerParam.Name, callerParam.Lineno)
-				if childParam.BlockParamIdx == callerParamIdx+1 &&
-					// ^ sanity check (-1 is when it was not yet set)
-					childParam.Id == -1 {
-
-					childParam.Id = callerParam.Id
-					// add reference
-					//TODO: add more stuff later
-					childParam.Ref = &models.Ref{
-						Name:     callerParam.Name,
-						Id:       callerParam.Id,
-						Parent:   strings.Split(node.Repr, ".")[0], //CAUTION, this is hard coded
-						Variable: callerParam,
-					}
-				}
-			}
-			log.Logger.Debug()
 		}
 		log.Logger.Debug()
 	}
-	for _, childNode := range node.Children {
-		ag.matchVarsIdentifiersHelper(childNode)
+	if abstractService, ok := node.(*AbstractServiceCall); ok {
+		for _, childNode := range abstractService.Children {
+			ag.matchVarsIdentifiersHelper(childNode)
+		}
 	}
 }
 
@@ -176,52 +206,41 @@ func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *a
 		return linenos[i] < linenos[j]
 	})
 
-	abstractGraph.Nodes = append(abstractGraph.Nodes, &AbstractNode{
-		Kind: abstree.KIND_ROOT,
+	abstractGraph.Nodes = append(abstractGraph.Nodes, &AbstractServiceCall{
 		Repr: fmt.Sprintf("%s.%s", serviceNode.Name, targetMethodName),
 	})
 
-	for _, lineno := range linenos {
-		if targetMethod.DatabaseCalls[lineno] != nil {
-			dbCall := targetMethod.DatabaseCalls[lineno]
-			repr := fmt.Sprintf("%s.%s (", dbCall.TargetType, dbCall.MethodName)
-			for _, param := range dbCall.Deps {
-				repr = repr + fmt.Sprintf("%s, ", param.Name)
+	if abstractService, ok := abstractGraph.Nodes[0].(*AbstractServiceCall); ok {
+		for _, lineno := range linenos {
+			if targetMethod.DatabaseCalls[lineno] != nil {
+				dbCall := targetMethod.DatabaseCalls[lineno]
+				abstractService.Children = append(abstractService.Children, &AbstractDatabaseCall{
+					ParsedCall:   dbCall,
+					CallerParams: dbCall.Deps,
+					Repr:         dbCall.SimpleString(),
+				})
+			} else if targetMethod.ServiceCalls[lineno] != nil {
+				svcCall := targetMethod.ServiceCalls[lineno]
+				abstractService.Children = append(abstractService.Children, &AbstractServiceCall{
+					ParsedCall:   svcCall,
+					Caller:       svcCall.SrcType,
+					CallerParams: svcCall.Deps,
+					Repr:         svcCall.SimpleString(),
+				})
 			}
-			repr = repr + ")"
-			abstractGraph.Nodes[0].Children = append(abstractGraph.Nodes[0].Children, &AbstractNode{
-				ParsedCall:   dbCall,
-				CallerParams: dbCall.Deps,
-				Kind:         abstree.KIND_DATABASE_CALL,
-				Repr:         repr,
-			})
-		} else if targetMethod.ServiceCalls[lineno] != nil {
-			svcCall := targetMethod.ServiceCalls[lineno]
-			repr := fmt.Sprintf("%s.%s (", svcCall.TargetType, svcCall.MethodName)
-			for _, param := range svcCall.Deps {
-				repr = repr + fmt.Sprintf("%s, ", param.Name)
-			}
-			repr = repr + ")"
-			abstractGraph.Nodes[0].Children = append(abstractGraph.Nodes[0].Children, &AbstractNode{
-				ParsedCall:   svcCall,
-				CallerParams: svcCall.Deps,
-				//CalleeParams: 	svcFuncDecl,
-				Kind: abstree.KIND_SERVICE_CALL,
-				Repr: repr,
-			})
 		}
+		// FIXME: is it really necessary that we only have one node?
+		// should these always be the entry nodes?
+		ag.recurseBuild(abstractService)
 	}
-	// FIXME: is it really necessary that we only have one node?
-	// should these always be the entry nodes?
-	ag.recurseBuild(abstractGraph.Nodes[0])
 }
 
-func (ag *AbstractGraph) recurseBuild(parentNode *AbstractNode) {
+func (ag *AbstractGraph) recurseBuild(parentNode *AbstractServiceCall) {
 	for _, node := range parentNode.Children {
 		// we need to unfold the service blocks from each service call
-		if node.Kind == abstree.KIND_SERVICE_CALL {
-			serviceNode := ag.AppServiceNodes[node.ParsedCall.TargetType]
-			methodName := node.ParsedCall.MethodName
+		if abstractService, ok := node.(*AbstractServiceCall); ok {
+			serviceNode := ag.AppServiceNodes[abstractService.ParsedCall.DestType]
+			methodName := abstractService.ParsedCall.MethodName
 			targetMethod := serviceNode.Methods[methodName]
 
 			linenos := make([]token.Pos, 0, len(targetMethod.DatabaseCalls))
@@ -239,33 +258,22 @@ func (ag *AbstractGraph) recurseBuild(parentNode *AbstractNode) {
 			for _, lineno := range linenos {
 				if targetMethod.DatabaseCalls[lineno] != nil {
 					dbCall := targetMethod.DatabaseCalls[lineno]
-					repr := fmt.Sprintf("%s.%s (", dbCall.TargetType, dbCall.MethodName)
-					for _, param := range dbCall.Deps {
-						repr = repr + fmt.Sprintf("%s, ", param.Name)
-					}
-					repr = repr + ")"
-					node.Children = append(node.Children, &AbstractNode{
+					abstractService.Children = append(abstractService.Children, &AbstractDatabaseCall{
 						ParsedCall:   dbCall,
 						CallerParams: dbCall.Deps,
-						Kind:         abstree.KIND_DATABASE_CALL,
-						Repr:         repr,
+						Repr:         dbCall.SimpleString(),
 					})
 				} else if targetMethod.ServiceCalls[lineno] != nil {
 					svcCall := targetMethod.ServiceCalls[lineno]
-					repr := fmt.Sprintf("%s.%s (", svcCall.TargetType, svcCall.MethodName)
-					for _, param := range svcCall.Deps {
-						repr = repr + fmt.Sprintf("%s, ", param.Name)
-					}
-					repr = repr + ")"
-					node.Children = append(node.Children, &AbstractNode{
+					abstractService.Children = append(abstractService.Children, &AbstractServiceCall{
 						ParsedCall:   svcCall,
+						Caller:       svcCall.SrcType,
 						CallerParams: svcCall.Deps,
-						Kind:         abstree.KIND_SERVICE_CALL,
-						Repr:         repr,
+						Repr:         svcCall.SimpleString(),
 					})
 				}
 			}
-			ag.recurseBuild(node)
+			ag.recurseBuild(abstractService)
 		}
 	}
 }
