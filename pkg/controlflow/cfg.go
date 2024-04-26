@@ -1,13 +1,15 @@
-package parser
+package controlflow
 
 import (
+	log "analyzer/pkg/logger"
 	"analyzer/pkg/models"
-	"analyzer/pkg/logger"
+	"analyzer/pkg/abstree"
 
 	"golang.org/x/tools/go/cfg"
 )
 
-func GenParsedCfg(cfg *cfg.CFG, method *models.ParsedFuncDecl, filepath string) *models.ParsedCFG {
+
+func GenParsedCfg(cfg *cfg.CFG, method *abstree.ParsedFuncDecl, filepath string) *models.ParsedCFG {
 	log.Logger.Debug("generating parsed config")
 	parsedCfg := models.ParsedCFG{
 		Cfg:        cfg,

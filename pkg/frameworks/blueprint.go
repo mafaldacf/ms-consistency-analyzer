@@ -1,8 +1,8 @@
 package frameworks
 
 import (
+	log "analyzer/pkg/logger"
 	"fmt"
-	"analyzer/pkg/logger"	
 	"reflect"
 
 	"github.com/blueprint-uservices/blueprint/plugins/workflow/workflowspec"

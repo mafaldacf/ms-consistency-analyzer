@@ -1,13 +1,14 @@
-package visitor
+package controlflow
 
 import (
+	log "analyzer/pkg/logger"
 	"fmt"
 	"go/ast"
-	"analyzer/pkg/logger"	
 	"reflect"
 	"slices"
 
 	"analyzer/pkg/models"
+	"analyzer/pkg/abstree"
 
 	"golang.org/x/tools/go/cfg"
 )
@@ -70,7 +71,7 @@ func visitBasicBlockAssignments(parsedCfg *models.ParsedCFG, block *cfg.Block, v
 	//log.Logger.Debug("- out block", block)
 }
 
-func VisitBasicBlockFuncCalls(parsedCfg *models.ParsedCFG, parsedFuncDecl *models.ParsedFuncDecl) {
+func VisitBasicBlockFuncCalls(parsedCfg *models.ParsedCFG, parsedFuncDecl *abstree.ParsedFuncDecl) {
 	log.Logger.Debug("visiting basic block func calls")
 	var visited = make(map[int32]bool)
 	for _, block := range parsedCfg.Cfg.Blocks {
@@ -79,7 +80,7 @@ func VisitBasicBlockFuncCalls(parsedCfg *models.ParsedCFG, parsedFuncDecl *model
 	log.Logger.Debugln()
 }
 
-func visitBasicBlockFuncCalls(parsedCfg *models.ParsedCFG, block *cfg.Block, parsedFuncDecl *models.ParsedFuncDecl, visited map[int32]bool) {
+func visitBasicBlockFuncCalls(parsedCfg *models.ParsedCFG, block *cfg.Block, parsedFuncDecl *abstree.ParsedFuncDecl, visited map[int32]bool) {
 	if !visited[block.Index] {
 		visited[block.Index] = true
 	} else {
@@ -107,7 +108,7 @@ func visitBasicBlockFuncCalls(parsedCfg *models.ParsedCFG, block *cfg.Block, par
 //  2. AssignStmt - assignment like errors from the return values of the function
 //  3. ParenExpr  - e.g. when used as a bool value in an if statement (assumes it is inside a parentheses)
 //     in this case, the unfolded node from ParenExpr is a CallExpr
-func hasFuncCall(parsedCfg *models.ParsedCFG, node ast.Node, parsedFuncDecl *models.ParsedFuncDecl) bool {
+func hasFuncCall(parsedCfg *models.ParsedCFG, node ast.Node, parsedFuncDecl *abstree.ParsedFuncDecl) bool {
 	switch n := node.(type) {
 	case *ast.ExprStmt:
 		if callExpr, ok := n.X.(*ast.CallExpr); ok {
@@ -144,9 +145,9 @@ func hasFuncCall(parsedCfg *models.ParsedCFG, node ast.Node, parsedFuncDecl *mod
 // hasServiceOrDatabaseCall
 // 1. check if it is a database call or service call
 // 2. if so, we fetch the arguments and compare against the CFG variables
-func hasServiceOrDatabaseCall(parsedCfg *models.ParsedCFG, node *ast.CallExpr, parsedFuncDecl *models.ParsedFuncDecl) bool {
+func hasServiceOrDatabaseCall(parsedCfg *models.ParsedCFG, node *ast.CallExpr, parsedFuncDecl *abstree.ParsedFuncDecl) bool {
 	log.Logger.Debug("found CallExpr:", node.Pos())
-	var parsedCall *models.ParsedCallExpr
+	var parsedCall *abstree.ParsedCallExpr
 	// check if it is a database call
 	dbCall := parsedFuncDecl.DatabaseCalls[node.Pos()]
 	if dbCall != nil {

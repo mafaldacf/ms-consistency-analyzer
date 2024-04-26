@@ -1,11 +1,12 @@
 package app
 
 import (
+	"analyzer/pkg/abstree"
+	log "analyzer/pkg/logger"
 	"analyzer/pkg/models"
 	"fmt"
-	"go/parser"
+	goparser "go/parser"
 	"go/token"
-	"analyzer/pkg/logger"
 	"path/filepath"
 
 	"github.com/blueprint-uservices/blueprint/plugins/workflow/workflowspec"
@@ -13,7 +14,7 @@ import (
 
 type App struct {
 	Path     string
-	Services map[string]*models.ServiceNode
+	Services map[string]*abstree.ServiceNode
 }
 
 func Init(path string) (*App, error) {
@@ -25,7 +26,7 @@ func Init(path string) (*App, error) {
 	}
 	app := &App{
 		Path:     fullPath,
-		Services: make(map[string]*models.ServiceNode),
+		Services: make(map[string]*abstree.ServiceNode),
 	}
 	log.Logger.Infof("initialized app at %s", app.Path)
 	return app, nil
@@ -34,21 +35,21 @@ func Init(path string) (*App, error) {
 func (app *App) AddServiceNode(serviceSpec *workflowspec.Service, services ...*workflowspec.Service) error {
 	fset := token.NewFileSet()
 	filepath := serviceSpec.Iface.File.Name
-	file, err := parser.ParseFile(fset, filepath, nil, parser.ParseComments)
+	file, err := goparser.ParseFile(fset, filepath, nil, goparser.ParseComments)
 	if err != nil {
 		log.Logger.Errorf("error parsing file %s: %s", filepath, err.Error())
 		return err
 	}
-	node := &models.ServiceNode{
+	node := &abstree.ServiceNode{
 		Name:       serviceSpec.Iface.Name,
 		Impl:       serviceSpec.Iface.Name + "Impl", // FIX THIS hardcoded value
 		Package:    serviceSpec.Iface.File.Package.Name,
 		Filepath:   filepath,
 		File:       file,
-		Fields:     make(map[string]models.ParsedField),
-		Imports:    make(map[string]*models.ParsedImportSpec),
-		Services:   make(map[string]*models.ServiceNode),
-		Methods:    make(map[string]*models.ParsedFuncDecl),
+		Fields:     make(map[string]abstree.ParsedField),
+		Imports:    make(map[string]*abstree.ParsedImportSpec),
+		Services:   make(map[string]*abstree.ServiceNode),
+		Methods:    make(map[string]*abstree.ParsedFuncDecl),
 		ParsedCFGs: make(map[string]*models.ParsedCFG),
 	}
 	for _, s := range services {

@@ -1,12 +1,13 @@
 package graph
 
 import (
+	"analyzer/pkg/abstree"
 	"analyzer/pkg/app"
+	log "analyzer/pkg/logger"
 	"analyzer/pkg/models"
 	"encoding/json"
 	"fmt"
 	"go/token"
-	"analyzer/pkg/logger"	
 	"os"
 	"sort"
 	"strings"
@@ -17,16 +18,16 @@ type AbstractNode struct {
 	Repr           string                 `json:"repr"`
 	CallerParams   []*models.Variable     `json:"caller_params,omitempty"`
 	CalleeParams   []*models.Variable     `json:"-"` // omit from json
-	Kind           models.NodeKind        `json:"-"` // omit from json
-	ParsedCall     *models.ParsedCallExpr `json:"-"` // omit from json
-	ParsedFuncDecl *models.ParsedFuncDecl `json:"-"` // omit from json
+	Kind           abstree.NodeKind        `json:"-"` // omit from json
+	ParsedCall     *abstree.ParsedCallExpr `json:"-"` // omit from json
+	ParsedFuncDecl *abstree.ParsedFuncDecl `json:"-"` // omit from json
 	// nodes representing database calls cannot contain children as well
 	Children []*AbstractNode `json:"children,omitempty"` // omit from json
 }
 
 type AbstractGraph struct {
 	Nodes           []*AbstractNode
-	AppServiceNodes map[string]*models.ServiceNode
+	AppServiceNodes map[string]*abstree.ServiceNode
 
 	// helpers
 	globalIdx        int64
@@ -160,7 +161,7 @@ func (ag *AbstractGraph) Save() {
 	}
 }
 
-func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *models.ServiceNode, targetMethodName string) {
+func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *abstree.ServiceNode, targetMethodName string) {
 	targetMethod := serviceNode.Methods[targetMethodName]
 
 	linenos := make([]token.Pos, 0, len(targetMethod.DatabaseCalls))
@@ -176,7 +177,7 @@ func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *m
 	})
 
 	abstractGraph.Nodes = append(abstractGraph.Nodes, &AbstractNode{
-		Kind: models.KIND_ROOT,
+		Kind: abstree.KIND_ROOT,
 		Repr: fmt.Sprintf("%s.%s", serviceNode.Name, targetMethodName),
 	})
 
@@ -191,7 +192,7 @@ func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *m
 			abstractGraph.Nodes[0].Children = append(abstractGraph.Nodes[0].Children, &AbstractNode{
 				ParsedCall:   dbCall,
 				CallerParams: dbCall.Deps,
-				Kind:         models.KIND_DATABASE_CALL,
+				Kind:         abstree.KIND_DATABASE_CALL,
 				Repr:         repr,
 			})
 		} else if targetMethod.ServiceCalls[lineno] != nil {
@@ -205,7 +206,7 @@ func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *m
 				ParsedCall:   svcCall,
 				CallerParams: svcCall.Deps,
 				//CalleeParams: 	svcFuncDecl,
-				Kind: models.KIND_SERVICE_CALL,
+				Kind: abstree.KIND_SERVICE_CALL,
 				Repr: repr,
 			})
 		}
@@ -218,7 +219,7 @@ func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *m
 func (ag *AbstractGraph) recurseBuild(parentNode *AbstractNode) {
 	for _, node := range parentNode.Children {
 		// we need to unfold the service blocks from each service call
-		if node.Kind == models.KIND_SERVICE_CALL {
+		if node.Kind == abstree.KIND_SERVICE_CALL {
 			serviceNode := ag.AppServiceNodes[node.ParsedCall.TargetType]
 			methodName := node.ParsedCall.MethodName
 			targetMethod := serviceNode.Methods[methodName]
@@ -246,7 +247,7 @@ func (ag *AbstractGraph) recurseBuild(parentNode *AbstractNode) {
 					node.Children = append(node.Children, &AbstractNode{
 						ParsedCall:   dbCall,
 						CallerParams: dbCall.Deps,
-						Kind:         models.KIND_DATABASE_CALL,
+						Kind:         abstree.KIND_DATABASE_CALL,
 						Repr:         repr,
 					})
 				} else if targetMethod.ServiceCalls[lineno] != nil {
@@ -259,7 +260,7 @@ func (ag *AbstractGraph) recurseBuild(parentNode *AbstractNode) {
 					node.Children = append(node.Children, &AbstractNode{
 						ParsedCall:   svcCall,
 						CallerParams: svcCall.Deps,
-						Kind:         models.KIND_SERVICE_CALL,
+						Kind:         abstree.KIND_SERVICE_CALL,
 						Repr:         repr,
 					})
 				}

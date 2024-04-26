@@ -1,16 +1,16 @@
-package parser
+package controlflow
 
 import (
+	log "analyzer/pkg/logger"
+	"analyzer/pkg/abstree"
 	"go/ast"
 	"go/parser"
 	"go/token"
-	"analyzer/pkg/logger"
-	"analyzer/pkg/models"
 
 	"golang.org/x/tools/go/cfg"
 )
 
-func GenerateMethodCFG(method *models.ParsedFuncDecl, filepath string) (*cfg.CFG, error) {
+func GenerateMethodCFG(method *abstree.ParsedFuncDecl, filepath string) (*cfg.CFG, error) {
 	fset := token.NewFileSet()
 	file, err := parser.ParseFile(fset, filepath, nil, 0)
 	if err != nil {

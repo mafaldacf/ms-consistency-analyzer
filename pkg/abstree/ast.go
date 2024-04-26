@@ -1,16 +1,107 @@
-package parser
+package abstree
 
 import (
+	log "analyzer/pkg/logger"
 	"analyzer/pkg/models"
+	"fmt"
 	"go/ast"
 	"go/token"
-	"analyzer/pkg/logger"
 	"strings"
 
 	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
 )
 
-func ParseImports(node *models.ServiceNode) {
+type NodeKind int
+
+const (
+	KIND_ROOT NodeKind = iota
+	KIND_SERVICE_CALL
+	KIND_DATABASE_CALL
+)
+
+type ParsedCallExpr struct {
+	Ast 			*ast.CallExpr
+	// represents the name of the field for the interface
+	// that the method is implementing e.g. f in 'f.storageService.StorePost(...)'
+	Receiver 		string
+	// represents either the service or database being called
+	TargetField 	string
+	Kind        	NodeKind
+	// string of the type of service (e.g. PostStorageService) or database (Cache)
+	TargetType 		string
+
+	MethodName 		string
+	Pos        		token.Pos
+	Deps       		[]*models.Variable
+}
+
+func (call *ParsedCallExpr) String() string {
+    funcCallStr := fmt.Sprintf("%s.%s.%s(", call.Receiver, call.TargetField, call.MethodName)
+    for i, arg := range call.Ast.Args {
+        if ident, ok := arg.(*ast.Ident); ok {
+            funcCallStr += ident.Name
+            if i < len(call.Ast.Args)-1 {
+                funcCallStr += ", "
+            }
+        }
+    }
+    funcCallStr += ")"
+    return funcCallStr
+}
+
+type ParsedFuncDecl struct {
+	Ast           *ast.FuncDecl
+	Name          string
+	Recv          *ast.Ident
+	DatabaseCalls map[token.Pos]*ParsedCallExpr
+	ServiceCalls  map[token.Pos]*ParsedCallExpr
+	// used to fetch the params when generating the basic cfg
+	// to store in the variables array of the function
+	Params []string
+}
+
+type ParsedImportSpec struct {
+	Ast                *ast.ImportSpec
+	Alias              string
+	Path               string
+	Package            string
+	IsBlueprintBackend bool
+}
+
+type ParsedField interface {
+}
+
+type ServiceField struct {
+	ParsedField
+	gocode.Variable
+	Lineno token.Pos
+	Ast    *ast.Field
+}
+type DatabaseField struct {
+	ParsedField
+	gocode.Variable
+	Lineno token.Pos
+	Ast    *ast.Field
+}
+
+
+type ServiceNode struct {
+	Name     string
+	Impl     string
+	Filepath string
+	Package  string
+	File     *ast.File
+	Fields   map[string]ParsedField
+	Imports  map[string]*ParsedImportSpec
+	// the map key is the service type (e.g. StorageService in 'storageService StorageService')
+	Services map[string]*ServiceNode
+	// safe because methods are unique since Golang does not allow overloading
+	Methods map[string]*ParsedFuncDecl
+
+	ParsedCFGs map[string]*models.ParsedCFG
+}
+
+func (node *ServiceNode) ParseImports() {
 	log.Logger.Debugf("inspecting imports for service %s\n", node.Name)
 
 	for _, imp := range node.File.Imports {
@@ -29,14 +120,14 @@ func ParseImports(node *models.ServiceNode) {
 			alias = items[len(items)-1]
 		}
 
-		importSpec := &models.ParsedImportSpec{
-			Ast:   		imp,
-			Alias: 		alias,
-			Path:  		path,
+		importSpec := &ParsedImportSpec{
+			Ast:   imp,
+			Alias: alias,
+			Path:  path,
 			// FIXME: package can sometimes be different than path when it is replaced by the go.mod
 			// but this is VERY rare, especially between services
 			// still, we need to later cover this edge case
-			Package:  	path,
+			Package: path,
 		}
 		// FIXME: this can be different if replaced in the Go.mod file
 		if path == "github.com/blueprint-uservices/blueprint/runtime/core/backend" {
@@ -53,7 +144,7 @@ func ParseImports(node *models.ServiceNode) {
 //  2. finds the function declarations that implement the
 //     service struct along with the name of the function, the receiver, and the parameters
 //  3. stores the function delc as parsed func decls in the methods of the service node
-func ParseMethods(node *models.ServiceNode) {
+func (node *ServiceNode) ParseMethods() {
 	log.Logger.Debugf("inspecting exposed methods for service implementation %s\n", node.Impl)
 
 	ast.Inspect(node.File, func(n ast.Node) bool {
@@ -90,13 +181,13 @@ func ParseMethods(node *models.ServiceNode) {
 							}
 
 							// store parsed func decl in the methods of the service node
-							parsedFuncDecl := models.ParsedFuncDecl{
+							parsedFuncDecl := ParsedFuncDecl{
 								Ast:           funcDecl,
 								Name:          funcDecl.Name.Name,
 								Recv:          receiverName,
 								Params:        params,
-								DatabaseCalls: make(map[token.Pos]*models.ParsedCallExpr),
-								ServiceCalls:  make(map[token.Pos]*models.ParsedCallExpr),
+								DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
+								ServiceCalls:  make(map[token.Pos]*ParsedCallExpr),
 							}
 							node.Methods[parsedFuncDecl.Name] = &parsedFuncDecl
 						}
@@ -126,7 +217,7 @@ func ParseInterfaceMethods(file *ast.File) {
 	})
 }
 
-func ParseStructFields(node *models.ServiceNode) {
+func (node *ServiceNode) ParseStructFields() {
 	log.Logger.Debugf("inspecting fields for service %s\n", node.Name)
 
 	ast.Inspect(node.File, func(n ast.Node) bool {
@@ -134,7 +225,7 @@ func ParseStructFields(node *models.ServiceNode) {
 			for _, field := range str.Fields.List {
 				for _, ident := range field.Names {
 					log.Logger.Debugf("> %s: %s\n", ident.Name, field.Type)
-					saveFieldWithType(node, field, ident.Name)
+					node.saveFieldWithType(field, ident.Name)
 				}
 			}
 		}
@@ -144,7 +235,7 @@ func ParseStructFields(node *models.ServiceNode) {
 }
 
 // saveFieldWithType saves the service or database fields defined in the structure
-func saveFieldWithType(node *models.ServiceNode, field *ast.Field, paramName string) {
+func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string) {
 	switch t := field.Type.(type) {
 
 	// if the type is from the current package, then it is probably a service import
@@ -153,16 +244,16 @@ func saveFieldWithType(node *models.ServiceNode, field *ast.Field, paramName str
 		// the field indeed corresponds to another service
 		// so the package of the variable is the same
 		if _, ok := node.Services[t.Name]; ok {
-			node.Fields[paramName] = &models.ServiceField{
+			node.Fields[paramName] = &ServiceField{
 				Variable: gocode.Variable{
 					Name: paramName,
 					Type: &gocode.UserType{
 						Package: node.Package,
-						Name: t.Name,
+						Name:    t.Name,
 					},
 				},
-				Lineno:  	field.Pos(),
-				Ast:        field,
+				Lineno: field.Pos(),
+				Ast:    field,
 			}
 		}
 
@@ -175,36 +266,36 @@ func saveFieldWithType(node *models.ServiceNode, field *ast.Field, paramName str
 				// check if the matched package is a database package imported from blueprint
 				if impt.IsBlueprintBackend {
 					switch t.Sel.Name {
-						//TODO: include other types from BLUEPRINT
+					//TODO: include other types from BLUEPRINT
 					case "Queue", "NoSQLDatabase", "Cache":
-						node.Fields[paramName] = &models.DatabaseField{
+						node.Fields[paramName] = &DatabaseField{
 							Variable: gocode.Variable{
-									Name: paramName,
-									Type: &gocode.UserType{
-										Package: node.Package,
-										Name: t.Sel.Name,
-									},
+								Name: paramName,
+								Type: &gocode.UserType{
+									Package: node.Package,
+									Name:    t.Sel.Name,
 								},
-								Lineno:  	field.Pos(),
-								Ast:        field,
-							}
-						default:
-							log.Logger.Warnf("unknown database type field %s for service %s", t.Sel.Name, node.Name)
+							},
+							Lineno: field.Pos(),
+							Ast:    field,
 						}
+					default:
+						log.Logger.Warnf("unknown database type field %s for service %s", t.Sel.Name, node.Name)
 					}
+				}
 				// check if the import matches the path of any of existing services
 				for _, s := range node.Services {
 					if s.Package == impt.Package {
-						node.Fields[paramName] = &models.ServiceField{
+						node.Fields[paramName] = &ServiceField{
 							Variable: gocode.Variable{
 								Name: paramName,
 								Type: &gocode.UserType{
 									Package: s.Package,
-									Name: t.Sel.Name,
+									Name:    t.Sel.Name,
 								},
 							},
-							Lineno:  	field.Pos(),
-							Ast:       	field,
+							Lineno: field.Pos(),
+							Ast:    field,
 						}
 					}
 				}
@@ -213,6 +304,59 @@ func saveFieldWithType(node *models.ServiceNode, field *ast.Field, paramName str
 	default:
 		log.Logger.Warnf("unknown field type %s for service %s", field.Type, node.Name)
 	}
+}
+
+func (node *ServiceNode) ParseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
+	log.Logger.Debugf("visiting method %s\n", parsedFuncDecl.Ast.Name.Name)
+
+	// e.g. f.queue.Push
+	//    ^ident2 ^ident ^method
+	// e.g. f.storageService.StorePost
+	//      ^ident2  ^ident    ^method
+	ast.Inspect(parsedFuncDecl.Ast, func(n ast.Node) bool {
+		if funcCall, ok := n.(*ast.CallExpr); ok {
+			if method, ok := funcCall.Fun.(*ast.SelectorExpr); ok {
+				// get first selector (e.g. storageService)
+				if ident, ok := method.X.(*ast.SelectorExpr); ok {
+					// get second selector (e.g. f)
+					if ident2, ok := ident.X.(*ast.Ident); ok {
+						// store function call either as service call or database call
+						parsedCallExpr := &ParsedCallExpr{
+							Ast:         funcCall,
+							Receiver:    ident2.Name,
+							TargetField: ident.Sel.Name,
+							MethodName:  method.Sel.Name,
+							Pos:         funcCall.Pos(),
+						}
+
+						// check if ident2 (e.g. f) is the current service receiver being implemented by the method
+						if ident2.Name == parsedFuncDecl.Recv.Name {
+							// if the targeted variable corresponds to a service field
+							if field, ok := node.Fields[parsedCallExpr.TargetField]; ok {
+								// if the field corresponds to a service field
+								if serviceField, ok := field.(*ServiceField); ok {
+									serviceNode := node.Services[serviceField.Variable.Type.(*gocode.UserType).Name]
+									parsedFuncDecl.ServiceCalls[parsedCallExpr.Pos] = parsedCallExpr
+									parsedCallExpr.TargetType = serviceNode.Name
+									parsedCallExpr.Kind = KIND_SERVICE_CALL
+								}
+								// if the field corresponds to a database field
+								if databaseField, ok := field.(*DatabaseField); ok {
+									databaseType := databaseField.Variable.Type.(*gocode.UserType).Name
+									parsedFuncDecl.DatabaseCalls[parsedCallExpr.Pos] = parsedCallExpr
+									parsedCallExpr.TargetType = databaseType
+									parsedCallExpr.Kind = KIND_DATABASE_CALL
+								}
+							}
+						}
+
+					}
+				}
+			}
+		}
+		return true
+	})
+	log.Logger.Debugln()
 }
 
 // NOT USED!!
@@ -233,4 +377,4 @@ func saveFieldWithType(node *models.ServiceNode, field *ast.Field, paramName str
 	}
 	return "unknown"
 }
- */
+*/
