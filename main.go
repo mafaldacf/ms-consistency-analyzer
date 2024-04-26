@@ -11,10 +11,6 @@ import (
 	"go/token"
 	"analyzer/pkg/logger"
 
-	/* "github.com/blueprint-uservices/blueprint/blueprint/pkg/wiring"
-	"github.com/blueprint-uservices/blueprint/plugins/cmdbuilder" */
-	/* "github.com/blueprint-uservices/blueprint/plugins/golang/gocode" */
-
 	// this needs to target the root of the app otherwise (and then replace the path in the go.mod file)
 	// otherwise the blueprint workflow plugin won't be able to locate the package
 	// more specifically, this occurs at

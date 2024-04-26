@@ -3,7 +3,7 @@ package models
 import (
 	"go/ast"
 	"go/token"
-	"github.com/blueprint-uservices/blueprint/plugins/golang/goparser"
+	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
 )
 
 // -------------------------
@@ -52,9 +52,20 @@ type ParsedImportSpec struct {
 	IsBlueprintBackend bool
 }
 
-type BlueprintDb int
+type ParsedField interface {
+}
+
+type ServiceField struct {
+	ParsedField
+	gocode.Variable
+	Lineno 		token.Pos
+	Ast      	*ast.Field
+}
 type DatabaseField struct {
-	Type string
+	ParsedField
+	gocode.Variable
+	Lineno 		token.Pos
+	Ast      	*ast.Field
 }
 
 type ServiceNode struct {
@@ -63,10 +74,8 @@ type ServiceNode struct {
 	Filepath  string
 	Package 	  string
 	File      *ast.File
-	Fields 	  map[string]*goparser.ParsedField
+	Fields 	  map[string]ParsedField
 	Imports   map[string]*ParsedImportSpec
-	// the map key is the field name (e.g. database in 'database backend.Cache')
-	Databases map[string]*DatabaseField
 	// the map key is the service type (e.g. StorageService in 'storageService StorageService')
 	Services  map[string]*ServiceNode
 	// safe because methods are unique since Golang does not allow overloading

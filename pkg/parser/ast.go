@@ -8,7 +8,6 @@ import (
 	"strings"
 
 	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
-	"github.com/blueprint-uservices/blueprint/plugins/golang/goparser"
 )
 
 func ParseImports(node *models.ServiceNode) {
@@ -154,27 +153,18 @@ func saveFieldWithType(node *models.ServiceNode, field *ast.Field, paramName str
 		// the field indeed corresponds to another service
 		// so the package of the variable is the same
 		if _, ok := node.Services[t.Name]; ok {
-			node.Fields[paramName] = &goparser.ParsedField{
+			node.Fields[paramName] = &models.ServiceField{
 				Variable: gocode.Variable{
-					// param is the name of the field e.g. storageService in 'storageService StorageService'
 					Name: paramName,
 					Type: &gocode.UserType{
 						Package: node.Package,
-						// t.Name is the type of the field e.g. StorageService in 'storageService StorageService'
 						Name: t.Name,
 					},
 				},
-				Struct:    nil,
-				Position:  int(field.Pos()),
-				Ast:       field,
-				IsService: true,
+				Lineno:  	field.Pos(),
+				Ast:        field,
 			}
 		}
-
-		/* if t.Name == "StorageService" || t.Name == "NotifyService" || t.Name == "Frontend" || t.Name == "Notify" {
-			// TODO: get the service node from the graph and add here
-			node.Services[paramName] = &models.ServiceNode{Name: t.Name}
-		} */
 
 	// probably selecting from a specific package
 	case *ast.SelectorExpr:
@@ -186,9 +176,18 @@ func saveFieldWithType(node *models.ServiceNode, field *ast.Field, paramName str
 				if impt.IsBlueprintBackend {
 					switch t.Sel.Name {
 						//TODO: include other types from BLUEPRINT
-						case "Queue", "NoSQLDatabase", "Cache":
-							parsedField := &models.DatabaseField{Type: t.Sel.Name}
-							node.Databases[paramName] = parsedField
+					case "Queue", "NoSQLDatabase", "Cache":
+						node.Fields[paramName] = &models.DatabaseField{
+							Variable: gocode.Variable{
+									Name: paramName,
+									Type: &gocode.UserType{
+										Package: node.Package,
+										Name: t.Sel.Name,
+									},
+								},
+								Lineno:  	field.Pos(),
+								Ast:        field,
+							}
 						default:
 							log.Logger.Warnf("unknown database type field %s for service %s", t.Sel.Name, node.Name)
 						}
@@ -196,20 +195,16 @@ func saveFieldWithType(node *models.ServiceNode, field *ast.Field, paramName str
 				// check if the import matches the path of any of existing services
 				for _, s := range node.Services {
 					if s.Package == impt.Package {
-						node.Fields[paramName] = &goparser.ParsedField{
+						node.Fields[paramName] = &models.ServiceField{
 							Variable: gocode.Variable{
-								// param is the name of the field e.g. storageService in 'storageService StorageService'
 								Name: paramName,
 								Type: &gocode.UserType{
 									Package: s.Package,
-									// t.Sel.Name is the type of the field e.g. StorageService in 'storageService StorageService'
 									Name: t.Sel.Name,
 								},
 							},
-							Struct:    nil,
-							Position:  int(field.Pos()),
-							Ast:       field,
-							IsService: true,
+							Lineno:  	field.Pos(),
+							Ast:       	field,
 						}
 					}
 				}

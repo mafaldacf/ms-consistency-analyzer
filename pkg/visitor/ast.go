@@ -40,26 +40,25 @@ func VisitServiceMethod(parsedFuncDecl *models.ParsedFuncDecl, node *models.Serv
 								}
 							}
 							funcCallStr += ")"
-							
-							// if the function call target corresponds to a service
+
+							// if the targeted variable corresponds to a service field 
 							if field, ok := node.Fields[parsedCallExpr.Selected]; ok {
-								// retrieve the targeted service node
-								if targetServiceNode, ok := node.Services[field.Variable.Type.(*gocode.UserType).Name]; ok {
+								// if the field corresponds to a service field
+								if serviceField, ok := field.(*models.ServiceField); ok {
 									log.Logger.Debugf("> found service call %s", funcCallStr)
+									serviceNode := node.Services[serviceField.Variable.Type.(*gocode.UserType).Name]
 									parsedFuncDecl.ServiceCalls[parsedCallExpr.Pos] = parsedCallExpr
-									parsedCallExpr.TargetType = targetServiceNode.Name
+									parsedCallExpr.TargetType = serviceNode.Name
 									parsedCallExpr.Kind = models.KIND_SERVICE_CALL
 								}
-							}
-							// if the function call target in a database
-							//FIXME: use the same logic for service fields and use interface with different 
-							// structure types similar to blueprint in *gocode.UserType for TypeName
-							if n, exists := node.Databases[parsedCallExpr.Selected]; exists {
-								log.Logger.Debugf("> found database call %s", funcCallStr)
-								parsedFuncDecl.DatabaseCalls[parsedCallExpr.Pos] = parsedCallExpr
-								parsedCallExpr.TargetType = n.Type
-								parsedCallExpr.Kind = models.KIND_DATABASE_CALL
-
+								// if the field corresponds to a database field
+								if databaseField, ok := field.(*models.DatabaseField); ok {
+									log.Logger.Debugf("> found database call %s", funcCallStr)
+									databaseType := databaseField.Variable.Type.(*gocode.UserType).Name
+									parsedFuncDecl.DatabaseCalls[parsedCallExpr.Pos] = parsedCallExpr
+									parsedCallExpr.TargetType = databaseType
+									parsedCallExpr.Kind = models.KIND_DATABASE_CALL
+								}
 							}
 						}
 

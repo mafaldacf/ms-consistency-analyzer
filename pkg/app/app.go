@@ -8,7 +8,6 @@ import (
 	"analyzer/pkg/logger"
 	"path/filepath"
 
-	"github.com/blueprint-uservices/blueprint/plugins/golang/goparser"
 	"github.com/blueprint-uservices/blueprint/plugins/workflow/workflowspec"
 )
 
@@ -46,9 +45,8 @@ func (app *App) AddServiceNode(serviceSpec *workflowspec.Service, services ...*w
 		Package:    serviceSpec.Iface.File.Package.Name,
 		Filepath:   filepath,
 		File:       file,
-		Fields:     make(map[string]*goparser.ParsedField),
+		Fields:     make(map[string]models.ParsedField),
 		Imports:    make(map[string]*models.ParsedImportSpec),
-		Databases:  make(map[string]*models.DatabaseField),
 		Services:   make(map[string]*models.ServiceNode),
 		Methods:    make(map[string]*models.ParsedFuncDecl),
 		ParsedCFGs: make(map[string]*models.ParsedCFG),
