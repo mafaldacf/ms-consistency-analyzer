@@ -57,14 +57,12 @@ func main() {
 		node.ParseImports()
 		node.ParseStructFields()
 		node.ParseMethods()
-		for method := range node.Methods {
+		for method := range node.ExposedMethods {
 			fmt.Printf("\n------------------------ %s ------------------------\n", method)
 			graph.VisitServiceMethodCFG(node, method)
 		}
 	}
-	entryPoints := map[string][]string{
-		"UploadService": {"UploadPost"},
-	}
+	entryPoints := []string{"UploadService"}
 	abstractGraph := graph.Build(app, entryPoints)
 	abstractGraph.Save()
 }

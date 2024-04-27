@@ -18,14 +18,14 @@ type AbstractNode interface {
 }
 
 type AbstractServiceCall struct {
-	AbstractNode 						`json:"-"` // omit from json
-	Repr         string     			`json:"repr,omitempty"`
+	AbstractNode `json:"-"` // omit from json
+	Repr         string     `json:"repr,omitempty"`
 	// name of the service calling e.g. StorageService
 	Caller       string                  `json:"caller,omitempty"`
 	CallerParams []*models.Variable      `json:"caller_params,omitempty"`
 	ParsedCall   *abstree.ParsedCallExpr `json:"-"` // omit from json
 	// nodes representing database calls cannot contain children as well
-	Children []AbstractNode 			`json:"children,omitempty"` // omit from json
+	Children []AbstractNode `json:"children,omitempty"` // omit from json
 }
 
 func (svc *AbstractServiceCall) GetCallerParams() []*models.Variable {
@@ -61,15 +61,16 @@ type AbstractGraph struct {
 	nodesBlockParams map[AbstractNode][]*models.Variable
 }
 
-func Build(app *app.App, entryPoints map[string][]string) *AbstractGraph {
+func Build(app *app.App, entryPoints []string) *AbstractGraph {
 	abstractGraph := AbstractGraph{
 		Nodes:           make([]AbstractNode, 0),
 		AppServiceNodes: app.Services,
 	}
 
 	//FIXME: this is hardcoded but the graph can have several root nodes with several (root) target methods
-	for serviceName, entryMethods := range entryPoints {
-		for _, method := range entryMethods {
+	for _, serviceName := range entryPoints {
+		service := app.Services[serviceName]
+		for _, method := range service.ExposedMethods {
 			abstractGraph.startBuild(&abstractGraph, app.Services[serviceName], method)
 			abstractGraph.matchVarsIdentifiers()
 		}
@@ -191,9 +192,7 @@ func (ag *AbstractGraph) Save() {
 	}
 }
 
-func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *abstree.ServiceNode, targetMethodName string) {
-	targetMethod := serviceNode.Methods[targetMethodName]
-
+func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *abstree.ServiceNode, targetMethod *abstree.ParsedFuncDecl) {
 	linenos := make([]token.Pos, 0, len(targetMethod.DatabaseCalls))
 	for k := range targetMethod.DatabaseCalls {
 		linenos = append(linenos, k)
@@ -207,7 +206,7 @@ func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *a
 	})
 
 	abstractGraph.Nodes = append(abstractGraph.Nodes, &AbstractServiceCall{
-		Repr: fmt.Sprintf("%s.%s", serviceNode.Name, targetMethodName),
+		Repr: fmt.Sprintf("%s.%s", serviceNode.Name, targetMethod.Name),
 	})
 
 	if abstractService, ok := abstractGraph.Nodes[0].(*AbstractServiceCall); ok {
@@ -241,7 +240,7 @@ func (ag *AbstractGraph) recurseBuild(parentNode *AbstractServiceCall) {
 		if abstractService, ok := node.(*AbstractServiceCall); ok {
 			serviceNode := ag.AppServiceNodes[abstractService.ParsedCall.DestType]
 			methodName := abstractService.ParsedCall.MethodName
-			targetMethod := serviceNode.Methods[methodName]
+			targetMethod := serviceNode.ExposedMethods[methodName]
 
 			linenos := make([]token.Pos, 0, len(targetMethod.DatabaseCalls))
 

@@ -29,8 +29,8 @@ type ParsedCallExpr struct {
 	Kind        NodeKind
 
 	// type of service calling (src) and being called (dest)
-	SrcType 	string
-	DestType 	string
+	SrcType  string
+	DestType string
 
 	MethodName string
 	Pos        token.Pos
@@ -116,7 +116,11 @@ type ServiceNode struct {
 	// the map key is the service type (e.g. StorageService in 'storageService StorageService')
 	Services map[string]*ServiceNode
 	// safe because methods are unique since Golang does not allow overloading
-	Methods map[string]*ParsedFuncDecl
+	// also this captures all exposed methods because they must be defined within the service struct file
+	ExposedMethods map[string]*ParsedFuncDecl
+	// FIXME: this does not capture all exposed methods
+	// advised to include the file of origin in the ParsedFuncDecl type for this
+	InternalMethods map[string]*ParsedFuncDecl
 
 	ParsedCFGs map[string]*models.ParsedCFG
 }
@@ -172,12 +176,15 @@ func (node *ServiceNode) ParseMethods() {
 		if funcDecl, ok := n.(*ast.FuncDecl); ok {
 			// check if the function has any receivers (i.e. structure(s) implemented by the function)
 			if funcDecl.Recv != nil && len(funcDecl.Recv.List) > 0 {
-				// get the function's receiver (i.e. structure implemented by the function)
+				// get the function's receiver (i.e. i.e. structure(s) implemented by the function)
 				if recv, ok := funcDecl.Recv.List[0].Type.(*ast.StarExpr); ok {
-					// get the identifier (i.e. data type) of the receiver (i.e., implemented structure name) matches the one we are looking for
+					// check if the data type (e.g. StorageService) of the receiver (i.e. structure(s) implemented by the function)
+					// matches the one we are looking for (i.e. StorageService)
 					if ident, ok := recv.X.(*ast.Ident); ok && ident.Name == node.Impl {
-						// get the name (i.e. variable name) of the receiver
-						if len(funcDecl.Recv.List[0].Names) > 0 {
+						// check if the function declaration being implDebugfemented by the Service structure
+						// is actually an exposed method to other services
+						if _, ok := node.ExposedMethods[funcDecl.Name.Name]; ok {
+							// get the variable name of the receiver
 							receiverName := funcDecl.Recv.List[0].Names[0]
 							// e.g. (f *FrontendImpl) UploadPost
 							log.Logger.Debugf("> (%s *%s) %s [:%d]\n", receiverName, ident.Name, funcDecl.Name.Name, funcDecl.Pos())
@@ -209,7 +216,7 @@ func (node *ServiceNode) ParseMethods() {
 								DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
 								ServiceCalls:  make(map[token.Pos]*ParsedCallExpr),
 							}
-							node.Methods[parsedFuncDecl.Name] = &parsedFuncDecl
+							node.ExposedMethods[parsedFuncDecl.Name] = &parsedFuncDecl
 						}
 					}
 				}
@@ -357,7 +364,7 @@ func (node *ServiceNode) ParseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 								if serviceField, ok := field.(*ServiceField); ok {
 									serviceNode := node.Services[serviceField.Variable.Type.(*gocode.UserType).Name]
 									parsedFuncDecl.ServiceCalls[parsedCallExpr.Pos] = parsedCallExpr
-									parsedCallExpr.SrcType 	= node.Name
+									parsedCallExpr.SrcType = node.Name
 									parsedCallExpr.DestType = serviceNode.Name
 									parsedCallExpr.Kind = KIND_SERVICE_CALL
 								}
@@ -365,7 +372,7 @@ func (node *ServiceNode) ParseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 								if databaseField, ok := field.(*DatabaseField); ok {
 									databaseType := databaseField.Variable.Type.(*gocode.UserType).Name
 									parsedFuncDecl.DatabaseCalls[parsedCallExpr.Pos] = parsedCallExpr
-									parsedCallExpr.SrcType 	= node.Name
+									parsedCallExpr.SrcType = node.Name
 									parsedCallExpr.DestType = databaseType
 									parsedCallExpr.Kind = KIND_DATABASE_CALL
 								}

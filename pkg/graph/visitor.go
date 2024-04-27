@@ -10,7 +10,7 @@ import (
 )
 
 func VisitServiceMethodCFG(node *abstree.ServiceNode, targetMethodName string) {
-	targetMethod := node.Methods[targetMethodName]
+	targetMethod := node.ExposedMethods[targetMethodName]
 	if targetMethod == nil {
 		log.Logger.Error("could not find target method with name ", targetMethodName)
 		return

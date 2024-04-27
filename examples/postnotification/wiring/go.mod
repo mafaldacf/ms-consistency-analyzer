@@ -8,7 +8,7 @@ require github.com/rabbitmq/amqp091-go v1.8.1 // indirect
 
 require (
 	github.com/blueprint-uservices/blueprint/blueprint v0.0.0-20240405152959-f078915d2306
-	postnotification/workflow/postnotification v0.0.0
+	postnotification/workflow v0.0.0
 )
 
 require (
@@ -41,4 +41,4 @@ require (
 	golang.org/x/tools v0.20.0 // indirect
 )
 
-replace postnotification/workflow/postnotification => ../workflow/postnotification
+replace postnotification/workflow => ../workflow

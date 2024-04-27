@@ -41,19 +41,22 @@ func (app *App) AddServiceNode(serviceSpec *workflowspec.Service, services ...*w
 		return err
 	}
 	node := &abstree.ServiceNode{
-		Name:       serviceSpec.Iface.Name,
-		Impl:       serviceSpec.Iface.Name + "Impl", // FIX THIS hardcoded value
-		Package:    serviceSpec.Iface.File.Package.Name,
-		Filepath:   filepath,
-		File:       file,
-		Fields:     make(map[string]abstree.ParsedField),
-		Imports:    make(map[string]*abstree.ParsedImportSpec),
-		Services:   make(map[string]*abstree.ServiceNode),
-		Methods:    make(map[string]*abstree.ParsedFuncDecl),
-		ParsedCFGs: make(map[string]*models.ParsedCFG),
+		Name:       		serviceSpec.Iface.Name,
+		Impl:       		serviceSpec.Iface.Name + "Impl", // FIX THIS hardcoded value
+		Package:    		serviceSpec.Iface.File.Package.Name,
+		Filepath:   		filepath,
+		File:       		file,
+		Fields:     		make(map[string]abstree.ParsedField),
+		Imports:    		make(map[string]*abstree.ParsedImportSpec),
+		Services:   		make(map[string]*abstree.ServiceNode),
+		ExposedMethods:    	make(map[string]*abstree.ParsedFuncDecl),
+		ParsedCFGs: 		make(map[string]*models.ParsedCFG),
 	}
 	for _, s := range services {
 		node.Services[s.Iface.Name] = app.Services[s.Iface.Name]
+	}
+	for _, m := range serviceSpec.Iface.Ast.Methods.List {
+		node.ExposedMethods[m.Names[0].Name] = nil
 	}
 	app.Services[node.Name] = node
 	log.Logger.Infof("added node %s at package %s with dependence on %d services", node.Name, node.Package, len(node.Services))
