@@ -2,6 +2,7 @@ package models
 
 import (
 	"golang.org/x/tools/go/cfg"
+	"analyzer/pkg/analyzer"
 )
 
 // -------------------------
@@ -14,10 +15,10 @@ type ParsedCFG struct {
 	BlocksInfo 	[]*BlockInfo
 	FileHash 	string 		 `json:"file_hash,omitempty"`
 	// FIXME: this should actually belong to the (first) block of the CFG
-	Vars 		[]*Variable
+	Vars 		[]*analyzer.Variable
 }
 type BlockInfo struct {
-	Gen []*Variable
-	In  []*Variable
-	Out []*Variable
+	Gen []*analyzer.Variable
+	In  []*analyzer.Variable
+	Out []*analyzer.Variable
 }

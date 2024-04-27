@@ -1,129 +1,13 @@
-package abstree
+package service
 
 import (
 	log "analyzer/pkg/logger"
-	"analyzer/pkg/models"
-	"fmt"
 	"go/ast"
 	"go/token"
 	"strings"
 
 	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
 )
-
-type NodeKind int
-
-const (
-	KIND_ROOT NodeKind = iota
-	KIND_SERVICE_CALL
-	KIND_DATABASE_CALL
-)
-
-type ParsedCallExpr struct {
-	Ast *ast.CallExpr
-	// represents the name of the field for the interface
-	// that the method is implementing e.g. f in 'f.storageService.StorePost(...)'
-	Receiver string
-	// represents either the service or database being called
-	TargetField string
-	Kind        NodeKind
-
-	// type of service calling (src) and being called (dest)
-	SrcType  string
-	DestType string
-
-	MethodName string
-	Pos        token.Pos
-	Deps       []*models.Variable
-}
-
-func (call *ParsedCallExpr) String() string {
-	var funcCallStr string
-	if call.Receiver != "" {
-		funcCallStr = fmt.Sprintf("%s.%s.%s(", call.Receiver, call.TargetField, call.MethodName)
-	} else {
-		funcCallStr = fmt.Sprintf("%s.%s(", call.TargetField, call.MethodName)
-	}
-	for i, arg := range call.Ast.Args {
-		if ident, ok := arg.(*ast.Ident); ok {
-			funcCallStr += ident.Name
-			if i < len(call.Ast.Args)-1 {
-				funcCallStr += ", "
-			}
-		}
-	}
-	funcCallStr += ")"
-	return funcCallStr
-}
-
-func (call *ParsedCallExpr) SimpleString() string {
-	funcCallStr := fmt.Sprintf("%s.%s(", call.TargetField, call.MethodName)
-	for i, arg := range call.Ast.Args {
-		if ident, ok := arg.(*ast.Ident); ok {
-			funcCallStr += ident.Name
-			if i < len(call.Ast.Args)-1 {
-				funcCallStr += ", "
-			}
-		}
-	}
-	funcCallStr += ")"
-	return funcCallStr
-}
-
-type ParsedFuncDecl struct {
-	Ast           *ast.FuncDecl
-	Name          string
-	Recv          *ast.Ident
-	DatabaseCalls map[token.Pos]*ParsedCallExpr
-	ServiceCalls  map[token.Pos]*ParsedCallExpr
-	// used to fetch the params when generating the basic cfg
-	// to store in the variables array of the function
-	Params []string
-}
-
-type ParsedImportSpec struct {
-	Ast                *ast.ImportSpec
-	Alias              string
-	Path               string
-	Package            string
-	IsBlueprintBackend bool
-}
-
-type ParsedField interface {
-}
-
-type ServiceField struct {
-	ParsedField
-	gocode.Variable
-	Lineno token.Pos
-	Ast    *ast.Field
-}
-type DatabaseField struct {
-	ParsedField
-	gocode.Variable
-	Lineno token.Pos
-	Ast    *ast.Field
-}
-
-type ServiceNode struct {
-	Name     string
-	Impl     string
-	Filepath string
-	Package  string
-	File     *ast.File
-	Fields   map[string]ParsedField
-	Imports  map[string]*ParsedImportSpec
-	// the map key is the service type (e.g. StorageService in 'storageService StorageService')
-	Services map[string]*ServiceNode
-	// safe because methods are unique since Golang does not allow overloading
-	// also this captures all exposed methods because they must be defined within the service struct file
-	ExposedMethods map[string]*ParsedFuncDecl
-	// FIXME: this does not capture all exposed methods
-	// advised to include the file of origin in the ParsedFuncDecl type for this
-	InternalMethods map[string]*ParsedFuncDecl
-
-	ParsedCFGs map[string]*models.ParsedCFG
-}
 
 func (node *ServiceNode) ParseImports() {
 	log.Logger.Debugf("inspecting imports for service %s\n", node.Name)

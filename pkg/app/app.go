@@ -1,9 +1,9 @@
 package app
 
 import (
-	"analyzer/pkg/abstree"
 	log "analyzer/pkg/logger"
 	"analyzer/pkg/models"
+	"analyzer/pkg/service"
 	"fmt"
 	goparser "go/parser"
 	"go/token"
@@ -14,7 +14,7 @@ import (
 
 type App struct {
 	Path     string
-	Services map[string]*abstree.ServiceNode
+	Services map[string]*service.ServiceNode
 }
 
 func Init(path string) (*App, error) {
@@ -26,7 +26,7 @@ func Init(path string) (*App, error) {
 	}
 	app := &App{
 		Path:     fullPath,
-		Services: make(map[string]*abstree.ServiceNode),
+		Services: make(map[string]*service.ServiceNode),
 	}
 	log.Logger.Infof("initialized app at %s", app.Path)
 	return app, nil
@@ -40,17 +40,17 @@ func (app *App) AddServiceNode(serviceSpec *workflowspec.Service, services ...*w
 		log.Logger.Errorf("error parsing file %s: %s", filepath, err.Error())
 		return err
 	}
-	node := &abstree.ServiceNode{
-		Name:       		serviceSpec.Iface.Name,
-		Impl:       		serviceSpec.Iface.Name + "Impl", // FIX THIS hardcoded value
-		Package:    		serviceSpec.Iface.File.Package.Name,
-		Filepath:   		filepath,
-		File:       		file,
-		Fields:     		make(map[string]abstree.ParsedField),
-		Imports:    		make(map[string]*abstree.ParsedImportSpec),
-		Services:   		make(map[string]*abstree.ServiceNode),
-		ExposedMethods:    	make(map[string]*abstree.ParsedFuncDecl),
-		ParsedCFGs: 		make(map[string]*models.ParsedCFG),
+	node := &service.ServiceNode{
+		Name:           serviceSpec.Iface.Name,
+		Impl:           serviceSpec.Iface.Name + "Impl", // FIX THIS hardcoded value
+		Package:        serviceSpec.Iface.File.Package.Name,
+		Filepath:       filepath,
+		File:           file,
+		Fields:         make(map[string]service.ParsedField),
+		Imports:        make(map[string]*service.ParsedImportSpec),
+		Services:       make(map[string]*service.ServiceNode),
+		ExposedMethods: make(map[string]*service.ParsedFuncDecl),
+		ParsedCFGs:     make(map[string]*models.ParsedCFG),
 	}
 	for _, s := range services {
 		node.Services[s.Iface.Name] = app.Services[s.Iface.Name]

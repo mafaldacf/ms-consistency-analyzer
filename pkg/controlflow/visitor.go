@@ -8,7 +8,8 @@ import (
 	"slices"
 
 	"analyzer/pkg/models"
-	"analyzer/pkg/abstree"
+	"analyzer/pkg/service"
+	"analyzer/pkg/analyzer"
 
 	"golang.org/x/tools/go/cfg"
 )
@@ -35,7 +36,7 @@ func visitBasicBlockAssignments(parsedCfg *models.ParsedCFG, block *cfg.Block, v
 		ok, lvalues, rvalues := isVarAssignment(node)
 		if ok {
 			for _, lvalue := range lvalues {
-				var usedVars []*models.Variable
+				var usedVars []*analyzer.Variable
 				for _, rvalue := range rvalues {
 					for _, v := range parsedCfg.Vars {
 						if rvalue == v.Name {
@@ -52,7 +53,7 @@ func visitBasicBlockAssignments(parsedCfg *models.ParsedCFG, block *cfg.Block, v
 						}
 					}
 				}
-				newVar := &models.Variable{
+				newVar := &analyzer.Variable{
 					//Id:     len(parsedCfg.Vars),
 					Id:     -1,
 					Lineno: node.Pos(),
@@ -71,7 +72,7 @@ func visitBasicBlockAssignments(parsedCfg *models.ParsedCFG, block *cfg.Block, v
 	//log.Logger.Debug("- out block", block)
 }
 
-func VisitBasicBlockFuncCalls(parsedCfg *models.ParsedCFG, parsedFuncDecl *abstree.ParsedFuncDecl) {
+func VisitBasicBlockFuncCalls(parsedCfg *models.ParsedCFG, parsedFuncDecl *service.ParsedFuncDecl) {
 	log.Logger.Debug("visiting basic block func calls")
 	var visited = make(map[int32]bool)
 	for _, block := range parsedCfg.Cfg.Blocks {
@@ -80,7 +81,7 @@ func VisitBasicBlockFuncCalls(parsedCfg *models.ParsedCFG, parsedFuncDecl *abstr
 	log.Logger.Debugln()
 }
 
-func visitBasicBlockFuncCalls(parsedCfg *models.ParsedCFG, block *cfg.Block, parsedFuncDecl *abstree.ParsedFuncDecl, visited map[int32]bool) {
+func visitBasicBlockFuncCalls(parsedCfg *models.ParsedCFG, block *cfg.Block, parsedFuncDecl *service.ParsedFuncDecl, visited map[int32]bool) {
 	if !visited[block.Index] {
 		visited[block.Index] = true
 	} else {
@@ -108,7 +109,7 @@ func visitBasicBlockFuncCalls(parsedCfg *models.ParsedCFG, block *cfg.Block, par
 //  2. AssignStmt - assignment like errors from the return values of the function
 //  3. ParenExpr  - e.g. when used as a bool value in an if statement (assumes it is inside a parentheses)
 //     in this case, the unfolded node from ParenExpr is a CallExpr
-func hasFuncCall(parsedCfg *models.ParsedCFG, node ast.Node, parsedFuncDecl *abstree.ParsedFuncDecl) bool {
+func hasFuncCall(parsedCfg *models.ParsedCFG, node ast.Node, parsedFuncDecl *service.ParsedFuncDecl) bool {
 	switch n := node.(type) {
 	case *ast.ExprStmt:
 		if callExpr, ok := n.X.(*ast.CallExpr); ok {
@@ -145,9 +146,9 @@ func hasFuncCall(parsedCfg *models.ParsedCFG, node ast.Node, parsedFuncDecl *abs
 // hasServiceOrDatabaseCall
 // 1. check if it is a database call or service call
 // 2. if so, we fetch the arguments and compare against the CFG variables
-func hasServiceOrDatabaseCall(parsedCfg *models.ParsedCFG, node *ast.CallExpr, parsedFuncDecl *abstree.ParsedFuncDecl) bool {
+func hasServiceOrDatabaseCall(parsedCfg *models.ParsedCFG, node *ast.CallExpr, parsedFuncDecl *service.ParsedFuncDecl) bool {
 	log.Logger.Debug("found CallExpr:", node.Pos())
-	var parsedCall *abstree.ParsedCallExpr
+	var parsedCall *service.ParsedCallExpr
 	// check if it is a database call
 	dbCall := parsedFuncDecl.DatabaseCalls[node.Pos()]
 	if dbCall != nil {
@@ -185,10 +186,10 @@ func hasServiceOrDatabaseCall(parsedCfg *models.ParsedCFG, node *ast.CallExpr, p
 					for i := len(parsedCfg.Vars) - 1; i >= 0; i-- {
 						v := parsedCfg.Vars[i]
 						if ident.Name == v.Name {
-							newInlineVariable := &models.Variable{
+							newInlineVariable := &analyzer.Variable{
 								Id:   -1,
 								Name: name,
-								Deps: []*models.Variable{v},
+								Deps: []*analyzer.Variable{v},
 							}
 							parsedCall.Deps = append(parsedCall.Deps, newInlineVariable)
 							break

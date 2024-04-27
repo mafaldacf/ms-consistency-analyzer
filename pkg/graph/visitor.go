@@ -1,15 +1,15 @@
 package graph
 
 import (
-	"analyzer/pkg/abstree"
+	"analyzer/pkg/analyzer"
 	"analyzer/pkg/controlflow"
 	log "analyzer/pkg/logger"
-	"analyzer/pkg/models"
+	"analyzer/pkg/service"
 	"fmt"
 	"go/token"
 )
 
-func VisitServiceMethodCFG(node *abstree.ServiceNode, targetMethodName string) {
+func VisitServiceMethodCFG(node *service.ServiceNode, targetMethodName string) {
 	targetMethod := node.ExposedMethods[targetMethodName]
 	if targetMethod == nil {
 		log.Logger.Error("could not find target method with name ", targetMethodName)
@@ -37,7 +37,7 @@ func VisitServiceMethodCFG(node *abstree.ServiceNode, targetMethodName string) {
 	VisitCalls(targetMethod.ServiceCalls)
 }
 
-func VisitCalls(parsedCalls map[token.Pos]*abstree.ParsedCallExpr) {
+func VisitCalls(parsedCalls map[token.Pos]*service.ParsedCallExpr) {
 	log.Logger.Info("visiting database/service calls for service node target method")
 	for pos, call := range parsedCalls {
 		log.Logger.Debugf("call %s.%s [%d]\n", call.TargetField, call.MethodName, pos)
@@ -50,7 +50,7 @@ func VisitCalls(parsedCalls map[token.Pos]*abstree.ParsedCallExpr) {
 	log.Logger.Debugln()
 }
 
-func visitDeps(v *models.Variable) string {
+func visitDeps(v *analyzer.Variable) string {
 	s := ""
 	for _, dep := range v.Deps {
 		visitDeps(dep)

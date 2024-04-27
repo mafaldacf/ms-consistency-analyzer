@@ -1,10 +1,10 @@
 package graph
 
 import (
-	"analyzer/pkg/abstree"
 	"analyzer/pkg/app"
 	log "analyzer/pkg/logger"
-	"analyzer/pkg/models"
+	"analyzer/pkg/analyzer"
+	"analyzer/pkg/service"
 	"encoding/json"
 	"fmt"
 	"go/token"
@@ -13,7 +13,7 @@ import (
 )
 
 type AbstractNode interface {
-	GetCallerParams() []*models.Variable
+	GetCallerParams() []*analyzer.Variable
 	String() string
 }
 
@@ -22,13 +22,13 @@ type AbstractServiceCall struct {
 	Repr         string     `json:"repr,omitempty"`
 	// name of the service calling e.g. StorageService
 	Caller       string                  `json:"caller,omitempty"`
-	CallerParams []*models.Variable      `json:"caller_params,omitempty"`
-	ParsedCall   *abstree.ParsedCallExpr `json:"-"` // omit from json
+	CallerParams []*analyzer.Variable    `json:"caller_params,omitempty"`
+	ParsedCall   *service.ParsedCallExpr `json:"-"` // omit from json
 	// nodes representing database calls cannot contain children as well
 	Children []AbstractNode `json:"children,omitempty"` // omit from json
 }
 
-func (svc *AbstractServiceCall) GetCallerParams() []*models.Variable {
+func (svc *AbstractServiceCall) GetCallerParams() []*analyzer.Variable {
 	return svc.CallerParams
 }
 
@@ -39,11 +39,11 @@ func (svc *AbstractServiceCall) String() string {
 type AbstractDatabaseCall struct {
 	AbstractNode `json:"-"`              // omit from json
 	Repr         string                  `json:"repr"`
-	CallerParams []*models.Variable      `json:"caller_params,omitempty"`
-	ParsedCall   *abstree.ParsedCallExpr `json:"-"` // omit from json
+	CallerParams []*analyzer.Variable    `json:"caller_params,omitempty"`
+	ParsedCall   *service.ParsedCallExpr `json:"-"` // omit from json
 }
 
-func (db *AbstractDatabaseCall) GetCallerParams() []*models.Variable {
+func (db *AbstractDatabaseCall) GetCallerParams() []*analyzer.Variable {
 	return db.CallerParams
 }
 
@@ -53,12 +53,12 @@ func (db *AbstractDatabaseCall) String() string {
 
 type AbstractGraph struct {
 	Nodes           []AbstractNode
-	AppServiceNodes map[string]*abstree.ServiceNode
+	AppServiceNodes map[string]*service.ServiceNode
 
 	// helpers
 	globalIdx        int64
 	visitedNodes     map[AbstractNode]bool
-	nodesBlockParams map[AbstractNode][]*models.Variable
+	nodesBlockParams map[AbstractNode][]*analyzer.Variable
 }
 
 func Build(app *app.App, entryPoints []string) *AbstractGraph {
@@ -86,7 +86,7 @@ func (ag *AbstractGraph) matchVarsIdentifiers() {
 	// variable id parameter is 0 when not previously set
 	ag.globalIdx = 0
 	ag.visitedNodes = make(map[AbstractNode]bool, 0)
-	ag.nodesBlockParams = make(map[AbstractNode][]*models.Variable, 0)
+	ag.nodesBlockParams = make(map[AbstractNode][]*analyzer.Variable, 0)
 
 	//FIXME: root node (e.g. UploadPost) must have callerParam args aswell
 	ag.matchVarsIdentifiersHelper(ag.Nodes[0])
@@ -114,7 +114,7 @@ func (ag *AbstractGraph) matchVarsIdentifiersHelper(node AbstractNode) {
 				if !ag.visitedNodes[childNode] {
 					// get all dependencies recursively within children
 					// (i think it is safe to have duplicates)
-					var deps []*models.Variable
+					var deps []*analyzer.Variable
 					for _, param := range childNode.GetCallerParams() {
 						deps = append(deps, getAllCallerParamDeps(param)...)
 					}
@@ -144,7 +144,7 @@ func (ag *AbstractGraph) matchVarsIdentifiersHelper(node AbstractNode) {
 						childParam.Id = callerParam.Id
 						// add reference
 						//TODO: add more stuff later
-						childParam.Ref = &models.Ref{
+						childParam.Ref = &analyzer.Ref{
 							Name:     callerParam.Name,
 							Id:       callerParam.Id,
 							Origin:   abstractService.Caller,
@@ -164,8 +164,8 @@ func (ag *AbstractGraph) matchVarsIdentifiersHelper(node AbstractNode) {
 	}
 }
 
-func getAllCallerParamDeps(v *models.Variable) []*models.Variable {
-	var deps []*models.Variable
+func getAllCallerParamDeps(v *analyzer.Variable) []*analyzer.Variable {
+	var deps []*analyzer.Variable
 	for _, d := range v.Deps {
 		deps = append(deps, getAllCallerParamDeps(d)...)
 	}
@@ -192,7 +192,7 @@ func (ag *AbstractGraph) Save() {
 	}
 }
 
-func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *abstree.ServiceNode, targetMethod *abstree.ParsedFuncDecl) {
+func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *service.ServiceNode, targetMethod *service.ParsedFuncDecl) {
 	linenos := make([]token.Pos, 0, len(targetMethod.DatabaseCalls))
 	for k := range targetMethod.DatabaseCalls {
 		linenos = append(linenos, k)

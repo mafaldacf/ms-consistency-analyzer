@@ -1,4 +1,4 @@
-package models
+package analyzer
 
 import (
 	"go/token"

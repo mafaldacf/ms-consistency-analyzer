@@ -2,7 +2,7 @@ package controlflow
 
 import (
 	log "analyzer/pkg/logger"
-	"analyzer/pkg/abstree"
+	"analyzer/pkg/service"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -10,7 +10,7 @@ import (
 	"golang.org/x/tools/go/cfg"
 )
 
-func GenerateMethodCFG(method *abstree.ParsedFuncDecl, filepath string) (*cfg.CFG, error) {
+func GenerateMethodCFG(method *service.ParsedFuncDecl, filepath string) (*cfg.CFG, error) {
 	fset := token.NewFileSet()
 	file, err := parser.ParseFile(fset, filepath, nil, 0)
 	if err != nil {
