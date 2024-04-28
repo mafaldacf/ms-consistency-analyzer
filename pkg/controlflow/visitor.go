@@ -1,26 +1,27 @@
 package controlflow
 
 import (
-	log "analyzer/pkg/logger"
+	"analyzer/pkg/logger"
 	"fmt"
 	"go/ast"
 	"reflect"
 	"slices"
 
+	"analyzer/pkg/analyzer"
 	"analyzer/pkg/models"
 	"analyzer/pkg/service"
-	"analyzer/pkg/analyzer"
 
+	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
 	"golang.org/x/tools/go/cfg"
 )
 
 func VisitBasicBlockAssignments(parsedCfg *models.ParsedCFG) {
-	log.Logger.Debug("visiting basic block assignments")
+	logger.Logger.Debug("visiting basic block assignments")
 	var visited = make(map[int32]bool)
 	for _, block := range parsedCfg.Cfg.Blocks {
 		visitBasicBlockAssignments(parsedCfg, block, visited)
 	}
-	log.Logger.Debugln()
+	logger.Logger.Debugln()
 }
 
 // visitBasicBlockAssignments goes through the
@@ -30,16 +31,16 @@ func visitBasicBlockAssignments(parsedCfg *models.ParsedCFG, block *cfg.Block, v
 	} else {
 		return
 	}
-	//log.Logger.Debug("+ in block", block, "with nodes", block.Nodes)
+	//logger.Logger.Debug("+ in block", block, "with nodes", block.Nodes)
 
 	for _, node := range block.Nodes {
-		ok, lvalues, rvalues := isVarAssignment(node)
+		ok, varType, lvalues, deps := isVarAssignment(node)
 		if ok {
 			for _, lvalue := range lvalues {
 				var usedVars []*analyzer.Variable
-				for _, rvalue := range rvalues {
+				for _, dep := range deps {
 					for _, v := range parsedCfg.Vars {
-						if rvalue == v.Name {
+						if dep == v.Name {
 							// remove duplicates e.g.
 							// message := Message{
 							//	ReqID:     Int64ToString(post.ReqID),
@@ -54,7 +55,10 @@ func visitBasicBlockAssignments(parsedCfg *models.ParsedCFG, block *cfg.Block, v
 					}
 				}
 				newVar := &analyzer.Variable{
-					//Id:     len(parsedCfg.Vars),
+					Type: &gocode.UserType{
+						Package: parsedCfg.Package,
+						Name:    varType, //FIXME, this needs to be type not name 
+					},
 					Id:     -1,
 					Lineno: node.Pos(),
 					Name:   lvalue,
@@ -66,19 +70,19 @@ func visitBasicBlockAssignments(parsedCfg *models.ParsedCFG, block *cfg.Block, v
 	}
 
 	for _, child := range block.Succs {
-		//log.Logger.Debug("in child of block", block, ":", child)
+		//logger.Logger.Debug("in child of block", block, ":", child)
 		visitBasicBlockAssignments(parsedCfg, child, visited)
 	}
-	//log.Logger.Debug("- out block", block)
+	//logger.Logger.Debug("- out block", block)
 }
 
 func VisitBasicBlockFuncCalls(parsedCfg *models.ParsedCFG, parsedFuncDecl *service.ParsedFuncDecl) {
-	log.Logger.Debug("visiting basic block func calls")
+	logger.Logger.Debug("visiting basic block func calls")
 	var visited = make(map[int32]bool)
 	for _, block := range parsedCfg.Cfg.Blocks {
 		visitBasicBlockFuncCalls(parsedCfg, block, parsedFuncDecl, visited)
 	}
-	log.Logger.Debugln()
+	logger.Logger.Debugln()
 }
 
 func visitBasicBlockFuncCalls(parsedCfg *models.ParsedCFG, block *cfg.Block, parsedFuncDecl *service.ParsedFuncDecl, visited map[int32]bool) {
@@ -87,18 +91,18 @@ func visitBasicBlockFuncCalls(parsedCfg *models.ParsedCFG, block *cfg.Block, par
 	} else {
 		return
 	}
-	//log.Logger.Debug("+ in block", block, "with nodes", block.Nodes)
+	//logger.Logger.Debug("+ in block", block, "with nodes", block.Nodes)
 
 	for _, node := range block.Nodes {
 		hasFuncCall(parsedCfg, node, parsedFuncDecl)
 	}
 
 	for _, child := range block.Succs {
-		//log.Logger.Debug("in child of block", block, ":", child)
+		//logger.Logger.Debug("in child of block", block, ":", child)
 		visitBasicBlockFuncCalls(parsedCfg, child, parsedFuncDecl, visited)
 	}
-	//log.Logger.Debug("- out block", block)
-	//log.Logger.Debugln()
+	//logger.Logger.Debug("- out block", block)
+	//logger.Logger.Debugln()
 }
 
 // hasFuncCall
@@ -137,7 +141,7 @@ func hasFuncCall(parsedCfg *models.ParsedCFG, node ast.Node, parsedFuncDecl *ser
 		// ignore warning ahead
 	default:
 		nodeType := reflect.TypeOf(n).Elem().Name()
-		log.Logger.Warn("unknown node type for func call", nodeType)
+		logger.Logger.Warn("unknown node type for func call", nodeType)
 	}
 
 	return false
@@ -147,19 +151,19 @@ func hasFuncCall(parsedCfg *models.ParsedCFG, node ast.Node, parsedFuncDecl *ser
 // 1. check if it is a database call or service call
 // 2. if so, we fetch the arguments and compare against the CFG variables
 func hasServiceOrDatabaseCall(parsedCfg *models.ParsedCFG, node *ast.CallExpr, parsedFuncDecl *service.ParsedFuncDecl) bool {
-	log.Logger.Debug("found CallExpr:", node.Pos())
+	logger.Logger.Debug("found CallExpr:", node.Pos())
 	var parsedCall *service.ParsedCallExpr
 	// check if it is a database call
 	dbCall := parsedFuncDecl.DatabaseCalls[node.Pos()]
 	if dbCall != nil {
 		parsedCall = dbCall
-		log.Logger.Debug("- database call:", dbCall.MethodName)
+		logger.Logger.Debug("- database call:", dbCall.MethodName)
 	}
 	// check if it is a service call
 	svcCall := parsedFuncDecl.ServiceCalls[node.Pos()]
 	if svcCall != nil {
 		parsedCall = svcCall
-		log.Logger.Debug("- service call:", svcCall.MethodName)
+		logger.Logger.Debug("- service call:", svcCall.MethodName)
 	}
 
 	// if we have database or service call, then we keep track of all arguments used
@@ -187,6 +191,10 @@ func hasServiceOrDatabaseCall(parsedCfg *models.ParsedCFG, node *ast.CallExpr, p
 						v := parsedCfg.Vars[i]
 						if ident.Name == v.Name {
 							newInlineVariable := &analyzer.Variable{
+								Type: &gocode.UserType{
+									Package: parsedCfg.Package,
+									Name:    name, //FIXME, this needs to be type not name 
+								},
 								Id:   -1,
 								Name: name,
 								Deps: []*analyzer.Variable{v},
@@ -203,10 +211,10 @@ func hasServiceOrDatabaseCall(parsedCfg *models.ParsedCFG, node *ast.CallExpr, p
 		// if yes, then we add the arg to the dependencies of the parsed call
 		// REMINDER: this is not necessary for e.g. SelectorExpr
 		for _, arg := range args {
-			log.Logger.Debugf("got arg '%s' for call '%s'", arg, parsedCall.MethodName)
+			logger.Logger.Debugf("got arg '%s' for call '%s'", arg, parsedCall.MethodName)
 			for _, v := range parsedCfg.Vars {
 				if arg == v.Name {
-					log.Logger.Debugf("add dep '%s':%d for call '%s'", v.Name, v.Lineno, parsedCall.MethodName)
+					logger.Logger.Debugf("add dep '%s':%d for call '%s'", v.Name, v.Lineno, parsedCall.MethodName)
 					parsedCall.Deps = append(parsedCall.Deps, v)
 				}
 			}
@@ -218,62 +226,65 @@ func hasServiceOrDatabaseCall(parsedCfg *models.ParsedCFG, node *ast.CallExpr, p
 	return false
 }
 
-func isVarAssignment(node ast.Node) (bool, []string, []string) {
+func isVarAssignment(node ast.Node) (bool, string, []string, []string) {
 	var lvalues []string
 	var rvalues []string
+	var varType string
 	if assign, ok := node.(*ast.AssignStmt); ok {
-		log.Logger.Debug("found AssignStmt:", assign.Pos())
+		logger.Logger.Warnf("found AssignStmt: %d", assign.Pos())
 		for _, lvalue := range assign.Lhs {
 			if ident, ok := lvalue.(*ast.Ident); ok {
 				lvalues = append(lvalues, ident.Name)
 			}
 		}
 		for _, rvalue := range assign.Rhs {
-			rvalues = append(rvalues, transverseAssignmentExpr(rvalue)...)
+			var deps []string
+			varType, deps = transverseAssignRValues(rvalue)
+			rvalues = append(rvalues, deps...)
 		}
-		log.Logger.Debug("\t", lvalues, "->", rvalues)
-		return true, lvalues, rvalues
+		logger.Logger.Warnf("\t %v --- (depends on) ---> %v", lvalues, rvalues)
+		return true, varType, lvalues, rvalues
 	}
-	return false, nil, nil
+	return false, varType, nil, nil
 }
 
-/* func transverseSelectorExpr(selectorExpr *ast.SelectorExpr) string {
-	var repr string
-
-	switch e := selectorExpr.X.(type) {
-		case *ast.Ident:
-			//log.Logger.Debug("- (ident) rvalue:", e.Name)
-			repr = repr + "." + e
-		case *ast.SelectorExpr:
-			repr = repr + "." + transverseSelectorExpr(e.X)
-		default:
-			nodeType := reflect.TypeOf(e).Elem().Name()
-			log.Logger.Warn("unknown rvalue selector", nodeType)
+func getExprType(expr ast.Expr) string {
+	switch e := expr.(type) {
+	case *ast.Ident:
+		return e.Name
+	case *ast.UnaryExpr:
+		return e.Op.String()
+	default:
+		nodeType := reflect.TypeOf(e).Elem().Name()
+		logger.Logger.Warn("unknown rvalue for node type", nodeType)
 	}
-	return repr
-} */
+	// FIXME: cover more use cases e.g.
+	// 1. type from other package using selector
+	// 2. type from current package
+	return "unknown"
+}
 
-func transverseAssignmentExpr(expr ast.Expr) []string {
+func transverseAssignRValues(expr ast.Expr) (string, []string) {
 	var identifiers []string
+	var varType string
 
 	switch e := expr.(type) {
 	case *ast.Ident:
-		//log.Logger.Debug("- (ident) rvalue:", e.Name)
 		identifiers = append(identifiers, e.Name)
 	case *ast.BasicLit:
-		//log.Logger.Debug("- (basic) rvalue:", e.Value)
 	case *ast.CallExpr:
-		//log.Logger.Debug("- (call) rvalue: Function call")
+		//FIXME: get type of func call
 		for _, arg := range e.Args {
-			identifiers = append(identifiers, transverseAssignmentExpr(arg)...)
+			_, r := transverseAssignRValues(arg)
+			identifiers = append(identifiers, r...)
 		}
 	case *ast.CompositeLit:
-		//log.Logger.Debug("- (struct) rvalue:")
+		varType = getExprType(e.Type)
 		for _, elt := range e.Elts {
 			if kv, ok := elt.(*ast.KeyValueExpr); ok {
 				if _, ok := kv.Key.(*ast.Ident); ok {
-					//log.Logger.Debug("    - field:", ident.Name)
-					identifiers = append(identifiers, transverseAssignmentExpr(kv.Value)...)
+					_, r := transverseAssignRValues(kv.Value)
+					identifiers = append(identifiers, r...)
 				}
 			}
 		}
@@ -282,12 +293,13 @@ func transverseAssignmentExpr(expr ast.Expr) []string {
 			identifiers = append(identifiers, ident.Name)
 		}
 	case *ast.BinaryExpr:
-		//log.Logger.Debug("- (binary) rvalue:")
-		identifiers = append(identifiers, transverseAssignmentExpr(e.X)...)
-		identifiers = append(identifiers, transverseAssignmentExpr(e.Y)...)
+		_, rX := transverseAssignRValues(e.X)
+		identifiers = append(identifiers, rX...)
+		_, rY := transverseAssignRValues(e.Y)
+		identifiers = append(identifiers, rY...)
 	default:
 		nodeType := reflect.TypeOf(e).Elem().Name()
-		log.Logger.Warn("unknown rvalue for node type", nodeType)
+		logger.Logger.Warn("unknown rvalue for node type", nodeType)
 	}
-	return identifiers
+	return varType, identifiers
 }

@@ -1,7 +1,7 @@
 package service
 
 import (
-	log "analyzer/pkg/logger"
+	"analyzer/pkg/logger"
 	"go/ast"
 	"go/token"
 	"strings"
@@ -10,7 +10,7 @@ import (
 )
 
 func (node *ServiceNode) ParseImports() {
-	log.Logger.Debugf("inspecting imports for service %s\n", node.Name)
+	logger.Logger.Debugf("inspecting imports for service %s\n", node.Name)
 
 	for _, imp := range node.File.Imports {
 		path := imp.Path.Value
@@ -42,9 +42,9 @@ func (node *ServiceNode) ParseImports() {
 			importSpec.IsBlueprintBackend = true
 		}
 		node.Imports[alias] = importSpec
-		log.Logger.Debugf("> %s for %s\n", alias, path)
+		logger.Logger.Debugf("> %s for %s\n", alias, path)
 	}
-	log.Logger.Debugln()
+	logger.Logger.Debugln()
 }
 
 // ParseMethods:
@@ -53,7 +53,7 @@ func (node *ServiceNode) ParseImports() {
 //     service struct along with the name of the function, the receiver, and the parameters
 //  3. stores the function delc as parsed func decls in the methods of the service node
 func (node *ServiceNode) ParseMethods() {
-	log.Logger.Debugf("inspecting exposed methods for service implementation %s\n", node.Impl)
+	logger.Logger.Debugf("inspecting exposed methods for service implementation %s\n", node.Impl)
 
 	ast.Inspect(node.File, func(n ast.Node) bool {
 		// check if node is a function declaration
@@ -71,7 +71,7 @@ func (node *ServiceNode) ParseMethods() {
 							// get the variable name of the receiver
 							receiverName := funcDecl.Recv.List[0].Names[0]
 							// e.g. (f *FrontendImpl) UploadPost
-							log.Logger.Debugf("> (%s *%s) %s [:%d]\n", receiverName, ident.Name, funcDecl.Name.Name, funcDecl.Pos())
+							logger.Logger.Debugf("> (%s *%s) %s [:%d]\n", receiverName, ident.Name, funcDecl.Name.Name, funcDecl.Pos())
 
 							// get name of the params for function declaration
 							var params []string
@@ -108,11 +108,11 @@ func (node *ServiceNode) ParseMethods() {
 		}
 		return true
 	})
-	log.Logger.Debugln()
+	logger.Logger.Debugln()
 }
 
 func ParseInterfaceMethods(file *ast.File) {
-	log.Logger.Debug("inspecting service interface and methods \n")
+	logger.Logger.Debug("inspecting service interface and methods \n")
 
 	serviceMethods := []string{}
 	ast.Inspect(file, func(n ast.Node) bool {
@@ -120,7 +120,7 @@ func ParseInterfaceMethods(file *ast.File) {
 			for _, field := range iface.Methods.List {
 				if methodName, ok := field.Names[0].Name, ok; ok {
 					serviceMethods = append(serviceMethods, methodName)
-					log.Logger.Debugf("> %s\n", methodName)
+					logger.Logger.Debugf("> %s\n", methodName)
 				}
 			}
 		}
@@ -129,20 +129,20 @@ func ParseInterfaceMethods(file *ast.File) {
 }
 
 func (node *ServiceNode) ParseStructFields() {
-	log.Logger.Debugf("inspecting fields for service %s\n", node.Name)
+	logger.Logger.Debugf("inspecting fields for service %s\n", node.Name)
 
 	ast.Inspect(node.File, func(n ast.Node) bool {
 		if str, ok := n.(*ast.StructType); ok {
 			for _, field := range str.Fields.List {
 				for _, ident := range field.Names {
-					log.Logger.Debugf("> %s: %s\n", ident.Name, field.Type)
+					logger.Logger.Debugf("> %s: %s\n", ident.Name, field.Type)
 					node.saveFieldWithType(field, ident.Name)
 				}
 			}
 		}
 		return true
 	})
-	log.Logger.Debugln()
+	logger.Logger.Debugln()
 }
 
 // saveFieldWithType saves the service or database fields defined in the structure
@@ -191,7 +191,7 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string) {
 							Ast:    field,
 						}
 					default:
-						log.Logger.Warnf("unknown database type field %s for service %s", t.Sel.Name, node.Name)
+						logger.Logger.Warnf("unknown database type field %s for service %s", t.Sel.Name, node.Name)
 					}
 				}
 				// check if the import matches the path of any of existing services
@@ -213,12 +213,12 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string) {
 			}
 		}
 	default:
-		log.Logger.Warnf("unknown field type %s for service %s", field.Type, node.Name)
+		logger.Logger.Warnf("unknown field type %s for service %s", field.Type, node.Name)
 	}
 }
 
 func (node *ServiceNode) ParseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
-	log.Logger.Debugf("visiting method %s\n", parsedFuncDecl.Ast.Name.Name)
+	logger.Logger.Debugf("visiting method %s\n", parsedFuncDecl.Ast.Name.Name)
 
 	// e.g. f.queue.Push
 	//    ^ident2 ^ident ^method
@@ -269,7 +269,7 @@ func (node *ServiceNode) ParseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 		}
 		return true
 	})
-	log.Logger.Debugln()
+	logger.Logger.Debugln()
 }
 
 // NOT USED!!

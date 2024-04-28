@@ -1,9 +1,10 @@
 package graph
 
 import (
-	"analyzer/pkg/app"
-	log "analyzer/pkg/logger"
 	"analyzer/pkg/analyzer"
+	"analyzer/pkg/app"
+	"analyzer/pkg/logger"
+	log "analyzer/pkg/logger"
 	"analyzer/pkg/service"
 	"encoding/json"
 	"fmt"
@@ -226,6 +227,8 @@ func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *s
 					CallerParams: svcCall.Deps,
 					Repr:         svcCall.SimpleString(),
 				})
+				logger.Logger.Warnf("1) %v", svcCall.SimpleString())
+				logger.Logger.Warnf("2) %v", abstractService.Children[len(abstractService.Children)-1].GetCallerParams())
 			}
 		}
 		// FIXME: is it really necessary that we only have one node?
@@ -270,6 +273,7 @@ func (ag *AbstractGraph) recurseBuild(parentNode *AbstractServiceCall) {
 						CallerParams: svcCall.Deps,
 						Repr:         svcCall.SimpleString(),
 					})
+					logger.Logger.Warnf("%v", abstractService.Children[len(abstractService.Children)-1].GetCallerParams())
 				}
 			}
 			ag.recurseBuild(abstractService)

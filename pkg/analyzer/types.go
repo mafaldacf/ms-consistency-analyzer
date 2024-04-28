@@ -1,7 +1,9 @@
 package analyzer
 
 import (
+	"fmt"
 	"go/token"
+
 	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
 )
 
@@ -20,5 +22,12 @@ type Variable struct {
 	IsBlockParam  bool        		`json:"node_param,omitempty"`
 	BlockParamIdx int         		`json:"node_param_idx,omitempty"`
 	Ref 		  *Ref        		`json:"ref,omitempty"`
-	Type 		  gocode.TypeName 	`json:"typename,omitempty"`
+	Type 		  gocode.TypeName 	`json:"-"`
+}
+
+func (v *Variable) String() string {
+	if v.Type != nil && v.Type.String() != "" {
+		return fmt.Sprintf("%s (%s)", v.Name, v.Type)
+	}
+	return fmt.Sprintf("%s (unknown)", v.Name)
 }
