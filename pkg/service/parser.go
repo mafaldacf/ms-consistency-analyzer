@@ -218,7 +218,7 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string) {
 }
 
 func (node *ServiceNode) ParseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
-	logger.Logger.Debugf("visiting method %s\n", parsedFuncDecl.Ast.Name.Name)
+	logger.Logger.Debugf("visiting method %s\n", parsedFuncDecl.Name)
 
 	// e.g. f.queue.Push
 	//    ^ident2 ^ident ^method
@@ -236,7 +236,7 @@ func (node *ServiceNode) ParseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 							Ast:         funcCall,
 							Receiver:    ident2.Name,
 							TargetField: ident.Sel.Name,
-							MethodName:  method.Sel.Name,
+							Name:        method.Sel.Name,
 							Pos:         funcCall.Pos(),
 						}
 
@@ -246,19 +246,32 @@ func (node *ServiceNode) ParseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 							if field, ok := node.Fields[parsedCallExpr.TargetField]; ok {
 								// if the field corresponds to a service field
 								if serviceField, ok := field.(*ServiceField); ok {
-									serviceNode := node.Services[serviceField.Variable.Type.(*gocode.UserType).Name]
+									// 1. extract the service field from the current service
+									// 2. get the target node service for the type
+									// 3. add the targeted method of the other service for the current call expression
+									targetServiceType := GetShortServiceTypeStr(serviceField.Type)
+									targetServiceNode := node.Services[targetServiceType]
+									targetMethod := targetServiceNode.ExposedMethods[parsedCallExpr.Name]
+									parsedCallExpr.Method = targetMethod.Method
+									// set the source (caller service) and destination (callee service) types
+									parsedCallExpr.SrcType = &ServiceType{Name: node.Name, Package: node.Package}
+									parsedCallExpr.DestType = serviceField.Variable.Type
+									// add the call expr to the existing calls of the current service
 									parsedFuncDecl.ServiceCalls[parsedCallExpr.Pos] = parsedCallExpr
-									parsedCallExpr.SrcType = node.Name
-									parsedCallExpr.DestType = serviceNode.Name
-									parsedCallExpr.Kind = KIND_SERVICE_CALL
 								}
 								// if the field corresponds to a database field
 								if databaseField, ok := field.(*DatabaseField); ok {
-									databaseType := databaseField.Variable.Type.(*gocode.UserType).Name
+									// 1. extract the service field from the current service
+									// 2. get the target database node
+									// 3. add the target method for the current call expression
+									/* targetDatabaseType := GetShortServiceTypeStr(databaseField.Type)
+									targetDatabaseNode := node.Services[targetServiceType]
+									parsedCallExpr.Method = targetServiceNode.ExposedMethods[parsedCallExpr.Name] */
+									// set the source (caller service) and destination (callee database) types
+									parsedCallExpr.SrcType = &ServiceType{Name: node.Name, Package: node.Package}
+									parsedCallExpr.DestType = databaseField.Variable.Type
+									// add the call expr to the existing calls of the current service
 									parsedFuncDecl.DatabaseCalls[parsedCallExpr.Pos] = parsedCallExpr
-									parsedCallExpr.SrcType = node.Name
-									parsedCallExpr.DestType = databaseType
-									parsedCallExpr.Kind = KIND_DATABASE_CALL
 								}
 							}
 						}

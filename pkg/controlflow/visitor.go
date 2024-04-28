@@ -57,7 +57,7 @@ func visitBasicBlockAssignments(parsedCfg *models.ParsedCFG, block *cfg.Block, v
 				newVar := &analyzer.Variable{
 					Type: &gocode.UserType{
 						Package: parsedCfg.Package,
-						Name:    varType, //FIXME, this needs to be type not name 
+						Name:    varType, //FIXME, this needs to be type not name
 					},
 					Id:     -1,
 					Lineno: node.Pos(),
@@ -157,13 +157,13 @@ func hasServiceOrDatabaseCall(parsedCfg *models.ParsedCFG, node *ast.CallExpr, p
 	dbCall := parsedFuncDecl.DatabaseCalls[node.Pos()]
 	if dbCall != nil {
 		parsedCall = dbCall
-		logger.Logger.Debug("- database call:", dbCall.MethodName)
+		logger.Logger.Debug("- database call:", dbCall.Name)
 	}
 	// check if it is a service call
 	svcCall := parsedFuncDecl.ServiceCalls[node.Pos()]
 	if svcCall != nil {
 		parsedCall = svcCall
-		logger.Logger.Debug("- service call:", svcCall.MethodName)
+		logger.Logger.Debug("- service call:", svcCall.Name)
 	}
 
 	// if we have database or service call, then we keep track of all arguments used
@@ -193,7 +193,7 @@ func hasServiceOrDatabaseCall(parsedCfg *models.ParsedCFG, node *ast.CallExpr, p
 							newInlineVariable := &analyzer.Variable{
 								Type: &gocode.UserType{
 									Package: parsedCfg.Package,
-									Name:    name, //FIXME, this needs to be type not name 
+									Name:    name, //FIXME, this needs to be type not name
 								},
 								Id:   -1,
 								Name: name,
@@ -211,10 +211,10 @@ func hasServiceOrDatabaseCall(parsedCfg *models.ParsedCFG, node *ast.CallExpr, p
 		// if yes, then we add the arg to the dependencies of the parsed call
 		// REMINDER: this is not necessary for e.g. SelectorExpr
 		for _, arg := range args {
-			logger.Logger.Debugf("got arg '%s' for call '%s'", arg, parsedCall.MethodName)
+			logger.Logger.Debugf("got arg '%s' for call '%s'", arg, parsedCall.Name)
 			for _, v := range parsedCfg.Vars {
 				if arg == v.Name {
-					logger.Logger.Debugf("add dep '%s':%d for call '%s'", v.Name, v.Lineno, parsedCall.MethodName)
+					logger.Logger.Debugf("add dep '%s':%d for call '%s'", v.Name, v.Lineno, parsedCall.Name)
 					parsedCall.Deps = append(parsedCall.Deps, v)
 				}
 			}
@@ -231,7 +231,7 @@ func isVarAssignment(node ast.Node) (bool, string, []string, []string) {
 	var rvalues []string
 	var varType string
 	if assign, ok := node.(*ast.AssignStmt); ok {
-		logger.Logger.Warnf("found AssignStmt: %d", assign.Pos())
+		logger.Logger.Debugf("found AssignStmt: %d", assign.Pos())
 		for _, lvalue := range assign.Lhs {
 			if ident, ok := lvalue.(*ast.Ident); ok {
 				lvalues = append(lvalues, ident.Name)
@@ -242,7 +242,7 @@ func isVarAssignment(node ast.Node) (bool, string, []string, []string) {
 			varType, deps = transverseAssignRValues(rvalue)
 			rvalues = append(rvalues, deps...)
 		}
-		logger.Logger.Warnf("\t %v --- (depends on) ---> %v", lvalues, rvalues)
+		logger.Logger.Debugf("\t %v --- (depends on) ---> %v", lvalues, rvalues)
 		return true, varType, lvalues, rvalues
 	}
 	return false, varType, nil, nil

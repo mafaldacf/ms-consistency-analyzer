@@ -7,6 +7,12 @@ import (
 	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
 )
 
+type Method interface {
+	// TODO: GetName(), GetPackage(), and return package.name in String()
+	String() string
+	GetNumParams() int
+}
+
 type Ref struct {
 	Name          string      `json:"name"`
 	Id            int64       `json:"id"`

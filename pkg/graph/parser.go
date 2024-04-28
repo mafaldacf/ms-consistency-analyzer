@@ -40,7 +40,7 @@ func VisitServiceMethodCFG(node *service.ServiceNode, targetMethodName string) {
 func VisitCalls(parsedCalls map[token.Pos]*service.ParsedCallExpr) {
 	log.Logger.Info("visiting database/service calls for service node target method")
 	for pos, call := range parsedCalls {
-		log.Logger.Debugf("call %s.%s [%d]\n", call.TargetField, call.MethodName, pos)
+		log.Logger.Debugf("call %s.%s [%d]\n", call.TargetField, call.Name, pos)
 		log.Logger.Debug("> deps: ")
 		for _, dep := range call.Deps {
 			r := visitDeps(dep)

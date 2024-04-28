@@ -1,10 +1,10 @@
 package controlflow
 
 import (
+	"analyzer/pkg/analyzer"
 	log "analyzer/pkg/logger"
 	"analyzer/pkg/models"
 	"analyzer/pkg/service"
-	"analyzer/pkg/analyzer"
 
 	"golang.org/x/tools/go/cfg"
 )

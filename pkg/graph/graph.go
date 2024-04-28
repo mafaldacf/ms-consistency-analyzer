@@ -3,7 +3,6 @@ package graph
 import (
 	"analyzer/pkg/analyzer"
 	"analyzer/pkg/app"
-	"analyzer/pkg/logger"
 	log "analyzer/pkg/logger"
 	"analyzer/pkg/service"
 	"encoding/json"
@@ -20,7 +19,7 @@ type AbstractNode interface {
 
 type AbstractServiceCall struct {
 	AbstractNode `json:"-"` // omit from json
-	Repr         string     `json:"repr,omitempty"`
+	Method       string     `json:"method,omitempty"`
 	// name of the service calling e.g. StorageService
 	Caller       string                  `json:"caller,omitempty"`
 	CallerParams []*analyzer.Variable    `json:"caller_params,omitempty"`
@@ -39,7 +38,7 @@ func (svc *AbstractServiceCall) String() string {
 
 type AbstractDatabaseCall struct {
 	AbstractNode `json:"-"`              // omit from json
-	Repr         string                  `json:"repr"`
+	Method       string                  `json:"method"`
 	CallerParams []*analyzer.Variable    `json:"caller_params,omitempty"`
 	ParsedCall   *service.ParsedCallExpr `json:"-"` // omit from json
 }
@@ -207,7 +206,7 @@ func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *s
 	})
 
 	abstractGraph.Nodes = append(abstractGraph.Nodes, &AbstractServiceCall{
-		Repr: fmt.Sprintf("%s.%s", serviceNode.Name, targetMethod.Name),
+		Method: fmt.Sprintf("%s.%s", serviceNode.Name, targetMethod.Name),
 	})
 
 	if abstractService, ok := abstractGraph.Nodes[0].(*AbstractServiceCall); ok {
@@ -217,18 +216,16 @@ func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *s
 				abstractService.Children = append(abstractService.Children, &AbstractDatabaseCall{
 					ParsedCall:   dbCall,
 					CallerParams: dbCall.Deps,
-					Repr:         dbCall.SimpleString(),
+					Method:       dbCall.SimpleString(),
 				})
 			} else if targetMethod.ServiceCalls[lineno] != nil {
 				svcCall := targetMethod.ServiceCalls[lineno]
 				abstractService.Children = append(abstractService.Children, &AbstractServiceCall{
 					ParsedCall:   svcCall,
-					Caller:       svcCall.SrcType,
+					Caller:       svcCall.SrcType.String(),
 					CallerParams: svcCall.Deps,
-					Repr:         svcCall.SimpleString(),
+					Method:       svcCall.SimpleString(),
 				})
-				logger.Logger.Warnf("1) %v", svcCall.SimpleString())
-				logger.Logger.Warnf("2) %v", abstractService.Children[len(abstractService.Children)-1].GetCallerParams())
 			}
 		}
 		// FIXME: is it really necessary that we only have one node?
@@ -241,8 +238,8 @@ func (ag *AbstractGraph) recurseBuild(parentNode *AbstractServiceCall) {
 	for _, node := range parentNode.Children {
 		// we need to unfold the service blocks from each service call
 		if abstractService, ok := node.(*AbstractServiceCall); ok {
-			serviceNode := ag.AppServiceNodes[abstractService.ParsedCall.DestType]
-			methodName := abstractService.ParsedCall.MethodName
+			serviceNode := ag.AppServiceNodes[service.GetShortServiceTypeStr(abstractService.ParsedCall.DestType)]
+			methodName := abstractService.ParsedCall.Name
 			targetMethod := serviceNode.ExposedMethods[methodName]
 
 			linenos := make([]token.Pos, 0, len(targetMethod.DatabaseCalls))
@@ -263,17 +260,16 @@ func (ag *AbstractGraph) recurseBuild(parentNode *AbstractServiceCall) {
 					abstractService.Children = append(abstractService.Children, &AbstractDatabaseCall{
 						ParsedCall:   dbCall,
 						CallerParams: dbCall.Deps,
-						Repr:         dbCall.SimpleString(),
+						Method:       dbCall.SimpleString(),
 					})
 				} else if targetMethod.ServiceCalls[lineno] != nil {
 					svcCall := targetMethod.ServiceCalls[lineno]
 					abstractService.Children = append(abstractService.Children, &AbstractServiceCall{
 						ParsedCall:   svcCall,
-						Caller:       svcCall.SrcType,
+						Caller:       svcCall.SrcType.String(),
 						CallerParams: svcCall.Deps,
-						Repr:         svcCall.SimpleString(),
+						Method:       svcCall.SimpleString(),
 					})
-					logger.Logger.Warnf("%v", abstractService.Children[len(abstractService.Children)-1].GetCallerParams())
 				}
 			}
 			ag.recurseBuild(abstractService)
