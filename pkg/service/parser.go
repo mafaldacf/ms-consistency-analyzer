@@ -1,7 +1,9 @@
 package service
 
 import (
+	"analyzer/pkg/frameworks"
 	"analyzer/pkg/logger"
+	"fmt"
 	"go/ast"
 	"go/token"
 	"strings"
@@ -252,7 +254,7 @@ func (node *ServiceNode) ParseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 									targetServiceType := GetShortServiceTypeStr(serviceField.Type)
 									targetServiceNode := node.Services[targetServiceType]
 									targetMethod := targetServiceNode.ExposedMethods[parsedCallExpr.Name]
-									parsedCallExpr.Method = targetMethod.Method
+									parsedCallExpr.Method = targetMethod
 									// set the source (caller service) and destination (callee service) types
 									parsedCallExpr.SrcType = &ServiceType{Name: node.Name, Package: node.Package}
 									parsedCallExpr.DestType = serviceField.Variable.Type
@@ -264,9 +266,9 @@ func (node *ServiceNode) ParseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 									// 1. extract the service field from the current service
 									// 2. get the target database node
 									// 3. add the target method for the current call expression
-									/* targetDatabaseType := GetShortServiceTypeStr(databaseField.Type)
-									targetDatabaseNode := node.Services[targetServiceType]
-									parsedCallExpr.Method = targetServiceNode.ExposedMethods[parsedCallExpr.Name] */
+									targetDatabaseType := GetShortServiceTypeStr(databaseField.Type)
+									parsedCallExpr.Method = frameworks.GetBackendMethod(fmt.Sprintf("%s.%s", targetDatabaseType, parsedCallExpr.Name))
+									
 									// set the source (caller service) and destination (callee database) types
 									parsedCallExpr.SrcType = &ServiceType{Name: node.Name, Package: node.Package}
 									parsedCallExpr.DestType = databaseField.Variable.Type

@@ -98,7 +98,7 @@ type ParsedCallExpr struct {
 	DestType gocode.TypeName
 
 	Pos  token.Pos
-	Deps []*analyzer.Variable
+	Params []*analyzer.Variable
 
 	Method analyzer.Method
 }
@@ -124,12 +124,10 @@ func (call *ParsedCallExpr) String() string {
 
 func (call *ParsedCallExpr) SimpleString() string {
 	funcCallStr := fmt.Sprintf("%s.%s(", call.TargetField, call.Name)
-	for i, arg := range call.Ast.Args {
-		if ident, ok := arg.(*ast.Ident); ok {
-			funcCallStr += ident.Name
-			if i < len(call.Ast.Args)-1 {
-				funcCallStr += ", "
-			}
+	for i, arg := range call.Params {
+		funcCallStr += arg.String()
+		if i < len(call.Ast.Args) - 2 {
+			funcCallStr += ", "
 		}
 	}
 	funcCallStr += ")"

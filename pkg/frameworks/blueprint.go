@@ -30,7 +30,7 @@ type BlueprintBackend struct {
 	NumParams 	int
 }
 
-func (b *BlueprintBackend) GetName() string {
+func (b *BlueprintBackend) String() string {
 	return b.Name
 }
 
@@ -39,10 +39,18 @@ func (b *BlueprintBackend) GetNumParams() int {
 }
 
 
-/* func GetBackendMethod(name string) *BlueprintBackend {
-	if name == "Put" {
+func GetBackendMethod(name string) *BlueprintBackend {
+	if name == "Cache.Put" {
 		return &BlueprintBackend {
-			
+			Name: name,
+			NumParams: 3,
 		}
 	}
-} */
+	if name == "Cache.Get" {
+		return &BlueprintBackend {
+			Name: name,
+			NumParams: 2,
+		}
+	}
+	return nil
+}

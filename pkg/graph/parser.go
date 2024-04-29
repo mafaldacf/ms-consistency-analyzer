@@ -30,7 +30,7 @@ func VisitServiceMethodCFG(node *service.ServiceNode, targetMethodName string) {
 	parsedCfg := controlflow.GenParsedCfg(basic_cfg, targetMethod, node.Filepath)
 	node.ParsedCFGs[targetMethodName] = parsedCfg
 
-	controlflow.VisitBasicBlockAssignments(parsedCfg)
+	controlflow.VisitBasicBlockDeclAndAssigns(parsedCfg)
 	controlflow.VisitBasicBlockFuncCalls(parsedCfg, targetMethod)
 
 	VisitCalls(targetMethod.DatabaseCalls)
@@ -42,7 +42,7 @@ func VisitCalls(parsedCalls map[token.Pos]*service.ParsedCallExpr) {
 	for pos, call := range parsedCalls {
 		log.Logger.Debugf("call %s.%s [%d]\n", call.TargetField, call.Name, pos)
 		log.Logger.Debug("> deps: ")
-		for _, dep := range call.Deps {
+		for _, dep := range call.Params {
 			r := visitDeps(dep)
 			log.Logger.Debugf("\t%s [%d], %s", dep.Name, dep.Lineno, r)
 		}

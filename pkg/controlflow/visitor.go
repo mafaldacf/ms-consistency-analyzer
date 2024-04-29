@@ -10,22 +10,23 @@ import (
 	"analyzer/pkg/analyzer"
 	"analyzer/pkg/models"
 	"analyzer/pkg/service"
+	"analyzer/pkg/utils"
 
 	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
 	"golang.org/x/tools/go/cfg"
 )
 
-func VisitBasicBlockAssignments(parsedCfg *models.ParsedCFG) {
+func VisitBasicBlockDeclAndAssigns(parsedCfg *models.ParsedCFG) {
 	logger.Logger.Debug("visiting basic block assignments")
 	var visited = make(map[int32]bool)
 	for _, block := range parsedCfg.Cfg.Blocks {
-		visitBasicBlockAssignments(parsedCfg, block, visited)
+		visitBasicBlockDeclAndAssigns(parsedCfg, block, visited)
 	}
 	logger.Logger.Debugln()
 }
 
-// visitBasicBlockAssignments goes through the
-func visitBasicBlockAssignments(parsedCfg *models.ParsedCFG, block *cfg.Block, visited map[int32]bool) {
+// visitBasicBlockDeclAndAssigns goes through the
+func visitBasicBlockDeclAndAssigns(parsedCfg *models.ParsedCFG, block *cfg.Block, visited map[int32]bool) {
 	if !visited[block.Index] {
 		visited[block.Index] = true
 	} else {
@@ -34,7 +35,7 @@ func visitBasicBlockAssignments(parsedCfg *models.ParsedCFG, block *cfg.Block, v
 	//logger.Logger.Debug("+ in block", block, "with nodes", block.Nodes)
 
 	for _, node := range block.Nodes {
-		ok, varType, lvalues, deps := isVarAssignment(node)
+		ok, varType, lvalues, deps := isVarDeclOrAssign(node)
 		if ok {
 			for _, lvalue := range lvalues {
 				var usedVars []*analyzer.Variable
@@ -71,7 +72,7 @@ func visitBasicBlockAssignments(parsedCfg *models.ParsedCFG, block *cfg.Block, v
 
 	for _, child := range block.Succs {
 		//logger.Logger.Debug("in child of block", block, ":", child)
-		visitBasicBlockAssignments(parsedCfg, child, visited)
+		visitBasicBlockDeclAndAssigns(parsedCfg, child, visited)
 	}
 	//logger.Logger.Debug("- out block", block)
 }
@@ -169,55 +170,56 @@ func hasServiceOrDatabaseCall(parsedCfg *models.ParsedCFG, node *ast.CallExpr, p
 	// if we have database or service call, then we keep track of all arguments used
 	if parsedCall != nil {
 		// gather all args used in the CallExpr
-		var args []string
 		for _, arg := range node.Args {
+			var param *analyzer.Variable
+
 			//FIXME: CREATE HELPER FUNCTION TO COVER MORE CASES BESIDES SELECTOR
 			// e.g. we can have multiple nested selectors: dummy.post.ReqID
 			switch e := arg.(type) {
 			case *ast.Ident:
-				args = append(args, e.Name)
+				if ok, v := getVariableInBlock(parsedCfg, e.Name); ok {
+					param = v
+				}
+				// e.g. &post
+			case *ast.UnaryExpr:
+				if ident, ok := e.X.(*ast.Ident); ok {
+					name := fmt.Sprintf("&%s", ident.Name)
+					logger.Logger.Warnf("HEREEEEEEEEE %v", parsedCfg.Vars)
+					if ok, v := getVariableInBlock(parsedCfg, ident.Name); ok {
+						param = &analyzer.Variable{
+							Type: &gocode.Pointer{
+								PointerTo: v.Type,
+							},
+							Id:   -1,
+							Name: name,
+							Deps: []*analyzer.Variable{v},
+						}
+					}
+				}
+				// FIXTHIS: can have mannyyyyyyyyyyyyyyy types!! maybe we need a recursive function here
 
-			// post.ReqID
-			// ^ ident ^ selector
+			// e.g. post.ReqID
+			//       ^ ident ^ selector
 			case *ast.SelectorExpr:
 				if ident, ok := e.X.(*ast.Ident); ok {
 					name := fmt.Sprintf("%s.%s", ident.Name, e.Sel.Name)
-
-					// now we have to get the actual dependency for ReqID with is postID
-					// REMINDER: this actually takes into account if the variable is assigned again
-					// because we are inside a block and we are using the last definition
-					// before the current lineno
-					for i := len(parsedCfg.Vars) - 1; i >= 0; i-- {
-						v := parsedCfg.Vars[i]
-						if ident.Name == v.Name {
-							newInlineVariable := &analyzer.Variable{
-								Type: &gocode.UserType{
-									Package: parsedCfg.Package,
-									Name:    name, //FIXME, this needs to be type not name
-								},
-								Id:   -1,
-								Name: name,
-								Deps: []*analyzer.Variable{v},
-							}
-							parsedCall.Deps = append(parsedCall.Deps, newInlineVariable)
-							break
+					if ok, v := getVariableInBlock(parsedCfg, ident.Name); ok {
+						param = &analyzer.Variable{
+							Type: &gocode.UserType{
+								Package: parsedCfg.Package,
+								Name:    name, //FIXME, this needs to be type not name
+							},
+							Id:   -1,
+							Name: name,
+							Deps: []*analyzer.Variable{v},
 						}
 					}
 				}
 			}
-
-		}
-		// for each arg, check if it is in the block variables array
-		// if yes, then we add the arg to the dependencies of the parsed call
-		// REMINDER: this is not necessary for e.g. SelectorExpr
-		for _, arg := range args {
-			logger.Logger.Debugf("got arg '%s' for call '%s'", arg, parsedCall.Name)
-			for _, v := range parsedCfg.Vars {
-				if arg == v.Name {
-					logger.Logger.Debugf("add dep '%s':%d for call '%s'", v.Name, v.Lineno, parsedCall.Name)
-					parsedCall.Deps = append(parsedCall.Deps, v)
-				}
+			if param != nil {
+				parsedCall.Params = append(parsedCall.Params, param)
 			}
+
 		}
 		return true
 	}
@@ -226,80 +228,44 @@ func hasServiceOrDatabaseCall(parsedCfg *models.ParsedCFG, node *ast.CallExpr, p
 	return false
 }
 
-func isVarAssignment(node ast.Node) (bool, string, []string, []string) {
+func getVariableInBlock(parsedCfg *models.ParsedCFG, name string) (bool, *analyzer.Variable) {
+	for i := len(parsedCfg.Vars) - 1; i >= 0; i-- {
+		v := parsedCfg.Vars[i]
+		if name == v.Name {
+			return true, v
+		}
+	}
+	return false, nil
+}
+
+func isVarDeclOrAssign(node ast.Node) (bool, string, []string, []string) {
 	var lvalues []string
 	var rvalues []string
 	var varType string
-	if assign, ok := node.(*ast.AssignStmt); ok {
-		logger.Logger.Debugf("found AssignStmt: %d", assign.Pos())
-		for _, lvalue := range assign.Lhs {
-			if ident, ok := lvalue.(*ast.Ident); ok {
-				lvalues = append(lvalues, ident.Name)
+	switch t := node.(type) {
+		case *ast.ValueSpec:
+			logger.Logger.Debugf("found ValueSpec: %d", t.Pos())
+			for _, name := range t.Names {
+				lvalues = append(lvalues, name.Name)
 			}
-		}
-		for _, rvalue := range assign.Rhs {
-			var deps []string
-			varType, deps = transverseAssignRValues(rvalue)
-			rvalues = append(rvalues, deps...)
-		}
-		logger.Logger.Debugf("\t %v --- (depends on) ---> %v", lvalues, rvalues)
-		return true, varType, lvalues, rvalues
-	}
-	return false, varType, nil, nil
-}
-
-func getExprType(expr ast.Expr) string {
-	switch e := expr.(type) {
-	case *ast.Ident:
-		return e.Name
-	case *ast.UnaryExpr:
-		return e.Op.String()
-	default:
-		nodeType := reflect.TypeOf(e).Elem().Name()
-		logger.Logger.Warn("unknown rvalue for node type", nodeType)
-	}
-	// FIXME: cover more use cases e.g.
-	// 1. type from other package using selector
-	// 2. type from current package
-	return "unknown"
-}
-
-func transverseAssignRValues(expr ast.Expr) (string, []string) {
-	var identifiers []string
-	var varType string
-
-	switch e := expr.(type) {
-	case *ast.Ident:
-		identifiers = append(identifiers, e.Name)
-	case *ast.BasicLit:
-	case *ast.CallExpr:
-		//FIXME: get type of func call
-		for _, arg := range e.Args {
-			_, r := transverseAssignRValues(arg)
-			identifiers = append(identifiers, r...)
-		}
-	case *ast.CompositeLit:
-		varType = getExprType(e.Type)
-		for _, elt := range e.Elts {
-			if kv, ok := elt.(*ast.KeyValueExpr); ok {
-				if _, ok := kv.Key.(*ast.Ident); ok {
-					_, r := transverseAssignRValues(kv.Value)
-					identifiers = append(identifiers, r...)
+			if ident, ok := t.Type.(*ast.Ident); ok {
+				varType = ident.Name
+			}
+			return true, varType, lvalues, rvalues
+		case *ast.AssignStmt:
+			logger.Logger.Debugf("found AssignStmt: %d", t.Pos())
+			for _, lvalue := range t.Lhs {
+				if ident, ok := lvalue.(*ast.Ident); ok {
+					lvalues = append(lvalues, ident.Name)
 				}
 			}
-		}
-	case *ast.SelectorExpr:
-		if ident, ok := e.X.(*ast.Ident); ok {
-			identifiers = append(identifiers, ident.Name)
-		}
-	case *ast.BinaryExpr:
-		_, rX := transverseAssignRValues(e.X)
-		identifiers = append(identifiers, rX...)
-		_, rY := transverseAssignRValues(e.Y)
-		identifiers = append(identifiers, rY...)
-	default:
-		nodeType := reflect.TypeOf(e).Elem().Name()
-		logger.Logger.Warn("unknown rvalue for node type", nodeType)
+			for _, rvalue := range t.Rhs {
+				var deps []string
+				varType, deps = utils.TransverseExprIdentifiers(rvalue)
+				rvalues = append(rvalues, deps...)
+			}
+			logger.Logger.Debugf("\t %v --- (depends on) ---> %v", lvalues, rvalues)
+			return true, varType, lvalues, rvalues
 	}
-	return varType, identifiers
+	return false, varType, nil, nil
 }

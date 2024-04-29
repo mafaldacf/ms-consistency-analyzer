@@ -10,26 +10,28 @@ import (
 	"go/token"
 	"os"
 	"sort"
+	"strings"
 )
 
 type AbstractNode interface {
-	GetCallerParams() []*analyzer.Variable
+	GetParams() []*analyzer.Variable
 	String() string
 }
 
 type AbstractServiceCall struct {
 	AbstractNode `json:"-"` // omit from json
 	Method       string     `json:"method,omitempty"`
+	Call         string     `json:"call,omitempty"`
 	// name of the service calling e.g. StorageService
-	Caller       string                  `json:"caller,omitempty"`
-	CallerParams []*analyzer.Variable    `json:"caller_params,omitempty"`
-	ParsedCall   *service.ParsedCallExpr `json:"-"` // omit from json
+	Caller     string                  `json:"caller,omitempty"`
+	Params     []*analyzer.Variable    `json:"params,omitempty"`
+	ParsedCall *service.ParsedCallExpr `json:"-"` // omit from json
 	// nodes representing database calls cannot contain children as well
 	Children []AbstractNode `json:"children,omitempty"` // omit from json
 }
 
-func (svc *AbstractServiceCall) GetCallerParams() []*analyzer.Variable {
-	return svc.CallerParams
+func (svc *AbstractServiceCall) GetParams() []*analyzer.Variable {
+	return svc.Params
 }
 
 func (svc *AbstractServiceCall) String() string {
@@ -38,13 +40,14 @@ func (svc *AbstractServiceCall) String() string {
 
 type AbstractDatabaseCall struct {
 	AbstractNode `json:"-"`              // omit from json
-	Method       string                  `json:"method"`
-	CallerParams []*analyzer.Variable    `json:"caller_params,omitempty"`
+	Method       string                  `json:"method,omitempty"`
+	Call         string                  `json:"call,omitempty"`
+	Params       []*analyzer.Variable    `json:"params,omitempty"`
 	ParsedCall   *service.ParsedCallExpr `json:"-"` // omit from json
 }
 
-func (db *AbstractDatabaseCall) GetCallerParams() []*analyzer.Variable {
-	return db.CallerParams
+func (db *AbstractDatabaseCall) GetParams() []*analyzer.Variable {
+	return db.Params
 }
 
 func (db *AbstractDatabaseCall) String() string {
@@ -95,7 +98,7 @@ func (ag *AbstractGraph) matchVarsIdentifiers() {
 func (ag *AbstractGraph) matchVarsIdentifiersHelper(node AbstractNode) {
 	// REMINDER: is it really necessary that we only have one node?
 	// should these always be the entry nodes????
-	for callerParamIdx, callerParam := range node.GetCallerParams() {
+	for callerParamIdx, callerParam := range node.GetParams() {
 		log.Logger.Debugf("> caller %s", node.String())
 		// assign id if not yet assigned (act as root variable for other child dependencies)
 		if callerParam.Id == -1 {
@@ -115,7 +118,7 @@ func (ag *AbstractGraph) matchVarsIdentifiersHelper(node AbstractNode) {
 					// get all dependencies recursively within children
 					// (i think it is safe to have duplicates)
 					var deps []*analyzer.Variable
-					for _, param := range childNode.GetCallerParams() {
+					for _, param := range childNode.GetParams() {
 						deps = append(deps, getAllCallerParamDeps(param)...)
 					}
 
@@ -147,7 +150,7 @@ func (ag *AbstractGraph) matchVarsIdentifiersHelper(node AbstractNode) {
 						childParam.Ref = &analyzer.Ref{
 							Name:     callerParam.Name,
 							Id:       callerParam.Id,
-							Origin:   abstractService.Caller,
+							Creator:  abstractService.Caller,
 							Variable: callerParam,
 						}
 					}
@@ -214,17 +217,19 @@ func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *s
 			if targetMethod.DatabaseCalls[lineno] != nil {
 				dbCall := targetMethod.DatabaseCalls[lineno]
 				abstractService.Children = append(abstractService.Children, &AbstractDatabaseCall{
-					ParsedCall:   dbCall,
-					CallerParams: dbCall.Deps,
-					Method:       dbCall.SimpleString(),
+					ParsedCall: dbCall,
+					Params:     dbCall.Params,
+					Call:       dbCall.SimpleString(),
+					//Method: 	  dbCall.Method.String(),
 				})
 			} else if targetMethod.ServiceCalls[lineno] != nil {
 				svcCall := targetMethod.ServiceCalls[lineno]
 				abstractService.Children = append(abstractService.Children, &AbstractServiceCall{
-					ParsedCall:   svcCall,
-					Caller:       svcCall.SrcType.String(),
-					CallerParams: svcCall.Deps,
-					Method:       svcCall.SimpleString(),
+					ParsedCall: svcCall,
+					Caller:     strings.Split(svcCall.SrcType.String(), ".")[1],
+					Params:     svcCall.Params,
+					Call:       svcCall.SimpleString(),
+					//Method:       svcCall.Method.String(),
 				})
 			}
 		}
@@ -258,17 +263,19 @@ func (ag *AbstractGraph) recurseBuild(parentNode *AbstractServiceCall) {
 				if targetMethod.DatabaseCalls[lineno] != nil {
 					dbCall := targetMethod.DatabaseCalls[lineno]
 					abstractService.Children = append(abstractService.Children, &AbstractDatabaseCall{
-						ParsedCall:   dbCall,
-						CallerParams: dbCall.Deps,
-						Method:       dbCall.SimpleString(),
+						ParsedCall: dbCall,
+						Params:     dbCall.Params,
+						Call:       dbCall.SimpleString(),
+						//Method: 	  dbCall.Method.String(),
 					})
 				} else if targetMethod.ServiceCalls[lineno] != nil {
 					svcCall := targetMethod.ServiceCalls[lineno]
 					abstractService.Children = append(abstractService.Children, &AbstractServiceCall{
-						ParsedCall:   svcCall,
-						Caller:       svcCall.SrcType.String(),
-						CallerParams: svcCall.Deps,
-						Method:       svcCall.SimpleString(),
+						ParsedCall: svcCall,
+						Caller:     strings.Split(svcCall.SrcType.String(), ".")[1],
+						Params:     svcCall.Params,
+						Call:       svcCall.SimpleString(),
+						//Method:       svcCall.Method.String(),
 					})
 				}
 			}
