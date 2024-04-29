@@ -1,5 +1,16 @@
 {
-  "method": "UploadService.UploadPost",
+  "method": "UploadService.UploadPost(username, text)",
+  "caller": "Client",
+  "params": [
+    {
+      "name": "username",
+      "id": 6
+    },
+    {
+      "name": "text",
+      "id": 7
+    }
+  ],
   "children": [
     {
       "call": "storageService.StorePost(post.ReqID, post)",
@@ -7,43 +18,39 @@
       "params": [
         {
           "name": "post.ReqID",
-          "id": 1,
+          "id": 9,
           "deps": [
             {
               "name": "post",
-              "id": 2,
+              "id": 10,
               "deps": [
                 {
                   "name": "text",
-                  "id": -1,
-                  "type": null
+                  "id": 7,
+                  "ref": {
+                    "name": "text",
+                    "creator": "Client",
+                    "id": 7
+                  }
                 }
-              ],
-              "type": {
-                "Package": "",
-                "Name": "Post"
-              }
+              ]
             }
-          ],
-          "type": {
-            "Package": "",
-            "Name": "post.ReqID"
-          }
+          ]
         },
         {
           "name": "post",
-          "id": 2,
+          "id": 10,
           "deps": [
             {
               "name": "text",
-              "id": -1,
-              "type": null
+              "id": 7,
+              "ref": {
+                "name": "text",
+                "creator": "Client",
+                "id": 7
+              }
             }
-          ],
-          "type": {
-            "Package": "",
-            "Name": "Post"
-          }
+          ]
         }
       ],
       "children": [
@@ -52,33 +59,27 @@
           "params": [
             {
               "name": "postIDStr",
-              "id": 3,
+              "id": 11,
               "deps": [
                 {
                   "name": "post",
-                  "id": 2,
+                  "id": 10,
                   "ref": {
                     "name": "post",
                     "creator": "UploadService",
-                    "id": 2
-                  },
-                  "type": null
+                    "id": 10
+                  }
                 }
-              ],
-              "type": {
-                "Package": "",
-                "Name": ""
-              }
+              ]
             },
             {
               "name": "post",
-              "id": 2,
+              "id": 10,
               "ref": {
                 "name": "post",
                 "creator": "UploadService",
-                "id": 2
-              },
-              "type": null
+                "id": 10
+              }
             }
           ]
         }
@@ -90,28 +91,24 @@
       "params": [
         {
           "name": "message",
-          "id": 6,
+          "id": 14,
           "deps": [
             {
               "name": "post",
-              "id": 2,
+              "id": 10,
               "deps": [
                 {
                   "name": "text",
-                  "id": -1,
-                  "type": null
+                  "id": 7,
+                  "ref": {
+                    "name": "text",
+                    "creator": "Client",
+                    "id": 7
+                  }
                 }
-              ],
-              "type": {
-                "Package": "",
-                "Name": "Post"
-              }
+              ]
             }
-          ],
-          "type": {
-            "Package": "",
-            "Name": "Message"
-          }
+          ]
         }
       ],
       "children": [
@@ -121,43 +118,33 @@
           "params": [
             {
               "name": "reqID",
-              "id": 10,
+              "id": 18,
               "deps": [
                 {
                   "name": "message",
-                  "id": 6,
+                  "id": 14,
                   "ref": {
                     "name": "message",
                     "creator": "UploadService",
-                    "id": 6
-                  },
-                  "type": null
+                    "id": 14
+                  }
                 }
-              ],
-              "type": {
-                "Package": "",
-                "Name": ""
-              }
+              ]
             },
             {
               "name": "postID",
-              "id": 11,
+              "id": 19,
               "deps": [
                 {
                   "name": "message",
-                  "id": 6,
+                  "id": 14,
                   "ref": {
                     "name": "message",
                     "creator": "UploadService",
-                    "id": 6
-                  },
-                  "type": null
+                    "id": 14
+                  }
                 }
-              ],
-              "type": {
-                "Package": "",
-                "Name": ""
-              }
+              ]
             }
           ],
           "children": [
@@ -166,43 +153,28 @@
               "params": [
                 {
                   "name": "postIDStr",
-                  "id": 12,
+                  "id": 20,
                   "deps": [
                     {
                       "name": "postID",
-                      "id": 11,
+                      "id": 19,
                       "ref": {
                         "name": "postID",
                         "creator": "NotifyService",
-                        "id": 11
-                      },
-                      "type": null
+                        "id": 19
+                      }
                     }
-                  ],
-                  "type": {
-                    "Package": "",
-                    "Name": ""
-                  }
+                  ]
                 },
                 {
                   "name": "\u0026post",
-                  "id": 13,
+                  "id": 21,
                   "deps": [
                     {
                       "name": "post",
-                      "id": -1,
-                      "type": {
-                        "Package": "",
-                        "Name": "Post"
-                      }
+                      "id": -1
                     }
-                  ],
-                  "type": {
-                    "PointerTo": {
-                      "Package": "",
-                      "Name": "Post"
-                    }
-                  }
+                  ]
                 }
               ]
             }

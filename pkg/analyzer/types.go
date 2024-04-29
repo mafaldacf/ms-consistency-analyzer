@@ -27,7 +27,7 @@ type Variable struct {
 	IsBlockParam  bool            `json:"-"`
 	BlockParamIdx int             `json:"-"`
 	Ref           *Ref            `json:"ref,omitempty"`
-	Type          gocode.TypeName `json:"type"`
+	Type          gocode.TypeName `json:"-"`
 }
 
 func (v *Variable) String() string {

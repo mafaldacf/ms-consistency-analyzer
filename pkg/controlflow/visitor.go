@@ -184,7 +184,6 @@ func hasServiceOrDatabaseCall(parsedCfg *models.ParsedCFG, node *ast.CallExpr, p
 			case *ast.UnaryExpr:
 				if ident, ok := e.X.(*ast.Ident); ok {
 					name := fmt.Sprintf("&%s", ident.Name)
-					logger.Logger.Warnf("HEREEEEEEEEE %v", parsedCfg.Vars)
 					if ok, v := getVariableInBlock(parsedCfg, ident.Name); ok {
 						param = &analyzer.Variable{
 							Type: &gocode.Pointer{

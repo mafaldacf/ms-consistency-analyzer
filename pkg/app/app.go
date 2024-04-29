@@ -58,7 +58,8 @@ func (app *App) AddServiceNode(serviceSpec *workflowspec.Service, services ...*w
 	for _, m := range serviceSpec.Iface.Ast.Methods.List {
 		node.ExposedMethods[m.Names[0].Name] = nil
 	}
+		
 	app.Services[node.Name] = node
-	log.Logger.Infof("added node %s at package %s with dependence on %d services", node.Name, node.Package, len(node.Services))
+	log.Logger.Warnf("added node %s at package %s with dependence on %d services with constructor arguments %v", node.Name, node.Package, len(node.Services), serviceSpec.Constructor.Arguments)
 	return nil
 }

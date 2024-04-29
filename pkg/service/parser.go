@@ -137,8 +137,8 @@ func (node *ServiceNode) ParseStructFields() {
 		if str, ok := n.(*ast.StructType); ok {
 			for _, field := range str.Fields.List {
 				for _, ident := range field.Names {
-					logger.Logger.Debugf("> %s: %s\n", ident.Name, field.Type)
 					node.saveFieldWithType(field, ident.Name)
+					logger.Logger.Warnf("%s: saved field %s\n", node.Name, node.Fields[ident.Name])
 				}
 			}
 		}

@@ -42,11 +42,11 @@ func GetShortServiceTypeStr(typeName gocode.TypeName) string {
 
 type ParsedFuncDecl struct {
 	analyzer.Method
-	Ast           *ast.FuncDecl
-	Name          string
-	Recv          *ast.Ident
-	DatabaseCalls map[token.Pos]*ParsedCallExpr
-	ServiceCalls  map[token.Pos]*ParsedCallExpr
+	Ast           *ast.FuncDecl 					`json:"-"` // omit from json
+	Name          string 							`json:"name"` // omit from json
+	Recv          *ast.Ident 						`json:"-"` // omit from json
+	DatabaseCalls map[token.Pos]*ParsedCallExpr 	`json:"-"` // omit from json
+	ServiceCalls  map[token.Pos]*ParsedCallExpr 	`json:"-"` // omit from json
 	// used to fetch the params when generating the basic cfg
 	// to store in the variables array of the function
 	Params []string

@@ -11,6 +11,8 @@ import (
 	"os"
 	"sort"
 	"strings"
+
+	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
 )
 
 type AbstractNode interface {
@@ -87,7 +89,7 @@ func Build(app *app.App, entryPoints []string) *AbstractGraph {
 func (ag *AbstractGraph) matchVarsIdentifiers() {
 	// cannot be 0 otherwise because default value in
 	// variable id parameter is 0 when not previously set
-	ag.globalIdx = 0
+	ag.globalIdx = 1
 	ag.visitedNodes = make(map[AbstractNode]bool, 0)
 	ag.nodesBlockParams = make(map[AbstractNode][]*analyzer.Variable, 0)
 
@@ -99,10 +101,10 @@ func (ag *AbstractGraph) matchVarsIdentifiersHelper(node AbstractNode) {
 	// REMINDER: is it really necessary that we only have one node?
 	// should these always be the entry nodes????
 	for callerParamIdx, callerParam := range node.GetParams() {
-		log.Logger.Debugf("> caller %s", node.String())
+		log.Logger.Debugf("> caller %s for param %s", node.String(), callerParam.Name)
 		// assign id if not yet assigned (act as root variable for other child dependencies)
-		if callerParam.Id == -1 {
-			log.Logger.Debug("assigning id ", ag.globalIdx, " to caller param ", callerParam.Name, " :", callerParam.Lineno)
+		if callerParam.Id < 0 {
+			log.Logger.Debugf("(1/2) assigning id %d to caller param %s", ag.globalIdx, callerParam.Name)
 			callerParam.Id = ag.globalIdx
 			ag.globalIdx++
 		}
@@ -113,23 +115,22 @@ func (ag *AbstractGraph) matchVarsIdentifiersHelper(node AbstractNode) {
 		// FIXME: FOR NOW BECAUSE WE ONLY SUPPORT 1 BLOCK PER REMOTE METHOD
 		if abstractService, ok := node.(*AbstractServiceCall); ok {
 			for _, childNode := range abstractService.Children {
-				log.Logger.Debug("visiting child node ", childNode.String())
 				if !ag.visitedNodes[childNode] {
 					// get all dependencies recursively within children
 					// (i think it is safe to have duplicates)
 					var deps []*analyzer.Variable
 					for _, param := range childNode.GetParams() {
-						deps = append(deps, getAllCallerParamDeps(param)...)
+						deps = append(deps, getAllVariableDeps(param)...)
 					}
-
+					
 					// block params is a subset of deps when a variable originates from
 					// the block parameter i.e. the (remote) method parameter
 					// FIXME: FOR NOW BECAUSE WE ONLY SUPPORT 1 BLOCK PER REMOTE METHOD
 					for _, dep := range deps {
 						if dep.IsBlockParam {
 							ag.nodesBlockParams[childNode] = append(ag.nodesBlockParams[childNode], dep)
-						} else if dep.Id == -1 {
-							log.Logger.Debug("assigning id ", ag.globalIdx, " to dep param ", callerParam.Name, " :", callerParam.Lineno)
+						} else if dep.Id < 0 {
+							log.Logger.Debugf("(2/2) assigning id %d to dep param %s", ag.globalIdx, dep.Name)
 							callerParam.Id = ag.globalIdx
 							ag.globalIdx++
 						}
@@ -142,7 +143,7 @@ func (ag *AbstractGraph) matchVarsIdentifiersHelper(node AbstractNode) {
 					log.Logger.Debugf("\t matching child (idx=%d) param %s:%d with caller (idx=%d) param %s:%d", childParam.BlockParamIdx, childParam.Name, childParam.Lineno, callerParamIdx+1, callerParam.Name, callerParam.Lineno)
 					if childParam.BlockParamIdx == callerParamIdx+1 &&
 						// ^ sanity check (-1 is when it was not yet set)
-						childParam.Id == -1 {
+						childParam.Id < 0 {
 
 						childParam.Id = callerParam.Id
 						// add reference
@@ -167,10 +168,10 @@ func (ag *AbstractGraph) matchVarsIdentifiersHelper(node AbstractNode) {
 	}
 }
 
-func getAllCallerParamDeps(v *analyzer.Variable) []*analyzer.Variable {
+func getAllVariableDeps(v *analyzer.Variable) []*analyzer.Variable {
 	var deps []*analyzer.Variable
 	for _, d := range v.Deps {
-		deps = append(deps, getAllCallerParamDeps(d)...)
+		deps = append(deps, getAllVariableDeps(d)...)
 	}
 	return append(deps, v)
 }
@@ -208,35 +209,53 @@ func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *s
 		return linenos[i] < linenos[j]
 	})
 
+	//FIXME: this is hardcoded but should be automated later
 	abstractGraph.Nodes = append(abstractGraph.Nodes, &AbstractServiceCall{
-		Method: fmt.Sprintf("%s.%s", serviceNode.Name, targetMethod.Name),
+		Method: fmt.Sprintf("%s.%s(%s, %s)", serviceNode.Name, targetMethod.Name, targetMethod.Params[0], targetMethod.Params[1]),
+		ParsedCall: &service.ParsedCallExpr{
+			TargetField: serviceNode.Name,
+			Name:        targetMethod.Name,
+		},
+		Caller: "Client",
 	})
+	abstractService := abstractGraph.Nodes[0].(*AbstractServiceCall)
 
-	if abstractService, ok := abstractGraph.Nodes[0].(*AbstractServiceCall); ok {
-		for _, lineno := range linenos {
-			if targetMethod.DatabaseCalls[lineno] != nil {
-				dbCall := targetMethod.DatabaseCalls[lineno]
-				abstractService.Children = append(abstractService.Children, &AbstractDatabaseCall{
-					ParsedCall: dbCall,
-					Params:     dbCall.Params,
-					Call:       dbCall.SimpleString(),
-					//Method: 	  dbCall.Method.String(),
-				})
-			} else if targetMethod.ServiceCalls[lineno] != nil {
-				svcCall := targetMethod.ServiceCalls[lineno]
-				abstractService.Children = append(abstractService.Children, &AbstractServiceCall{
-					ParsedCall: svcCall,
-					Caller:     strings.Split(svcCall.SrcType.String(), ".")[1],
-					Params:     svcCall.Params,
-					Call:       svcCall.SimpleString(),
-					//Method:       svcCall.Method.String(),
-				})
-			}
-		}
-		// FIXME: is it really necessary that we only have one node?
-		// should these always be the entry nodes?
-		ag.recurseBuild(abstractService)
+	//FIXME: this is hardcoded but should be automated later
+	entryMethod := serviceNode.ExposedMethods[targetMethod.Name]
+	for _, p := range entryMethod.Params {
+		abstractService.Params = append(abstractService.Params, &analyzer.Variable{
+			Name: p,
+			Type: &gocode.BasicType{
+				Name: "string",
+			},
+			Id: -1,
+		})
 	}
+
+	for _, lineno := range linenos {
+		if targetMethod.DatabaseCalls[lineno] != nil {
+			dbCall := targetMethod.DatabaseCalls[lineno]
+			abstractService.Children = append(abstractService.Children, &AbstractDatabaseCall{
+				ParsedCall: dbCall,
+				Params:     dbCall.Params,
+				Call:       dbCall.SimpleString(),
+				//Method: 	  dbCall.Method.String(),
+			})
+		} else if targetMethod.ServiceCalls[lineno] != nil {
+			svcCall := targetMethod.ServiceCalls[lineno]
+			abstractService.Children = append(abstractService.Children, &AbstractServiceCall{
+				ParsedCall: svcCall,
+				Caller:     strings.Split(svcCall.SrcType.String(), ".")[1],
+				Params:     svcCall.Params,
+				Call:       svcCall.SimpleString(),
+				//Method:       svcCall.Method.String(),
+			})
+		}
+	}
+
+	// FIXME: is it really necessary that we only have one node?
+	// should these always be the entry nodes?
+	ag.recurseBuild(abstractService)
 }
 
 func (ag *AbstractGraph) recurseBuild(parentNode *AbstractServiceCall) {

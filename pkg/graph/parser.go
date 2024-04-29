@@ -3,7 +3,7 @@ package graph
 import (
 	"analyzer/pkg/analyzer"
 	"analyzer/pkg/controlflow"
-	log "analyzer/pkg/logger"
+	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
 	"fmt"
 	"go/token"
@@ -12,18 +12,18 @@ import (
 func VisitServiceMethodCFG(node *service.ServiceNode, targetMethodName string) {
 	targetMethod := node.ExposedMethods[targetMethodName]
 	if targetMethod == nil {
-		log.Logger.Error("could not find target method with name ", targetMethodName)
+		logger.Logger.Error("could not find target method with name ", targetMethodName)
 		return
 	}
 	node.ParseMethodBodyCalls(targetMethod)
 
 	basic_cfg, err := controlflow.GenerateMethodCFG(targetMethod, node.Filepath)
 	if err != nil {
-		log.Logger.Errorf("error generating CFG for target method %s in %s: %s\n", targetMethod.Name, node.Filepath, err.Error())
+		logger.Logger.Errorf("error generating CFG for target method %s in %s: %s\n", targetMethod.Name, node.Filepath, err.Error())
 		return
 	}
 	if basic_cfg == nil {
-		log.Logger.Errorf("basic cfg is nil for target method %s in %s\n", targetMethod.Name, node.Filepath)
+		logger.Logger.Errorf("basic cfg is nil for target method %s in %s\n", targetMethod.Name, node.Filepath)
 		return
 	}
 
@@ -38,16 +38,16 @@ func VisitServiceMethodCFG(node *service.ServiceNode, targetMethodName string) {
 }
 
 func VisitCalls(parsedCalls map[token.Pos]*service.ParsedCallExpr) {
-	log.Logger.Info("visiting database/service calls for service node target method")
+	logger.Logger.Info("visiting database/service calls for service node target method")
 	for pos, call := range parsedCalls {
-		log.Logger.Debugf("call %s.%s [%d]\n", call.TargetField, call.Name, pos)
-		log.Logger.Debug("> deps: ")
+		logger.Logger.Debugf("call %s.%s [%d]\n", call.TargetField, call.Name, pos)
+		logger.Logger.Debug("> deps: ")
 		for _, dep := range call.Params {
 			r := visitDeps(dep)
-			log.Logger.Debugf("\t%s [%d], %s", dep.Name, dep.Lineno, r)
+			logger.Logger.Debugf("\t%s [%d], %s", dep.Name, dep.Lineno, r)
 		}
 	}
-	log.Logger.Debugln()
+	logger.Logger.Debugln()
 }
 
 func visitDeps(v *analyzer.Variable) string {
