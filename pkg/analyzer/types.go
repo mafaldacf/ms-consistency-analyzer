@@ -1,15 +1,39 @@
 package analyzer
 
 import (
+	"go/ast"
 	"go/token"
 
 	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
 )
 
+type Field interface {
+}
+
+type FunctionField struct {
+	Field
+	gocode.Variable
+	Lineno token.Pos
+	Ast    *ast.Field
+}
+
+type ServiceField struct {
+	Field
+	gocode.Variable
+	Lineno token.Pos
+	Ast    *ast.Field
+}
+type DatabaseField struct {
+	Field
+	gocode.Variable
+	Lineno token.Pos
+	Ast    *ast.Field
+}
+
 type Method interface {
-	// TODO: GetName(), GetPackage(), and return package.name in String()
 	String() string
-	GetNumParams() int
+	GetParams() []*FunctionField
+	GetReturns() []*FunctionField
 }
 
 type Ref struct {

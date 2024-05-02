@@ -47,17 +47,31 @@ type ParsedFuncDecl struct {
 	Recv          *ast.Ident 						`json:"-"` // omit from json
 	DatabaseCalls map[token.Pos]*ParsedCallExpr 	`json:"-"` // omit from json
 	ServiceCalls  map[token.Pos]*ParsedCallExpr 	`json:"-"` // omit from json
+	Service 	  string 							`json:"-"`
 	// used to fetch the params when generating the basic cfg
 	// to store in the variables array of the function
-	Params []string
+	Params 	[]*analyzer.FunctionField
+	Returns []*analyzer.FunctionField
 }
 
 func (p *ParsedFuncDecl) String() string {
-	return p.Name
+	repr := fmt.Sprintf("%s.%s(", p.Service, p.Name)
+	for i, arg := range p.Params {
+		repr += arg.GetName()
+		if i < len(p.Params) - 1 {
+			repr += ", "
+		}
+	}
+	repr += ")"
+	return repr
 }
 
-func (p *ParsedFuncDecl) GetNumParams() int {
-	return len(p.Params)
+func (p *ParsedFuncDecl) GetParams() []*analyzer.FunctionField {
+	return p.Params
+}
+
+func (p *ParsedFuncDecl) GetReturns() []*analyzer.FunctionField {
+	return p.Returns
 }
 
 type ParsedImportSpec struct {
@@ -66,22 +80,6 @@ type ParsedImportSpec struct {
 	Path               string
 	Package            string
 	IsBlueprintBackend bool
-}
-
-type ParsedField interface {
-}
-
-type ServiceField struct {
-	ParsedField
-	gocode.Variable
-	Lineno token.Pos
-	Ast    *ast.Field
-}
-type DatabaseField struct {
-	ParsedField
-	gocode.Variable
-	Lineno token.Pos
-	Ast    *ast.Field
 }
 
 type ParsedCallExpr struct {
@@ -140,7 +138,7 @@ type ServiceNode struct {
 	Filepath string
 	Package  string
 	File     *ast.File
-	Fields   map[string]ParsedField
+	Fields   map[string]analyzer.Field
 	Imports  map[string]*ParsedImportSpec
 	// the map key is the service type (e.g. StorageService in 'storageService StorageService')
 	Services map[string]*ServiceNode

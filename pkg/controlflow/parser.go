@@ -42,7 +42,8 @@ func ParseCFG(node *service.ServiceNode, method *service.ParsedFuncDecl) (*model
 			//Id:     		len(parsedCfg.Vars),
 			Id:            -1,
 			Lineno:        pos,
-			Name:          param,
+			Name:          param.Name,
+			Type: 		   param.Type,
 			IsBlockParam:  true,
 			BlockParamIdx: i + 1, // we are considering idexes > 0 due to the json representation
 		})

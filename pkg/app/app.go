@@ -1,6 +1,7 @@
 package app
 
 import (
+	"analyzer/pkg/analyzer"
 	log "analyzer/pkg/logger"
 	"analyzer/pkg/models"
 	"analyzer/pkg/service"
@@ -46,7 +47,7 @@ func (app *App) AddServiceNode(serviceSpec *workflowspec.Service, services ...*w
 		Package:        serviceSpec.Iface.File.Package.Name,
 		Filepath:       filepath,
 		File:           file,
-		Fields:         make(map[string]service.ParsedField),
+		Fields:         make(map[string]analyzer.Field),
 		Imports:        make(map[string]*service.ParsedImportSpec),
 		Services:       make(map[string]*service.ServiceNode),
 		ExposedMethods: make(map[string]*service.ParsedFuncDecl),

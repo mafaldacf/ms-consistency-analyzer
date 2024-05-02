@@ -1,6 +1,7 @@
 package service
 
 import (
+	"analyzer/pkg/analyzer"
 	"analyzer/pkg/frameworks"
 	"analyzer/pkg/logger"
 	"fmt"
@@ -76,12 +77,21 @@ func (node *ServiceNode) ParseMethods() {
 							logger.Logger.Debugf("> (%s *%s) %s [:%d]\n", receiverName, ident.Name, funcDecl.Name.Name, funcDecl.Pos())
 
 							// get name of the params for function declaration
-							var params []string
+							var params []*analyzer.FunctionField
 							for _, field := range funcDecl.Type.Params.List {
 								// TODO: any types with selector! e.g. model.Message
 								if _, ok := field.Type.(*ast.Ident); ok {
 									for _, ident := range field.Names {
-										params = append(params, ident.Name)
+										params = append(params, &analyzer.FunctionField{
+											Variable: gocode.Variable{
+												Name: ident.Name,
+												Type: &gocode.BasicType{
+													Name: "string",
+												},
+											},
+											Lineno: field.Pos(),
+											Ast:    field,
+										})
 									}
 								}
 								/* if _, ok := field.Type.(*ast.SelectorExpr); ok {
@@ -101,6 +111,7 @@ func (node *ServiceNode) ParseMethods() {
 								Params:        params,
 								DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
 								ServiceCalls:  make(map[token.Pos]*ParsedCallExpr),
+								Service: 	   node.Name,
 							}
 							node.ExposedMethods[parsedFuncDecl.Name] = &parsedFuncDecl
 						}
@@ -157,7 +168,7 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string) {
 		// the field indeed corresponds to another service
 		// so the package of the variable is the same
 		if _, ok := node.Services[t.Name]; ok {
-			node.Fields[paramName] = &ServiceField{
+			node.Fields[paramName] = &analyzer.ServiceField{
 				Variable: gocode.Variable{
 					Name: paramName,
 					Type: &gocode.UserType{
@@ -181,7 +192,7 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string) {
 					switch t.Sel.Name {
 					//TODO: include other types from BLUEPRINT
 					case "Queue", "NoSQLDatabase", "Cache":
-						node.Fields[paramName] = &DatabaseField{
+						node.Fields[paramName] = &analyzer.DatabaseField{
 							Variable: gocode.Variable{
 								Name: paramName,
 								Type: &gocode.UserType{
@@ -199,7 +210,7 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string) {
 				// check if the import matches the path of any of existing services
 				for _, s := range node.Services {
 					if s.Package == impt.Package {
-						node.Fields[paramName] = &ServiceField{
+						node.Fields[paramName] = &analyzer.ServiceField{
 							Variable: gocode.Variable{
 								Name: paramName,
 								Type: &gocode.UserType{
@@ -247,7 +258,7 @@ func (node *ServiceNode) ParseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 							// if the targeted variable corresponds to a service field
 							if field, ok := node.Fields[parsedCallExpr.TargetField]; ok {
 								// if the field corresponds to a service field
-								if serviceField, ok := field.(*ServiceField); ok {
+								if serviceField, ok := field.(*analyzer.ServiceField); ok {
 									// 1. extract the service field from the current service
 									// 2. get the target node service for the type
 									// 3. add the targeted method of the other service for the current call expression
@@ -262,7 +273,7 @@ func (node *ServiceNode) ParseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 									parsedFuncDecl.ServiceCalls[parsedCallExpr.Pos] = parsedCallExpr
 								}
 								// if the field corresponds to a database field
-								if databaseField, ok := field.(*DatabaseField); ok {
+								if databaseField, ok := field.(*analyzer.DatabaseField); ok {
 									// 1. extract the service field from the current service
 									// 2. get the target database node
 									// 3. add the target method for the current call expression
@@ -286,23 +297,3 @@ func (node *ServiceNode) ParseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 	})
 	logger.Logger.Debugln()
 }
-
-// NOT USED!!
-/* func getFieldType(field *ast.Field) string {
-	switch t := field.Type.(type) {
-	case *ast.Ident:
-		return t.Name
-	case *ast.ArrayType:
-		if ident, ok := t.Elt.(*ast.Ident); ok {
-			return "[]" + ident.Name
-		}
-	case *ast.StarExpr:
-		if ident, ok := t.X.(*ast.Ident); ok {
-			return "*" + ident.Name
-		}
-	case *ast.SelectorExpr:
-		return fmt.Sprintf("%s.%s", t.X.(*ast.Ident).Name, t.Sel.Name)
-	}
-	return "unknown"
-}
-*/

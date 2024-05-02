@@ -1,11 +1,12 @@
 package frameworks
 
 import (
-	"analyzer/pkg/logger"
 	"analyzer/pkg/analyzer"
+	"analyzer/pkg/logger"
 	"fmt"
 	"reflect"
 
+	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
 	"github.com/blueprint-uservices/blueprint/plugins/workflow/workflowspec"
 )
 
@@ -27,29 +28,81 @@ func GetBlueprintServiceSpec[T any]() (*workflowspec.Service, error) {
 type BlueprintBackend struct {
 	analyzer.Method
 	Name      	string
-	NumParams 	int
+	Params 		[]*analyzer.FunctionField
+	Returns 	[]*analyzer.FunctionField
 }
 
 func (b *BlueprintBackend) String() string {
-	return b.Name
+	repr := fmt.Sprintf("%s(", b.Name)
+	for i, param := range b.Params {
+		repr += param.GetName()
+		if i < len(b.Params) - 1 {
+			repr += ", "
+		}
+	}
+	repr += ")"
+	return repr
 }
 
-func (b *BlueprintBackend) GetNumParams() int {
-	return b.NumParams
+func (b *BlueprintBackend) GetParams() []*analyzer.FunctionField {
+	return b.Params
 }
 
+func (b *BlueprintBackend) GetReturns() []*analyzer.FunctionField {
+	return b.Returns
+}
 
 func GetBackendMethod(name string) *BlueprintBackend {
 	if name == "Cache.Put" {
 		return &BlueprintBackend {
 			Name: name,
-			NumParams: 3,
+			Params: []*analyzer.FunctionField{
+				{
+					Variable: gocode.Variable{
+						Name: "key",
+						Type: &gocode.BasicType{
+							Name: "string",
+						},
+					},
+					Lineno: 0,
+					Ast:    nil,
+				},
+				{
+					Variable: gocode.Variable{
+						Name: "value",
+						Type: &gocode.InterfaceType{
+						},
+					},
+					Lineno: 0,
+					Ast:    nil,
+				},
+			},
 		}
 	}
 	if name == "Cache.Get" {
 		return &BlueprintBackend {
 			Name: name,
-			NumParams: 2,
+			Params: []*analyzer.FunctionField{
+				{
+					Variable: gocode.Variable{
+						Name: "key",
+						Type: &gocode.BasicType{
+							Name: "string",
+						},
+					},
+					Lineno: 0,
+					Ast:    nil,
+				},
+				{
+					Variable: gocode.Variable{
+						Name: "val",
+						Type: &gocode.InterfaceType{
+						},
+					},
+					Lineno: 0,
+					Ast:    nil,
+				},
+			},
 		}
 	}
 	return nil
