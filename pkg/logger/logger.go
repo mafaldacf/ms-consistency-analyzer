@@ -37,7 +37,7 @@ func (f *CustomFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 	levelText := fmt.Sprintf("\x1b[%dm%-5s\x1b[0m", levelColor, strings.ToUpper(entry.Level.String()[:4]))
 
 	// %-4d forces to have an equal \tab in all lines
-	msg := fmt.Sprintf("%s:%-4d \t- %s%s\n", file, line, levelText, entry.Message)
+	msg := fmt.Sprintf("%s:%-10d \t- %s%s\n", file, line, levelText, entry.Message)
 	return []byte(msg), nil
 }
 

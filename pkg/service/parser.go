@@ -138,7 +138,7 @@ func (node *ServiceNode) ParseStructFields() {
 			for _, field := range str.Fields.List {
 				for _, ident := range field.Names {
 					node.saveFieldWithType(field, ident.Name)
-					logger.Logger.Warnf("%s: saved field %s\n", node.Name, node.Fields[ident.Name])
+					logger.Logger.Debugf("%s: saved field %s\n", node.Name, node.Fields[ident.Name])
 				}
 			}
 		}

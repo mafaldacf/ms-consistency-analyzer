@@ -61,7 +61,7 @@ func TransverseExprIdentifiers(expr ast.Expr) (string, []string) {
 		identifiers = append(identifiers, rY...)
 	default:
 		nodeType := reflect.TypeOf(e).Elem().Name()
-		logger.Logger.Warn("unknown rvalue for node type", nodeType)
+		logger.Logger.Warnf("unknown type in TransverseExprIdentifiers: %s", nodeType)
 	}
 	return varType, identifiers
 }
@@ -74,7 +74,7 @@ func getExprType(expr ast.Expr) string {
 		return e.Op.String()
 	default:
 		nodeType := reflect.TypeOf(e).Elem().Name()
-		logger.Logger.Warn("unknown rvalue for node type", nodeType)
+		logger.Logger.Warnf("unknown type in getExprType: %s", nodeType)
 	}
 	// FIXME: cover more use cases e.g.
 	// 1. type from other package using selector

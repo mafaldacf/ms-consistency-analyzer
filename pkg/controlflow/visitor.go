@@ -4,6 +4,7 @@ import (
 	"analyzer/pkg/logger"
 	"fmt"
 	"go/ast"
+	"go/token"
 	"reflect"
 	"slices"
 
@@ -15,6 +16,37 @@ import (
 	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
 	"golang.org/x/tools/go/cfg"
 )
+
+func VisitServiceMethodCFG(parsedCfg * models.ParsedCFG, method *service.ParsedFuncDecl) {
+	VisitBasicBlockDeclAndAssigns(parsedCfg)
+	VisitBasicBlockFuncCalls(parsedCfg, method)
+
+	VisitCalls(method.DatabaseCalls)
+	VisitCalls(method.ServiceCalls)
+}
+
+func VisitCalls(parsedCalls map[token.Pos]*service.ParsedCallExpr) {
+	logger.Logger.Info("visiting database/service calls for service node target method")
+	for pos, call := range parsedCalls {
+		logger.Logger.Debugf("call %s.%s [%d]\n", call.TargetField, call.Name, pos)
+		logger.Logger.Debug("> deps: ")
+		for _, dep := range call.Params {
+			r := visitDeps(dep)
+			logger.Logger.Debugf("\t%s [%d], %s", dep.Name, dep.Lineno, r)
+		}
+	}
+	logger.Logger.Debugln()
+}
+
+func visitDeps(v *analyzer.Variable) string {
+	s := ""
+	for _, dep := range v.Deps {
+		visitDeps(dep)
+		return s + fmt.Sprintf("-> %s [%d] ", dep.Name, dep.Lineno)
+	}
+	return ""
+}
+
 
 func VisitBasicBlockDeclAndAssigns(parsedCfg *models.ParsedCFG) {
 	logger.Logger.Debug("visiting basic block assignments")
@@ -142,7 +174,7 @@ func hasFuncCall(parsedCfg *models.ParsedCFG, node ast.Node, parsedFuncDecl *ser
 		// ignore warning ahead
 	default:
 		nodeType := reflect.TypeOf(n).Elem().Name()
-		logger.Logger.Warn("unknown node type for func call", nodeType)
+		logger.Logger.Warnf("unknown type in hasFuncCall: %s", nodeType)
 	}
 
 	return false

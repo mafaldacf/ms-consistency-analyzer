@@ -2,8 +2,9 @@ package main
 
 import (
 	"analyzer/pkg/app"
+	"analyzer/pkg/controlflow"
 	"analyzer/pkg/frameworks"
-	"analyzer/pkg/graph"
+	"analyzer/pkg/abstractgraph"
 	"fmt"
 
 	// this needs to target the root of the app otherwise (and then replace the path in the go.mod file)
@@ -57,12 +58,17 @@ func main() {
 		node.ParseImports()
 		node.ParseStructFields()
 		node.ParseMethods()
-		for method := range node.ExposedMethods {
+		for _, method := range node.ExposedMethods {
 			fmt.Printf("\n------------------------ %s ------------------------\n", method)
-			graph.VisitServiceMethodCFG(node, method)
+			node.ParseMethodBodyCalls(method)
+			parsedCfg, err := controlflow.ParseCFG(node, method)
+			if err != nil {
+				return
+			}
+			controlflow.VisitServiceMethodCFG(parsedCfg, method)
 		}
 	}
 	entryPoints := []string{"UploadService"}
-	abstractGraph := graph.Build(app, entryPoints)
+	abstractGraph := abstractgraph.Build(app, entryPoints)
 	abstractGraph.Save()
 }

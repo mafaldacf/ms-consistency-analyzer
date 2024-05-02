@@ -1,4 +1,4 @@
-package graph
+package abstractgraph
 
 import (
 	"analyzer/pkg/analyzer"
