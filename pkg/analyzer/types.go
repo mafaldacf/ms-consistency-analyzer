@@ -28,6 +28,7 @@ type DatabaseField struct {
 	gocode.Variable
 	Lineno token.Pos
 	Ast    *ast.Field
+	IsQueue bool
 }
 
 type Method interface {

@@ -149,7 +149,7 @@ func (node *ServiceNode) ParseStructFields() {
 			for _, field := range str.Fields.List {
 				for _, ident := range field.Names {
 					node.saveFieldWithType(field, ident.Name)
-					logger.Logger.Debugf("%s: saved field %s\n", node.Name, node.Fields[ident.Name])
+					logger.Logger.Warnf("%s: saved field %s\n", node.Name, node.Fields[ident.Name])
 				}
 			}
 		}
@@ -188,24 +188,24 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string) {
 		if ident, ok := t.X.(*ast.Ident); ok {
 			if impt, ok := node.Imports[ident.Name]; ok {
 				// check if the matched package is a database package imported from blueprint
-				if impt.IsBlueprintBackend {
-					switch t.Sel.Name {
-					//TODO: include other types from BLUEPRINT
-					case "Queue", "NoSQLDatabase", "Cache":
-						node.Fields[paramName] = &analyzer.DatabaseField{
-							Variable: gocode.Variable{
-								Name: paramName,
-								Type: &gocode.UserType{
-									Package: node.Package,
-									Name:    t.Sel.Name,
-								},
+				if impt.IsBlueprintBackend && frameworks.IsBlueprintBackend(t.Sel.Name) {
+					newField := &analyzer.DatabaseField{
+						Variable: gocode.Variable{
+							Name: paramName,
+							Type: &gocode.UserType{
+								Package: impt.Package,
+								Name:    t.Sel.Name,
 							},
-							Lineno: field.Pos(),
-							Ast:    field,
-						}
-					default:
-						logger.Logger.Warnf("unknown database type field %s for service %s", t.Sel.Name, node.Name)
+						},
+						Lineno: 	field.Pos(),
+						Ast:    	field,
+						IsQueue: 	frameworks.IsBlueprintBackendQueue(t.Sel.Name),
 					}
+					if frameworks.IsBlueprintBackendQueue(t.Sel.Name) {
+						newField.IsQueue = true
+						node.ImplementsQueue = true
+					}
+					node.Fields[paramName] = newField
 				}
 				// check if the import matches the path of any of existing services
 				for _, s := range node.Services {
@@ -230,66 +230,84 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string) {
 	}
 }
 
-func (node *ServiceNode) ParseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
-	logger.Logger.Debugf("visiting method %s\n", parsedFuncDecl.Name)
+func (node *ServiceNode) ParseQueueImplementation() {
+	queues := []*analyzer.DatabaseField{}
+	// get all implemented queues
+	for _, field := range node.Fields {
+		if dbField, ok := field.(*analyzer.DatabaseField); ok && dbField.IsQueue {
+			queues = append(queues, dbField)
+		}
+	}
 
+	// search for the method that implements the queues
+}
+
+func isFieldCallInBody(n ast.Node, parsedFuncDecl *ParsedFuncDecl) (bool, *ast.CallExpr, *ast.SelectorExpr, *ast.SelectorExpr, *ast.Ident)  {
 	// e.g. f.queue.Push
 	//    ^ident2 ^ident ^method
 	// e.g. f.storageService.StorePost
 	//      ^ident2  ^ident    ^method
-	ast.Inspect(parsedFuncDecl.Ast, func(n ast.Node) bool {
-		if funcCall, ok := n.(*ast.CallExpr); ok {
-			if method, ok := funcCall.Fun.(*ast.SelectorExpr); ok {
-				// get first selector (e.g. storageService)
-				if ident, ok := method.X.(*ast.SelectorExpr); ok {
-					// get second selector (e.g. f)
-					if ident2, ok := ident.X.(*ast.Ident); ok {
-						// store function call either as service call or database call
-						parsedCallExpr := &ParsedCallExpr{
-							Ast:         funcCall,
-							Receiver:    ident2.Name,
-							TargetField: ident.Sel.Name,
-							Name:        method.Sel.Name,
-							Pos:         funcCall.Pos(),
-						}
-
-						// check if ident2 (e.g. f) is the current service receiver being implemented by the method
-						if ident2.Name == parsedFuncDecl.Recv.Name {
-							// if the targeted variable corresponds to a service field
-							if field, ok := node.Fields[parsedCallExpr.TargetField]; ok {
-								// if the field corresponds to a service field
-								if serviceField, ok := field.(*analyzer.ServiceField); ok {
-									// 1. extract the service field from the current service
-									// 2. get the target node service for the type
-									// 3. add the targeted method of the other service for the current call expression
-									targetServiceType := GetShortServiceTypeStr(serviceField.Type)
-									targetServiceNode := node.Services[targetServiceType]
-									targetMethod := targetServiceNode.ExposedMethods[parsedCallExpr.Name]
-									parsedCallExpr.Method = targetMethod
-									// set the source (caller service) and destination (callee service) types
-									parsedCallExpr.SrcType = &ServiceType{Name: node.Name, Package: node.Package}
-									parsedCallExpr.DestType = serviceField.Variable.Type
-									// add the call expr to the existing calls of the current service
-									parsedFuncDecl.ServiceCalls[parsedCallExpr.Pos] = parsedCallExpr
-								}
-								// if the field corresponds to a database field
-								if databaseField, ok := field.(*analyzer.DatabaseField); ok {
-									// 1. extract the service field from the current service
-									// 2. get the target database node
-									// 3. add the target method for the current call expression
-									targetDatabaseType := GetShortServiceTypeStr(databaseField.Type)
-									parsedCallExpr.Method = frameworks.GetBackendMethod(fmt.Sprintf("%s.%s", targetDatabaseType, parsedCallExpr.Name))
-									
-									// set the source (caller service) and destination (callee database) types
-									parsedCallExpr.SrcType = &ServiceType{Name: node.Name, Package: node.Package}
-									parsedCallExpr.DestType = databaseField.Variable.Type
-									// add the call expr to the existing calls of the current service
-									parsedFuncDecl.DatabaseCalls[parsedCallExpr.Pos] = parsedCallExpr
-								}
-							}
-						}
-
+	if funcCall, ok := n.(*ast.CallExpr); ok {
+		if method, ok := funcCall.Fun.(*ast.SelectorExpr); ok {
+			// get first selector (e.g. storageService)
+			if ident, ok := method.X.(*ast.SelectorExpr); ok {
+				// get second selector (e.g. f)
+				if ident2, ok := ident.X.(*ast.Ident); ok {
+					// check if ident2 (e.g. f) is the current service receiver being implemented by the method
+					if ident2.Name == parsedFuncDecl.Recv.Name {
+						return true, funcCall, method, ident, ident2
 					}
+				}
+			}
+		}
+	}
+	return false, nil, nil, nil, nil
+}
+
+func (node *ServiceNode) ParseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
+	logger.Logger.Debugf("visiting method %s\n", parsedFuncDecl.Name)
+
+	ast.Inspect(parsedFuncDecl.Ast, func(n ast.Node) bool {
+		ok, funcCall, method, ident, ident2 := isFieldCallInBody(n, parsedFuncDecl)
+		if ok {
+			// store function call either as service call or database call
+			parsedCallExpr := &ParsedCallExpr{
+				Ast:         funcCall,
+				Receiver:    ident2.Name,
+				TargetField: ident.Sel.Name,
+				Name:        method.Sel.Name,
+				Pos:         funcCall.Pos(),
+			}
+			// if the targeted variable corresponds to a service field
+			if field, ok := node.Fields[parsedCallExpr.TargetField]; ok {
+				// if the field corresponds to a service field
+				if serviceField, ok := field.(*analyzer.ServiceField); ok {
+					// 1. extract the service field from the current service
+					// 2. get the target node service for the type
+					// 3. add the targeted method of the other service for the current call expression
+					targetServiceType := GetShortServiceTypeStr(serviceField.Type)
+					targetServiceNode := node.Services[targetServiceType]
+					targetMethod := targetServiceNode.ExposedMethods[parsedCallExpr.Name]
+					parsedCallExpr.Method = targetMethod
+					// set the source (caller service) and destination (callee service) types
+					parsedCallExpr.SrcType = &ServiceType{Name: node.Name, Package: node.Package}
+					parsedCallExpr.DestType = serviceField.Variable.Type
+					// add the call expr to the existing calls of the current service
+					parsedFuncDecl.ServiceCalls[parsedCallExpr.Pos] = parsedCallExpr
+				}
+				// if the field corresponds to a database field
+				if databaseField, ok := field.(*analyzer.DatabaseField); ok {
+					// 1. extract the service field from the current service
+					// 2. get the target database node
+					// 3. add the target method for the current call expression
+					targetDatabaseType := GetShortServiceTypeStr(databaseField.Type)
+					parsedCallExpr.Method = frameworks.GetBackendMethod(fmt.Sprintf("%s.%s", targetDatabaseType, parsedCallExpr.Name))
+					
+					// set the source (caller service) and destination (callee database) types
+					parsedCallExpr.SrcType = &ServiceType{Name: node.Name, Package: node.Package}
+					parsedCallExpr.DestType = databaseField.Variable.Type
+					// add the call expr to the existing calls of the current service
+					parsedFuncDecl.DatabaseCalls[parsedCallExpr.Pos] = parsedCallExpr
 				}
 			}
 		}

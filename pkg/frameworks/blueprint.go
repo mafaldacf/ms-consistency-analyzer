@@ -25,6 +25,21 @@ func GetBlueprintServiceSpec[T any]() (*workflowspec.Service, error) {
 	return serviceSpec, nil
 }
 
+func IsBlueprintBackend(name string) bool {
+	switch name {
+		case "Queue", "NoSQLDatabase", "Cache":
+			return true
+	}
+	return false
+}
+
+func IsBlueprintBackendQueue(name string) bool {
+	if name == "Queue" {
+		return true
+	}
+	return false
+}
+
 type BlueprintBackend struct {
 	analyzer.Method
 	Name      	string

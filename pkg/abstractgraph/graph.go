@@ -10,7 +10,7 @@ import (
 	"go/token"
 	"os"
 	"sort"
-	"strings" q
+	"strings"
 )
 
 type AbstractNode interface {
@@ -192,7 +192,6 @@ func (ag *AbstractGraph) Save() {
 			return
 		}
 		file.Write(data)
-		//fmt.Println(string(data))
 	}
 }
 
@@ -209,7 +208,6 @@ func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *s
 		return linenos[i] < linenos[j]
 	})
 
-	//FIXME: this is hardcoded but should be automated later
 	abstractGraph.Nodes = append(abstractGraph.Nodes, &AbstractServiceCall{
 		ParsedCall: &service.ParsedCallExpr{
 			TargetField: serviceNode.Name,

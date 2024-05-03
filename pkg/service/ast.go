@@ -150,4 +150,5 @@ type ServiceNode struct {
 	InternalMethods map[string]*ParsedFuncDecl
 
 	ParsedCFGs map[string]*models.ParsedCFG
+	ImplementsQueue bool
 }
