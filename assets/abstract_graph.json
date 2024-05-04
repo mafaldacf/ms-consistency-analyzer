@@ -30,7 +30,7 @@
       }
     }
   ],
-  "children": [
+  "edges": [
     {
       "call": "storageService.StorePost(ctx context.Context, post.ReqID .Postpost .Post)",
       "method": "StorageService.StorePost(ctx, reqID, post)",
@@ -82,7 +82,7 @@
           ]
         }
       ],
-      "children": [
+      "edges": [
         {
           "call": "cache.Put(ctx context.Context, postIDStr .post postnotification.Post)",
           "method": "Cache.Put(key, value)",
@@ -160,7 +160,7 @@
           ]
         }
       ],
-      "children": [
+      "edges": [
         {
           "call": "storageService.ReadPost(ctx context.Context, reqID .postID .)",
           "method": "StorageService.ReadPost(ctx, reqID, postID)",
@@ -206,7 +206,7 @@
               ]
             }
           ],
-          "children": [
+          "edges": [
             {
               "call": "cache.Get(ctx context.Context, postIDStr .\u0026post *.Post)",
               "method": "Cache.Get(key, val)",

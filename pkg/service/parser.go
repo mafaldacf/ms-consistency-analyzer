@@ -1,9 +1,9 @@
 package service
 
 import (
-	"analyzer/pkg/analyzer"
-	"analyzer/pkg/frameworks"
+	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
+	"analyzer/pkg/types"
 	"analyzer/pkg/utils"
 	"fmt"
 	"go/ast"
@@ -57,7 +57,7 @@ func (node *ServiceNode) ParseImports() {
 //     service struct along with the name of the function, the receiver, and the parameters
 //  3. stores the function delc as parsed func decls in the methods of the service node
 
-func (node *ServiceNode) methodImplementsServiceStructure(n ast.Node) (ok bool, funcDecl *ast.FuncDecl, ident *ast.Ident, rcvIdent *ast.Ident) {
+func (node *ServiceNode) methodImplementsService(n ast.Node) (ok bool, funcDecl *ast.FuncDecl, rcvIdent *ast.Ident) {
 	// check if node is a function declaration
 	if funcDecl, ok = n.(*ast.FuncDecl); ok {
 		// check if the function has any receivers (i.e. structure(s) implemented by the function)
@@ -66,68 +66,70 @@ func (node *ServiceNode) methodImplementsServiceStructure(n ast.Node) (ok bool, 
 			if recv, ok := funcDecl.Recv.List[0].Type.(*ast.StarExpr); ok {
 				// check if the data type (e.g. StorageService) of the receiver (i.e. structure(s) implemented by the function)
 				// matches the one we are looking for (i.e. StorageService)
-				if ident, ok = recv.X.(*ast.Ident); ok && ident.Name == node.Impl {
-					// check if the function declaration being implemented by the Service structure
-					// is actually an exposed method to other services
-					if _, ok := node.ExposedMethods[funcDecl.Name.Name]; ok {
-						rcvIdent = funcDecl.Recv.List[0].Names[0]
-						return true, funcDecl, ident, rcvIdent
-					}
+				if ident, ok := recv.X.(*ast.Ident); ok && ident.Name == node.Impl {
+					rcvIdent = funcDecl.Recv.List[0].Names[0]
+					return true, funcDecl, rcvIdent
 				}
 			}
 		}
 	}
-	return false, nil, nil, nil
+	return false, nil, nil
 }
 
-func (node *ServiceNode) parseFuncDeclParams(funcDecl *ast.FuncDecl) []*analyzer.FunctionField {
-	var params []*analyzer.FunctionField
+func (node *ServiceNode) methodExposedByService(funcDecl *ast.FuncDecl) bool {
+	// check if the function declaration being implemented by the Service structure
+	// is actually an exposed method to other services
+	_, ok := node.ExposedMethods[funcDecl.Name.Name]
+	return ok
+}
+
+func (node *ServiceNode) parseFuncDeclParams(funcDecl *ast.FuncDecl) []*types.FunctionField {
+	var params []*types.FunctionField
 	for _, field := range funcDecl.Type.Params.List {
 		// TODO: any types with selector! e.g. model.Message (careful with context.Context)
 		switch t := field.Type.(type) {
-			case *ast.Ident:
+		case *ast.Ident:
+			for _, fieldIdent := range field.Names {
+				newParam := &types.FunctionField{
+					Variable: gocode.Variable{
+						Name: fieldIdent.Name,
+					},
+					Lineno: field.Pos(),
+					Ast:    field,
+				}
+				if utils.IsBasicType(t.Name) {
+					newParam.Type = &gocode.BasicType{
+						Name: t.Name,
+					}
+				} else {
+					newParam.Type = &gocode.UserType{
+						Name:    t.Name,
+						Package: node.Package,
+					}
+				}
+				params = append(params, newParam)
+			}
+		case *ast.SelectorExpr:
+			if pkgIdent, ok := t.X.(*ast.Ident); ok {
 				for _, fieldIdent := range field.Names {
-					newParam := &analyzer.FunctionField{
+					importPathAlias := pkgIdent.Name
+					importPath := node.Imports[importPathAlias]
+					newParam := &types.FunctionField{
 						Variable: gocode.Variable{
 							Name: fieldIdent.Name,
+							Type: &gocode.UserType{
+								Name:    t.Sel.Name,
+								Package: importPath.Package,
+							},
 						},
 						Lineno: field.Pos(),
 						Ast:    field,
 					}
-					if utils.IsBasicType(t.Name) {
-						newParam.Type = &gocode.BasicType{
-							Name: t.Name,
-						}
-					} else {
-						newParam.Type = &gocode.UserType{
-							Name: t.Name,
-							Package: node.Package,
-						}
-					}
 					params = append(params, newParam)
 				}
-			case *ast.SelectorExpr:
-				if pkgIdent, ok := t.X.(*ast.Ident); ok {
-					for _, fieldIdent := range field.Names {
-						importPathAlias := pkgIdent.Name
-						importPath := node.Imports[importPathAlias]
-						newParam := &analyzer.FunctionField{
-							Variable: gocode.Variable{
-								Name: fieldIdent.Name,
-								Type:  &gocode.UserType{
-									Name: t.Sel.Name,
-									Package: importPath.Package,
-								},
-							},
-							Lineno: field.Pos(),
-							Ast:    field,
-						}
-						params = append(params, newParam)
-					}
-				}
+			}
 		}
 	}
-	logger.Logger.Warnf("HEREEEEEEEEEE appending for %s: %v\n", funcDecl.Name, params)
 	return params
 }
 
@@ -135,24 +137,33 @@ func (node *ServiceNode) ParseMethods() {
 	logger.Logger.Debugf("inspecting exposed methods for service implementation %s\n", node.Impl)
 
 	ast.Inspect(node.File, func(n ast.Node) bool {
-		ok, funcDecl, ident, rcvIdent := node.methodImplementsServiceStructure(n)
+		ok, funcDecl, rcvIdent := node.methodImplementsService(n)
 		if ok {
-			logger.Logger.Debugf("> (%s *%s) %s [:%d]\n", rcvIdent, ident.Name, funcDecl.Name.Name, funcDecl.Pos())
-			params := node.parseFuncDeclParams(funcDecl)
-			parsedFuncDecl := ParsedFuncDecl{
-				Ast:           funcDecl,
-				Name:          funcDecl.Name.Name,
-				Recv:          rcvIdent,
-				Params:        params,
-				DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
-				ServiceCalls:  make(map[token.Pos]*ParsedCallExpr),
-				Service: 	   node.Name,
+			if node.methodExposedByService(funcDecl) {
+				parsedFuncDecl := node.addExposedMethod(funcDecl, rcvIdent)
+				logger.Logger.Debugf("Found exposed method: %s", parsedFuncDecl.String())
+			} else {
+				parsedFuncDecl := node.addInternalMethod(funcDecl, rcvIdent)
+				logger.Logger.Debugf("Found internal method: %s", parsedFuncDecl.String())
+				if node.ImplementsQueue {
+					node.parseQueueImplementationIfWorker(parsedFuncDecl)
+				}
 			}
-			node.ExposedMethods[parsedFuncDecl.Name] = &parsedFuncDecl
 		}
 		return true
 	})
-	logger.Logger.Debugln()
+}
+
+func (node *ServiceNode) ParseMethodsBody() {
+	for _, method := range node.ExposedMethods {
+		node.parseMethodBodyCalls(method)
+	}
+	for _, method := range node.InternalMethods {
+		node.parseMethodBodyCalls(method)
+	}
+	for _, method := range node.WorkerMethods {
+		node.parseMethodBodyCalls(method)
+	}
 }
 
 func ParseInterfaceMethods(file *ast.File) {
@@ -172,7 +183,7 @@ func ParseInterfaceMethods(file *ast.File) {
 	})
 }
 
-func (node *ServiceNode) ParseStructFields() {
+func (node *ServiceNode) ParseServiceFields() {
 	logger.Logger.Debugf("inspecting fields for service %s\n", node.Name)
 
 	ast.Inspect(node.File, func(n ast.Node) bool {
@@ -199,7 +210,7 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string) {
 		// the field indeed corresponds to another service
 		// so the package of the variable is the same
 		if _, ok := node.Services[t.Name]; ok {
-			node.Fields[paramName] = &analyzer.ServiceField{
+			node.Fields[paramName] = &types.ServiceField{
 				Variable: gocode.Variable{
 					Name: paramName,
 					Type: &gocode.UserType{
@@ -220,7 +231,7 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string) {
 			if impt, ok := node.Imports[ident.Name]; ok {
 				// check if the matched package is a database package imported from blueprint
 				if impt.IsBlueprintBackend && frameworks.IsBlueprintBackend(t.Sel.Name) {
-					newField := &analyzer.DatabaseField{
+					newField := &types.DatabaseField{
 						Variable: gocode.Variable{
 							Name: paramName,
 							Type: &gocode.UserType{
@@ -228,9 +239,9 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string) {
 								Name:    t.Sel.Name,
 							},
 						},
-						Lineno: 	field.Pos(),
-						Ast:    	field,
-						IsQueue: 	frameworks.IsBlueprintBackendQueue(t.Sel.Name),
+						Lineno:  field.Pos(),
+						Ast:     field,
+						IsQueue: frameworks.IsBlueprintBackendQueue(t.Sel.Name),
 					}
 					if frameworks.IsBlueprintBackendQueue(t.Sel.Name) {
 						newField.IsQueue = true
@@ -241,7 +252,7 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string) {
 				// check if the import matches the path of any of existing services
 				for _, s := range node.Services {
 					if s.Package == impt.Package {
-						node.Fields[paramName] = &analyzer.ServiceField{
+						node.Fields[paramName] = &types.ServiceField{
 							Variable: gocode.Variable{
 								Name: paramName,
 								Type: &gocode.UserType{
@@ -261,32 +272,79 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string) {
 	}
 }
 
-func (node *ServiceNode) ParseQueueImplementation() {
-	queues := []*analyzer.DatabaseField{}
+func (node *ServiceNode) parseQueueImplementationIfWorker(parsedFuncDecl *ParsedFuncDecl) {
+	/* queues := []*types.DatabaseField{}
 	// get all implemented queues
 	for _, field := range node.Fields {
-		if dbField, ok := field.(*analyzer.DatabaseField); ok && dbField.IsQueue {
+		if dbField, ok := field.(*types.DatabaseField); ok && dbField.IsQueue {
 			queues = append(queues, dbField)
 		}
-	}
+	} */
 
-	// search for the method that implements the queues
+	// inspect methods
+	ast.Inspect(parsedFuncDecl.Ast, func(n ast.Node) bool {
+		ok, _, methodIdent, fieldIdent, _ := fieldCallInMethodBody(n, parsedFuncDecl)
+		if !ok {
+			return true
+		}
+		if field, isField := node.Fields[fieldIdent.Name]; isField {
+			if dbField, isDbField := field.(*types.DatabaseField); isDbField {
+				if dbField.IsQueue && methodIdent.Name == "Pop" {
+					logger.Logger.Debugf("Found internal (worker) method: %s", parsedFuncDecl.String())
+					// move from internal to worker methods (althought theoretically they are still internal)
+					delete(node.InternalMethods, parsedFuncDecl.Name)
+					node.WorkerMethods[parsedFuncDecl.Name] = parsedFuncDecl
+				}
+			}
+		}
+		return true
+	})
 }
 
-func hasFieldCallInMethodBody(node ast.Node, parsedFuncDecl *ParsedFuncDecl) (bool, *ast.CallExpr, *ast.SelectorExpr, *ast.SelectorExpr, *ast.Ident)  {
+func (node *ServiceNode) addInternalMethod(funcDecl *ast.FuncDecl, rcvIdent *ast.Ident) *ParsedFuncDecl {
+	params := node.parseFuncDeclParams(funcDecl)
+	parsedFuncDecl := &ParsedFuncDecl{
+		Ast:           funcDecl,
+		Name:          funcDecl.Name.Name,
+		Recv:          rcvIdent,
+		Params:        params,
+		DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
+		ServiceCalls:  make(map[token.Pos]*ParsedCallExpr),
+		Service:       node.Name,
+	}
+	node.InternalMethods[parsedFuncDecl.Name] = parsedFuncDecl
+	return parsedFuncDecl
+}
+
+func (node *ServiceNode) addExposedMethod(funcDecl *ast.FuncDecl, rcvIdent *ast.Ident) *ParsedFuncDecl {
+	params := node.parseFuncDeclParams(funcDecl)
+	parsedFuncDecl := &ParsedFuncDecl{
+		Ast:           funcDecl,
+		Name:          funcDecl.Name.Name,
+		Recv:          rcvIdent,
+		Params:        params,
+		DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
+		ServiceCalls:  make(map[token.Pos]*ParsedCallExpr),
+		Service:       node.Name,
+	}
+	node.ExposedMethods[parsedFuncDecl.Name] = parsedFuncDecl
+	return parsedFuncDecl
+}
+
+func fieldCallInMethodBody(node ast.Node, parsedFuncDecl *ParsedFuncDecl) (bool, *ast.CallExpr, *ast.Ident, *ast.Ident, *ast.Ident) {
 	// e.g. f.queue.Push
 	//    ^ident2 ^ident ^method
 	// e.g. f.storageService.StorePost
 	//      ^ident2  ^ident    ^method
 	if funcCall, ok := node.(*ast.CallExpr); ok {
-		if method, ok := funcCall.Fun.(*ast.SelectorExpr); ok {
+		if methodSel, ok := funcCall.Fun.(*ast.SelectorExpr); ok {
 			// get first selector (e.g. storageService)
-			if ident, ok := method.X.(*ast.SelectorExpr); ok {
+			if fieldSel, ok := methodSel.X.(*ast.SelectorExpr); ok {
 				// get second selector (e.g. f)
-				if ident2, ok := ident.X.(*ast.Ident); ok {
+				if serviceRcvIdent, ok := fieldSel.X.(*ast.Ident); ok {
 					// check if ident2 (e.g. f) is the current service receiver being implemented by the method
-					if ident2.Name == parsedFuncDecl.Recv.Name {
-						return true, funcCall, method, ident, ident2
+					if serviceRcvIdent.Name == parsedFuncDecl.Recv.Name {
+						return true, funcCall, methodSel.Sel, fieldSel.Sel, serviceRcvIdent
 					}
 				}
 			}
@@ -295,24 +353,24 @@ func hasFieldCallInMethodBody(node ast.Node, parsedFuncDecl *ParsedFuncDecl) (bo
 	return false, nil, nil, nil, nil
 }
 
-func (node *ServiceNode) ParseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
+func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 	logger.Logger.Debugf("visiting method %s\n", parsedFuncDecl.Name)
 
 	ast.Inspect(parsedFuncDecl.Ast, func(n ast.Node) bool {
-		ok, funcCall, method, ident, ident2 := hasFieldCallInMethodBody(n, parsedFuncDecl)
+		ok, funcCall, methodIdent, fieldIdent, serviceRcvIdent := fieldCallInMethodBody(n, parsedFuncDecl)
 		if ok {
 			// store function call either as service call or database call
 			parsedCallExpr := &ParsedCallExpr{
 				Ast:         funcCall,
-				Receiver:    ident2.Name,
-				TargetField: ident.Sel.Name,
-				Name:        method.Sel.Name,
+				Receiver:    serviceRcvIdent.Name,
+				TargetField: fieldIdent.Name,
+				Name:        methodIdent.Name,
 				Pos:         funcCall.Pos(),
 			}
 			// if the targeted variable corresponds to a service field
 			if field, ok := node.Fields[parsedCallExpr.TargetField]; ok {
 				// if the field corresponds to a service field
-				if serviceField, ok := field.(*analyzer.ServiceField); ok {
+				if serviceField, ok := field.(*types.ServiceField); ok {
 					// 1. extract the service field from the current service
 					// 2. get the target node service for the type
 					// 3. add the targeted method of the other service for the current call expression
@@ -327,13 +385,13 @@ func (node *ServiceNode) ParseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 					parsedFuncDecl.ServiceCalls[parsedCallExpr.Pos] = parsedCallExpr
 				}
 				// if the field corresponds to a database field
-				if databaseField, ok := field.(*analyzer.DatabaseField); ok {
+				if databaseField, ok := field.(*types.DatabaseField); ok {
 					// 1. extract the service field from the current service
 					// 2. get the target database node
 					// 3. add the target method for the current call expression
 					targetDatabaseType := GetShortServiceTypeStr(databaseField.Type)
 					parsedCallExpr.Method = frameworks.GetBackendMethod(fmt.Sprintf("%s.%s", targetDatabaseType, parsedCallExpr.Name))
-					
+
 					// set the source (caller service) and destination (callee database) types
 					parsedCallExpr.SrcType = &ServiceType{Name: node.Name, Package: node.Package}
 					parsedCallExpr.DestType = databaseField.Variable.Type

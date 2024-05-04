@@ -1,57 +1,36 @@
 package frameworks
 
 import (
-	"analyzer/pkg/analyzer"
-	"analyzer/pkg/logger"
+	"analyzer/pkg/types"
 	"fmt"
-	"reflect"
 
 	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
-	"github.com/blueprint-uservices/blueprint/plugins/workflow/workflowspec"
 )
-
-func GetBlueprintServiceSpec[T any]() (*workflowspec.Service, error) {
-	t := reflect.TypeOf(new(T)).Elem()
-	serviceSpec, err := workflowspec.GetService[T]()
-	if err != nil {
-		logger.Logger.Error(fmt.Sprintf("error getting service %s from workflow spec %s", t, err.Error()))
-		return nil, err
-	}
-	if serviceSpec == nil {
-		msg := fmt.Sprintf("workflow spec of service %s is nil", t)
-		logger.Logger.Error(msg)
-		return nil, fmt.Errorf(msg)
-	}
-	return serviceSpec, nil
-}
 
 func IsBlueprintBackend(name string) bool {
 	switch name {
-		case "Queue", "NoSQLDatabase", "Cache":
-			return true
-	}
-	return false
-}
-
-func IsBlueprintBackendQueue(name string) bool {
-	if name == "Queue" {
+	case "Queue", "NoSQLDatabase", "Cache":
 		return true
 	}
 	return false
 }
 
+func IsBlueprintBackendQueue(name string) bool {
+	return name == "Queue"
+}
+
 type BlueprintBackend struct {
-	analyzer.Method
-	Name      	string
-	Params 		[]*analyzer.FunctionField
-	Returns 	[]*analyzer.FunctionField
+	types.Method
+	Name    string
+	Params  []*types.FunctionField
+	Returns []*types.FunctionField
 }
 
 func (b *BlueprintBackend) String() string {
 	repr := fmt.Sprintf("%s(", b.Name)
 	for i, param := range b.Params {
 		repr += param.GetName()
-		if i < len(b.Params) - 1 {
+		if i < len(b.Params)-1 {
 			repr += ", "
 		}
 	}
@@ -59,19 +38,19 @@ func (b *BlueprintBackend) String() string {
 	return repr
 }
 
-func (b *BlueprintBackend) GetParams() []*analyzer.FunctionField {
+func (b *BlueprintBackend) GetParams() []*types.FunctionField {
 	return b.Params
 }
 
-func (b *BlueprintBackend) GetReturns() []*analyzer.FunctionField {
+func (b *BlueprintBackend) GetReturns() []*types.FunctionField {
 	return b.Returns
 }
 
 func GetBackendMethod(name string) *BlueprintBackend {
 	if name == "Cache.Put" {
-		return &BlueprintBackend {
+		return &BlueprintBackend{
 			Name: name,
-			Params: []*analyzer.FunctionField{
+			Params: []*types.FunctionField{
 				{
 					Variable: gocode.Variable{
 						Name: "key",
@@ -85,8 +64,7 @@ func GetBackendMethod(name string) *BlueprintBackend {
 				{
 					Variable: gocode.Variable{
 						Name: "value",
-						Type: &gocode.InterfaceType{
-						},
+						Type: &gocode.InterfaceType{},
 					},
 					Lineno: 0,
 					Ast:    nil,
@@ -95,9 +73,9 @@ func GetBackendMethod(name string) *BlueprintBackend {
 		}
 	}
 	if name == "Cache.Get" {
-		return &BlueprintBackend {
+		return &BlueprintBackend{
 			Name: name,
-			Params: []*analyzer.FunctionField{
+			Params: []*types.FunctionField{
 				{
 					Variable: gocode.Variable{
 						Name: "key",
@@ -111,8 +89,7 @@ func GetBackendMethod(name string) *BlueprintBackend {
 				{
 					Variable: gocode.Variable{
 						Name: "val",
-						Type: &gocode.InterfaceType{
-						},
+						Type: &gocode.InterfaceType{},
 					},
 					Lineno: 0,
 					Ast:    nil,

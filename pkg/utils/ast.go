@@ -4,27 +4,7 @@ import (
 	"analyzer/pkg/logger"
 	"go/ast"
 	"reflect"
-
-	/* "github.com/blueprint-uservices/blueprint/plugins/golang/gocode" */
 )
-
-/* func ConvertExprTypes(expr ast.Expr) (gocode.TypeName) {
-	switch e := expr.(type) {
-	case *ast.Ident:
-		expr = append(args, e.Name)
-		
-		// e.g. &post
-	case *ast.UnaryExpr:
-		logger.Logger.Warnf("HEREEEEEEEEE %v", e.X)
-
-	// e.g. post.ReqID
-	//       ^ ident ^ selector
-	case *ast.SelectorExpr:
-		if ident, ok := e.X.(*ast.Ident); ok {
-			ident.
-		}
-	}
-} */
 
 func TransverseExprIdentifiers(expr ast.Expr) (string, []string) {
 	var identifiers []string

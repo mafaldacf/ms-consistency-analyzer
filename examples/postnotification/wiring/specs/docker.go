@@ -9,8 +9,8 @@ import (
 	"github.com/blueprint-uservices/blueprint/plugins/gotests"
 	"github.com/blueprint-uservices/blueprint/plugins/http"
 	"github.com/blueprint-uservices/blueprint/plugins/linuxcontainer"
-	"github.com/blueprint-uservices/blueprint/plugins/mongodb"
 	"github.com/blueprint-uservices/blueprint/plugins/rabbitmq"
+	"github.com/blueprint-uservices/blueprint/plugins/redis"
 	"github.com/blueprint-uservices/blueprint/plugins/thrift"
 	"github.com/blueprint-uservices/blueprint/plugins/workflow"
 )
@@ -27,7 +27,7 @@ func makeDockerSpec(spec wiring.WiringSpec) ([]string, error) {
 	var containers []string
 	var allServices []string
 
-	post_db := mongodb.Container(spec, "post_db")
+	post_db := redis.Container(spec, "post_db")
 	notification_queue := rabbitmq.Container(spec, "notification_queue", "notification")
 
 	allServices = append(allServices, post_db)

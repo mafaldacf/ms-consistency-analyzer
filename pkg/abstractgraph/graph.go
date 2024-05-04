@@ -1,10 +1,10 @@
 package abstractgraph
 
 import (
-	"analyzer/pkg/analyzer"
 	"analyzer/pkg/app"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
+	"analyzer/pkg/types"
 	"encoding/json"
 	"fmt"
 	"go/token"
@@ -14,24 +14,24 @@ import (
 )
 
 type AbstractNode interface {
-	GetParams() []*analyzer.Variable
+	GetParams() []*types.Variable
 	String() string
 }
 
 type AbstractServiceCall struct {
 	AbstractNode `json:"-"` // omit from json
-	Call         string     			`json:"call,omitempty"`
-	Method       string        			`json:"method,omitempty"`
+	Call         string     `json:"call,omitempty"`
+	Method       string     `json:"method,omitempty"`
 	// name of the service calling e.g. StorageService
-	Caller     string                  	`json:"caller,omitempty"`
-	Params     []*analyzer.Variable    	`json:"params,omitempty"`
-	ParsedCall *service.ParsedCallExpr 	`json:"-"` // omit from json
+	Caller     string                  `json:"caller,omitempty"`
+	Params     []*types.Variable       `json:"params,omitempty"`
+	ParsedCall *service.ParsedCallExpr `json:"-"` // omit from json
 	// nodes representing database calls cannot contain children as well
-	Children []AbstractNode 			`json:"children,omitempty"` // omit from json
-	Parent 	 AbstractNode 				`json:"-"` // omit from json
+	Children []AbstractNode `json:"edges,omitempty"` // omit from json
+	Parent   AbstractNode   `json:"-"`                  // omit from json
 }
 
-func (svc *AbstractServiceCall) GetParams() []*analyzer.Variable {
+func (svc *AbstractServiceCall) GetParams() []*types.Variable {
 	return svc.Params
 }
 
@@ -41,14 +41,14 @@ func (svc *AbstractServiceCall) String() string {
 
 type AbstractDatabaseCall struct {
 	AbstractNode `json:"-"`              // omit from json
-	Call         string                  	`json:"call,omitempty"`
-	Method       string        				`json:"method,omitempty"`
-	Params       []*analyzer.Variable    	`json:"params,omitempty"`
-	ParsedCall   *service.ParsedCallExpr 	`json:"-"` // omit from json
-	Parent 	 	AbstractNode 				`json:"-"` // omit from json
+	Call         string                  `json:"call,omitempty"`
+	Method       string                  `json:"method,omitempty"`
+	Params       []*types.Variable       `json:"params,omitempty"`
+	ParsedCall   *service.ParsedCallExpr `json:"-"` // omit from json
+	Parent       AbstractNode            `json:"-"` // omit from json
 }
 
-func (db *AbstractDatabaseCall) GetParams() []*analyzer.Variable {
+func (db *AbstractDatabaseCall) GetParams() []*types.Variable {
 	return db.Params
 }
 
@@ -63,7 +63,7 @@ type AbstractGraph struct {
 	// helpers
 	globalIdx        int64
 	visitedNodes     map[AbstractNode]bool
-	nodesBlockParams map[AbstractNode][]*analyzer.Variable
+	nodesBlockParams map[AbstractNode][]*types.Variable
 }
 
 func Build(app *app.App, entryPoints []string) *AbstractGraph {
@@ -91,7 +91,7 @@ func (ag *AbstractGraph) matchVarsIdentifiers() {
 	// variable id parameter is 0 when not previously set
 	ag.globalIdx = 1
 	ag.visitedNodes = make(map[AbstractNode]bool, 0)
-	ag.nodesBlockParams = make(map[AbstractNode][]*analyzer.Variable, 0)
+	ag.nodesBlockParams = make(map[AbstractNode][]*types.Variable, 0)
 
 	//FIXME: root node (e.g. UploadPost) must have callerParam args aswell
 	ag.matchVarsIdentifiersHelper(ag.Nodes[0])
@@ -118,11 +118,11 @@ func (ag *AbstractGraph) matchVarsIdentifiersHelper(node AbstractNode) {
 				if !ag.visitedNodes[childNode] {
 					// get all dependencies recursively within children
 					// (i think it is safe to have duplicates)
-					var deps []*analyzer.Variable
+					var deps []*types.Variable
 					for _, param := range childNode.GetParams() {
 						deps = append(deps, getAllVariableDeps(param)...)
 					}
-					
+
 					// block params is a subset of deps when a variable originates from
 					// the block parameter i.e. the (remote) method parameter
 					// FIXME: FOR NOW BECAUSE WE ONLY SUPPORT 1 BLOCK PER REMOTE METHOD
@@ -141,21 +141,21 @@ func (ag *AbstractGraph) matchVarsIdentifiersHelper(node AbstractNode) {
 				// if they correspond to the same index in the func call and func definition, resp.
 				for _, childParam := range ag.nodesBlockParams[childNode] {
 					if childParam.BlockParamIdx == callerParamIdx &&
-					// ^ sanity check (-1 is when it was not yet set)
-					childParam.Id == -1 {
+						// ^ sanity check (-1 is when it was not yet set)
+						childParam.Id == -1 {
 
-							logger.Logger.Warnf("\t matching child (%s) param '%s' with parent (%s) param '%s' for id %d", childNode.String(), childParam.Name, node.String(), callerParam.Name, callerParam.Id)
+						logger.Logger.Debugf("\t matching child (%s) param '%s' with parent (%s) param '%s' for id %d", childNode.String(), childParam.Name, node.String(), callerParam.Name, callerParam.Id)
 
-							childParam.Id = callerParam.Id
-							// add reference
-							//TODO: add more stuff later
-							childParam.Ref = &analyzer.Ref{
-								Name:     callerParam.Name,
-								Id:       callerParam.Id,
-								Creator:  abstractService.Caller,
-								Variable: callerParam,
-							}
+						childParam.Id = callerParam.Id
+						// add reference
+						//TODO: add more stuff later
+						childParam.Ref = &types.Ref{
+							Name:     callerParam.Name,
+							Id:       callerParam.Id,
+							Creator:  abstractService.Caller,
+							Variable: callerParam,
 						}
+					}
 					logger.Logger.Debug()
 				}
 				logger.Logger.Debug()
@@ -170,8 +170,8 @@ func (ag *AbstractGraph) matchVarsIdentifiersHelper(node AbstractNode) {
 	}
 }
 
-func getAllVariableDeps(v *analyzer.Variable) []*analyzer.Variable {
-	var deps []*analyzer.Variable
+func getAllVariableDeps(v *types.Variable) []*types.Variable {
+	var deps []*types.Variable
 	for _, d := range v.Deps {
 		deps = append(deps, getAllVariableDeps(d)...)
 	}
@@ -223,14 +223,14 @@ func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *s
 	//FIXME: this is hardcoded but should be automated later
 	entryMethod := serviceNode.ExposedMethods[targetMethod.Name]
 	for _, p := range entryMethod.Params {
-		abstractService.Params = append(abstractService.Params, &analyzer.Variable{
+		abstractService.Params = append(abstractService.Params, &types.Variable{
 			Name: p.Name,
 			Type: p.Type,
-			Id: -1,
-			Ref: &analyzer.Ref{
+			Id:   -1,
+			Ref: &types.Ref{
 				Creator: "Client",
-				Name: p.Name,
-				Id: -1,
+				Name:    p.Name,
+				Id:      -1,
 			},
 		})
 	}
@@ -242,7 +242,7 @@ func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *s
 				ParsedCall: dbCall,
 				Params:     dbCall.Params,
 				Call:       dbCall.SimpleString(),
-				Method: 	dbCall.Method.String(),
+				Method:     dbCall.Method.String(),
 			})
 		} else if targetMethod.ServiceCalls[lineno] != nil {
 			svcCall := targetMethod.ServiceCalls[lineno]
@@ -288,8 +288,8 @@ func (ag *AbstractGraph) recurseBuild(parentNode *AbstractServiceCall) {
 						ParsedCall: dbCall,
 						Params:     dbCall.Params,
 						Call:       dbCall.SimpleString(),
-						Method: 	dbCall.Method.String(),
-						Parent: 	abstractService,
+						Method:     dbCall.Method.String(),
+						Parent:     abstractService,
 					})
 				} else if targetMethod.ServiceCalls[lineno] != nil {
 					svcCall := targetMethod.ServiceCalls[lineno]
@@ -299,7 +299,7 @@ func (ag *AbstractGraph) recurseBuild(parentNode *AbstractServiceCall) {
 						Params:     svcCall.Params,
 						Call:       svcCall.SimpleString(),
 						Method:     svcCall.Method.String(),
-						Parent: 	abstractService,
+						Parent:     abstractService,
 					})
 				}
 			}

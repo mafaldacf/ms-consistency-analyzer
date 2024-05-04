@@ -1,4 +1,4 @@
-package analyzer
+package types
 
 import (
 	"fmt"
@@ -27,9 +27,10 @@ type ServiceField struct {
 type DatabaseField struct {
 	Field
 	gocode.Variable
-	Lineno token.Pos
-	Ast    *ast.Field
-	IsQueue bool
+	Lineno 		token.Pos
+	Ast    		*ast.Field
+	IsQueue		bool
+	Instance    *DatabaseInstance
 }
 
 type Method interface {

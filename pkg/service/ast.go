@@ -1,8 +1,7 @@
 package service
 
 import (
-	"analyzer/pkg/analyzer"
-	"analyzer/pkg/models"
+	"analyzer/pkg/types"
 	"fmt"
 	"go/ast"
 	"go/token"
@@ -41,24 +40,24 @@ func GetShortServiceTypeStr(typeName gocode.TypeName) string {
 }
 
 type ParsedFuncDecl struct {
-	analyzer.Method
-	Ast           *ast.FuncDecl 					`json:"-"` // omit from json
-	Name          string 							`json:"name"` // omit from json
-	Recv          *ast.Ident 						`json:"-"` // omit from json
-	DatabaseCalls map[token.Pos]*ParsedCallExpr 	`json:"-"` // omit from json
-	ServiceCalls  map[token.Pos]*ParsedCallExpr 	`json:"-"` // omit from json
-	Service 	  string 							`json:"-"`
+	types.Method
+	Ast           *ast.FuncDecl                 `json:"-"`    // omit from json
+	Name          string                        `json:"name"` // omit from json
+	Recv          *ast.Ident                    `json:"-"`    // omit from json
+	DatabaseCalls map[token.Pos]*ParsedCallExpr `json:"-"`    // omit from json
+	ServiceCalls  map[token.Pos]*ParsedCallExpr `json:"-"`    // omit from json
+	Service       string                        `json:"-"`
 	// used to fetch the params when generating the basic cfg
 	// to store in the variables array of the function
-	Params 	[]*analyzer.FunctionField
-	Returns []*analyzer.FunctionField
+	Params  []*types.FunctionField
+	Returns []*types.FunctionField
 }
 
 func (p *ParsedFuncDecl) String() string {
 	repr := fmt.Sprintf("%s.%s(", p.Service, p.Name)
 	for i, arg := range p.Params {
 		repr += arg.GetName()
-		if i < len(p.Params) - 1 {
+		if i < len(p.Params)-1 {
 			repr += ", "
 		}
 	}
@@ -66,11 +65,11 @@ func (p *ParsedFuncDecl) String() string {
 	return repr
 }
 
-func (p *ParsedFuncDecl) GetParams() []*analyzer.FunctionField {
+func (p *ParsedFuncDecl) GetParams() []*types.FunctionField {
 	return p.Params
 }
 
-func (p *ParsedFuncDecl) GetReturns() []*analyzer.FunctionField {
+func (p *ParsedFuncDecl) GetReturns() []*types.FunctionField {
 	return p.Returns
 }
 
@@ -83,22 +82,22 @@ type ParsedImportSpec struct {
 }
 
 type ParsedCallExpr struct {
-	Ast *ast.CallExpr
+	Ast  *ast.CallExpr
 	Name string
 
 	// represents the name of the field for the interface
 	// that the method is implementing e.g. f in 'f.storageService.StorePost(...)'
-	Receiver string
+	Receiver    string
 	TargetField string
 
 	// type of service calling (src) and being called (dest)
 	SrcType  gocode.TypeName
 	DestType gocode.TypeName
 
-	Pos  token.Pos
-	Params []*analyzer.Variable
+	Pos    token.Pos
+	Params []*types.Variable
 
-	Method analyzer.Method
+	Method types.Method
 }
 
 func (call *ParsedCallExpr) String() string {
@@ -124,7 +123,7 @@ func (call *ParsedCallExpr) SimpleString() string {
 	funcCallStr := fmt.Sprintf("%s.%s(", call.TargetField, call.Name)
 	for i, arg := range call.Params {
 		funcCallStr += arg.String()
-		if i < len(call.Ast.Args) - 2 {
+		if i < len(call.Ast.Args)-2 {
 			funcCallStr += ", "
 		}
 	}
@@ -138,17 +137,39 @@ type ServiceNode struct {
 	Filepath string
 	Package  string
 	File     *ast.File
-	Fields   map[string]analyzer.Field
+	Fields   map[string]types.Field
 	Imports  map[string]*ParsedImportSpec
 	// the map key is the service type (e.g. StorageService in 'storageService StorageService')
-	Services map[string]*ServiceNode
+	Services 	map[string]*ServiceNode
+	Databases 	map[string]types.DatabaseInstance
 	// safe because methods are unique since Golang does not allow overloading
 	// also this captures all exposed methods because they must be defined within the service struct file
-	ExposedMethods map[string]*ParsedFuncDecl
-	// FIXME: this does not capture all exposed methods
-	// advised to include the file of origin in the ParsedFuncDecl type for this
+	ExposedMethods  map[string]*ParsedFuncDecl
+	WorkerMethods   map[string]*ParsedFuncDecl
 	InternalMethods map[string]*ParsedFuncDecl
 
-	ParsedCFGs map[string]*models.ParsedCFG
+	ParsedCFGs      map[string]*types.ParsedCFG
 	ImplementsQueue bool
+}
+
+func (n *ServiceNode) String() string {
+	repr := fmt.Sprintf("%s ----> Services: { ", n.Name)
+	i := 0
+	for name := range n.Services {
+		repr += name
+		if i < len(n.Services) - 1 {
+			repr += ", "
+		}
+		i++
+	}
+	repr += " }, Databases: { "
+	i = 0
+	for _, t := range n.Databases {
+		repr += t.String()
+		if i < len(n.Databases) - 1 {
+			repr += ", "
+		}
+		i++
+	}
+	return repr + " }"
 }
