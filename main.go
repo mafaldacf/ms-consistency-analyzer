@@ -5,9 +5,10 @@ import (
 	"analyzer/pkg/app"
 	"analyzer/pkg/controlflow"
 	"analyzer/pkg/frameworks"
-	"analyzer/pkg/logger"
 	"fmt"
+	/* "analyzer/pkg/logger"
 	"postnotification/wiring/specs"
+	"reflect" */
 
 	// this needs to target the root of the app otherwise (and then replace the path in the go.mod file)
 	// otherwise the blueprint workflow plugin won't be able to locate the package
@@ -21,8 +22,12 @@ import (
 	"postnotification/workflow/postnotification"
 	"postnotification/workflow/postnotification/dummy"
 
+	/* "github.com/blueprint-uservices/blueprint/blueprint/pkg/coreplugins/address"
+	"github.com/blueprint-uservices/blueprint/blueprint/pkg/coreplugins/namespaceutil"
+	"github.com/blueprint-uservices/blueprint/blueprint/pkg/ir"
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/wiring"
 	"github.com/blueprint-uservices/blueprint/plugins/cmdbuilder"
+	"github.com/blueprint-uservices/blueprint/plugins/linuxcontainer" */
 )
 
 type BlueprintType interface {
@@ -35,7 +40,7 @@ func main() {
 	uploadServiceSpec, err3 := frameworks.GetBlueprintServiceSpec[postnotification.UploadService]()
 
 	// Build a supported wiring spec
-	builder := cmdbuilder.CmdBuilder{}
+	/* builder := cmdbuilder.CmdBuilder{}
 	builder.Name = "PostNotification"
 	builder.Registry = make(map[string]cmdbuilder.SpecOption)
 	builder.Registry[specs.Docker.Name] = specs.Docker
@@ -56,7 +61,30 @@ func main() {
 	if err != nil {
 		return
 	}
-	fmt.Sprintf("IR: %v", builder.IR)
+	logger.Logger.Warnf(fmt.Sprintf("IR: %v", builder.IR))
+	logger.Logger.Warn("")
+	for _, node := range builder.IR.Children {
+		if n, ok := node.(namespaceutil.IRNamespace); ok {
+			if nn, ok := n.(ir.IRNode); ok {
+				if nnn, ok := nn.(*linuxcontainer.Container); ok {
+					t := reflect.TypeOf(nnn).Elem().Name()
+					logger.Logger.Warnf("visiting IRNamespace for node %s and type %s", nnn.String(), t)
+					for _, child := range nnn.Edges {
+						t := reflect.TypeOf(child).Elem().Name()
+						logger.Logger.Warnf("visiting edges for child %s with type %s", child.Name(), t)
+					}
+					logger.Logger.Warn("")
+				}
+			}
+		} else if n, ok := node.(*address.DialConfig); ok {
+			t := reflect.TypeOf(n).Elem().Name()
+			logger.Logger.Warnf("ignoring DialConfig for node %s with type %s", node.Name(), t)
+		} else {
+			t := reflect.TypeOf(node).Elem().Name()
+			logger.Logger.Warnf("ignoring node %s with type %s", node.Name(), t)
+		}
+	}
+	return */
 
 	if err0 != nil || err1 != nil || err2 != nil || err3 != nil {
 		return

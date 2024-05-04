@@ -4,8 +4,10 @@ import (
 	"context"
 	"math/rand"
 
-	"github.com/blueprint-uservices/blueprint/runtime/core/backend"
 	"postnotification/workflow/postnotification/common"
+	"postnotification/workflow/postnotification/models"
+
+	"github.com/blueprint-uservices/blueprint/runtime/core/backend"
 )
 
 type UploadService interface {
@@ -34,7 +36,7 @@ func (u *UploadServiceImpl) UploadPost(ctx context.Context, username string, tex
 		ReqID:     common.Int64ToString(post.ReqID),
 		PostID:    common.Int64ToString(post.PostID),
 	}
-	u.notifyService.Notify(ctx, message)
+	u.notifyService.Notify(ctx, message, models.Dummy{})
 
 	return post.PostID, nil
 }

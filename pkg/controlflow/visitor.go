@@ -207,21 +207,21 @@ func hasServiceOrDatabaseCall(parsedCfg *models.ParsedCFG, node *ast.CallExpr, p
 
 			//FIXME: CREATE HELPER FUNCTION TO COVER MORE CASES BESIDES SELECTOR
 			// e.g. we can have multiple nested selectors: dummy.post.ReqID
-			switch e := arg.(type) {
+			switch t := arg.(type) {
 			case *ast.Ident:
-				if ok, v := getVariableInBlock(parsedCfg, e.Name); ok {
+				if ok, v := getVariableInBlock(parsedCfg, t.Name); ok {
 					param = v
 				}
 				// e.g. &post
 			case *ast.UnaryExpr:
-				if ident, ok := e.X.(*ast.Ident); ok {
+				if ident, ok := t.X.(*ast.Ident); ok {
 					name := fmt.Sprintf("&%s", ident.Name)
 					if ok, v := getVariableInBlock(parsedCfg, ident.Name); ok {
 						param = &analyzer.Variable{
 							Type: &gocode.Pointer{
 								PointerTo: v.Type,
 							},
-							Id:   -1,
+							Id:   -1, // inline
 							Name: name,
 							Deps: []*analyzer.Variable{v},
 						}
@@ -232,15 +232,12 @@ func hasServiceOrDatabaseCall(parsedCfg *models.ParsedCFG, node *ast.CallExpr, p
 			// e.g. post.ReqID
 			//       ^ ident ^ selector
 			case *ast.SelectorExpr:
-				if ident, ok := e.X.(*ast.Ident); ok {
-					name := fmt.Sprintf("%s.%s", ident.Name, e.Sel.Name)
+				if ident, ok := t.X.(*ast.Ident); ok {
+					name := fmt.Sprintf("%s.%s", ident.Name, t.Sel.Name)
 					if ok, v := getVariableInBlock(parsedCfg, ident.Name); ok {
 						param = &analyzer.Variable{
-							Type: &gocode.UserType{
-								Package: parsedCfg.Package,
-								Name:    name, //FIXME, this needs to be type not name
-							},
-							Id:   -1,
+							Type: v.Type,
+							Id:   -1, // inline
 							Name: name,
 							Deps: []*analyzer.Variable{v},
 						}
@@ -250,8 +247,9 @@ func hasServiceOrDatabaseCall(parsedCfg *models.ParsedCFG, node *ast.CallExpr, p
 			if param != nil {
 				parsedCall.Params = append(parsedCall.Params, param)
 			}
-
+			
 		}
+		logger.Logger.Warnf("AAAAAAAAAAAAAAA for %s: %v\n", parsedCall.Name, parsedCall.Params)
 		return true
 	}
 	// otherwise we return false because we did not find either

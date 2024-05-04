@@ -4,6 +4,7 @@ import (
 	"analyzer/pkg/analyzer"
 	"analyzer/pkg/frameworks"
 	"analyzer/pkg/logger"
+	"analyzer/pkg/utils"
 	"fmt"
 	"go/ast"
 	"go/token"
@@ -55,69 +56,99 @@ func (node *ServiceNode) ParseImports() {
 //  2. finds the function declarations that implement the
 //     service struct along with the name of the function, the receiver, and the parameters
 //  3. stores the function delc as parsed func decls in the methods of the service node
+
+func (node *ServiceNode) methodImplementsServiceStructure(n ast.Node) (ok bool, funcDecl *ast.FuncDecl, ident *ast.Ident, rcvIdent *ast.Ident) {
+	// check if node is a function declaration
+	if funcDecl, ok = n.(*ast.FuncDecl); ok {
+		// check if the function has any receivers (i.e. structure(s) implemented by the function)
+		if funcDecl.Recv != nil && len(funcDecl.Recv.List) > 0 {
+			// get the function's receiver (i.e. i.e. structure(s) implemented by the function)
+			if recv, ok := funcDecl.Recv.List[0].Type.(*ast.StarExpr); ok {
+				// check if the data type (e.g. StorageService) of the receiver (i.e. structure(s) implemented by the function)
+				// matches the one we are looking for (i.e. StorageService)
+				if ident, ok = recv.X.(*ast.Ident); ok && ident.Name == node.Impl {
+					// check if the function declaration being implemented by the Service structure
+					// is actually an exposed method to other services
+					if _, ok := node.ExposedMethods[funcDecl.Name.Name]; ok {
+						rcvIdent = funcDecl.Recv.List[0].Names[0]
+						return true, funcDecl, ident, rcvIdent
+					}
+				}
+			}
+		}
+	}
+	return false, nil, nil, nil
+}
+
+func (node *ServiceNode) parseFuncDeclParams(funcDecl *ast.FuncDecl) []*analyzer.FunctionField {
+	var params []*analyzer.FunctionField
+	for _, field := range funcDecl.Type.Params.List {
+		// TODO: any types with selector! e.g. model.Message (careful with context.Context)
+		switch t := field.Type.(type) {
+			case *ast.Ident:
+				for _, fieldIdent := range field.Names {
+					newParam := &analyzer.FunctionField{
+						Variable: gocode.Variable{
+							Name: fieldIdent.Name,
+						},
+						Lineno: field.Pos(),
+						Ast:    field,
+					}
+					if utils.IsBasicType(t.Name) {
+						newParam.Type = &gocode.BasicType{
+							Name: t.Name,
+						}
+					} else {
+						newParam.Type = &gocode.UserType{
+							Name: t.Name,
+							Package: node.Package,
+						}
+					}
+					params = append(params, newParam)
+				}
+			case *ast.SelectorExpr:
+				if pkgIdent, ok := t.X.(*ast.Ident); ok {
+					for _, fieldIdent := range field.Names {
+						importPathAlias := pkgIdent.Name
+						importPath := node.Imports[importPathAlias]
+						newParam := &analyzer.FunctionField{
+							Variable: gocode.Variable{
+								Name: fieldIdent.Name,
+								Type:  &gocode.UserType{
+									Name: t.Sel.Name,
+									Package: importPath.Package,
+								},
+							},
+							Lineno: field.Pos(),
+							Ast:    field,
+						}
+						params = append(params, newParam)
+					}
+				}
+		}
+	}
+	logger.Logger.Warnf("HEREEEEEEEEEE appending for %s: %v\n", funcDecl.Name, params)
+	return params
+}
+
 func (node *ServiceNode) ParseMethods() {
 	logger.Logger.Debugf("inspecting exposed methods for service implementation %s\n", node.Impl)
 
 	ast.Inspect(node.File, func(n ast.Node) bool {
-		// check if node is a function declaration
-		if funcDecl, ok := n.(*ast.FuncDecl); ok {
-			// check if the function has any receivers (i.e. structure(s) implemented by the function)
-			if funcDecl.Recv != nil && len(funcDecl.Recv.List) > 0 {
-				// get the function's receiver (i.e. i.e. structure(s) implemented by the function)
-				if recv, ok := funcDecl.Recv.List[0].Type.(*ast.StarExpr); ok {
-					// check if the data type (e.g. StorageService) of the receiver (i.e. structure(s) implemented by the function)
-					// matches the one we are looking for (i.e. StorageService)
-					if ident, ok := recv.X.(*ast.Ident); ok && ident.Name == node.Impl {
-						// check if the function declaration being implDebugfemented by the Service structure
-						// is actually an exposed method to other services
-						if _, ok := node.ExposedMethods[funcDecl.Name.Name]; ok {
-							// get the variable name of the receiver
-							receiverName := funcDecl.Recv.List[0].Names[0]
-							// e.g. (f *FrontendImpl) UploadPost
-							logger.Logger.Debugf("> (%s *%s) %s [:%d]\n", receiverName, ident.Name, funcDecl.Name.Name, funcDecl.Pos())
-
-							// get name of the params for function declaration
-							var params []*analyzer.FunctionField
-							for _, field := range funcDecl.Type.Params.List {
-								// TODO: any types with selector! e.g. model.Message
-								if _, ok := field.Type.(*ast.Ident); ok {
-									for _, ident := range field.Names {
-										params = append(params, &analyzer.FunctionField{
-											Variable: gocode.Variable{
-												Name: ident.Name,
-												Type: &gocode.BasicType{
-													Name: "string",
-												},
-											},
-											Lineno: field.Pos(),
-											Ast:    field,
-										})
-									}
-								}
-								/* if _, ok := field.Type.(*ast.SelectorExpr); ok {
-									// TODO: any types with selector! e.g. model.Message
-									// except any 'ctx' parameter
-									// FIXME: this cannot be hard coded
-									// we need to check if Context actually corresponds
-									// to context.Context from the Go library
-								} */
-							}
-
-							// store parsed func decl in the methods of the service node
-							parsedFuncDecl := ParsedFuncDecl{
-								Ast:           funcDecl,
-								Name:          funcDecl.Name.Name,
-								Recv:          receiverName,
-								Params:        params,
-								DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
-								ServiceCalls:  make(map[token.Pos]*ParsedCallExpr),
-								Service: 	   node.Name,
-							}
-							node.ExposedMethods[parsedFuncDecl.Name] = &parsedFuncDecl
-						}
-					}
-				}
+		ok, funcDecl, ident, rcvIdent := node.methodImplementsServiceStructure(n)
+		if ok {
+			logger.Logger.Debugf("> (%s *%s) %s [:%d]\n", rcvIdent, ident.Name, funcDecl.Name.Name, funcDecl.Pos())
+			params := node.parseFuncDeclParams(funcDecl)
+			parsedFuncDecl := ParsedFuncDecl{
+				Ast:           funcDecl,
+				Name:          funcDecl.Name.Name,
+				Recv:          rcvIdent,
+				Params:        params,
+				DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
+				ServiceCalls:  make(map[token.Pos]*ParsedCallExpr),
+				Service: 	   node.Name,
 			}
+			node.ExposedMethods[parsedFuncDecl.Name] = &parsedFuncDecl
 		}
 		return true
 	})
@@ -149,7 +180,7 @@ func (node *ServiceNode) ParseStructFields() {
 			for _, field := range str.Fields.List {
 				for _, ident := range field.Names {
 					node.saveFieldWithType(field, ident.Name)
-					logger.Logger.Warnf("%s: saved field %s\n", node.Name, node.Fields[ident.Name])
+					logger.Logger.Debugf("%s: saved field %s\n", node.Name, node.Fields[ident.Name])
 				}
 			}
 		}
@@ -242,12 +273,12 @@ func (node *ServiceNode) ParseQueueImplementation() {
 	// search for the method that implements the queues
 }
 
-func isFieldCallInBody(n ast.Node, parsedFuncDecl *ParsedFuncDecl) (bool, *ast.CallExpr, *ast.SelectorExpr, *ast.SelectorExpr, *ast.Ident)  {
+func hasFieldCallInMethodBody(node ast.Node, parsedFuncDecl *ParsedFuncDecl) (bool, *ast.CallExpr, *ast.SelectorExpr, *ast.SelectorExpr, *ast.Ident)  {
 	// e.g. f.queue.Push
 	//    ^ident2 ^ident ^method
 	// e.g. f.storageService.StorePost
 	//      ^ident2  ^ident    ^method
-	if funcCall, ok := n.(*ast.CallExpr); ok {
+	if funcCall, ok := node.(*ast.CallExpr); ok {
 		if method, ok := funcCall.Fun.(*ast.SelectorExpr); ok {
 			// get first selector (e.g. storageService)
 			if ident, ok := method.X.(*ast.SelectorExpr); ok {
@@ -268,7 +299,7 @@ func (node *ServiceNode) ParseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 	logger.Logger.Debugf("visiting method %s\n", parsedFuncDecl.Name)
 
 	ast.Inspect(parsedFuncDecl.Ast, func(n ast.Node) bool {
-		ok, funcCall, method, ident, ident2 := isFieldCallInBody(n, parsedFuncDecl)
+		ok, funcCall, method, ident, ident2 := hasFieldCallInMethodBody(n, parsedFuncDecl)
 		if ok {
 			// store function call either as service call or database call
 			parsedCallExpr := &ParsedCallExpr{

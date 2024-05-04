@@ -1,6 +1,7 @@
 package analyzer
 
 import (
+	"fmt"
 	"go/ast"
 	"go/token"
 
@@ -38,8 +39,8 @@ type Method interface {
 }
 
 type Ref struct {
-	Name     string    `json:"name"`
-	Creator  string    `json:"creator"`
+	Name     string    `json:"name,omitempty"`
+	Creator  string    `json:"creator,omitempty"`
 	Id       int64     `json:"id"`
 	Variable *Variable `json:"-"`
 }
@@ -56,9 +57,8 @@ type Variable struct {
 }
 
 func (v *Variable) String() string {
-	return v.Name
-	/* if v.Type != nil && v.Type.String() != "" {
+	if v.Type != nil {
 		return fmt.Sprintf("%s %s", v.Name, v.Type)
 	}
-	return fmt.Sprintf("%s (unknown)", v.Name) */
+	return fmt.Sprintf("%s (unknown)", v.Name)
 }

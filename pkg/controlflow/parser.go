@@ -45,12 +45,12 @@ func ParseCFG(node *service.ServiceNode, method *service.ParsedFuncDecl) (*model
 			Name:          param.Name,
 			Type: 		   param.Type,
 			IsBlockParam:  true,
-			BlockParamIdx: i + 1, // we are considering idexes > 0 due to the json representation
+			BlockParamIdx: i,
 		})
 	}
 	logger.Logger.Debug("Variables")
 	for _, v := range parsedCfg.Vars {
-		logger.Logger.Debugf("\t%s [%d], ", v.Name, v.Lineno)
+		logger.Logger.Warnf("PARSED CFG VARS \t%s [%d], ", v.Name, v.Lineno)
 	}
 	logger.Logger.Debugln()
 	node.ParsedCFGs[method.Name] = parsedCfg

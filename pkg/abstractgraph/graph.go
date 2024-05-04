@@ -28,6 +28,7 @@ type AbstractServiceCall struct {
 	ParsedCall *service.ParsedCallExpr 	`json:"-"` // omit from json
 	// nodes representing database calls cannot contain children as well
 	Children []AbstractNode 			`json:"children,omitempty"` // omit from json
+	Parent 	 AbstractNode 				`json:"-"` // omit from json
 }
 
 func (svc *AbstractServiceCall) GetParams() []*analyzer.Variable {
@@ -44,6 +45,7 @@ type AbstractDatabaseCall struct {
 	Method       string        				`json:"method,omitempty"`
 	Params       []*analyzer.Variable    	`json:"params,omitempty"`
 	ParsedCall   *service.ParsedCallExpr 	`json:"-"` // omit from json
+	Parent 	 	AbstractNode 				`json:"-"` // omit from json
 }
 
 func (db *AbstractDatabaseCall) GetParams() []*analyzer.Variable {
@@ -101,7 +103,7 @@ func (ag *AbstractGraph) matchVarsIdentifiersHelper(node AbstractNode) {
 	for callerParamIdx, callerParam := range node.GetParams() {
 		logger.Logger.Debugf("> caller %s for param %s", node.String(), callerParam.Name)
 		// assign id if not yet assigned (act as root variable for other child dependencies)
-		if callerParam.Id < 0 {
+		if callerParam.Id == -1 {
 			logger.Logger.Debugf("(1/2) assigning id %d to caller param %s", ag.globalIdx, callerParam.Name)
 			callerParam.Id = ag.globalIdx
 			ag.globalIdx++
@@ -127,7 +129,7 @@ func (ag *AbstractGraph) matchVarsIdentifiersHelper(node AbstractNode) {
 					for _, dep := range deps {
 						if dep.IsBlockParam {
 							ag.nodesBlockParams[childNode] = append(ag.nodesBlockParams[childNode], dep)
-						} else if dep.Id < 0 {
+						} else if dep.Id == -1 {
 							logger.Logger.Debugf("(2/2) assigning id %d to dep param %s", ag.globalIdx, dep.Name)
 							callerParam.Id = ag.globalIdx
 							ag.globalIdx++
@@ -138,11 +140,11 @@ func (ag *AbstractGraph) matchVarsIdentifiersHelper(node AbstractNode) {
 				// match the child parameter id to the caller parameter id
 				// if they correspond to the same index in the func call and func definition, resp.
 				for _, childParam := range ag.nodesBlockParams[childNode] {
-					if childParam.BlockParamIdx == callerParamIdx+1 &&
+					if childParam.BlockParamIdx == callerParamIdx &&
 					// ^ sanity check (-1 is when it was not yet set)
-					childParam.Id < 0 {
+					childParam.Id == -1 {
 
-							logger.Logger.Debugf("\t matching child (%s) param '%s' with parent (%s) param '%s' for id %d", childNode.String(), childParam.Name, node.String(), callerParam.Name, callerParam.Id)
+							logger.Logger.Warnf("\t matching child (%s) param '%s' with parent (%s) param '%s' for id %d", childNode.String(), childParam.Name, node.String(), callerParam.Name, callerParam.Id)
 
 							childParam.Id = callerParam.Id
 							// add reference
@@ -225,6 +227,11 @@ func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *s
 			Name: p.Name,
 			Type: p.Type,
 			Id: -1,
+			Ref: &analyzer.Ref{
+				Creator: "Client",
+				Name: p.Name,
+				Id: -1,
+			},
 		})
 	}
 
@@ -282,6 +289,7 @@ func (ag *AbstractGraph) recurseBuild(parentNode *AbstractServiceCall) {
 						Params:     dbCall.Params,
 						Call:       dbCall.SimpleString(),
 						Method: 	dbCall.Method.String(),
+						Parent: 	abstractService,
 					})
 				} else if targetMethod.ServiceCalls[lineno] != nil {
 					svcCall := targetMethod.ServiceCalls[lineno]
@@ -291,6 +299,7 @@ func (ag *AbstractGraph) recurseBuild(parentNode *AbstractServiceCall) {
 						Params:     svcCall.Params,
 						Call:       svcCall.SimpleString(),
 						Method:     svcCall.Method.String(),
+						Parent: 	abstractService,
 					})
 				}
 			}
