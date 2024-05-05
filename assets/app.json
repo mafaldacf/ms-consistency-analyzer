@@ -1,24 +1,27 @@
 {
   "name": "postnotification",
-  "package": {
+  "app_services": {
     "NotifyService": {
-      "name": "NotifyService",
       "fields": {
         "queue": "backend.Queue",
         "storageService": "postnotification.StorageService"
       },
       "services": [
         "StorageService"
+      ],
+      "databases": [
+        "notification_queue"
       ]
     },
     "StorageService": {
-      "name": "StorageService",
       "fields": {
         "cache": "backend.Cache"
-      }
+      },
+      "databases": [
+        "post_db"
+      ]
     },
     "UploadService": {
-      "name": "UploadService",
       "fields": {
         "notifyService": "postnotification.NotifyService",
         "queue": "backend.Queue",
@@ -27,15 +30,18 @@
       "services": [
         "StorageService",
         "NotifyService"
+      ],
+      "databases": [
+        "notification_queue"
       ]
     }
   },
   "app_databases": {
     "notification_queue": {
-      "name": "notification_queue"
+      "type": "Queue"
     },
     "post_db": {
-      "name": "post_db"
+      "type": "Cache"
     }
   }
 }

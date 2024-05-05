@@ -168,12 +168,10 @@ func (s *ServiceNode) MarshalJSON() ([]byte, error) {
 		fieldTypes[name] = field.GetTypeName()
 	}
 	return json.MarshalIndent(&struct {
-		Name 		string 				`json:"name,omitempty"`
 		Fields 		map[string]string 	`json:"fields,omitempty"`
 		Services 	[]string 			`json:"services,omitempty"`
 		Databases 	[]string 			`json:"databases,omitempty"`
 	}{
-		Name: 		s.Name,
 		Fields: 	fieldTypes,
 		Services: 	serviceKeys,
 		Databases: 	databaseKeys,

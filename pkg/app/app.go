@@ -34,7 +34,7 @@ type App struct {
 func (app *App) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Name      string                            `json:"name"`
-		Services  map[string]*service.ServiceNode   `json:"package"`
+		Services  map[string]*service.ServiceNode   `json:"app_services"`
 		Databases map[string]types.DatabaseInstance `json:"app_databases"`
 	}{
 		Name:      app.Name,
@@ -82,14 +82,18 @@ func (app *App) Save() {
 	file.Write(data)
 }
 
-func getDatabaseInstanceName(name string) string {
+func getShortDbInstanceName(name string) string {
 	// remove .client suffix (e.g. notification_queue.client)
-	return strings.Split(name, ".")[0]
+	splits := strings.Split(name, ".")[0]
+	if len(splits) > 0 {
+		return strings.Split(name, ".")[0]
+	}
+	return ""
 }
 
 func (app *App) RegisterDatabaseInstances(databases map[string]ir.IRNode) {
 	for name, node := range databases {
-		name = getDatabaseInstanceName(name)
+		name = getShortDbInstanceName(name)
 		switch node.(type) {
 		case *redis.RedisGoClient:
 			app.Databases[name] = &frameworks.CacheInstance{
@@ -120,6 +124,7 @@ func (app *App) RegisterServiceNodes(servicesSpec map[*workflowspec.Service][]go
 	app.matchServiceEdges()
 	app.parseServicesInfo()
 	app.parseServicesBody()
+	app.matchServiceDatabases(servicesSpec)
 
 	for _, node := range app.Services {
 		logger.Logger.Infof("[APP] registered service node %s", node.String())
@@ -131,6 +136,42 @@ func (app *App) matchServiceEdges() {
 	for _, node := range app.Services {
 		for edgeName := range node.Services {
 			node.Services[edgeName] = app.Services[edgeName]
+		}
+	}
+}
+
+func (app *App) matchServiceDatabases(servicesSpec map[*workflowspec.Service][]golang.Service) {
+	for spec, args := range servicesSpec {
+		var constructorArgs []string
+		// key: index in constructor for database argument
+		// value: database instance to be referenced
+		dbInstancesConstructorIdx := make(map[int]types.DatabaseInstance)
+		for idx, arg := range args {
+			_, isServiceIR := arg.(*workflow.WorkflowClient)
+			databaseInstance, isRegisteredDb := app.Databases[getShortDbInstanceName(arg.Name())]
+			// if it is not a service IR and it is a registered database instance in the app
+			// then we save the instance and the index of the argument for the service constructor
+			if !isServiceIR && isRegisteredDb {
+				// args don't count with golang context whose index 0 is reserved to
+				dbInstancesConstructorIdx[idx+1] = databaseInstance
+			}
+		}
+		for _, arg := range spec.Constructor.Arguments {
+			constructorArgs = append(constructorArgs, arg.Name)
+		}
+		node := app.Services[spec.Iface.Name]
+		// inspired by blueprint
+		// findConstructorsOfIface() at blueprint/plugins/workflow/workflowspec/service.go
+		for _, pkg := range spec.Iface.File.Package.Module.Packages {
+			for _, f := range pkg.Funcs {
+				if workflowspec.IsConstructorOfIface(f, spec.Iface) {
+					/* retType, valid := f.Returns[0].Type.(*gocode.UserType)
+					if valid {
+						logger.Logger.Warnf("VALID RET TYPE!!!! %v", retType)
+					} */
+					node.ParseDatabaseInstancesInConstructor(f.Name, constructorArgs, dbInstancesConstructorIdx)
+				}
+			}
 		}
 	}
 }
@@ -163,38 +204,39 @@ func parseAndVisitCFG(node *service.ServiceNode, methods map[string]*service.Par
 
 func (app *App) createServiceNodes(servicesSpec map[*workflowspec.Service][]golang.Service) error {
 	// services also include blueprint backends
-	for serviceSpec, golangServices := range servicesSpec {
+	for spec, edges := range servicesSpec {
 		fset := token.NewFileSet()
-		filepath := serviceSpec.Iface.File.Name
+		filepath := spec.Iface.File.Name
 		file, err := goparser.ParseFile(fset, filepath, nil, goparser.ParseComments)
 		if err != nil {
 			logger.Logger.Errorf("error parsing file %s: %s", filepath, err.Error())
 			return err
 		}
 		node := &service.ServiceNode{
-			Name:            serviceSpec.Iface.Name,
-			Impl:            serviceSpec.Iface.Name + "Impl", // FIX THIS hardcoded value
-			Package:         serviceSpec.Iface.File.Package.Name,
+			Name:            spec.Iface.Name,
+			Impl:            spec.Iface.Name + "Impl", // FIX THIS hardcoded value
+			Package:         spec.Iface.File.Package.Name,
 			Filepath:        filepath,
 			File:            file,
 			Fields:          make(map[string]types.Field),
 			Imports:         make(map[string]*service.ParsedImportSpec),
 			Services:        make(map[string]*service.ServiceNode),
+			Databases:       make(map[string]types.DatabaseInstance),
 			ExposedMethods:  make(map[string]*service.ParsedFuncDecl),
 			WorkerMethods:   make(map[string]*service.ParsedFuncDecl),
 			InternalMethods: make(map[string]*service.ParsedFuncDecl),
 			ParsedCFGs:      make(map[string]*types.ParsedCFG),
 		}
 		// add entry for methods that will be later parsed
-		for _, m := range serviceSpec.Iface.Ast.Methods.List {
+		for _, m := range spec.Iface.Ast.Methods.List {
 			node.ExposedMethods[m.Names[0].Name] = nil
 		}
 
 		// add entry in map but with nil value
 		// after we have created all service nodes
 		// then we are going to reference all edges correctly
-		for _, golangService := range golangServices {
-			if workflowClient, ok := golangService.(*workflow.WorkflowClient); ok {
+		for _, edge := range edges {
+			if workflowClient, ok := edge.(*workflow.WorkflowClient); ok {
 				node.Services[workflowClient.ServiceType] = nil
 			}
 		}
@@ -222,6 +264,7 @@ func (app *App) RegisterSimpleServiceNode(serviceSpec *workflowspec.Service, ser
 		Fields:          make(map[string]types.Field),
 		Imports:         make(map[string]*service.ParsedImportSpec),
 		Services:        make(map[string]*service.ServiceNode),
+		Databases:       make(map[string]types.DatabaseInstance),
 		ExposedMethods:  make(map[string]*service.ParsedFuncDecl),
 		WorkerMethods:   make(map[string]*service.ParsedFuncDecl),
 		InternalMethods: make(map[string]*service.ParsedFuncDecl),

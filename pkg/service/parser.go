@@ -73,10 +73,10 @@ func (node *ServiceNode) methodImplementsService(n ast.Node) (ok bool, funcDecl 
 			}
 		}
 	}
-	return false, nil, nil
+	return false, funcDecl, nil
 }
 
-func (node *ServiceNode) methodExposedByService(funcDecl *ast.FuncDecl) bool {
+func (node *ServiceNode) isMethodExposedByService(funcDecl *ast.FuncDecl) bool {
 	// check if the function declaration being implemented by the Service structure
 	// is actually an exposed method to other services
 	_, ok := node.ExposedMethods[funcDecl.Name.Name]
@@ -137,18 +137,15 @@ func (node *ServiceNode) ParseMethods() {
 	logger.Logger.Debugf("inspecting exposed methods for service implementation %s\n", node.Impl)
 
 	ast.Inspect(node.File, func(n ast.Node) bool {
-		ok, funcDecl, rcvIdent := node.methodImplementsService(n)
-		if ok {
-			if node.methodExposedByService(funcDecl) {
-				parsedFuncDecl := node.addExposedMethod(funcDecl, rcvIdent)
-				logger.Logger.Debugf("Found exposed method: %s", parsedFuncDecl.String())
-			} else {
-				parsedFuncDecl := node.addInternalMethod(funcDecl, rcvIdent)
-				logger.Logger.Debugf("Found internal method: %s", parsedFuncDecl.String())
-				if node.ImplementsQueue {
-					node.parseQueueImplementationIfWorker(parsedFuncDecl)
-				}
+		implementsService, funcDecl, rcvIdent := node.methodImplementsService(n)
+		if implementsService {
+			if node.isMethodExposedByService(funcDecl) {
+				node.addExposedMethod(funcDecl, rcvIdent)
+			} else if node.ImplementsQueue {
+				node.addWorkerMethodIfQueueImpl(funcDecl, rcvIdent)
 			}
+		} else if funcDecl != nil {
+			node.addInternalMethod(funcDecl)
 		}
 		return true
 	})
@@ -158,41 +155,31 @@ func (node *ServiceNode) ParseMethodsBody() {
 	for _, method := range node.ExposedMethods {
 		node.parseMethodBodyCalls(method)
 	}
-	for _, method := range node.InternalMethods {
-		node.parseMethodBodyCalls(method)
-	}
 	for _, method := range node.WorkerMethods {
 		node.parseMethodBodyCalls(method)
 	}
-}
-
-func ParseInterfaceMethods(file *ast.File) {
-	logger.Logger.Debug("inspecting service interface and methods \n")
-
-	serviceMethods := []string{}
-	ast.Inspect(file, func(n ast.Node) bool {
-		if iface, ok := n.(*ast.InterfaceType); ok {
-			for _, field := range iface.Methods.List {
-				if methodName, ok := field.Names[0].Name, ok; ok {
-					serviceMethods = append(serviceMethods, methodName)
-					logger.Logger.Debugf("> %s\n", methodName)
-				}
-			}
-		}
-		return true
-	})
+	//FIXME: move to package methods
+	for _, method := range node.InternalMethods {
+		node.parseMethodBodyCalls(method)
+	}
 }
 
 func (node *ServiceNode) ParseFields() {
 	logger.Logger.Debugf("inspecting fields for service %s\n", node.Name)
 
 	ast.Inspect(node.File, func(n ast.Node) bool {
+		// a struct type is first a spec type
+		// we want to make sure that we found the service type
+		// otherwise, we return true to keep recursition to next ast node
+		if ts, ok := n.(*ast.TypeSpec); ok {
+			if ts.Name.Name != node.Impl {
+				return true
+			}
+		}
 		if str, ok := n.(*ast.StructType); ok {
-			for _, field := range str.Fields.List {
-				for _, ident := range field.Names {
-					node.saveFieldWithType(field, ident.Name)
-					logger.Logger.Debugf("%s: saved field %s\n", node.Name, node.Fields[ident.Name])
-				}
+			for idx, field := range str.Fields.List {
+				node.saveFieldWithType(field, field.Names[0].Name, idx)
+				logger.Logger.Debugf("%s: saved field %s\n", node.Name, node.Fields[field.Names[0].Name])
 			}
 		}
 		return true
@@ -201,7 +188,7 @@ func (node *ServiceNode) ParseFields() {
 }
 
 // saveFieldWithType saves the service or database fields defined in the structure
-func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string) {
+func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string, idx int) {
 	switch t := field.Type.(type) {
 
 	// if the type is from the current package, then it is probably a service import
@@ -220,6 +207,7 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string) {
 				},
 				Lineno: field.Pos(),
 				Ast:    field,
+				Idx:    idx,
 			}
 		}
 
@@ -242,6 +230,7 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string) {
 						Lineno:  field.Pos(),
 						Ast:     field,
 						IsQueue: frameworks.IsBlueprintBackendQueue(t.Sel.Name),
+						Idx:     idx,
 					}
 					if frameworks.IsBlueprintBackendQueue(t.Sel.Name) {
 						newField.IsQueue = true
@@ -272,7 +261,7 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string) {
 	}
 }
 
-func (node *ServiceNode) parseQueueImplementationIfWorker(parsedFuncDecl *ParsedFuncDecl) {
+func (node *ServiceNode) addWorkerMethodIfQueueImpl(funcDecl *ast.FuncDecl, recvIdent *ast.Ident) {
 	/* queues := []*types.DatabaseField{}
 	// get all implemented queues
 	for _, field := range node.Fields {
@@ -282,18 +271,26 @@ func (node *ServiceNode) parseQueueImplementationIfWorker(parsedFuncDecl *Parsed
 	} */
 
 	// inspect methods
-	ast.Inspect(parsedFuncDecl.Ast, func(n ast.Node) bool {
-		ok, _, methodIdent, fieldIdent, _ := fieldCallInMethodBody(n, parsedFuncDecl)
+	ast.Inspect(funcDecl, func(n ast.Node) bool {
+		ok, _, methodIdent, fieldIdent, _ := fieldCallInMethodBody(n, recvIdent)
 		if !ok {
 			return true
 		}
 		if field, isField := node.Fields[fieldIdent.Name]; isField {
 			if dbField, isDbField := field.(*types.DatabaseField); isDbField {
 				if dbField.IsQueue && methodIdent.Name == "Pop" {
-					logger.Logger.Debugf("Found internal (worker) method: %s", parsedFuncDecl.String())
-					// move from internal to worker methods (althought theoretically they are still internal)
-					delete(node.InternalMethods, parsedFuncDecl.Name)
+					params := node.parseFuncDeclParams(funcDecl)
+					parsedFuncDecl := &ParsedFuncDecl{
+						Ast:           funcDecl,
+						Name:          funcDecl.Name.Name,
+						Recv:          recvIdent,
+						Params:        params,
+						DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
+						ServiceCalls:  make(map[token.Pos]*ParsedCallExpr),
+						Service:       node.Name,
+					}
 					node.WorkerMethods[parsedFuncDecl.Name] = parsedFuncDecl
+					logger.Logger.Debugf("Found worker method: %s", parsedFuncDecl.String())
 				}
 			}
 		}
@@ -301,22 +298,20 @@ func (node *ServiceNode) parseQueueImplementationIfWorker(parsedFuncDecl *Parsed
 	})
 }
 
-func (node *ServiceNode) addInternalMethod(funcDecl *ast.FuncDecl, rcvIdent *ast.Ident) *ParsedFuncDecl {
+func (node *ServiceNode) addInternalMethod(funcDecl *ast.FuncDecl) {
 	params := node.parseFuncDeclParams(funcDecl)
 	parsedFuncDecl := &ParsedFuncDecl{
 		Ast:           funcDecl,
 		Name:          funcDecl.Name.Name,
-		Recv:          rcvIdent,
 		Params:        params,
 		DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
 		ServiceCalls:  make(map[token.Pos]*ParsedCallExpr),
 		Service:       node.Name,
 	}
 	node.InternalMethods[parsedFuncDecl.Name] = parsedFuncDecl
-	return parsedFuncDecl
 }
 
-func (node *ServiceNode) addExposedMethod(funcDecl *ast.FuncDecl, rcvIdent *ast.Ident) *ParsedFuncDecl {
+func (node *ServiceNode) addExposedMethod(funcDecl *ast.FuncDecl, rcvIdent *ast.Ident) {
 	params := node.parseFuncDeclParams(funcDecl)
 	parsedFuncDecl := &ParsedFuncDecl{
 		Ast:           funcDecl,
@@ -328,10 +323,10 @@ func (node *ServiceNode) addExposedMethod(funcDecl *ast.FuncDecl, rcvIdent *ast.
 		Service:       node.Name,
 	}
 	node.ExposedMethods[parsedFuncDecl.Name] = parsedFuncDecl
-	return parsedFuncDecl
+	logger.Logger.Debugf("Found exposed method: %s", parsedFuncDecl.String())
 }
 
-func fieldCallInMethodBody(node ast.Node, parsedFuncDecl *ParsedFuncDecl) (bool, *ast.CallExpr, *ast.Ident, *ast.Ident, *ast.Ident) {
+func fieldCallInMethodBody(node ast.Node, recvIdent *ast.Ident) (bool, *ast.CallExpr, *ast.Ident, *ast.Ident, *ast.Ident) {
 	// e.g. f.queue.Push
 	//    ^ident2 ^ident ^method
 	// e.g. f.storageService.StorePost
@@ -343,7 +338,7 @@ func fieldCallInMethodBody(node ast.Node, parsedFuncDecl *ParsedFuncDecl) (bool,
 				// get second selector (e.g. f)
 				if serviceRcvIdent, ok := fieldSel.X.(*ast.Ident); ok {
 					// check if ident2 (e.g. f) is the current service receiver being implemented by the method
-					if serviceRcvIdent.Name == parsedFuncDecl.Recv.Name {
+					if serviceRcvIdent.Name == recvIdent.Name {
 						return true, funcCall, methodSel.Sel, fieldSel.Sel, serviceRcvIdent
 					}
 				}
@@ -357,12 +352,13 @@ func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 	logger.Logger.Debugf("visiting method %s\n", parsedFuncDecl.Name)
 
 	ast.Inspect(parsedFuncDecl.Ast, func(n ast.Node) bool {
-		ok, funcCall, methodIdent, fieldIdent, serviceRcvIdent := fieldCallInMethodBody(n, parsedFuncDecl)
+		// beware that functions migh have nil receivers
+		ok, funcCall, methodIdent, fieldIdent, serviceRecvIdent := fieldCallInMethodBody(n, parsedFuncDecl.Recv)
 		if ok {
 			// store function call either as service call or database call
 			parsedCallExpr := &ParsedCallExpr{
 				Ast:         funcCall,
-				Receiver:    serviceRcvIdent.Name,
+				Receiver:    serviceRecvIdent.Name,
 				TargetField: fieldIdent.Name,
 				Name:        methodIdent.Name,
 				Pos:         funcCall.Pos(),
@@ -403,4 +399,42 @@ func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 		return true
 	})
 	logger.Logger.Debugln()
+}
+
+func (node *ServiceNode) ParseDatabaseInstancesInConstructor(constructorName string, constructorArgs []string, dbInstancesConstructorIdx map[int]types.DatabaseInstance) {
+	constructor := node.InternalMethods[constructorName]
+	ast.Inspect(constructor.Ast.Body, func(n ast.Node) bool {
+		compositeLit, ok := n.(*ast.CompositeLit)
+		if !ok {
+			return true
+		}
+		if ident, ok := compositeLit.Type.(*ast.Ident); ok && ident.Name == node.Impl {
+			// iterate all key value pairs passed during the service definition
+			for _, elt := range compositeLit.Elts {
+				if kv, ok := elt.(*ast.KeyValueExpr); ok {
+					keyIdent, ok1 := kv.Key.(*ast.Ident)
+					keyValue, ok2 := kv.Value.(*ast.Ident)
+					if ok1 && ok2 {
+						field := node.Fields[keyIdent.Name]
+						// check if the field being defined in a database field
+						if dbField, ok := field.(*types.DatabaseField); ok {
+							// find the value that was passed to the structure
+							// implementation in the constructor arguments
+							for idx, arg := range constructorArgs {
+								if arg == keyValue.Name {
+									if dbInstance, ok := dbInstancesConstructorIdx[idx]; ok {
+										dbField.Instance = dbInstance
+										node.Databases[dbInstance.GetName()] = dbInstance
+										logger.Logger.Debugf("[%s] linked database field '%s' to instance '%s'", node.Name, dbField.Name, dbInstance.GetName())
+										break
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		return true
+	})
 }

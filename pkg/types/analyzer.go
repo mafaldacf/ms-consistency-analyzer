@@ -10,6 +10,7 @@ import (
 
 type Field interface {
 	GetTypeName() string
+	GetIndex() int
 }
 
 type FunctionField struct {
@@ -24,6 +25,7 @@ type ServiceField struct {
 	gocode.Variable
 	Lineno token.Pos
 	Ast    *ast.Field
+	Idx 	int
 }
 type DatabaseField struct {
 	Field
@@ -32,14 +34,23 @@ type DatabaseField struct {
 	Ast    		*ast.Field
 	IsQueue		bool
 	Instance    DatabaseInstance
+	Idx 		int
 }
 
 func (svc *ServiceField) GetTypeName() string {
 	return svc.GetType()
 }
 
+func (svc *ServiceField) GetIndex() int {
+	return svc.Idx
+}
+
 func (db *DatabaseField) GetTypeName() string {
 	return db.GetType()
+}
+
+func (db *DatabaseField) GetIndex() int {
+	return db.Idx
 }
 
 func (fn *FunctionField) GetTypeName() string {
