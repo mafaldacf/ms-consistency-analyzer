@@ -22,14 +22,14 @@ func main() {
 
 	appName := "postnotification"
 
-	builder := frameworks.BuildIR(appName, specs.Docker)
-	services, _ := frameworks.InspectIR(builder)
+	services, databases  := frameworks.BuildAndInspectIR(appName, specs.Docker)
 	app, err := app.Init(appName, fmt.Sprintf("examples/%s/workflow/%s", appName, appName))
 	if err != nil {
 		return
 	}
+	app.RegisterDatabaseInstances(databases)
 	app.RegisterServiceNodes(services)
-	app.Parse()
+	app.Save()
 	entryPoints := []string{"UploadService"}
 	abstractGraph := abstractgraph.Build(app, entryPoints)
 	abstractGraph.Save()

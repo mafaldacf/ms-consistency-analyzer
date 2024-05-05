@@ -181,7 +181,7 @@ func getAllVariableDeps(v *types.Variable) []*types.Variable {
 func (ag *AbstractGraph) Save() {
 	// print in JSON format
 	// https://omute.net/editor
-	file, err := os.Create("assets/abstract_graph.json")
+	file, err := os.Create("assets/abstractgraph.json")
 	if err != nil {
 		fmt.Println("Error creating file:", err)
 		return

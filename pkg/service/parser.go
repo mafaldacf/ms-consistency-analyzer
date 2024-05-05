@@ -1,7 +1,7 @@
 package service
 
 import (
-	"analyzer/pkg/frameworks/blueprint"
+	frameworks "analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
 	"analyzer/pkg/utils"
@@ -183,7 +183,7 @@ func ParseInterfaceMethods(file *ast.File) {
 	})
 }
 
-func (node *ServiceNode) ParseServiceFields() {
+func (node *ServiceNode) ParseFields() {
 	logger.Logger.Debugf("inspecting fields for service %s\n", node.Name)
 
 	ast.Inspect(node.File, func(n ast.Node) bool {

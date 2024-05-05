@@ -15,9 +15,15 @@ import (
 	"github.com/blueprint-uservices/blueprint/plugins/rabbitmq"
 	"github.com/blueprint-uservices/blueprint/plugins/redis"
 	"github.com/blueprint-uservices/blueprint/plugins/workflow"
+	"github.com/blueprint-uservices/blueprint/plugins/workflow/workflowspec"
 )
 
-func BuildIR(name string, spec cmdbuilder.SpecOption) *cmdbuilder.CmdBuilder {
+func BuildAndInspectIR(name string, spec cmdbuilder.SpecOption) (map[*workflowspec.Service][]golang.Service, map[string]ir.IRNode) {
+	builder := buildIR(name, spec)
+	return inspectIR(builder)
+}
+
+func buildIR(name string, spec cmdbuilder.SpecOption) *cmdbuilder.CmdBuilder {
 	builder := &cmdbuilder.CmdBuilder{
 		Name: name,
 		Registry: map[string]cmdbuilder.SpecOption{},
@@ -44,8 +50,8 @@ func BuildIR(name string, spec cmdbuilder.SpecOption) *cmdbuilder.CmdBuilder {
 	return builder
 }
 
-func InspectIR(builder *cmdbuilder.CmdBuilder) (map[*workflow.WorkflowHandler][]golang.Service, map[string]ir.IRNode) {
-	services := make(map[*workflow.WorkflowHandler][]golang.Service)
+func inspectIR(builder *cmdbuilder.CmdBuilder) (map[*workflowspec.Service][]golang.Service, map[string]ir.IRNode) {
+	services := make(map[*workflowspec.Service][]golang.Service)
 	databases := make(map[string]ir.IRNode)
 	//logger.Logger.Debugf("IR: %v", builder.IR)
 	logger.Logger.Debug("")
@@ -73,15 +79,15 @@ func InspectIR(builder *cmdbuilder.CmdBuilder) (map[*workflow.WorkflowHandler][]
 									
 									for _, arg := range workflowHandler.Args {
 										if redisClient, ok := arg.(*redis.RedisGoClient); ok {
-											services[workflowHandler] = append(services[workflowHandler], redisClient)
+											services[workflowHandler.ServiceInfo] = append(services[workflowHandler.ServiceInfo], redisClient)
 											databases[redisClient.Name()] = redisClient
 											logger.Logger.Debugf("[HANDLER ARG] [redis.RedisGoClient] got node %s", redisClient.Name())
 										} else if rabbitClient, ok := arg.(*rabbitmq.RabbitmqGoClient); ok {
-											services[workflowHandler] = append(services[workflowHandler], rabbitClient)
+											services[workflowHandler.ServiceInfo] = append(services[workflowHandler.ServiceInfo], rabbitClient)
 											databases[rabbitClient.Name()] = rabbitClient
 											logger.Logger.Debugf("[HANDLER ARG] [rabbitmq.RabbitmqGoClient] got node %s", rabbitClient.Name())
 										} else if workflowClient, ok := arg.(*workflow.WorkflowClient); ok {
-											services[workflowHandler] = append(services[workflowHandler], workflowClient)
+											services[workflowHandler.ServiceInfo] = append(services[workflowHandler.ServiceInfo], workflowClient)
 											logger.Logger.Debugf("[HANDLER ARG] [workflow.WorkflowClient] got node %s (service_type = %v)", workflowClient.Name(), workflowClient.ServiceType)
 										}
 									}
@@ -102,7 +108,7 @@ func InspectIR(builder *cmdbuilder.CmdBuilder) (map[*workflow.WorkflowHandler][]
 
 	logger.Logger.Debug()
 	for key, value := range services {
-		logger.Logger.Debugf("Inspecting service %s", key.ServiceType)
+		logger.Logger.Debugf("Inspecting service %s", key.Iface.Name)
 		for _, arg := range value {
 			if workflowClient, ok := arg.(*workflow.WorkflowClient); ok {
 				logger.Logger.Debugf("\t\t[workflow] %s", workflowClient.ServiceType)

@@ -9,6 +9,7 @@ import (
 )
 
 type Field interface {
+	GetTypeName() string
 }
 
 type FunctionField struct {
@@ -26,11 +27,23 @@ type ServiceField struct {
 }
 type DatabaseField struct {
 	Field
-	gocode.Variable
+	gocode.Variable 
 	Lineno 		token.Pos
 	Ast    		*ast.Field
 	IsQueue		bool
-	Instance    *DatabaseInstance
+	Instance    DatabaseInstance
+}
+
+func (svc *ServiceField) GetTypeName() string {
+	return svc.GetType()
+}
+
+func (db *DatabaseField) GetTypeName() string {
+	return db.GetType()
+}
+
+func (fn *FunctionField) GetTypeName() string {
+	return fn.GetType()
 }
 
 type Method interface {

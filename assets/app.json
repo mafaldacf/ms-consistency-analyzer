@@ -1,0 +1,41 @@
+{
+  "name": "postnotification",
+  "package": {
+    "NotifyService": {
+      "name": "NotifyService",
+      "fields": {
+        "queue": "backend.Queue",
+        "storageService": "postnotification.StorageService"
+      },
+      "services": [
+        "StorageService"
+      ]
+    },
+    "StorageService": {
+      "name": "StorageService",
+      "fields": {
+        "cache": "backend.Cache"
+      }
+    },
+    "UploadService": {
+      "name": "UploadService",
+      "fields": {
+        "notifyService": "postnotification.NotifyService",
+        "queue": "backend.Queue",
+        "storageService": "postnotification.StorageService"
+      },
+      "services": [
+        "StorageService",
+        "NotifyService"
+      ]
+    }
+  },
+  "app_databases": {
+    "notification_queue": {
+      "name": "notification_queue"
+    },
+    "post_db": {
+      "name": "post_db"
+    }
+  }
+}

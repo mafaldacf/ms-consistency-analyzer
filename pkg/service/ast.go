@@ -2,6 +2,7 @@ package service
 
 import (
 	"analyzer/pkg/types"
+	"encoding/json"
 	"fmt"
 	"go/ast"
 	"go/token"
@@ -132,44 +133,54 @@ func (call *ParsedCallExpr) SimpleString() string {
 }
 
 type ServiceNode struct {
-	Name     string
-	Impl     string
-	Filepath string
-	Package  string
-	File     *ast.File
-	Fields   map[string]types.Field
-	Imports  map[string]*ParsedImportSpec
+	Name     		string
+	Impl     		string
+	Filepath 		string 
+	Package  		string
+	File     		*ast.File
+	Fields   		map[string]types.Field
+	Imports  		map[string]*ParsedImportSpec
 	// the map key is the service type (e.g. StorageService in 'storageService StorageService')
-	Services 	map[string]*ServiceNode
-	Databases 	map[string]types.DatabaseInstance
+	Services 		map[string]*ServiceNode
+	Databases 		map[string]types.DatabaseInstance
 	// safe because methods are unique since Golang does not allow overloading
 	// also this captures all exposed methods because they must be defined within the service struct file
 	ExposedMethods  map[string]*ParsedFuncDecl
 	WorkerMethods   map[string]*ParsedFuncDecl
-	InternalMethods map[string]*ParsedFuncDecl
+	InternalMethods map[string]*ParsedFuncDecl 
 
 	ParsedCFGs      map[string]*types.ParsedCFG
 	ImplementsQueue bool
 }
 
+// MarshalJSON is used by app.Save()
+func (s *ServiceNode) MarshalJSON() ([]byte, error) {
+	var serviceKeys []string
+	for k := range s.Services {
+		serviceKeys = append(serviceKeys, k)
+	}
+	var databaseKeys []string
+	for k := range s.Databases {
+		databaseKeys = append(databaseKeys, k)
+	}
+	fieldTypes := make(map[string]string)
+	for name, field := range s.Fields {
+		fieldTypes[name] = field.GetTypeName()
+	}
+	return json.MarshalIndent(&struct {
+		Name 		string 				`json:"name,omitempty"`
+		Fields 		map[string]string 	`json:"fields,omitempty"`
+		Services 	[]string 			`json:"services,omitempty"`
+		Databases 	[]string 			`json:"databases,omitempty"`
+	}{
+		Name: 		s.Name,
+		Fields: 	fieldTypes,
+		Services: 	serviceKeys,
+		Databases: 	databaseKeys,
+	}, "", " ")
+}
+
 func (n *ServiceNode) String() string {
-	repr := fmt.Sprintf("%s ----> Services: { ", n.Name)
-	i := 0
-	for name := range n.Services {
-		repr += name
-		if i < len(n.Services) - 1 {
-			repr += ", "
-		}
-		i++
-	}
-	repr += " }, Databases: { "
-	i = 0
-	for _, t := range n.Databases {
-		repr += t.String()
-		if i < len(n.Databases) - 1 {
-			repr += ", "
-		}
-		i++
-	}
-	return repr + " }"
+	str, _ := n.MarshalJSON()
+	return string(str)
 }

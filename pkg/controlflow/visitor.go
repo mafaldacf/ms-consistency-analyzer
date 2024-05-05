@@ -25,7 +25,7 @@ func VisitServiceMethodCFG(parsedCfg *types.ParsedCFG, method *service.ParsedFun
 }
 
 func VisitCalls(parsedCalls map[token.Pos]*service.ParsedCallExpr) {
-	logger.Logger.Info("visiting database/service calls for service node target method")
+	logger.Logger.Debug("visiting database/service calls for service node target method")
 	for pos, call := range parsedCalls {
 		logger.Logger.Debugf("call %s.%s [%d]\n", call.TargetField, call.Name, pos)
 		logger.Logger.Debug("> deps: ")
