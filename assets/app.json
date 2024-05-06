@@ -28,8 +28,8 @@
         "storageService": "postnotification.StorageService"
       },
       "services": [
-        "StorageService",
-        "NotifyService"
+        "NotifyService",
+        "StorageService"
       ],
       "databases": [
         "notification_queue"
@@ -38,10 +38,14 @@
   },
   "app_databases": {
     "notification_queue": {
-      "type": "Queue"
+      "name": "notification_queue",
+      "type": "Queue",
+      "kind": "RabbitMQ"
     },
     "post_db": {
-      "type": "Cache"
+      "name": "post_db",
+      "type": "Cache",
+      "kind": "Redis"
     }
   }
 }

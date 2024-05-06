@@ -21,9 +21,10 @@ func IsBlueprintBackendQueue(name string) bool {
 
 type BlueprintBackend struct {
 	types.Method
-	Name    string
+	Name    string 
 	Params  []*types.FunctionField
 	Returns []*types.FunctionField
+	Write 	 bool
 }
 
 func (b *BlueprintBackend) String() string {
@@ -50,6 +51,7 @@ func GetBackendMethod(name string) *BlueprintBackend {
 	if name == "Cache.Put" {
 		return &BlueprintBackend{
 			Name: name,
+			Write: true,
 			Params: []*types.FunctionField{
 				{
 					Variable: gocode.Variable{
@@ -89,6 +91,37 @@ func GetBackendMethod(name string) *BlueprintBackend {
 				{
 					Variable: gocode.Variable{
 						Name: "val",
+						Type: &gocode.InterfaceType{},
+					},
+					Lineno: 0,
+					Ast:    nil,
+				},
+			},
+		}
+	}
+	if name == "Queue.Push" {
+		return &BlueprintBackend{
+			Name: name,
+			Write: true,
+			Params: []*types.FunctionField{
+				{
+					Variable: gocode.Variable{
+						Name: "item",
+						Type: &gocode.InterfaceType{},
+					},
+					Lineno: 0,
+					Ast:    nil,
+				},
+			},
+		}
+	}
+	if name == "Queue.Pop" {
+		return &BlueprintBackend{
+			Name: name,
+			Params: []*types.FunctionField{
+				{
+					Variable: gocode.Variable{
+						Name: "dst",
 						Type: &gocode.InterfaceType{},
 					},
 					Lineno: 0,

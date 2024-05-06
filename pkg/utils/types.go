@@ -4,6 +4,9 @@ import (
 	"go/ast"
 	"reflect"
 	"slices"
+	"strings"
+
+	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
 )
 
 var basicTypes = []string {
@@ -24,4 +27,10 @@ func GetNodeType(node ast.Node) string {
 
 func IsBasicType(t string) bool {
 	return slices.Contains(basicTypes, t)
+}
+
+// GetShortTypeStr removes the package (e.g. backend.) from the type
+func GetShortTypeStr(typeName gocode.TypeName) string {
+	splits := strings.Split(typeName.String(), ".")
+	return splits[len(splits)-1]
 }

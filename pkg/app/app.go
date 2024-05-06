@@ -99,12 +99,14 @@ func (app *App) RegisterDatabaseInstances(databases map[string]ir.IRNode) {
 			app.Databases[name] = &frameworks.CacheInstance{
 				BlueprintDatabaseInstance: frameworks.BlueprintDatabaseInstance{
 					Name: name,
+					Kind: "Redis",
 				},
 			}
 		case *rabbitmq.RabbitmqGoClient:
 			app.Databases[name] = &frameworks.QueueInstance{
 				BlueprintDatabaseInstance: frameworks.BlueprintDatabaseInstance{
 					Name: name,
+					Kind: "RabbitMQ",
 				},
 			}
 		default:
@@ -123,8 +125,8 @@ func (app *App) RegisterServiceNodes(servicesSpec map[*workflowspec.Service][]go
 	}
 	app.matchServiceEdges()
 	app.parseServicesInfo()
-	app.parseServicesBody()
 	app.matchServiceDatabases(servicesSpec)
+	app.parseServicesBody()
 
 	for _, node := range app.Services {
 		logger.Logger.Infof("[APP] registered service node %s", node.String())

@@ -370,13 +370,13 @@ func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 					// 1. extract the service field from the current service
 					// 2. get the target node service for the type
 					// 3. add the targeted method of the other service for the current call expression
-					targetServiceType := GetShortServiceTypeStr(serviceField.Type)
+					targetServiceType := utils.GetShortTypeStr(serviceField.Type)
 					targetServiceNode := node.Services[targetServiceType]
 					targetMethod := targetServiceNode.ExposedMethods[parsedCallExpr.Name]
 					parsedCallExpr.Method = targetMethod
 					// set the source (caller service) and destination (callee service) types
-					parsedCallExpr.SrcType = &ServiceType{Name: node.Name, Package: node.Package}
-					parsedCallExpr.DestType = serviceField.Variable.Type
+					parsedCallExpr.CallerTypeName = &ServiceType{Name: node.Name, Package: node.Package}
+					parsedCallExpr.CalleeTypeName = serviceField.Variable.Type
 					// add the call expr to the existing calls of the current service
 					parsedFuncDecl.ServiceCalls[parsedCallExpr.Pos] = parsedCallExpr
 				}
@@ -385,12 +385,13 @@ func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 					// 1. extract the service field from the current service
 					// 2. get the target database node
 					// 3. add the target method for the current call expression
-					targetDatabaseType := GetShortServiceTypeStr(databaseField.Type)
+					targetDatabaseType := utils.GetShortTypeStr(databaseField.Type)
 					parsedCallExpr.Method = frameworks.GetBackendMethod(fmt.Sprintf("%s.%s", targetDatabaseType, parsedCallExpr.Name))
+					parsedCallExpr.Instance = databaseField.Instance
 
 					// set the source (caller service) and destination (callee database) types
-					parsedCallExpr.SrcType = &ServiceType{Name: node.Name, Package: node.Package}
-					parsedCallExpr.DestType = databaseField.Variable.Type
+					parsedCallExpr.CallerTypeName = &ServiceType{Name: node.Name, Package: node.Package}
+					parsedCallExpr.CalleeTypeName = databaseField.Variable.Type
 					// add the call expr to the existing calls of the current service
 					parsedFuncDecl.DatabaseCalls[parsedCallExpr.Pos] = parsedCallExpr
 				}

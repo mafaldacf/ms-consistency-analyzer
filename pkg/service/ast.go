@@ -35,11 +35,6 @@ func (t *ServiceType) Equals(other gocode.TypeName) bool {
 
 func (st *ServiceType) IsTypeName() {}
 
-func GetShortServiceTypeStr(typeName gocode.TypeName) string {
-	splits := strings.Split(typeName.String(), ".")
-	return splits[len(splits)-1]
-}
-
 type ParsedFuncDecl struct {
 	types.Method
 	Ast           *ast.FuncDecl                 `json:"-"`    // omit from json
@@ -92,13 +87,14 @@ type ParsedCallExpr struct {
 	TargetField string
 
 	// type of service calling (src) and being called (dest)
-	SrcType  gocode.TypeName
-	DestType gocode.TypeName
+	CallerTypeName gocode.TypeName
+	CalleeTypeName gocode.TypeName
 
 	Pos    token.Pos
 	Params []*types.Variable
 
-	Method types.Method
+	Instance types.DatabaseInstance
+	Method   types.Method
 }
 
 func (call *ParsedCallExpr) String() string {
@@ -133,21 +129,21 @@ func (call *ParsedCallExpr) SimpleString() string {
 }
 
 type ServiceNode struct {
-	Name     		string
-	Impl     		string
-	Filepath 		string 
-	Package  		string
-	File     		*ast.File
-	Fields   		map[string]types.Field
-	Imports  		map[string]*ParsedImportSpec
+	Name     string
+	Impl     string
+	Filepath string
+	Package  string
+	File     *ast.File
+	Fields   map[string]types.Field
+	Imports  map[string]*ParsedImportSpec
 	// the map key is the service type (e.g. StorageService in 'storageService StorageService')
-	Services 		map[string]*ServiceNode
-	Databases 		map[string]types.DatabaseInstance
+	Services  map[string]*ServiceNode
+	Databases map[string]types.DatabaseInstance
 	// safe because methods are unique since Golang does not allow overloading
 	// also this captures all exposed methods because they must be defined within the service struct file
 	ExposedMethods  map[string]*ParsedFuncDecl
 	WorkerMethods   map[string]*ParsedFuncDecl
-	InternalMethods map[string]*ParsedFuncDecl 
+	InternalMethods map[string]*ParsedFuncDecl
 
 	ParsedCFGs      map[string]*types.ParsedCFG
 	ImplementsQueue bool
@@ -168,13 +164,13 @@ func (s *ServiceNode) MarshalJSON() ([]byte, error) {
 		fieldTypes[name] = field.GetTypeName()
 	}
 	return json.MarshalIndent(&struct {
-		Fields 		map[string]string 	`json:"fields,omitempty"`
-		Services 	[]string 			`json:"services,omitempty"`
-		Databases 	[]string 			`json:"databases,omitempty"`
+		Fields    map[string]string `json:"fields,omitempty"`
+		Services  []string          `json:"services,omitempty"`
+		Databases []string          `json:"databases,omitempty"`
 	}{
-		Fields: 	fieldTypes,
-		Services: 	serviceKeys,
-		Databases: 	databaseKeys,
+		Fields:    fieldTypes,
+		Services:  serviceKeys,
+		Databases: databaseKeys,
 	}, "", " ")
 }
 

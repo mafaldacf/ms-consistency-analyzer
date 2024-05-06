@@ -9,6 +9,8 @@ import (
 type BlueprintDatabaseInstance struct {
 	types.DatabaseInstance 	`json:"-"`
 	Name string 			`json:"name"`
+	// specific subtype of database (e.g. Redis in Cache)
+	Kind string 			`json:"kind"`
 }
 type QueueInstance struct {
 	BlueprintDatabaseInstance
@@ -33,9 +35,13 @@ func (q *QueueInstance) GetTypeName() string {
 // MarshalJSON is used by app.Save()
 func (q *QueueInstance) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Backend  string `json:"type"`
+		Name  string `json:"name"`
+		Type  string `json:"type"`
+		Kind  string `json:"kind"`
 	}{
-		Backend: q.GetTypeName(),
+		Name: q.GetName(),
+		Type: q.GetTypeName(),
+		Kind: q.Kind,
 	})
 }
 
@@ -62,8 +68,12 @@ func (c *CacheInstance) GetTypeName() string {
 // MarshalJSON is used by app.Save()
 func (c *CacheInstance) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Backend  string `json:"type"`
+		Name  string `json:"name"`
+		Type  string `json:"type"`
+		Kind  string `json:"kind"`
 	}{
-		Backend: c.GetTypeName(),
+		Name: c.GetName(),
+		Type: c.GetTypeName(),
+		Kind: c.Kind,
 	})
 }
