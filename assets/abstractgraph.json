@@ -1,6 +1,7 @@
 {
   "method": "UploadService.UploadPost(ctx, username, text)",
   "caller": "Client",
+  "callee": "UploadService",
   "params": [
     {
       "name": "ctx",
@@ -39,7 +40,7 @@
       "params": [
         {
           "name": "ctx",
-          "id": 14,
+          "id": 9,
           "ref": {
             "name": "ctx",
             "creator": "Client",
@@ -131,14 +132,13 @@
       ]
     },
     {
-      "call": "notifyService.Notify(ctx context.Context, message .Message)",
-      "method": "NotifyService.Notify(ctx, message, dummy)",
+      "call": "queue.Push(ctx context.Contextmessage .Message)",
+      "method": "Queue.Push(item)",
       "caller": "UploadService",
-      "callee": "NotifyService",
       "params": [
         {
           "name": "ctx",
-          "id": 14,
+          "id": 9,
           "ref": {
             "name": "ctx",
             "creator": "Client",
@@ -147,7 +147,7 @@
         },
         {
           "name": "message",
-          "id": 15,
+          "id": 13,
           "deps": [
             {
               "name": "post",
@@ -167,101 +167,11 @@
           ]
         }
       ],
-      "edges": [
-        {
-          "call": "storageService.ReadPost(ctx context.Context, reqID .postID .)",
-          "method": "StorageService.ReadPost(ctx, reqID, postID)",
-          "caller": "NotifyService",
-          "params": [
-            {
-              "name": "ctx",
-              "id": 18,
-              "ref": {
-                "name": "ctx",
-                "creator": "UploadService",
-                "id": 14
-              }
-            },
-            {
-              "name": "reqID",
-              "id": 19,
-              "deps": [
-                {
-                  "name": "message",
-                  "id": 15,
-                  "ref": {
-                    "name": "message",
-                    "creator": "UploadService",
-                    "id": 15
-                  }
-                }
-              ]
-            },
-            {
-              "name": "postID",
-              "id": 20,
-              "deps": [
-                {
-                  "name": "message",
-                  "id": 15,
-                  "ref": {
-                    "name": "message",
-                    "creator": "UploadService",
-                    "id": 15
-                  }
-                }
-              ]
-            }
-          ],
-          "edges": [
-            {
-              "call": "cache.Get(ctx context.Context, postIDStr .\u0026post *.Post)",
-              "method": "Cache.Get(key, val)",
-              "params": [
-                {
-                  "name": "ctx",
-                  "id": 18,
-                  "ref": {
-                    "name": "ctx",
-                    "creator": "NotifyService",
-                    "id": 18
-                  }
-                },
-                {
-                  "name": "postIDStr",
-                  "id": 21,
-                  "deps": [
-                    {
-                      "name": "postID",
-                      "id": 20,
-                      "ref": {
-                        "name": "postID",
-                        "creator": "NotifyService",
-                        "id": 20
-                      }
-                    }
-                  ]
-                },
-                {
-                  "name": "\u0026post",
-                  "id": 22,
-                  "deps": [
-                    {
-                      "name": "post",
-                      "id": -1
-                    }
-                  ]
-                }
-              ],
-              "db_instance": {
-                "name": "post_db",
-                "type": "Cache",
-                "kind": "Redis"
-              }
-            }
-          ]
-        }
-      ]
+      "db_instance": {
+        "name": "notification_queue",
+        "type": "Queue",
+        "kind": "RabbitMQ"
+      }
     }
   ]
 }

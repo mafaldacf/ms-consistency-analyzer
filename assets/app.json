@@ -23,12 +23,10 @@
     },
     "UploadService": {
       "fields": {
-        "notifyService": "postnotification.NotifyService",
         "queue": "backend.Queue",
         "storageService": "postnotification.StorageService"
       },
       "services": [
-        "NotifyService",
         "StorageService"
       ],
       "databases": [

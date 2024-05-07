@@ -37,12 +37,15 @@ func (st *ServiceType) IsTypeName() {}
 
 type ParsedFuncDecl struct {
 	types.Method
-	Ast           *ast.FuncDecl                 `json:"-"`    // omit from json
-	Name          string                        `json:"name"` // omit from json
-	Recv          *ast.Ident                    `json:"-"`    // omit from json
-	DatabaseCalls map[token.Pos]*ParsedCallExpr `json:"-"`    // omit from json
-	ServiceCalls  map[token.Pos]*ParsedCallExpr `json:"-"`    // omit from json
+	Ast           *ast.FuncDecl                 `json:"-"`
+	Name          string                        `json:"name"`
+	Recv          *ast.Ident                    `json:"-"`
+	DatabaseCalls map[token.Pos]*ParsedCallExpr `json:"-"`
+	ServiceCalls  map[token.Pos]*ParsedCallExpr `json:"-"`
 	Service       string                        `json:"-"`
+
+	DbInstances []types.DatabaseInstance `json:"-"`
+
 	// used to fetch the params when generating the basic cfg
 	// to store in the variables array of the function
 	Params  []*types.FunctionField
@@ -93,8 +96,12 @@ type ParsedCallExpr struct {
 	Pos    token.Pos
 	Params []*types.Variable
 
-	Instance types.DatabaseInstance
-	Method   types.Method
+	DbInstance types.DatabaseInstance
+	Method     types.Method
+}
+
+func (call *ParsedCallExpr) GetTargetedDatabaseInstance() types.DatabaseInstance {
+	return call.DbInstance
 }
 
 func (call *ParsedCallExpr) String() string {
@@ -129,21 +136,22 @@ func (call *ParsedCallExpr) SimpleString() string {
 }
 
 type ServiceNode struct {
-	Name     string
-	Impl     string
-	Filepath string
-	Package  string
-	File     *ast.File
-	Fields   map[string]types.Field
-	Imports  map[string]*ParsedImportSpec
+	Name     		string
+	Impl     		string
+	Filepath 		string
+	Package  		string
+	File     		*ast.File
+	Fields   		map[string]types.Field
+	Imports  		map[string]*ParsedImportSpec
 	// the map key is the service type (e.g. StorageService in 'storageService StorageService')
-	Services  map[string]*ServiceNode
-	Databases map[string]types.DatabaseInstance
+	Services  		map[string]*ServiceNode
+	Databases 		map[string]types.DatabaseInstance
 	// safe because methods are unique since Golang does not allow overloading
 	// also this captures all exposed methods because they must be defined within the service struct file
 	ExposedMethods  map[string]*ParsedFuncDecl
 	WorkerMethods   map[string]*ParsedFuncDecl
 	InternalMethods map[string]*ParsedFuncDecl
+	Constructor 	*ParsedFuncDecl
 
 	ParsedCFGs      map[string]*types.ParsedCFG
 	ImplementsQueue bool

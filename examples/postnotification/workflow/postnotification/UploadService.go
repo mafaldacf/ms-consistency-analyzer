@@ -5,7 +5,7 @@ import (
 	"math/rand"
 
 	"postnotification/workflow/postnotification/common"
-	"postnotification/workflow/postnotification/models"
+	//"postnotification/workflow/postnotification/models"
 
 	"github.com/blueprint-uservices/blueprint/runtime/core/backend"
 )
@@ -16,12 +16,12 @@ type UploadService interface {
 
 type UploadServiceImpl struct {
 	storageService  StorageService
-	notifyService  	NotifyService
+	//notifyService  	NotifyService
 	queue    		backend.Queue
 }
 
-func NewUploadServiceImpl(ctx context.Context, storageService StorageService, notifyService NotifyService, queue backend.Queue) (UploadService, error) {
-	return &UploadServiceImpl{storageService: storageService, notifyService: notifyService, queue: queue}, nil
+func NewUploadServiceImpl(ctx context.Context, storageService StorageService, queue backend.Queue) (UploadService, error) {
+	return &UploadServiceImpl{storageService: storageService, queue: queue}, nil
 }
 
 func (u *UploadServiceImpl) UploadPost(ctx context.Context, username string, text string) (int64, error) {
@@ -36,7 +36,11 @@ func (u *UploadServiceImpl) UploadPost(ctx context.Context, username string, tex
 		ReqID:     common.Int64ToString(post.ReqID),
 		PostID:    common.Int64ToString(post.PostID),
 	}
-	u.notifyService.Notify(ctx, message, models.Dummy{})
+	//u.notifyService.Notify(ctx, message, models.Dummy{})
+	_, err := u.queue.Push(ctx, message)
+	if err != nil {
+		return 0, err
+	}
 
 	return post.PostID, nil
 }

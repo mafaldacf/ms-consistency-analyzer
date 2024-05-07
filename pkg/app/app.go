@@ -118,15 +118,15 @@ func (app *App) RegisterDatabaseInstances(databases map[string]ir.IRNode) {
 	}
 }
 
-func (app *App) RegisterServiceNodes(servicesSpec map[*workflowspec.Service][]golang.Service) error {
-	err := app.createServiceNodes(servicesSpec)
+func (app *App) RegisterServiceNodes(specs map[*workflowspec.Service][]golang.Service) error {
+	servicesToSpec, err := app.createServiceNodes(specs)
 	if err != nil {
 		return err
 	}
 	app.matchServiceEdges()
-	app.parseServicesInfo()
-	app.matchServiceDatabases(servicesSpec)
-	app.parseServicesBody()
+	app.parseServicesInfo(servicesToSpec, specs)
+	app.parseServicesMethods()
+	app.parseServicesMethodsBody()
 
 	for _, node := range app.Services {
 		logger.Logger.Infof("[APP] registered service node %s", node.String())
@@ -142,51 +142,59 @@ func (app *App) matchServiceEdges() {
 	}
 }
 
-func (app *App) matchServiceDatabases(servicesSpec map[*workflowspec.Service][]golang.Service) {
-	for spec, args := range servicesSpec {
-		var constructorArgs []string
-		// key: index in constructor for database argument
-		// value: database instance to be referenced
-		dbInstancesConstructorIdx := make(map[int]types.DatabaseInstance)
-		for idx, arg := range args {
-			_, isServiceIR := arg.(*workflow.WorkflowClient)
-			databaseInstance, isRegisteredDb := app.Databases[getShortDbInstanceName(arg.Name())]
-			// if it is not a service IR and it is a registered database instance in the app
-			// then we save the instance and the index of the argument for the service constructor
-			if !isServiceIR && isRegisteredDb {
-				// args don't count with golang context whose index 0 is reserved to
-				dbInstancesConstructorIdx[idx+1] = databaseInstance
-			}
-		}
-		for _, arg := range spec.Constructor.Arguments {
-			constructorArgs = append(constructorArgs, arg.Name)
-		}
-		node := app.Services[spec.Iface.Name]
-		// inspired by blueprint
-		// findConstructorsOfIface() at blueprint/plugins/workflow/workflowspec/service.go
-		for _, pkg := range spec.Iface.File.Package.Module.Packages {
-			for _, f := range pkg.Funcs {
-				if workflowspec.IsConstructorOfIface(f, spec.Iface) {
-					/* retType, valid := f.Returns[0].Type.(*gocode.UserType)
-					if valid {
-						logger.Logger.Warnf("VALID RET TYPE!!!! %v", retType)
-					} */
-					node.ParseDatabaseInstancesInConstructor(f.Name, constructorArgs, dbInstancesConstructorIdx)
-				}
+// inspired by blueprint
+// findConstructorsOfIface() at blueprint/plugins/workflow/workflowspec/service.go
+func getConstructorNameFromSpec(spec *workflowspec.Service) string {
+	for _, pkg := range spec.Iface.File.Package.Module.Packages {
+		for _, f := range pkg.Funcs {
+			if workflowspec.IsConstructorOfIface(f, spec.Iface) {
+				return f.Name
 			}
 		}
 	}
+	return ""
 }
 
-func (app *App) parseServicesInfo() {
+func (app *App) matchServiceDatabases(serviceNode *service.ServiceNode, serviceSpec *workflowspec.Service, specs map[*workflowspec.Service][]golang.Service) {
+	serviceArgs := specs[serviceSpec]
+	var constructorArgs []string
+	// key: index in constructor for database argument
+	// value: database instance to be referenced
+	dbInstancesConstructorIdx := make(map[int]types.DatabaseInstance)
+	for idx, arg := range serviceArgs {
+		_, isServiceIR := arg.(*workflow.WorkflowClient)
+		databaseInstance, isRegisteredDb := app.Databases[getShortDbInstanceName(arg.Name())]
+		// if it is not a service IR and it is a registered database instance in the app
+		// then we save the instance and the index of the argument for the service constructor
+		if !isServiceIR && isRegisteredDb {
+			// args don't count with golang context whose index 0 is reserved to
+			dbInstancesConstructorIdx[idx+1] = databaseInstance
+			serviceNode.Databases[databaseInstance.GetName()] = databaseInstance
+		}
+	}
+	for _, arg := range serviceSpec.Constructor.Arguments {
+		constructorArgs = append(constructorArgs, arg.Name)
+	}
+	serviceNode.ParseConstructor(constructorArgs, dbInstancesConstructorIdx)
+}
+
+func (app *App) parseServicesInfo(servicesToSpec map[*service.ServiceNode]*workflowspec.Service, specs map[*workflowspec.Service][]golang.Service) {
 	for _, node := range app.Services {
 		node.ParseImports()
 		node.ParseFields()
+		serviceSpec := servicesToSpec[node]
+		node.RegisterConstructor(getConstructorNameFromSpec(serviceSpec))
+		app.matchServiceDatabases(node, serviceSpec, specs)
+	}
+}
+
+func (app *App) parseServicesMethods() {
+	for _, node := range app.Services {
 		node.ParseMethods()
 	}
 }
 
-func (app *App) parseServicesBody() {
+func (app *App) parseServicesMethodsBody() {
 	for _, node := range app.Services {
 		node.ParseMethodsBody()
 		parseAndVisitCFG(node, node.ExposedMethods, "exposed")
@@ -204,15 +212,16 @@ func parseAndVisitCFG(node *service.ServiceNode, methods map[string]*service.Par
 	}
 }
 
-func (app *App) createServiceNodes(servicesSpec map[*workflowspec.Service][]golang.Service) error {
+func (app *App) createServiceNodes(specs map[*workflowspec.Service][]golang.Service) (map[*service.ServiceNode]*workflowspec.Service, error) {
+	serviceSpec := make(map[*service.ServiceNode]*workflowspec.Service)
 	// services also include blueprint backends
-	for spec, edges := range servicesSpec {
+	for spec, edges := range specs {
 		fset := token.NewFileSet()
 		filepath := spec.Iface.File.Name
 		file, err := goparser.ParseFile(fset, filepath, nil, goparser.ParseComments)
 		if err != nil {
 			logger.Logger.Errorf("error parsing file %s: %s", filepath, err.Error())
-			return err
+			return serviceSpec, err
 		}
 		node := &service.ServiceNode{
 			Name:            spec.Iface.Name,
@@ -229,6 +238,7 @@ func (app *App) createServiceNodes(servicesSpec map[*workflowspec.Service][]gola
 			InternalMethods: make(map[string]*service.ParsedFuncDecl),
 			ParsedCFGs:      make(map[string]*types.ParsedCFG),
 		}
+		serviceSpec[node] = spec
 		// add entry for methods that will be later parsed
 		for _, m := range spec.Iface.Ast.Methods.List {
 			node.ExposedMethods[m.Names[0].Name] = nil
@@ -244,7 +254,7 @@ func (app *App) createServiceNodes(servicesSpec map[*workflowspec.Service][]gola
 		}
 		app.Services[node.Name] = node
 	}
-	return nil
+	return serviceSpec, nil
 }
 
 // RegisterSimpleServiceNode is deprecated

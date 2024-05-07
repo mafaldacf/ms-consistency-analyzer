@@ -42,7 +42,7 @@ func makeDockerSpec(spec wiring.WiringSpec) ([]string, error) {
 	notify_service_ctr := applyDockerDefaults(spec, notify_service, "notify_service_proc", "notify_service_container")
 	containers = append(containers, notify_service_ctr)
 
-	upload_service := workflow.Service[postnotification.UploadService](spec, "upload_service", storage_service, notify_service, notification_queue)
+	upload_service := workflow.Service[postnotification.UploadService](spec, "upload_service", storage_service, notification_queue)
 	upload_service_ctr := applyHTTPDefaults(spec, upload_service, "upload_service_proc", "upload_service_container")
 	containers = append(containers, upload_service_ctr)
 	allServices = append(allServices, "upload_service")

@@ -2,6 +2,7 @@ package abstractgraph
 
 import (
 	"analyzer/pkg/app"
+	frameworks "analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
@@ -10,6 +11,7 @@ import (
 	"fmt"
 	"go/token"
 	"os"
+	"slices"
 	"sort"
 	"strings"
 )
@@ -47,10 +49,11 @@ type AbstractDatabaseCall struct {
 	AbstractNode `json:"-"`              // omit from json
 	Call         string                  `json:"call,omitempty"`
 	Method       string                  `json:"method,omitempty"`
+	Caller       string                  `json:"caller,omitempty"`
 	Params       []*types.Variable       `json:"params,omitempty"`
 	ParsedCall   *service.ParsedCallExpr `json:"-"` // omit from json
 	Parent       AbstractNode            `json:"-"` // omit from json
-	Instance     types.DatabaseInstance  `json:"db_instance"`
+	DbInstance   types.DatabaseInstance  `json:"db_instance"`
 }
 
 func (db *AbstractDatabaseCall) GetParams() []*types.Variable {
@@ -81,7 +84,7 @@ func Build(app *app.App, entryPoints []string) *AbstractGraph {
 	for _, serviceName := range entryPoints {
 		service := app.Services[serviceName]
 		for _, method := range service.ExposedMethods {
-			abstractGraph.startBuild(&abstractGraph, app.Services[serviceName], method)
+			abstractGraph.startBuild(app, app.Services[serviceName], method)
 			abstractGraph.matchVarsIdentifiers()
 		}
 	}
@@ -202,33 +205,63 @@ func (ag *AbstractGraph) Save() {
 	}
 }
 
-func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *service.ServiceNode, targetMethod *service.ParsedFuncDecl) {
-	linenos := make([]token.Pos, 0, len(targetMethod.DatabaseCalls))
-	for k := range targetMethod.DatabaseCalls {
+func getMethodCallsLinenosByOrder(method *service.ParsedFuncDecl) []token.Pos {
+	var linenos []token.Pos
+	for k := range method.DatabaseCalls {
 		linenos = append(linenos, k)
 	}
-	for k := range targetMethod.ServiceCalls {
+	for k := range method.ServiceCalls {
 		linenos = append(linenos, k)
 	}
 	// order by lineno
 	sort.Slice(linenos, func(i, j int) bool {
 		return linenos[i] < linenos[j]
 	})
+	return linenos
+}
 
-	abstractGraph.Nodes = append(abstractGraph.Nodes, &AbstractServiceCall{
+func (ag *AbstractGraph) startBuild(app *app.App, serviceNode *service.ServiceNode, targetMethod *service.ParsedFuncDecl) {
+	entryAbstractServiceCall := ag.addEntry(serviceNode, targetMethod)
+	queuePushCalls := ag.buildEntry(serviceNode, entryAbstractServiceCall, targetMethod)
+	ag.appendQueuePopCalls(app, queuePushCalls)
+	ag.recurseBuild(entryAbstractServiceCall)
+}
+
+func (ag *AbstractGraph) appendQueuePopCalls(app *app.App, pushCalls []*service.ParsedCallExpr) {
+	for _, pushCall := range pushCalls {
+		queueInstance := pushCall.DbInstance
+		for _, serviceNode := range app.Services {
+			// found service node in app that uses this queue
+			if _, ok := serviceNode.Databases[queueInstance.GetName()]; ok {
+				// check if it implements the pop worker
+				for _, workerMethod := range serviceNode.WorkerMethods {
+					if slices.Contains(workerMethod.DbInstances, queueInstance) {
+						logger.Logger.Warnf("[GRAPH] found queue worker %s for queue %s: %v", workerMethod.String(), queueInstance.GetName(), workerMethod.DbInstances)
+					}
+				}
+			}
+		}
+	}
+}
+
+func (ag *AbstractGraph) addEntry(serviceNode *service.ServiceNode, targetMethod *service.ParsedFuncDecl) *AbstractServiceCall {
+	entryAbstractServiceCall := &AbstractServiceCall{
 		ParsedCall: &service.ParsedCallExpr{
 			TargetField: serviceNode.Name,
 			Name:        targetMethod.Name,
 		},
 		Caller: "Client",
+		Callee: serviceNode.Name,
 		Method: targetMethod.String(),
-	})
-	abstractService := abstractGraph.Nodes[0].(*AbstractServiceCall)
+	}
+	ag.Nodes = append(ag.Nodes, entryAbstractServiceCall)
+	return entryAbstractServiceCall
+}
 
-	//FIXME: this is hardcoded but should be automated later
+func (ag *AbstractGraph) buildEntry(serviceNode *service.ServiceNode, entryAbstractServiceCall *AbstractServiceCall, targetMethod *service.ParsedFuncDecl) []*service.ParsedCallExpr {
 	entryMethod := serviceNode.ExposedMethods[targetMethod.Name]
 	for _, p := range entryMethod.Params {
-		abstractService.Params = append(abstractService.Params, &types.Variable{
+		entryAbstractServiceCall.Params = append(entryAbstractServiceCall.Params, &types.Variable{
 			Name: p.Name,
 			Type: p.Type,
 			Id:   -1,
@@ -240,19 +273,28 @@ func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *s
 		})
 	}
 
+	linenos := getMethodCallsLinenosByOrder(targetMethod)
+	var queuePushCalls []*service.ParsedCallExpr
 	for _, lineno := range linenos {
 		if targetMethod.DatabaseCalls[lineno] != nil {
 			dbCall := targetMethod.DatabaseCalls[lineno]
-			abstractService.Children = append(abstractService.Children, &AbstractDatabaseCall{
+			entryAbstractServiceCall.Children = append(entryAbstractServiceCall.Children, &AbstractDatabaseCall{
 				ParsedCall: dbCall,
 				Params:     dbCall.Params,
 				Call:       dbCall.SimpleString(),
+				Caller:     strings.Split(dbCall.CallerTypeName.String(), ".")[1],
 				Method:     dbCall.Method.String(),
-				Instance:   dbCall.Instance,
+				DbInstance: dbCall.DbInstance,
 			})
+			if dbInstance := dbCall.GetTargetedDatabaseInstance(); dbInstance != nil && dbInstance.IsQueue() {
+				if method, ok := dbCall.Method.(*frameworks.BlueprintBackend); ok && method.IsWrite() {
+					queuePushCalls = append(queuePushCalls, dbCall)
+					logger.Logger.Warnf("[GRAPH] found queue push call %s in %s", dbCall.String(), entryAbstractServiceCall.Callee)
+				}
+			}
 		} else if targetMethod.ServiceCalls[lineno] != nil {
 			svcCall := targetMethod.ServiceCalls[lineno]
-			abstractService.Children = append(abstractService.Children, &AbstractServiceCall{
+			entryAbstractServiceCall.Children = append(entryAbstractServiceCall.Children, &AbstractServiceCall{
 				ParsedCall: svcCall,
 				Caller:     strings.Split(svcCall.CallerTypeName.String(), ".")[1],
 				Callee:     strings.Split(svcCall.CalleeTypeName.String(), ".")[1],
@@ -262,10 +304,7 @@ func (ag *AbstractGraph) startBuild(abstractGraph *AbstractGraph, serviceNode *s
 			})
 		}
 	}
-
-	// FIXME: is it really necessary that we only have one node?
-	// should these always be the entry nodes?
-	ag.recurseBuild(abstractService)
+	return queuePushCalls
 }
 
 func (ag *AbstractGraph) recurseBuild(parentNode *AbstractServiceCall) {
@@ -297,7 +336,7 @@ func (ag *AbstractGraph) recurseBuild(parentNode *AbstractServiceCall) {
 						Call:       dbCall.SimpleString(),
 						Method:     dbCall.Method.String(),
 						Parent:     abstractService,
-						Instance:   dbCall.Instance,
+						DbInstance: dbCall.DbInstance,
 					})
 				} else if targetMethod.ServiceCalls[lineno] != nil {
 					svcCall := targetMethod.ServiceCalls[lineno]

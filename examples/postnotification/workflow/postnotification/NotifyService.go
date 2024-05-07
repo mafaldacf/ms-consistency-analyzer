@@ -7,14 +7,14 @@ import (
 
 	"github.com/blueprint-uservices/blueprint/runtime/core/backend"
 	"postnotification/workflow/postnotification/common"
-	"postnotification/workflow/postnotification/models"
+	//"postnotification/workflow/postnotification/models"
 )
 
 // does not expose any methods to other services
 // it defines Run that runs workers that pull messages from the queue
 type NotifyService interface {
 	Run(ctx context.Context) error 
-	Notify(ctx context.Context, message Message, dummy models.Dummy) error
+	//Notify(ctx context.Context, message Message, dummy models.Dummy) error
 }
 
 type NotifyServiceImpl struct {
@@ -28,7 +28,7 @@ func NewNotifyServiceImpl(ctx context.Context, storageService StorageService, qu
 	return n, nil
 }
 
-func (n *NotifyServiceImpl) Notify(ctx context.Context, message Message, dummy models.Dummy) error {
+/* func (n *NotifyServiceImpl) Notify(ctx context.Context, message Message, dummy models.Dummy) error {
 	
 	reqID, err := common.StringToInt64(message.ReqID)
 	if err != nil {
@@ -41,7 +41,7 @@ func (n *NotifyServiceImpl) Notify(ctx context.Context, message Message, dummy m
 	_, err = n.storageService.ReadPost(ctx, reqID, postID)
 	//u.database.GetCollection(ctx, "post", "post").FindOne(ctx, post)
 	return err
-}
+} */
 
 func (n *NotifyServiceImpl) handleMessage(ctx context.Context, message Message) error {
 	reqID, err := common.StringToInt64(message.ReqID)

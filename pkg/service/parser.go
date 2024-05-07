@@ -141,25 +141,36 @@ func (node *ServiceNode) ParseMethods() {
 		if implementsService {
 			if node.isMethodExposedByService(funcDecl) {
 				node.addExposedMethod(funcDecl, rcvIdent)
+				return true
 			} else if node.ImplementsQueue {
-				node.addWorkerMethodIfQueueImpl(funcDecl, rcvIdent)
+				if funcImplementsQueue, dbInstance := node.funcImplementsQueue(funcDecl, rcvIdent); funcImplementsQueue {
+					node.addWorkerMethod(funcDecl, rcvIdent, dbInstance)
+					return true
+				}
 			}
-		} else if funcDecl != nil {
-			node.addInternalMethod(funcDecl)
+			node.addInternalMethod(funcDecl, rcvIdent)
+		} else if funcDecl != nil && funcDecl.Name.Name != node.Constructor.Name {
+			// be aware that there can be internal methods with the same name of the instructor
+			// we distinguish them since the constructor usually does not implement the service
+			// so we need to make sure that the name of this function (that does not implement the service) is not equal to the constructor
+			node.addInternalMethod(funcDecl, nil)
 		}
 		return true
 	})
 }
 
 func (node *ServiceNode) ParseMethodsBody() {
-	for _, method := range node.ExposedMethods {
+	for name, method := range node.ExposedMethods {
+		logger.Logger.Debugf("parse exposed %s", name)
 		node.parseMethodBodyCalls(method)
 	}
-	for _, method := range node.WorkerMethods {
+	for name, method := range node.WorkerMethods {
+		logger.Logger.Debugf("parse worker %s", name)
 		node.parseMethodBodyCalls(method)
 	}
 	//FIXME: move to package methods
-	for _, method := range node.InternalMethods {
+	for name, method := range node.InternalMethods {
+		logger.Logger.Debugf("parse internal %s", name)
 		node.parseMethodBodyCalls(method)
 	}
 }
@@ -185,6 +196,21 @@ func (node *ServiceNode) ParseFields() {
 		return true
 	})
 	logger.Logger.Debugln()
+}
+
+func (node *ServiceNode) RegisterConstructor(constructorName string) {
+	ast.Inspect(node.File, func(n ast.Node) bool {
+		implementsService, funcDecl, _ := node.methodImplementsService(n)
+		if !implementsService && funcDecl != nil && funcDecl.Name.Name == constructorName {
+			node.Constructor = &ParsedFuncDecl{
+				Ast:           funcDecl,
+				Name:          funcDecl.Name.Name,
+				Service:       node.Name,
+			}
+			logger.Logger.Debugf("[PARSER] registered constructor %s for service %s", constructorName, node.Name)
+		}
+		return true
+	})
 }
 
 // saveFieldWithType saves the service or database fields defined in the structure
@@ -261,15 +287,7 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string, i
 	}
 }
 
-func (node *ServiceNode) addWorkerMethodIfQueueImpl(funcDecl *ast.FuncDecl, recvIdent *ast.Ident) {
-	/* queues := []*types.DatabaseField{}
-	// get all implemented queues
-	for _, field := range node.Fields {
-		if dbField, ok := field.(*types.DatabaseField); ok && dbField.IsQueue {
-			queues = append(queues, dbField)
-		}
-	} */
-
+func (node *ServiceNode) funcImplementsQueue(funcDecl *ast.FuncDecl, recvIdent *ast.Ident) (implements bool, dbInstance types.DatabaseInstance) {
 	// inspect methods
 	ast.Inspect(funcDecl, func(n ast.Node) bool {
 		ok, _, methodIdent, fieldIdent, _ := fieldCallInMethodBody(n, recvIdent)
@@ -279,36 +297,47 @@ func (node *ServiceNode) addWorkerMethodIfQueueImpl(funcDecl *ast.FuncDecl, recv
 		if field, isField := node.Fields[fieldIdent.Name]; isField {
 			if dbField, isDbField := field.(*types.DatabaseField); isDbField {
 				if dbField.IsQueue && methodIdent.Name == "Pop" {
-					params := node.parseFuncDeclParams(funcDecl)
-					parsedFuncDecl := &ParsedFuncDecl{
-						Ast:           funcDecl,
-						Name:          funcDecl.Name.Name,
-						Recv:          recvIdent,
-						Params:        params,
-						DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
-						ServiceCalls:  make(map[token.Pos]*ParsedCallExpr),
-						Service:       node.Name,
-					}
-					node.WorkerMethods[parsedFuncDecl.Name] = parsedFuncDecl
-					logger.Logger.Debugf("Found worker method: %s", parsedFuncDecl.String())
+					implements = true
+					dbInstance = dbField.DbInstance
+					return false
 				}
 			}
 		}
 		return true
 	})
+	return implements, dbInstance
 }
 
-func (node *ServiceNode) addInternalMethod(funcDecl *ast.FuncDecl) {
+
+func (node *ServiceNode) addWorkerMethod(funcDecl *ast.FuncDecl, recvIdent *ast.Ident, dbInstance types.DatabaseInstance) {
 	params := node.parseFuncDeclParams(funcDecl)
 	parsedFuncDecl := &ParsedFuncDecl{
 		Ast:           funcDecl,
 		Name:          funcDecl.Name.Name,
+		Recv:          recvIdent,
 		Params:        params,
 		DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
 		ServiceCalls:  make(map[token.Pos]*ParsedCallExpr),
 		Service:       node.Name,
 	}
+	parsedFuncDecl.DbInstances = append(parsedFuncDecl.DbInstances, dbInstance)
+	node.WorkerMethods[parsedFuncDecl.Name] = parsedFuncDecl
+	logger.Logger.Debugf("[PARSER] added worker method %s for service %s: %v (field=%s)", parsedFuncDecl.String(), node.Name, parsedFuncDecl.DbInstances, dbInstance)
+}
+
+func (node *ServiceNode) addInternalMethod(funcDecl *ast.FuncDecl, rcvIdent *ast.Ident) {
+	params := node.parseFuncDeclParams(funcDecl)
+	parsedFuncDecl := &ParsedFuncDecl{
+		Ast:           funcDecl,
+		Name:          funcDecl.Name.Name,
+		Params:        params,
+		Recv: 		   rcvIdent,
+		DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
+		ServiceCalls:  make(map[token.Pos]*ParsedCallExpr),
+		Service:       node.Name,
+	}
 	node.InternalMethods[parsedFuncDecl.Name] = parsedFuncDecl
+	logger.Logger.Debugf("[PARSER] added internal method %s to service %s", parsedFuncDecl.String(), node.Name)
 }
 
 func (node *ServiceNode) addExposedMethod(funcDecl *ast.FuncDecl, rcvIdent *ast.Ident) {
@@ -323,7 +352,7 @@ func (node *ServiceNode) addExposedMethod(funcDecl *ast.FuncDecl, rcvIdent *ast.
 		Service:       node.Name,
 	}
 	node.ExposedMethods[parsedFuncDecl.Name] = parsedFuncDecl
-	logger.Logger.Debugf("Found exposed method: %s", parsedFuncDecl.String())
+	logger.Logger.Debugf("[PARSER] added exposed method %s to service %s", parsedFuncDecl.String(), node.Name)
 }
 
 func fieldCallInMethodBody(node ast.Node, recvIdent *ast.Ident) (bool, *ast.CallExpr, *ast.Ident, *ast.Ident, *ast.Ident) {
@@ -387,7 +416,7 @@ func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 					// 3. add the target method for the current call expression
 					targetDatabaseType := utils.GetShortTypeStr(databaseField.Type)
 					parsedCallExpr.Method = frameworks.GetBackendMethod(fmt.Sprintf("%s.%s", targetDatabaseType, parsedCallExpr.Name))
-					parsedCallExpr.Instance = databaseField.Instance
+					parsedCallExpr.DbInstance = databaseField.DbInstance
 
 					// set the source (caller service) and destination (callee database) types
 					parsedCallExpr.CallerTypeName = &ServiceType{Name: node.Name, Package: node.Package}
@@ -402,8 +431,8 @@ func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 	logger.Logger.Debugln()
 }
 
-func (node *ServiceNode) ParseDatabaseInstancesInConstructor(constructorName string, constructorArgs []string, dbInstancesConstructorIdx map[int]types.DatabaseInstance) {
-	constructor := node.InternalMethods[constructorName]
+func (node *ServiceNode) ParseConstructor(constructorArgs []string, dbInstancesConstructorIdx map[int]types.DatabaseInstance) {
+	constructor := node.Constructor
 	ast.Inspect(constructor.Ast.Body, func(n ast.Node) bool {
 		compositeLit, ok := n.(*ast.CompositeLit)
 		if !ok {
@@ -424,9 +453,8 @@ func (node *ServiceNode) ParseDatabaseInstancesInConstructor(constructorName str
 							for idx, arg := range constructorArgs {
 								if arg == keyValue.Name {
 									if dbInstance, ok := dbInstancesConstructorIdx[idx]; ok {
-										dbField.Instance = dbInstance
-										node.Databases[dbInstance.GetName()] = dbInstance
-										logger.Logger.Debugf("[%s] linked database field '%s' to instance '%s'", node.Name, dbField.Name, dbInstance.GetName())
+										dbField.DbInstance = dbInstance
+										logger.Logger.Debugf("[PARSER] [%s] linked database field '%s' to instance '%s'", node.Name, dbField.Name, dbInstance.GetName())
 										break
 									}
 								}

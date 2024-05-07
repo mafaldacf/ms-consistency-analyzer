@@ -47,6 +47,10 @@ func (b *BlueprintBackend) GetReturns() []*types.FunctionField {
 	return b.Returns
 }
 
+func (b *BlueprintBackend) IsWrite() bool {
+	return b.Write
+}
+
 func GetBackendMethod(name string) *BlueprintBackend {
 	if name == "Cache.Put" {
 		return &BlueprintBackend{

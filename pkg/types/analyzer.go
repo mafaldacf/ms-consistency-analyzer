@@ -25,16 +25,16 @@ type ServiceField struct {
 	gocode.Variable
 	Lineno token.Pos
 	Ast    *ast.Field
-	Idx 	int
+	Idx    int
 }
 type DatabaseField struct {
 	Field
-	gocode.Variable 
-	Lineno 		token.Pos
-	Ast    		*ast.Field
-	IsQueue		bool
-	Instance    DatabaseInstance
-	Idx 		int
+	gocode.Variable
+	Lineno     token.Pos
+	Ast        *ast.Field
+	IsQueue    bool
+	DbInstance DatabaseInstance
+	Idx        int
 }
 
 func (svc *ServiceField) GetTypeName() string {
