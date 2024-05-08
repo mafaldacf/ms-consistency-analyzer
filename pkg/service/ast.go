@@ -111,16 +111,9 @@ func (call *ParsedCallExpr) String() string {
 	} else {
 		funcCallStr = fmt.Sprintf("%s.%s(", call.TargetField, call.Name)
 	}
-	for i, arg := range call.Ast.Args {
-		switch e := arg.(type) {
-		case *ast.Ident:
-			funcCallStr += e.Name
-		case *ast.UnaryExpr:
-			if ident, ok := e.X.(*ast.Ident); ok {
-				funcCallStr += "&" + ident.Name
-			}
-		}
-		if i < len(call.Ast.Args)-1 {
+	for i, arg := range call.Method.GetParams() {
+		funcCallStr += arg.String()
+		if i < len(call.Method.GetParams())-1 {
 			funcCallStr += ", "
 		}
 	}
@@ -130,9 +123,9 @@ func (call *ParsedCallExpr) String() string {
 
 func (call *ParsedCallExpr) SimpleString() string {
 	funcCallStr := fmt.Sprintf("%s.%s(", call.TargetField, call.Name)
-	for i, arg := range call.Params {
+	for i, arg := range call.Method.GetParams() {
 		funcCallStr += arg.String()
-		if i < len(call.Ast.Args)-1 {
+		if i < len(call.Method.GetParams())-1 {
 			funcCallStr += ", "
 		}
 	}

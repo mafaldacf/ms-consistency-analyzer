@@ -5,7 +5,7 @@
   "params": [
     {
       "name": "ctx",
-      "id": 6,
+      "id": 4,
       "ref": {
         "name": "ctx",
         "creator": "Client",
@@ -14,7 +14,7 @@
     },
     {
       "name": "username",
-      "id": 7,
+      "id": 5,
       "ref": {
         "name": "username",
         "creator": "Client",
@@ -23,7 +23,7 @@
     },
     {
       "name": "text",
-      "id": 8,
+      "id": 6,
       "ref": {
         "name": "text",
         "creator": "Client",
@@ -33,14 +33,14 @@
   ],
   "edges": [
     {
-      "call": "storageService.StorePost(ctx context.Context, post.ReqID .Post, post .Post)",
+      "call": "storageService.StorePost(ctx context.Context, reqID int64, post postnotification.Post)",
       "method": "StorageService.StorePost(ctx, reqID, post)",
       "caller": "UploadService",
       "callee": "StorageService",
       "params": [
         {
           "name": "ctx",
-          "id": 9,
+          "id": 7,
           "ref": {
             "name": "ctx",
             "creator": "Client",
@@ -49,19 +49,19 @@
         },
         {
           "name": "post.ReqID",
-          "id": 10,
+          "id": 8,
           "deps": [
             {
               "name": "post",
-              "id": 11,
+              "id": 9,
               "deps": [
                 {
                   "name": "text",
-                  "id": 8,
+                  "id": 6,
                   "ref": {
                     "name": "text",
                     "creator": "Client",
-                    "id": 8
+                    "id": 6
                   }
                 }
               ]
@@ -70,15 +70,15 @@
         },
         {
           "name": "post",
-          "id": 11,
+          "id": 9,
           "deps": [
             {
               "name": "text",
-              "id": 8,
+              "id": 6,
               "ref": {
                 "name": "text",
                 "creator": "Client",
-                "id": 8
+                "id": 6
               }
             }
           ]
@@ -86,41 +86,41 @@
       ],
       "edges": [
         {
-          "call": "cache.Put(ctx context.Context, postIDStr ., post postnotification.Post)",
+          "call": "cache.Put(key string, value interface{.})",
           "method": "Cache.Put(key, value)",
           "caller": "StorageService",
           "params": [
             {
               "name": "ctx",
-              "id": 9,
+              "id": 7,
               "ref": {
                 "name": "ctx",
                 "creator": "UploadService",
-                "id": 9
+                "id": 7
               }
             },
             {
               "name": "postIDStr",
-              "id": 12,
+              "id": 10,
               "deps": [
                 {
                   "name": "post",
-                  "id": 11,
+                  "id": 9,
                   "ref": {
                     "name": "post",
                     "creator": "UploadService",
-                    "id": 11
+                    "id": 9
                   }
                 }
               ]
             },
             {
               "name": "post",
-              "id": 11,
+              "id": 9,
               "ref": {
                 "name": "post",
                 "creator": "UploadService",
-                "id": 11
+                "id": 9
               }
             }
           ],
@@ -133,13 +133,13 @@
       ]
     },
     {
-      "call": "queue.Push(ctx context.Context, message .Message)",
+      "call": "queue.Push(item interface{.})",
       "method": "Queue.Push(item)",
       "caller": "UploadService",
       "params": [
         {
           "name": "ctx",
-          "id": 9,
+          "id": 7,
           "ref": {
             "name": "ctx",
             "creator": "Client",
@@ -148,19 +148,19 @@
         },
         {
           "name": "message",
-          "id": 13,
+          "id": 11,
           "deps": [
             {
               "name": "post",
-              "id": 11,
+              "id": 9,
               "deps": [
                 {
                   "name": "text",
-                  "id": 8,
+                  "id": 6,
                   "ref": {
                     "name": "text",
                     "creator": "Client",
-                    "id": 8
+                    "id": 6
                   }
                 }
               ]
@@ -172,11 +172,11 @@
         {
           "handler": {
             "method": "NotifyService.workerThread(ctx, workerID)",
-            "caller": "Client",
+            "caller": "UploadService",
             "callee": "NotifyService",
             "edges": [
               {
-                "call": "queue.Pop()",
+                "call": "queue.Pop(dst interface{.})",
                 "method": "Queue.Pop(dst)",
                 "caller": "NotifyService",
                 "db_instance": {
@@ -186,13 +186,13 @@
                 }
               },
               {
-                "call": "storageService.ReadPost()",
+                "call": "storageService.ReadPost(ctx context.Context, reqID int64, postID int64)",
                 "method": "StorageService.ReadPost(ctx, reqID, postID)",
                 "caller": "NotifyService",
                 "callee": "StorageService",
                 "edges": [
                   {
-                    "call": "cache.Get(ctx context.Context, postIDStr ., \u0026post *.Post)",
+                    "call": "cache.Get(key string, val interface{.})",
                     "method": "Cache.Get(key, val)",
                     "caller": "StorageService",
                     "params": [

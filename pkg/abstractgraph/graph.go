@@ -13,7 +13,6 @@ import (
 	"os"
 	"slices"
 	"sort"
-	"strings"
 )
 
 type AbstractNode interface {
@@ -21,7 +20,7 @@ type AbstractNode interface {
 	String() 		string
 	GetChildren() 	[]AbstractNode
 	AddChild(AbstractNode)
-	SetVisited()
+	SetVisited(bool)
 	IsVisited() bool
 }
 
@@ -63,8 +62,8 @@ func (call *AbstractServiceCall) AddChild(child AbstractNode) {
 	call.Children = append(call.Children, child)
 }
 
-func (call *AbstractServiceCall) SetVisited() {
-	call.Visited = true
+func (call *AbstractServiceCall) SetVisited(v bool) {
+	call.Visited = v
 }
 
 func (call *AbstractServiceCall) IsVisited() bool {
@@ -100,8 +99,8 @@ func (call *AbstractDatabaseCall) AddChild(child AbstractNode) {
 	call.Children = append(call.Children, child)
 }
 
-func (call *AbstractDatabaseCall) SetVisited() {
-	call.Visited = true
+func (call *AbstractDatabaseCall) SetVisited(v bool) {
+	call.Visited = v
 }
 
 func (call *AbstractDatabaseCall) IsVisited() bool {
@@ -114,43 +113,41 @@ type AbstractGraph struct {
 
 	// helpers
 	globalIdx        int64
-	visitedNodes     map[AbstractNode]bool
 	nodesBlockParams map[AbstractNode][]*types.Variable
 }
 
 func Build(app *app.App, entryPoints []string) *AbstractGraph {
-	abstractGraph := AbstractGraph{
+	ag := &AbstractGraph{
 		Nodes:           make([]AbstractNode, 0),
 		AppServiceNodes: app.Services,
 	}
-
-	//FIXME: this is hardcoded but the graph can have several root nodes with several (root) target methods
 	for _, serviceName := range entryPoints {
 		service := app.Services[serviceName]
 		for _, method := range service.ExposedMethods {
-			abstractGraph.initBuild(app, app.Services[serviceName], method)
-			abstractGraph.matchIdentifiers()
+			ag.initBuild(app, app.Services[serviceName], method)
 		}
 	}
-	return &abstractGraph
+	
+	for _, node := range ag.Nodes {
+		ag.cleanVisited(node)
+	}
+	ag.globalIdx = 1
+	ag.nodesBlockParams = make(map[AbstractNode][]*types.Variable, 0)
+	for _, abstractEntry := range ag.Nodes {
+		ag.matchIdentifiers(abstractEntry)
+	}
+	return ag
 }
 
-// matchIdentifiers uses DFS search
-func (ag *AbstractGraph) matchIdentifiers() {
-	// cannot be 0 otherwise because default value in
-	// variable id parameter is 0 when not previously set
-	ag.globalIdx = 1
-	ag.visitedNodes = make(map[AbstractNode]bool, 0)
-	ag.nodesBlockParams = make(map[AbstractNode][]*types.Variable, 0)
-
-	for _, abstractEntry := range ag.Nodes {
-		ag.matchIdentifiersHelper(abstractEntry)
+func (ag *AbstractGraph) cleanVisited(node AbstractNode) {
+	node.SetVisited(false)
+	for _, edge := range node.GetChildren() {
+		ag.cleanVisited(edge)
 	}
 }
 
-func (ag *AbstractGraph) matchIdentifiersHelper(node AbstractNode) {
-	// REMINDER: is it really necessary that we only have one node?
-	// should these always be the entry nodes????
+func (ag *AbstractGraph) matchIdentifiers(node AbstractNode) {
+	logger.Logger.Warnf("matching identifiers for node %s", node.String())
 	for callerParamIdx, callerParam := range node.GetParams() {
 		logger.Logger.Debugf("> caller %s for param %s", node.String(), callerParam.Name)
 		// assign id if not yet assigned (act as root variable for other child dependencies)
@@ -160,13 +157,9 @@ func (ag *AbstractGraph) matchIdentifiersHelper(node AbstractNode) {
 			ag.globalIdx++
 		}
 
-		// iterate every child and if not yet visited then we extract
-		// all the variables (even from the dependencies) that correspond to
-		// a parameter of the block i.e. the (remote) method parameter
-		// FIXME: FOR NOW BECAUSE WE ONLY SUPPORT 1 BLOCK PER REMOTE METHOD
 		if abstractService, ok := node.(*AbstractServiceCall); ok {
 			for _, childNode := range abstractService.Children {
-				if !ag.visitedNodes[childNode] {
+				if !node.IsVisited() {
 					// get all dependencies recursively within children
 					// (i think it is safe to have duplicates)
 					var deps []*types.Variable
@@ -176,7 +169,6 @@ func (ag *AbstractGraph) matchIdentifiersHelper(node AbstractNode) {
 
 					// block params is a subset of deps when a variable originates from
 					// the block parameter i.e. the (remote) method parameter
-					// FIXME: FOR NOW BECAUSE WE ONLY SUPPORT 1 BLOCK PER REMOTE METHOD
 					for _, dep := range deps {
 						if dep.IsBlockParam {
 							ag.nodesBlockParams[childNode] = append(ag.nodesBlockParams[childNode], dep)
@@ -186,7 +178,7 @@ func (ag *AbstractGraph) matchIdentifiersHelper(node AbstractNode) {
 							ag.globalIdx++
 						}
 					}
-					ag.visitedNodes[childNode] = true
+					node.SetVisited(true)
 				}
 				// match the child parameter id to the caller parameter id
 				// if they correspond to the same index in the func call and func definition, resp.
@@ -216,7 +208,7 @@ func (ag *AbstractGraph) matchIdentifiersHelper(node AbstractNode) {
 	}
 	if abstractService, ok := node.(*AbstractServiceCall); ok {
 		for _, childNode := range abstractService.Children {
-			ag.matchIdentifiersHelper(childNode)
+			ag.matchIdentifiers(childNode)
 		}
 	}
 }
@@ -272,22 +264,34 @@ func (ag *AbstractGraph) initBuild(app *app.App, serviceNode *service.ServiceNod
 	}
 }
 
-func (ag *AbstractGraph) addEntry(serviceNode *service.ServiceNode, targetMethod *service.ParsedFuncDecl) {
-	// add entry node to graph
-	entryAbstractServiceCall := &AbstractServiceCall{
+func createDummyAbstractServiceCall(node *service.ServiceNode, method *service.ParsedFuncDecl, caller string) AbstractServiceCall{
+	call := AbstractServiceCall{
 		ParsedCall: &service.ParsedCallExpr{
-			TargetField: serviceNode.Name,
-			Name:        targetMethod.Name,
+			TargetField: node.Name,
+			Name:        method.Name,
+			Method: 	 method,
 		},
-		Caller: "Client",
-		Callee: serviceNode.Name,
-		Method: targetMethod.String(),
+		Caller: caller,
+		Callee: node.Name,
+		Method: method.String(),
+	} 
+	for _, p := range method.GetParams() {
+		call.ParsedCall.Params = append(call.ParsedCall.Params, &types.Variable{
+			Name: p.Name,
+			Type: p.Type,
+		})
 	}
-	ag.Nodes = append(ag.Nodes, entryAbstractServiceCall)
+	return call
+}
+
+func (ag *AbstractGraph) addEntry(node *service.ServiceNode, method *service.ParsedFuncDecl) {
+	// add entry node to graph
+	entryCall := createDummyAbstractServiceCall(node, method, "Client")
+	ag.Nodes = append(ag.Nodes, &entryCall)
 	// build entry node
-	entryMethod := serviceNode.ExposedMethods[targetMethod.Name]
+	entryMethod := node.ExposedMethods[method.Name]
 	for _, p := range entryMethod.Params {
-		entryAbstractServiceCall.Params = append(entryAbstractServiceCall.Params, &types.Variable{
+		entryCall.Params = append(entryCall.Params, &types.Variable{
 			Name: p.Name,
 			Type: p.Type,
 			Id:   -1,
@@ -306,34 +310,34 @@ func (ag *AbstractGraph) recurseBuild(app *app.App, abstractNode AbstractNode) {
 	}
 	switch node := abstractNode.(type) {
 		case *AbstractServiceCall:
-			logger.Logger.Warnf("Doing recurse build on service call %s", node.String())
+			logger.Logger.Debugf("Doing recurse build on service call %s", node.String())
 			targetMethod := ag.AppServiceNodes[node.Callee].ExposedMethods[node.ParsedCall.Name]
 			ag.appendAbstractEdges(node, targetMethod)
 		case *AbstractDatabaseCall:
-			logger.Logger.Warnf("Doing recurse build on database call %s", node.String())
+			logger.Logger.Debugf("Doing recurse build on database call %s", node.String())
 			if dbInstance := node.ParsedCall.GetTargetedDatabaseInstance(); dbInstance != nil && dbInstance.IsQueue() {
 				if method, ok := node.ParsedCall.Method.(*frameworks.BlueprintBackend); ok && method.IsWrite() {
-					queueHandlers := ag.findQueueHandlers(app, dbInstance)
+					queueHandlers := ag.findQueueHandlers(app, dbInstance, node)
 					for _, handler := range queueHandlers {
 						node.Children = append(node.Children, handler)
 					}
 				}
 			}
 		case *AbstractQueueHandler:
-			logger.Logger.Warnf("Doing recurse build on queue handler %s", node.String())
+			logger.Logger.Debugf("Doing recurse build on queue handler %s", node.String())
 			targetMethod := ag.AppServiceNodes[node.Callee].QueueHandlerMethods[node.ParsedCall.Name]
 			ag.appendAbstractEdges(node, targetMethod)
 		default:
-			logger.Logger.Warnf("Error recursing build for %s", node)
+			logger.Logger.Debugf("Error recursing build for %s", node)
 			return
 	}
-	abstractNode.SetVisited()
+	abstractNode.SetVisited(true)
 	for _, edge := range abstractNode.GetChildren(){
 		ag.recurseBuild(app, edge)
 	}
 }
 
-func (ag *AbstractGraph) findQueueHandlers(app *app.App, instance types.DatabaseInstance) []*AbstractQueueHandler {
+func (ag *AbstractGraph) findQueueHandlers(app *app.App, instance types.DatabaseInstance, publisher *AbstractDatabaseCall) []*AbstractQueueHandler {
 	var queueHandlers []*AbstractQueueHandler
 	for _, node := range app.Services {
 		if _, ok := node.Databases[instance.GetName()]; ok {
@@ -342,16 +346,14 @@ func (ag *AbstractGraph) findQueueHandlers(app *app.App, instance types.Database
 					if slices.Contains(queueHandler.DbInstances, instance) {
 						logger.Logger.Warnf("[GRAPH] found worker %s on instance '%s'", queueHandler.String(), instance.GetName())
 						queueHandler := &AbstractQueueHandler{
-							AbstractServiceCall: AbstractServiceCall{
-								ParsedCall: &service.ParsedCallExpr{
-									TargetField: node.Name,
-									Name:        queueHandler.Name,
-								},
-								Caller: 	"Client",
-								Callee: 	node.Name,
-								Method: 	queueHandler.String(),
-							},
+							AbstractServiceCall: createDummyAbstractServiceCall(node, queueHandler, utils.GetShortTypeStr(publisher.ParsedCall.CallerTypeName),),
 							DbInstance: instance,
+						}
+						for _, p := range queueHandler.GetParams() {
+							queueHandler.ParsedCall.Params = append(queueHandler.ParsedCall.Params, &types.Variable{
+								Name: p.Name,
+								Type: p.Type,
+							})
 						}
 						queueHandlers = append(queueHandlers, queueHandler)
 					}
@@ -371,7 +373,7 @@ func (ag *AbstractGraph) appendAbstractEdges(abstractCall AbstractNode, targetMe
 				ParsedCall: dbCall,
 				Params:     dbCall.Params,
 				Call:       dbCall.SimpleString(),
-				Caller:     strings.Split(dbCall.CallerTypeName.String(), ".")[1],
+				Caller:     utils.GetShortTypeStr(dbCall.CallerTypeName),
 				Method:     dbCall.Method.String(),
 				DbInstance: dbCall.DbInstance,
 			}
@@ -383,6 +385,7 @@ func (ag *AbstractGraph) appendAbstractEdges(abstractCall AbstractNode, targetMe
 			}
 		} else if targetMethod.ServiceCalls[lineno] != nil {
 			svcCall := targetMethod.ServiceCalls[lineno]
+			logger.Logger.Warnf("[GRAPH] appending edge of abstract service call %s", svcCall.SimpleString())
 			abstractCall.AddChild(&AbstractServiceCall{
 				ParsedCall: svcCall,
 				Caller:     utils.GetShortTypeStr(svcCall.CallerTypeName),
