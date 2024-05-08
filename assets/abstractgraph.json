@@ -33,7 +33,7 @@
   ],
   "edges": [
     {
-      "call": "storageService.StorePost(ctx context.Context, post.ReqID .Postpost .Post)",
+      "call": "storageService.StorePost(ctx context.Context, post.ReqID .Post, post .Post)",
       "method": "StorageService.StorePost(ctx, reqID, post)",
       "caller": "UploadService",
       "callee": "StorageService",
@@ -86,8 +86,9 @@
       ],
       "edges": [
         {
-          "call": "cache.Put(ctx context.Context, postIDStr .post postnotification.Post)",
+          "call": "cache.Put(ctx context.Context, postIDStr ., post postnotification.Post)",
           "method": "Cache.Put(key, value)",
+          "caller": "StorageService",
           "params": [
             {
               "name": "ctx",
@@ -132,7 +133,7 @@
       ]
     },
     {
-      "call": "queue.Push(ctx context.Contextmessage .Message)",
+      "call": "queue.Push(ctx context.Context, message .Message)",
       "method": "Queue.Push(item)",
       "caller": "UploadService",
       "params": [
@@ -165,6 +166,17 @@
               ]
             }
           ]
+        }
+      ],
+      "handlers": [
+        {
+          "method": "NotifyService.workerThread(ctx, workerID)",
+          "caller": "Client",
+          "db_instance": {
+            "name": "notification_queue",
+            "type": "Queue",
+            "kind": "RabbitMQ"
+          }
         }
       ],
       "db_instance": {

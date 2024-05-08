@@ -144,7 +144,7 @@ func (node *ServiceNode) ParseMethods() {
 				return true
 			} else if node.ImplementsQueue {
 				if funcImplementsQueue, dbInstance := node.funcImplementsQueue(funcDecl, rcvIdent); funcImplementsQueue {
-					node.addWorkerMethod(funcDecl, rcvIdent, dbInstance)
+					node.addQueueHandlerMethod(funcDecl, rcvIdent, dbInstance)
 					return true
 				}
 			}
@@ -164,7 +164,7 @@ func (node *ServiceNode) ParseMethodsBody() {
 		logger.Logger.Debugf("parse exposed %s", name)
 		node.parseMethodBodyCalls(method)
 	}
-	for name, method := range node.WorkerMethods {
+	for name, method := range node.QueueHandlerMethods {
 		logger.Logger.Debugf("parse worker %s", name)
 		node.parseMethodBodyCalls(method)
 	}
@@ -203,9 +203,9 @@ func (node *ServiceNode) RegisterConstructor(constructorName string) {
 		implementsService, funcDecl, _ := node.methodImplementsService(n)
 		if !implementsService && funcDecl != nil && funcDecl.Name.Name == constructorName {
 			node.Constructor = &ParsedFuncDecl{
-				Ast:           funcDecl,
-				Name:          funcDecl.Name.Name,
-				Service:       node.Name,
+				Ast:     funcDecl,
+				Name:    funcDecl.Name.Name,
+				Service: node.Name,
 			}
 			logger.Logger.Debugf("[PARSER] registered constructor %s for service %s", constructorName, node.Name)
 		}
@@ -308,8 +308,7 @@ func (node *ServiceNode) funcImplementsQueue(funcDecl *ast.FuncDecl, recvIdent *
 	return implements, dbInstance
 }
 
-
-func (node *ServiceNode) addWorkerMethod(funcDecl *ast.FuncDecl, recvIdent *ast.Ident, dbInstance types.DatabaseInstance) {
+func (node *ServiceNode) addQueueHandlerMethod(funcDecl *ast.FuncDecl, recvIdent *ast.Ident, dbInstance types.DatabaseInstance) {
 	params := node.parseFuncDeclParams(funcDecl)
 	parsedFuncDecl := &ParsedFuncDecl{
 		Ast:           funcDecl,
@@ -321,7 +320,7 @@ func (node *ServiceNode) addWorkerMethod(funcDecl *ast.FuncDecl, recvIdent *ast.
 		Service:       node.Name,
 	}
 	parsedFuncDecl.DbInstances = append(parsedFuncDecl.DbInstances, dbInstance)
-	node.WorkerMethods[parsedFuncDecl.Name] = parsedFuncDecl
+	node.QueueHandlerMethods[parsedFuncDecl.Name] = parsedFuncDecl
 	logger.Logger.Debugf("[PARSER] added worker method %s for service %s: %v (field=%s)", parsedFuncDecl.String(), node.Name, parsedFuncDecl.DbInstances, dbInstance)
 }
 
@@ -331,7 +330,7 @@ func (node *ServiceNode) addInternalMethod(funcDecl *ast.FuncDecl, rcvIdent *ast
 		Ast:           funcDecl,
 		Name:          funcDecl.Name.Name,
 		Params:        params,
-		Recv: 		   rcvIdent,
+		Recv:          rcvIdent,
 		DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
 		ServiceCalls:  make(map[token.Pos]*ParsedCallExpr),
 		Service:       node.Name,

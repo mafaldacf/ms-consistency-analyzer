@@ -31,6 +31,10 @@ func IsBasicType(t string) bool {
 
 // GetShortTypeStr removes the package (e.g. backend.) from the type
 func GetShortTypeStr(typeName gocode.TypeName) string {
-	splits := strings.Split(typeName.String(), ".")
-	return splits[len(splits)-1]
+	typeNameStr := typeName.String()
+	splits := strings.Split(typeNameStr, ".")
+	if len(splits) > 0 {
+		return splits[len(splits)-1]
+	}
+	return typeNameStr
 }

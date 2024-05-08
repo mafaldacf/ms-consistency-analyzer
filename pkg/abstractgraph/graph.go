@@ -17,51 +17,72 @@ import (
 )
 
 type AbstractNode interface {
-	GetParams() []*types.Variable
-	String() string
+	GetParams() 	[]*types.Variable
+	String() 		string
+	GetChildren() 	[]AbstractNode
+	AddChild(AbstractNode)
 }
 
 type AbstractServiceCall struct {
-	AbstractNode `json:"-"` // omit from json
-	Call         string     `json:"call,omitempty"`
-	Method       string     `json:"method,omitempty"`
+	AbstractNode 						`json:"-"` 					// omit from json
+	Visited      bool     				`json:"-"` 					// omit from json
+	Call         string     			`json:"call,omitempty"`
+	Method       string     			`json:"method,omitempty"`
 
-	Caller string `json:"caller,omitempty"`
-	Callee string `json:"callee,omitempty"`
+	Caller 		string 					`json:"caller,omitempty"`
+	Callee 		string 					`json:"callee,omitempty"`
 
-	Params     []*types.Variable       `json:"params,omitempty"`
-	ParsedCall *service.ParsedCallExpr `json:"-"` // omit from json
+	Params     	[]*types.Variable       `json:"params,omitempty"`
+	ParsedCall 	*service.ParsedCallExpr `json:"-"` 					// omit from json
 
 	// nodes representing database calls cannot contain children as well
-	Children []AbstractNode `json:"edges,omitempty"` // omit from json
-	Parent   AbstractNode   `json:"-"`               // omit from json
+	Children 	[]AbstractNode 			`json:"edges,omitempty"`
+	Parent   	AbstractNode  			`json:"-"`              	// omit from json
 }
 
-func (svc *AbstractServiceCall) GetParams() []*types.Variable {
-	return svc.Params
+func (call *AbstractServiceCall) GetParams() []*types.Variable {
+	return call.Params
 }
 
-func (svc *AbstractServiceCall) String() string {
-	return svc.ParsedCall.SimpleString()
+func (call *AbstractServiceCall) String() string {
+	return call.ParsedCall.SimpleString()
+}
+
+func (call *AbstractServiceCall) GetChildren() []AbstractNode {
+	return call.Children
+}
+
+func (call *AbstractServiceCall) AddChild(child AbstractNode) {
+	call.Children = append(call.Children, child)
 }
 
 type AbstractDatabaseCall struct {
-	AbstractNode `json:"-"`              // omit from json
+	AbstractNode 						 `json:"-"`              	// omit from json
+	Visited      bool     			     `json:"-"` 				// omit from json
 	Call         string                  `json:"call,omitempty"`
 	Method       string                  `json:"method,omitempty"`
 	Caller       string                  `json:"caller,omitempty"`
 	Params       []*types.Variable       `json:"params,omitempty"`
-	ParsedCall   *service.ParsedCallExpr `json:"-"` // omit from json
-	Parent       AbstractNode            `json:"-"` // omit from json
+	ParsedCall   *service.ParsedCallExpr `json:"-"` 				// omit from json
+	Parent       AbstractNode            `json:"-"` 				// omit from json
+	Children 	 []AbstractNode  `json:"handlers,omitempty"`
 	DbInstance   types.DatabaseInstance  `json:"db_instance"`
 }
 
-func (db *AbstractDatabaseCall) GetParams() []*types.Variable {
-	return db.Params
+func (call *AbstractDatabaseCall) GetParams() []*types.Variable {
+	return call.Params
 }
 
-func (db *AbstractDatabaseCall) String() string {
-	return db.ParsedCall.SimpleString()
+func (call *AbstractDatabaseCall) String() string {
+	return call.ParsedCall.SimpleString()
+}
+
+func (call *AbstractDatabaseCall) GetChildren() []AbstractNode {
+	return call.Children
+}
+
+func (call *AbstractDatabaseCall) AddChild(child AbstractNode) {
+	call.Children = append(call.Children, child)
 }
 
 type AbstractGraph struct {
@@ -84,28 +105,27 @@ func Build(app *app.App, entryPoints []string) *AbstractGraph {
 	for _, serviceName := range entryPoints {
 		service := app.Services[serviceName]
 		for _, method := range service.ExposedMethods {
-			abstractGraph.startBuild(app, app.Services[serviceName], method)
-			abstractGraph.matchVarsIdentifiers()
+			abstractGraph.initBuild(app, app.Services[serviceName], method)
+			abstractGraph.matchIdentifiers()
 		}
 	}
 	return &abstractGraph
 }
 
-// MatchVarsIdentifiers uses DFS search
-
-// FIXME: do for multiple levels of children
-func (ag *AbstractGraph) matchVarsIdentifiers() {
+// matchIdentifiers uses DFS search
+func (ag *AbstractGraph) matchIdentifiers() {
 	// cannot be 0 otherwise because default value in
 	// variable id parameter is 0 when not previously set
 	ag.globalIdx = 1
 	ag.visitedNodes = make(map[AbstractNode]bool, 0)
 	ag.nodesBlockParams = make(map[AbstractNode][]*types.Variable, 0)
 
-	//FIXME: root node (e.g. UploadPost) must have callerParam args aswell
-	ag.matchVarsIdentifiersHelper(ag.Nodes[0])
+	for _, abstractEntry := range ag.Nodes {
+		ag.matchIdentifiersHelper(abstractEntry)
+	}
 }
 
-func (ag *AbstractGraph) matchVarsIdentifiersHelper(node AbstractNode) {
+func (ag *AbstractGraph) matchIdentifiersHelper(node AbstractNode) {
 	// REMINDER: is it really necessary that we only have one node?
 	// should these always be the entry nodes????
 	for callerParamIdx, callerParam := range node.GetParams() {
@@ -173,7 +193,7 @@ func (ag *AbstractGraph) matchVarsIdentifiersHelper(node AbstractNode) {
 	}
 	if abstractService, ok := node.(*AbstractServiceCall); ok {
 		for _, childNode := range abstractService.Children {
-			ag.matchVarsIdentifiersHelper(childNode)
+			ag.matchIdentifiersHelper(childNode)
 		}
 	}
 }
@@ -220,31 +240,47 @@ func getMethodCallsLinenosByOrder(method *service.ParsedFuncDecl) []token.Pos {
 	return linenos
 }
 
-func (ag *AbstractGraph) startBuild(app *app.App, serviceNode *service.ServiceNode, targetMethod *service.ParsedFuncDecl) {
-	entryAbstractServiceCall := ag.addEntry(serviceNode, targetMethod)
-	queuePushCalls := ag.buildEntry(serviceNode, entryAbstractServiceCall, targetMethod)
-	ag.appendQueuePopCalls(app, queuePushCalls)
-	ag.recurseBuild(entryAbstractServiceCall)
+func (ag *AbstractGraph) initBuild(app *app.App, serviceNode *service.ServiceNode, targetMethod *service.ParsedFuncDecl) {
+	ag.addAndBuildEntry(app, serviceNode, targetMethod)
+	for _, abstractEntry := range ag.Nodes {
+		if abstractServiceEntry, ok := abstractEntry.(*AbstractServiceCall); ok { // sanity check
+			ag.recurseBuild(app, abstractServiceEntry)
+		}
+	}
 }
 
-func (ag *AbstractGraph) appendQueuePopCalls(app *app.App, pushCalls []*service.ParsedCallExpr) {
-	for _, pushCall := range pushCalls {
+func (ag *AbstractGraph) appendQueuePopCalls(app *app.App, abstractPushCalls []*AbstractDatabaseCall) []*AbstractDatabaseCall {
+	var queueHandlers []*AbstractDatabaseCall
+	for _, pushCall := range abstractPushCalls {
 		queueInstance := pushCall.DbInstance
 		for _, serviceNode := range app.Services {
 			// found service node in app that uses this queue
 			if _, ok := serviceNode.Databases[queueInstance.GetName()]; ok {
 				// check if it implements the pop worker
-				for _, workerMethod := range serviceNode.WorkerMethods {
-					if slices.Contains(workerMethod.DbInstances, queueInstance) {
-						logger.Logger.Warnf("[GRAPH] found queue worker %s for queue %s: %v", workerMethod.String(), queueInstance.GetName(), workerMethod.DbInstances)
+				for _, queueHandler := range serviceNode.QueueHandlerMethods {
+					if slices.Contains(queueHandler.DbInstances, queueInstance) {
+						logger.Logger.Warnf("[GRAPH] found worker %s on instance '%s'", queueHandler.String(), queueInstance.GetName())
+						queueHandler := &AbstractDatabaseCall{
+							ParsedCall: &service.ParsedCallExpr{
+								TargetField: serviceNode.Name,
+								Name:        queueHandler.Name,
+							},
+							Caller: 	"Client",
+							Method: 	queueHandler.String(),
+							DbInstance: pushCall.DbInstance,
+						}
+						pushCall.Children = append(pushCall.Children, queueHandler)
+						queueHandlers = append(queueHandlers, queueHandler)
 					}
 				}
 			}
 		}
 	}
+	return queueHandlers
 }
 
-func (ag *AbstractGraph) addEntry(serviceNode *service.ServiceNode, targetMethod *service.ParsedFuncDecl) *AbstractServiceCall {
+func (ag *AbstractGraph) addAndBuildEntry(app *app.App, serviceNode *service.ServiceNode, targetMethod *service.ParsedFuncDecl) {
+	// add entry node to graph
 	entryAbstractServiceCall := &AbstractServiceCall{
 		ParsedCall: &service.ParsedCallExpr{
 			TargetField: serviceNode.Name,
@@ -255,10 +291,7 @@ func (ag *AbstractGraph) addEntry(serviceNode *service.ServiceNode, targetMethod
 		Method: targetMethod.String(),
 	}
 	ag.Nodes = append(ag.Nodes, entryAbstractServiceCall)
-	return entryAbstractServiceCall
-}
-
-func (ag *AbstractGraph) buildEntry(serviceNode *service.ServiceNode, entryAbstractServiceCall *AbstractServiceCall, targetMethod *service.ParsedFuncDecl) []*service.ParsedCallExpr {
+	// build entry node
 	entryMethod := serviceNode.ExposedMethods[targetMethod.Name]
 	for _, p := range entryMethod.Params {
 		entryAbstractServiceCall.Params = append(entryAbstractServiceCall.Params, &types.Variable{
@@ -272,85 +305,62 @@ func (ag *AbstractGraph) buildEntry(serviceNode *service.ServiceNode, entryAbstr
 			},
 		})
 	}
+	entryAbstractServiceCall.Visited = true
+	ag.appendAbstractEdges(app, entryAbstractServiceCall, targetMethod)
+}
 
+func (ag *AbstractGraph) recurseBuild(app *app.App, abstractNode AbstractNode) {
+	for _, node := range abstractNode.GetChildren() {
+		// we need to unfold the service blocks from each service call
+		if abstractService, ok := node.(*AbstractServiceCall); ok && !abstractService.Visited {
+			serviceNode := ag.AppServiceNodes[utils.GetShortTypeStr(abstractService.ParsedCall.CalleeTypeName)]
+			methodName := abstractService.ParsedCall.Name
+			targetMethod := serviceNode.ExposedMethods[methodName]
+			abstractService.Visited = true
+
+			ag.appendAbstractEdges(app, abstractService, targetMethod)
+			ag.recurseBuild(app, abstractService)
+		}
+		if abstractDatabase, ok := node.(*AbstractDatabaseCall); ok && !abstractDatabase.Visited {
+			/* ag.appendAbstractEdges(app, abstractDatabase, targetMethod) */
+			abstractDatabase.Visited = true
+			ag.recurseBuild(app, abstractDatabase)
+		}
+	}
+}
+
+func (ag *AbstractGraph) appendAbstractEdges(app *app.App, abstractCall AbstractNode, targetMethod *service.ParsedFuncDecl) {
+	var abstractPushCalls []*AbstractDatabaseCall
 	linenos := getMethodCallsLinenosByOrder(targetMethod)
-	var queuePushCalls []*service.ParsedCallExpr
 	for _, lineno := range linenos {
 		if targetMethod.DatabaseCalls[lineno] != nil {
 			dbCall := targetMethod.DatabaseCalls[lineno]
-			entryAbstractServiceCall.Children = append(entryAbstractServiceCall.Children, &AbstractDatabaseCall{
+			abstractDbCall := &AbstractDatabaseCall{
 				ParsedCall: dbCall,
 				Params:     dbCall.Params,
 				Call:       dbCall.SimpleString(),
 				Caller:     strings.Split(dbCall.CallerTypeName.String(), ".")[1],
 				Method:     dbCall.Method.String(),
 				DbInstance: dbCall.DbInstance,
-			})
+			}
+			abstractCall.AddChild(abstractDbCall)
 			if dbInstance := dbCall.GetTargetedDatabaseInstance(); dbInstance != nil && dbInstance.IsQueue() {
 				if method, ok := dbCall.Method.(*frameworks.BlueprintBackend); ok && method.IsWrite() {
-					queuePushCalls = append(queuePushCalls, dbCall)
-					logger.Logger.Warnf("[GRAPH] found queue push call %s in %s", dbCall.String(), entryAbstractServiceCall.Callee)
+					abstractPushCalls = append(abstractPushCalls, abstractDbCall)
+					logger.Logger.Warnf("[GRAPH] found queue push call in %s: %s on instance '%s'", abstractCall.(*AbstractServiceCall).Callee, dbCall.String(), dbInstance.GetName())
 				}
 			}
 		} else if targetMethod.ServiceCalls[lineno] != nil {
 			svcCall := targetMethod.ServiceCalls[lineno]
-			entryAbstractServiceCall.Children = append(entryAbstractServiceCall.Children, &AbstractServiceCall{
+			abstractCall.AddChild(&AbstractServiceCall{
 				ParsedCall: svcCall,
-				Caller:     strings.Split(svcCall.CallerTypeName.String(), ".")[1],
-				Callee:     strings.Split(svcCall.CalleeTypeName.String(), ".")[1],
+				Caller:     utils.GetShortTypeStr(svcCall.CallerTypeName),
+				Callee:     utils.GetShortTypeStr(svcCall.CalleeTypeName),
 				Params:     svcCall.Params,
 				Call:       svcCall.SimpleString(),
 				Method:     svcCall.Method.String(),
 			})
 		}
 	}
-	return queuePushCalls
-}
-
-func (ag *AbstractGraph) recurseBuild(parentNode *AbstractServiceCall) {
-	for _, node := range parentNode.Children {
-		// we need to unfold the service blocks from each service call
-		if abstractService, ok := node.(*AbstractServiceCall); ok {
-			serviceNode := ag.AppServiceNodes[utils.GetShortTypeStr(abstractService.ParsedCall.CalleeTypeName)]
-			methodName := abstractService.ParsedCall.Name
-			targetMethod := serviceNode.ExposedMethods[methodName]
-
-			linenos := make([]token.Pos, 0, len(targetMethod.DatabaseCalls))
-
-			for k := range targetMethod.DatabaseCalls {
-				linenos = append(linenos, k)
-			}
-			for k := range targetMethod.ServiceCalls {
-				linenos = append(linenos, k)
-			}
-			// order by lineno
-			sort.Slice(linenos, func(i, j int) bool {
-				return linenos[i] < linenos[j]
-			})
-			for _, lineno := range linenos {
-				if targetMethod.DatabaseCalls[lineno] != nil {
-					dbCall := targetMethod.DatabaseCalls[lineno]
-					abstractService.Children = append(abstractService.Children, &AbstractDatabaseCall{
-						ParsedCall: dbCall,
-						Params:     dbCall.Params,
-						Call:       dbCall.SimpleString(),
-						Method:     dbCall.Method.String(),
-						Parent:     abstractService,
-						DbInstance: dbCall.DbInstance,
-					})
-				} else if targetMethod.ServiceCalls[lineno] != nil {
-					svcCall := targetMethod.ServiceCalls[lineno]
-					abstractService.Children = append(abstractService.Children, &AbstractServiceCall{
-						ParsedCall: svcCall,
-						Caller:     strings.Split(svcCall.CallerTypeName.String(), ".")[1],
-						Params:     svcCall.Params,
-						Call:       svcCall.SimpleString(),
-						Method:     svcCall.Method.String(),
-						Parent:     abstractService,
-					})
-				}
-			}
-			ag.recurseBuild(abstractService)
-		}
-	}
+	ag.appendQueuePopCalls(app, abstractPushCalls)
 }

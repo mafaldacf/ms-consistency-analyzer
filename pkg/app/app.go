@@ -198,7 +198,7 @@ func (app *App) parseServicesMethodsBody() {
 	for _, node := range app.Services {
 		node.ParseMethodsBody()
 		parseAndVisitCFG(node, node.ExposedMethods, "exposed")
-		parseAndVisitCFG(node, node.WorkerMethods, "worker")
+		parseAndVisitCFG(node, node.QueueHandlerMethods, "worker")
 		parseAndVisitCFG(node, node.InternalMethods, "internal")
 	}
 }
@@ -224,19 +224,19 @@ func (app *App) createServiceNodes(specs map[*workflowspec.Service][]golang.Serv
 			return serviceSpec, err
 		}
 		node := &service.ServiceNode{
-			Name:            spec.Iface.Name,
-			Impl:            spec.Iface.Name + "Impl", // FIX THIS hardcoded value
-			Package:         spec.Iface.File.Package.Name,
-			Filepath:        filepath,
-			File:            file,
-			Fields:          make(map[string]types.Field),
-			Imports:         make(map[string]*service.ParsedImportSpec),
-			Services:        make(map[string]*service.ServiceNode),
-			Databases:       make(map[string]types.DatabaseInstance),
-			ExposedMethods:  make(map[string]*service.ParsedFuncDecl),
-			WorkerMethods:   make(map[string]*service.ParsedFuncDecl),
-			InternalMethods: make(map[string]*service.ParsedFuncDecl),
-			ParsedCFGs:      make(map[string]*types.ParsedCFG),
+			Name:                spec.Iface.Name,
+			Impl:                spec.Iface.Name + "Impl", // FIX THIS hardcoded value
+			Package:             spec.Iface.File.Package.Name,
+			Filepath:            filepath,
+			File:                file,
+			Fields:              make(map[string]types.Field),
+			Imports:             make(map[string]*service.ParsedImportSpec),
+			Services:            make(map[string]*service.ServiceNode),
+			Databases:           make(map[string]types.DatabaseInstance),
+			ExposedMethods:      make(map[string]*service.ParsedFuncDecl),
+			QueueHandlerMethods: make(map[string]*service.ParsedFuncDecl),
+			InternalMethods:     make(map[string]*service.ParsedFuncDecl),
+			ParsedCFGs:          make(map[string]*types.ParsedCFG),
 		}
 		serviceSpec[node] = spec
 		// add entry for methods that will be later parsed
@@ -268,19 +268,19 @@ func (app *App) RegisterSimpleServiceNode(serviceSpec *workflowspec.Service, ser
 		return err
 	}
 	node := &service.ServiceNode{
-		Name:            serviceSpec.Iface.Name,
-		Impl:            serviceSpec.Iface.Name + "Impl", // FIX THIS hardcoded value
-		Package:         serviceSpec.Iface.File.Package.Name,
-		Filepath:        filepath,
-		File:            file,
-		Fields:          make(map[string]types.Field),
-		Imports:         make(map[string]*service.ParsedImportSpec),
-		Services:        make(map[string]*service.ServiceNode),
-		Databases:       make(map[string]types.DatabaseInstance),
-		ExposedMethods:  make(map[string]*service.ParsedFuncDecl),
-		WorkerMethods:   make(map[string]*service.ParsedFuncDecl),
-		InternalMethods: make(map[string]*service.ParsedFuncDecl),
-		ParsedCFGs:      make(map[string]*types.ParsedCFG),
+		Name:                serviceSpec.Iface.Name,
+		Impl:                serviceSpec.Iface.Name + "Impl", // FIX THIS hardcoded value
+		Package:             serviceSpec.Iface.File.Package.Name,
+		Filepath:            filepath,
+		File:                file,
+		Fields:              make(map[string]types.Field),
+		Imports:             make(map[string]*service.ParsedImportSpec),
+		Services:            make(map[string]*service.ServiceNode),
+		Databases:           make(map[string]types.DatabaseInstance),
+		ExposedMethods:      make(map[string]*service.ParsedFuncDecl),
+		QueueHandlerMethods: make(map[string]*service.ParsedFuncDecl),
+		InternalMethods:     make(map[string]*service.ParsedFuncDecl),
+		ParsedCFGs:          make(map[string]*types.ParsedCFG),
 	}
 	for _, s := range services {
 		node.Services[s.Iface.Name] = app.Services[s.Iface.Name]

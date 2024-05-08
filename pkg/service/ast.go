@@ -127,7 +127,7 @@ func (call *ParsedCallExpr) SimpleString() string {
 	funcCallStr := fmt.Sprintf("%s.%s(", call.TargetField, call.Name)
 	for i, arg := range call.Params {
 		funcCallStr += arg.String()
-		if i < len(call.Ast.Args)-2 {
+		if i < len(call.Ast.Args)-1 {
 			funcCallStr += ", "
 		}
 	}
@@ -136,22 +136,22 @@ func (call *ParsedCallExpr) SimpleString() string {
 }
 
 type ServiceNode struct {
-	Name     		string
-	Impl     		string
-	Filepath 		string
-	Package  		string
-	File     		*ast.File
-	Fields   		map[string]types.Field
-	Imports  		map[string]*ParsedImportSpec
+	Name     string
+	Impl     string
+	Filepath string
+	Package  string
+	File     *ast.File
+	Fields   map[string]types.Field
+	Imports  map[string]*ParsedImportSpec
 	// the map key is the service type (e.g. StorageService in 'storageService StorageService')
-	Services  		map[string]*ServiceNode
-	Databases 		map[string]types.DatabaseInstance
+	Services  map[string]*ServiceNode
+	Databases map[string]types.DatabaseInstance
 	// safe because methods are unique since Golang does not allow overloading
 	// also this captures all exposed methods because they must be defined within the service struct file
-	ExposedMethods  map[string]*ParsedFuncDecl
-	WorkerMethods   map[string]*ParsedFuncDecl
-	InternalMethods map[string]*ParsedFuncDecl
-	Constructor 	*ParsedFuncDecl
+	ExposedMethods      map[string]*ParsedFuncDecl
+	QueueHandlerMethods map[string]*ParsedFuncDecl
+	InternalMethods     map[string]*ParsedFuncDecl
+	Constructor         *ParsedFuncDecl
 
 	ParsedCFGs      map[string]*types.ParsedCFG
 	ImplementsQueue bool
