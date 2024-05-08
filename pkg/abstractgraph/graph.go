@@ -21,6 +21,8 @@ type AbstractNode interface {
 	String() 		string
 	GetChildren() 	[]AbstractNode
 	AddChild(AbstractNode)
+	SetVisited()
+	IsVisited() bool
 }
 
 type AbstractServiceCall struct {
@@ -61,6 +63,14 @@ func (call *AbstractServiceCall) AddChild(child AbstractNode) {
 	call.Children = append(call.Children, child)
 }
 
+func (call *AbstractServiceCall) SetVisited() {
+	call.Visited = true
+}
+
+func (call *AbstractServiceCall) IsVisited() bool {
+	return call.Visited
+}
+
 type AbstractDatabaseCall struct {
 	AbstractNode 						 `json:"-"`              	// omit from json
 	Visited      bool     			     `json:"-"` 				// omit from json
@@ -88,6 +98,14 @@ func (call *AbstractDatabaseCall) GetChildren() []AbstractNode {
 
 func (call *AbstractDatabaseCall) AddChild(child AbstractNode) {
 	call.Children = append(call.Children, child)
+}
+
+func (call *AbstractDatabaseCall) SetVisited() {
+	call.Visited = true
+}
+
+func (call *AbstractDatabaseCall) IsVisited() bool {
+	return call.Visited
 }
 
 type AbstractGraph struct {
@@ -246,7 +264,7 @@ func getMethodCallsLinenosByOrder(method *service.ParsedFuncDecl) []token.Pos {
 }
 
 func (ag *AbstractGraph) initBuild(app *app.App, serviceNode *service.ServiceNode, targetMethod *service.ParsedFuncDecl) {
-	ag.addAndBuildEntry(serviceNode, targetMethod)
+	ag.addEntry(serviceNode, targetMethod)
 	for _, abstractEntry := range ag.Nodes {
 		if abstractServiceEntry, ok := abstractEntry.(*AbstractServiceCall); ok { // sanity check
 			ag.recurseBuild(app, abstractServiceEntry)
@@ -254,7 +272,7 @@ func (ag *AbstractGraph) initBuild(app *app.App, serviceNode *service.ServiceNod
 	}
 }
 
-func (ag *AbstractGraph) addAndBuildEntry(serviceNode *service.ServiceNode, targetMethod *service.ParsedFuncDecl) {
+func (ag *AbstractGraph) addEntry(serviceNode *service.ServiceNode, targetMethod *service.ParsedFuncDecl) {
 	// add entry node to graph
 	entryAbstractServiceCall := &AbstractServiceCall{
 		ParsedCall: &service.ParsedCallExpr{
@@ -280,46 +298,39 @@ func (ag *AbstractGraph) addAndBuildEntry(serviceNode *service.ServiceNode, targ
 			},
 		})
 	}
-	entryAbstractServiceCall.Visited = true
-	ag.appendAbstractEdges(entryAbstractServiceCall, targetMethod)
 }
 
 func (ag *AbstractGraph) recurseBuild(app *app.App, abstractNode AbstractNode) {
-	for _, node := range abstractNode.GetChildren() {
-		logger.Logger.Warnf("Doing recurse build on %s (parent = %s)", node.String(), abstractNode.String())
-		// regular service call
-		if abstractService, ok := node.(*AbstractServiceCall); ok && !abstractService.Visited {
-			abstractService.Visited = true
-			serviceNode := ag.AppServiceNodes[utils.GetShortTypeStr(abstractService.ParsedCall.CalleeTypeName)]
-			methodName := abstractService.ParsedCall.Name
-			targetMethod := serviceNode.ExposedMethods[methodName]
-			ag.appendAbstractEdges(abstractService, targetMethod)
-			ag.recurseBuild(app, abstractService)
-		}
-		// queue handlers representing service methods triggered by queue messages
-		if abstractQueueHandler, ok := node.(*AbstractQueueHandler); ok && !abstractQueueHandler.Visited {
-			abstractQueueHandler.Visited = true
-			serviceNode := ag.AppServiceNodes[abstractQueueHandler.Callee]
-			methodName := abstractQueueHandler.ParsedCall.Name
-			targetMethod := serviceNode.QueueHandlerMethods[methodName]
-			ag.appendAbstractEdges(abstractQueueHandler, targetMethod)
-			ag.recurseBuild(app, abstractQueueHandler)
-		}
-		// database calls that trigger queue handlers
-		if abstractDatabaseCall, ok := node.(*AbstractDatabaseCall); ok && !abstractDatabaseCall.Visited {
-			abstractDatabaseCall.Visited = true
-			if dbInstance := abstractDatabaseCall.ParsedCall.GetTargetedDatabaseInstance(); dbInstance != nil && dbInstance.IsQueue() {
-				if method, ok := abstractDatabaseCall.ParsedCall.Method.(*frameworks.BlueprintBackend); ok && method.IsWrite() {
+	if abstractNode.IsVisited() {
+		return
+	}
+	switch node := abstractNode.(type) {
+		case *AbstractServiceCall:
+			logger.Logger.Warnf("Doing recurse build on service call %s", node.String())
+			targetMethod := ag.AppServiceNodes[node.Callee].ExposedMethods[node.ParsedCall.Name]
+			ag.appendAbstractEdges(node, targetMethod)
+		case *AbstractDatabaseCall:
+			logger.Logger.Warnf("Doing recurse build on database call %s", node.String())
+			if dbInstance := node.ParsedCall.GetTargetedDatabaseInstance(); dbInstance != nil && dbInstance.IsQueue() {
+				if method, ok := node.ParsedCall.Method.(*frameworks.BlueprintBackend); ok && method.IsWrite() {
 					queueHandlers := ag.findQueueHandlers(app, dbInstance)
 					for _, handler := range queueHandlers {
-						abstractDatabaseCall.Children = append(abstractDatabaseCall.Children, handler)
-						ag.recurseBuild(app, handler)
+						node.Children = append(node.Children, handler)
 					}
 				}
 			}
-		}
+		case *AbstractQueueHandler:
+			logger.Logger.Warnf("Doing recurse build on queue handler %s", node.String())
+			targetMethod := ag.AppServiceNodes[node.Callee].QueueHandlerMethods[node.ParsedCall.Name]
+			ag.appendAbstractEdges(node, targetMethod)
+		default:
+			logger.Logger.Warnf("Error recursing build for %s", node)
+			return
 	}
-
+	abstractNode.SetVisited()
+	for _, edge := range abstractNode.GetChildren(){
+		ag.recurseBuild(app, edge)
+	}
 }
 
 func (ag *AbstractGraph) findQueueHandlers(app *app.App, instance types.DatabaseInstance) []*AbstractQueueHandler {

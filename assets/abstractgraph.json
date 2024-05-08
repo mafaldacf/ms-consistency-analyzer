@@ -173,7 +173,63 @@
           "handler": {
             "method": "NotifyService.workerThread(ctx, workerID)",
             "caller": "Client",
-            "callee": "NotifyService"
+            "callee": "NotifyService",
+            "edges": [
+              {
+                "call": "queue.Pop()",
+                "method": "Queue.Pop(dst)",
+                "caller": "NotifyService",
+                "db_instance": {
+                  "name": "notification_queue",
+                  "type": "Queue",
+                  "kind": "RabbitMQ"
+                }
+              },
+              {
+                "call": "storageService.ReadPost()",
+                "method": "StorageService.ReadPost(ctx, reqID, postID)",
+                "caller": "NotifyService",
+                "callee": "StorageService",
+                "edges": [
+                  {
+                    "call": "cache.Get(ctx context.Context, postIDStr ., \u0026post *.Post)",
+                    "method": "Cache.Get(key, val)",
+                    "caller": "StorageService",
+                    "params": [
+                      {
+                        "name": "ctx",
+                        "id": -1
+                      },
+                      {
+                        "name": "postIDStr",
+                        "id": -1,
+                        "deps": [
+                          {
+                            "name": "postID",
+                            "id": -1
+                          }
+                        ]
+                      },
+                      {
+                        "name": "\u0026post",
+                        "id": -1,
+                        "deps": [
+                          {
+                            "name": "post",
+                            "id": -1
+                          }
+                        ]
+                      }
+                    ],
+                    "db_instance": {
+                      "name": "post_db",
+                      "type": "Cache",
+                      "kind": "Redis"
+                    }
+                  }
+                ]
+              }
+            ]
           },
           "db_instance": {
             "name": "notification_queue",
