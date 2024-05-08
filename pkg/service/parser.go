@@ -377,7 +377,7 @@ func fieldCallInMethodBody(node ast.Node, recvIdent *ast.Ident) (bool, *ast.Call
 }
 
 func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
-	logger.Logger.Debugf("visiting method %s\n", parsedFuncDecl.Name)
+	logger.Logger.Warnf("[PARSER] visiting method %s\n", parsedFuncDecl.Name)
 
 	ast.Inspect(parsedFuncDecl.Ast, func(n ast.Node) bool {
 		// beware that functions migh have nil receivers
@@ -407,6 +407,7 @@ func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 					parsedCallExpr.CalleeTypeName = serviceField.Variable.Type
 					// add the call expr to the existing calls of the current service
 					parsedFuncDecl.ServiceCalls[parsedCallExpr.Pos] = parsedCallExpr
+					logger.Logger.Warnf("[PARSER] found database call %s", parsedCallExpr.String())
 				}
 				// if the field corresponds to a database field
 				if databaseField, ok := field.(*types.DatabaseField); ok {
@@ -422,6 +423,7 @@ func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 					parsedCallExpr.CalleeTypeName = databaseField.Variable.Type
 					// add the call expr to the existing calls of the current service
 					parsedFuncDecl.DatabaseCalls[parsedCallExpr.Pos] = parsedCallExpr
+					logger.Logger.Warnf("[PARSER] found database call %s", parsedCallExpr.String())
 				}
 			}
 		}

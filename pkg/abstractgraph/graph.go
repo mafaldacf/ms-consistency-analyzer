@@ -40,6 +40,11 @@ type AbstractServiceCall struct {
 	Parent   	AbstractNode  			`json:"-"`              	// omit from json
 }
 
+type AbstractQueueHandler struct {
+	AbstractServiceCall 				  			`json:"handler"`
+	DbInstance   			types.DatabaseInstance  `json:"db_instance"`
+}
+
 func (call *AbstractServiceCall) GetParams() []*types.Variable {
 	return call.Params
 }
@@ -65,7 +70,7 @@ type AbstractDatabaseCall struct {
 	Params       []*types.Variable       `json:"params,omitempty"`
 	ParsedCall   *service.ParsedCallExpr `json:"-"` 				// omit from json
 	Parent       AbstractNode            `json:"-"` 				// omit from json
-	Children 	 []AbstractNode  `json:"handlers,omitempty"`
+	Children 	 []AbstractNode 		 `json:"queue_handlers,omitempty"`
 	DbInstance   types.DatabaseInstance  `json:"db_instance"`
 }
 
@@ -241,7 +246,7 @@ func getMethodCallsLinenosByOrder(method *service.ParsedFuncDecl) []token.Pos {
 }
 
 func (ag *AbstractGraph) initBuild(app *app.App, serviceNode *service.ServiceNode, targetMethod *service.ParsedFuncDecl) {
-	ag.addAndBuildEntry(app, serviceNode, targetMethod)
+	ag.addAndBuildEntry(serviceNode, targetMethod)
 	for _, abstractEntry := range ag.Nodes {
 		if abstractServiceEntry, ok := abstractEntry.(*AbstractServiceCall); ok { // sanity check
 			ag.recurseBuild(app, abstractServiceEntry)
@@ -249,37 +254,7 @@ func (ag *AbstractGraph) initBuild(app *app.App, serviceNode *service.ServiceNod
 	}
 }
 
-func (ag *AbstractGraph) appendQueuePopCalls(app *app.App, abstractPushCalls []*AbstractDatabaseCall) []*AbstractDatabaseCall {
-	var queueHandlers []*AbstractDatabaseCall
-	for _, pushCall := range abstractPushCalls {
-		queueInstance := pushCall.DbInstance
-		for _, serviceNode := range app.Services {
-			// found service node in app that uses this queue
-			if _, ok := serviceNode.Databases[queueInstance.GetName()]; ok {
-				// check if it implements the pop worker
-				for _, queueHandler := range serviceNode.QueueHandlerMethods {
-					if slices.Contains(queueHandler.DbInstances, queueInstance) {
-						logger.Logger.Warnf("[GRAPH] found worker %s on instance '%s'", queueHandler.String(), queueInstance.GetName())
-						queueHandler := &AbstractDatabaseCall{
-							ParsedCall: &service.ParsedCallExpr{
-								TargetField: serviceNode.Name,
-								Name:        queueHandler.Name,
-							},
-							Caller: 	"Client",
-							Method: 	queueHandler.String(),
-							DbInstance: pushCall.DbInstance,
-						}
-						pushCall.Children = append(pushCall.Children, queueHandler)
-						queueHandlers = append(queueHandlers, queueHandler)
-					}
-				}
-			}
-		}
-	}
-	return queueHandlers
-}
-
-func (ag *AbstractGraph) addAndBuildEntry(app *app.App, serviceNode *service.ServiceNode, targetMethod *service.ParsedFuncDecl) {
+func (ag *AbstractGraph) addAndBuildEntry(serviceNode *service.ServiceNode, targetMethod *service.ParsedFuncDecl) {
 	// add entry node to graph
 	entryAbstractServiceCall := &AbstractServiceCall{
 		ParsedCall: &service.ParsedCallExpr{
@@ -306,31 +281,77 @@ func (ag *AbstractGraph) addAndBuildEntry(app *app.App, serviceNode *service.Ser
 		})
 	}
 	entryAbstractServiceCall.Visited = true
-	ag.appendAbstractEdges(app, entryAbstractServiceCall, targetMethod)
+	ag.appendAbstractEdges(entryAbstractServiceCall, targetMethod)
 }
 
 func (ag *AbstractGraph) recurseBuild(app *app.App, abstractNode AbstractNode) {
 	for _, node := range abstractNode.GetChildren() {
-		// we need to unfold the service blocks from each service call
+		logger.Logger.Warnf("Doing recurse build on %s (parent = %s)", node.String(), abstractNode.String())
+		// regular service call
 		if abstractService, ok := node.(*AbstractServiceCall); ok && !abstractService.Visited {
+			abstractService.Visited = true
 			serviceNode := ag.AppServiceNodes[utils.GetShortTypeStr(abstractService.ParsedCall.CalleeTypeName)]
 			methodName := abstractService.ParsedCall.Name
 			targetMethod := serviceNode.ExposedMethods[methodName]
-			abstractService.Visited = true
-
-			ag.appendAbstractEdges(app, abstractService, targetMethod)
+			ag.appendAbstractEdges(abstractService, targetMethod)
 			ag.recurseBuild(app, abstractService)
 		}
-		if abstractDatabase, ok := node.(*AbstractDatabaseCall); ok && !abstractDatabase.Visited {
-			/* ag.appendAbstractEdges(app, abstractDatabase, targetMethod) */
-			abstractDatabase.Visited = true
-			ag.recurseBuild(app, abstractDatabase)
+		// queue handlers representing service methods triggered by queue messages
+		if abstractQueueHandler, ok := node.(*AbstractQueueHandler); ok && !abstractQueueHandler.Visited {
+			abstractQueueHandler.Visited = true
+			serviceNode := ag.AppServiceNodes[abstractQueueHandler.Callee]
+			methodName := abstractQueueHandler.ParsedCall.Name
+			targetMethod := serviceNode.QueueHandlerMethods[methodName]
+			ag.appendAbstractEdges(abstractQueueHandler, targetMethod)
+			ag.recurseBuild(app, abstractQueueHandler)
+		}
+		// database calls that trigger queue handlers
+		if abstractDatabaseCall, ok := node.(*AbstractDatabaseCall); ok && !abstractDatabaseCall.Visited {
+			abstractDatabaseCall.Visited = true
+			if dbInstance := abstractDatabaseCall.ParsedCall.GetTargetedDatabaseInstance(); dbInstance != nil && dbInstance.IsQueue() {
+				if method, ok := abstractDatabaseCall.ParsedCall.Method.(*frameworks.BlueprintBackend); ok && method.IsWrite() {
+					queueHandlers := ag.findQueueHandlers(app, dbInstance)
+					for _, handler := range queueHandlers {
+						abstractDatabaseCall.Children = append(abstractDatabaseCall.Children, handler)
+						ag.recurseBuild(app, handler)
+					}
+				}
+			}
 		}
 	}
+
 }
 
-func (ag *AbstractGraph) appendAbstractEdges(app *app.App, abstractCall AbstractNode, targetMethod *service.ParsedFuncDecl) {
-	var abstractPushCalls []*AbstractDatabaseCall
+func (ag *AbstractGraph) findQueueHandlers(app *app.App, instance types.DatabaseInstance) []*AbstractQueueHandler {
+	var queueHandlers []*AbstractQueueHandler
+	for _, node := range app.Services {
+		if _, ok := node.Databases[instance.GetName()]; ok {
+			if _, ok := node.Databases[instance.GetName()]; ok {
+				for _, queueHandler := range node.QueueHandlerMethods {
+					if slices.Contains(queueHandler.DbInstances, instance) {
+						logger.Logger.Warnf("[GRAPH] found worker %s on instance '%s'", queueHandler.String(), instance.GetName())
+						queueHandler := &AbstractQueueHandler{
+							AbstractServiceCall: AbstractServiceCall{
+								ParsedCall: &service.ParsedCallExpr{
+									TargetField: node.Name,
+									Name:        queueHandler.Name,
+								},
+								Caller: 	"Client",
+								Callee: 	node.Name,
+								Method: 	queueHandler.String(),
+							},
+							DbInstance: instance,
+						}
+						queueHandlers = append(queueHandlers, queueHandler)
+					}
+				}
+			}
+		}
+	}
+	return queueHandlers
+}
+
+func (ag *AbstractGraph) appendAbstractEdges(abstractCall AbstractNode, targetMethod *service.ParsedFuncDecl) {
 	linenos := getMethodCallsLinenosByOrder(targetMethod)
 	for _, lineno := range linenos {
 		if targetMethod.DatabaseCalls[lineno] != nil {
@@ -346,7 +367,6 @@ func (ag *AbstractGraph) appendAbstractEdges(app *app.App, abstractCall Abstract
 			abstractCall.AddChild(abstractDbCall)
 			if dbInstance := dbCall.GetTargetedDatabaseInstance(); dbInstance != nil && dbInstance.IsQueue() {
 				if method, ok := dbCall.Method.(*frameworks.BlueprintBackend); ok && method.IsWrite() {
-					abstractPushCalls = append(abstractPushCalls, abstractDbCall)
 					logger.Logger.Warnf("[GRAPH] found queue push call in %s: %s on instance '%s'", abstractCall.(*AbstractServiceCall).Callee, dbCall.String(), dbInstance.GetName())
 				}
 			}
@@ -362,5 +382,4 @@ func (ag *AbstractGraph) appendAbstractEdges(app *app.App, abstractCall Abstract
 			})
 		}
 	}
-	ag.appendQueuePopCalls(app, abstractPushCalls)
 }

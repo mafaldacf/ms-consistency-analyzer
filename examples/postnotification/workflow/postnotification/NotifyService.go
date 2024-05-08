@@ -76,11 +76,24 @@ func (n *NotifyServiceImpl) workerThread(ctx context.Context, workerID int) erro
 		} else if !result {
 			backend.GetLogger().Error(ctx, "could not retrieve message from queue")
 		} else {
-			n.handleMessage(ctx, Message {
+			message := Message {
 				ReqID: message["ReqID"].(string),
 				PostID: message["PostID"].(string),
 				Timestamp: message["Timestamp"].(string),
-			})
+			}
+			//n.handleMessage(ctx, message)
+			reqID, err := common.StringToInt64(message.ReqID)
+			if err != nil {
+				return
+			}
+			postID, err := common.StringToInt64(message.PostID)
+			if err != nil {
+				return
+			}
+			_, err = n.storageService.ReadPost(ctx, reqID, postID)
+			if err != nil {
+				return
+			}
 		}
 	}()
 	<-forever

@@ -112,11 +112,16 @@ func (call *ParsedCallExpr) String() string {
 		funcCallStr = fmt.Sprintf("%s.%s(", call.TargetField, call.Name)
 	}
 	for i, arg := range call.Ast.Args {
-		if ident, ok := arg.(*ast.Ident); ok {
-			funcCallStr += ident.Name
-			if i < len(call.Ast.Args)-1 {
-				funcCallStr += ", "
+		switch e := arg.(type) {
+		case *ast.Ident:
+			funcCallStr += e.Name
+		case *ast.UnaryExpr:
+			if ident, ok := e.X.(*ast.Ident); ok {
+				funcCallStr += "&" + ident.Name
 			}
+		}
+		if i < len(call.Ast.Args)-1 {
+			funcCallStr += ", "
 		}
 	}
 	funcCallStr += ")"

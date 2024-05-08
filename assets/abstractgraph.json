@@ -168,10 +168,13 @@
           ]
         }
       ],
-      "handlers": [
+      "queue_handlers": [
         {
-          "method": "NotifyService.workerThread(ctx, workerID)",
-          "caller": "Client",
+          "handler": {
+            "method": "NotifyService.workerThread(ctx, workerID)",
+            "caller": "Client",
+            "callee": "NotifyService"
+          },
           "db_instance": {
             "name": "notification_queue",
             "type": "Queue",
