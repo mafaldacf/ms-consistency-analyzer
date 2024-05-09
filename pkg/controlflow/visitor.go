@@ -199,6 +199,7 @@ func hasServiceOrDatabaseCall(parsedCfg *types.ParsedCFG, node *ast.CallExpr, pa
 
 	// if we have database or service call, then we keep track of all arguments used
 	if parsedCall != nil {
+		logger.Logger.Warnf("[VISITOR] found parsed call %s", parsedCall.Name)
 		// gather all args used in the CallExpr
 		for _, arg := range node.Args {
 			var param *types.Variable

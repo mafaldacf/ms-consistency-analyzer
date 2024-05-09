@@ -407,7 +407,7 @@ func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 					parsedCallExpr.CalleeTypeName = serviceField.Variable.Type
 					// add the call expr to the existing calls of the current service
 					parsedFuncDecl.ServiceCalls[parsedCallExpr.Pos] = parsedCallExpr
-					logger.Logger.Warnf("[PARSER] found database call %s", parsedCallExpr.String())
+					logger.Logger.Warnf("[PARSER] found service call %s (params: %v)", parsedCallExpr.String(), parsedCallExpr.Params)
 				}
 				// if the field corresponds to a database field
 				if databaseField, ok := field.(*types.DatabaseField); ok {
@@ -423,7 +423,7 @@ func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 					parsedCallExpr.CalleeTypeName = databaseField.Variable.Type
 					// add the call expr to the existing calls of the current service
 					parsedFuncDecl.DatabaseCalls[parsedCallExpr.Pos] = parsedCallExpr
-					logger.Logger.Warnf("[PARSER] found database call %s", parsedCallExpr.String())
+					logger.Logger.Warnf("[PARSER] found database call %s (params: %v)", parsedCallExpr.String(), parsedCallExpr.Params)
 				}
 			}
 		}

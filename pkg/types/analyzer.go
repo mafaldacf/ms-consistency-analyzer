@@ -70,6 +70,8 @@ type Ref struct {
 	Variable *Variable `json:"-"`
 }
 
+const VARIABLE_UNASSIGNED_ID int64 = -1
+
 type Variable struct {
 	Name          string          `json:"name"`
 	Id            int64           `json:"id"`
@@ -86,4 +88,20 @@ func (v *Variable) String() string {
 		return fmt.Sprintf("%s %s", v.Name, v.Type)
 	}
 	return fmt.Sprintf("%s (unknown)", v.Name)
+}
+
+func (v *Variable) EqualBlockParamIndex(idx int) bool {
+	return v.BlockParamIdx == idx
+}
+
+func (v *Variable) HasAssignedID() bool {
+	return v.Id != -1
+}
+
+func (v *Variable) AssignID(id int64) {
+	v.Id = id
+}
+
+func (v *Variable) AddReference(ref *Ref) {
+	v.Ref = ref
 }

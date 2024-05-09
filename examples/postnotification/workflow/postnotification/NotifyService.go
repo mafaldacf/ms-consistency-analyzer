@@ -43,7 +43,7 @@ func NewNotifyServiceImpl(ctx context.Context, storageService StorageService, qu
 	return err
 } */
 
-func (n *NotifyServiceImpl) handleMessage(ctx context.Context, message Message) error {
+/* func (n *NotifyServiceImpl) handleMessage(ctx context.Context, message Message) error {
 	reqID, err := common.StringToInt64(message.ReqID)
 	if err != nil {
 		return nil
@@ -55,7 +55,7 @@ func (n *NotifyServiceImpl) handleMessage(ctx context.Context, message Message) 
 	
 	_, err = n.storageService.ReadPost(ctx, reqID, postID)
 	return err
-}
+} */
 
 func (n *NotifyServiceImpl) workerThread(ctx context.Context, workerID int) error {
 	var forever chan struct{}
