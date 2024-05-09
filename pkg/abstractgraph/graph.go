@@ -29,16 +29,16 @@ type AbstractServiceCall struct {
 	AbstractNode `json:"-"` // omit from json
 	Visited      bool       `json:"-"` // omit from json
 	Call         string     `json:"call,omitempty"`
-	Method       string     `json:"method,omitempty"`
+	Method       string     `json:"method"`
 
-	Caller string `json:"caller,omitempty"`
-	Callee string `json:"callee,omitempty"`
+	Caller string `json:"caller"`
+	Callee string `json:"callee"`
 
-	Params     []*types.Variable       `json:"params,omitempty"`
+	Params     []*types.Variable       `json:"params"`
 	ParsedCall *service.ParsedCallExpr `json:"-"` // omit from json
 
 	// nodes representing database calls cannot contain children as well
-	Children []AbstractNode `json:"edges,omitempty"`
+	Children []AbstractNode `json:"edges"`
 	Parent   AbstractNode   `json:"-"` // omit from json
 }
 
@@ -78,10 +78,10 @@ func (call *AbstractServiceCall) GetCallerStr() string {
 type AbstractDatabaseCall struct {
 	AbstractNode `json:"-"`              // omit from json
 	Visited      bool                    `json:"-"` // omit from json
-	Call         string                  `json:"call,omitempty"`
-	Method       string                  `json:"method,omitempty"`
-	Caller       string                  `json:"caller,omitempty"`
-	Params       []*types.Variable       `json:"params,omitempty"`
+	Call         string                  `json:"call"`
+	Method       string                  `json:"method"`
+	Caller       string                  `json:"caller"`
+	Params       []*types.Variable       `json:"params"`
 	ParsedCall   *service.ParsedCallExpr `json:"-"` // omit from json
 	Parent       AbstractNode            `json:"-"` // omit from json
 	Children     []AbstractNode          `json:"queue_handlers,omitempty"`
@@ -282,7 +282,7 @@ func (graph *AbstractGraph) initBuild(app *app.App, serviceNode *service.Service
 	}
 }
 
-func createDummyAbstractServiceCall(node *service.ServiceNode, method *service.ParsedFuncDecl, caller string) AbstractServiceCall {
+func createDummyAbstractServiceCall(node *service.ServiceNode, method *service.ParsedFuncDecl, caller string, pushCall string) AbstractServiceCall {
 	logger.Logger.Warnf("[GRAPH - DUMMY] create dummy abstract service call for node %s and method %s", node.Name, method.Name)
 	call := AbstractServiceCall{
 		ParsedCall: &service.ParsedCallExpr{
@@ -290,6 +290,7 @@ func createDummyAbstractServiceCall(node *service.ServiceNode, method *service.P
 			Name:        method.Name,
 			Method:      method,
 		},
+		Call: pushCall,
 		Caller: caller,
 		Callee: node.Name,
 		Method: method.String(),
@@ -305,7 +306,7 @@ func createDummyAbstractServiceCall(node *service.ServiceNode, method *service.P
 
 func (graph *AbstractGraph) addEntry(node *service.ServiceNode, method *service.ParsedFuncDecl) {
 	// add entry node to graph
-	entryCall := createDummyAbstractServiceCall(node, method, "Client")
+	entryCall := createDummyAbstractServiceCall(node, method, "Client", "")
 	graph.Nodes = append(graph.Nodes, &entryCall)
 	// build entry node
 	entryMethod := node.ExposedMethods[method.Name]
@@ -366,7 +367,7 @@ func (graph *AbstractGraph) findQueueHandlers(app *app.App, instance types.Datab
 					if slices.Contains(queueHandler.DbInstances, instance) {
 						logger.Logger.Warnf("[GRAPH - QUEUE] found worker %s on instance '%s'", queueHandler.String(), instance.GetName())
 						queueHandler := &AbstractQueueHandler{
-							AbstractServiceCall: createDummyAbstractServiceCall(node, queueHandler, utils.GetShortTypeStr(publisher.ParsedCall.CallerTypeName)),
+							AbstractServiceCall: createDummyAbstractServiceCall(node, queueHandler, utils.GetShortTypeStr(publisher.ParsedCall.CallerTypeName), publisher.ParsedCall.SimpleString()),
 							DbInstance:          instance,
 						}
 						for _, p := range queueHandler.GetParams() {

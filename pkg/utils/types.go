@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"go/ast"
 	"reflect"
 	"slices"
 	"strings"
@@ -9,7 +8,7 @@ import (
 	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
 )
 
-var basicTypes = []string {
+var basicTypes = []string{
 	"bool",
 	"string",
 	"int", "int8", "int16", "int32", "int64",
@@ -21,7 +20,7 @@ var basicTypes = []string {
 	"error",
 }
 
-func GetNodeType(node ast.Node) string {
+func GetType(node interface{}) string {
 	return reflect.TypeOf(node).Elem().Name()
 }
 

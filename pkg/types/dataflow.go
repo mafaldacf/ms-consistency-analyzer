@@ -16,6 +16,8 @@ type ParsedCFG struct {
 	FileHash   string `json:"file_hash,omitempty"`
 	// FIXME: this should actually belong to the (first) block of the CFG
 	Vars []*Variable
+
+	FullMethod  string
 }
 type BlockInfo struct {
 	Gen []*Variable

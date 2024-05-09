@@ -3,7 +3,7 @@ package postnotification
 import (
 	"context"
 	"sync"
-	"time"
+	/* "time" */
 
 	"github.com/blueprint-uservices/blueprint/runtime/core/backend"
 	"postnotification/workflow/postnotification/common"
@@ -61,6 +61,24 @@ func (n *NotifyServiceImpl) workerThread(ctx context.Context, workerID int) erro
 	var forever chan struct{}
 	go func() {
 		var message map[string]interface{}
+		n.queue.Pop(ctx, &message)
+		notification := Message {
+			ReqID: message["ReqID"].(string),
+			PostID: message["PostID"].(string),
+			Timestamp: message["Timestamp"].(string),
+		}
+		reqID, _:= common.StringToInt64(notification.ReqID)
+		postID, _ := common.StringToInt64(notification.PostID)
+		n.storageService.ReadPost(ctx, reqID, postID)
+	}()
+	<-forever
+	return nil
+}
+
+/* func (n *NotifyServiceImpl) workerThread(ctx context.Context, workerID int) error {
+	var forever chan struct{}
+	go func() {
+		var message map[string]interface{}
 		backend.GetLogger().Info(ctx, "[worker %d] waiting for message...", workerID)
 
 		// blueprint uses backend.CopyResult in backend.Pop that requires as source argument
@@ -98,7 +116,7 @@ func (n *NotifyServiceImpl) workerThread(ctx context.Context, workerID int) erro
 	}()
 	<-forever
 	return nil
-}
+} */
 
 func (n *NotifyServiceImpl) Run(ctx context.Context) error {
 	backend.GetLogger().Info(ctx, "initializing %d workers", n.numWorkers)

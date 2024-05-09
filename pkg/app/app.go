@@ -6,13 +6,13 @@ import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
+	"analyzer/pkg/utils"
 	"encoding/json"
 	"fmt"
 	goparser "go/parser"
 	"go/token"
 	"os"
 	"path/filepath"
-	"reflect"
 	"strings"
 
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/ir"
@@ -110,8 +110,7 @@ func (app *App) RegisterDatabaseInstances(databases map[string]ir.IRNode) {
 				},
 			}
 		default:
-			t := reflect.TypeOf(node).Elem().Name()
-			logger.Logger.Warnf("unknown type for database instance: %s (type = %s)", name, t)
+			logger.Logger.Warnf("unknown type for database instance: %s (type = %s)", name, utils.GetType(node))
 			continue
 		}
 		logger.Logger.Infof("[APP] registered database instance %s", app.Databases[name].String())

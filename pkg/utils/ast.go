@@ -3,7 +3,6 @@ package utils
 import (
 	"analyzer/pkg/logger"
 	"go/ast"
-	"reflect"
 )
 
 func TransverseExprIdentifiers(expr ast.Expr) (string, []string) {
@@ -40,8 +39,7 @@ func TransverseExprIdentifiers(expr ast.Expr) (string, []string) {
 		_, rY := TransverseExprIdentifiers(e.Y)
 		identifiers = append(identifiers, rY...)
 	default:
-		nodeType := reflect.TypeOf(e).Elem().Name()
-		logger.Logger.Warnf("unknown type in TransverseExprIdentifiers: %s", nodeType)
+		logger.Logger.Warnf("unknown type in TransverseExprIdentifiers: %s", GetType(e))
 	}
 	return varType, identifiers
 }
@@ -53,8 +51,7 @@ func getExprType(expr ast.Expr) string {
 	case *ast.UnaryExpr:
 		return e.Op.String()
 	default:
-		nodeType := reflect.TypeOf(e).Elem().Name()
-		logger.Logger.Warnf("unknown type in getExprType: %s", nodeType)
+		logger.Logger.Warnf("unknown type in getExprType: %s", GetType(e))
 	}
 	// FIXME: cover more use cases e.g.
 	// 1. type from other package using selector

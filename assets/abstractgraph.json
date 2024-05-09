@@ -171,14 +171,32 @@
       "queue_handlers": [
         {
           "handler": {
+            "call": "queue.Push(item interface{.})",
             "method": "NotifyService.workerThread(ctx, workerID)",
             "caller": "UploadService",
             "callee": "NotifyService",
+            "params": null,
             "edges": [
               {
                 "call": "queue.Pop(dst interface{.})",
                 "method": "Queue.Pop(dst)",
                 "caller": "NotifyService",
+                "params": [
+                  {
+                    "name": "ctx",
+                    "id": 8
+                  },
+                  {
+                    "name": "\u0026message",
+                    "id": 9,
+                    "deps": [
+                      {
+                        "name": "message",
+                        "id": -1
+                      }
+                    ]
+                  }
+                ],
                 "db_instance": {
                   "name": "notification_queue",
                   "type": "Queue",
@@ -190,6 +208,32 @@
                 "method": "StorageService.ReadPost(ctx, reqID, postID)",
                 "caller": "NotifyService",
                 "callee": "StorageService",
+                "params": [
+                  {
+                    "name": "ctx",
+                    "id": 8
+                  },
+                  {
+                    "name": "reqID",
+                    "id": 10,
+                    "deps": [
+                      {
+                        "name": "notification",
+                        "id": -1
+                      }
+                    ]
+                  },
+                  {
+                    "name": "postID",
+                    "id": 11,
+                    "deps": [
+                      {
+                        "name": "notification",
+                        "id": -1
+                      }
+                    ]
+                  }
+                ],
                 "edges": [
                   {
                     "call": "cache.Get(key string, val interface{.})",
@@ -198,21 +242,31 @@
                     "params": [
                       {
                         "name": "ctx",
-                        "id": 8
+                        "id": 8,
+                        "ref": {
+                          "name": "ctx",
+                          "creator": "NotifyService",
+                          "id": 8
+                        }
                       },
                       {
                         "name": "postIDStr",
-                        "id": 9,
+                        "id": 12,
                         "deps": [
                           {
                             "name": "postID",
-                            "id": -1
+                            "id": 11,
+                            "ref": {
+                              "name": "postID",
+                              "creator": "NotifyService",
+                              "id": 11
+                            }
                           }
                         ]
                       },
                       {
                         "name": "\u0026post",
-                        "id": 10,
+                        "id": 13,
                         "deps": [
                           {
                             "name": "post",

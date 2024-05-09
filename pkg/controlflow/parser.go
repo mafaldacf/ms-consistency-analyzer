@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"go/ast"
 	"go/token"
-	"reflect"
 	"slices"
 
 	"analyzer/pkg/service"
@@ -21,6 +20,7 @@ func ParseServiceMethodCFG(parsedCfg *types.ParsedCFG, method *service.ParsedFun
 	visitBasicBlockFuncCalls(parsedCfg, method)
 	visitCalls(method.DatabaseCalls)
 	visitCalls(method.ServiceCalls)
+	logger.Logger.Warn()
 }
 
 func visitCalls(parsedCalls map[token.Pos]*service.ParsedCallExpr) {
@@ -46,12 +46,28 @@ func visitDeps(v *types.Variable) string {
 }
 
 func visitBasicBlockDeclAndAssigns(parsedCfg *types.ParsedCFG) {
-	logger.Logger.Debug("visiting basic block assignments")
 	var visited = make(map[int32]bool)
 	for _, block := range parsedCfg.Cfg.Blocks {
 		visitBasicBlockDeclAndAssignsRecursor(parsedCfg, block, visited)
 	}
 	logger.Logger.Debugln()
+}
+
+func getStmtsIfGoRoutine(node ast.Node) []ast.Node {
+	var stmts []ast.Node
+	found := false
+	if goStmt, ok := node.(*ast.GoStmt); ok {
+		if funcLit, ok := goStmt.Call.Fun.(*ast.FuncLit); ok {
+			for _, stmt := range funcLit.Body.List{
+				stmts = append(stmts, stmt)
+				found = true
+			}
+		}
+	}
+	if !found {
+		stmts = append(stmts, node)
+	}
+	return stmts
 }
 
 func visitBasicBlockDeclAndAssignsRecursor(parsedCfg *types.ParsedCFG, block *cfg.Block, visited map[int32]bool) {
@@ -61,37 +77,41 @@ func visitBasicBlockDeclAndAssignsRecursor(parsedCfg *types.ParsedCFG, block *cf
 		return
 	}
 	for _, node := range block.Nodes {
-		ok, varType, lvalues, deps := isVarDeclOrAssign(node)
-		if ok {
-			for _, lvalue := range lvalues {
-				var usedVars []*types.Variable
-				for _, dep := range deps {
-					for _, v := range parsedCfg.Vars {
-						if dep == v.Name {
-							// remove duplicates e.g.
-							// message := Message{
-							//	ReqID:     Int64ToString(post.ReqID),
-							//	PostID:    Int64ToString(post.PostID),
-							//}
-							// uses twice the variable 'post'
-							if !slices.Contains(usedVars, v) {
-								usedVars = append(usedVars, v)
+		// if it is a go routine it will contain many stmts
+		for _, stmt := range getStmtsIfGoRoutine(node) {
+			ok, varType, lvalues, deps := isVarDeclOrAssign(stmt)
+			if ok {
+				for _, lvalue := range lvalues {
+					var usedVars []*types.Variable
+					for _, dep := range deps {
+						for _, v := range parsedCfg.Vars {
+							if dep == v.Name {
+								// remove duplicates e.g.
+								// message := Message{
+								//	ReqID:     Int64ToString(post.ReqID),
+								//	PostID:    Int64ToString(post.PostID),
+								//}
+								// uses twice the variable 'post'
+								if !slices.Contains(usedVars, v) {
+									usedVars = append(usedVars, v)
+								}
+								break
 							}
-							break
 						}
 					}
+					newVar := &types.Variable{
+						Type: &gocode.UserType{
+							Package: parsedCfg.Package,
+							Name:    varType, //FIXME, this needs to be type not name
+						},
+						Id:     -1,
+						Lineno: stmt.Pos(),
+						Name:   lvalue,
+						Deps:   usedVars,
+					}
+					logger.Logger.Infof("ADDED NEW VAR IN BLOCK: %v", newVar)
+					parsedCfg.Vars = append(parsedCfg.Vars, newVar)
 				}
-				newVar := &types.Variable{
-					Type: &gocode.UserType{
-						Package: parsedCfg.Package,
-						Name:    varType, //FIXME, this needs to be type not name
-					},
-					Id:     -1,
-					Lineno: node.Pos(),
-					Name:   lvalue,
-					Deps:   usedVars,
-				}
-				parsedCfg.Vars = append(parsedCfg.Vars, newVar)
 			}
 		}
 	}
@@ -103,23 +123,24 @@ func visitBasicBlockDeclAndAssignsRecursor(parsedCfg *types.ParsedCFG, block *cf
 
 func visitBasicBlockFuncCalls(parsedCfg *types.ParsedCFG, parsedFuncDecl *service.ParsedFuncDecl) {
 	var visited = make(map[int32]bool)
-	for _, block := range parsedCfg.Cfg.Blocks {
-		visitBasicBlockFuncCallsRecursor(parsedCfg, block, parsedFuncDecl, visited)
+	for i, block := range parsedCfg.Cfg.Blocks {
+		logger.Logger.Warnf("[CFG] visiting block #%d func calls for cfg %s", i, parsedCfg.FullMethod)
+		visitBasicBlockFuncCallsRecursor(block, parsedCfg, parsedFuncDecl, visited)
 	}
 	logger.Logger.Debugln()
 }
 
-func visitBasicBlockFuncCallsRecursor(parsedCfg *types.ParsedCFG, block *cfg.Block, parsedFuncDecl *service.ParsedFuncDecl, visited map[int32]bool) {
+func visitBasicBlockFuncCallsRecursor(block *cfg.Block, parsedCfg *types.ParsedCFG, parsedFuncDecl *service.ParsedFuncDecl, visited map[int32]bool) {
 	if visited[block.Index] {
 		return
 	}
 
 	visited[block.Index] = true
 	for _, node := range block.Nodes {
-		processParsedCalls(parsedCfg, node, parsedFuncDecl)
+		processParsedCalls(node, parsedCfg, parsedFuncDecl)
 	}
 	for _, child := range block.Succs {
-		visitBasicBlockFuncCallsRecursor(parsedCfg, child, parsedFuncDecl, visited)
+		visitBasicBlockFuncCallsRecursor(child, parsedCfg, parsedFuncDecl, visited)
 	}
 }
 
@@ -131,35 +152,57 @@ func visitBasicBlockFuncCallsRecursor(parsedCfg *types.ParsedCFG, block *cfg.Blo
 //  2. AssignStmt - assignment like errors from the return values of the function
 //  3. ParenExpr  - e.g. when used as a bool value in an if statement (assumes it is inside a parentheses)
 //     in this case, the unfolded node from ParenExpr is a CallExpr
-func processParsedCalls(parsedCfg *types.ParsedCFG, node ast.Node, parsedFuncDecl *service.ParsedFuncDecl) bool {
+func processParsedCalls(node ast.Node, parsedCfg *types.ParsedCFG, parsedFuncDecl *service.ParsedFuncDecl) bool {
+	logger.Logger.Warnf("\t\tprocessing parsed calls for parsed cfg of %s (node type = %s)", parsedCfg.FullMethod, utils.GetType(node))
 	switch n := node.(type) {
 	case *ast.ExprStmt:
-		if callExpr, ok := n.X.(*ast.CallExpr); ok {
-			return findParsedCallsAndAddParams(parsedCfg, callExpr, parsedFuncDecl)
-		}
+		return processParsedCalls(n.X, parsedCfg, parsedFuncDecl)
 	case *ast.AssignStmt:
 		found := false
 		for _, rvalue := range n.Rhs {
-			if callExpr, ok := rvalue.(*ast.CallExpr); ok {
-				if findParsedCallsAndAddParams(parsedCfg, callExpr, parsedFuncDecl) {
-					found = true
-				}
-			}
+			found = processParsedCalls(rvalue, parsedCfg, parsedFuncDecl)
 		}
 		return found
 	case *ast.ParenExpr:
-		return processParsedCalls(parsedCfg, n.X, parsedFuncDecl)
+		return processParsedCalls(n.X, parsedCfg, parsedFuncDecl)
 	case *ast.CallExpr:
-		return findParsedCallsAndAddParams(parsedCfg, n, parsedFuncDecl)
+		return findParsedCallsAndAddParams(n, parsedCfg, parsedFuncDecl)
+	case *ast.IncDecStmt:
+		return processParsedCalls(n.X, parsedCfg, parsedFuncDecl)
+	case *ast.CompositeLit:
+		for _, elt := range n.Elts{
+			processParsedCalls(elt, parsedCfg, parsedFuncDecl)
+		}
+	case *ast.KeyValueExpr:
+		processParsedCalls(n.Key, parsedCfg, parsedFuncDecl)
+		processParsedCalls(n.Value, parsedCfg, parsedFuncDecl)
+	case *ast.DeferStmt:
+		return processParsedCalls(n.Call.Fun, parsedCfg, parsedFuncDecl)
+	case *ast.SelectorExpr:
+		return processParsedCalls(n.X, parsedCfg, parsedFuncDecl)
+	// ------------
+	// Go Routines
+	// ------------
+	case *ast.GoStmt:
+		for _, stmt := range getStmtsIfGoRoutine(node) {
+			processParsedCalls(stmt, parsedCfg, parsedFuncDecl)
+		}
+	// -------------------
+	// Declaring Variables
+	// ------------------
+	case *ast.DeclStmt:
+		for _, spec := range n.Decl.(*ast.GenDecl).Specs {
+			processParsedCalls(spec, parsedCfg, parsedFuncDecl)
+		}
+	case *ast.ValueSpec:
+	// ------
+	// Others
+	// ------
 	case *ast.ReturnStmt:
-		// nothing to do
-		// ignore warning ahead
 	case *ast.BinaryExpr: // e.g. if err != nil
-		// nothing to do
-		// ignore warning ahead
+	case *ast.Ident:
 	default:
-		nodeType := reflect.TypeOf(n).Elem().Name()
-		logger.Logger.Warnf("unknown type in hasFuncCall: %s", nodeType)
+		logger.Logger.Infof("unknown type in hasFuncCall: %s", utils.GetType(n))
 	}
 
 	return false
@@ -168,8 +211,8 @@ func processParsedCalls(parsedCfg *types.ParsedCFG, node ast.Node, parsedFuncDec
 // hasServiceOrDatabaseCall
 // 1. check if it is a database call or service call
 // 2. if so, we fetch the arguments and compare against the CFG variables
-func findParsedCallsAndAddParams(parsedCfg *types.ParsedCFG, node *ast.CallExpr, parsedFuncDecl *service.ParsedFuncDecl) bool {
-	logger.Logger.Debug("found CallExpr:", node.Pos())
+func findParsedCallsAndAddParams(node *ast.CallExpr, parsedCfg *types.ParsedCFG, parsedFuncDecl *service.ParsedFuncDecl) bool {
+	logger.Logger.Warnf("\t\t\t\t finding parsed calls and params for parsed cfg of %s", parsedCfg.FullMethod)
 	var parsedCall *service.ParsedCallExpr
 	// check if it is a database call
 	dbCall := parsedFuncDecl.DatabaseCalls[node.Pos()]
@@ -186,7 +229,7 @@ func findParsedCallsAndAddParams(parsedCfg *types.ParsedCFG, node *ast.CallExpr,
 
 	// if we have database or service call, then we keep track of all arguments used
 	if parsedCall != nil {
-		logger.Logger.Warnf("[VISITOR] found parsed call %s", parsedCall.Name)
+		logger.Logger.Infof("[VISITOR] finding parsed call %s: original args = %v", parsedCall.Name, node.Args)
 		// gather all args used in the CallExpr
 		for _, arg := range node.Args {
 			var param *types.Variable
@@ -233,8 +276,8 @@ func findParsedCallsAndAddParams(parsedCfg *types.ParsedCFG, node *ast.CallExpr,
 			if param != nil {
 				parsedCall.Params = append(parsedCall.Params, param)
 			}
-
 		}
+		logger.Logger.Infof("[VISITOR] found parsed call %s: parsed params = %v", parsedCall.Name, parsedCall.Params)
 		return true
 	}
 	// otherwise we return false because we did not find either
@@ -256,30 +299,43 @@ func isVarDeclOrAssign(node ast.Node) (bool, string, []string, []string) {
 	var lvalues []string
 	var rvalues []string
 	var varType string
-	switch t := node.(type) {
+	var found bool
+	switch n := node.(type) {
 	case *ast.ValueSpec:
-		logger.Logger.Debugf("found ValueSpec: %d", t.Pos())
-		for _, name := range t.Names {
+		logger.Logger.Debugf("found ValueSpec: %d", n.Pos())
+		for _, name := range n.Names {
 			lvalues = append(lvalues, name.Name)
 		}
-		if ident, ok := t.Type.(*ast.Ident); ok {
+		if ident, ok := n.Type.(*ast.Ident); ok {
 			varType = ident.Name
 		}
-		return true, varType, lvalues, rvalues
+		found = true
 	case *ast.AssignStmt:
-		logger.Logger.Debugf("found AssignStmt: %d", t.Pos())
-		for _, lvalue := range t.Lhs {
+		logger.Logger.Debugf("found AssignStmt: %d", n.Pos())
+		for _, lvalue := range n.Lhs {
 			if ident, ok := lvalue.(*ast.Ident); ok {
 				lvalues = append(lvalues, ident.Name)
 			}
 		}
-		for _, rvalue := range t.Rhs {
+		for _, rvalue := range n.Rhs {
 			var deps []string
 			varType, deps = utils.TransverseExprIdentifiers(rvalue)
 			rvalues = append(rvalues, deps...)
 		}
 		logger.Logger.Debugf("\t %v --- (depends on) ---> %v", lvalues, rvalues)
-		return true, varType, lvalues, rvalues
+		found = true
+	case *ast.DeclStmt:
+		for _, spec := range n.Decl.(*ast.GenDecl).Specs {
+			f, vt, lvs, rvs := isVarDeclOrAssign(spec)
+			if f {
+				found = true
+			}
+			varType = vt
+			lvalues = append(lvalues, lvs...)
+			rvalues = append(lvalues, rvs...)
+		}
+	default:
+		logger.Logger.Warnf("unknown var type %s", utils.GetType(node))
 	}
-	return false, varType, nil, nil
+	return found, varType, lvalues, rvalues
 }

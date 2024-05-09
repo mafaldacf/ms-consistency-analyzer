@@ -27,6 +27,7 @@ func BuildParsedCFG(node *service.ServiceNode, basicCfg *cfg.CFG, method *servic
 		Cfg:        basicCfg,
 		BlocksInfo: make([]*types.BlockInfo, 0, len(basicCfg.Blocks)),
 		Vars:       make([]*types.Variable, 0),
+		FullMethod: 	method.String(),
 	}
 	for _, info := range parsedCfg.BlocksInfo {
 		info.Gen = make([]*types.Variable, 0)
