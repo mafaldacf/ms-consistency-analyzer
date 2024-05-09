@@ -196,7 +196,7 @@ func (app *App) parseServicesMethods() {
 
 func (app *App) parseServicesMethodsBody() {
 	for _, node := range app.Services {
-		fmt.Printf("\n ######################## %s ########################\n", node.Name)
+		fmt.Printf("\n ################################## %s ##################################\n", node.Name)
 		node.ParseMethodsBody()
 		parseAndVisitCFG(node, node.ExposedMethods, "exposed")
 		parseAndVisitCFG(node, node.QueueHandlerMethods, "worker")
@@ -206,11 +206,11 @@ func (app *App) parseServicesMethodsBody() {
 
 func parseAndVisitCFG(node *service.ServiceNode, methods map[string]*service.ParsedFuncDecl, visibility string) {
 	for _, method := range methods {
-		fmt.Printf("\n[%s] ------------------------ %s ------------------------\n", strings.ToUpper(visibility), method)
+		fmt.Printf("\n[%s] ------------------- %s -------------------\n", strings.ToUpper(visibility), method)
 		if parsedCfg, err := controlflow.ParseCFG(node, method); err == nil {
-			controlflow.VisitServiceMethodCFG(parsedCfg, method)
+			controlflow.ParseServiceMethodCFG(parsedCfg, method)
 		}
-		fmt.Printf("\n-----------------------------------------------------------------\n")
+		fmt.Printf("\n-------------------------------------------------------\n")
 	}
 }
 
