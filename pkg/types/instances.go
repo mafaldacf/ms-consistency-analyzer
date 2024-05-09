@@ -5,4 +5,5 @@ type DatabaseInstance interface {
 	IsQueue() bool
 	GetTypeName() string
 	GetName() string
+	Equals() bool
 }

@@ -1,6 +1,7 @@
 package types
 
 import (
+	"encoding/json"
 	"fmt"
 	"go/ast"
 	"go/token"
@@ -64,13 +65,22 @@ type Method interface {
 }
 
 type Ref struct {
-	Name     string    `json:"name,omitempty"`
 	Creator  string    `json:"creator,omitempty"`
-	Id       int64     `json:"id"`
 	Variable *Variable `json:"-"`
 }
 
-const VARIABLE_UNASSIGNED_ID int64 = -1
+// MarshalJSON is used by app.Save()
+func (ref *Ref) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Name    string  `json:"name"`
+		Creator string  `json:"creator"`
+		Id      int64   `json:"id"`
+	}{
+		Name:    ref.Variable.Name,
+		Creator: ref.Creator,
+		Id: 	 ref.Variable.Id,
+	})
+}
 
 type Variable struct {
 	Name          string          `json:"name"`

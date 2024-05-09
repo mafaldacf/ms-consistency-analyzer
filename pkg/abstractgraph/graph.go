@@ -13,10 +13,13 @@ import (
 	"os"
 	"slices"
 	"sort"
+
+	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
 )
 
 type AbstractNode interface {
 	GetParams() []*types.Variable
+	GetParam(int) *types.Variable
 	String() string
 	GetChildren() []AbstractNode
 	AddChild(AbstractNode)
@@ -49,6 +52,10 @@ type AbstractQueueHandler struct {
 
 func (call *AbstractServiceCall) GetParams() []*types.Variable {
 	return call.Params
+}
+
+func (call *AbstractServiceCall) GetParam(index int) *types.Variable {
+	return call.Params[index]
 }
 
 func (call *AbstractServiceCall) String() string {
@@ -92,6 +99,11 @@ func (call *AbstractDatabaseCall) GetParams() []*types.Variable {
 	return call.Params
 }
 
+func (call *AbstractDatabaseCall) GetParam(index int) *types.Variable {
+	return call.Params[index]
+}
+
+
 func (call *AbstractDatabaseCall) String() string {
 	return call.ParsedCall.SimpleString()
 }
@@ -132,6 +144,7 @@ func Build(app *app.App, entryPoints []string) *AbstractGraph {
 	graph := &AbstractGraph{
 		Nodes:           make([]AbstractNode, 0),
 		AppServiceNodes: app.Services,
+		GlobalIndex:     1,
 	}
 	for _, serviceName := range entryPoints {
 		service := app.Services[serviceName]
@@ -160,6 +173,9 @@ func (graph *AbstractGraph) cleanVisited(node AbstractNode) {
 func getAllChildDeps(node AbstractNode) map[AbstractNode][]*types.Variable {
 	allChildDeps := make(map[AbstractNode][]*types.Variable)
 	for _, child := range node.GetChildren() {
+		if _, isQueueHandler := child.(*AbstractQueueHandler); isQueueHandler {
+			continue
+		}
 		// if it is visited then it already has IDs assigned
 		if !child.IsVisited() {
 			logger.Logger.Warnf("\t getting all deps for child %s", child.String())
@@ -199,6 +215,7 @@ func (graph *AbstractGraph) matchIdentifiers(node AbstractNode) {
 	logger.Logger.Warnf("matching identifiers for node %s (params = %v)", node.String(), node.GetParams())
 	node.SetVisited(true)
 	graph.matchCallerToChildParams(node)
+	graph.matchQueuePublishersToReceiversParams(node)
 	logger.Logger.Warn()
 	for _, child := range node.GetChildren() {
 		graph.matchIdentifiers(child)
@@ -220,14 +237,62 @@ func (graph *AbstractGraph) matchCallerToChildParams(node AbstractNode) {
 					logger.Logger.Warnf("\t\t matching child (%s) param '%s' with parent (%s) param '%s' for id %d", child.String(), childBlockParam.Name, node.String(), callerParam.Name, callerParam.Id)
 					childBlockParam.AssignID(callerParam.Id)
 					childBlockParam.AddReference(&types.Ref{
-						Name:     callerParam.Name,
-						Id:       callerParam.Id,
 						Creator:  node.GetCallerStr(),
 						Variable: callerParam,
 					})
 				}
 			}
 		}
+	}
+}
+
+// FIXME: this should be recursive!!
+func getVariableIfPointer(variable *types.Variable) (*types.Variable) {
+	value := variable
+	if _, ok := value.Type.(*gocode.Pointer); ok {
+		value = value.Deps[0]
+	}
+	return value
+}
+
+
+func (graph *AbstractGraph) matchQueuePublishersToReceiversParams(node AbstractNode) {
+	if pushCall, ok := node.(*AbstractDatabaseCall); ok {
+		if queueMethod, ok := pushCall.ParsedCall.Method.(*frameworks.BlueprintBackend); ok && queueMethod.IsQueuePush() {
+			logger.Logger.Infof("FOUND QUEUE PUSH %s (PARAMS = %v)", pushCall.String(), pushCall.Params)
+			for _, child := range node.GetChildren() {
+				queueHandler, ok := child.(*AbstractQueueHandler)
+				if !ok {
+					continue
+				}
+				for _, popCall := range queueHandler.ParsedCall.Method.(*service.ParsedFuncDecl).DatabaseCalls {
+					if popMethod, ok := popCall.Method.(*frameworks.BlueprintBackend); ok && popMethod.IsQueuePop() {
+						logger.Logger.Infof("FOUND QUEUE POP %s (PARAMS = %v)", popCall.String(), popCall.Params)
+						if pushCall.DbInstance == popCall.DbInstance {
+							// valid because we have Push(ctx, src) and Pop(ctx, dst)
+							// so the parameters indexes match correctly
+							for idx, param := range popCall.Params {
+								parentParam := pushCall.GetParam(idx)
+								/* Type: &gocode.Pointer{
+									PointerTo: v.Type,
+								} */
+								param := getVariableIfPointer(param)
+								param.Ref = &types.Ref{
+									Variable: parentParam,
+									Creator:  "unknown creator",
+								}
+								if parentParam.Ref != nil {
+									param.Ref.Creator = parentParam.Ref.Creator
+								} else {
+									param.Ref.Creator = utils.GetShortTypeStr(pushCall.ParsedCall.CallerTypeName)
+								}
+							}
+						}
+					}
+				}
+			}
+		}
+		
 	}
 }
 
@@ -282,16 +347,21 @@ func (graph *AbstractGraph) initBuild(app *app.App, serviceNode *service.Service
 	}
 }
 
-func createDummyAbstractServiceCall(node *service.ServiceNode, method *service.ParsedFuncDecl, caller string, pushCall string) AbstractServiceCall {
-	logger.Logger.Warnf("[GRAPH - DUMMY] create dummy abstract service call for node %s and method %s", node.Name, method.Name)
+func (graph *AbstractGraph) createDummyAbstractServiceCall(node *service.ServiceNode, method *service.ParsedFuncDecl, publisher *AbstractDatabaseCall) AbstractServiceCall {
+	logger.Logger.Warnf("[GRAPH - DUMMY] create dummy abstract service call for node %s and method %s with params %v", node.Name, method.Name, method.GetParams())
+
+	var callerStr = "Client"
+	if publisher != nil {
+		callerStr = utils.GetShortTypeStr(publisher.ParsedCall.CallerTypeName)
+	}
+
 	call := AbstractServiceCall{
 		ParsedCall: &service.ParsedCallExpr{
 			TargetField: node.Name,
 			Name:        method.Name,
 			Method:      method,
 		},
-		Call: pushCall,
-		Caller: caller,
+		Caller: callerStr,
 		Callee: node.Name,
 		Method: method.String(),
 	}
@@ -299,28 +369,26 @@ func createDummyAbstractServiceCall(node *service.ServiceNode, method *service.P
 		call.ParsedCall.Params = append(call.ParsedCall.Params, &types.Variable{
 			Name: p.Name,
 			Type: p.Type,
+			Id:   graph.getAndIncGlobalIndex(),
 		})
 	}
+	call.Params = call.ParsedCall.Params
 	return call
 }
 
 func (graph *AbstractGraph) addEntry(node *service.ServiceNode, method *service.ParsedFuncDecl) {
 	// add entry node to graph
-	entryCall := createDummyAbstractServiceCall(node, method, "Client", "")
+	entryCall := graph.createDummyAbstractServiceCall(node, method, nil)
 	graph.Nodes = append(graph.Nodes, &entryCall)
 	// build entry node
-	entryMethod := node.ExposedMethods[method.Name]
-	for _, p := range entryMethod.Params {
-		entryCall.Params = append(entryCall.Params, &types.Variable{
-			Name: p.Name,
-			Type: p.Type,
-			Id:   types.VARIABLE_UNASSIGNED_ID,
-			Ref: &types.Ref{
-				Creator: "Client",
-				Name:    p.Name,
-				Id:      types.VARIABLE_UNASSIGNED_ID,
+	for _, param := range entryCall.Params {
+		param.Ref = &types.Ref{
+			Creator: "Client",
+			Variable: &types.Variable{
+				Name: param.Name,
+				Id:   0,
 			},
-		})
+		}
 	}
 }
 
@@ -339,7 +407,7 @@ func (graph *AbstractGraph) recurseBuild(app *app.App, abstractNode AbstractNode
 		logger.Logger.Debugf("Doing recurse build on database call %s", node.String())
 		if dbInstance := node.ParsedCall.GetTargetedDatabaseInstance(); dbInstance != nil && dbInstance.IsQueue() {
 			if method, ok := node.ParsedCall.Method.(*frameworks.BlueprintBackend); ok && method.IsWrite() {
-				queueHandlers := graph.findQueueHandlers(app, dbInstance, node)
+				queueHandlers := graph.findQueueHandlersAndAddRefs(app, dbInstance, node)
 				for _, handler := range queueHandlers {
 					node.Children = append(node.Children, handler)
 				}
@@ -358,7 +426,7 @@ func (graph *AbstractGraph) recurseBuild(app *app.App, abstractNode AbstractNode
 	}
 }
 
-func (graph *AbstractGraph) findQueueHandlers(app *app.App, instance types.DatabaseInstance, publisher *AbstractDatabaseCall) []*AbstractQueueHandler {
+func (graph *AbstractGraph) findQueueHandlersAndAddRefs(app *app.App, instance types.DatabaseInstance, publisher *AbstractDatabaseCall) []*AbstractQueueHandler {
 	var queueHandlers []*AbstractQueueHandler
 	for _, node := range app.Services {
 		if _, ok := node.Databases[instance.GetName()]; ok {
@@ -367,7 +435,7 @@ func (graph *AbstractGraph) findQueueHandlers(app *app.App, instance types.Datab
 					if slices.Contains(queueHandler.DbInstances, instance) {
 						logger.Logger.Warnf("[GRAPH - QUEUE] found worker %s on instance '%s'", queueHandler.String(), instance.GetName())
 						queueHandler := &AbstractQueueHandler{
-							AbstractServiceCall: createDummyAbstractServiceCall(node, queueHandler, utils.GetShortTypeStr(publisher.ParsedCall.CallerTypeName), publisher.ParsedCall.SimpleString()),
+							AbstractServiceCall: graph.createDummyAbstractServiceCall(node, queueHandler, publisher),
 							DbInstance:          instance,
 						}
 						for _, p := range queueHandler.GetParams() {
@@ -377,6 +445,21 @@ func (graph *AbstractGraph) findQueueHandlers(app *app.App, instance types.Datab
 							})
 						}
 						queueHandlers = append(queueHandlers, queueHandler)
+
+						/* for _, dbCall := range queueHandler.ParsedCall.Method.(*service.ParsedFuncDecl).DatabaseCalls {
+							if dbCall.DbInstance == instance {
+								if method, ok := dbCall.Method.(*frameworks.BlueprintBackend); ok && method.IsQueuePop() {
+									// valid because we have Push(ctx, src) and Pop(ctx, dst)
+									// so the parameters indexes match correctly
+									for idx, param := range dbCall.Params {
+										param.Ref = &types.Ref{
+											Variable: publisher.GetParam(idx),
+											Creator:  publisher.GetParam(idx).Ref.Creator,
+										}
+									}
+								}
+							}
+						} */
 					}
 				}
 			}

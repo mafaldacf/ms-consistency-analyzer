@@ -51,88 +51,65 @@ func (b *BlueprintBackend) IsWrite() bool {
 	return b.Write
 }
 
+func (b *BlueprintBackend) IsQueuePop() bool {
+	return !b.Write && b.Name == "Queue.Pop"
+}
+
+func (b *BlueprintBackend) IsQueuePush() bool {
+	return b.Write && b.Name == "Queue.Push"
+}
+
 func GetBackendMethod(name string) *BlueprintBackend {
-	if name == "Cache.Put" {
-		return &BlueprintBackend{
-			Name: name,
-			Write: true,
-			Params: []*types.FunctionField{
-				{
-					Variable: gocode.Variable{
-						Name: "key",
-						Type: &gocode.BasicType{
-							Name: "string",
-						},
-					},
-					Lineno: 0,
-					Ast:    nil,
-				},
-				{
-					Variable: gocode.Variable{
-						Name: "value",
-						Type: &gocode.InterfaceType{},
-					},
-					Lineno: 0,
-					Ast:    nil,
-				},
-			},
-		}
-	}
-	if name == "Cache.Get" {
-		return &BlueprintBackend{
-			Name: name,
-			Params: []*types.FunctionField{
-				{
-					Variable: gocode.Variable{
-						Name: "key",
-						Type: &gocode.BasicType{
-							Name: "string",
-						},
-					},
-					Lineno: 0,
-					Ast:    nil,
-				},
-				{
-					Variable: gocode.Variable{
-						Name: "val",
-						Type: &gocode.InterfaceType{},
-					},
-					Lineno: 0,
-					Ast:    nil,
-				},
-			},
-		}
-	}
-	if name == "Queue.Push" {
-		return &BlueprintBackend{
-			Name: name,
-			Write: true,
-			Params: []*types.FunctionField{
-				{
-					Variable: gocode.Variable{
-						Name: "item",
-						Type: &gocode.InterfaceType{},
-					},
-					Lineno: 0,
-					Ast:    nil,
-				},
-			},
-		}
-	}
-	if name == "Queue.Pop" {
-		return &BlueprintBackend{
-			Name: name,
-			Params: []*types.FunctionField{
-				{
-					Variable: gocode.Variable{
-						Name: "dst",
-						Type: &gocode.InterfaceType{},
-					},
-					Lineno: 0,
-					Ast:    nil,
-				},
-			},
-		}
+	switch name {
+		case "Cache.Put":
+			return &BlueprintBackend{Name: name, Write: true, Params:[]*types.FunctionField{&ctxParam, &keyParam, &valueParam}}
+		case "Cache.Get":
+			return &BlueprintBackend{Name: name, Write: false, Params:[]*types.FunctionField{&ctxParam, &keyParam, &valueParam}}
+		case "Queue.Push":
+			return &BlueprintBackend{Name: name, Write: true, Params:[]*types.FunctionField{&ctxParam, &itemParam}}
+		case "Queue.Pop":
+			return &BlueprintBackend{Name: name, Write: false, Params:[]*types.FunctionField{&ctxParam, &itemParam}}
 	}
 	return nil
+}
+
+var ctxParam = types.FunctionField {
+	Variable: gocode.Variable{
+		Name: "ctx",
+		Type: &gocode.UserType{
+			Name: "Context",
+			Package: "context",
+		},
+	},
+	Lineno: 0,
+	Ast:    nil,
+}
+
+var keyParam = types.FunctionField {
+	Variable: gocode.Variable{
+		Name: "key",
+		Type: &gocode.BasicType{
+			Name: "string",
+		},
+	},
+	Lineno: 0,
+	Ast:    nil,
+}
+
+var valueParam = types.FunctionField {
+	Variable: gocode.Variable{
+		Name: "value",
+		Type: &gocode.InterfaceType{},
+	},
+	Lineno: 0,
+	Ast:    nil,
+}
+
+var itemParam = types.FunctionField {
+	Variable: gocode.Variable{
+		Name: "item",
+		Type: &gocode.InterfaceType{},
+	},
+	Lineno: 0,
+	Ast:    nil,
 }
