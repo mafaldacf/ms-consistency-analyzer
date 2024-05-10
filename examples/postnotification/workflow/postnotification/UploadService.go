@@ -25,8 +25,9 @@ func NewUploadServiceImpl(ctx context.Context, storageService StorageService, qu
 }
 
 func (u *UploadServiceImpl) UploadPost(ctx context.Context, username string, text string) (int64, error) {
+	reqID := rand.Int63()
 	post := Post{
-		ReqID:     rand.Int63(),
+		ReqID:     reqID,
 		PostID:    rand.Int63(),
 		Text:      text,
 	}

@@ -76,7 +76,9 @@ func inspectIR(builder *cmdbuilder.CmdBuilder) (map[*workflowspec.Service][]gola
 									logger.Logger.Debugf("[NODE] [rabbitmq.RabbitmqGoClient] got node %s", rabbitClient.Name())
 								} else if workflowHandler, ok := child.(*workflow.WorkflowHandler); ok {
 									logger.Logger.Debugf("[NODE] [workflow.WorkflowHandler] got node %s (service_type = %v)", workflowHandler.Name(), workflowHandler.ServiceType)
-									
+
+									// make sure that services that do not have any other dependencies are also included
+									services[workflowHandler.ServiceInfo] = nil
 									for _, arg := range workflowHandler.Args {
 										if redisClient, ok := arg.(*redis.RedisGoClient); ok {
 											services[workflowHandler.ServiceInfo] = append(services[workflowHandler.ServiceInfo], redisClient)

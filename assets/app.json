@@ -1,6 +1,7 @@
 {
   "name": "postnotification",
   "app_services": {
+    "DummyService": {},
     "NotifyService": {
       "fields": {
         "queue": "backend.Queue",
@@ -15,8 +16,12 @@
     },
     "StorageService": {
       "fields": {
-        "cache": "backend.Cache"
+        "cache": "backend.Cache",
+        "dummyService": "postnotification.DummyService"
       },
+      "services": [
+        "DummyService"
+      ],
       "databases": [
         "post_db"
       ]

@@ -5,29 +5,23 @@
   "params": [
     {
       "name": "ctx",
-      "id": 1,
       "ref": {
         "name": "ctx",
-        "creator": "Client",
-        "id": 0
+        "creator": "Client"
       }
     },
     {
       "name": "username",
-      "id": 2,
       "ref": {
         "name": "username",
-        "creator": "Client",
-        "id": 0
+        "creator": "Client"
       }
     },
     {
       "name": "text",
-      "id": 3,
       "ref": {
         "name": "text",
-        "creator": "Client",
-        "id": 0
+        "creator": "Client"
       }
     }
   ],
@@ -40,28 +34,25 @@
       "params": [
         {
           "name": "ctx",
-          "id": 1,
           "ref": {
             "name": "ctx",
-            "creator": "Client",
-            "id": 1
+            "creator": "Client"
           }
         },
         {
           "name": "post.ReqID",
-          "id": 1,
           "deps": [
             {
               "name": "post",
-              "id": 2,
               "deps": [
                 {
+                  "name": "reqID"
+                },
+                {
                   "name": "text",
-                  "id": 3,
                   "ref": {
                     "name": "text",
-                    "creator": "Client",
-                    "id": 3
+                    "creator": "Client"
                   }
                 }
               ]
@@ -70,15 +61,15 @@
         },
         {
           "name": "post",
-          "id": 2,
           "deps": [
             {
+              "name": "reqID"
+            },
+            {
               "name": "text",
-              "id": 3,
               "ref": {
                 "name": "text",
-                "creator": "Client",
-                "id": 3
+                "creator": "Client"
               }
             }
           ]
@@ -92,35 +83,28 @@
           "params": [
             {
               "name": "ctx",
-              "id": 1,
               "ref": {
                 "name": "ctx",
-                "creator": "UploadService",
-                "id": 1
+                "creator": "UploadService"
               }
             },
             {
               "name": "postIDStr",
-              "id": 3,
               "deps": [
                 {
                   "name": "post",
-                  "id": 2,
                   "ref": {
                     "name": "post",
-                    "creator": "UploadService",
-                    "id": 2
+                    "creator": "UploadService"
                   }
                 }
               ]
             },
             {
               "name": "post",
-              "id": 2,
               "ref": {
                 "name": "post",
-                "creator": "UploadService",
-                "id": 2
+                "creator": "UploadService"
               }
             }
           ],
@@ -139,28 +123,25 @@
       "params": [
         {
           "name": "ctx",
-          "id": 1,
           "ref": {
             "name": "ctx",
-            "creator": "Client",
-            "id": 1
+            "creator": "Client"
           }
         },
         {
           "name": "message",
-          "id": 4,
           "deps": [
             {
               "name": "post",
-              "id": 2,
               "deps": [
                 {
+                  "name": "reqID"
+                },
+                {
                   "name": "text",
-                  "id": 3,
                   "ref": {
                     "name": "text",
-                    "creator": "Client",
-                    "id": 3
+                    "creator": "Client"
                   }
                 }
               ]
@@ -176,12 +157,10 @@
             "callee": "NotifyService",
             "params": [
               {
-                "name": "ctx",
-                "id": 4
+                "name": "ctx"
               },
               {
-                "name": "workerID",
-                "id": 5
+                "name": "workerID"
               }
             ],
             "edges": [
@@ -192,24 +171,19 @@
                 "params": [
                   {
                     "name": "ctx",
-                    "id": 4,
                     "ref": {
                       "name": "ctx",
-                      "creator": "UploadService",
-                      "id": 4
+                      "creator": "UploadService"
                     }
                   },
                   {
                     "name": "\u0026message",
-                    "id": 5,
                     "deps": [
                       {
                         "name": "message",
-                        "id": -2,
                         "ref": {
                           "name": "message",
-                          "creator": "UploadService",
-                          "id": 4
+                          "creator": "UploadService"
                         }
                       }
                     ]
@@ -229,28 +203,22 @@
                 "params": [
                   {
                     "name": "ctx",
-                    "id": 4,
                     "ref": {
                       "name": "ctx",
-                      "creator": "UploadService",
-                      "id": 4
+                      "creator": "UploadService"
                     }
                   },
                   {
                     "name": "reqID",
-                    "id": 6,
                     "deps": [
                       {
                         "name": "notification",
-                        "id": -2,
                         "deps": [
                           {
                             "name": "message",
-                            "id": -2,
                             "ref": {
                               "name": "message",
-                              "creator": "UploadService",
-                              "id": 4
+                              "creator": "UploadService"
                             }
                           }
                         ]
@@ -259,19 +227,15 @@
                   },
                   {
                     "name": "postID",
-                    "id": 7,
                     "deps": [
                       {
                         "name": "notification",
-                        "id": -2,
                         "deps": [
                           {
                             "name": "message",
-                            "id": -2,
                             "ref": {
                               "name": "message",
-                              "creator": "UploadService",
-                              "id": 4
+                              "creator": "UploadService"
                             }
                           }
                         ]
@@ -287,35 +251,28 @@
                     "params": [
                       {
                         "name": "ctx",
-                        "id": 4,
                         "ref": {
                           "name": "ctx",
-                          "creator": "NotifyService",
-                          "id": 4
+                          "creator": "NotifyService"
                         }
                       },
                       {
                         "name": "postIDStr",
-                        "id": 8,
                         "deps": [
                           {
                             "name": "postID",
-                            "id": 7,
                             "ref": {
                               "name": "postID",
-                              "creator": "NotifyService",
-                              "id": 7
+                              "creator": "NotifyService"
                             }
                           }
                         ]
                       },
                       {
                         "name": "\u0026post",
-                        "id": 9,
                         "deps": [
                           {
-                            "name": "post",
-                            "id": -2
+                            "name": "post"
                           }
                         ]
                       }

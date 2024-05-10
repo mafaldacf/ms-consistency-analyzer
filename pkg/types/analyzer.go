@@ -74,7 +74,7 @@ func (ref *Ref) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Name    string  `json:"name"`
 		Creator string  `json:"creator"`
-		Id      int64   `json:"id"`
+		Id      int64   `json:"-"`
 	}{
 		Name:    ref.Variable.Name,
 		Creator: ref.Creator,
@@ -87,7 +87,7 @@ const VARIABLE_UNASSIGNED_ID int64 = -2
 
 type Variable struct {
 	Name          string          `json:"name"`
-	Id            int64           `json:"id"`
+	Id            int64           `json:"-"`
 	Lineno        token.Pos       `json:"-"` // 0 (default) represents inline variable
 	Deps          []*Variable     `json:"deps,omitempty"`
 	IsBlockParam  bool            `json:"-"`

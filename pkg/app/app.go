@@ -215,6 +215,7 @@ func parseAndVisitCFG(node *service.ServiceNode, methods map[string]*service.Par
 
 func (app *App) createServiceNodes(specs map[*workflowspec.Service][]golang.Service) (map[*service.ServiceNode]*workflowspec.Service, error) {
 	serviceSpec := make(map[*service.ServiceNode]*workflowspec.Service)
+	logger.Logger.Infof("[APP] loading #%d specs", len(specs))
 	// services also include blueprint backends
 	for spec, edges := range specs {
 		fset := token.NewFileSet()
@@ -254,6 +255,7 @@ func (app *App) createServiceNodes(specs map[*workflowspec.Service][]golang.Serv
 			}
 		}
 		app.Services[node.Name] = node
+		logger.Logger.Infof("[APP] created service node: %s", node.Name)
 	}
 	return serviceSpec, nil
 }

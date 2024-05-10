@@ -274,9 +274,9 @@ func (graph *AbstractGraph) matchQueuePublishersToReceiversParams(node AbstractN
 								/* Type: &gocode.Pointer{
 									PointerTo: v.Type,
 								} */
-								if parentParam.IsUnassigned() {
+								/* if parentParam.IsUnassigned() {
 									parentParam.AssignID(graph.getAndIncGlobalIndex())
-								}
+								} */
 								param := getVariableIfPointer(param)
 								param.AddReference(&types.Ref{
 									Variable: parentParam,

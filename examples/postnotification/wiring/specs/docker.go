@@ -33,7 +33,12 @@ func makeDockerSpec(spec wiring.WiringSpec) ([]string, error) {
 	allServices = append(allServices, post_db)
 	allServices = append(allServices, notification_queue)
 
-	storage_service := workflow.Service[postnotification.StorageService](spec, "storage_service", post_db)
+	dummy_service := workflow.Service[postnotification.DummyService](spec, "dummy_service")
+	dummy_service_ctr := applyDockerDefaults(spec, dummy_service, "dummy_service_proc", "dummy_service_container")
+	containers = append(containers, dummy_service_ctr)
+	allServices = append(allServices, "dummy_service")
+
+	storage_service := workflow.Service[postnotification.StorageService](spec, "storage_service", post_db, dummy_service)
 	storage_service_ctr := applyDockerDefaults(spec, storage_service, "storage_service_proc", "storage_service_container")
 	containers = append(containers, storage_service_ctr)
 	allServices = append(allServices, "storage_service")

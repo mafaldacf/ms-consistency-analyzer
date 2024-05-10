@@ -5,7 +5,6 @@ import (
 	"strconv"
 	
 	"github.com/blueprint-uservices/blueprint/runtime/core/backend"
-	//"postnotification/workflow/postnotification/dummy"
 )
 
 type StorageService interface {
@@ -15,11 +14,11 @@ type StorageService interface {
 
 type StorageServiceImpl struct {
 	cache 		 backend.Cache
-	//dummyService dummy.DummyService
+	dummyService DummyService
 }
 
-func NewStorageServiceImpl(ctx context.Context, cache backend.Cache) (StorageService, error) {
-	u := &StorageServiceImpl{cache: cache}
+func NewStorageServiceImpl(ctx context.Context, cache backend.Cache, dummyService DummyService) (StorageService, error) {
+	u := &StorageServiceImpl{cache: cache, dummyService: dummyService}
 	return u, nil
 }
 
@@ -39,5 +38,6 @@ func (u *StorageServiceImpl) ReadPost(ctx context.Context, reqID int64, postID i
 	if err != nil {
 		return post, err
 	}
+	/* u.dummyService.Dummy(ctx, postID) */
 	return post, nil
 }
