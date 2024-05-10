@@ -38,6 +38,15 @@ func TransverseExprIdentifiers(expr ast.Expr) (string, []string) {
 		identifiers = append(identifiers, rX...)
 		_, rY := TransverseExprIdentifiers(e.Y)
 		identifiers = append(identifiers, rY...)
+	case *ast.TypeAssertExpr:
+		_, rX := TransverseExprIdentifiers(e.X)
+		identifiers = append(identifiers, rX...)
+	case *ast.IndexExpr: // from type assert
+		_, rX := TransverseExprIdentifiers(e.X)
+		identifiers = append(identifiers, rX...)
+	case *ast.UnaryExpr: //e.g. &post
+		_, rX := TransverseExprIdentifiers(e.X)
+		identifiers = append(identifiers, rX...)
 	default:
 		logger.Logger.Warnf("unknown type in TransverseExprIdentifiers: %s", GetType(e))
 	}

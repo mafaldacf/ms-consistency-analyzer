@@ -2,7 +2,7 @@ package postnotification
 
 import (
 	"context"
-	"sync"
+	/* "sync" */
 	/* "time" */
 
 	"github.com/blueprint-uservices/blueprint/runtime/core/backend"
@@ -13,7 +13,7 @@ import (
 // does not expose any methods to other services
 // it defines Run that runs workers that pull messages from the queue
 type NotifyService interface {
-	Run(ctx context.Context) error 
+	/* Run(ctx context.Context) error  */
 	//Notify(ctx context.Context, message Message, dummy models.Dummy) error
 }
 
@@ -118,7 +118,7 @@ func (n *NotifyServiceImpl) workerThread(ctx context.Context, workerID int) erro
 	return nil
 } */
 
-func (n *NotifyServiceImpl) Run(ctx context.Context) error {
+/* func (n *NotifyServiceImpl) Run(ctx context.Context) error {
 	backend.GetLogger().Info(ctx, "initializing %d workers", n.numWorkers)
 	var wg sync.WaitGroup
 	wg.Add(n.numWorkers)
@@ -135,4 +135,4 @@ func (n *NotifyServiceImpl) Run(ctx context.Context) error {
 	wg.Wait()
 	backend.GetLogger().Info(ctx, "joining %d workers", n.numWorkers)
 	return nil
-}
+} */

@@ -82,10 +82,13 @@ func (ref *Ref) MarshalJSON() ([]byte, error) {
 	})
 }
 
+const VARIABLE_INLINE_ID int64 = -1
+const VARIABLE_UNASSIGNED_ID int64 = -2
+
 type Variable struct {
 	Name          string          `json:"name"`
 	Id            int64           `json:"id"`
-	Lineno        token.Pos       `json:"-"` // 0 represents inline variable
+	Lineno        token.Pos       `json:"-"` // 0 (default) represents inline variable
 	Deps          []*Variable     `json:"deps,omitempty"`
 	IsBlockParam  bool            `json:"-"`
 	BlockParamIdx int             `json:"-"`
@@ -104,8 +107,8 @@ func (v *Variable) EqualBlockParamIndex(idx int) bool {
 	return v.BlockParamIdx == idx
 }
 
-func (v *Variable) HasAssignedID() bool {
-	return v.Id != -1
+func (v *Variable) IsUnassigned() bool {
+	return v.Id < 0
 }
 
 func (v *Variable) AssignID(id int64) {

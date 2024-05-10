@@ -37,8 +37,7 @@ func BuildParsedCFG(node *service.ServiceNode, basicCfg *cfg.CFG, method *servic
 	pos := parsedCfg.Cfg.Blocks[0].Stmt.Pos()
 	for i, param := range method.Params {
 		parsedCfg.Vars = append(parsedCfg.Vars, &types.Variable{
-			//Id:     		len(parsedCfg.Vars),
-			Id:            -1,
+			Id:            types.VARIABLE_UNASSIGNED_ID,
 			Lineno:        pos,
 			Name:          param.Name,
 			Type:          param.Type,

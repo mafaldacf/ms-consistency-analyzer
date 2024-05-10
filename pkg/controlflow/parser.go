@@ -20,11 +20,9 @@ func ParseServiceMethodCFG(parsedCfg *types.ParsedCFG, method *service.ParsedFun
 	visitBasicBlockFuncCalls(parsedCfg, method)
 	visitCalls(method.DatabaseCalls)
 	visitCalls(method.ServiceCalls)
-	logger.Logger.Warn()
 }
 
 func visitCalls(parsedCalls map[token.Pos]*service.ParsedCallExpr) {
-	logger.Logger.Debug("visiting database/service calls for service node target method")
 	for pos, call := range parsedCalls {
 		logger.Logger.Debugf("call %s.%s [%d]\n", call.TargetField, call.Name, pos)
 		logger.Logger.Debug("> deps: ")
@@ -104,12 +102,11 @@ func visitBasicBlockDeclAndAssignsRecursor(parsedCfg *types.ParsedCFG, block *cf
 							Package: parsedCfg.Package,
 							Name:    varType, //FIXME, this needs to be type not name
 						},
-						Id:     -1,
+						Id:     types.VARIABLE_UNASSIGNED_ID,
 						Lineno: stmt.Pos(),
 						Name:   lvalue,
 						Deps:   usedVars,
 					}
-					logger.Logger.Infof("ADDED NEW VAR IN BLOCK: %v", newVar)
 					parsedCfg.Vars = append(parsedCfg.Vars, newVar)
 				}
 			}
@@ -124,7 +121,7 @@ func visitBasicBlockDeclAndAssignsRecursor(parsedCfg *types.ParsedCFG, block *cf
 func visitBasicBlockFuncCalls(parsedCfg *types.ParsedCFG, parsedFuncDecl *service.ParsedFuncDecl) {
 	var visited = make(map[int32]bool)
 	for i, block := range parsedCfg.Cfg.Blocks {
-		logger.Logger.Warnf("[CFG] visiting block #%d func calls for cfg %s", i, parsedCfg.FullMethod)
+		logger.Logger.Debugf("[CFG] visiting block #%d func calls for cfg %s", i, parsedCfg.FullMethod)
 		visitBasicBlockFuncCallsRecursor(block, parsedCfg, parsedFuncDecl, visited)
 	}
 	logger.Logger.Debugln()
@@ -153,7 +150,7 @@ func visitBasicBlockFuncCallsRecursor(block *cfg.Block, parsedCfg *types.ParsedC
 //  3. ParenExpr  - e.g. when used as a bool value in an if statement (assumes it is inside a parentheses)
 //     in this case, the unfolded node from ParenExpr is a CallExpr
 func processParsedCalls(node ast.Node, parsedCfg *types.ParsedCFG, parsedFuncDecl *service.ParsedFuncDecl) bool {
-	logger.Logger.Warnf("\t\tprocessing parsed calls for parsed cfg of %s (node type = %s)", parsedCfg.FullMethod, utils.GetType(node))
+	logger.Logger.Debugf("\t\tprocessing parsed calls for parsed cfg of %s (node type = %s)", parsedCfg.FullMethod, utils.GetType(node))
 	switch n := node.(type) {
 	case *ast.ExprStmt:
 		return processParsedCalls(n.X, parsedCfg, parsedFuncDecl)
@@ -194,15 +191,16 @@ func processParsedCalls(node ast.Node, parsedCfg *types.ParsedCFG, parsedFuncDec
 		for _, spec := range n.Decl.(*ast.GenDecl).Specs {
 			processParsedCalls(spec, parsedCfg, parsedFuncDecl)
 		}
-	case *ast.ValueSpec:
 	// ------
 	// Others
 	// ------
+	case *ast.ValueSpec:
 	case *ast.ReturnStmt:
 	case *ast.BinaryExpr: // e.g. if err != nil
 	case *ast.Ident:
+	case *ast.TypeAssertExpr:
 	default:
-		logger.Logger.Infof("unknown type in hasFuncCall: %s", utils.GetType(n))
+		logger.Logger.Warnf("unknown type in hasFuncCall: %s", utils.GetType(n))
 	}
 
 	return false
@@ -212,24 +210,22 @@ func processParsedCalls(node ast.Node, parsedCfg *types.ParsedCFG, parsedFuncDec
 // 1. check if it is a database call or service call
 // 2. if so, we fetch the arguments and compare against the CFG variables
 func findParsedCallsAndAddParams(node *ast.CallExpr, parsedCfg *types.ParsedCFG, parsedFuncDecl *service.ParsedFuncDecl) bool {
-	logger.Logger.Warnf("\t\t\t\t finding parsed calls and params for parsed cfg of %s", parsedCfg.FullMethod)
+	logger.Logger.Debugf("\t\t\t\t finding parsed calls and params for parsed cfg of %s", parsedCfg.FullMethod)
 	var parsedCall *service.ParsedCallExpr
 	// check if it is a database call
 	dbCall := parsedFuncDecl.DatabaseCalls[node.Pos()]
 	if dbCall != nil {
 		parsedCall = dbCall
-		logger.Logger.Debug("- database call:", dbCall.Name)
 	}
 	// check if it is a service call
 	svcCall := parsedFuncDecl.ServiceCalls[node.Pos()]
 	if svcCall != nil {
 		parsedCall = svcCall
-		logger.Logger.Debug("- service call:", svcCall.Name)
 	}
 
 	// if we have database or service call, then we keep track of all arguments used
 	if parsedCall != nil {
-		logger.Logger.Infof("[VISITOR] finding parsed call %s: original args = %v", parsedCall.Name, node.Args)
+		logger.Logger.Debugf("[VISITOR] finding parsed call %s: original args = %v", parsedCall.Name, node.Args)
 		// gather all args used in the CallExpr
 		for _, arg := range node.Args {
 			var param *types.Variable
@@ -250,7 +246,7 @@ func findParsedCallsAndAddParams(node *ast.CallExpr, parsedCfg *types.ParsedCFG,
 							Type: &gocode.Pointer{
 								PointerTo: v.Type,
 							},
-							Id:   -1, // inline
+							Id:   types.VARIABLE_INLINE_ID,
 							Name: name,
 							Deps: []*types.Variable{v},
 						}
@@ -266,7 +262,7 @@ func findParsedCallsAndAddParams(node *ast.CallExpr, parsedCfg *types.ParsedCFG,
 					if ok, v := getVariableInBlock(parsedCfg, ident.Name); ok {
 						param = &types.Variable{
 							Type: v.Type,
-							Id:   -1, // inline
+							Id:   types.VARIABLE_INLINE_ID, // inline
 							Name: name,
 							Deps: []*types.Variable{v},
 						}
@@ -277,7 +273,7 @@ func findParsedCallsAndAddParams(node *ast.CallExpr, parsedCfg *types.ParsedCFG,
 				parsedCall.Params = append(parsedCall.Params, param)
 			}
 		}
-		logger.Logger.Infof("[VISITOR] found parsed call %s: parsed params = %v", parsedCall.Name, parsedCall.Params)
+		logger.Logger.Debugf("[VISITOR] found parsed call %s: parsed params = %v", parsedCall.Name, parsedCall.Params)
 		return true
 	}
 	// otherwise we return false because we did not find either
@@ -302,7 +298,6 @@ func isVarDeclOrAssign(node ast.Node) (bool, string, []string, []string) {
 	var found bool
 	switch n := node.(type) {
 	case *ast.ValueSpec:
-		logger.Logger.Debugf("found ValueSpec: %d", n.Pos())
 		for _, name := range n.Names {
 			lvalues = append(lvalues, name.Name)
 		}
@@ -311,7 +306,6 @@ func isVarDeclOrAssign(node ast.Node) (bool, string, []string, []string) {
 		}
 		found = true
 	case *ast.AssignStmt:
-		logger.Logger.Debugf("found AssignStmt: %d", n.Pos())
 		for _, lvalue := range n.Lhs {
 			if ident, ok := lvalue.(*ast.Ident); ok {
 				lvalues = append(lvalues, ident.Name)
@@ -322,7 +316,6 @@ func isVarDeclOrAssign(node ast.Node) (bool, string, []string, []string) {
 			varType, deps = utils.TransverseExprIdentifiers(rvalue)
 			rvalues = append(rvalues, deps...)
 		}
-		logger.Logger.Debugf("\t %v --- (depends on) ---> %v", lvalues, rvalues)
 		found = true
 	case *ast.DeclStmt:
 		for _, spec := range n.Decl.(*ast.GenDecl).Specs {
@@ -332,10 +325,14 @@ func isVarDeclOrAssign(node ast.Node) (bool, string, []string, []string) {
 			}
 			varType = vt
 			lvalues = append(lvalues, lvs...)
-			rvalues = append(lvalues, rvs...)
+			rvalues = append(rvalues, rvs...)
 		}
+	case *ast.ExprStmt: // ignore expressions from function calls
+	case *ast.ReturnStmt: // ignore return statements
+	case *ast.BinaryExpr: // ignore e.g. if err != nil
+
 	default:
-		logger.Logger.Warnf("unknown var type %s", utils.GetType(node))
+		logger.Logger.Warnf("unknown type in isVarDeclOrAssign %s", utils.GetType(node))
 	}
 	return found, varType, lvalues, rvalues
 }

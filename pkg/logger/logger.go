@@ -31,7 +31,16 @@ func (f *CustomFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 		file = "???"
 		line = 0
 	} else {
-		file = filepath.Base(file)
+		dir := filepath.Dir(file)
+		splits := strings.Split(dir, "/")
+		len := len(splits)
+		if len >= 2 {
+			file = splits[len-2] + "/" + splits[len-1] + "/" + filepath.Base(file)
+		} else if len >= 1 {
+			file = splits[len-1] + "/" + filepath.Base(file)
+		} else {
+			file = filepath.Base(file)
+		}
 	}
 	levelColor := getColor(entry.Level)
 	levelText := fmt.Sprintf("\x1b[%dm%-5s\x1b[0m", levelColor, strings.ToUpper(entry.Level.String()[:4]))
