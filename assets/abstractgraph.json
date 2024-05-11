@@ -212,16 +212,11 @@
                     "name": "reqID",
                     "deps": [
                       {
-                        "name": "notification",
-                        "deps": [
-                          {
-                            "name": "message",
-                            "ref": {
-                              "name": "message",
-                              "creator": "UploadService"
-                            }
-                          }
-                        ]
+                        "name": "message",
+                        "ref": {
+                          "name": "workerID",
+                          "creator": "UploadService"
+                        }
                       }
                     ]
                   },
@@ -229,16 +224,11 @@
                     "name": "postID",
                     "deps": [
                       {
-                        "name": "notification",
-                        "deps": [
-                          {
-                            "name": "message",
-                            "ref": {
-                              "name": "message",
-                              "creator": "UploadService"
-                            }
-                          }
-                        ]
+                        "name": "message",
+                        "ref": {
+                          "name": "workerID",
+                          "creator": "UploadService"
+                        }
                       }
                     ]
                   }

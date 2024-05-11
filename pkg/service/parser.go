@@ -290,8 +290,8 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string, i
 func (node *ServiceNode) funcImplementsQueue(funcDecl *ast.FuncDecl, recvIdent *ast.Ident) (implements bool, dbInstance types.DatabaseInstance) {
 	// inspect methods
 	ast.Inspect(funcDecl, func(n ast.Node) bool {
-		ok, _, methodIdent, fieldIdent, _ := fieldCallInMethodBody(n, recvIdent)
-		if !ok {
+		ok, _, methodIdent, fieldIdent, _ := selectedFieldOrInternalFuncInCall(n, recvIdent)
+		if !ok || fieldIdent == nil {
 			return true
 		}
 		if field, isField := node.Fields[fieldIdent.Name]; isField {
@@ -317,6 +317,7 @@ func (node *ServiceNode) addQueueHandlerMethod(funcDecl *ast.FuncDecl, recvIdent
 		Params:        params,
 		DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
 		ServiceCalls:  make(map[token.Pos]*ParsedCallExpr),
+		InternalCalls: make(map[token.Pos]*ParsedCallExpr),
 		Service:       node.Name,
 	}
 	parsedFuncDecl.DbInstances = append(parsedFuncDecl.DbInstances, dbInstance)
@@ -333,6 +334,7 @@ func (node *ServiceNode) addInternalMethod(funcDecl *ast.FuncDecl, rcvIdent *ast
 		Recv:          rcvIdent,
 		DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
 		ServiceCalls:  make(map[token.Pos]*ParsedCallExpr),
+		InternalCalls: make(map[token.Pos]*ParsedCallExpr),
 		Service:       node.Name,
 	}
 	node.InternalMethods[parsedFuncDecl.Name] = parsedFuncDecl
@@ -348,13 +350,23 @@ func (node *ServiceNode) addExposedMethod(funcDecl *ast.FuncDecl, rcvIdent *ast.
 		Params:        params,
 		DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
 		ServiceCalls:  make(map[token.Pos]*ParsedCallExpr),
+		InternalCalls: make(map[token.Pos]*ParsedCallExpr),
 		Service:       node.Name,
 	}
 	node.ExposedMethods[parsedFuncDecl.Name] = parsedFuncDecl
 	logger.Logger.Debugf("[PARSER] added exposed method %s to service %s", parsedFuncDecl.String(), node.Name)
 }
 
-func fieldCallInMethodBody(node ast.Node, recvIdent *ast.Ident) (bool, *ast.CallExpr, *ast.Ident, *ast.Ident, *ast.Ident) {
+func hasCurrentServiceRecvIdent(selectorExpr *ast.SelectorExpr, expectedRecvIdent *ast.Ident) (bool, *ast.Ident) {
+	if serviceRecvIdent, ok := selectorExpr.X.(*ast.Ident); ok {
+		if serviceRecvIdent.Name == expectedRecvIdent.Name {
+			return true, serviceRecvIdent
+		}
+	}
+	return false, nil
+}
+
+func selectedFieldOrInternalFuncInCall(node ast.Node, expectedRecvIdent *ast.Ident) (ok bool, funcCall *ast.CallExpr, methodIdent *ast.Ident, fieldIdent *ast.Ident, serviceRecvIdent *ast.Ident) {
 	// e.g. f.queue.Push
 	//    ^ident2 ^ident ^method
 	// e.g. f.storageService.StorePost
@@ -363,13 +375,11 @@ func fieldCallInMethodBody(node ast.Node, recvIdent *ast.Ident) (bool, *ast.Call
 		if methodSel, ok := funcCall.Fun.(*ast.SelectorExpr); ok {
 			// get first selector (e.g. storageService)
 			if fieldSel, ok := methodSel.X.(*ast.SelectorExpr); ok {
-				// get second selector (e.g. f)
-				if serviceRcvIdent, ok := fieldSel.X.(*ast.Ident); ok {
-					// check if ident2 (e.g. f) is the current service receiver being implemented by the method
-					if serviceRcvIdent.Name == recvIdent.Name {
-						return true, funcCall, methodSel.Sel, fieldSel.Sel, serviceRcvIdent
-					}
+				if ok, serviceRecvIdent := hasCurrentServiceRecvIdent(fieldSel, expectedRecvIdent); ok {
+					return true, funcCall, methodSel.Sel, fieldSel.Sel, serviceRecvIdent
 				}
+			} else if ok, serviceRecvIdent := hasCurrentServiceRecvIdent(methodSel, expectedRecvIdent); ok {
+				return true, funcCall, methodSel.Sel, nil, serviceRecvIdent
 			}
 		}
 	}
@@ -381,18 +391,21 @@ func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 
 	ast.Inspect(parsedFuncDecl.Ast, func(n ast.Node) bool {
 		// beware that functions migh have nil receivers
-		ok, funcCall, methodIdent, fieldIdent, serviceRecvIdent := fieldCallInMethodBody(n, parsedFuncDecl.Recv)
-		if ok {
-			// store function call either as service call or database call
-			parsedCallExpr := &ParsedCallExpr{
-				Ast:         funcCall,
-				Receiver:    serviceRecvIdent.Name,
-				TargetField: fieldIdent.Name,
-				Name:        methodIdent.Name,
-				Pos:         funcCall.Pos(),
-			}
+		ok, funcCall, methodIdent, fieldIdent, serviceRecvIdent := selectedFieldOrInternalFuncInCall(n, parsedFuncDecl.Recv)
+		if !ok {
+			return true
+		}
+		if fieldIdent != nil {
 			// if the targeted variable corresponds to a service field
-			if field, ok := node.Fields[parsedCallExpr.TargetField]; ok {
+			if field, ok := node.Fields[fieldIdent.Name]; ok {
+				// store function call either as service call or database call
+				parsedCallExpr := &ParsedCallExpr{
+					Ast:         funcCall,
+					Receiver:    serviceRecvIdent.Name,
+					TargetField: fieldIdent.Name,
+					Name:        methodIdent.Name,
+					Pos:         funcCall.Pos(),
+				}
 				// if the field corresponds to a service field
 				if serviceField, ok := field.(*types.ServiceField); ok {
 					// 1. extract the service field from the current service
@@ -426,6 +439,16 @@ func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 					logger.Logger.Debugf("[PARSER] added new database call %s (params: %v)", parsedCallExpr.String(), parsedCallExpr.Params)
 				}
 			}
+		} else if funcDecl, ok := node.InternalMethods[methodIdent.Name]; ok {
+			parsedCallExpr := &ParsedCallExpr{
+				Ast:         funcCall,
+				Receiver:    serviceRecvIdent.Name,
+				Name:        methodIdent.Name,
+				Method:      funcDecl,
+				Pos:         funcCall.Pos(),
+			}
+			parsedFuncDecl.InternalCalls[parsedCallExpr.Pos] = parsedCallExpr
+			logger.Logger.Infof("ADDED INTERNAL CALL: %v", parsedCallExpr)
 		}
 		return true
 	})

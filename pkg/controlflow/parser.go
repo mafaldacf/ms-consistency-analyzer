@@ -200,32 +200,29 @@ func processParsedCalls(node ast.Node, parsedCfg *types.ParsedCFG, parsedFuncDec
 	case *ast.Ident:
 	case *ast.TypeAssertExpr:
 	default:
-		logger.Logger.Warnf("unknown type in hasFuncCall: %s", utils.GetType(n))
+		logger.Logger.Warnf("unknown type in processParsedCalls: %s", utils.GetType(n))
 	}
 
 	return false
 }
 
-// hasServiceOrDatabaseCall
-// 1. check if it is a database call or service call
-// 2. if so, we fetch the arguments and compare against the CFG variables
-func findParsedCallsAndAddParams(node *ast.CallExpr, parsedCfg *types.ParsedCFG, parsedFuncDecl *service.ParsedFuncDecl) bool {
-	logger.Logger.Debugf("\t\t\t\t finding parsed calls and params for parsed cfg of %s", parsedCfg.FullMethod)
-	var parsedCall *service.ParsedCallExpr
-	// check if it is a database call
-	dbCall := parsedFuncDecl.DatabaseCalls[node.Pos()]
-	if dbCall != nil {
-		parsedCall = dbCall
+func getParsedCallAtPosition(parsedFuncDecl *service.ParsedFuncDecl, pos token.Pos) (*service.ParsedCallExpr, bool) {
+	if dbCall, ok := parsedFuncDecl.DatabaseCalls[pos]; ok {
+		return dbCall, true
 	}
-	// check if it is a service call
-	svcCall := parsedFuncDecl.ServiceCalls[node.Pos()]
-	if svcCall != nil {
-		parsedCall = svcCall
+	if svcCall, ok := parsedFuncDecl.ServiceCalls[pos]; ok {
+		return svcCall, true
 	}
+	if intCall, ok := parsedFuncDecl.InternalCalls[pos]; ok {
+		return intCall, true
+	}
+	return nil, false
+}
 
-	// if we have database or service call, then we keep track of all arguments used
-	if parsedCall != nil {
-		logger.Logger.Debugf("[VISITOR] finding parsed call %s: original args = %v", parsedCall.Name, node.Args)
+func findParsedCallsAndAddParams(node *ast.CallExpr, parsedCfg *types.ParsedCFG, parsedFuncDecl *service.ParsedFuncDecl) bool {
+	parsedCall, ok := getParsedCallAtPosition(parsedFuncDecl, node.Pos())
+	if ok {
+		logger.Logger.Infof("[VISITOR] found parsed call %s at current position with args %v", parsedCall.Name, node.Args)
 		// gather all args used in the CallExpr
 		for _, arg := range node.Args {
 			var param *types.Variable

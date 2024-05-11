@@ -43,7 +43,7 @@ func NewNotifyServiceImpl(ctx context.Context, storageService StorageService, qu
 	return err
 } */
 
-/* func (n *NotifyServiceImpl) handleMessage(ctx context.Context, message Message) error {
+func (n *NotifyServiceImpl) handleMessage(ctx context.Context, message Message) error {
 	reqID, err := common.StringToInt64(message.ReqID)
 	if err != nil {
 		return nil
@@ -55,7 +55,7 @@ func NewNotifyServiceImpl(ctx context.Context, storageService StorageService, qu
 	
 	_, err = n.storageService.ReadPost(ctx, reqID, postID)
 	return err
-} */
+}
 
 func (n *NotifyServiceImpl) workerThread(ctx context.Context, workerID int) error {
 	var forever chan struct{}
@@ -67,9 +67,10 @@ func (n *NotifyServiceImpl) workerThread(ctx context.Context, workerID int) erro
 			PostID: message["PostID"].(string),
 			Timestamp: message["Timestamp"].(string),
 		}
-		reqID, _:= common.StringToInt64(notification.ReqID)
+		/* reqID, _ := common.StringToInt64(notification.ReqID)
 		postID, _ := common.StringToInt64(notification.PostID)
-		n.storageService.ReadPost(ctx, reqID, postID)
+		n.storageService.ReadPost(ctx, reqID, postID) */
+		n.handleMessage(ctx, notification)
 	}()
 	<-forever
 	return nil

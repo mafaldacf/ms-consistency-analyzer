@@ -128,7 +128,7 @@ func (app *App) RegisterServiceNodes(specs map[*workflowspec.Service][]golang.Se
 	app.parseServicesMethodsBody()
 
 	for _, node := range app.Services {
-		logger.Logger.Infof("[APP] registered service node %s", node.String())
+		logger.Logger.Infof("[APP] registered service node %s with %d service(s) and %d database(s)", node.Name, len(node.Services), len(node.Databases))
 	}
 	return nil
 }
@@ -197,13 +197,38 @@ func (app *App) parseServicesMethodsBody() {
 	for _, node := range app.Services {
 		fmt.Printf("\n ################################## %s ##################################\n", node.Name)
 		node.ParseMethodsBody()
-		parseAndVisitCFG(node, node.ExposedMethods, "exposed")
-		parseAndVisitCFG(node, node.QueueHandlerMethods, "worker")
-		parseAndVisitCFG(node, node.InternalMethods, "internal")
+		parseCFGs(node, node.ExposedMethods, "exposed")
+		parseCFGs(node, node.QueueHandlerMethods, "worker")
+		parseCFGs(node, node.InternalMethods, "internal")
+		for _, method := range node.ExposedMethods {
+			allInternalCalls(node, method, method)
+		}
+		for _, method := range node.QueueHandlerMethods {
+			allInternalCalls(node, method, method)
+		}
 	}
 }
 
-func parseAndVisitCFG(node *service.ServiceNode, methods map[string]*service.ParsedFuncDecl, visibility string) {
+func allInternalCalls(node *service.ServiceNode, entryMethod *service.ParsedFuncDecl, method *service.ParsedFuncDecl) {
+	for internalLineno, internalCall := range method.InternalCalls {
+		internalMethodDecl := node.InternalMethods[internalCall.Name]
+
+		for _, dbCall := range internalMethodDecl.DatabaseCalls {
+			entryMethod.DatabaseCalls[internalLineno] = dbCall
+		}
+		for _, svcCall := range internalMethodDecl.ServiceCalls {
+			entryMethod.ServiceCalls[internalLineno] = svcCall
+		}
+
+		for _, intCall := range internalMethodDecl.InternalCalls {
+			if intDecl, ok := node.InternalMethods[intCall.Name]; ok {
+				allInternalCalls(node, entryMethod, intDecl)
+			}
+		}
+	}
+}
+
+func parseCFGs(node *service.ServiceNode, methods map[string]*service.ParsedFuncDecl, visibility string) {
 	for _, method := range methods {
 		fmt.Printf("\n[%s] ------------------- %s -------------------\n", strings.ToUpper(visibility), method)
 		if parsedCfg, err := controlflow.ParseCFG(node, method); err == nil {

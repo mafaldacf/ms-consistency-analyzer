@@ -42,6 +42,7 @@ type ParsedFuncDecl struct {
 	Recv          *ast.Ident                    `json:"-"`
 	DatabaseCalls map[token.Pos]*ParsedCallExpr `json:"-"`
 	ServiceCalls  map[token.Pos]*ParsedCallExpr `json:"-"`
+	InternalCalls map[token.Pos]*ParsedCallExpr `json:"-"`
 	Service       string                        `json:"-"`
 
 	DbInstances []types.DatabaseInstance `json:"-"`
@@ -105,12 +106,14 @@ func (call *ParsedCallExpr) GetTargetedDatabaseInstance() types.DatabaseInstance
 }
 
 func (call *ParsedCallExpr) String() string {
-	var funcCallStr string
+	funcCallStr := ""
 	if call.Receiver != "" {
-		funcCallStr = fmt.Sprintf("%s.%s.%s(", call.Receiver, call.TargetField, call.Name)
-	} else {
-		funcCallStr = fmt.Sprintf("%s.%s(", call.TargetField, call.Name)
+		funcCallStr += fmt.Sprintf("%s.", call.Receiver)
 	}
+	if call.TargetField != "" {
+		funcCallStr += fmt.Sprintf("%s.", call.TargetField)
+	}
+	funcCallStr += fmt.Sprintf("%s(", call.Name)
 	for i, arg := range call.Method.GetParams() {
 		funcCallStr += arg.String()
 		if i < len(call.Method.GetParams())-1 {

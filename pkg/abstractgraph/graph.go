@@ -226,7 +226,7 @@ func (graph *AbstractGraph) matchCallerToChildParams(node AbstractNode) {
 	for callerParamIdx, callerParam := range node.GetParams() {
 		if callerParam.IsUnassigned() {
 			callerParam.AssignID(graph.getAndIncGlobalIndex())
-			logger.Logger.Infof("\t caller param #%d: %s (new id = %d)", callerParamIdx, callerParam.Name, callerParam.Id)
+			logger.Logger.Debugf("\t caller param #%d: %s (new id = %d)", callerParamIdx, callerParam.Name, callerParam.Id)
 		} else {
 			logger.Logger.Debugf("\t caller param #%d: %s (id = %d)", callerParamIdx, callerParam.Name, callerParam.Id)
 		}
