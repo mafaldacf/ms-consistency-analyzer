@@ -210,21 +210,18 @@ func (app *App) parseServicesMethodsBody() {
 }
 
 func allInternalCalls(node *service.ServiceNode, entryMethod *service.ParsedFuncDecl, method *service.ParsedFuncDecl) {
-	for internalLineno, internalCall := range method.InternalCalls {
-		internalMethodDecl := node.InternalMethods[internalCall.Name]
-
-		for _, dbCall := range internalMethodDecl.DatabaseCalls {
-			entryMethod.DatabaseCalls[internalLineno] = dbCall
-		}
-		for _, svcCall := range internalMethodDecl.ServiceCalls {
-			entryMethod.ServiceCalls[internalLineno] = svcCall
-		}
-
-		for _, intCall := range internalMethodDecl.InternalCalls {
-			if intDecl, ok := node.InternalMethods[intCall.Name]; ok {
-				allInternalCalls(node, entryMethod, intDecl)
+	for _, call := range method.Calls {
+		if internalCall, ok := call.(*service.InternalParsedCallExpr); ok {
+			internalMethodDecl := node.InternalMethods[internalCall.Name]
+	
+			for _, call := range internalMethodDecl.Calls {
+				if ok := controlflow.IsServiceOrDatabaseParsedCall(call); ok {
+					entryMethod.Calls = append(entryMethod.Calls, call)
+				} else if intDecl, ok := node.InternalMethods[call.GetName()]; ok {
+					allInternalCalls(node, entryMethod, intDecl)
+				}
 			}
-		}
+		} 
 	}
 }
 

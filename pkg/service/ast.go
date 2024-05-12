@@ -37,13 +37,11 @@ func (st *ServiceType) IsTypeName() {}
 
 type ParsedFuncDecl struct {
 	types.Method
-	Ast           *ast.FuncDecl                 `json:"-"`
-	Name          string                        `json:"name"`
-	Recv          *ast.Ident                    `json:"-"`
-	DatabaseCalls map[token.Pos]*ParsedCallExpr `json:"-"`
-	ServiceCalls  map[token.Pos]*ParsedCallExpr `json:"-"`
-	InternalCalls map[token.Pos]*ParsedCallExpr `json:"-"`
-	Service       string                        `json:"-"`
+	Ast     *ast.FuncDecl `json:"-"`
+	Name    string        `json:"name"`
+	Recv    *ast.Ident    `json:"-"`
+	Calls   []Call        `json:"-"`
+	Service string        `json:"-"`
 
 	DbInstances []types.DatabaseInstance `json:"-"`
 
@@ -81,6 +79,15 @@ type ParsedImportSpec struct {
 	IsBlueprintBackend bool
 }
 
+type Call interface {
+	String() string
+	GetName() string
+	SimpleString() string
+	IsAtPos(token.Pos) bool
+	AddParam(param *types.Variable)
+	GetParams() []*types.Variable
+}
+
 type ParsedCallExpr struct {
 	Ast  *ast.CallExpr
 	Name string
@@ -90,19 +97,9 @@ type ParsedCallExpr struct {
 	Receiver    string
 	TargetField string
 
-	// type of service calling (src) and being called (dest)
-	CallerTypeName gocode.TypeName
-	CalleeTypeName gocode.TypeName
-
 	Pos    token.Pos
 	Params []*types.Variable
-
-	DbInstance types.DatabaseInstance
-	Method     types.Method
-}
-
-func (call *ParsedCallExpr) GetTargetedDatabaseInstance() types.DatabaseInstance {
-	return call.DbInstance
+	Method types.Method
 }
 
 func (call *ParsedCallExpr) String() string {
@@ -134,6 +131,105 @@ func (call *ParsedCallExpr) SimpleString() string {
 	}
 	funcCallStr += ")"
 	return funcCallStr
+}
+
+type ServiceParsedCallExpr struct {
+	Call
+	ParsedCallExpr
+	CallerTypeName gocode.TypeName
+	CalleeTypeName gocode.TypeName
+}
+
+func (svcCall *ServiceParsedCallExpr) GetCallTypeNames() (gocode.TypeName, gocode.TypeName) {
+	return svcCall.CallerTypeName, svcCall.CalleeTypeName
+}
+
+func (svcCall *ServiceParsedCallExpr) String() string {
+	return svcCall.ParsedCallExpr.String()
+}
+
+func (svcCall *ServiceParsedCallExpr) SimpleString() string {
+	return svcCall.ParsedCallExpr.SimpleString()
+}
+
+func (svcCall *ServiceParsedCallExpr) IsAtPos(pos token.Pos) bool {
+	return svcCall.ParsedCallExpr.Pos == pos
+}
+
+func (svcCall *ServiceParsedCallExpr) GetName() string {
+	return svcCall.Name
+}
+
+func (svcCall *ServiceParsedCallExpr) AddParam(param *types.Variable) {
+	svcCall.Params = append(svcCall.Params, param)
+}
+
+func (svcCall *ServiceParsedCallExpr) GetParams() []*types.Variable {
+	return svcCall.Params
+}
+
+type DatabaseParsedCallExpr struct {
+	Call
+	ParsedCallExpr
+	DbInstance     types.DatabaseInstance
+	CallerTypeName gocode.TypeName
+}
+
+func (dbCall *DatabaseParsedCallExpr) IsAtPos(pos token.Pos) bool {
+	return dbCall.ParsedCallExpr.Pos == pos
+}
+
+func (dbCall *DatabaseParsedCallExpr) String() string {
+	return dbCall.ParsedCallExpr.String()
+}
+
+func (dbCall *DatabaseParsedCallExpr) SimpleString() string {
+	return dbCall.ParsedCallExpr.SimpleString()
+}
+
+func (dbCall *DatabaseParsedCallExpr) GetTargetedDatabaseInstance() types.DatabaseInstance {
+	return dbCall.DbInstance
+}
+
+func (dbCall *DatabaseParsedCallExpr) GetName() string {
+	return dbCall.Name
+}
+
+func (dbCall *DatabaseParsedCallExpr) AddParam(param *types.Variable) {
+	dbCall.Params = append(dbCall.Params, param)
+}
+
+func (dbCall *DatabaseParsedCallExpr) GetParams() []*types.Variable {
+	return dbCall.Params
+}
+
+type InternalParsedCallExpr struct {
+	Call
+	ParsedCallExpr
+}
+
+func (internalCall *InternalParsedCallExpr) String() string {
+	return internalCall.ParsedCallExpr.String()
+}
+
+func (internalCall *InternalParsedCallExpr) SimpleString() string {
+	return internalCall.ParsedCallExpr.SimpleString()
+}
+
+func (internalCall *InternalParsedCallExpr) IsAtPos(pos token.Pos) bool {
+	return internalCall.ParsedCallExpr.Pos == pos
+}
+
+func (internalCall *InternalParsedCallExpr) GetName() string {
+	return internalCall.Name
+}
+
+func (internalCall *InternalParsedCallExpr) AddParam(param *types.Variable) {
+	internalCall.Params = append(internalCall.Params, param)
+}
+
+func (internalCall *InternalParsedCallExpr) GetParams() []*types.Variable {
+	return internalCall.Params
 }
 
 type ServiceNode struct {

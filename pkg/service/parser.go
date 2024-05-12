@@ -7,7 +7,6 @@ import (
 	"analyzer/pkg/utils"
 	"fmt"
 	"go/ast"
-	"go/token"
 	"strings"
 
 	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
@@ -311,14 +310,11 @@ func (node *ServiceNode) funcImplementsQueue(funcDecl *ast.FuncDecl, recvIdent *
 func (node *ServiceNode) addQueueHandlerMethod(funcDecl *ast.FuncDecl, recvIdent *ast.Ident, dbInstance types.DatabaseInstance) {
 	params := node.parseFuncDeclParams(funcDecl)
 	parsedFuncDecl := &ParsedFuncDecl{
-		Ast:           funcDecl,
-		Name:          funcDecl.Name.Name,
-		Recv:          recvIdent,
-		Params:        params,
-		DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
-		ServiceCalls:  make(map[token.Pos]*ParsedCallExpr),
-		InternalCalls: make(map[token.Pos]*ParsedCallExpr),
-		Service:       node.Name,
+		Ast:     funcDecl,
+		Name:    funcDecl.Name.Name,
+		Recv:    recvIdent,
+		Params:  params,
+		Service: node.Name,
 	}
 	parsedFuncDecl.DbInstances = append(parsedFuncDecl.DbInstances, dbInstance)
 	node.QueueHandlerMethods[parsedFuncDecl.Name] = parsedFuncDecl
@@ -328,14 +324,11 @@ func (node *ServiceNode) addQueueHandlerMethod(funcDecl *ast.FuncDecl, recvIdent
 func (node *ServiceNode) addInternalMethod(funcDecl *ast.FuncDecl, rcvIdent *ast.Ident) {
 	params := node.parseFuncDeclParams(funcDecl)
 	parsedFuncDecl := &ParsedFuncDecl{
-		Ast:           funcDecl,
-		Name:          funcDecl.Name.Name,
-		Params:        params,
-		Recv:          rcvIdent,
-		DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
-		ServiceCalls:  make(map[token.Pos]*ParsedCallExpr),
-		InternalCalls: make(map[token.Pos]*ParsedCallExpr),
-		Service:       node.Name,
+		Ast:     funcDecl,
+		Name:    funcDecl.Name.Name,
+		Params:  params,
+		Recv:    rcvIdent,
+		Service: node.Name,
 	}
 	node.InternalMethods[parsedFuncDecl.Name] = parsedFuncDecl
 	logger.Logger.Debugf("[PARSER] added internal method %s to service %s", parsedFuncDecl.String(), node.Name)
@@ -344,14 +337,11 @@ func (node *ServiceNode) addInternalMethod(funcDecl *ast.FuncDecl, rcvIdent *ast
 func (node *ServiceNode) addExposedMethod(funcDecl *ast.FuncDecl, rcvIdent *ast.Ident) {
 	params := node.parseFuncDeclParams(funcDecl)
 	parsedFuncDecl := &ParsedFuncDecl{
-		Ast:           funcDecl,
-		Name:          funcDecl.Name.Name,
-		Recv:          rcvIdent,
-		Params:        params,
-		DatabaseCalls: make(map[token.Pos]*ParsedCallExpr),
-		ServiceCalls:  make(map[token.Pos]*ParsedCallExpr),
-		InternalCalls: make(map[token.Pos]*ParsedCallExpr),
-		Service:       node.Name,
+		Ast:     funcDecl,
+		Name:    funcDecl.Name.Name,
+		Recv:    rcvIdent,
+		Params:  params,
+		Service: node.Name,
 	}
 	node.ExposedMethods[parsedFuncDecl.Name] = parsedFuncDecl
 	logger.Logger.Debugf("[PARSER] added exposed method %s to service %s", parsedFuncDecl.String(), node.Name)
@@ -399,13 +389,6 @@ func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 			// if the targeted variable corresponds to a service field
 			if field, ok := node.Fields[fieldIdent.Name]; ok {
 				// store function call either as service call or database call
-				parsedCallExpr := &ParsedCallExpr{
-					Ast:         funcCall,
-					Receiver:    serviceRecvIdent.Name,
-					TargetField: fieldIdent.Name,
-					Name:        methodIdent.Name,
-					Pos:         funcCall.Pos(),
-				}
 				// if the field corresponds to a service field
 				if serviceField, ok := field.(*types.ServiceField); ok {
 					// 1. extract the service field from the current service
@@ -413,14 +396,21 @@ func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 					// 3. add the targeted method of the other service for the current call expression
 					targetServiceType := utils.GetShortTypeStr(serviceField.Type)
 					targetServiceNode := node.Services[targetServiceType]
-					targetMethod := targetServiceNode.ExposedMethods[parsedCallExpr.Name]
-					parsedCallExpr.Method = targetMethod
-					// set the source (caller service) and destination (callee service) types
-					parsedCallExpr.CallerTypeName = &ServiceType{Name: node.Name, Package: node.Package}
-					parsedCallExpr.CalleeTypeName = serviceField.Variable.Type
-					// add the call expr to the existing calls of the current service
-					parsedFuncDecl.ServiceCalls[parsedCallExpr.Pos] = parsedCallExpr
-					logger.Logger.Debugf("[PARSER] added new service call %s (params: %v)", parsedCallExpr.String(), parsedCallExpr.Params)
+					targetMethod := targetServiceNode.ExposedMethods[methodIdent.Name]
+					svcParsedCallExpr := &ServiceParsedCallExpr{
+						ParsedCallExpr: ParsedCallExpr{
+							Ast:         funcCall,
+							Receiver:    serviceRecvIdent.Name,
+							TargetField: fieldIdent.Name,
+							Name:        methodIdent.Name,
+							Pos:         funcCall.Pos(),
+							Method:      targetMethod,
+						},
+						CallerTypeName: &ServiceType{Name: node.Name, Package: node.Package},
+						CalleeTypeName: serviceField.Variable.Type,
+					}
+					parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, svcParsedCallExpr)
+					logger.Logger.Debugf("[PARSER] added new service call %s (params: %v)", svcParsedCallExpr.String(), svcParsedCallExpr.Params)
 				}
 				// if the field corresponds to a database field
 				if databaseField, ok := field.(*types.DatabaseField); ok {
@@ -428,27 +418,34 @@ func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 					// 2. get the target database node
 					// 3. add the target method for the current call expression
 					targetDatabaseType := utils.GetShortTypeStr(databaseField.Type)
-					parsedCallExpr.Method = frameworks.GetBackendMethod(fmt.Sprintf("%s.%s", targetDatabaseType, parsedCallExpr.Name))
-					parsedCallExpr.DbInstance = databaseField.DbInstance
-
-					// set the source (caller service) and destination (callee database) types
-					parsedCallExpr.CallerTypeName = &ServiceType{Name: node.Name, Package: node.Package}
-					parsedCallExpr.CalleeTypeName = databaseField.Variable.Type
-					// add the call expr to the existing calls of the current service
-					parsedFuncDecl.DatabaseCalls[parsedCallExpr.Pos] = parsedCallExpr
-					logger.Logger.Debugf("[PARSER] added new database call %s (params: %v)", parsedCallExpr.String(), parsedCallExpr.Params)
+					dbCall := &DatabaseParsedCallExpr{
+						ParsedCallExpr: ParsedCallExpr{
+							Ast:         funcCall,
+							Receiver:    serviceRecvIdent.Name,
+							TargetField: fieldIdent.Name,
+							Name:        methodIdent.Name,
+							Pos:         funcCall.Pos(),
+							Method:      frameworks.GetBackendMethod(fmt.Sprintf("%s.%s", targetDatabaseType, methodIdent.Name)),
+						},
+						CallerTypeName: &ServiceType{Name: node.Name, Package: node.Package},
+						DbInstance:     databaseField.DbInstance,
+					}
+					parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, dbCall)
+					logger.Logger.Debugf("[PARSER] added new database call %s (params: %v)", dbCall.String(), dbCall.Params)
 				}
 			}
 		} else if funcDecl, ok := node.InternalMethods[methodIdent.Name]; ok {
-			parsedCallExpr := &ParsedCallExpr{
-				Ast:         funcCall,
-				Receiver:    serviceRecvIdent.Name,
-				Name:        methodIdent.Name,
-				Method:      funcDecl,
-				Pos:         funcCall.Pos(),
+			internalCall := &InternalParsedCallExpr{
+				ParsedCallExpr: ParsedCallExpr{
+					Ast:      funcCall,
+					Receiver: serviceRecvIdent.Name,
+					Name:     methodIdent.Name,
+					Method:   funcDecl,
+					Pos:      funcCall.Pos(),
+				},
 			}
-			parsedFuncDecl.InternalCalls[parsedCallExpr.Pos] = parsedCallExpr
-			logger.Logger.Infof("ADDED INTERNAL CALL: %v", parsedCallExpr)
+			parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, internalCall)
+			logger.Logger.Infof("[PARSER] added new internal call %s (params: %v)", internalCall.String(), internalCall.Params)
 		}
 		return true
 	})

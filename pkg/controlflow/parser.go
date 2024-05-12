@@ -18,20 +18,27 @@ import (
 func ParseServiceMethodCFG(parsedCfg *types.ParsedCFG, method *service.ParsedFuncDecl) {
 	visitBasicBlockDeclAndAssigns(parsedCfg)
 	visitBasicBlockFuncCalls(parsedCfg, method)
-	visitCalls(method.DatabaseCalls)
-	visitCalls(method.ServiceCalls)
+	visitCalls(method)
 }
 
-func visitCalls(parsedCalls map[token.Pos]*service.ParsedCallExpr) {
-	for pos, call := range parsedCalls {
-		logger.Logger.Debugf("call %s.%s [%d]\n", call.TargetField, call.Name, pos)
-		logger.Logger.Debug("> deps: ")
-		for _, dep := range call.Params {
-			r := visitDeps(dep)
-			logger.Logger.Debugf("\t%s [%d], %s", dep.Name, dep.Lineno, r)
+func IsServiceOrDatabaseParsedCall(call service.Call) bool {
+	_, ok1 := call.(*service.ServiceParsedCallExpr)
+	_, ok2 := call.(*service.DatabaseParsedCallExpr)
+	return ok1 || ok2
+}
+
+func visitCalls(method *service.ParsedFuncDecl) {
+	for _, call := range method.Calls {
+		if ok := IsServiceOrDatabaseParsedCall(call); ok {
+			logger.Logger.Debugf("call \n", call.SimpleString())
+			logger.Logger.Debug("> deps: ")
+			for _, dep := range call.GetParams() {
+				r := visitDeps(dep)
+				logger.Logger.Debugf("\t%s [%d], %s", dep.Name, dep.Lineno, r)
+			}
 		}
+		logger.Logger.Debugln()
 	}
-	logger.Logger.Debugln()
 }
 
 func visitDeps(v *types.Variable) string {
@@ -56,7 +63,7 @@ func getStmtsIfGoRoutine(node ast.Node) []ast.Node {
 	found := false
 	if goStmt, ok := node.(*ast.GoStmt); ok {
 		if funcLit, ok := goStmt.Call.Fun.(*ast.FuncLit); ok {
-			for _, stmt := range funcLit.Body.List{
+			for _, stmt := range funcLit.Body.List {
 				stmts = append(stmts, stmt)
 				found = true
 			}
@@ -167,7 +174,7 @@ func processParsedCalls(node ast.Node, parsedCfg *types.ParsedCFG, parsedFuncDec
 	case *ast.IncDecStmt:
 		return processParsedCalls(n.X, parsedCfg, parsedFuncDecl)
 	case *ast.CompositeLit:
-		for _, elt := range n.Elts{
+		for _, elt := range n.Elts {
 			processParsedCalls(elt, parsedCfg, parsedFuncDecl)
 		}
 	case *ast.KeyValueExpr:
@@ -206,15 +213,11 @@ func processParsedCalls(node ast.Node, parsedCfg *types.ParsedCFG, parsedFuncDec
 	return false
 }
 
-func getParsedCallAtPosition(parsedFuncDecl *service.ParsedFuncDecl, pos token.Pos) (*service.ParsedCallExpr, bool) {
-	if dbCall, ok := parsedFuncDecl.DatabaseCalls[pos]; ok {
-		return dbCall, true
-	}
-	if svcCall, ok := parsedFuncDecl.ServiceCalls[pos]; ok {
-		return svcCall, true
-	}
-	if intCall, ok := parsedFuncDecl.InternalCalls[pos]; ok {
-		return intCall, true
+func getParsedCallAtPosition(parsedFuncDecl *service.ParsedFuncDecl, pos token.Pos) (service.Call, bool) {
+	for _, call := range parsedFuncDecl.Calls {
+		if call.IsAtPos(pos) {
+			return call, true
+		}
 	}
 	return nil, false
 }
@@ -222,7 +225,7 @@ func getParsedCallAtPosition(parsedFuncDecl *service.ParsedFuncDecl, pos token.P
 func findParsedCallsAndAddParams(node *ast.CallExpr, parsedCfg *types.ParsedCFG, parsedFuncDecl *service.ParsedFuncDecl) bool {
 	parsedCall, ok := getParsedCallAtPosition(parsedFuncDecl, node.Pos())
 	if ok {
-		logger.Logger.Infof("[VISITOR] found parsed call %s at current position with args %v", parsedCall.Name, node.Args)
+		logger.Logger.Infof("[VISITOR] found parsed call %s at current position with args %v", parsedCall.GetName(), node.Args)
 		// gather all args used in the CallExpr
 		for _, arg := range node.Args {
 			var param *types.Variable
@@ -267,10 +270,10 @@ func findParsedCallsAndAddParams(node *ast.CallExpr, parsedCfg *types.ParsedCFG,
 				}
 			}
 			if param != nil {
-				parsedCall.Params = append(parsedCall.Params, param)
+				parsedCall.AddParam(param)
 			}
 		}
-		logger.Logger.Debugf("[VISITOR] found parsed call %s: parsed params = %v", parsedCall.Name, parsedCall.Params)
+		logger.Logger.Debugf("[VISITOR] found parsed call %s: parsed params = %v", parsedCall.GetName(), parsedCall.GetParams())
 		return true
 	}
 	// otherwise we return false because we did not find either
