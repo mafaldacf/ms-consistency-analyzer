@@ -18,36 +18,31 @@ import (
 func ParseServiceMethodCFG(parsedCfg *types.ParsedCFG, method *service.ParsedFuncDecl) {
 	visitBasicBlockDeclAndAssigns(parsedCfg)
 	visitBasicBlockFuncCalls(parsedCfg, method)
-	visitCalls(method)
+}
+
+func AddInternalCallsContent(node *service.ServiceNode, entryMethod *service.ParsedFuncDecl, method *service.ParsedFuncDecl) {
+	for _, call := range method.Calls {
+		if internalCall, ok := call.(*service.InternalParsedCallExpr); ok {
+			internalMethodDecl := node.InternalMethods[internalCall.Name]
+	
+			for _, call := range internalMethodDecl.Calls {
+				if ok := IsServiceOrDatabaseParsedCall(call); ok {
+					entryMethod.Calls = append(entryMethod.Calls, call)
+					/* for _, param := range call.GetParams() {
+						
+					} */
+				} else if intDecl, ok := node.InternalMethods[call.GetName()]; ok {
+					AddInternalCallsContent(node, entryMethod, intDecl)
+				}
+			}
+		} 
+	}
 }
 
 func IsServiceOrDatabaseParsedCall(call service.Call) bool {
 	_, ok1 := call.(*service.ServiceParsedCallExpr)
 	_, ok2 := call.(*service.DatabaseParsedCallExpr)
 	return ok1 || ok2
-}
-
-func visitCalls(method *service.ParsedFuncDecl) {
-	for _, call := range method.Calls {
-		if ok := IsServiceOrDatabaseParsedCall(call); ok {
-			logger.Logger.Debugf("call \n", call.SimpleString())
-			logger.Logger.Debug("> deps: ")
-			for _, dep := range call.GetParams() {
-				r := visitDeps(dep)
-				logger.Logger.Debugf("\t%s [%d], %s", dep.Name, dep.Lineno, r)
-			}
-		}
-		logger.Logger.Debugln()
-	}
-}
-
-func visitDeps(v *types.Variable) string {
-	s := ""
-	for _, dep := range v.Deps {
-		visitDeps(dep)
-		return s + fmt.Sprintf("-> %s [%d] ", dep.Name, dep.Lineno)
-	}
-	return ""
 }
 
 func visitBasicBlockDeclAndAssigns(parsedCfg *types.ParsedCFG) {
@@ -138,10 +133,9 @@ func visitBasicBlockFuncCallsRecursor(block *cfg.Block, parsedCfg *types.ParsedC
 	if visited[block.Index] {
 		return
 	}
-
 	visited[block.Index] = true
 	for _, node := range block.Nodes {
-		processParsedCalls(node, parsedCfg, parsedFuncDecl)
+		findCallsInBlock(node, parsedCfg, parsedFuncDecl)
 	}
 	for _, child := range block.Succs {
 		visitBasicBlockFuncCallsRecursor(child, parsedCfg, parsedFuncDecl, visited)
@@ -156,47 +150,47 @@ func visitBasicBlockFuncCallsRecursor(block *cfg.Block, parsedCfg *types.ParsedC
 //  2. AssignStmt - assignment like errors from the return values of the function
 //  3. ParenExpr  - e.g. when used as a bool value in an if statement (assumes it is inside a parentheses)
 //     in this case, the unfolded node from ParenExpr is a CallExpr
-func processParsedCalls(node ast.Node, parsedCfg *types.ParsedCFG, parsedFuncDecl *service.ParsedFuncDecl) bool {
-	logger.Logger.Debugf("\t\tprocessing parsed calls for parsed cfg of %s (node type = %s)", parsedCfg.FullMethod, utils.GetType(node))
+func findCallsInBlock(node ast.Node, parsedCfg *types.ParsedCFG, parsedFuncDecl *service.ParsedFuncDecl) bool {
+	logger.Logger.Debugf("\t\tfinding calls for block %s (node type = %s)", parsedCfg.FullMethod, utils.GetType(node))
 	switch n := node.(type) {
 	case *ast.ExprStmt:
-		return processParsedCalls(n.X, parsedCfg, parsedFuncDecl)
+		return findCallsInBlock(n.X, parsedCfg, parsedFuncDecl)
 	case *ast.AssignStmt:
 		found := false
 		for _, rvalue := range n.Rhs {
-			found = processParsedCalls(rvalue, parsedCfg, parsedFuncDecl)
+			found = findCallsInBlock(rvalue, parsedCfg, parsedFuncDecl)
 		}
 		return found
 	case *ast.ParenExpr:
-		return processParsedCalls(n.X, parsedCfg, parsedFuncDecl)
+		return findCallsInBlock(n.X, parsedCfg, parsedFuncDecl)
 	case *ast.CallExpr:
-		return findParsedCallsAndAddParams(n, parsedCfg, parsedFuncDecl)
+		return validateCallAndAddParams(n, parsedCfg, parsedFuncDecl)
 	case *ast.IncDecStmt:
-		return processParsedCalls(n.X, parsedCfg, parsedFuncDecl)
+		return findCallsInBlock(n.X, parsedCfg, parsedFuncDecl)
 	case *ast.CompositeLit:
 		for _, elt := range n.Elts {
-			processParsedCalls(elt, parsedCfg, parsedFuncDecl)
+			findCallsInBlock(elt, parsedCfg, parsedFuncDecl)
 		}
 	case *ast.KeyValueExpr:
-		processParsedCalls(n.Key, parsedCfg, parsedFuncDecl)
-		processParsedCalls(n.Value, parsedCfg, parsedFuncDecl)
+		findCallsInBlock(n.Key, parsedCfg, parsedFuncDecl)
+		findCallsInBlock(n.Value, parsedCfg, parsedFuncDecl)
 	case *ast.DeferStmt:
-		return processParsedCalls(n.Call.Fun, parsedCfg, parsedFuncDecl)
+		return findCallsInBlock(n.Call.Fun, parsedCfg, parsedFuncDecl)
 	case *ast.SelectorExpr:
-		return processParsedCalls(n.X, parsedCfg, parsedFuncDecl)
+		return findCallsInBlock(n.X, parsedCfg, parsedFuncDecl)
 	// ------------
 	// Go Routines
 	// ------------
 	case *ast.GoStmt:
 		for _, stmt := range getStmtsIfGoRoutine(node) {
-			processParsedCalls(stmt, parsedCfg, parsedFuncDecl)
+			findCallsInBlock(stmt, parsedCfg, parsedFuncDecl)
 		}
 	// -------------------
 	// Declaring Variables
 	// ------------------
 	case *ast.DeclStmt:
 		for _, spec := range n.Decl.(*ast.GenDecl).Specs {
-			processParsedCalls(spec, parsedCfg, parsedFuncDecl)
+			findCallsInBlock(spec, parsedCfg, parsedFuncDecl)
 		}
 	// ------
 	// Others
@@ -207,7 +201,7 @@ func processParsedCalls(node ast.Node, parsedCfg *types.ParsedCFG, parsedFuncDec
 	case *ast.Ident:
 	case *ast.TypeAssertExpr:
 	default:
-		logger.Logger.Warnf("unknown type in processParsedCalls: %s", utils.GetType(n))
+		logger.Logger.Warnf("unknown type in findCallsInBlock: %s", utils.GetType(n))
 	}
 
 	return false
@@ -222,63 +216,62 @@ func getParsedCallAtPosition(parsedFuncDecl *service.ParsedFuncDecl, pos token.P
 	return nil, false
 }
 
-func findParsedCallsAndAddParams(node *ast.CallExpr, parsedCfg *types.ParsedCFG, parsedFuncDecl *service.ParsedFuncDecl) bool {
+func validateCallAndAddParams(node *ast.CallExpr, parsedCfg *types.ParsedCFG, parsedFuncDecl *service.ParsedFuncDecl) bool {
 	parsedCall, ok := getParsedCallAtPosition(parsedFuncDecl, node.Pos())
-	if ok {
-		logger.Logger.Infof("[VISITOR] found parsed call %s at current position with args %v", parsedCall.GetName(), node.Args)
-		// gather all args used in the CallExpr
-		for _, arg := range node.Args {
-			var param *types.Variable
+	if !ok {
+		return false
+	}
 
-			//FIXME: CREATE HELPER FUNCTION TO COVER MORE CASES BESIDES SELECTOR
-			// e.g. we can have multiple nested selectors: dummy.post.ReqID
-			switch t := arg.(type) {
-			case *ast.Ident:
-				if ok, v := getVariableInBlock(parsedCfg, t.Name); ok {
-					param = v
-				}
-				// e.g. &post
-			case *ast.UnaryExpr:
-				if ident, ok := t.X.(*ast.Ident); ok {
-					name := fmt.Sprintf("&%s", ident.Name)
-					if ok, v := getVariableInBlock(parsedCfg, ident.Name); ok {
-						param = &types.Variable{
-							Type: &gocode.Pointer{
-								PointerTo: v.Type,
-							},
-							Id:   types.VARIABLE_INLINE_ID,
-							Name: name,
-							Deps: []*types.Variable{v},
-						}
-					}
-				}
-				// FIXTHIS: can have mannyyyyyyyyyyyyyyy types!! maybe we need a recursive function here
+	logger.Logger.Infof("[VISITOR] found parsed call %s at current position with args %v", parsedCall.GetName(), node.Args)
+	// gather all args used in the CallExpr
+	for _, arg := range node.Args {
+		var param *types.Variable
 
-			// e.g. post.ReqID
-			//       ^ ident ^ selector
-			case *ast.SelectorExpr:
-				if ident, ok := t.X.(*ast.Ident); ok {
-					name := fmt.Sprintf("%s.%s", ident.Name, t.Sel.Name)
-					if ok, v := getVariableInBlock(parsedCfg, ident.Name); ok {
-						param = &types.Variable{
-							Type: v.Type,
-							Id:   types.VARIABLE_INLINE_ID, // inline
-							Name: name,
-							Deps: []*types.Variable{v},
-						}
+		//FIXME: CREATE HELPER FUNCTION TO COVER MORE CASES BESIDES SELECTOR
+		// e.g. we can have multiple nested selectors: dummy.post.ReqID
+		switch t := arg.(type) {
+		case *ast.Ident:
+			if ok, v := getVariableInBlock(parsedCfg, t.Name); ok {
+				param = v
+			}
+			// e.g. &post
+		case *ast.UnaryExpr:
+			if ident, ok := t.X.(*ast.Ident); ok {
+				name := fmt.Sprintf("&%s", ident.Name)
+				if ok, v := getVariableInBlock(parsedCfg, ident.Name); ok {
+					param = &types.Variable{
+						Type: &gocode.Pointer{
+							PointerTo: v.Type,
+						},
+						Id:   types.VARIABLE_INLINE_ID,
+						Name: name,
+						Deps: []*types.Variable{v},
 					}
 				}
 			}
-			if param != nil {
-				parsedCall.AddParam(param)
+			// FIXTHIS: can have mannyyyyyyyyyyyyyyy types!! maybe we need a recursive function here
+
+		// e.g. post.ReqID
+		//       ^ ident ^ selector
+		case *ast.SelectorExpr:
+			if ident, ok := t.X.(*ast.Ident); ok {
+				name := fmt.Sprintf("%s.%s", ident.Name, t.Sel.Name)
+				if ok, v := getVariableInBlock(parsedCfg, ident.Name); ok {
+					param = &types.Variable{
+						Type: v.Type,
+						Id:   types.VARIABLE_INLINE_ID, // inline
+						Name: name,
+						Deps: []*types.Variable{v},
+					}
+				}
 			}
 		}
-		logger.Logger.Debugf("[VISITOR] found parsed call %s: parsed params = %v", parsedCall.GetName(), parsedCall.GetParams())
-		return true
+		if param != nil {
+			parsedCall.AddParam(param)
+		}
 	}
-	// otherwise we return false because we did not find either
-	// a database nor a service call
-	return false
+	logger.Logger.Debugf("[VISITOR] found parsed call %s: parsed params = %v", parsedCall.GetName(), parsedCall.GetParams())
+	return true
 }
 
 func getVariableInBlock(parsedCfg *types.ParsedCFG, name string) (bool, *types.Variable) {

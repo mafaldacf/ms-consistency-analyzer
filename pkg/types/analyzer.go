@@ -62,6 +62,8 @@ type Method interface {
 	String() string
 	GetParams() []*FunctionField
 	GetReturns() []*FunctionField
+	IsQueueWrite() bool
+	IsQueueRead() bool
 }
 
 type Ref struct {
@@ -72,13 +74,13 @@ type Ref struct {
 // MarshalJSON is used by app.Save()
 func (ref *Ref) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Name    string  `json:"name"`
-		Creator string  `json:"creator"`
-		Id      int64   `json:"-"`
+		Name    string `json:"name"`
+		Creator string `json:"creator"`
+		Id      int64  `json:"id"`
 	}{
 		Name:    ref.Variable.Name,
 		Creator: ref.Creator,
-		Id: 	 ref.Variable.Id,
+		Id:      ref.Variable.Id,
 	})
 }
 
@@ -87,7 +89,7 @@ const VARIABLE_UNASSIGNED_ID int64 = -2
 
 type Variable struct {
 	Name          string          `json:"name"`
-	Id            int64           `json:"-"`
+	Id            int64           `json:"id"`
 	Lineno        token.Pos       `json:"-"` // 0 (default) represents inline variable
 	Deps          []*Variable     `json:"deps,omitempty"`
 	IsBlockParam  bool            `json:"-"`
@@ -111,10 +113,25 @@ func (v *Variable) IsUnassigned() bool {
 	return v.Id < 0
 }
 
+func (v *Variable) HasReference() bool {
+	return v.Ref != nil
+}
+
 func (v *Variable) AssignID(id int64) {
 	v.Id = id
 }
 
-func (v *Variable) AddReference(ref *Ref) {
-	v.Ref = ref
+func (v *Variable) AddReference(callerStr string, callerParam *Variable) {
+	v.Ref = &Ref{
+		Creator:  callerStr,
+		Variable: callerParam,
+	}
+}
+
+func (v *Variable) AddReferenceWithID(callerStr string, callerParam *Variable) {
+	v.Id = callerParam.Id
+	v.Ref = &Ref{
+		Creator:  callerStr,
+		Variable: callerParam,
+	}
 }

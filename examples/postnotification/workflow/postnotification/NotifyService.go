@@ -67,10 +67,10 @@ func (n *NotifyServiceImpl) workerThread(ctx context.Context, workerID int) erro
 			PostID: message["PostID"].(string),
 			Timestamp: message["Timestamp"].(string),
 		}
-		/* reqID, _ := common.StringToInt64(notification.ReqID)
+		reqID, _ := common.StringToInt64(notification.ReqID)
 		postID, _ := common.StringToInt64(notification.PostID)
-		n.storageService.ReadPost(ctx, reqID, postID) */
-		n.handleMessage(ctx, notification)
+		n.storageService.ReadPost(ctx, reqID, postID)
+		/* n.handleMessage(ctx, notification) */
 	}()
 	<-forever
 	return nil

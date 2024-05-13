@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"go/ast"
 	"go/token"
+	"slices"
 	"strings"
 
 	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
@@ -50,6 +51,9 @@ type ParsedFuncDecl struct {
 	Params  []*types.FunctionField
 	Returns []*types.FunctionField
 }
+
+func (*ParsedFuncDecl) IsQueueWrite() bool { return false }
+func (*ParsedFuncDecl) IsQueueRead() bool  { return false }
 
 func (p *ParsedFuncDecl) String() string {
 	repr := fmt.Sprintf("%s.%s(", p.Service, p.Name)
@@ -254,18 +258,44 @@ type ServiceNode struct {
 	ImplementsQueue bool
 }
 
+func (node *ServiceNode) GetQueueHandlersForDatabase(database types.DatabaseInstance) []*ParsedFuncDecl {
+	if _, ok := node.Databases[database.GetName()]; !ok {
+		return nil
+	}
+
+	var handlers []*ParsedFuncDecl
+	for _, handler := range node.QueueHandlerMethods {
+		if slices.Contains(handler.DbInstances, database) {
+			handlers = append(handlers, handler)
+		}
+	}
+	return handlers
+}
+
+func (node *ServiceNode) GetExposedMethod(name string) *ParsedFuncDecl {
+	return node.ExposedMethods[name]
+}
+
+func (node *ServiceNode) GetInternalMethod(name string) *ParsedFuncDecl {
+	return node.InternalMethods[name]
+}
+
+func (node *ServiceNode) GetQueueHandlerMethod(name string) *ParsedFuncDecl {
+	return node.QueueHandlerMethods[name]
+}
+
 // MarshalJSON is used by app.Save()
-func (s *ServiceNode) MarshalJSON() ([]byte, error) {
+func (node *ServiceNode) MarshalJSON() ([]byte, error) {
 	var serviceKeys []string
-	for k := range s.Services {
+	for k := range node.Services {
 		serviceKeys = append(serviceKeys, k)
 	}
 	var databaseKeys []string
-	for k := range s.Databases {
+	for k := range node.Databases {
 		databaseKeys = append(databaseKeys, k)
 	}
 	fieldTypes := make(map[string]string)
-	for name, field := range s.Fields {
+	for name, field := range node.Fields {
 		fieldTypes[name] = field.GetTypeName()
 	}
 	return json.MarshalIndent(&struct {
@@ -279,7 +309,7 @@ func (s *ServiceNode) MarshalJSON() ([]byte, error) {
 	}, "", " ")
 }
 
-func (n *ServiceNode) String() string {
-	str, _ := n.MarshalJSON()
+func (node *ServiceNode) String() string {
+	str, _ := node.MarshalJSON()
 	return string(str)
 }

@@ -201,27 +201,11 @@ func (app *App) parseServicesMethodsBody() {
 		parseCFGs(node, node.QueueHandlerMethods, "worker")
 		parseCFGs(node, node.InternalMethods, "internal")
 		for _, method := range node.ExposedMethods {
-			allInternalCalls(node, method, method)
+			controlflow.AddInternalCallsContent(node, method, method)
 		}
 		for _, method := range node.QueueHandlerMethods {
-			allInternalCalls(node, method, method)
+			controlflow.AddInternalCallsContent(node, method, method)
 		}
-	}
-}
-
-func allInternalCalls(node *service.ServiceNode, entryMethod *service.ParsedFuncDecl, method *service.ParsedFuncDecl) {
-	for _, call := range method.Calls {
-		if internalCall, ok := call.(*service.InternalParsedCallExpr); ok {
-			internalMethodDecl := node.InternalMethods[internalCall.Name]
-	
-			for _, call := range internalMethodDecl.Calls {
-				if ok := controlflow.IsServiceOrDatabaseParsedCall(call); ok {
-					entryMethod.Calls = append(entryMethod.Calls, call)
-				} else if intDecl, ok := node.InternalMethods[call.GetName()]; ok {
-					allInternalCalls(node, entryMethod, intDecl)
-				}
-			}
-		} 
 	}
 }
 
