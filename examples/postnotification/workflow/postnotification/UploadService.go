@@ -5,7 +5,6 @@ import (
 	"math/rand"
 
 	"postnotification/workflow/postnotification/common"
-	//"postnotification/workflow/postnotification/models"
 
 	"github.com/blueprint-uservices/blueprint/runtime/core/backend"
 )

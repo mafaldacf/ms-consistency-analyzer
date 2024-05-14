@@ -200,12 +200,6 @@ func (app *App) parseServicesMethodsBody() {
 		parseCFGs(node, node.ExposedMethods, "exposed")
 		parseCFGs(node, node.QueueHandlerMethods, "worker")
 		parseCFGs(node, node.InternalMethods, "internal")
-		for _, method := range node.ExposedMethods {
-			controlflow.AddInternalCallsContent(node, method, method)
-		}
-		for _, method := range node.QueueHandlerMethods {
-			controlflow.AddInternalCallsContent(node, method, method)
-		}
 	}
 }
 

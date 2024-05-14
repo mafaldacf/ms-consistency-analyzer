@@ -59,6 +59,17 @@ func (b *BlueprintBackend) IsQueueWrite() bool {
 	return b.Write && b.Name == "Queue.Push"
 }
 
+func (b *BlueprintBackend) MatchQueueIdentifiers() map[int]int {
+	var matches map[int]int
+	if b.Name == "Queue.Push" {
+		matches = make(map[int]int, 0)
+		// we have Queue.Push(ctx, src) and Queue.Pop(ctx, dst)
+		// so the (src @ index 1) matches (dst @ index 1)
+		matches[1] = 1
+	}
+	return matches
+}
+
 func GetBackendMethod(name string) *BlueprintBackend {
 	switch name {
 	case "Cache.Put":

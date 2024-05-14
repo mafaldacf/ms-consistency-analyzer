@@ -20,31 +20,6 @@ func ParseServiceMethodCFG(parsedCfg *types.ParsedCFG, method *service.ParsedFun
 	visitBasicBlockFuncCalls(parsedCfg, method)
 }
 
-func AddInternalCallsContent(node *service.ServiceNode, entryMethod *service.ParsedFuncDecl, method *service.ParsedFuncDecl) {
-	for _, call := range method.Calls {
-		if internalCall, ok := call.(*service.InternalParsedCallExpr); ok {
-			internalMethodDecl := node.InternalMethods[internalCall.Name]
-	
-			for _, call := range internalMethodDecl.Calls {
-				if ok := IsServiceOrDatabaseParsedCall(call); ok {
-					entryMethod.Calls = append(entryMethod.Calls, call)
-					/* for _, param := range call.GetParams() {
-						
-					} */
-				} else if intDecl, ok := node.InternalMethods[call.GetName()]; ok {
-					AddInternalCallsContent(node, entryMethod, intDecl)
-				}
-			}
-		} 
-	}
-}
-
-func IsServiceOrDatabaseParsedCall(call service.Call) bool {
-	_, ok1 := call.(*service.ServiceParsedCallExpr)
-	_, ok2 := call.(*service.DatabaseParsedCallExpr)
-	return ok1 || ok2
-}
-
 func visitBasicBlockDeclAndAssigns(parsedCfg *types.ParsedCFG) {
 	var visited = make(map[int32]bool)
 	for _, block := range parsedCfg.Cfg.Blocks {
@@ -222,7 +197,7 @@ func validateCallAndAddParams(node *ast.CallExpr, parsedCfg *types.ParsedCFG, pa
 		return false
 	}
 
-	logger.Logger.Infof("[VISITOR] found parsed call %s at current position with args %v", parsedCall.GetName(), node.Args)
+	logger.Logger.Debugf("[VISITOR] found parsed call %s at current position with args %v", parsedCall.GetName(), node.Args)
 	// gather all args used in the CallExpr
 	for _, arg := range node.Args {
 		var param *types.Variable

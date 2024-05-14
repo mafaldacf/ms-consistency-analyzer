@@ -377,7 +377,7 @@ func selectedFieldOrInternalFuncInCall(node ast.Node, expectedRecvIdent *ast.Ide
 }
 
 func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
-	logger.Logger.Warnf("[AST PARSER] visiting method %s", parsedFuncDecl.Name)
+	logger.Logger.Debugf("[AST PARSER] visiting method %s", parsedFuncDecl.Name)
 
 	ast.Inspect(parsedFuncDecl.Ast, func(n ast.Node) bool {
 		// beware that functions migh have nil receivers
@@ -435,7 +435,7 @@ func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 				}
 			}
 		} else if funcDecl, ok := node.InternalMethods[methodIdent.Name]; ok {
-			internalCall := &InternalParsedCallExpr{
+			internalCall := &InternalTempParsedCallExpr{
 				ParsedCallExpr: ParsedCallExpr{
 					Ast:      funcCall,
 					Receiver: serviceRecvIdent.Name,
@@ -443,6 +443,7 @@ func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 					Method:   funcDecl,
 					Pos:      funcCall.Pos(),
 				},
+				ServiceTypeName: &ServiceType{Name: node.Name, Package: node.Package},
 			}
 			parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, internalCall)
 			logger.Logger.Infof("[PARSER] added new internal call %s (params: %v)", internalCall.String(), internalCall.Params)

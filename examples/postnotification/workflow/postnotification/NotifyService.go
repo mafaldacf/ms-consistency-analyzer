@@ -2,11 +2,13 @@ package postnotification
 
 import (
 	"context"
+	"time"
 	/* "sync" */
 	/* "time" */
 
-	"github.com/blueprint-uservices/blueprint/runtime/core/backend"
 	"postnotification/workflow/postnotification/common"
+
+	"github.com/blueprint-uservices/blueprint/runtime/core/backend"
 	//"postnotification/workflow/postnotification/models"
 )
 
@@ -57,7 +59,7 @@ func (n *NotifyServiceImpl) handleMessage(ctx context.Context, message Message) 
 	return err
 }
 
-func (n *NotifyServiceImpl) workerThread(ctx context.Context, workerID int) error {
+/* func (n *NotifyServiceImpl) workerThread(ctx context.Context, workerID int) error {
 	var forever chan struct{}
 	go func() {
 		var message map[string]interface{}
@@ -70,13 +72,13 @@ func (n *NotifyServiceImpl) workerThread(ctx context.Context, workerID int) erro
 		reqID, _ := common.StringToInt64(notification.ReqID)
 		postID, _ := common.StringToInt64(notification.PostID)
 		n.storageService.ReadPost(ctx, reqID, postID)
-		/* n.handleMessage(ctx, notification) */
+		n.handleMessage(ctx, notification)
 	}()
 	<-forever
 	return nil
-}
+} */
 
-/* func (n *NotifyServiceImpl) workerThread(ctx context.Context, workerID int) error {
+func (n *NotifyServiceImpl) workerThread(ctx context.Context, workerID int) error {
 	var forever chan struct{}
 	go func() {
 		var message map[string]interface{}
@@ -92,32 +94,33 @@ func (n *NotifyServiceImpl) workerThread(ctx context.Context, workerID int) erro
 		if err != nil {
 			backend.GetLogger().Error(ctx, "error retrieving message from queue: %s", err.Error())
 			time.Sleep(1 * time.Second)
-		} else if !result {
+			return
+		} 
+		if !result {
 			backend.GetLogger().Error(ctx, "could not retrieve message from queue")
-		} else {
-			message := Message {
-				ReqID: message["ReqID"].(string),
-				PostID: message["PostID"].(string),
-				Timestamp: message["Timestamp"].(string),
-			}
-			//n.handleMessage(ctx, message)
-			reqID, err := common.StringToInt64(message.ReqID)
-			if err != nil {
-				return
-			}
-			postID, err := common.StringToInt64(message.PostID)
-			if err != nil {
-				return
-			}
-			_, err = n.storageService.ReadPost(ctx, reqID, postID)
-			if err != nil {
-				return
-			}
+			return
+		}
+		notification := Message {
+			ReqID: message["ReqID"].(string),
+			PostID: message["PostID"].(string),
+			Timestamp: message["Timestamp"].(string),
+		}
+		reqID, err := common.StringToInt64(notification.ReqID)
+		if err != nil {
+			return
+		}
+		postID, err := common.StringToInt64(notification.PostID)
+		if err != nil {
+			return
+		}
+		_, err = n.storageService.ReadPost(ctx, reqID, postID)
+		if err != nil {
+			return
 		}
 	}()
 	<-forever
 	return nil
-} */
+}
 
 /* func (n *NotifyServiceImpl) Run(ctx context.Context) error {
 	backend.GetLogger().Info(ctx, "initializing %d workers", n.numWorkers)

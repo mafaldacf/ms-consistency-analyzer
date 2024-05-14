@@ -207,32 +207,33 @@ func (dbCall *DatabaseParsedCallExpr) GetParams() []*types.Variable {
 	return dbCall.Params
 }
 
-type InternalParsedCallExpr struct {
+type InternalTempParsedCallExpr struct {
 	Call
 	ParsedCallExpr
+	ServiceTypeName gocode.TypeName
 }
 
-func (internalCall *InternalParsedCallExpr) String() string {
+func (internalCall *InternalTempParsedCallExpr) String() string {
 	return internalCall.ParsedCallExpr.String()
 }
 
-func (internalCall *InternalParsedCallExpr) SimpleString() string {
+func (internalCall *InternalTempParsedCallExpr) SimpleString() string {
 	return internalCall.ParsedCallExpr.SimpleString()
 }
 
-func (internalCall *InternalParsedCallExpr) IsAtPos(pos token.Pos) bool {
+func (internalCall *InternalTempParsedCallExpr) IsAtPos(pos token.Pos) bool {
 	return internalCall.ParsedCallExpr.Pos == pos
 }
 
-func (internalCall *InternalParsedCallExpr) GetName() string {
+func (internalCall *InternalTempParsedCallExpr) GetName() string {
 	return internalCall.Name
 }
 
-func (internalCall *InternalParsedCallExpr) AddParam(param *types.Variable) {
+func (internalCall *InternalTempParsedCallExpr) AddParam(param *types.Variable) {
 	internalCall.Params = append(internalCall.Params, param)
 }
 
-func (internalCall *InternalParsedCallExpr) GetParams() []*types.Variable {
+func (internalCall *InternalTempParsedCallExpr) GetParams() []*types.Variable {
 	return internalCall.Params
 }
 

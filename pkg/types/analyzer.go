@@ -1,6 +1,7 @@
 package types
 
 import (
+	"analyzer/pkg/logger"
 	"encoding/json"
 	"fmt"
 	"go/ast"
@@ -121,17 +122,20 @@ func (v *Variable) AssignID(id int64) {
 	v.Id = id
 }
 
-func (v *Variable) AddReference(callerStr string, callerParam *Variable) {
-	v.Ref = &Ref{
-		Creator:  callerStr,
-		Variable: callerParam,
-	}
+func (v *Variable) AddDependencies(deps []*Variable) {
+	v.Deps = append(v.Deps, deps...)
 }
 
-func (v *Variable) AddReferenceWithID(callerStr string, callerParam *Variable) {
+func (v *Variable) AddReferenceWithID(callerParam *Variable, callerStr string) {
 	v.Id = callerParam.Id
 	v.Ref = &Ref{
 		Creator:  callerStr,
 		Variable: callerParam,
 	}
+	logger.Logger.Debugf("added reference (%s) -> (%s) with id = %d (creator: %s)", v.Name, callerParam.Name, v.Id, callerStr)
+}
+
+func (v *Variable) AddOriginalReferenceWithID(ref *Ref) {
+	v.Id = ref.Variable.Id
+	v.Ref = ref
 }
