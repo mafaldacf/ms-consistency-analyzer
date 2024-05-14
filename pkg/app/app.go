@@ -197,25 +197,24 @@ func (app *App) parseServicesMethodsBody() {
 	for _, node := range app.Services {
 		fmt.Printf("\n ################################## %s ##################################\n", node.Name)
 		node.ParseMethodsBody()
-		parseCFGs(node, node.ExposedMethods, "exposed")
-		parseCFGs(node, node.QueueHandlerMethods, "worker")
-		parseCFGs(node, node.InternalMethods, "internal")
+		parseCFGsHelper(node, node.ExposedMethods, "exposed")
+		parseCFGsHelper(node, node.QueueHandlerMethods, "worker")
+		parseCFGsHelper(node, node.InternalMethods, "internal")
 	}
 }
 
-func parseCFGs(node *service.ServiceNode, methods map[string]*service.ParsedFuncDecl, visibility string) {
+func parseCFGsHelper(node *service.ServiceNode, methods map[string]*service.ParsedFuncDecl, visibility string) {
 	for _, method := range methods {
 		fmt.Printf("\n[%s] ------------------- %s -------------------\n", strings.ToUpper(visibility), method)
-		if parsedCfg, err := controlflow.ParseCFG(node, method); err == nil {
-			controlflow.ParseServiceMethodCFG(parsedCfg, method)
-		}
+		controlflow.GenerateMethodCFGs(node, method)
+		controlflow.ParseServiceMethodCFG(method)
 		fmt.Printf("\n-------------------------------------------------------\n")
 	}
 }
 
 func (app *App) createServiceNodes(specs map[*workflowspec.Service][]golang.Service) (map[*service.ServiceNode]*workflowspec.Service, error) {
 	serviceSpec := make(map[*service.ServiceNode]*workflowspec.Service)
-	logger.Logger.Infof("[APP] loading #%d specs", len(specs))
+	logger.Logger.Debugf("[APP] loading #%d specs", len(specs))
 	// services also include blueprint backends
 	for spec, edges := range specs {
 		fset := token.NewFileSet()
@@ -238,7 +237,6 @@ func (app *App) createServiceNodes(specs map[*workflowspec.Service][]golang.Serv
 			ExposedMethods:      make(map[string]*service.ParsedFuncDecl),
 			QueueHandlerMethods: make(map[string]*service.ParsedFuncDecl),
 			InternalMethods:     make(map[string]*service.ParsedFuncDecl),
-			ParsedCFGs:          make(map[string]*types.ParsedCFG),
 		}
 		serviceSpec[node] = spec
 		// add entry for methods that will be later parsed
@@ -283,7 +281,6 @@ func (app *App) RegisterSimpleServiceNode(serviceSpec *workflowspec.Service, ser
 		ExposedMethods:      make(map[string]*service.ParsedFuncDecl),
 		QueueHandlerMethods: make(map[string]*service.ParsedFuncDecl),
 		InternalMethods:     make(map[string]*service.ParsedFuncDecl),
-		ParsedCFGs:          make(map[string]*types.ParsedCFG),
 	}
 	for _, s := range services {
 		node.Services[s.Iface.Name] = app.Services[s.Iface.Name]

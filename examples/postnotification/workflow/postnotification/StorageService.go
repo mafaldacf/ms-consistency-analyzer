@@ -14,11 +14,11 @@ type StorageService interface {
 
 type StorageServiceImpl struct {
 	cache 		 backend.Cache
-	dummyService DummyService
+	/* dummyService DummyService */
 }
 
-func NewStorageServiceImpl(ctx context.Context, cache backend.Cache, dummyService DummyService) (StorageService, error) {
-	u := &StorageServiceImpl{cache: cache, dummyService: dummyService}
+func NewStorageServiceImpl(ctx context.Context, cache backend.Cache/* , dummyService DummyService */) (StorageService, error) {
+	u := &StorageServiceImpl{cache: cache, /* dummyService: dummyService */}
 	return u, nil
 }
 

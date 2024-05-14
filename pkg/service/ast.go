@@ -38,18 +38,23 @@ func (st *ServiceType) IsTypeName() {}
 
 type ParsedFuncDecl struct {
 	types.Method
-	Ast     *ast.FuncDecl `json:"-"`
-	Name    string        `json:"name"`
-	Recv    *ast.Ident    `json:"-"`
-	Calls   []Call        `json:"-"`
-	Service string        `json:"-"`
+	Ast     		*ast.FuncDecl 				`json:"-"`
+	Name    		string        				`json:"name"`
+	Recv    		*ast.Ident    				`json:"-"`
+	Calls   		[]Call        				`json:"-"`
+	Service 		string        				`json:"-"`
+	ParsedCfg  		*types.ParsedCFG 			`json:"-"`
 
-	DbInstances []types.DatabaseInstance `json:"-"`
+	DbInstances 	[]types.DatabaseInstance 	`json:"-"`
 
 	// used to fetch the params when generating the basic cfg
 	// to store in the variables array of the function
-	Params  []*types.FunctionField
-	Returns []*types.FunctionField
+	Params  		[]*types.FunctionField
+	Returns 		[]*types.FunctionField
+}
+
+func (f *ParsedFuncDecl) SetParsedCFG(parsedCfg *types.ParsedCFG) {
+	f.ParsedCfg = parsedCfg
 }
 
 func (*ParsedFuncDecl) IsQueueWrite() bool { return false }
@@ -255,7 +260,6 @@ type ServiceNode struct {
 	InternalMethods     map[string]*ParsedFuncDecl
 	Constructor         *ParsedFuncDecl
 
-	ParsedCFGs      map[string]*types.ParsedCFG
 	ImplementsQueue bool
 }
 
