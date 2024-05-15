@@ -172,17 +172,17 @@ func (node *ServiceNode) ParseMethods() {
 
 func (node *ServiceNode) ParseMethodsBody() {
 	for name, method := range node.ExposedMethods {
-		logger.Logger.Debugf("parse exposed %s", name)
-		node.parseMethodBodyCalls(method)
+		logger.Logger.Debugf(">> EXPOSED >> %s", name)
+		node.findMethodBodyCalls(method)
 	}
 	for name, method := range node.QueueHandlerMethods {
-		logger.Logger.Debugf("parse worker %s", name)
-		node.parseMethodBodyCalls(method)
+		logger.Logger.Debugf(">> QUEUE HANDLER >> %s", name)
+		node.findMethodBodyCalls(method)
 	}
 	//FIXME: move to package methods
 	for name, method := range node.InternalMethods {
-		logger.Logger.Debugf("parse internal %s", name)
-		node.parseMethodBodyCalls(method)
+		logger.Logger.Debugf(">> INTERNAL >> %s", name)
+		node.findMethodBodyCalls(method)
 	}
 }
 
@@ -412,7 +412,7 @@ func selectedFieldOrInternalFuncInCall(node ast.Node, expectedRecvIdent *ast.Ide
 	return false, nil, nil, nil, nil
 }
 
-func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
+func (node *ServiceNode) findMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 	logger.Logger.Debugf("[AST PARSER] visiting method %s", parsedFuncDecl.Name)
 
 	ast.Inspect(parsedFuncDecl.Ast, func(n ast.Node) bool {
@@ -446,7 +446,7 @@ func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 						CalleeTypeName: serviceField.Variable.Type,
 					}
 					parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, svcParsedCallExpr)
-					logger.Logger.Debugf("[PARSER] added new service call %s (params: %v)", svcParsedCallExpr.String(), svcParsedCallExpr.Params)
+					logger.Logger.Debugf("[PARSER] found new service call %s (params: %v)", svcParsedCallExpr.String(), svcParsedCallExpr.Params)
 				}
 				// if the field corresponds to a database field
 				if databaseField, ok := field.(*types.DatabaseField); ok {
@@ -467,7 +467,7 @@ func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 						DbInstance:     databaseField.DbInstance,
 					}
 					parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, dbCall)
-					logger.Logger.Debugf("[PARSER] added new database call %s (params: %v)", dbCall.String(), dbCall.Params)
+					logger.Logger.Debugf("[PARSER] found new database call %s (params: %v)", dbCall.String(), dbCall.Params)
 				}
 			}
 		} else if funcDecl, ok := node.InternalMethods[methodIdent.Name]; ok {
@@ -482,7 +482,7 @@ func (node *ServiceNode) parseMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 				ServiceTypeName: &ServiceType{Name: node.Name, Package: node.Package},
 			}
 			parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, internalCall)
-			logger.Logger.Infof("[PARSER] added new internal call %s (params: %v)", internalCall.String(), internalCall.Params)
+			logger.Logger.Debugf("[PARSER] found new internal call %s (params: %v)", internalCall.String(), internalCall.Params)
 		}
 		return true
 	})

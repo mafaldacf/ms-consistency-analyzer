@@ -89,15 +89,16 @@ func visitBasicBlockDeclAndAssignsRecursor(parsedCfg *types.ParsedCFG, parsedBlo
 		}
 	}
 
-	for _, child := range parsedBlock.GetSuccs() {
-		visitBasicBlockDeclAndAssignsRecursor(parsedCfg, parsedCfg.GetParsedBlockAtIndex(child.Index), visited)
+	for _, succ := range parsedBlock.GetSuccs() {
+		parsedSucc := parsedCfg.GetParsedBlockAtIndex(succ.Index)
+		parsedSucc.CopyVarsFromPredecessor(parsedBlock)
+		visitBasicBlockDeclAndAssignsRecursor(parsedCfg, parsedSucc, visited)
 	}
 }
 
 func visitBasicBlockFuncCalls(parsedFuncDecl *service.ParsedFuncDecl) {
 	var visited = make(map[int32]bool)
-	for i, parsedBlock := range parsedFuncDecl.ParsedCfg.ParsedBlocks {
-		logger.Logger.Debugf("[CFG] visiting block #%d func calls for cfg %s", i, parsedFuncDecl.ParsedCfg.FullMethod)
+	for _, parsedBlock := range parsedFuncDecl.ParsedCfg.ParsedBlocks {
 		visitBasicBlockFuncCallsRecursor(parsedBlock, parsedFuncDecl, visited)
 	}
 	logger.Logger.Debugln()
@@ -111,8 +112,9 @@ func visitBasicBlockFuncCallsRecursor(parsedBlock *types.ParsedBlock, parsedFunc
 	for _, node := range parsedBlock.GetNodes() {
 		findCallsInBlock(node, parsedBlock, parsedFuncDecl)
 	}
-	for _, block := range parsedBlock.GetSuccs() {
-		visitBasicBlockFuncCallsRecursor(parsedFuncDecl.ParsedCfg.GetParsedBlockAtIndex(block.Index), parsedFuncDecl, visited)
+	for _, succ := range parsedBlock.GetSuccs() {
+		parsedSucc := parsedFuncDecl.ParsedCfg.GetParsedBlockAtIndex(succ.Index)
+		visitBasicBlockFuncCallsRecursor(parsedSucc, parsedFuncDecl, visited)
 	}
 }
 
@@ -125,7 +127,6 @@ func visitBasicBlockFuncCallsRecursor(parsedBlock *types.ParsedBlock, parsedFunc
 //  3. ParenExpr  - e.g. when used as a bool value in an if statement (assumes it is inside a parentheses)
 //     in this case, the unfolded node from ParenExpr is a CallExpr
 func findCallsInBlock(node ast.Node, parsedBlock *types.ParsedBlock, parsedFuncDecl *service.ParsedFuncDecl) bool {
-	logger.Logger.Debugf("\t\tfinding calls for block %s (node type = %s)", parsedBlock, utils.GetType(node))
 	switch n := node.(type) {
 	case *ast.ExprStmt:
 		return findCallsInBlock(n.X, parsedBlock, parsedFuncDecl)

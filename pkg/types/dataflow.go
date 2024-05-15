@@ -1,6 +1,8 @@
 package types
 
 import (
+	"analyzer/pkg/logger"
+	"analyzer/pkg/utils"
 	"fmt"
 	"go/ast"
 	"go/token"
@@ -36,6 +38,14 @@ func (cfg *ParsedCFG) String() string {
 	str := fmt.Sprintf("CFG @ %s", cfg.FullMethod)
 	for _, block := range cfg.ParsedBlocks {
 		str += ", " + block.String()
+	}
+	return str + "\n"
+}
+
+func (cfg *ParsedCFG) FullString() string {
+	str := "\n"
+	for _, block := range cfg.ParsedBlocks {
+		str += block.FullString()
 	}
 	return str + "\n"
 }
@@ -88,6 +98,11 @@ func (block *ParsedBlock) GetSuccs() []*cfg.Block {
 	return block.Block.Succs
 }
 
+func (block *ParsedBlock) CopyVarsFromPredecessor(predecessor *ParsedBlock) {
+	logger.Logger.Debugf("copying vars %d -> %d: %v -> %v", predecessor.GetIndex(), block.GetIndex(), predecessor.Vars, block.Vars)
+	block.Vars = append(predecessor.Vars, block.Vars...)
+}
+
 func (block *ParsedBlock) String() string {
 	str := fmt.Sprintf("Block %d (", block.Block.Index)
 	for i, v := range block.Vars {
@@ -97,6 +112,18 @@ func (block *ParsedBlock) String() string {
 		}
 	}
 	str += ")"
+	return str
+}
+
+func (block *ParsedBlock) FullString() string {
+	str := fmt.Sprintf("Block %d", block.Block.Index)
+	for i, v := range block.Block.Nodes {
+		str += fmt.Sprintf("\t Node %d: %s", i, utils.GetType(v))
+	}
+	for _, v := range block.Block.Succs {
+		str += fmt.Sprintf("\t Succ: %d", v.Index)
+	}
+	str += "\n"
 	return str
 }
 

@@ -24,7 +24,8 @@ func GenerateMethodCFGs(node *service.ServiceNode, parsedFuncDecl *service.Parse
 			BlockParamIdx: i,
 		})
 	}
-	logger.Logger.Infof("parsed %s (params: %v)", parsedCfg.String(), parsedFuncDecl.Params)
+	logger.Logger.Infof("parsed %s", parsedCfg.String())
+	//logger.Logger.Info(parsedCfg.FullString())
 }
 
 // https://github.com/coder/go-tools/blob/master/go/analysis/passes/ctrlflow/ctrlflow_test.go

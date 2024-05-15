@@ -3,15 +3,10 @@ package postnotification
 import (
 	"context"
 	"sync"
-	"time"
-
-	/* "sync" */
-	/* "time" */
 
 	"postnotification/workflow/postnotification/common"
 
 	"github.com/blueprint-uservices/blueprint/runtime/core/backend"
-	//"postnotification/workflow/postnotification/models"
 )
 
 // does not expose any methods to other services
@@ -50,18 +45,40 @@ func NewNotifyServiceImpl(ctx context.Context, storageService StorageService, qu
 func (n *NotifyServiceImpl) handleMessage(ctx context.Context, message Message) error {
 	reqID, err := common.StringToInt64(message.ReqID)
 	if err != nil {
-		return nil
+		return err
 	}
 	postID, err := common.StringToInt64(message.PostID)
 	if err != nil {
-		return nil
+		return err
 	}
 	
 	_, err = n.storageService.ReadPost(ctx, reqID, postID)
-	return err
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (n *NotifyServiceImpl) workerThread(ctx context.Context, workerID int) error {
+	var forever chan struct{}
+	go func() {
+		var message map[string]interface{}
+		n.queue.Pop(ctx, &message)
+		notification := Message {
+			ReqID: message["ReqID"].(string),
+			PostID: message["PostID"].(string),
+			Timestamp: message["Timestamp"].(string),
+		}
+		/* reqID, _ := common.StringToInt64(notification.ReqID)
+		postID, _ := common.StringToInt64(notification.PostID)
+		n.storageService.ReadPost(ctx, reqID, postID) */
+		n.handleMessage(ctx, notification)
+	}()
+	<-forever
+	return nil
+}
+
+/* func (n *NotifyServiceImpl) workerThread(ctx context.Context, workerID int) error {
 	var forever chan struct{}
 	go func() {
 		var message map[string]interface{}
@@ -100,14 +117,14 @@ func (n *NotifyServiceImpl) workerThread(ctx context.Context, workerID int) erro
 		if err != nil {
 			return
 		}
-		/* err = n.handleMessage(ctx, notification)
+		err = n.handleMessage(ctx, notification)
 		if err != nil {
 			return
-		} */
+		}
 	}()
 	<-forever
 	return nil
-}
+} */
 
 func (n *NotifyServiceImpl) Run(ctx context.Context) error {
 	backend.GetLogger().Info(ctx, "initializing %d workers", n.numWorkers)
