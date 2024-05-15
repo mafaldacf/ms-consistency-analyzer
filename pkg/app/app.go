@@ -9,7 +9,7 @@ import (
 	"analyzer/pkg/utils"
 	"encoding/json"
 	"fmt"
-	goparser "go/parser"
+	"go/parser"
 	"go/token"
 	"os"
 	"path/filepath"
@@ -179,11 +179,12 @@ func (app *App) matchServiceDatabases(serviceNode *service.ServiceNode, serviceS
 
 func (app *App) parseServicesInfo(servicesToSpec map[*service.ServiceNode]*workflowspec.Service, specs map[*workflowspec.Service][]golang.Service) {
 	for _, node := range app.Services {
+		logger.Logger.Warnf("[PARSER] APP service %s", node.Name)
 		node.ParseImports()
+		node.RegisterConstructor(getConstructorNameFromSpec(servicesToSpec[node]))
+		node.RegisterStructure()
 		node.ParseFields()
-		serviceSpec := servicesToSpec[node]
-		node.RegisterConstructor(getConstructorNameFromSpec(serviceSpec))
-		app.matchServiceDatabases(node, serviceSpec, specs)
+		app.matchServiceDatabases(node, servicesToSpec[node], specs)
 	}
 }
 
@@ -219,14 +220,13 @@ func (app *App) createServiceNodes(specs map[*workflowspec.Service][]golang.Serv
 	for spec, edges := range specs {
 		fset := token.NewFileSet()
 		filepath := spec.Iface.File.Name
-		file, err := goparser.ParseFile(fset, filepath, nil, goparser.ParseComments)
+		file, err := parser.ParseFile(fset, filepath, nil, parser.ParseComments)
 		if err != nil {
 			logger.Logger.Errorf("error parsing file %s: %s", filepath, err.Error())
 			return serviceSpec, err
 		}
 		node := &service.ServiceNode{
 			Name:                spec.Iface.Name,
-			Impl:                spec.Iface.Name + "Impl", // FIX THIS hardcoded value
 			Package:             spec.Iface.File.Package.Name,
 			Filepath:            filepath,
 			File:                file,
@@ -256,40 +256,4 @@ func (app *App) createServiceNodes(specs map[*workflowspec.Service][]golang.Serv
 		logger.Logger.Infof("[APP] created service node: %s", node.Name)
 	}
 	return serviceSpec, nil
-}
-
-// RegisterSimpleServiceNode is deprecated
-// only used when we use frameworks.GetBlueprintServiceSpec[T]() directly
-func (app *App) RegisterSimpleServiceNode(serviceSpec *workflowspec.Service, services ...*workflowspec.Service) error {
-	fset := token.NewFileSet()
-	filepath := serviceSpec.Iface.File.Name
-	file, err := goparser.ParseFile(fset, filepath, nil, goparser.ParseComments)
-	if err != nil {
-		logger.Logger.Errorf("error parsing file %s: %s", filepath, err.Error())
-		return err
-	}
-	node := &service.ServiceNode{
-		Name:                serviceSpec.Iface.Name,
-		Impl:                serviceSpec.Iface.Name + "Impl", // FIX THIS hardcoded value
-		Package:             serviceSpec.Iface.File.Package.Name,
-		Filepath:            filepath,
-		File:                file,
-		Fields:              make(map[string]types.Field),
-		Imports:             make(map[string]*service.ParsedImportSpec),
-		Services:            make(map[string]*service.ServiceNode),
-		Databases:           make(map[string]types.DatabaseInstance),
-		ExposedMethods:      make(map[string]*service.ParsedFuncDecl),
-		QueueHandlerMethods: make(map[string]*service.ParsedFuncDecl),
-		InternalMethods:     make(map[string]*service.ParsedFuncDecl),
-	}
-	for _, s := range services {
-		node.Services[s.Iface.Name] = app.Services[s.Iface.Name]
-	}
-	for _, m := range serviceSpec.Iface.Ast.Methods.List {
-		node.ExposedMethods[m.Names[0].Name] = nil
-	}
-
-	app.Services[node.Name] = node
-	logger.Logger.Infof("register app service node %s", node.String())
-	return nil
 }

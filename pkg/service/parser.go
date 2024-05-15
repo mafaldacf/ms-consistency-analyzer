@@ -7,6 +7,7 @@ import (
 	"analyzer/pkg/utils"
 	"fmt"
 	"go/ast"
+	"slices"
 	"strings"
 
 	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
@@ -73,6 +74,17 @@ func (node *ServiceNode) methodImplementsService(n ast.Node) (ok bool, funcDecl 
 		}
 	}
 	return false, funcDecl, nil
+}
+
+func (node *ServiceNode) methodHasReceiver(n ast.Node) (ok bool, funcDecl *ast.FuncDecl) {
+	// check if node is a function declaration
+	if funcDecl, ok = n.(*ast.FuncDecl); ok {
+		// check if the function has any receivers (i.e. structure(s) implemented by the function)
+		if funcDecl.Recv != nil && len(funcDecl.Recv.List) > 0 {
+			return true, funcDecl
+		}
+	}
+	return false, funcDecl
 }
 
 func (node *ServiceNode) isMethodExposedByService(funcDecl *ast.FuncDecl) bool {
@@ -199,14 +211,38 @@ func (node *ServiceNode) ParseFields() {
 
 func (node *ServiceNode) RegisterConstructor(constructorName string) {
 	ast.Inspect(node.File, func(n ast.Node) bool {
-		implementsService, funcDecl, _ := node.methodImplementsService(n)
-		if !implementsService && funcDecl != nil && funcDecl.Name.Name == constructorName {
+		hasReceiver, funcDecl := node.methodHasReceiver(n)
+		if !hasReceiver && funcDecl != nil && funcDecl.Name.Name == constructorName {
 			node.Constructor = &ParsedFuncDecl{
 				Ast:     funcDecl,
 				Name:    funcDecl.Name.Name,
 				Service: node.Name,
 			}
 			logger.Logger.Debugf("[PARSER] registered constructor %s for service %s", constructorName, node.Name)
+		}
+		return true
+	})
+}
+
+func (node *ServiceNode) RegisterStructure() {
+	var exposedMethodsNames []string
+	for name := range node.ExposedMethods {
+		exposedMethodsNames = append(exposedMethodsNames, name)
+	}
+	ast.Inspect(node.File, func(n ast.Node) bool {
+		if node.Impl != "" {
+			return false
+		}
+		if funcDecl, ok := n.(*ast.FuncDecl); ok && slices.Contains(exposedMethodsNames, funcDecl.Name.Name) {
+			if funcDecl.Recv != nil && len(funcDecl.Recv.List) > 0 {
+				if recv, ok := funcDecl.Recv.List[0].Type.(*ast.StarExpr); ok {
+					if ident, ok := recv.X.(*ast.Ident); ok {
+						node.Impl = ident.Name
+						logger.Logger.Debugf("[PARSER] registered structure %s for service %s", node.Impl, node.Name)
+						return false
+					}
+				}
+			}
 		}
 		return true
 	})
