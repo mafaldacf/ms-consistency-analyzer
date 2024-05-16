@@ -28,6 +28,7 @@ func buildIR(name string, spec cmdbuilder.SpecOption) *cmdbuilder.CmdBuilder {
 		Name: name,
 		Registry: map[string]cmdbuilder.SpecOption{},
 		Spec: spec,
+		OutputDir: "build",
 	}
 	logging.DisableCompilerLogging()
 	builder.Registry[spec.Name] = spec

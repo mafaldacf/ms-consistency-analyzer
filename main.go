@@ -15,7 +15,7 @@ import (
 	// 		analyzer/apps/postnotification/workflow/postnotification'
 	// but the existing packages in the mod.Package represents the root of the app
 	// 		'postnotification/workflow/postnotification'
-	"postnotification/wiring/specs"
+	"github.com/blueprint-uservices/blueprint/examples/postnotification/wiring/specs"
 )
 
 func main() {
