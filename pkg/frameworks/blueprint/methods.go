@@ -3,8 +3,6 @@ package frameworks
 import (
 	"analyzer/pkg/types"
 	"fmt"
-
-	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
 )
 
 func IsBlueprintBackend(name string) bool {
@@ -22,8 +20,7 @@ func IsBlueprintBackendQueue(name string) bool {
 type BlueprintBackend struct {
 	types.Method
 	Name    string
-	Params  []*types.FunctionField
-	Returns []*types.FunctionField
+	Params  []*types.FunctionParameter
 	Write   bool
 }
 
@@ -39,12 +36,8 @@ func (b *BlueprintBackend) String() string {
 	return repr
 }
 
-func (b *BlueprintBackend) GetParams() []*types.FunctionField {
+func (b *BlueprintBackend) GetParams() []*types.FunctionParameter {
 	return b.Params
-}
-
-func (b *BlueprintBackend) GetReturns() []*types.FunctionField {
-	return b.Returns
 }
 
 func (b *BlueprintBackend) IsWrite() bool {
@@ -73,54 +66,43 @@ func (b *BlueprintBackend) MatchQueueIdentifiers() map[int]int {
 func GetBackendMethod(name string) *BlueprintBackend {
 	switch name {
 	case "Cache.Put":
-		return &BlueprintBackend{Name: name, Write: true, Params: []*types.FunctionField{&ctxParam, &keyParam, &valueParam}}
+		return &BlueprintBackend{Name: name, Write: true, Params: []*types.FunctionParameter{&ctxParam, &keyParam, &valueParam}}
 	case "Cache.Get":
-		return &BlueprintBackend{Name: name, Write: false, Params: []*types.FunctionField{&ctxParam, &keyParam, &valueParam}}
+		return &BlueprintBackend{Name: name, Write: false, Params: []*types.FunctionParameter{&ctxParam, &keyParam, &valueParam}}
 	case "Queue.Push":
-		return &BlueprintBackend{Name: name, Write: true, Params: []*types.FunctionField{&ctxParam, &itemParam}}
+		return &BlueprintBackend{Name: name, Write: true, Params: []*types.FunctionParameter{&ctxParam, &itemParam}}
 	case "Queue.Pop":
-		return &BlueprintBackend{Name: name, Write: false, Params: []*types.FunctionField{&ctxParam, &itemParam}}
+		return &BlueprintBackend{Name: name, Write: false, Params: []*types.FunctionParameter{&ctxParam, &itemParam}}
 	}
 	return nil
 }
 
-var ctxParam = types.FunctionField{
-	Variable: gocode.Variable{
+var ctxParam = types.FunctionParameter{
+	FieldInfo: types.FieldInfo{
 		Name: "ctx",
-		Type: &gocode.UserType{
+		Type: &types.User{
 			Name:    "Context",
 			Package: "context",
 		},
 	},
-	Lineno: 0,
-	Ast:    nil,
 }
-
-var keyParam = types.FunctionField{
-	Variable: gocode.Variable{
+var keyParam = types.FunctionParameter{
+	FieldInfo: types.FieldInfo{
 		Name: "key",
-		Type: &gocode.BasicType{
-			Name: "string",
+		Type: &types.Basic{
+			Name:    "string",
 		},
 	},
-	Lineno: 0,
-	Ast:    nil,
 }
-
-var valueParam = types.FunctionField{
-	Variable: gocode.Variable{
+var valueParam = types.FunctionParameter{
+	FieldInfo: types.FieldInfo{
 		Name: "value",
-		Type: &gocode.InterfaceType{},
+		Type: &types.Interface{},
 	},
-	Lineno: 0,
-	Ast:    nil,
 }
-
-var itemParam = types.FunctionField{
-	Variable: gocode.Variable{
+var itemParam = types.FunctionParameter{
+	FieldInfo: types.FieldInfo{
 		Name: "item",
-		Type: &gocode.InterfaceType{},
+		Type: &types.Interface{},
 	},
-	Lineno: 0,
-	Ast:    nil,
 }

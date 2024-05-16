@@ -10,16 +10,15 @@ import (
 )
 
 func GenerateMethodCFGs(node *service.ServiceNode, parsedFuncDecl *service.ParsedFuncDecl) {
-	cfg := cfg.New(parsedFuncDecl.Ast.Body, mayReturn)
+	cfg := cfg.New(parsedFuncDecl.GetBody(), mayReturn)
 	parsedCfg := types.InitParsedCFG(cfg, parsedFuncDecl.Name)
 	parsedFuncDecl.SetParsedCFG(parsedCfg)
 	entryBlock := parsedCfg.GetEntryParsedBlock()
 	for i, param := range parsedFuncDecl.Params {
 		entryBlock.Vars = append(entryBlock.Vars, &types.Variable{
 			Id:            types.VARIABLE_UNASSIGNED_ID,
-			Lineno:        entryBlock.GetPosition(),
-			Name:          param.Name,
-			Type:          param.Type,
+			Name:          param.GetName(),
+			Type:          param.GetType(),
 			IsBlockParam:  true,
 			BlockParamIdx: i,
 		})

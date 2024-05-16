@@ -94,7 +94,7 @@
       ],
       "edges": [
         {
-          "call": "cache.Put(ctx context.Context, key string, value interface{.})",
+          "call": "cache.Put(ctx context.Context, key string, value interface{})",
           "method": "Cache.Put(ctx, key, value)",
           "caller": "StorageService",
           "params": [
@@ -141,7 +141,7 @@
       ]
     },
     {
-      "call": "queue.Push(ctx context.Context, item interface{.})",
+      "call": "queue.Push(ctx context.Context, item interface{})",
       "method": "Queue.Push(ctx, item)",
       "caller": "UploadService",
       "params": [
@@ -198,7 +198,7 @@
             ],
             "edges": [
               {
-                "call": "queue.Pop(ctx context.Context, item interface{.})",
+                "call": "queue.Pop(ctx context.Context, item interface{})",
                 "method": "Queue.Pop(ctx, item)",
                 "caller": "NotifyService",
                 "params": [
@@ -293,7 +293,7 @@
                 ],
                 "edges": [
                   {
-                    "call": "cache.Get(ctx context.Context, key string, value interface{.})",
+                    "call": "cache.Get(ctx context.Context, key string, value interface{})",
                     "method": "Cache.Get(ctx, key, value)",
                     "caller": "StorageService",
                     "params": [

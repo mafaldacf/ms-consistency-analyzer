@@ -7,58 +7,39 @@ import (
 	"go/ast"
 	"go/token"
 	"slices"
-	"strings"
-
-	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
 )
-
-type ServiceType struct {
-	gocode.TypeName
-	Package string
-	Name    string
-}
-
-func (t *ServiceType) String() string {
-	splits := strings.Split(t.Package, "/")
-	return fmt.Sprintf("%s.%s", splits[len(splits)-1], t.Name)
-}
-
-func (t *ServiceType) Equals(other gocode.TypeName) bool {
-	if t == nil || other == nil {
-		return false
-	}
-	t2, isSameType := other.(*ServiceType)
-	if !isSameType {
-		return false
-	}
-	return t.Name == t2.Name
-}
-
-func (st *ServiceType) IsTypeName() {}
 
 type ParsedFuncDecl struct {
 	types.Method
-	Ast     		*ast.FuncDecl 				`json:"-"`
-	Name    		string        				`json:"name"`
-	Recv    		*ast.Ident    				`json:"-"`
-	Calls   		[]Call        				`json:"-"`
-	Service 		string        				`json:"-"`
-	ParsedCfg  		*types.ParsedCFG 			`json:"-"`
+	Ast       *ast.FuncDecl    `json:"-"`
+	Name      string           `json:"name"`
+	Recv      *ast.Ident       `json:"-"`
+	Calls     []Call           `json:"-"`
+	Service   string           `json:"-"`
+	ParsedCfg *types.ParsedCFG `json:"-"`
 
-	DbInstances 	[]types.DatabaseInstance 	`json:"-"`
+	DbInstances []types.DatabaseInstance `json:"-"`
 
 	// used to fetch the params when generating the basic cfg
 	// to store in the variables array of the function
-	Params  		[]*types.FunctionField
-	Returns 		[]*types.FunctionField
+	Params  []*types.FunctionParameter
 }
 
+func (f *ParsedFuncDecl) GetAst() *ast.FuncDecl { 
+	return f.Ast 
+}
+func (f *ParsedFuncDecl) GetBody() *ast.BlockStmt { 
+	return f.Ast.Body
+}
 func (f *ParsedFuncDecl) SetParsedCFG(parsedCfg *types.ParsedCFG) {
 	f.ParsedCfg = parsedCfg
 }
-
-func (*ParsedFuncDecl) IsQueueWrite() bool { return false }
-func (*ParsedFuncDecl) IsQueueRead() bool  { return false }
+func (*ParsedFuncDecl) IsQueueWrite() bool { 
+	return false 
+}
+func (*ParsedFuncDecl) IsQueueRead() bool  { 
+	return false 
+}
 
 func (p *ParsedFuncDecl) String() string {
 	repr := fmt.Sprintf("%s.%s(", p.Service, p.Name)
@@ -72,14 +53,9 @@ func (p *ParsedFuncDecl) String() string {
 	return repr
 }
 
-func (p *ParsedFuncDecl) GetParams() []*types.FunctionField {
+func (p *ParsedFuncDecl) GetParams() []*types.FunctionParameter {
 	return p.Params
 }
-
-func (p *ParsedFuncDecl) GetReturns() []*types.FunctionField {
-	return p.Returns
-}
-
 type ParsedImportSpec struct {
 	Ast                *ast.ImportSpec
 	Alias              string
@@ -145,11 +121,11 @@ func (call *ParsedCallExpr) SimpleString() string {
 type ServiceParsedCallExpr struct {
 	Call
 	ParsedCallExpr
-	CallerTypeName gocode.TypeName
-	CalleeTypeName gocode.TypeName
+	CallerTypeName types.Type
+	CalleeTypeName types.Type
 }
 
-func (svcCall *ServiceParsedCallExpr) GetCallTypeNames() (gocode.TypeName, gocode.TypeName) {
+func (svcCall *ServiceParsedCallExpr) GetCallTypeNames() (types.Type, types.Type) {
 	return svcCall.CallerTypeName, svcCall.CalleeTypeName
 }
 
@@ -181,7 +157,7 @@ type DatabaseParsedCallExpr struct {
 	Call
 	ParsedCallExpr
 	DbInstance     types.DatabaseInstance
-	CallerTypeName gocode.TypeName
+	CallerTypeName types.Type
 }
 
 func (dbCall *DatabaseParsedCallExpr) IsAtPos(pos token.Pos) bool {
@@ -215,7 +191,7 @@ func (dbCall *DatabaseParsedCallExpr) GetParams() []*types.Variable {
 type InternalTempParsedCallExpr struct {
 	Call
 	ParsedCallExpr
-	ServiceTypeName gocode.TypeName
+	ServiceTypeName types.Type
 }
 
 func (internalCall *InternalTempParsedCallExpr) String() string {

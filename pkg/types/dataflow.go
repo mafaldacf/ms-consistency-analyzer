@@ -9,17 +9,11 @@ import (
 
 	"golang.org/x/tools/go/cfg"
 )
-
-// -------------------------
-//
-//	CFG
-//
-// ------------------------
 type ParsedCFG struct {
 	Cfg        		*cfg.CFG
 	ParsedBlocks 	[]*ParsedBlock
 	Package    		string
-	FileHash   		string 			`json:"file_hash,omitempty"`
+	FileHash   		string
 	FullMethod  	string
 }
 
@@ -74,6 +68,12 @@ type ParsedBlock struct {
 	Info 		 BlockInfo
 }
 
+type BlockInfo struct {
+	Gen []*Variable
+	In  []*Variable
+	Out []*Variable
+}
+
 func (block *ParsedBlock) GetVariables()  []*Variable {
 	return block.Vars
 }
@@ -125,10 +125,4 @@ func (block *ParsedBlock) FullString() string {
 	}
 	str += "\n"
 	return str
-}
-
-type BlockInfo struct {
-	Gen []*Variable
-	In  []*Variable
-	Out []*Variable
 }

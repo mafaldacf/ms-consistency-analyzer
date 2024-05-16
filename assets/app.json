@@ -3,8 +3,8 @@
   "app_services": {
     "NotifyService": {
       "fields": {
-        "queue": "backend.Queue",
-        "storageService": "postnotification.StorageService"
+        "queue": "Queue",
+        "storageService": "StorageService"
       },
       "services": [
         "StorageService"
@@ -15,7 +15,7 @@
     },
     "StorageService": {
       "fields": {
-        "cache": "backend.Cache"
+        "cache": "Cache"
       },
       "databases": [
         "post_db"
@@ -23,8 +23,8 @@
     },
     "UploadService": {
       "fields": {
-        "queue": "backend.Queue",
-        "storageService": "postnotification.StorageService"
+        "queue": "Queue",
+        "storageService": "StorageService"
       },
       "services": [
         "StorageService"

@@ -10,8 +10,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-
-	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
 )
 
 type AbstractNode interface {
@@ -246,7 +244,7 @@ func (graph *AbstractGraph) matchIdentifiers(node AbstractNode) {
 // FIXME: this should be recursive!!
 func getVariableIfPointer(variable *types.Variable) *types.Variable {
 	value := variable
-	if _, ok := value.Type.(*gocode.Pointer); ok {
+	if _, ok := value.Type.(*types.Pointer); ok {
 		value = value.Deps[0]
 	}
 	return value
@@ -285,7 +283,7 @@ func (graph *AbstractGraph) createDummyAbstractServiceCall(node *service.Service
 
 	var callerStr = "Client"
 	if parent != nil {
-		callerStr = utils.GetShortTypeStr(parent.ParsedCall.CallerTypeName)
+		callerStr = parent.ParsedCall.CallerTypeName.GetName()
 	}
 
 	call := AbstractServiceCall{
@@ -302,8 +300,8 @@ func (graph *AbstractGraph) createDummyAbstractServiceCall(node *service.Service
 	}
 	for _, p := range method.GetParams() {
 		call.ParsedCall.Params = append(call.ParsedCall.Params, &types.Variable{
-			Name: p.Name,
-			Type: p.Type,
+			Name: p.GetName(),
+			Type: p.GetType(),
 			Id:   graph.getAndIncGlobalIndex(),
 		})
 	}
@@ -362,7 +360,7 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				ParsedCall: parsedCall,
 				Params:     parsedCall.Params,
 				Call:       parsedCall.SimpleString(),
-				Caller:     utils.GetShortTypeStr(parsedCall.CallerTypeName),
+				Caller:     parsedCall.CallerTypeName.GetName(),
 				Method:     parsedCall.Method.String(),
 				DbInstance: parsedCall.DbInstance,
 			}
@@ -378,8 +376,8 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 		case *service.ServiceParsedCallExpr:
 			child := &AbstractServiceCall{
 				ParsedCall: parsedCall,
-				Caller:     utils.GetShortTypeStr(parsedCall.CallerTypeName),
-				Callee:     utils.GetShortTypeStr(parsedCall.CalleeTypeName),
+				Caller:     parsedCall.CallerTypeName.GetName(),
+				Callee:     parsedCall.CalleeTypeName.GetName(),
 				Params:     parsedCall.Params,
 				Call:       parsedCall.SimpleString(),
 				Method:     parsedCall.Method.String(),
@@ -389,7 +387,7 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 		case *service.InternalTempParsedCallExpr:
 			tempChild := &AbstractTempInternalCall{
 				ParsedCall: parsedCall,
-				Service:    utils.GetShortTypeStr(parsedCall.ServiceTypeName),
+				Service:    parsedCall.ServiceTypeName.GetName(),
 				Params:     parsedCall.Params,
 				Call:       parsedCall.SimpleString(),
 				Method:     parsedCall.Method.String(),
@@ -413,8 +411,8 @@ func (graph *AbstractGraph) appendPublisherQueueHandlers(app *app.App, publisher
 			}
 			for _, p := range handlerMethod.GetParams() {
 				abstractHandler.ParsedCall.Params = append(abstractHandler.ParsedCall.Params, &types.Variable{
-					Name: p.Name,
-					Type: p.Type,
+					Name: p.GetName(),
+					Type: p.GetType(),
 				})
 			}
 			publisher.Children = append(publisher.Children, abstractHandler)
@@ -437,7 +435,7 @@ func (graph *AbstractGraph) referencePublisherParams(queueHandler *AbstractQueue
 			if pushParam.Ref != nil {
 				popParam.Ref.Creator = pushParam.Ref.Creator
 			} else {
-				popParam.Ref.Creator = utils.GetShortTypeStr(queueHandler.Publisher.ParsedCall.CallerTypeName)
+				popParam.Ref.Creator = queueHandler.Publisher.ParsedCall.CallerTypeName.GetName()
 			}
 		}
 		return true
@@ -460,7 +458,7 @@ func (graph *AbstractGraph) referenceServiceCallerParams(rootParent AbstractNode
 				continue
 			}
 			for callerParamIdx, callerParam := range directParent.GetParams() {
-				if dep.IsBlockParam && dep.EqualBlockParamIndex(callerParamIdx) {
+				if dep.IsBlockParameter() && dep.EqualBlockParamIndex(callerParamIdx) {
 					if dep.IsUnassigned() {
 						if rootParent == directParent {
 							dep.AddReferenceWithID(callerParam, child.GetCallerStr())

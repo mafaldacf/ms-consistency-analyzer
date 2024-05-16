@@ -10,8 +10,6 @@ import (
 
 	"analyzer/pkg/service"
 	"analyzer/pkg/utils"
-
-	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
 )
 
 func ParseServiceMethodCFG(method *service.ParsedFuncDecl) {
@@ -74,12 +72,11 @@ func visitBasicBlockDeclAndAssignsRecursor(parsedCfg *types.ParsedCFG, parsedBlo
 						}
 					}
 					newVar := &types.Variable{
-						Type: &gocode.UserType{
+						Type: &types.User{
 							Package: parsedCfg.Package,
 							Name:    varType, //FIXME, this needs to be type not name
 						},
 						Id:     types.VARIABLE_UNASSIGNED_ID,
-						Lineno: stmt.Pos(),
 						Name:   lvalue,
 						Deps:   usedVars,
 					}
@@ -215,7 +212,7 @@ func validateCallAndAddParams(node *ast.CallExpr, parsedBlock *types.ParsedBlock
 				name := fmt.Sprintf("&%s", ident.Name)
 				if ok, v := getVariableInBlock(parsedBlock, ident.Name); ok {
 					param = &types.Variable{
-						Type: &gocode.Pointer{
+						Type: &types.Pointer{
 							PointerTo: v.Type,
 						},
 						Id:   types.VARIABLE_INLINE_ID,

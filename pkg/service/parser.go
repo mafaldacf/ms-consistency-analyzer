@@ -9,8 +9,6 @@ import (
 	"go/ast"
 	"slices"
 	"strings"
-
-	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
 )
 
 func (node *ServiceNode) ParseImports() {
@@ -94,29 +92,28 @@ func (node *ServiceNode) isMethodExposedByService(funcDecl *ast.FuncDecl) bool {
 	return ok
 }
 
-func (node *ServiceNode) parseFuncDeclParams(funcDecl *ast.FuncDecl) []*types.FunctionField {
-	var params []*types.FunctionField
+func (node *ServiceNode) parseFuncDeclParams(funcDecl *ast.FuncDecl) []*types.FunctionParameter {
+	var params []*types.FunctionParameter
 	for _, field := range funcDecl.Type.Params.List {
 		// TODO: any types with selector! e.g. model.Message (careful with context.Context)
 		switch t := field.Type.(type) {
 		case *ast.Ident:
 			for _, fieldIdent := range field.Names {
-				newParam := &types.FunctionField{
-					Variable: gocode.Variable{
+				newParam := &types.FunctionParameter{
+					FieldInfo: types.FieldInfo{
+						Ast: field,
 						Name: fieldIdent.Name,
 					},
-					Lineno: field.Pos(),
-					Ast:    field,
 				}
 				if utils.IsBasicType(t.Name) {
-					newParam.Type = &gocode.BasicType{
+					newParam.SetType(&types.Basic{
 						Name: t.Name,
-					}
+					})
 				} else {
-					newParam.Type = &gocode.UserType{
+					newParam.SetType(&types.User{
 						Name:    t.Name,
 						Package: node.Package,
-					}
+					})
 				}
 				params = append(params, newParam)
 			}
@@ -125,16 +122,15 @@ func (node *ServiceNode) parseFuncDeclParams(funcDecl *ast.FuncDecl) []*types.Fu
 				for _, fieldIdent := range field.Names {
 					importPathAlias := pkgIdent.Name
 					importPath := node.Imports[importPathAlias]
-					newParam := &types.FunctionField{
-						Variable: gocode.Variable{
+					newParam := &types.FunctionParameter{
+						FieldInfo: types.FieldInfo{
+							Ast: field,
 							Name: fieldIdent.Name,
-							Type: &gocode.UserType{
+							Type: &types.User{
 								Name:    t.Sel.Name,
 								Package: importPath.Package,
 							},
 						},
-						Lineno: field.Pos(),
-						Ast:    field,
 					}
 					params = append(params, newParam)
 				}
@@ -259,16 +255,15 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string, i
 		// so the package of the variable is the same
 		if _, ok := node.Services[t.Name]; ok {
 			node.Fields[paramName] = &types.ServiceField{
-				Variable: gocode.Variable{
+				FieldInfo: types.FieldInfo{
+					Ast:  field,
 					Name: paramName,
-					Type: &gocode.UserType{
-						Package: node.Package,
+					Type: &types.User{
 						Name:    t.Name,
+						Package: node.Package,
 					},
 				},
-				Lineno: field.Pos(),
-				Ast:    field,
-				Idx:    idx,
+				Idx: idx,
 			}
 		}
 
@@ -281,15 +276,14 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string, i
 				// check if the matched package is a database package imported from blueprint
 				if impt.IsBlueprintBackend && frameworks.IsBlueprintBackend(t.Sel.Name) {
 					newField := &types.DatabaseField{
-						Variable: gocode.Variable{
+						FieldInfo: types.FieldInfo{
+							Ast:  field,
 							Name: paramName,
-							Type: &gocode.UserType{
-								Package: impt.Package,
+							Type: &types.User{
 								Name:    t.Sel.Name,
+								Package: impt.Package,
 							},
 						},
-						Lineno:  field.Pos(),
-						Ast:     field,
 						IsQueue: frameworks.IsBlueprintBackendQueue(t.Sel.Name),
 						Idx:     idx,
 					}
@@ -303,15 +297,14 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string, i
 				for _, s := range node.Services {
 					if s.Package == impt.Package {
 						node.Fields[paramName] = &types.ServiceField{
-							Variable: gocode.Variable{
+							FieldInfo: types.FieldInfo{
+								Ast:  field,
 								Name: paramName,
-								Type: &gocode.UserType{
-									Package: s.Package,
+								Type: &types.User{
 									Name:    t.Sel.Name,
+									Package: s.Package,
 								},
 							},
-							Lineno: field.Pos(),
-							Ast:    field,
 						}
 					}
 				}
@@ -415,7 +408,7 @@ func selectedFieldOrInternalFuncInCall(node ast.Node, expectedRecvIdent *ast.Ide
 func (node *ServiceNode) findMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 	logger.Logger.Debugf("[AST PARSER] visiting method %s", parsedFuncDecl.Name)
 
-	ast.Inspect(parsedFuncDecl.Ast, func(n ast.Node) bool {
+	ast.Inspect(parsedFuncDecl.GetAst(), func(n ast.Node) bool {
 		// beware that functions migh have nil receivers
 		ok, funcCall, methodIdent, fieldIdent, serviceRecvIdent := selectedFieldOrInternalFuncInCall(n, parsedFuncDecl.Recv)
 		if !ok {
@@ -430,7 +423,7 @@ func (node *ServiceNode) findMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 					// 1. extract the service field from the current service
 					// 2. get the target node service for the type
 					// 3. add the targeted method of the other service for the current call expression
-					targetServiceType := utils.GetShortTypeStr(serviceField.Type)
+					targetServiceType := serviceField.GetTypeName()
 					targetServiceNode := node.Services[targetServiceType]
 					targetMethod := targetServiceNode.ExposedMethods[methodIdent.Name]
 					svcParsedCallExpr := &ServiceParsedCallExpr{
@@ -442,8 +435,8 @@ func (node *ServiceNode) findMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 							Pos:         funcCall.Pos(),
 							Method:      targetMethod,
 						},
-						CallerTypeName: &ServiceType{Name: node.Name, Package: node.Package},
-						CalleeTypeName: serviceField.Variable.Type,
+						CallerTypeName: &types.Service{Name: node.Name, Package: node.Package},
+						CalleeTypeName: serviceField.GetType(),
 					}
 					parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, svcParsedCallExpr)
 					logger.Logger.Debugf("[PARSER] found new service call %s (params: %v)", svcParsedCallExpr.String(), svcParsedCallExpr.Params)
@@ -453,7 +446,7 @@ func (node *ServiceNode) findMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 					// 1. extract the service field from the current service
 					// 2. get the target database node
 					// 3. add the target method for the current call expression
-					targetDatabaseType := utils.GetShortTypeStr(databaseField.Type)
+					targetDatabaseType := databaseField.GetTypeName()
 					dbCall := &DatabaseParsedCallExpr{
 						ParsedCallExpr: ParsedCallExpr{
 							Ast:         funcCall,
@@ -463,7 +456,7 @@ func (node *ServiceNode) findMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 							Pos:         funcCall.Pos(),
 							Method:      frameworks.GetBackendMethod(fmt.Sprintf("%s.%s", targetDatabaseType, methodIdent.Name)),
 						},
-						CallerTypeName: &ServiceType{Name: node.Name, Package: node.Package},
+						CallerTypeName: &types.Service{Name: node.Name, Package: node.Package},
 						DbInstance:     databaseField.DbInstance,
 					}
 					parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, dbCall)
@@ -479,7 +472,7 @@ func (node *ServiceNode) findMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 					Method:   funcDecl,
 					Pos:      funcCall.Pos(),
 				},
-				ServiceTypeName: &ServiceType{Name: node.Name, Package: node.Package},
+				ServiceTypeName: &types.Service{Name: node.Name, Package: node.Package},
 			}
 			parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, internalCall)
 			logger.Logger.Debugf("[PARSER] found new internal call %s (params: %v)", internalCall.String(), internalCall.Params)
@@ -490,7 +483,7 @@ func (node *ServiceNode) findMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 
 func (node *ServiceNode) ParseConstructor(constructorArgs []string, dbInstancesConstructorIdx map[int]types.DatabaseInstance) {
 	constructor := node.Constructor
-	ast.Inspect(constructor.Ast.Body, func(n ast.Node) bool {
+	ast.Inspect(constructor.GetBody(), func(n ast.Node) bool {
 		compositeLit, ok := n.(*ast.CompositeLit)
 		if !ok {
 			return true
@@ -511,7 +504,7 @@ func (node *ServiceNode) ParseConstructor(constructorArgs []string, dbInstancesC
 								if arg == keyValue.Name {
 									if dbInstance, ok := dbInstancesConstructorIdx[idx]; ok {
 										dbField.DbInstance = dbInstance
-										logger.Logger.Debugf("[PARSER] [%s] linked database field '%s' to instance '%s'", node.Name, dbField.Name, dbInstance.GetName())
+										logger.Logger.Debugf("[PARSER] [%s] linked database field '%s' to instance '%s'", node.Name, dbField.GetName(), dbInstance.GetName())
 										break
 									}
 								}
