@@ -2,10 +2,12 @@ package frameworks
 
 import (
 	"analyzer/pkg/logger"
+	"analyzer/pkg/utils"
 	"reflect"
 
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/blueprint/logging"
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/coreplugins/namespaceutil"
+	"github.com/blueprint-uservices/blueprint/blueprint/pkg/coreplugins/address"
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/ir"
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/wiring"
 	"github.com/blueprint-uservices/blueprint/plugins/cmdbuilder"
@@ -16,9 +18,10 @@ import (
 	"github.com/blueprint-uservices/blueprint/plugins/redis"
 	"github.com/blueprint-uservices/blueprint/plugins/workflow"
 	"github.com/blueprint-uservices/blueprint/plugins/workflow/workflowspec"
+	"github.com/blueprint-uservices/blueprint/plugins/http"
 )
 
-func BuildAndInspectIR(name string, spec cmdbuilder.SpecOption) (map[*workflowspec.Service][]golang.Service, map[string]ir.IRNode) {
+func BuildAndInspectIR(name string, spec cmdbuilder.SpecOption) (map[*workflowspec.Service][]golang.Service, map[string]ir.IRNode, []string) {
 	builder := buildIR(name, spec)
 	return inspectIR(builder)
 }
@@ -51,12 +54,20 @@ func buildIR(name string, spec cmdbuilder.SpecOption) *cmdbuilder.CmdBuilder {
 	return builder
 }
 
-func inspectIR(builder *cmdbuilder.CmdBuilder) (map[*workflowspec.Service][]golang.Service, map[string]ir.IRNode) {
+func inspectIR(builder *cmdbuilder.CmdBuilder) (map[*workflowspec.Service][]golang.Service, map[string]ir.IRNode, []string) {
 	services := make(map[*workflowspec.Service][]golang.Service)
 	databases := make(map[string]ir.IRNode)
+	var frontends []string
 	//logger.Logger.Debugf("IR: %v", builder.IR)
 	logger.Logger.Debug("")
 	for _, node := range builder.IR.Children {
+		if n, ok := node.(*address.Address[*http.GolangHttpServer]); ok {
+			if httpService, ok := n.GetDestination().(*http.GolangHttpServer); ok {
+				if workflowHandler, ok := httpService.Wrapped.(*workflow.WorkflowHandler); ok {
+					frontends = append(frontends, workflowHandler.ServiceInfo.Iface.Name)
+				}
+			}
+		}
 		if n, ok := node.(namespaceutil.IRNamespace); ok {
 			if nn, ok := n.(ir.IRNode); ok {
 				if nnn, ok := nn.(*linuxcontainer.Container); ok {
@@ -96,7 +107,8 @@ func inspectIR(builder *cmdbuilder.CmdBuilder) (map[*workflowspec.Service][]gola
 									}
 								}
 							}
-
+						} else {
+							logger.Logger.Warnf("unknown node type: %s", utils.GetType(child))
 						}
 					}
 					logger.Logger.Debug("")
@@ -131,5 +143,5 @@ func inspectIR(builder *cmdbuilder.CmdBuilder) (map[*workflowspec.Service][]gola
 			logger.Logger.Debugf("\t\t[redis] %s", redisClient.Name())
 		}
 	}
-	return services, databases
+	return services, databases, frontends
 }

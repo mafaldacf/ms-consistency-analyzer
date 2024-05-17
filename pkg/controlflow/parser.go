@@ -7,6 +7,7 @@ import (
 	"go/ast"
 	"go/token"
 	"slices"
+	"strings"
 
 	"analyzer/pkg/service"
 	"analyzer/pkg/utils"
@@ -76,9 +77,9 @@ func visitBasicBlockDeclAndAssignsRecursor(parsedCfg *types.ParsedCFG, parsedBlo
 							Package: parsedCfg.Package,
 							Name:    varType, //FIXME, this needs to be type not name
 						},
-						Id:     types.VARIABLE_UNASSIGNED_ID,
-						Name:   lvalue,
-						Deps:   usedVars,
+						Id:   types.VARIABLE_UNASSIGNED_ID,
+						Name: lvalue,
+						Deps: usedVars,
 					}
 					parsedBlock.AddVariable(newVar)
 				}
@@ -221,7 +222,14 @@ func validateCallAndAddParams(node *ast.CallExpr, parsedBlock *types.ParsedBlock
 					}
 				}
 			}
-			// FIXTHIS: can have mannyyyyyyyyyyyyyyy types!! maybe we need a recursive function here
+		case *ast.BasicLit:
+			param = &types.Variable{
+				Type: &types.Basic{
+					Name: "string",
+				},
+				Id:   types.VARIABLE_INLINE_ID,
+				Name: strings.Trim(t.Value, "\""),
+			}
 
 		// e.g. post.ReqID
 		//       ^ ident ^ selector
@@ -237,12 +245,15 @@ func validateCallAndAddParams(node *ast.CallExpr, parsedBlock *types.ParsedBlock
 					}
 				}
 			}
+		default:
+			logger.Logger.Warnf("unknown type in validateCallAndAddParams %s", utils.GetType(t))
 		}
+
 		if param != nil {
 			parsedCall.AddParam(param)
 		}
 	}
-	logger.Logger.Debugf("[VISITOR] (2) found parsed call %s with parsed params = %v", parsedCall.GetName(), parsedCall.GetParams())
+	logger.Logger.Warnf("[VISITOR] (2) found parsed call %s with parsed params = %v", parsedCall.GetName(), parsedCall.GetParams())
 	return true
 }
 

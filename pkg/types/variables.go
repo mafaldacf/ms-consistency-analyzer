@@ -7,8 +7,8 @@ import (
 )
 
 type Ref struct {
-	Creator  string    `json:"creator,omitempty"`
-	Variable *Variable `json:"-"`
+	Creator  string
+	Variable *Variable
 }
 
 func (ref *Ref) MarshalJSON() ([]byte, error) {
@@ -27,16 +27,31 @@ const VARIABLE_INLINE_ID int64 = -1
 const VARIABLE_UNASSIGNED_ID int64 = -2
 
 type Variable struct {
-	Name          string          `json:"name"`
-	Id            int64           `json:"id"`
+	Name          string
+	Type          Type
+	Id            int64
 
-	Deps          []*Variable     `json:"deps,omitempty"`
-	Ref           *Ref            `json:"ref,omitempty"`
+	Deps          []*Variable
+	Ref           *Ref
 
-	IsBlockParam  bool            `json:"-"`
-	BlockParamIdx int             `json:"-"`
+	IsBlockParam  bool
+	BlockParamIdx int
+}
 
-	Type          Type 			  `json:"-"`
+func (v *Variable) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Name    	string 			`json:"name"`
+		Type      	string 			`json:"type,omitempty"`
+		Id      	int64  			`json:"id"`
+		Deps      	[]*Variable 	`json:"deps,omitempty"`
+		Ref      	*Ref  			`json:"ref,omitempty"`
+	}{
+		Name:   v.Name,
+		Type: 	v.Type.String(),
+		Id: 	v.Id,
+		Deps: 	v.Deps,
+		Ref: 	v.Ref,
+	})
 }
 
 func (v *Variable) String() string {

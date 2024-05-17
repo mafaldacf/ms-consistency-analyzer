@@ -68,7 +68,7 @@ func Init(name string, path string) (*App, error) {
 func (app *App) Save() {
 	// print in JSON format
 	// https://omute.net/editor
-	file, err := os.Create("assets/app.json")
+	file, err := os.Create(fmt.Sprintf("assets/%s_app.json", app.Name))
 	if err != nil {
 		fmt.Println("Error creating file:", err)
 		return

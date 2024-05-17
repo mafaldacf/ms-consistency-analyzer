@@ -1,0 +1,67 @@
+{
+  "method": "FrontendService.Frontend(ctx)",
+  "caller": "Client",
+  "callee": "FrontendService",
+  "params": [
+    {
+      "name": "ctx",
+      "type": "context.Context",
+      "id": 1,
+      "ref": {
+        "name": "ctx",
+        "creator": "Client",
+        "id": 0
+      }
+    }
+  ],
+  "edges": [
+    {
+      "call": "fooService.Foo(ctx context.Context, text string)",
+      "method": "FooService.Foo(ctx, text)",
+      "caller": "FrontendService",
+      "callee": "FooService",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "context.Context",
+          "id": 1,
+          "ref": {
+            "name": "ctx",
+            "creator": "FrontendService",
+            "id": 1
+          }
+        },
+        {
+          "name": "Frontend",
+          "type": "string",
+          "id": 2
+        }
+      ],
+      "edges": null
+    },
+    {
+      "call": "barService.Bar(ctx context.Context, text string)",
+      "method": "BarService.Bar(ctx, text)",
+      "caller": "FrontendService",
+      "callee": "BarService",
+      "params": [
+        {
+          "name": "ctx",
+          "type": "context.Context",
+          "id": 1,
+          "ref": {
+            "name": "ctx",
+            "creator": "FrontendService",
+            "id": 1
+          }
+        },
+        {
+          "name": "Frontend",
+          "type": "string",
+          "id": 3
+        }
+      ],
+      "edges": null
+    }
+  ]
+}

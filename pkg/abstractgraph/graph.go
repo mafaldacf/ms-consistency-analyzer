@@ -186,6 +186,7 @@ func (call *AbstractDatabaseCall) GetCallerStr() string {
 }
 
 type AbstractGraph struct {
+	AppName 	    string
 	Nodes           []AbstractNode
 	AppServiceNodes map[string]*service.ServiceNode
 	GlobalIndex     int64
@@ -197,16 +198,17 @@ func (graph *AbstractGraph) getAndIncGlobalIndex() int64 {
 	return prev
 }
 
-func Build(app *app.App, entryPoints []string) *AbstractGraph {
+func Build(app *app.App, frontends []string) *AbstractGraph {
 	graph := &AbstractGraph{
+		AppName: 		 app.Name,
 		Nodes:           make([]AbstractNode, 0),
 		AppServiceNodes: app.Services,
 		GlobalIndex:     1,
 	}
-	for _, serviceName := range entryPoints {
-		service := app.Services[serviceName]
+	for _, frontend := range frontends {
+		service := app.Services[frontend]
 		for _, method := range service.ExposedMethods {
-			graph.initBuild(app, app.Services[serviceName], method)
+			graph.initBuild(app, app.Services[frontend], method)
 		}
 	}
 
@@ -253,7 +255,7 @@ func getVariableIfPointer(variable *types.Variable) *types.Variable {
 func (graph *AbstractGraph) Save() {
 	// print in JSON format
 	// https://omute.net/editor
-	file, err := os.Create("assets/abstractgraph.json")
+	file, err := os.Create(fmt.Sprintf("assets/%s_abstractgraph.json", graph.AppName))
 	if err != nil {
 		fmt.Println("Error creating file:", err)
 		return

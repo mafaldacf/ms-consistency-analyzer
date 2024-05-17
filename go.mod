@@ -6,15 +6,15 @@ toolchain go1.22.2
 
 require golang.org/x/tools v0.21.0
 
-require github.com/blueprint-uservices/blueprint/examples/postnotification/workflow v0.0.0 // indirect
+require github.com/blueprint-uservices/blueprint/plugins v0.0.0
+require github.com/blueprint-uservices/blueprint/blueprint v0.0.0
+require github.com/blueprint-uservices/blueprint/runtime v0.0.0 // indirect
 
+require github.com/blueprint-uservices/blueprint/examples/postnotification/workflow v0.0.0 // indirect
 require github.com/blueprint-uservices/blueprint/examples/postnotification/wiring v0.0.0
 
-require github.com/blueprint-uservices/blueprint/plugins v0.0.0
-
-require github.com/blueprint-uservices/blueprint/blueprint v0.0.0
-
-require github.com/blueprint-uservices/blueprint/runtime v0.0.0 // indirect
+require github.com/blueprint-uservices/blueprint/examples/foobar/workflow v0.0.0 // indirect
+require github.com/blueprint-uservices/blueprint/examples/foobar/wiring v0.0.0
 
 require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
@@ -42,14 +42,14 @@ require (
 	golang.org/x/sync v0.7.0 // indirect
 )
 
+replace github.com/blueprint-uservices/blueprint/plugins => ./blueprint/plugins
+replace github.com/blueprint-uservices/blueprint/blueprint => ./blueprint/blueprint
+replace github.com/blueprint-uservices/blueprint/runtime => ./blueprint/runtime
+
 replace github.com/blueprint-uservices/blueprint/examples/postnotification => ./blueprint/examples/postnotification
-
 replace github.com/blueprint-uservices/blueprint/examples/postnotification/workflow => ./blueprint/examples/postnotification/workflow
-
 replace github.com/blueprint-uservices/blueprint/examples/postnotification/wiring => ./blueprint/examples/postnotification/wiring
 
-replace github.com/blueprint-uservices/blueprint/plugins => ./blueprint/plugins
-
-replace github.com/blueprint-uservices/blueprint/blueprint => ./blueprint/blueprint
-
-replace github.com/blueprint-uservices/blueprint/runtime => ./blueprint/runtime
+replace github.com/blueprint-uservices/blueprint/examples/foobar => ./blueprint/examples/foobar
+replace github.com/blueprint-uservices/blueprint/examples/foobar/workflow => ./blueprint/examples/foobar/workflow
+replace github.com/blueprint-uservices/blueprint/examples/foobar/wiring => ./blueprint/examples/foobar/wiring

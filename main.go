@@ -4,6 +4,8 @@ import (
 	"analyzer/pkg/abstractgraph"
 	"analyzer/pkg/app"
 	"analyzer/pkg/frameworks/blueprint"
+	"analyzer/pkg/logger"
+	"flag"
 	"fmt"
 
 	// this needs to target the root of the app otherwise (and then replace the path in the go.mod file)
@@ -15,22 +17,35 @@ import (
 	// 		analyzer/apps/postnotification/workflow/postnotification'
 	// but the existing packages in the mod.Package represents the root of the app
 	// 		'postnotification/workflow/postnotification'
-	"github.com/blueprint-uservices/blueprint/examples/postnotification/wiring/specs"
+	pn_specs "github.com/blueprint-uservices/blueprint/examples/postnotification/wiring/specs"
+	fb_specs "github.com/blueprint-uservices/blueprint/examples/foobar/wiring/specs"
+	"github.com/blueprint-uservices/blueprint/plugins/cmdbuilder"
 )
 
 func main() {
 
-	appName := "postnotification"
+	appName := flag.String("app", "", "The name of the application to be analyzed")
+	flag.Parse()
+	if *appName != "postnotification" && *appName != "foobar" {
+		logger.Logger.Fatal(fmt.Sprintf("invalid app name (%s) must provide an application name ('postnotification' or 'foobar') using the -app flag", *appName))
+	}
 
-	services, databases  := frameworks.BuildAndInspectIR(appName, specs.Docker)
-	app, err := app.Init(appName, fmt.Sprintf("examples/%s/workflow/%s", appName, appName))
+	var spec cmdbuilder.SpecOption
+	if *appName == "postnotification" {
+		spec = pn_specs.Docker
+	} else if *appName == "foobar" {
+		spec = fb_specs.Docker
+	}
+
+	services, databases, frontends := frameworks.BuildAndInspectIR(*appName, spec)
+	app, err := app.Init(*appName, fmt.Sprintf("examples/%s/workflow/%s", *appName, *appName))
 	if err != nil {
 		return
 	}
 	app.RegisterDatabaseInstances(databases)
 	app.RegisterServiceNodes(services)
 	app.Save()
-	entryPoints := []string{"UploadService"}
-	abstractGraph := abstractgraph.Build(app, entryPoints)
+
+	abstractGraph := abstractgraph.Build(app, frontends)
 	abstractGraph.Save()
 }
