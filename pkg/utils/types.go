@@ -24,3 +24,8 @@ func GetType(node interface{}) string {
 func IsBasicType(t string) bool {
 	return slices.Contains(basicTypes, t)
 }
+
+func IsType[T any](obj interface{}) bool {
+	_, ok := obj.(T)
+	return ok
+}

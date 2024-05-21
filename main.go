@@ -5,6 +5,7 @@ import (
 	"analyzer/pkg/app"
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
+	"analyzer/pkg/detector"
 	"flag"
 	"fmt"
 
@@ -48,4 +49,8 @@ func main() {
 
 	abstractGraph := abstractgraph.Build(app, frontends)
 	abstractGraph.Save()
+
+	for _, node := range abstractGraph.Nodes {
+		detector.CaptureInconsistencies(node)
+	}
 }

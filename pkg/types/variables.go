@@ -4,6 +4,7 @@ import (
 	"analyzer/pkg/logger"
 	"encoding/json"
 	"fmt"
+	"github.com/golang-collections/collections/stack"
 )
 
 type Ref struct {
@@ -97,4 +98,25 @@ func (v *Variable) AddReferenceWithID(callerParam *Variable, callerStr string) {
 func (v *Variable) AddOriginalReferenceWithID(ref *Ref) {
 	v.Id = ref.Variable.Id
 	v.Ref = ref
+}
+
+func (v *Variable) IsReferencedObject(target *Variable) bool {
+	var stack stack.Stack
+	stack.Push(v)
+	for stack.Len() != 0 {
+		variable := stack.Pop().(*Variable)
+		// cannot do variable == target since they can be different due to the Ref variable
+		// but ids are still the same because they were previously matched in the abstract graph
+		// e.g. in case variable == target.ref.variable
+		if variable.Id == target.Id {
+			return true
+		}
+		if variable.HasReference() {
+			stack.Push(variable.Ref.Variable)
+		}
+		for _, dep := range variable.Deps {
+			stack.Push(dep)
+		}
+	}
+	return false
 }

@@ -26,9 +26,9 @@ func visitBasicBlockDeclAndAssigns(method *service.ParsedFuncDecl) {
 	logger.Logger.Debugln()
 }
 
-func getStmtsIfGoRoutine(node ast.Node) []ast.Node {
+func getStmtsIfGoRoutine(node ast.Node) ([]ast.Node, bool) {
 	var stmts []ast.Node
-	found := false
+	var found bool = false
 	if goStmt, ok := node.(*ast.GoStmt); ok {
 		if funcLit, ok := goStmt.Call.Fun.(*ast.FuncLit); ok {
 			for _, stmt := range funcLit.Body.List {
@@ -37,10 +37,42 @@ func getStmtsIfGoRoutine(node ast.Node) []ast.Node {
 			}
 		}
 	}
-	if !found {
-		stmts = append(stmts, node)
+	return stmts, found
+}
+
+func saveBlockDeclsAndAssigns(parsedCfg *types.ParsedCFG, parsedBlock *types.ParsedBlock, node ast.Node) {
+	ok, varType, lvalues, deps := isVarDeclOrAssign(node)
+	if ok {
+		for _, lvalue := range lvalues {
+			var usedVars []*types.Variable
+			for _, dep := range deps {
+				for _, v := range parsedBlock.GetVariables() {
+					if dep == v.Name {
+						// remove duplicates e.g.
+						// message := Message{
+						//	ReqID:     Int64ToString(post.ReqID),
+						//	PostID:    Int64ToString(post.PostID),
+						//}
+						// uses twice the variable 'post'
+						if !slices.Contains(usedVars, v) {
+							usedVars = append(usedVars, v)
+						}
+						break
+					}
+				}
+			}
+			newVar := &types.Variable{
+				Type: &types.User{
+					Package: parsedCfg.Package,
+					Name:    varType, //FIXME, this needs to be type not name
+				},
+				Id:   types.VARIABLE_UNASSIGNED_ID,
+				Name: lvalue,
+				Deps: usedVars,
+			}
+			parsedBlock.AddVariable(newVar)
+		}
 	}
-	return stmts
 }
 
 func visitBasicBlockDeclAndAssignsRecursor(parsedCfg *types.ParsedCFG, parsedBlock *types.ParsedBlock, visited map[int32]bool) {
@@ -51,39 +83,12 @@ func visitBasicBlockDeclAndAssignsRecursor(parsedCfg *types.ParsedCFG, parsedBlo
 	}
 	for _, node := range parsedBlock.GetNodes() {
 		// if it is a go routine it will contain many stmts
-		for _, stmt := range getStmtsIfGoRoutine(node) {
-			ok, varType, lvalues, deps := isVarDeclOrAssign(stmt)
-			if ok {
-				for _, lvalue := range lvalues {
-					var usedVars []*types.Variable
-					for _, dep := range deps {
-						for _, v := range parsedBlock.GetVariables() {
-							if dep == v.Name {
-								// remove duplicates e.g.
-								// message := Message{
-								//	ReqID:     Int64ToString(post.ReqID),
-								//	PostID:    Int64ToString(post.PostID),
-								//}
-								// uses twice the variable 'post'
-								if !slices.Contains(usedVars, v) {
-									usedVars = append(usedVars, v)
-								}
-								break
-							}
-						}
-					}
-					newVar := &types.Variable{
-						Type: &types.User{
-							Package: parsedCfg.Package,
-							Name:    varType, //FIXME, this needs to be type not name
-						},
-						Id:   types.VARIABLE_UNASSIGNED_ID,
-						Name: lvalue,
-						Deps: usedVars,
-					}
-					parsedBlock.AddVariable(newVar)
-				}
-			}
+		stmts, found := getStmtsIfGoRoutine(node)
+		if !found {
+			stmts = append(stmts, node)
+		}
+		for _, stmt := range stmts {
+			saveBlockDeclsAndAssigns(parsedCfg, parsedBlock, stmt)
 		}
 	}
 
@@ -155,8 +160,11 @@ func findCallsInBlock(node ast.Node, parsedBlock *types.ParsedBlock, parsedFuncD
 	// Go Routines
 	// ------------
 	case *ast.GoStmt:
-		for _, stmt := range getStmtsIfGoRoutine(node) {
-			findCallsInBlock(stmt, parsedBlock, parsedFuncDecl)
+		stmts, found := getStmtsIfGoRoutine(node)
+		if found {
+			for _, stmt := range stmts {
+				findCallsInBlock(stmt, parsedBlock, parsedFuncDecl)
+			}
 		}
 	// -------------------
 	// Declaring Variables
@@ -253,7 +261,7 @@ func validateCallAndAddParams(node *ast.CallExpr, parsedBlock *types.ParsedBlock
 			parsedCall.AddParam(param)
 		}
 	}
-	logger.Logger.Warnf("[VISITOR] (2) found parsed call %s with parsed params = %v", parsedCall.GetName(), parsedCall.GetParams())
+	logger.Logger.Infof("[CFG] found call %s", parsedCall.String())
 	return true
 }
 

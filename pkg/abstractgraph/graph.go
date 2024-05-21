@@ -12,6 +12,19 @@ import (
 	"os"
 )
 
+type AbstractGraph struct {
+	AppName  string
+	Nodes    []AbstractNode
+	Services map[string]*service.ServiceNode
+	GIndex   int64
+}
+
+func (graph *AbstractGraph) getAndIncGIndex() int64 {
+	prev := graph.GIndex
+	graph.GIndex++
+	return prev
+}
+
 type AbstractNode interface {
 	GetParams() []*types.Variable
 	GetParam(int) *types.Variable
@@ -88,7 +101,6 @@ type AbstractTempInternalCall struct {
 	Children     []AbstractNode                      `json:"edges"`
 }
 
-
 func (call *AbstractTempInternalCall) GetChildren() []AbstractNode {
 	return call.Children
 }
@@ -126,7 +138,7 @@ type AbstractDatabaseCall struct {
 	Visited      bool                            `json:"-"` // omit from json
 	Call         string                          `json:"call"`
 	Method       string                          `json:"method"`
-	Caller       string                          `json:"caller"`
+	Service      string                          `json:"caller"`
 	Params       []*types.Variable               `json:"params"`
 	ParsedCall   *service.DatabaseParsedCallExpr `json:"-"` // omit from json
 	Children     []AbstractNode                  `json:"queue_handlers,omitempty"`
@@ -137,7 +149,7 @@ type AbstractQueueHandler struct {
 	AbstractServiceCall `json:"handler"`
 	DbInstance          types.DatabaseInstance `json:"db_instance"`
 	Publisher           *AbstractDatabaseCall  `json:"-"`
-	Receiver 		    bool 				   `json:"-"`
+	Receiver            bool                   `json:"-"`
 }
 
 func (call *AbstractQueueHandler) HasQueueReceiver() bool {
@@ -153,7 +165,11 @@ func (call *AbstractDatabaseCall) GetParams() []*types.Variable {
 }
 
 func (call *AbstractDatabaseCall) GetParam(index int) *types.Variable {
-	return call.Params[index]
+	if index > 0 && index < len(call.Params) {
+		return call.Params[index]
+	}
+	logger.Logger.Warnf("did not find parameter of index %d for call %s", index, call.String())
+	return nil
 }
 
 func (call *AbstractDatabaseCall) GetName() string {
@@ -182,28 +198,15 @@ func (call *AbstractDatabaseCall) IsVisited() bool {
 }
 
 func (call *AbstractDatabaseCall) GetCallerStr() string {
-	return call.Caller
-}
-
-type AbstractGraph struct {
-	AppName 	    string
-	Nodes           []AbstractNode
-	AppServiceNodes map[string]*service.ServiceNode
-	GlobalIndex     int64
-}
-
-func (graph *AbstractGraph) getAndIncGlobalIndex() int64 {
-	prev := graph.GlobalIndex
-	graph.GlobalIndex++
-	return prev
+	return call.Service
 }
 
 func Build(app *app.App, frontends []string) *AbstractGraph {
 	graph := &AbstractGraph{
-		AppName: 		 app.Name,
-		Nodes:           make([]AbstractNode, 0),
-		AppServiceNodes: app.Services,
-		GlobalIndex:     1,
+		AppName:  app.Name,
+		Nodes:    make([]AbstractNode, 0),
+		Services: app.Services,
+		GIndex:   1,
 	}
 	for _, frontend := range frontends {
 		service := app.Services[frontend]
@@ -215,7 +218,7 @@ func Build(app *app.App, frontends []string) *AbstractGraph {
 	for _, node := range graph.Nodes {
 		graph.cleanVisited(node)
 	}
-	graph.GlobalIndex = 1
+	graph.GIndex = 1
 	for _, abstractEntry := range graph.Nodes {
 		graph.matchIdentifiers(abstractEntry)
 	}
@@ -304,7 +307,7 @@ func (graph *AbstractGraph) createDummyAbstractServiceCall(node *service.Service
 		call.ParsedCall.Params = append(call.ParsedCall.Params, &types.Variable{
 			Name: p.GetName(),
 			Type: p.GetType(),
-			Id:   graph.getAndIncGlobalIndex(),
+			Id:   graph.getAndIncGIndex(),
 		})
 	}
 	call.Params = call.ParsedCall.Params
@@ -335,14 +338,14 @@ func (graph *AbstractGraph) recurseBuild(app *app.App, abstractNode AbstractNode
 
 	switch node := abstractNode.(type) {
 	case *AbstractServiceCall:
-		targetMethod := graph.AppServiceNodes[node.Callee].GetExposedMethod(node.ParsedCall.Name)
+		targetMethod := graph.Services[node.Callee].GetExposedMethod(node.ParsedCall.Name)
 		graph.appendAbstractEdges(node, node, targetMethod)
 	case *AbstractDatabaseCall:
 		if node.ParsedCall.Method.IsQueueWrite() {
 			graph.appendPublisherQueueHandlers(app, node)
 		}
 	case *AbstractQueueHandler:
-		targetMethod := graph.AppServiceNodes[node.Callee].GetQueueHandlerMethod(node.ParsedCall.Name)
+		targetMethod := graph.Services[node.Callee].GetQueueHandlerMethod(node.ParsedCall.Name)
 		graph.appendAbstractEdges(node, node, targetMethod)
 	default:
 		logger.Logger.Warnf("Error recursing build for %s\nUnknown node type: %s", node, utils.GetType(node))
@@ -362,12 +365,12 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				ParsedCall: parsedCall,
 				Params:     parsedCall.Params,
 				Call:       parsedCall.SimpleString(),
-				Caller:     parsedCall.CallerTypeName.GetName(),
+				Service:    parsedCall.CallerTypeName.GetName(),
 				Method:     parsedCall.Method.String(),
 				DbInstance: parsedCall.DbInstance,
 			}
 			rootParent.AddChild(child)
-			
+
 			if rootIsQueueHandler && !rootQueueHandler.HasQueueReceiver() {
 				if !graph.referencePublisherParams(rootQueueHandler, child) {
 					graph.referenceServiceCallerParams(rootParent, directParent, child)
@@ -395,7 +398,7 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				Method:     parsedCall.Method.String(),
 			}
 			graph.referenceServiceCallerParams(rootParent, directParent, tempChild)
-			tempMethod := graph.AppServiceNodes[tempChild.Service].GetInternalMethod(tempChild.ParsedCall.Name)
+			tempMethod := graph.Services[tempChild.Service].GetInternalMethod(tempChild.ParsedCall.Name)
 			graph.appendAbstractEdges(rootParent, tempChild, tempMethod)
 		}
 	}
@@ -466,7 +469,7 @@ func (graph *AbstractGraph) referenceServiceCallerParams(rootParent AbstractNode
 							dep.AddReferenceWithID(callerParam, child.GetCallerStr())
 						} else {
 							if len(callerParam.Deps) > 0 {
-								dep.AssignID(graph.getAndIncGlobalIndex())
+								dep.AssignID(graph.getAndIncGIndex())
 								dep.AddDependencies(callerParam.Deps)
 							} else if callerParam.HasReference() {
 								// this can happen with the context variable (e.g. handleMessage called by the workerThread in the NotifyService)
@@ -480,8 +483,8 @@ func (graph *AbstractGraph) referenceServiceCallerParams(rootParent AbstractNode
 				}
 			}
 			if dep.IsUnassigned() {
-				dep.AssignID(graph.getAndIncGlobalIndex())
+				dep.AssignID(graph.getAndIncGIndex())
 			}
 		}
-	}	
+	}
 }

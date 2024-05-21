@@ -23,7 +23,7 @@ func GenerateMethodCFGs(node *service.ServiceNode, parsedFuncDecl *service.Parse
 			BlockParamIdx: i,
 		})
 	}
-	logger.Logger.Infof("parsed %s", parsedCfg.String())
+	logger.Logger.Infof("[CFG] parsed CFG %s", parsedCfg.String())
 	//logger.Logger.Info(parsedCfg.FullString())
 }
 

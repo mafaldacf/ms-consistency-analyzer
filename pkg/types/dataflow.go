@@ -29,9 +29,12 @@ func InitParsedCFG(cfg *cfg.CFG, fullMethod string) *ParsedCFG {
 }
 
 func (cfg *ParsedCFG) String() string {
-	str := fmt.Sprintf("CFG @ %s", cfg.FullMethod)
-	for _, block := range cfg.ParsedBlocks {
-		str += ", " + block.String()
+	str := fmt.Sprintf("%s: ", cfg.FullMethod)
+	for i, block := range cfg.ParsedBlocks {
+		str += block.String()
+		if i < len(cfg.ParsedBlocks) - 1 {
+			str += ", "
+		}
 	}
 	return str + "\n"
 }
@@ -104,7 +107,7 @@ func (block *ParsedBlock) CopyVarsFromPredecessor(predecessor *ParsedBlock) {
 }
 
 func (block *ParsedBlock) String() string {
-	str := fmt.Sprintf("Block %d (", block.Block.Index)
+	str := fmt.Sprintf("Block %d [%s] (", block.Block.Index, block.Block.Kind)
 	for i, v := range block.Vars {
 		str += v.Name
 		if i < len(block.Vars) - 1 {

@@ -63,6 +63,42 @@ func (b *BlueprintBackend) MatchQueueIdentifiers() map[int]int {
 	return matches
 }
 
+func (b *BlueprintBackend) GetWrittenObjectIndex() int {
+	switch b.Name {
+	case "Cache.Put":
+		return 2
+	case "Queue.Push":
+		return 1
+	}
+	return -1
+}
+
+func (b *BlueprintBackend) GetReadObjectIndex() int {
+	switch b.Name {
+	case "Cache.Get":
+		return 2
+	case "Queue.Pop":
+		return 1
+	}
+	return -1
+}
+
+func (b *BlueprintBackend) GetWrittenKeyIndex() int {
+	switch b.Name {
+	case "Cache.Put":
+		return 1
+	}
+	return -1
+}
+
+func (b *BlueprintBackend) GetReadKeyIndex() int {
+	switch b.Name {
+	case "Cache.Get":
+		return 1
+	}
+	return -1
+}
+
 func GetBackendMethod(name string) *BlueprintBackend {
 	switch name {
 	case "Cache.Put":
