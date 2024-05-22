@@ -68,7 +68,8 @@ func Init(name string, path string) (*App, error) {
 func (app *App) Save() {
 	// print in JSON format
 	// https://omute.net/editor
-	file, err := os.Create(fmt.Sprintf("assets/%s_app.json", app.Name))
+	path := fmt.Sprintf("assets/%s/app.json", app.Name)
+	file, err := os.Create(path)
 	if err != nil {
 		fmt.Println("Error creating file:", err)
 		return
@@ -80,6 +81,7 @@ func (app *App) Save() {
 		return
 	}
 	file.Write(data)
+	logger.Logger.Infof("[JSON] app saved at %s", path)
 }
 
 func getShortDbInstanceName(name string) string {

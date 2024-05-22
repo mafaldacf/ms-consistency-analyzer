@@ -35,6 +35,7 @@ type AbstractNode interface {
 	SetVisited(bool)
 	IsVisited() bool
 	GetCallerStr() string
+	GetCallee() string
 }
 
 type AbstractServiceCall struct {
@@ -63,6 +64,10 @@ func (call *AbstractServiceCall) GetParam(index int) *types.Variable {
 
 func (call *AbstractServiceCall) GetName() string {
 	return call.ParsedCall.Name
+}
+
+func (call *AbstractServiceCall) GetCallee() string {
+	return call.Callee
 }
 
 func (call *AbstractServiceCall) String() string {
@@ -258,7 +263,8 @@ func getVariableIfPointer(variable *types.Variable) *types.Variable {
 func (graph *AbstractGraph) Save() {
 	// print in JSON format
 	// https://omute.net/editor
-	file, err := os.Create(fmt.Sprintf("assets/%s_abstractgraph.json", graph.AppName))
+	path := fmt.Sprintf("assets/%s/abstractgraph.json", graph.AppName)
+	file, err := os.Create(path)
 	if err != nil {
 		fmt.Println("Error creating file:", err)
 		return
@@ -272,6 +278,7 @@ func (graph *AbstractGraph) Save() {
 		}
 		file.Write(data)
 	}
+	logger.Logger.Infof("[JSON] graph saved at %s", path)
 }
 
 func (graph *AbstractGraph) initBuild(app *app.App, serviceNode *service.ServiceNode, targetMethod *service.ParsedFuncDecl) {

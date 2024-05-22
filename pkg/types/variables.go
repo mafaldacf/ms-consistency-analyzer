@@ -33,6 +33,7 @@ type Variable struct {
 	Id            int64
 
 	Deps          []*Variable
+	Includes      []*Variable
 	Ref           *Ref
 
 	IsBlockParam  bool

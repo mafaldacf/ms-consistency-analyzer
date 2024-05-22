@@ -1,0 +1,32 @@
+{
+  "inconsistencies": [
+    {
+      "key": "postIDStr (15)",
+      "service": "StorageService",
+      "write": {
+        "key": "postIDStr (8)",
+        "object": "post (5)",
+        "service": "StorageService",
+        "database": "post_db",
+        "call": "cache.Put(ctx context.Context, key string, value interface{})"
+      },
+      "database": "post_db",
+      "call": "cache.Get(ctx context.Context, key string, value interface{})"
+    }
+  ],
+  "writes": [
+    {
+      "key": "postIDStr (8)",
+      "object": "post (5)",
+      "service": "StorageService",
+      "database": "post_db",
+      "call": "cache.Put(ctx context.Context, key string, value interface{})"
+    },
+    {
+      "object": "message (7)",
+      "service": "UploadService",
+      "database": "notification_queue",
+      "call": "queue.Push(ctx context.Context, item interface{})"
+    }
+  ]
+}

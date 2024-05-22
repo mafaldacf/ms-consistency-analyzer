@@ -50,7 +50,9 @@ func main() {
 	abstractGraph := abstractgraph.Build(app, frontends)
 	abstractGraph.Save()
 
-	for _, node := range abstractGraph.Nodes {
-		detector.CaptureInconsistencies(node)
+	for _, entryNode := range abstractGraph.Nodes {
+		request := detector.InitRequest(entryNode)
+		request.CaptureInconsistencies()
+		request.SaveInconsistencies(app.Name)
 	}
 }
