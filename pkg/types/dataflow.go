@@ -23,7 +23,7 @@ func InitParsedCFG(cfg *cfg.CFG, fullMethod string) *ParsedCFG {
 		FullMethod: fullMethod,
 	}
 	for _, block := range cfg.Blocks {
-		parsedCfg.ParsedBlocks = append(parsedCfg.ParsedBlocks, &ParsedBlock{ Block: block, })
+		parsedCfg.ParsedBlocks = append(parsedCfg.ParsedBlocks, &ParsedBlock{ Block: block})
 	}
 	return parsedCfg
 }
@@ -66,9 +66,10 @@ func (cfg *ParsedCFG) GetParsedBlockAtIndex(index int32) *ParsedBlock {
 }
 
 type ParsedBlock struct {
-	Block        *cfg.Block
-	Vars 		 []*Variable
-	Info 		 BlockInfo
+	Block        	*cfg.Block
+	// blocks can contain inline go routines
+	Vars 		 	[]*Variable
+	Info 		 	BlockInfo
 }
 
 type BlockInfo struct {

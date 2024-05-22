@@ -9,7 +9,7 @@ import (
 	"golang.org/x/tools/go/cfg"
 )
 
-func GenerateMethodCFGs(node *service.ServiceNode, parsedFuncDecl *service.ParsedFuncDecl) {
+func GenerateMethodCFG(parsedFuncDecl *service.ParsedFuncDecl) {
 	cfg := cfg.New(parsedFuncDecl.GetBody(), mayReturn)
 	parsedCfg := types.InitParsedCFG(cfg, parsedFuncDecl.Name)
 	parsedFuncDecl.SetParsedCFG(parsedCfg)

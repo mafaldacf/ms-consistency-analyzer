@@ -93,8 +93,12 @@ func (node *ServiceNode) isMethodExposedByService(funcDecl *ast.FuncDecl) bool {
 }
 
 func (node *ServiceNode) parseFuncDeclParams(funcDecl *ast.FuncDecl) []*types.FunctionParameter {
-	var params []*types.FunctionParameter
-	for _, field := range funcDecl.Type.Params.List {
+	return node.ParseFieldList(funcDecl.Type.Params)
+}
+
+func (node *ServiceNode) ParseFieldList(params *ast.FieldList) []*types.FunctionParameter {
+	var fnParams []*types.FunctionParameter
+	for _, field := range params.List {
 		// TODO: any types with selector! e.g. model.Message (careful with context.Context)
 		switch t := field.Type.(type) {
 		case *ast.Ident:
@@ -115,7 +119,7 @@ func (node *ServiceNode) parseFuncDeclParams(funcDecl *ast.FuncDecl) []*types.Fu
 						Package: node.Package,
 					})
 				}
-				params = append(params, newParam)
+				fnParams = append(fnParams, newParam)
 			}
 		case *ast.SelectorExpr:
 			if pkgIdent, ok := t.X.(*ast.Ident); ok {
@@ -132,12 +136,12 @@ func (node *ServiceNode) parseFuncDeclParams(funcDecl *ast.FuncDecl) []*types.Fu
 							},
 						},
 					}
-					params = append(params, newParam)
+					fnParams = append(fnParams, newParam)
 				}
 			}
 		}
 	}
-	return params
+	return fnParams
 }
 
 func (node *ServiceNode) ParseMethods() {

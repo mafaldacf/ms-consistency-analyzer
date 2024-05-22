@@ -13,20 +13,41 @@ import (
 	"analyzer/pkg/utils"
 )
 
-func ParseServiceMethodCFG(method *service.ParsedFuncDecl) {
-	visitBasicBlockDeclAndAssigns(method)
-	visitBasicBlockFuncCalls(method)
-}
-
-func visitBasicBlockDeclAndAssigns(method *service.ParsedFuncDecl) {
+func ParseServiceMethodCFG(node *service.ServiceNode, method *service.ParsedFuncDecl) {
 	var visited = make(map[int32]bool)
 	for _, parsedBlock := range method.ParsedCfg.GetParsedBlocks() {
-		visitBasicBlockDeclAndAssignsRecursor(method.ParsedCfg, parsedBlock, visited)
+		visitBasicBlock(node, method, parsedBlock, visited)
 	}
 	logger.Logger.Debugln()
 }
 
-func getStmtsIfGoRoutine(node ast.Node) ([]ast.Node, bool) {
+func visitBasicBlock(node *service.ServiceNode, parsedFuncDecl *service.ParsedFuncDecl, parsedBlock *types.ParsedBlock, visited map[int32]bool) {
+	if visited[parsedBlock.GetIndex()] {
+		return
+	}
+	visited[parsedBlock.GetIndex()] = true
+	for _, blockNode := range parsedBlock.GetNodes() {
+		// variable declaration and assignments
+		stmts, found := getStmtsIfInlineGoRoutine(blockNode)
+		if found {
+			for _, stmt := range stmts {
+				saveDeclsAndAssigns(parsedFuncDecl.ParsedCfg, parsedBlock, stmt)
+			}
+		} else {
+			saveDeclsAndAssigns(parsedFuncDecl.ParsedCfg, parsedBlock, blockNode)
+		}
+		// service, function, and database calls
+		saveCalls(node, blockNode, parsedBlock, parsedFuncDecl)
+	}
+
+	for _, succ := range parsedBlock.GetSuccs() {
+		parsedSucc := parsedFuncDecl.ParsedCfg.GetParsedBlockAtIndex(succ.Index)
+		parsedSucc.CopyVarsFromPredecessor(parsedBlock)
+		visitBasicBlock(node, parsedFuncDecl, parsedSucc, visited)
+	}
+}
+
+func getStmtsIfInlineGoRoutine(node ast.Node) ([]ast.Node, bool) {
 	var stmts []ast.Node
 	var found bool = false
 	if goStmt, ok := node.(*ast.GoStmt); ok {
@@ -40,7 +61,7 @@ func getStmtsIfGoRoutine(node ast.Node) ([]ast.Node, bool) {
 	return stmts, found
 }
 
-func saveBlockDeclsAndAssigns(parsedCfg *types.ParsedCFG, parsedBlock *types.ParsedBlock, node ast.Node) {
+func saveDeclsAndAssigns(parsedCfg *types.ParsedCFG, parsedBlock *types.ParsedBlock, node ast.Node) {
 	ok, varType, lvalues, deps := isVarDeclOrAssign(node)
 	if ok {
 		for _, lvalue := range lvalues {
@@ -75,52 +96,6 @@ func saveBlockDeclsAndAssigns(parsedCfg *types.ParsedCFG, parsedBlock *types.Par
 	}
 }
 
-func visitBasicBlockDeclAndAssignsRecursor(parsedCfg *types.ParsedCFG, parsedBlock *types.ParsedBlock, visited map[int32]bool) {
-	if !visited[parsedBlock.GetIndex()] {
-		visited[parsedBlock.GetIndex()] = true
-	} else {
-		return
-	}
-	for _, node := range parsedBlock.GetNodes() {
-		// if it is a go routine it will contain many stmts
-		stmts, found := getStmtsIfGoRoutine(node)
-		if !found {
-			stmts = append(stmts, node)
-		}
-		for _, stmt := range stmts {
-			saveBlockDeclsAndAssigns(parsedCfg, parsedBlock, stmt)
-		}
-	}
-
-	for _, succ := range parsedBlock.GetSuccs() {
-		parsedSucc := parsedCfg.GetParsedBlockAtIndex(succ.Index)
-		parsedSucc.CopyVarsFromPredecessor(parsedBlock)
-		visitBasicBlockDeclAndAssignsRecursor(parsedCfg, parsedSucc, visited)
-	}
-}
-
-func visitBasicBlockFuncCalls(parsedFuncDecl *service.ParsedFuncDecl) {
-	var visited = make(map[int32]bool)
-	for _, parsedBlock := range parsedFuncDecl.ParsedCfg.ParsedBlocks {
-		visitBasicBlockFuncCallsRecursor(parsedBlock, parsedFuncDecl, visited)
-	}
-	logger.Logger.Debugln()
-}
-
-func visitBasicBlockFuncCallsRecursor(parsedBlock *types.ParsedBlock, parsedFuncDecl *service.ParsedFuncDecl, visited map[int32]bool) {
-	if visited[parsedBlock.GetIndex()] {
-		return
-	}
-	visited[parsedBlock.GetIndex()] = true
-	for _, node := range parsedBlock.GetNodes() {
-		findCallsInBlock(node, parsedBlock, parsedFuncDecl)
-	}
-	for _, succ := range parsedBlock.GetSuccs() {
-		parsedSucc := parsedFuncDecl.ParsedCfg.GetParsedBlockAtIndex(succ.Index)
-		visitBasicBlockFuncCallsRecursor(parsedSucc, parsedFuncDecl, visited)
-	}
-}
-
 // hasFuncCall
 // check if we found an ast node representing a database or service function call
 //
@@ -129,41 +104,42 @@ func visitBasicBlockFuncCallsRecursor(parsedBlock *types.ParsedBlock, parsedFunc
 //  2. AssignStmt - assignment like errors from the return values of the function
 //  3. ParenExpr  - e.g. when used as a bool value in an if statement (assumes it is inside a parentheses)
 //     in this case, the unfolded node from ParenExpr is a CallExpr
-func findCallsInBlock(node ast.Node, parsedBlock *types.ParsedBlock, parsedFuncDecl *service.ParsedFuncDecl) bool {
-	switch n := node.(type) {
+func saveCalls(node *service.ServiceNode, blockNode ast.Node, parsedBlock *types.ParsedBlock, parsedFuncDecl *service.ParsedFuncDecl) bool {
+	switch n := blockNode.(type) {
 	case *ast.ExprStmt:
-		return findCallsInBlock(n.X, parsedBlock, parsedFuncDecl)
+		return saveCalls(node, n.X, parsedBlock, parsedFuncDecl)
 	case *ast.AssignStmt:
 		found := false
 		for _, rvalue := range n.Rhs {
-			found = findCallsInBlock(rvalue, parsedBlock, parsedFuncDecl)
+			found = saveCalls(node, rvalue, parsedBlock, parsedFuncDecl)
 		}
 		return found
 	case *ast.ParenExpr:
-		return findCallsInBlock(n.X, parsedBlock, parsedFuncDecl)
+		return saveCalls(node, n.X, parsedBlock, parsedFuncDecl)
 	case *ast.CallExpr:
-		return validateCallAndAddParams(n, parsedBlock, parsedFuncDecl)
+		return saveCallIfValid(n, parsedBlock, parsedFuncDecl)
 	case *ast.IncDecStmt:
-		return findCallsInBlock(n.X, parsedBlock, parsedFuncDecl)
+		return saveCalls(node, n.X, parsedBlock, parsedFuncDecl)
 	case *ast.CompositeLit:
 		for _, elt := range n.Elts {
-			findCallsInBlock(elt, parsedBlock, parsedFuncDecl)
+			saveCalls(node, elt, parsedBlock, parsedFuncDecl)
 		}
 	case *ast.KeyValueExpr:
-		findCallsInBlock(n.Key, parsedBlock, parsedFuncDecl)
-		findCallsInBlock(n.Value, parsedBlock, parsedFuncDecl)
+		saveCalls(node, n.Key, parsedBlock, parsedFuncDecl)
+		saveCalls(node, n.Value, parsedBlock, parsedFuncDecl)
 	case *ast.DeferStmt:
-		return findCallsInBlock(n.Call.Fun, parsedBlock, parsedFuncDecl)
+		return saveCalls(node, n.Call.Fun, parsedBlock, parsedFuncDecl)
 	case *ast.SelectorExpr:
-		return findCallsInBlock(n.X, parsedBlock, parsedFuncDecl)
+		return saveCalls(node, n.X, parsedBlock, parsedFuncDecl)
 	// ------------
 	// Go Routines
 	// ------------
 	case *ast.GoStmt:
-		stmts, found := getStmtsIfGoRoutine(node)
+		logger.Logger.Warnf("FOUND GO STMT in saveCalls: %v", n.Call)
+		stmts, found := getStmtsIfInlineGoRoutine(blockNode)
 		if found {
 			for _, stmt := range stmts {
-				findCallsInBlock(stmt, parsedBlock, parsedFuncDecl)
+				saveCalls(node, stmt, parsedBlock, parsedFuncDecl)
 			}
 		}
 	// -------------------
@@ -171,18 +147,32 @@ func findCallsInBlock(node ast.Node, parsedBlock *types.ParsedBlock, parsedFuncD
 	// ------------------
 	case *ast.DeclStmt:
 		for _, spec := range n.Decl.(*ast.GenDecl).Specs {
-			findCallsInBlock(spec, parsedBlock, parsedFuncDecl)
+			saveCalls(node, spec, parsedBlock, parsedFuncDecl)
 		}
-	// ------
-	// Others
-	// ------
-	case *ast.ValueSpec:
-	case *ast.ReturnStmt:
+	// ----------------------
+	// Nodes with expressions
+	// ----------------------
+	case *ast.UnaryExpr: // e.g. <-forever
+		saveCalls(node, n.X, parsedBlock, parsedFuncDecl)
 	case *ast.BinaryExpr: // e.g. if err != nil
+		saveCalls(node, n.X, parsedBlock, parsedFuncDecl)
+		saveCalls(node, n.Y, parsedBlock, parsedFuncDecl)
+	case *ast.ReturnStmt:
+		for _, r := range n.Results {
+			saveCalls(node, r, parsedBlock, parsedFuncDecl)
+		}
+	case *ast.ValueSpec:
+		for _, v := range n.Values {
+			saveCalls(node, v, parsedBlock, parsedFuncDecl)
+		}
+	// ---------
+	// Remaining
+	// ---------
 	case *ast.Ident:
 	case *ast.TypeAssertExpr:
+	case *ast.BasicLit: // e.g. integers (1), strings ("foo"), etc
 	default:
-		logger.Logger.Warnf("unknown type in findCallsInBlock: %s", utils.GetType(n))
+		logger.Logger.Warnf("unknown type in saveCalls: %s", utils.GetType(n))
 	}
 
 	return false
@@ -197,7 +187,7 @@ func getParsedCallAtPosition(parsedFuncDecl *service.ParsedFuncDecl, pos token.P
 	return nil, false
 }
 
-func validateCallAndAddParams(node *ast.CallExpr, parsedBlock *types.ParsedBlock, parsedFuncDecl *service.ParsedFuncDecl) bool {
+func saveCallIfValid(node *ast.CallExpr, parsedBlock *types.ParsedBlock, parsedFuncDecl *service.ParsedFuncDecl) bool {
 	parsedCall, ok := getParsedCallAtPosition(parsedFuncDecl, node.Pos())
 	if !ok {
 		return false
@@ -254,7 +244,7 @@ func validateCallAndAddParams(node *ast.CallExpr, parsedBlock *types.ParsedBlock
 				}
 			}
 		default:
-			logger.Logger.Warnf("unknown type in validateCallAndAddParams %s", utils.GetType(t))
+			logger.Logger.Warnf("unknown type in saveCallIfValid %s", utils.GetType(t))
 		}
 
 		if param != nil {
