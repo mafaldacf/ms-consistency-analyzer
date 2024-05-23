@@ -69,8 +69,8 @@ type Call interface {
 	GetName() string
 	SimpleString() string
 	IsAtPos(token.Pos) bool
-	AddParam(param *types.Variable)
-	GetParams() []*types.Variable
+	AddParam(param types.Variable)
+	GetParams() []types.Variable
 }
 
 type ParsedCallExpr struct {
@@ -83,7 +83,7 @@ type ParsedCallExpr struct {
 	TargetField string
 
 	Pos    token.Pos
-	Params []*types.Variable
+	Params []types.Variable
 	Method types.Method
 }
 
@@ -96,9 +96,9 @@ func (call *ParsedCallExpr) String() string {
 		funcCallStr += fmt.Sprintf("%s.", call.TargetField)
 	}
 	funcCallStr += fmt.Sprintf("%s(", call.Name)
-	for i, arg := range call.Method.GetParams() {
+	for i, arg := range call.Params {
 		funcCallStr += arg.String()
-		if i < len(call.Method.GetParams())-1 {
+		if i < len(call.Params)-1 {
 			funcCallStr += ", "
 		}
 	}
@@ -108,9 +108,9 @@ func (call *ParsedCallExpr) String() string {
 
 func (call *ParsedCallExpr) SimpleString() string {
 	funcCallStr := fmt.Sprintf("%s.%s(", call.TargetField, call.Name)
-	for i, arg := range call.Method.GetParams() {
+	for i, arg := range call.Params {
 		funcCallStr += arg.String()
-		if i < len(call.Method.GetParams())-1 {
+		if i < len(call.Params)-1 {
 			funcCallStr += ", "
 		}
 	}
@@ -145,11 +145,11 @@ func (svcCall *ServiceParsedCallExpr) GetName() string {
 	return svcCall.Name
 }
 
-func (svcCall *ServiceParsedCallExpr) AddParam(param *types.Variable) {
+func (svcCall *ServiceParsedCallExpr) AddParam(param types.Variable) {
 	svcCall.Params = append(svcCall.Params, param)
 }
 
-func (svcCall *ServiceParsedCallExpr) GetParams() []*types.Variable {
+func (svcCall *ServiceParsedCallExpr) GetParams() []types.Variable {
 	return svcCall.Params
 }
 
@@ -180,11 +180,11 @@ func (dbCall *DatabaseParsedCallExpr) GetName() string {
 	return dbCall.Name
 }
 
-func (dbCall *DatabaseParsedCallExpr) AddParam(param *types.Variable) {
+func (dbCall *DatabaseParsedCallExpr) AddParam(param types.Variable) {
 	dbCall.Params = append(dbCall.Params, param)
 }
 
-func (dbCall *DatabaseParsedCallExpr) GetParams() []*types.Variable {
+func (dbCall *DatabaseParsedCallExpr) GetParams() []types.Variable {
 	return dbCall.Params
 }
 
@@ -210,11 +210,11 @@ func (internalCall *InternalTempParsedCallExpr) GetName() string {
 	return internalCall.Name
 }
 
-func (internalCall *InternalTempParsedCallExpr) AddParam(param *types.Variable) {
+func (internalCall *InternalTempParsedCallExpr) AddParam(param types.Variable) {
 	internalCall.Params = append(internalCall.Params, param)
 }
 
-func (internalCall *InternalTempParsedCallExpr) GetParams() []*types.Variable {
+func (internalCall *InternalTempParsedCallExpr) GetParams() []types.Variable {
 	return internalCall.Params
 }
 
@@ -237,6 +237,14 @@ type ServiceNode struct {
 	Constructor         *ParsedFuncDecl
 
 	ImplementsQueue bool
+}
+
+func (node *ServiceNode) GetImportsMap() map[string]string {
+	imports := make(map[string]string, 0)
+	for key, importSpec := range node.Imports {
+		imports[key] = importSpec.Path
+	}
+	return imports
 }
 
 func (node *ServiceNode) GetQueueHandlersForDatabase(database types.DatabaseInstance) []*ParsedFuncDecl {

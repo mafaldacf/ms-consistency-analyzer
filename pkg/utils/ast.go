@@ -5,62 +5,14 @@ import (
 	"go/ast"
 )
 
-func TransverseExprIdentifiers(expr ast.Expr) (string, []string) {
-	var identifiers []string
-	var varType string
-
-	switch e := expr.(type) {
-	case *ast.Ident:
-		identifiers = append(identifiers, e.Name)
-	case *ast.BasicLit:
-	case *ast.CallExpr:
-		//FIXME: get type of func call
-		for _, arg := range e.Args {
-			_, r := TransverseExprIdentifiers(arg)
-			identifiers = append(identifiers, r...)
-		}
-	case *ast.CompositeLit:
-		varType = getExprType(e.Type)
-		for _, elt := range e.Elts {
-			if kv, ok := elt.(*ast.KeyValueExpr); ok {
-				if _, ok := kv.Key.(*ast.Ident); ok {
-					_, r := TransverseExprIdentifiers(kv.Value)
-					identifiers = append(identifiers, r...)
-				}
-			}
-		}
-	case *ast.SelectorExpr:
-		if ident, ok := e.X.(*ast.Ident); ok {
-			identifiers = append(identifiers, ident.Name)
-		}
-	case *ast.BinaryExpr:
-		_, rX := TransverseExprIdentifiers(e.X)
-		identifiers = append(identifiers, rX...)
-		_, rY := TransverseExprIdentifiers(e.Y)
-		identifiers = append(identifiers, rY...)
-	case *ast.TypeAssertExpr:
-		_, rX := TransverseExprIdentifiers(e.X)
-		identifiers = append(identifiers, rX...)
-	case *ast.IndexExpr: // from type assert
-		_, rX := TransverseExprIdentifiers(e.X)
-		identifiers = append(identifiers, rX...)
-	case *ast.UnaryExpr: //e.g. &post
-		_, rX := TransverseExprIdentifiers(e.X)
-		identifiers = append(identifiers, rX...)
-	default:
-		logger.Logger.Warnf("unknown type in TransverseExprIdentifiers: %s", GetType(e))
-	}
-	return varType, identifiers
-}
-
-func getExprType(expr ast.Expr) string {
+func GetExprType(expr ast.Expr) string {
 	switch e := expr.(type) {
 	case *ast.Ident:
 		return e.Name
 	case *ast.UnaryExpr:
 		return e.Op.String()
 	default:
-		logger.Logger.Warnf("unknown type in getExprType: %s", GetType(e))
+		logger.Logger.Fatalf("unknown type in GetExprType for %s: %v", GetType(e), e)
 	}
 	// FIXME: cover more use cases e.g.
 	// 1. type from other package using selector

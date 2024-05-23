@@ -15,21 +15,49 @@ type Service struct {
 	Package string
 	Name    string
 }
-type User struct {
-	Type    `json:"-"`
+type UserType struct {
+	Type     `json:"-"`
+	UserType Type
+
 	Package string
 	Name    string
 }
-type Basic struct {
-	Type    `json:"-"`
-	Name    string
+type StructType struct {
+	Type   `json:"-"`
+	Name   string
 }
-type Interface struct {
-	Type    `json:"-"`
+type MapType struct {
+	Type   `json:"-"`
+	KeyType 	Type
+	ValueType 	Type
 }
-type Pointer struct {
+type ChanType struct {
+	Type   `json:"-"`
+	ChanType   Type
+}
+type ArrayType struct {
+	Type   			`json:"-"`
+	ElementsType  	Type
+}
+type BasicType struct {
+	Type `json:"-"`
+	Name 	string
+	Value 	string
+}
+type InterfaceType struct {
+	Type `json:"-"`
+}
+type GenericType struct {
+	Type `json:"-"`
+	Name  string
+}
+type PointerType struct {
 	Type      `json:"-"`
 	PointerTo Type
+}
+type AddressType struct {
+	Type      `json:"-"`
+	AddressOf Type
 }
 
 func packageAlias(pkg string) string {
@@ -37,52 +65,62 @@ func packageAlias(pkg string) string {
 	return splits[len(splits)-1]
 }
 
-// ------------
-// SERVICE TYPE
-// ------------
+// Service
 func (t *Service) String() string {
 	return fmt.Sprintf("%s.%s", packageAlias(t.Package), t.Name)
 }
 func (t *Service) GetName() string {
 	return t.Name
 }
-
-// ------------
-// POINTER TYPE
-// ------------
-func (t *Pointer) String() string {
-	return fmt.Sprintf("*%s", t.PointerTo)
-}
-func (t *Pointer) GetName() string {
-	return t.PointerTo.GetName()
-}
-
-// ---------
-// USER TYPE
-// ---------
-func (t *User) String() string {
+// User
+func (t *UserType) String() string {
 	return fmt.Sprintf("%s.%s", packageAlias(t.Package), t.Name)
 }
-func (t *User) GetName() string {
+func (t *UserType) GetName() string {
 	return t.Name
 }
-
-// ----------
-// BASIC TYPE
-// ----------
-func (t *Basic) String() string {
+// Pointer
+func (t *PointerType) String() string {
+	return fmt.Sprintf("*%s", t.PointerTo)
+}
+// Address
+func (t *AddressType) String() string {
+	return fmt.Sprintf("&%s", t.AddressOf)
+}
+// Basic
+func (t *BasicType) String() string {
+	if t.Value != "" {
+		return fmt.Sprintf("%s (%s)", t.Name, t.Value)
+	}
 	return t.Name
 }
-func (t *Basic) GetName() string {
-	return t.Name
+// Array
+func (t *ArrayType) String() string {
+	return "[]" + t.ElementsType.String()
 }
-
-// --------------
-// INTERFACE TYPE
-// --------------
-func (t *Interface) String() string {
-	return "interface{}"
+// Map
+func (t *MapType) String() string {
+	return fmt.Sprintf("map[%s]%s", t.KeyType.String(), t.ValueType.String())
 }
-func (t *Interface) GetName() string {
+// Chan
+func (t *ChanType) String() string {
+	return fmt.Sprintf("chan %s", t.ChanType.String())
+}
+// Struct
+func (t *StructType) String() string {
+	if t.Name != "" {
+		return fmt.Sprintf("struct (%s)", t.Name)
+	}
+	return "struct"
+}
+// Generic
+func (t *GenericType) String() string {
+	if t.Name != "" {
+		return fmt.Sprintf("generic (%s)", t.Name)
+	}
+	return "undefined"
+}
+// Interface
+func (t *InterfaceType) String() string {
 	return "interface{}"
 }

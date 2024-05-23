@@ -19,9 +19,9 @@ func IsBlueprintBackendQueue(name string) bool {
 
 type BlueprintBackend struct {
 	types.Method
-	Name    string
-	Params  []*types.FunctionParameter
-	Write   bool
+	Name   string
+	Params []*types.FunctionParameter
+	Write  bool
 }
 
 func (b *BlueprintBackend) String() string {
@@ -116,7 +116,7 @@ func GetBackendMethod(name string) *BlueprintBackend {
 var ctxParam = types.FunctionParameter{
 	FieldInfo: types.FieldInfo{
 		Name: "ctx",
-		Type: &types.User{
+		Type: &types.UserType{
 			Name:    "Context",
 			Package: "context",
 		},
@@ -125,20 +125,20 @@ var ctxParam = types.FunctionParameter{
 var keyParam = types.FunctionParameter{
 	FieldInfo: types.FieldInfo{
 		Name: "key",
-		Type: &types.Basic{
-			Name:    "string",
+		Type: &types.BasicType{
+			Name: "string",
 		},
 	},
 }
 var valueParam = types.FunctionParameter{
 	FieldInfo: types.FieldInfo{
 		Name: "value",
-		Type: &types.Interface{},
+		Type: &types.InterfaceType{},
 	},
 }
 var itemParam = types.FunctionParameter{
 	FieldInfo: types.FieldInfo{
 		Name: "item",
-		Type: &types.Interface{},
+		Type: &types.InterfaceType{},
 	},
 }

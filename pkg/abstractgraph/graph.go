@@ -26,8 +26,8 @@ func (graph *AbstractGraph) getAndIncGIndex() int64 {
 }
 
 type AbstractNode interface {
-	GetParams() []*types.Variable
-	GetParam(int) *types.Variable
+	GetParams() []types.Variable
+	GetParam(int) types.Variable
 	String() string
 	GetName() string
 	GetChildren() []AbstractNode
@@ -41,24 +41,23 @@ type AbstractNode interface {
 type AbstractServiceCall struct {
 	AbstractNode `json:"-"` // omit from json
 	Visited      bool       `json:"-"` // omit from json
-	Call         string     `json:"call,omitempty"`
 	Method       string     `json:"method"`
 
 	Caller string `json:"caller"`
-	Callee string `json:"callee"`
+	Callee string `json:"-"`
 
-	Params     []*types.Variable              `json:"params"`
+	Params     []types.Variable               `json:"params"`
 	ParsedCall *service.ServiceParsedCallExpr `json:"-"` // omit from json
 
 	// nodes representing database calls cannot contain children as well
 	Children []AbstractNode `json:"edges"`
 }
 
-func (call *AbstractServiceCall) GetParams() []*types.Variable {
+func (call *AbstractServiceCall) GetParams() []types.Variable {
 	return call.Params
 }
 
-func (call *AbstractServiceCall) GetParam(index int) *types.Variable {
+func (call *AbstractServiceCall) GetParam(index int) types.Variable {
 	return call.Params[index]
 }
 
@@ -98,10 +97,9 @@ func (call *AbstractServiceCall) GetCallerStr() string {
 type AbstractTempInternalCall struct {
 	AbstractNode `json:"-"`
 	Visited      bool                                `json:"-"`
-	Call         string                              `json:"call,omitempty"`
 	Method       string                              `json:"method"`
 	Service      string                              `json:"service"`
-	Params       []*types.Variable                   `json:"params"`
+	Params       []types.Variable                    `json:"params"`
 	ParsedCall   *service.InternalTempParsedCallExpr `json:"-"`
 	Children     []AbstractNode                      `json:"edges"`
 }
@@ -114,11 +112,11 @@ func (call *AbstractTempInternalCall) String() string {
 	return call.ParsedCall.SimpleString()
 }
 
-func (call *AbstractTempInternalCall) GetParams() []*types.Variable {
+func (call *AbstractTempInternalCall) GetParams() []types.Variable {
 	return call.Params
 }
 
-func (call *AbstractTempInternalCall) GetParam(index int) *types.Variable {
+func (call *AbstractTempInternalCall) GetParam(index int) types.Variable {
 	return call.Params[index]
 }
 
@@ -141,10 +139,9 @@ func (call *AbstractTempInternalCall) GetCallerStr() string {
 type AbstractDatabaseCall struct {
 	AbstractNode `json:"-"`                      // omit from json
 	Visited      bool                            `json:"-"` // omit from json
-	Call         string                          `json:"call"`
 	Method       string                          `json:"method"`
 	Service      string                          `json:"caller"`
-	Params       []*types.Variable               `json:"params"`
+	Params       []types.Variable                `json:"params"`
 	ParsedCall   *service.DatabaseParsedCallExpr `json:"-"` // omit from json
 	Children     []AbstractNode                  `json:"queue_handlers,omitempty"`
 	DbInstance   types.DatabaseInstance          `json:"db_instance"`
@@ -165,15 +162,14 @@ func (call *AbstractQueueHandler) EnableQueueReceiver() {
 	call.Receiver = true
 }
 
-func (call *AbstractDatabaseCall) GetParams() []*types.Variable {
+func (call *AbstractDatabaseCall) GetParams() []types.Variable {
 	return call.Params
 }
 
-func (call *AbstractDatabaseCall) GetParam(index int) *types.Variable {
+func (call *AbstractDatabaseCall) GetParam(index int) types.Variable {
 	if index > 0 && index < len(call.Params) {
 		return call.Params[index]
 	}
-	logger.Logger.Warnf("did not find parameter of index %d for call %s", index, call.String())
 	return nil
 }
 
@@ -252,12 +248,18 @@ func (graph *AbstractGraph) matchIdentifiers(node AbstractNode) {
 }
 
 // FIXME: this should be recursive!!
-func getVariableIfPointer(variable *types.Variable) *types.Variable {
-	value := variable
-	if _, ok := value.Type.(*types.Pointer); ok {
-		value = value.Deps[0]
+func getVariableIfPointer(variable types.Variable) types.Variable {
+	if variable.GetVariableInfo() == nil {
+		logger.Logger.Fatalf("missing info for variable %v", variable)
 	}
-	return value
+	if variable.GetVariableInfo().GetType() == nil {
+		logger.Logger.Fatalf("missing type for variable %v", variable)
+	}
+
+	if _, ok := variable.GetVariableInfo().GetType().(*types.PointerType); ok {
+		return variable.GetDependencies()[0]
+	}
+	return variable
 }
 
 func (graph *AbstractGraph) Save() {
@@ -311,10 +313,12 @@ func (graph *AbstractGraph) createDummyAbstractServiceCall(node *service.Service
 		Method: method.String(),
 	}
 	for _, p := range method.GetParams() {
-		call.ParsedCall.Params = append(call.ParsedCall.Params, &types.Variable{
-			Name: p.GetName(),
-			Type: p.GetType(),
-			Id:   graph.getAndIncGIndex(),
+		call.ParsedCall.Params = append(call.ParsedCall.Params, &types.GenericVariable{
+			VariableInfo: &types.VariableInfo{
+				Name: p.GetName(),
+				Type: p.GetType(),
+				Id:   graph.getAndIncGIndex(),
+			},
 		})
 	}
 	call.Params = call.ParsedCall.Params
@@ -327,11 +331,13 @@ func (graph *AbstractGraph) addEntry(node *service.ServiceNode, method *service.
 	graph.Nodes = append(graph.Nodes, &entryCall)
 	// build entry node
 	for _, param := range entryCall.Params {
-		param.Ref = &types.Ref{
+		param.GetVariableInfo().Reference = &types.Reference{
 			Creator: "Client",
-			Variable: &types.Variable{
-				Name: param.Name,
-				Id:   0,
+			Variable: &types.GenericVariable{
+				VariableInfo: &types.VariableInfo{
+					Name: param.GetVariableInfo().GetName(),
+					Id:   graph.getAndIncGIndex(),
+				},
 			},
 		}
 	}
@@ -371,7 +377,6 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 			child := &AbstractDatabaseCall{
 				ParsedCall: parsedCall,
 				Params:     parsedCall.Params,
-				Call:       parsedCall.SimpleString(),
 				Service:    parsedCall.CallerTypeName.GetName(),
 				Method:     parsedCall.Method.String(),
 				DbInstance: parsedCall.DbInstance,
@@ -391,7 +396,6 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				Caller:     parsedCall.CallerTypeName.GetName(),
 				Callee:     parsedCall.CalleeTypeName.GetName(),
 				Params:     parsedCall.Params,
-				Call:       parsedCall.SimpleString(),
 				Method:     parsedCall.Method.String(),
 			}
 			rootParent.AddChild(child)
@@ -401,7 +405,6 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				ParsedCall: parsedCall,
 				Service:    parsedCall.ServiceTypeName.GetName(),
 				Params:     parsedCall.Params,
-				Call:       parsedCall.SimpleString(),
 				Method:     parsedCall.Method.String(),
 			}
 			graph.referenceServiceCallerParams(rootParent, directParent, tempChild)
@@ -422,9 +425,11 @@ func (graph *AbstractGraph) appendPublisherQueueHandlers(app *app.App, publisher
 				Publisher:           publisher,
 			}
 			for _, p := range handlerMethod.GetParams() {
-				abstractHandler.ParsedCall.Params = append(abstractHandler.ParsedCall.Params, &types.Variable{
-					Name: p.GetName(),
-					Type: p.GetType(),
+				abstractHandler.ParsedCall.Params = append(abstractHandler.ParsedCall.Params, &types.GenericVariable{
+					VariableInfo: &types.VariableInfo{
+						Name: p.GetName(),
+						Type: p.GetType(),
+					},
 				})
 			}
 			publisher.Children = append(publisher.Children, abstractHandler)
@@ -443,11 +448,18 @@ func (graph *AbstractGraph) referencePublisherParams(queueHandler *AbstractQueue
 			pushParam := queueHandler.Publisher.GetParam(pushParamIdx)
 			popParam := child.GetParam(popParamIdx)
 			popParam = getVariableIfPointer(popParam)
-			popParam.AddReferenceWithID(pushParam, "unknown creator")
-			if pushParam.Ref != nil {
-				popParam.Ref.Creator = pushParam.Ref.Creator
+
+			if addressVar, ok := popParam.(*types.AddressVariable); ok {
+				popParam = addressVar.GetAddressOf()
+			} else if ptrVar, ok := popParam.(*types.PointerVariable); ok {
+				popParam = ptrVar.GetPointerTo()
+			}
+
+			popParam.GetVariableInfo().AddReferenceWithID(pushParam, "unknown creator")
+			if pushParam.GetVariableInfo().HasReference() {
+				popParam.GetVariableInfo().GetReference().Creator = pushParam.GetVariableInfo().GetReference().Creator
 			} else {
-				popParam.Ref.Creator = queueHandler.Publisher.ParsedCall.CallerTypeName.GetName()
+				popParam.GetVariableInfo().GetReference().Creator = queueHandler.Publisher.ParsedCall.CallerTypeName.GetName()
 			}
 		}
 		return true
@@ -455,9 +467,9 @@ func (graph *AbstractGraph) referencePublisherParams(queueHandler *AbstractQueue
 	return false
 }
 
-func getIndirectParamDeps(v *types.Variable) []*types.Variable {
-	var deps []*types.Variable
-	for _, d := range v.Deps {
+func getIndirectParamDeps(v types.Variable) []types.Variable {
+	var deps []types.Variable
+	for _, d := range v.GetDependencies() {
 		deps = append(deps, getIndirectParamDeps(d)...)
 	}
 	return append(deps, v)
@@ -466,31 +478,33 @@ func getIndirectParamDeps(v *types.Variable) []*types.Variable {
 func (graph *AbstractGraph) referenceServiceCallerParams(rootParent AbstractNode, directParent AbstractNode, child AbstractNode) {
 	for _, childParam := range child.GetParams() {
 		for _, dep := range getIndirectParamDeps(childParam) {
-			if dep.HasReference() {
+			if dep.GetVariableInfo().HasReference() {
 				continue
 			}
 			for callerParamIdx, callerParam := range directParent.GetParams() {
-				if dep.IsBlockParameter() && dep.EqualBlockParamIndex(callerParamIdx) {
-					if dep.IsUnassigned() {
+				if dep.GetVariableInfo().IsBlockParameter() && dep.GetVariableInfo().EqualBlockParamIndex(callerParamIdx) {
+					if dep.GetVariableInfo().IsUnassigned() {
+
+						if addressVar, ok := dep.(*types.AddressVariable); ok {
+							dep = addressVar.GetAddressOf()
+						} else if ptrVar, ok := dep.(*types.PointerVariable); ok {
+							dep = ptrVar.GetPointerTo()
+						}
+
 						if rootParent == directParent {
-							dep.AddReferenceWithID(callerParam, child.GetCallerStr())
+							dep.GetVariableInfo().AddReferenceWithID(callerParam, child.GetCallerStr())
+						} else if callerParam.GetVariableInfo().HasReference() {
+							// this can happen with the context variable (e.g. handleMessage called by the workerThread in the NotifyService)
+							dep.GetVariableInfo().AddOriginalReferenceWithID(callerParam.GetVariableInfo().GetReference())
 						} else {
-							if len(callerParam.Deps) > 0 {
-								dep.AssignID(graph.getAndIncGIndex())
-								dep.AddDependencies(callerParam.Deps)
-							} else if callerParam.HasReference() {
-								// this can happen with the context variable (e.g. handleMessage called by the workerThread in the NotifyService)
-								dep.AddOriginalReferenceWithID(callerParam.Ref)
-							} else {
-								dep.AddReferenceWithID(callerParam, child.GetCallerStr())
-							}
+							dep.GetVariableInfo().AddReferenceWithID(callerParam, child.GetCallerStr())
 						}
 						break
 					}
 				}
 			}
-			if dep.IsUnassigned() {
-				dep.AssignID(graph.getAndIncGIndex())
+			if dep.GetVariableInfo().IsUnassigned() {
+				dep.GetVariableInfo().AssignID(graph.getAndIncGIndex())
 			}
 		}
 	}

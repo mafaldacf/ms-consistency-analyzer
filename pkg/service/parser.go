@@ -4,7 +4,6 @@ import (
 	frameworks "analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
-	"analyzer/pkg/utils"
 	"fmt"
 	"go/ast"
 	"slices"
@@ -97,51 +96,21 @@ func (node *ServiceNode) parseFuncDeclParams(funcDecl *ast.FuncDecl) []*types.Fu
 }
 
 func (node *ServiceNode) ParseFieldList(params *ast.FieldList) []*types.FunctionParameter {
-	var fnParams []*types.FunctionParameter
+	var funcParams []*types.FunctionParameter 
 	for _, field := range params.List {
-		// TODO: any types with selector! e.g. model.Message (careful with context.Context)
-		switch t := field.Type.(type) {
-		case *ast.Ident:
-			for _, fieldIdent := range field.Names {
-				newParam := &types.FunctionParameter{
-					FieldInfo: types.FieldInfo{
-						Ast: field,
-						Name: fieldIdent.Name,
-					},
-				}
-				if utils.IsBasicType(t.Name) {
-					newParam.SetType(&types.Basic{
-						Name: t.Name,
-					})
-				} else {
-					newParam.SetType(&types.User{
-						Name:    t.Name,
-						Package: node.Package,
-					})
-				}
-				fnParams = append(fnParams, newParam)
+		paramType := types.ComputeType(field.Type, "", nil)
+		for _, ident := range field.Names {
+			param := &types.FunctionParameter{
+				FieldInfo: types.FieldInfo{
+					Ast:  field,
+					Type: paramType,
+					Name: ident.Name,
+				},
 			}
-		case *ast.SelectorExpr:
-			if pkgIdent, ok := t.X.(*ast.Ident); ok {
-				for _, fieldIdent := range field.Names {
-					importPathAlias := pkgIdent.Name
-					importPath := node.Imports[importPathAlias]
-					newParam := &types.FunctionParameter{
-						FieldInfo: types.FieldInfo{
-							Ast: field,
-							Name: fieldIdent.Name,
-							Type: &types.User{
-								Name:    t.Sel.Name,
-								Package: importPath.Package,
-							},
-						},
-					}
-					fnParams = append(fnParams, newParam)
-				}
-			}
+			funcParams = append(funcParams, param)
 		}
 	}
-	return fnParams
+	return funcParams
 }
 
 func (node *ServiceNode) ParseMethods() {
@@ -262,7 +231,7 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string, i
 				FieldInfo: types.FieldInfo{
 					Ast:  field,
 					Name: paramName,
-					Type: &types.User{
+					Type: &types.UserType{
 						Name:    t.Name,
 						Package: node.Package,
 					},
@@ -283,7 +252,7 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string, i
 						FieldInfo: types.FieldInfo{
 							Ast:  field,
 							Name: paramName,
-							Type: &types.User{
+							Type: &types.UserType{
 								Name:    t.Sel.Name,
 								Package: impt.Package,
 							},
@@ -304,7 +273,7 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string, i
 							FieldInfo: types.FieldInfo{
 								Ast:  field,
 								Name: paramName,
-								Type: &types.User{
+								Type: &types.UserType{
 									Name:    t.Sel.Name,
 									Package: s.Package,
 								},

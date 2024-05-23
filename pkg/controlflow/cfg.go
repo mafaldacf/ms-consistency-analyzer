@@ -15,12 +15,14 @@ func GenerateMethodCFG(parsedFuncDecl *service.ParsedFuncDecl) {
 	parsedFuncDecl.SetParsedCFG(parsedCfg)
 	entryBlock := parsedCfg.GetEntryParsedBlock()
 	for i, param := range parsedFuncDecl.Params {
-		entryBlock.Vars = append(entryBlock.Vars, &types.Variable{
-			Id:            types.VARIABLE_UNASSIGNED_ID,
-			Name:          param.GetName(),
-			Type:          param.GetType(),
-			IsBlockParam:  true,
-			BlockParamIdx: i,
+		entryBlock.Vars = append(entryBlock.Vars, &types.GenericVariable{
+			VariableInfo: &types.VariableInfo{
+				Id:            types.VARIABLE_UNASSIGNED_ID,
+				Name:          param.GetName(),
+				Type:          param.GetType(),
+				IsBlockParam:  true,
+				BlockParamIdx: i,
+			},
 		})
 	}
 	logger.Logger.Infof("[CFG] parsed CFG %s", parsedCfg.String())

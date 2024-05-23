@@ -9,21 +9,22 @@ import (
 
 	"golang.org/x/tools/go/cfg"
 )
+
 type ParsedCFG struct {
-	Cfg        		*cfg.CFG
-	ParsedBlocks 	[]*ParsedBlock
-	Package    		string
-	FileHash   		string
-	FullMethod  	string
+	Cfg          *cfg.CFG
+	ParsedBlocks []*ParsedBlock
+	Package      string
+	FileHash     string
+	FullMethod   string
 }
 
 func InitParsedCFG(cfg *cfg.CFG, fullMethod string) *ParsedCFG {
 	parsedCfg := &ParsedCFG{
-		Cfg: 		cfg,
+		Cfg:        cfg,
 		FullMethod: fullMethod,
 	}
 	for _, block := range cfg.Blocks {
-		parsedCfg.ParsedBlocks = append(parsedCfg.ParsedBlocks, &ParsedBlock{ Block: block})
+		parsedCfg.ParsedBlocks = append(parsedCfg.ParsedBlocks, &ParsedBlock{Block: block})
 	}
 	return parsedCfg
 }
@@ -32,7 +33,7 @@ func (cfg *ParsedCFG) String() string {
 	str := fmt.Sprintf("%s: ", cfg.FullMethod)
 	for i, block := range cfg.ParsedBlocks {
 		str += block.String()
-		if i < len(cfg.ParsedBlocks) - 1 {
+		if i < len(cfg.ParsedBlocks)-1 {
 			str += ", "
 		}
 	}
@@ -49,7 +50,7 @@ func (cfg *ParsedCFG) FullString() string {
 
 func (cfg *ParsedCFG) GetEntryParsedBlock() *ParsedBlock {
 	if len(cfg.ParsedBlocks) > 0 {
-		return cfg.ParsedBlocks[0] 
+		return cfg.ParsedBlocks[0]
 	}
 	return nil
 }
@@ -66,23 +67,27 @@ func (cfg *ParsedCFG) GetParsedBlockAtIndex(index int32) *ParsedBlock {
 }
 
 type ParsedBlock struct {
-	Block        	*cfg.Block
+	Block *cfg.Block
 	// blocks can contain inline go routines
-	Vars 		 	[]*Variable
-	Info 		 	BlockInfo
+	Vars []Variable
+	Info BlockInfo
 }
 
 type BlockInfo struct {
-	Gen []*Variable
-	In  []*Variable
-	Out []*Variable
+	Gen []Variable
+	In  []Variable
+	Out []Variable
 }
 
-func (block *ParsedBlock) GetVariables()  []*Variable {
+func (block *ParsedBlock) GetVariables() []Variable {
 	return block.Vars
 }
 
-func (block *ParsedBlock) AddVariable(variable *Variable) {
+func (block *ParsedBlock) AddVariables(variables []Variable) {
+	block.Vars = append(block.Vars, variables...)
+}
+
+func (block *ParsedBlock) AddVariable(variable Variable) {
 	block.Vars = append(block.Vars, variable)
 }
 
@@ -110,8 +115,8 @@ func (block *ParsedBlock) CopyVarsFromPredecessor(predecessor *ParsedBlock) {
 func (block *ParsedBlock) String() string {
 	str := fmt.Sprintf("Block %d [%s] (", block.Block.Index, block.Block.Kind)
 	for i, v := range block.Vars {
-		str += v.Name
-		if i < len(block.Vars) - 1 {
+		str += v.GetVariableInfo().GetName()
+		if i < len(block.Vars)-1 {
 			str += ", "
 		}
 	}

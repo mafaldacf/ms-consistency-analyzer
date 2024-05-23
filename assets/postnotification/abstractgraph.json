@@ -1,149 +1,167 @@
 {
   "method": "UploadService.UploadPost(ctx, username, text)",
   "caller": "Client",
-  "callee": "UploadService",
   "params": [
     {
-      "name": "ctx",
-      "type": "context.Context",
-      "id": 1,
-      "ref": {
+      "variable": {
         "name": "ctx",
-        "creator": "Client",
-        "id": 0
+        "type": ".context",
+        "id": 1,
+        "ref": {
+          "name": "ctx",
+          "creator": "Client",
+          "id": 4
+        }
       }
     },
     {
-      "name": "username",
-      "type": "string",
-      "id": 2,
-      "ref": {
+      "variable": {
         "name": "username",
-        "creator": "Client",
-        "id": 0
+        "type": "string",
+        "id": 2,
+        "ref": {
+          "name": "username",
+          "creator": "Client",
+          "id": 5
+        }
       }
     },
     {
-      "name": "text",
-      "type": "string",
-      "id": 3,
-      "ref": {
+      "variable": {
         "name": "text",
-        "creator": "Client",
-        "id": 0
+        "type": "string",
+        "id": 3,
+        "ref": {
+          "name": "text",
+          "creator": "Client",
+          "id": 6
+        }
       }
     }
   ],
   "edges": [
     {
-      "call": "storageService.StorePost(ctx context.Context, reqID int64, post postnotification.Post)",
       "method": "StorageService.StorePost(ctx, reqID, post)",
       "caller": "UploadService",
-      "callee": "StorageService",
       "params": [
         {
-          "name": "ctx",
-          "type": "context.Context",
-          "id": 1,
-          "ref": {
+          "variable": {
             "name": "ctx",
-            "creator": "UploadService",
-            "id": 1
+            "type": ".context",
+            "id": 1,
+            "ref": {
+              "name": "ctx",
+              "creator": "UploadService",
+              "id": 1
+            }
           }
         },
         {
-          "name": "post.ReqID",
-          "type": ".Post",
-          "id": 6,
-          "deps": [
-            {
-              "name": "post",
-              "type": ".Post",
-              "id": 5,
-              "deps": [
-                {
-                  "name": "reqID",
-                  "type": ".",
-                  "id": 4
-                },
-                {
-                  "name": "text",
-                  "type": "string",
-                  "id": 3,
-                  "ref": {
-                    "name": "text",
-                    "creator": "UploadService",
-                    "id": 3
-                  }
-                }
-              ]
-            }
-          ]
+          "variable": {
+            "name": "reqID",
+            "type": "generic (rand.Int63())",
+            "id": 7
+          }
         },
         {
-          "name": "post",
-          "type": ".Post",
-          "id": 5,
-          "deps": [
-            {
-              "name": "reqID",
-              "type": ".",
-              "id": 4
+          "variable": {
+            "name": "post",
+            "type": "struct (Post)",
+            "id": 10
+          },
+          "fields": {
+            "Creator": {
+              "variable": {
+                "name": "Creator",
+                "type": "string (\"some wild creator\")",
+                "id": 9
+              }
             },
-            {
-              "name": "text",
-              "type": "string",
-              "id": 3,
-              "ref": {
+            "PostID": {
+              "variable": {
+                "name": "PostID",
+                "type": "generic (rand.Int63())",
+                "id": 8
+              }
+            },
+            "ReqID": {
+              "variable": {
+                "name": "reqID",
+                "type": "generic (rand.Int63())",
+                "id": 7
+              }
+            },
+            "Text": {
+              "variable": {
                 "name": "text",
-                "creator": "UploadService",
-                "id": 3
+                "type": "string",
+                "id": 3,
+                "ref": {
+                  "name": "text",
+                  "creator": "UploadService",
+                  "id": 3
+                }
               }
             }
-          ]
+          }
         }
       ],
       "edges": [
         {
-          "call": "cache.Put(ctx context.Context, key string, value interface{})",
           "method": "Cache.Put(ctx, key, value)",
           "caller": "StorageService",
           "params": [
             {
-              "name": "ctx",
-              "type": "context.Context",
-              "id": 1,
-              "ref": {
+              "variable": {
                 "name": "ctx",
-                "creator": "StorageService",
-                "id": 1
+                "type": ".context",
+                "id": 1,
+                "ref": {
+                  "name": "ctx",
+                  "creator": "StorageService",
+                  "id": 1
+                }
               }
             },
             {
-              "name": "postIDStr",
-              "type": ".",
-              "id": 8,
-              "deps": [
+              "variable": {
+                "name": "postIDStr",
+                "type": "generic (strconv.FormatInt())",
+                "id": 15
+              },
+              "params": [
                 {
-                  "name": "post",
-                  "type": "postnotification.Post",
-                  "id": 5,
-                  "ref": {
+                  "variable": {
                     "name": "post",
-                    "creator": "StorageService",
-                    "id": 5
+                    "type": ".Post",
+                    "id": 10,
+                    "ref": {
+                      "name": "post",
+                      "creator": "StorageService",
+                      "id": 10,
+                      "deps": "reqID (7), PostID (8), text (3), Creator (9)"
+                    }
+                  }
+                },
+                {
+                  "variable": {
+                    "type": "int (10)",
+                    "id": 14
                   }
                 }
               ]
             },
             {
-              "name": "post",
-              "type": "postnotification.Post",
-              "id": 5,
-              "ref": {
+              "variable": {
                 "name": "post",
-                "creator": "StorageService",
-                "id": 5
+                "type": ".Post",
+                "id": 10,
+                "ref": {
+                  "name": "post",
+                  "creator": "StorageService",
+                  "id": 10,
+                  "deps": "reqID (7), PostID (8), text (3), Creator (9)"
+                }
               }
             }
           ],
@@ -156,48 +174,61 @@
       ]
     },
     {
-      "call": "queue.Push(ctx context.Context, item interface{})",
       "method": "Queue.Push(ctx, item)",
       "caller": "UploadService",
       "params": [
         {
-          "name": "ctx",
-          "type": "context.Context",
-          "id": 1,
-          "ref": {
+          "variable": {
             "name": "ctx",
-            "creator": "UploadService",
-            "id": 1
+            "type": ".context",
+            "id": 1,
+            "ref": {
+              "name": "ctx",
+              "creator": "UploadService",
+              "id": 1
+            }
           }
         },
         {
-          "name": "message",
-          "type": ".Message",
-          "id": 7,
-          "deps": [
-            {
-              "name": "post",
-              "type": ".Post",
-              "id": 5,
-              "deps": [
+          "variable": {
+            "name": "message",
+            "type": "struct (Message)",
+            "id": 13
+          },
+          "fields": {
+            "PostID": {
+              "variable": {
+                "name": "PostID",
+                "type": "generic (common.Int64ToString())",
+                "id": 12
+              },
+              "params": [
                 {
-                  "name": "reqID",
-                  "type": ".",
-                  "id": 4
-                },
+                  "variable": {
+                    "name": "PostID",
+                    "type": "generic (rand.Int63())",
+                    "id": 8
+                  }
+                }
+              ]
+            },
+            "ReqID": {
+              "variable": {
+                "name": "ReqID",
+                "type": "generic (common.Int64ToString())",
+                "id": 11
+              },
+              "params": [
                 {
-                  "name": "text",
-                  "type": "string",
-                  "id": 3,
-                  "ref": {
-                    "name": "text",
-                    "creator": "UploadService",
-                    "id": 3
+                  "variable": {
+                    "name": "reqID",
+                    "type": "generic (rand.Int63())",
+                    "id": 7
                   }
                 }
               ]
             }
-          ]
+          }
         }
       ],
       "queue_handlers": [
@@ -205,51 +236,57 @@
           "handler": {
             "method": "NotifyService.workerThread(ctx, workerID)",
             "caller": "UploadService",
-            "callee": "NotifyService",
             "params": [
               {
-                "name": "ctx",
-                "type": "context.Context",
-                "id": 9
+                "variable": {
+                  "name": "ctx",
+                  "type": ".context",
+                  "id": 16
+                }
               },
               {
-                "name": "workerID",
-                "type": "int",
-                "id": 10
+                "variable": {
+                  "name": "workerID",
+                  "type": "int",
+                  "id": 17
+                }
               }
             ],
             "edges": [
               {
-                "call": "queue.Pop(ctx context.Context, item interface{})",
                 "method": "Queue.Pop(ctx, item)",
                 "caller": "NotifyService",
                 "params": [
                   {
-                    "name": "ctx",
-                    "type": "context.Context",
-                    "id": 9,
-                    "ref": {
+                    "variable": {
                       "name": "ctx",
-                      "creator": "NotifyService",
-                      "id": 9
+                      "type": ".context",
+                      "id": 16,
+                      "ref": {
+                        "name": "ctx",
+                        "creator": "NotifyService",
+                        "id": 16
+                      }
                     }
                   },
                   {
-                    "name": "\u0026message",
-                    "type": "*.",
-                    "id": -1,
-                    "deps": [
-                      {
+                    "variable": {
+                      "type": "\u0026map[string]interface{}"
+                    },
+                    "address_of": {
+                      "variable": {
                         "name": "message",
-                        "type": ".",
-                        "id": 7,
+                        "type": "map[string]interface{}",
+                        "id": 13,
                         "ref": {
                           "name": "message",
                           "creator": "UploadService",
-                          "id": 7
+                          "id": 13,
+                          "deps": "ReqID (11), PostID (12)"
                         }
-                      }
-                    ]
+                      },
+                      "key_values": null
+                    }
                   }
                 ],
                 "db_instance": {
@@ -259,114 +296,123 @@
                 }
               },
               {
-                "call": "storageService.ReadPost(ctx context.Context, reqID int64, postID int64)",
                 "method": "StorageService.ReadPost(ctx, reqID, postID)",
                 "caller": "NotifyService",
-                "callee": "StorageService",
                 "params": [
                   {
-                    "name": "ctx",
-                    "type": "context.Context",
-                    "id": 9,
-                    "ref": {
+                    "variable": {
                       "name": "ctx",
-                      "creator": "NotifyService",
-                      "id": 9
+                      "type": ".context",
+                      "id": 16,
+                      "ref": {
+                        "name": "ctx",
+                        "creator": "NotifyService",
+                        "id": 16
+                      }
                     }
                   },
                   {
-                    "name": "reqID",
-                    "type": ".",
-                    "id": 13,
-                    "deps": [
+                    "variable": {
+                      "name": "reqID",
+                      "type": "generic (common.StringToInt64())",
+                      "id": 19
+                    },
+                    "params": [
                       {
-                        "name": "message",
-                        "type": "postnotification.Message",
-                        "id": 12,
-                        "deps": [
-                          {
-                            "name": "message",
-                            "type": ".",
-                            "id": 7,
-                            "ref": {
-                              "name": "message",
-                              "creator": "UploadService",
-                              "id": 7
-                            }
+                        "variable": {
+                          "name": "message",
+                          "type": ".Message",
+                          "id": 18,
+                          "ref": {
+                            "name": "notification",
+                            "creator": "NotifyService",
+                            "id": 18,
+                            "deps": "message (13), message (13), message (13)"
                           }
-                        ]
+                        }
                       }
                     ]
                   },
                   {
-                    "name": "postID",
-                    "type": ".",
-                    "id": 14,
-                    "deps": [
+                    "variable": {
+                      "name": "postID",
+                      "type": "generic (common.StringToInt64())",
+                      "id": 20
+                    },
+                    "params": [
                       {
-                        "name": "message",
-                        "type": "postnotification.Message",
-                        "id": 12,
-                        "deps": [
-                          {
-                            "name": "message",
-                            "type": ".",
-                            "id": 7,
-                            "ref": {
-                              "name": "message",
-                              "creator": "UploadService",
-                              "id": 7
-                            }
+                        "variable": {
+                          "name": "message",
+                          "type": ".Message",
+                          "id": 18,
+                          "ref": {
+                            "name": "notification",
+                            "creator": "NotifyService",
+                            "id": 18,
+                            "deps": "message (13), message (13), message (13)"
                           }
-                        ]
+                        }
                       }
                     ]
                   }
                 ],
                 "edges": [
                   {
-                    "call": "cache.Get(ctx context.Context, key string, value interface{})",
                     "method": "Cache.Get(ctx, key, value)",
                     "caller": "StorageService",
                     "params": [
                       {
-                        "name": "ctx",
-                        "type": "context.Context",
-                        "id": 9,
-                        "ref": {
+                        "variable": {
                           "name": "ctx",
-                          "creator": "StorageService",
-                          "id": 9
+                          "type": ".context",
+                          "id": 16,
+                          "ref": {
+                            "name": "ctx",
+                            "creator": "StorageService",
+                            "id": 16
+                          }
                         }
                       },
                       {
-                        "name": "postIDStr",
-                        "type": ".",
-                        "id": 15,
-                        "deps": [
+                        "variable": {
+                          "name": "postIDStr",
+                          "type": "generic (strconv.FormatInt())",
+                          "id": 22
+                        },
+                        "params": [
                           {
-                            "name": "postID",
-                            "type": "int64",
-                            "id": 14,
-                            "ref": {
+                            "variable": {
                               "name": "postID",
-                              "creator": "StorageService",
-                              "id": 14
+                              "type": "int64",
+                              "id": 20,
+                              "ref": {
+                                "name": "postID",
+                                "creator": "StorageService",
+                                "id": 20,
+                                "deps": "message (18)"
+                              }
+                            }
+                          },
+                          {
+                            "variable": {
+                              "type": "int (10)",
+                              "id": 21
                             }
                           }
                         ]
                       },
                       {
-                        "name": "\u0026post",
-                        "type": "*.Post",
-                        "id": 17,
-                        "deps": [
-                          {
+                        "variable": {
+                          "type": "\u0026.Post",
+                          "id": 23
+                        },
+                        "address_of": {
+                          "variable": {
                             "name": "post",
                             "type": ".Post",
-                            "id": 16
+                            "id": -1
                           }
-                        ]
+                        }
                       }
                     ],
                     "db_instance": {

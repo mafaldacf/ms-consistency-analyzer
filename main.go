@@ -45,14 +45,19 @@ func main() {
 	}
 	app.RegisterDatabaseInstances(databases)
 	app.RegisterServiceNodes(services)
-	app.Save()
 
 	abstractGraph := abstractgraph.Build(app, frontends)
-	abstractGraph.Save()
 
+	var requests []*detector.Request
 	for _, entryNode := range abstractGraph.Nodes {
 		request := detector.InitRequest(entryNode)
 		request.CaptureInconsistencies()
+		requests = append(requests, request)
+	}
+
+	app.Save()
+	abstractGraph.Save()
+	for _, request := range requests {
 		request.SaveInconsistencies(app.Name)
 	}
 }
