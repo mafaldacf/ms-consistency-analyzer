@@ -10,7 +10,7 @@ type Type interface {
 	GetName() string
 }
 
-type Service struct {
+type ServiceType struct {
 	Type    `json:"-"`
 	Package string
 	Name    string
@@ -18,7 +18,6 @@ type Service struct {
 type UserType struct {
 	Type     `json:"-"`
 	UserType Type
-
 	Package string
 	Name    string
 }
@@ -65,10 +64,10 @@ func packageAlias(pkg string) string {
 }
 
 // Service
-func (t *Service) String() string {
+func (t *ServiceType) String() string {
 	return fmt.Sprintf("%s.%s", packageAlias(t.Package), t.Name)
 }
-func (t *Service) GetName() string {
+func (t *ServiceType) GetName() string {
 	return t.Name
 }
 // User
@@ -85,9 +84,15 @@ func (t *UserType) GetName() string {
 func (t *PointerType) String() string {
 	return fmt.Sprintf("*%s", t.PointerTo)
 }
+func (t *PointerType) GetName() string {
+	return t.String()
+}
 // Address
 func (t *AddressType) String() string {
 	return fmt.Sprintf("&%s", t.AddressOf)
+}
+func (t *AddressType) GetName() string {
+	return t.String()
 }
 // Basic
 func (t *BasicType) String() string {
@@ -96,21 +101,36 @@ func (t *BasicType) String() string {
 	}
 	return t.Name
 }
+func (t *BasicType) GetName() string {
+	return t.Value
+}
 // Array
 func (t *ArrayType) String() string {
 	return "[]" + t.ElementsType.String()
+}
+func (t *ArrayType) GetName() string {
+	return t.String()
 }
 // Map
 func (t *MapType) String() string {
 	return fmt.Sprintf("map[%s]%s", t.KeyType.String(), t.ValueType.String())
 }
+func (t *MapType) GetName() string {
+	return t.String()
+}
 // Chan
 func (t *ChanType) String() string {
 	return fmt.Sprintf("chan %s", t.ChanType.String())
 }
+func (t *ChanType) GetName() string {
+	return t.String()
+}
 // Struct
 func (t *StructType) String() string {
 	return "struct"
+}
+func (t *StructType) GetName() string {
+	return t.String()
 }
 // Generic
 func (t *GenericType) String() string {
@@ -119,7 +139,13 @@ func (t *GenericType) String() string {
 	}
 	return "undefined"
 }
+func (t *GenericType) GetName() string {
+	return t.String()
+}
 // Interface
 func (t *InterfaceType) String() string {
 	return "interface{}"
+}
+func (t *InterfaceType) GetName() string {
+	return t.String()
 }

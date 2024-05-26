@@ -3,6 +3,7 @@
   "app_services": {
     "NotifyService": {
       "fields": {
+        "numWorkers": "",
         "queue": "Queue",
         "storageService": "StorageService"
       },

@@ -73,6 +73,10 @@ func CreateTypeVariable(name string, t Type) Variable {
 	return nil
 }
 
+func computeUserType(name string, importedPkg string) Type {
+	return nil
+}
+
 func ComputeType(typeExpr ast.Expr, pkg string, importMap map[string]string) Type {
 	switch e := typeExpr.(type) {
 	case *ast.Ident:
@@ -87,9 +91,12 @@ func ComputeType(typeExpr ast.Expr, pkg string, importMap map[string]string) Typ
 		}
 	case *ast.SelectorExpr:
 		if pkgIdent, ok := e.X.(*ast.Ident); ok {
-			return &UserType{
-				Name:    pkgIdent.Name,
-				Package: importMap[pkgIdent.Name],
+			if fullImpt, ok := importMap[pkgIdent.Name]; ok {
+				return &UserType{
+					Name:    e.Sel.Name,
+					Package: pkgIdent.Name,
+					Type:    computeUserType(e.Sel.Name, fullImpt),
+				}
 			}
 		}
 	case *ast.ChanType:

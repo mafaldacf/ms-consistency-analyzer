@@ -25,6 +25,11 @@ type FunctionParameter struct {
 	Field
 	FieldInfo  FieldInfo
 }
+type GenericField struct {
+	Field
+	Idx    	  int
+	FieldInfo FieldInfo
+}
 type ServiceField struct {
 	Field
 	FieldInfo FieldInfo
@@ -36,6 +41,31 @@ type DatabaseField struct {
 	IsQueue    bool
 	DbInstance DatabaseInstance
 	Idx        int
+}
+
+// -------------
+// GENERIC FIELD
+// -------------
+func (f *GenericField) String() string {
+	return fmt.Sprintf("%s %s", f.FieldInfo.Name, f.FieldInfo.Type.String())
+}
+func (f *GenericField) GetTypeString() string {
+	return f.FieldInfo.Type.String()
+}
+func (f *GenericField) GetIndex() int {
+	return f.Idx
+}
+func (f *GenericField) GetName() string {
+	return f.FieldInfo.Name
+}
+func (f *GenericField) GetType() Type {
+	return f.FieldInfo.Type
+}
+func (f *GenericField) GetTypeName() string {
+	return f.FieldInfo.Type.GetName()
+}
+func (f *GenericField) SetType(t Type) {
+	f.FieldInfo.Type = t
 }
 
 // -------------

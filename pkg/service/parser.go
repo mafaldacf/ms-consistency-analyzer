@@ -217,7 +217,56 @@ func (node *ServiceNode) RegisterStructure() {
 	})
 }
 
-// saveFieldWithType saves the service or database fields defined in the structure
+func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string, idx int) {
+	fieldType := types.ComputeType(field.Type, node.Package, node.GetImportsMap())
+	switch t := fieldType.(type) {
+	case *types.UserType:
+		if t.Package != "" {
+			// check if it is a blueprint backend import
+			if impt, ok := node.Imports[t.Package]; ok && impt.IsBlueprintBackend && frameworks.IsBlueprintBackend(t.Name) {
+				dbField := &types.DatabaseField{
+					FieldInfo: types.FieldInfo{
+						Ast:  field,
+						Name: paramName,
+						Type: t,
+					},
+					IsQueue: frameworks.IsBlueprintBackendQueue(t.Name),
+					Idx:     idx,
+				}
+				if dbField.IsQueue {
+					node.ImplementsQueue = true
+				}
+				node.Fields[paramName] = dbField
+				return
+			}
+		}
+		// upgrade to service field
+		if service, ok := node.Services[t.Name]; ok && service.Package == t.Package {
+			node.Fields[paramName] = &types.ServiceField{
+				FieldInfo: types.FieldInfo{
+					Ast:  field,
+					Name: paramName,
+					Type: &types.ServiceType{
+						Name:    t.Name,
+						Package: t.Package,
+					},
+				},
+			}
+			// clear to signar garbage collector
+			t = nil
+			return
+		}
+	}
+	node.Fields[paramName] = &types.GenericField{
+		FieldInfo: types.FieldInfo{
+			Ast:  field,
+			Name: paramName,
+			Type: fieldType,
+		},
+	}
+}
+
+/* // saveFieldWithType saves the service or database fields defined in the structure
 func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string, idx int) {
 	switch t := field.Type.(type) {
 
@@ -286,7 +335,7 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string, i
 	default:
 		logger.Logger.Warnf("unknown field type %s for service %s", field.Type, node.Name)
 	}
-}
+} */
 
 func (node *ServiceNode) funcImplementsQueue(funcDecl *ast.FuncDecl, recvIdent *ast.Ident) (implements bool, dbInstance types.DatabaseInstance) {
 	// inspect methods
@@ -408,7 +457,7 @@ func (node *ServiceNode) findMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 							Pos:         funcCall.Pos(),
 							Method:      targetMethod,
 						},
-						CallerTypeName: &types.Service{Name: node.Name, Package: node.Package},
+						CallerTypeName: &types.ServiceType{Name: node.Name, Package: node.Package},
 						CalleeTypeName: serviceField.GetType(),
 					}
 					parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, svcParsedCallExpr)
@@ -429,7 +478,7 @@ func (node *ServiceNode) findMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 							Pos:         funcCall.Pos(),
 							Method:      frameworks.GetBackendMethod(fmt.Sprintf("%s.%s", targetDatabaseType, methodIdent.Name)),
 						},
-						CallerTypeName: &types.Service{Name: node.Name, Package: node.Package},
+						CallerTypeName: &types.ServiceType{Name: node.Name, Package: node.Package},
 						DbInstance:     databaseField.DbInstance,
 					}
 					parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, dbCall)
@@ -445,7 +494,7 @@ func (node *ServiceNode) findMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 					Method:   funcDecl,
 					Pos:      funcCall.Pos(),
 				},
-				ServiceTypeName: &types.Service{Name: node.Name, Package: node.Package},
+				ServiceTypeName: &types.ServiceType{Name: node.Name, Package: node.Package},
 			}
 			parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, internalCall)
 			logger.Logger.Debugf("[PARSER] found new internal call %s (params: %v)", internalCall.String(), internalCall.Params)
