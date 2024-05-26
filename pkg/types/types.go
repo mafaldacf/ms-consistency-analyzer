@@ -24,7 +24,6 @@ type UserType struct {
 }
 type StructType struct {
 	Type   `json:"-"`
-	Name   string
 }
 type MapType struct {
 	Type   `json:"-"`
@@ -74,6 +73,9 @@ func (t *Service) GetName() string {
 }
 // User
 func (t *UserType) String() string {
+	if t.UserType != nil {
+		return fmt.Sprintf("%s %s.%s", t.UserType.String(), packageAlias(t.Package), t.Name)
+	}
 	return fmt.Sprintf("%s.%s", packageAlias(t.Package), t.Name)
 }
 func (t *UserType) GetName() string {
@@ -108,15 +110,12 @@ func (t *ChanType) String() string {
 }
 // Struct
 func (t *StructType) String() string {
-	if t.Name != "" {
-		return fmt.Sprintf("struct (%s)", t.Name)
-	}
 	return "struct"
 }
 // Generic
 func (t *GenericType) String() string {
 	if t.Name != "" {
-		return fmt.Sprintf("generic (%s)", t.Name)
+		return fmt.Sprintf("< %s", t.Name)
 	}
 	return "undefined"
 }

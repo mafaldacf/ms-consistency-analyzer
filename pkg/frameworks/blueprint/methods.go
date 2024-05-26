@@ -119,6 +119,7 @@ var ctxParam = types.FunctionParameter{
 		Type: &types.UserType{
 			Name:    "Context",
 			Package: "context",
+			UserType: &types.InterfaceType{},
 		},
 	},
 }

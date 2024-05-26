@@ -140,6 +140,31 @@ func computeFunctionCallName(expr ast.Expr) string {
 	return ""
 }
 
+func GetDeclaredUserType(expr ast.Expr, pkg string, typesMap map[string]*UserType, importMap map[string]string) (*UserType, bool) {
+	if typesMap == nil {
+		// FIX THIS HARDCODED CODE
+		typesMap = make(map[string]*UserType)
+		typesMap["Post"] = &UserType{
+			Name: "Post",
+			Package: pkg,
+			UserType: &StructType{},
+		}
+		typesMap["Message"] = &UserType{
+			Name: "Message",
+			Package: pkg,
+			UserType: &StructType{},
+		}
+	}
+	switch e := expr.(type) {
+	case *ast.Ident:
+		if userType, ok := typesMap[e.Name]; ok {
+			return userType, true
+		}
+	}
+	logger.Logger.Fatalf("could not get declared type for expr %s (type = %s)", expr, utils.GetType(expr))
+	return nil, false
+}
+
 func LookupVariables(blockVars []Variable, expr ast.Expr, pkg string, importMap map[string]string) (variable Variable) {
 	switch e := expr.(type) {
 	case *ast.Ident:
@@ -157,26 +182,26 @@ func LookupVariables(blockVars []Variable, expr ast.Expr, pkg string, importMap 
 		}
 	// FIXME: ACTUALLY THE TYPE OF A STRUCT SHOULD REFERENCE A USER TYPE THAT WAS PREVIOUSLY DEFINED
 	case *ast.CompositeLit:
-		if structIdent, ok := e.Type.(*ast.Ident); ok {
-			structType := &StructType{
-				Name: structIdent.Name,
-			}
-			variable = &StructVariable{
-				VariableInfo: &VariableInfo{
-					Type: structType,
-					Id:   VARIABLE_INLINE_ID,
-				},
-				Fields: make(map[string]Variable),
-			}
-
-			for _, elt := range e.Elts {
-				keyvalue := elt.(*ast.KeyValueExpr)
-				key := keyvalue.Key.(*ast.Ident)
-				eltVar := LookupVariables(blockVars, keyvalue.Value, pkg, importMap)
-				if eltVar.GetVariableInfo().Name == "" {
-					eltVar.GetVariableInfo().SetName(key.Name)
+		if ident, ok := e.Type.(*ast.Ident); ok {
+			if userType, found := GetDeclaredUserType(ident, pkg, nil, importMap); found {
+				if _, ok := userType.UserType.(*StructType); ok {
+					variable = &StructVariable{
+						VariableInfo: &VariableInfo{
+							Type: userType,
+							Id:   VARIABLE_INLINE_ID,
+						},
+						Fields: make(map[string]Variable),
+					}
+					for _, elt := range e.Elts {
+						keyvalue := elt.(*ast.KeyValueExpr)
+						key := keyvalue.Key.(*ast.Ident)
+						eltVar := LookupVariables(blockVars, keyvalue.Value, pkg, importMap)
+						if eltVar.GetVariableInfo().Name == "" {
+							eltVar.GetVariableInfo().SetName(key.Name)
+						}
+						variable.(*StructVariable).AddField(key.Name, eltVar)
+					}
 				}
-				variable.(*StructVariable).AddField(key.Name, eltVar)
 			}
 		} else if arrayTypeAst, ok := e.Type.(*ast.ArrayType); ok {
 			arrayType := &ArrayType{
@@ -237,6 +262,20 @@ func LookupVariables(blockVars []Variable, expr ast.Expr, pkg string, importMap 
 				VariableInfo: &VariableInfo{
 					Type: addrType,
 					Id:   VARIABLE_INLINE_ID,
+					Name: variable.GetVariableInfo().Name,
+				},
+			}
+		} else if e.Op == token.MUL { // e.g. *post
+			variable = LookupVariables(blockVars, e.X, pkg, importMap)
+			addrType := &AddressType{
+				AddressOf: variable.GetVariableInfo().Type,
+			}
+			variable = &PointerVariable{
+				PointerTo: variable,
+				VariableInfo: &VariableInfo{
+					Type: addrType,
+					Id:   VARIABLE_INLINE_ID,
+					Name: variable.GetVariableInfo().Name,
 				},
 			}
 
@@ -258,7 +297,7 @@ func IsVarDeclOrAssign(blockVars []Variable, node ast.Node, pkg string, importMa
 			vars = append(vars, v...)
 		}
 	case *ast.ValueSpec:
-		t := ComputeType(n.Type, "", nil)
+		t := ComputeType(n.Type, pkg, importMap)
 		for _, ident := range n.Names {
 			decl := CreateTypeVariable(ident.Name, t)
 			vars = append(vars, decl)

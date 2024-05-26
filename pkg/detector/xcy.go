@@ -115,6 +115,7 @@ func (request *Request) addInconsistency(prevWrite *Write, readKey types.Variabl
 		Write:    prevWrite,
 		Call:     call.String(),
 	}
+	logger.Logger.Infof("[XCY] found inconsistency: %s", read.String())
 	request.Inconsistencies = append(request.Inconsistencies, read)
 	logger.Logger.Infof("added xcy violation %s", read.String())
 }
@@ -136,7 +137,7 @@ func (request *Request) captureInconsistencies(node abstractgraph.AbstractNode) 
 				key := dbCall.GetParam(backend.GetReadKeyIndex())
 				for _, prevWrite := range request.Writes {
 					if dbCall.DbInstance == prevWrite.Database {
-						if types.IsReferencedObject(key, prevWrite.Object) {
+						if types.HasSameWrittenObject(key, prevWrite.Object) {
 							request.addInconsistency(prevWrite, key, dbCall)
 						}
 					}

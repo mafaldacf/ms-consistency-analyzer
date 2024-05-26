@@ -5,7 +5,7 @@
     {
       "variable": {
         "name": "ctx",
-        "type": ".context",
+        "type": "context.context",
         "id": 1,
         "ref": {
           "name": "ctx",
@@ -47,7 +47,7 @@
         {
           "variable": {
             "name": "ctx",
-            "type": ".context",
+            "type": "context.context",
             "id": 1,
             "ref": {
               "name": "ctx",
@@ -59,14 +59,14 @@
         {
           "variable": {
             "name": "reqID",
-            "type": "generic (rand.Int63())",
+            "type": "\u003c rand.Int63()",
             "id": 7
           }
         },
         {
           "variable": {
             "name": "post",
-            "type": "struct (Post)",
+            "type": "struct postnotification.Post",
             "id": 10
           },
           "fields": {
@@ -80,14 +80,14 @@
             "PostID": {
               "variable": {
                 "name": "PostID",
-                "type": "generic (rand.Int63())",
+                "type": "\u003c rand.Int63()",
                 "id": 8
               }
             },
             "ReqID": {
               "variable": {
                 "name": "reqID",
-                "type": "generic (rand.Int63())",
+                "type": "\u003c rand.Int63()",
                 "id": 7
               }
             },
@@ -114,7 +114,7 @@
             {
               "variable": {
                 "name": "ctx",
-                "type": ".context",
+                "type": "context.context",
                 "id": 1,
                 "ref": {
                   "name": "ctx",
@@ -126,20 +126,19 @@
             {
               "variable": {
                 "name": "postIDStr",
-                "type": "generic (strconv.FormatInt())",
+                "type": "\u003c strconv.FormatInt()",
                 "id": 15
               },
               "params": [
                 {
                   "variable": {
                     "name": "post",
-                    "type": ".Post",
+                    "type": "postnotification.Post",
                     "id": 10,
                     "ref": {
                       "name": "post",
                       "creator": "StorageService",
-                      "id": 10,
-                      "deps": "reqID (7), PostID (8), text (3), Creator (9)"
+                      "id": 10
                     }
                   }
                 },
@@ -154,13 +153,12 @@
             {
               "variable": {
                 "name": "post",
-                "type": ".Post",
+                "type": "postnotification.Post",
                 "id": 10,
                 "ref": {
                   "name": "post",
                   "creator": "StorageService",
-                  "id": 10,
-                  "deps": "reqID (7), PostID (8), text (3), Creator (9)"
+                  "id": 10
                 }
               }
             }
@@ -180,7 +178,7 @@
         {
           "variable": {
             "name": "ctx",
-            "type": ".context",
+            "type": "context.context",
             "id": 1,
             "ref": {
               "name": "ctx",
@@ -192,21 +190,21 @@
         {
           "variable": {
             "name": "message",
-            "type": "struct (Message)",
+            "type": "struct postnotification.Message",
             "id": 13
           },
           "fields": {
             "PostID": {
               "variable": {
                 "name": "PostID",
-                "type": "generic (common.Int64ToString())",
+                "type": "\u003c common.Int64ToString()",
                 "id": 12
               },
               "params": [
                 {
                   "variable": {
                     "name": "PostID",
-                    "type": "generic (rand.Int63())",
+                    "type": "\u003c rand.Int63()",
                     "id": 8
                   }
                 }
@@ -215,14 +213,14 @@
             "ReqID": {
               "variable": {
                 "name": "ReqID",
-                "type": "generic (common.Int64ToString())",
+                "type": "\u003c common.Int64ToString()",
                 "id": 11
               },
               "params": [
                 {
                   "variable": {
                     "name": "reqID",
-                    "type": "generic (rand.Int63())",
+                    "type": "\u003c rand.Int63()",
                     "id": 7
                   }
                 }
@@ -240,7 +238,7 @@
               {
                 "variable": {
                   "name": "ctx",
-                  "type": ".context",
+                  "type": "context.context",
                   "id": 16
                 }
               },
@@ -260,7 +258,7 @@
                   {
                     "variable": {
                       "name": "ctx",
-                      "type": ".context",
+                      "type": "context.context",
                       "id": 16,
                       "ref": {
                         "name": "ctx",
@@ -271,6 +269,7 @@
                   },
                   {
                     "variable": {
+                      "name": "message",
                       "type": "\u0026map[string]interface{}"
                     },
                     "address_of": {
@@ -281,8 +280,7 @@
                         "ref": {
                           "name": "message",
                           "creator": "UploadService",
-                          "id": 13,
-                          "deps": "ReqID (11), PostID (12)"
+                          "id": 13
                         }
                       },
                       "key_values": null
@@ -302,7 +300,7 @@
                   {
                     "variable": {
                       "name": "ctx",
-                      "type": ".context",
+                      "type": "context.context",
                       "id": 16,
                       "ref": {
                         "name": "ctx",
@@ -314,20 +312,19 @@
                   {
                     "variable": {
                       "name": "reqID",
-                      "type": "generic (common.StringToInt64())",
+                      "type": "\u003c common.StringToInt64()",
                       "id": 19
                     },
                     "params": [
                       {
                         "variable": {
                           "name": "message",
-                          "type": ".Message",
+                          "type": "postnotification.Message",
                           "id": 18,
                           "ref": {
                             "name": "notification",
                             "creator": "NotifyService",
-                            "id": 18,
-                            "deps": "message (13), message (13), message (13)"
+                            "id": 18
                           }
                         }
                       }
@@ -336,20 +333,19 @@
                   {
                     "variable": {
                       "name": "postID",
-                      "type": "generic (common.StringToInt64())",
+                      "type": "\u003c common.StringToInt64()",
                       "id": 20
                     },
                     "params": [
                       {
                         "variable": {
                           "name": "message",
-                          "type": ".Message",
+                          "type": "postnotification.Message",
                           "id": 18,
                           "ref": {
                             "name": "notification",
                             "creator": "NotifyService",
-                            "id": 18,
-                            "deps": "message (13), message (13), message (13)"
+                            "id": 18
                           }
                         }
                       }
@@ -364,7 +360,7 @@
                       {
                         "variable": {
                           "name": "ctx",
-                          "type": ".context",
+                          "type": "context.context",
                           "id": 16,
                           "ref": {
                             "name": "ctx",
@@ -376,7 +372,7 @@
                       {
                         "variable": {
                           "name": "postIDStr",
-                          "type": "generic (strconv.FormatInt())",
+                          "type": "\u003c strconv.FormatInt()",
                           "id": 22
                         },
                         "params": [
@@ -388,8 +384,7 @@
                               "ref": {
                                 "name": "postID",
                                 "creator": "StorageService",
-                                "id": 20,
-                                "deps": "message (18)"
+                                "id": 20
                               }
                             }
                           },
@@ -403,13 +398,14 @@
                       },
                       {
                         "variable": {
-                          "type": "\u0026.Post",
+                          "name": "post",
+                          "type": "\u0026postnotification.Post",
                           "id": 23
                         },
                         "address_of": {
                           "variable": {
                             "name": "post",
-                            "type": ".Post",
+                            "type": "postnotification.Post",
                             "id": -1
                           }
                         }

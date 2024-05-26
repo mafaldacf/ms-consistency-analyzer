@@ -98,7 +98,7 @@ func (node *ServiceNode) parseFuncDeclParams(funcDecl *ast.FuncDecl) []*types.Fu
 func (node *ServiceNode) ParseFieldList(params *ast.FieldList) []*types.FunctionParameter {
 	var funcParams []*types.FunctionParameter 
 	for _, field := range params.List {
-		paramType := types.ComputeType(field.Type, "", nil)
+		paramType := types.ComputeType(field.Type, node.Package, node.GetImportsMap())
 		for _, ident := range field.Names {
 			param := &types.FunctionParameter{
 				FieldInfo: types.FieldInfo{
