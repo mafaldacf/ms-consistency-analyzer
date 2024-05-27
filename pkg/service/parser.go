@@ -423,7 +423,7 @@ func (node *ServiceNode) findMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 	})
 }
 
-func (node *ServiceNode) ParseConstructor(constructorArgs []string, dbInstancesConstructorIdx map[int]types.DatabaseInstance) {
+func (node *ServiceNode) ParseConstructor(paramDBs map[string]types.DatabaseInstance) {
 	constructor := node.Constructor
 	ast.Inspect(constructor.GetBody(), func(n ast.Node) bool {
 		compositeLit, ok := n.(*ast.CompositeLit)
@@ -435,22 +435,17 @@ func (node *ServiceNode) ParseConstructor(constructorArgs []string, dbInstancesC
 			for _, elt := range compositeLit.Elts {
 				if kv, ok := elt.(*ast.KeyValueExpr); ok {
 					keyIdent, ok1 := kv.Key.(*ast.Ident)
-					keyValue, ok2 := kv.Value.(*ast.Ident)
+					valueIdent, ok2 := kv.Value.(*ast.Ident)
 					if ok1 && ok2 {
 						field := node.Fields[keyIdent.Name]
 						// check if the field being defined in a database field
 						if dbField, ok := field.(*types.DatabaseField); ok {
-							// find the value that was passed to the structure
-							// implementation in the constructor arguments
-							for idx, arg := range constructorArgs {
-								if arg == keyValue.Name {
-									if dbInstance, ok := dbInstancesConstructorIdx[idx]; ok {
-										dbField.DbInstance = dbInstance
-										logger.Logger.Debugf("[PARSER] [%s] linked database field '%s' to instance '%s'", node.Name, dbField.GetName(), dbInstance.GetName())
-										break
-									}
-								}
+							dbInstance := paramDBs[valueIdent.Name]
+							if dbInstance == nil {
+								logger.Logger.Fatalf("could not find database instance for constructor parameter %s in %s", valueIdent.Name, node.Name)
 							}
+							dbField.DbInstance = dbInstance
+							logger.Logger.Debugf("[PARSER] [%s] linked database field '%s' to instance '%s'", node.Name, dbField.GetName(), dbField.DbInstance.GetName())
 						}
 					}
 				}
