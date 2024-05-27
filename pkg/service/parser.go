@@ -13,7 +13,7 @@ import (
 func (node *ServiceNode) ParseImports() {
 	logger.Logger.Debugf("inspecting imports for service %s\n", node.Name)
 
-	for _, imp := range node.File.Imports {
+	for _, imp := range node.File.Ast.Imports {
 		path := imp.Path.Value
 		// remove quotes
 		path = path[1 : len(path)-1]
@@ -29,20 +29,12 @@ func (node *ServiceNode) ParseImports() {
 			alias = items[len(items)-1]
 		}
 
-		importSpec := &ParsedImportSpec{
-			Ast:   imp,
+		impt := &types.Import{
 			Alias: alias,
 			Path:  path,
-			// FIXME: package can sometimes be different than path when it is replaced by the go.mod
-			// but this is VERY rare, especially between services
-			// still, we need to later cover this edge case
-			Package: path,
 		}
-		// FIXME: this can be different if replaced in the Go.mod file
-		if path == "github.com/blueprint-uservices/blueprint/runtime/core/backend" {
-			importSpec.IsBlueprintBackend = true
-		}
-		node.Imports[alias] = importSpec
+		impt.BuildPackageName()
+		node.File.Imports[alias] = impt
 		logger.Logger.Debugf("> %s for %s\n", alias, path)
 	}
 	logger.Logger.Debugln()
@@ -63,7 +55,7 @@ func (node *ServiceNode) methodImplementsService(n ast.Node) (ok bool, funcDecl 
 			if recv, ok := funcDecl.Recv.List[0].Type.(*ast.StarExpr); ok {
 				// check if the data type (e.g. StorageService) of the receiver (i.e. structure(s) implemented by the function)
 				// matches the one we are looking for (i.e. StorageService)
-				if ident, ok := recv.X.(*ast.Ident); ok && ident.Name == node.Impl {
+				if ident, ok := recv.X.(*ast.Ident); ok && ident.Name == node.ImplName {
 					rcvIdent = funcDecl.Recv.List[0].Names[0]
 					return true, funcDecl, rcvIdent
 				}
@@ -96,9 +88,9 @@ func (node *ServiceNode) parseFuncDeclParams(funcDecl *ast.FuncDecl) []*types.Fu
 }
 
 func (node *ServiceNode) ParseFieldList(params *ast.FieldList) []*types.FunctionParameter {
-	var funcParams []*types.FunctionParameter 
+	var funcParams []*types.FunctionParameter
 	for _, field := range params.List {
-		paramType := types.ComputeType(field.Type, node.Package, node.GetImportsMap())
+		paramType := types.ComputeType(field.Type, node.File)
 		for _, ident := range field.Names {
 			param := &types.FunctionParameter{
 				FieldInfo: types.FieldInfo{
@@ -114,9 +106,9 @@ func (node *ServiceNode) ParseFieldList(params *ast.FieldList) []*types.Function
 }
 
 func (node *ServiceNode) ParseMethods() {
-	logger.Logger.Debugf("inspecting exposed methods for service implementation %s\n", node.Impl)
+	logger.Logger.Debugf("inspecting exposed methods for service implementation %s\n", node.ImplName)
 
-	ast.Inspect(node.File, func(n ast.Node) bool {
+	ast.Inspect(node.File.Ast, func(n ast.Node) bool {
 		implementsService, funcDecl, rcvIdent := node.methodImplementsService(n)
 		if implementsService {
 			if node.isMethodExposedByService(funcDecl) {
@@ -158,12 +150,12 @@ func (node *ServiceNode) ParseMethodsBody() {
 func (node *ServiceNode) ParseFields() {
 	logger.Logger.Debugf("inspecting fields for service %s\n", node.Name)
 
-	ast.Inspect(node.File, func(n ast.Node) bool {
+	ast.Inspect(node.File.Ast, func(n ast.Node) bool {
 		// a struct type is first a spec type
 		// we want to make sure that we found the service type
 		// otherwise, we return true to keep recursition to next ast node
 		if ts, ok := n.(*ast.TypeSpec); ok {
-			if ts.Name.Name != node.Impl {
+			if ts.Name.Name != node.ImplName {
 				return true
 			}
 		}
@@ -178,16 +170,16 @@ func (node *ServiceNode) ParseFields() {
 	logger.Logger.Debugln()
 }
 
-func (node *ServiceNode) RegisterConstructor(constructorName string) {
-	ast.Inspect(node.File, func(n ast.Node) bool {
+func (node *ServiceNode) RegisterConstructor() {
+	ast.Inspect(node.File.Ast, func(n ast.Node) bool {
 		hasReceiver, funcDecl := node.methodHasReceiver(n)
-		if !hasReceiver && funcDecl != nil && funcDecl.Name.Name == constructorName {
+		if !hasReceiver && funcDecl != nil && funcDecl.Name.Name == node.ConstructorName {
 			node.Constructor = &ParsedFuncDecl{
 				Ast:     funcDecl,
 				Name:    funcDecl.Name.Name,
 				Service: node.Name,
 			}
-			logger.Logger.Debugf("[PARSER] registered constructor %s for service %s", constructorName, node.Name)
+			logger.Logger.Debugf("[PARSER] registered constructor %s for service %s", node.ConstructorName, node.Name)
 		}
 		return true
 	})
@@ -198,16 +190,16 @@ func (node *ServiceNode) RegisterStructure() {
 	for name := range node.ExposedMethods {
 		exposedMethodsNames = append(exposedMethodsNames, name)
 	}
-	ast.Inspect(node.File, func(n ast.Node) bool {
-		if node.Impl != "" {
+	ast.Inspect(node.File.Ast, func(n ast.Node) bool {
+		if node.ImplName != "" {
 			return false
 		}
 		if funcDecl, ok := n.(*ast.FuncDecl); ok && slices.Contains(exposedMethodsNames, funcDecl.Name.Name) {
 			if funcDecl.Recv != nil && len(funcDecl.Recv.List) > 0 {
 				if recv, ok := funcDecl.Recv.List[0].Type.(*ast.StarExpr); ok {
 					if ident, ok := recv.X.(*ast.Ident); ok {
-						node.Impl = ident.Name
-						logger.Logger.Debugf("[PARSER] registered structure %s for service %s", node.Impl, node.Name)
+						node.ImplName = ident.Name
+						logger.Logger.Debugf("[PARSER] registered structure %s for service %s", node.ImplName, node.Name)
 						return false
 					}
 				}
@@ -218,12 +210,12 @@ func (node *ServiceNode) RegisterStructure() {
 }
 
 func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string, idx int) {
-	fieldType := types.ComputeType(field.Type, node.Package, node.GetImportsMap())
+	fieldType := types.ComputeType(field.Type, node.File)
 	switch t := fieldType.(type) {
 	case *types.UserType:
 		if t.Package != "" {
 			// check if it is a blueprint backend import
-			if impt, ok := node.Imports[t.Package]; ok && impt.IsBlueprintBackend && frameworks.IsBlueprintBackend(t.Name) {
+			if impt, ok := node.File.Imports[t.Package]; ok && impt.IsBlueprintPackage() && frameworks.IsBlueprintBackend(t.Name) {
 				dbField := &types.DatabaseField{
 					FieldInfo: types.FieldInfo{
 						Ast:  field,
@@ -241,7 +233,7 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string, i
 			}
 		}
 		// upgrade to service field
-		if service, ok := node.Services[t.Name]; ok && service.Package == t.Package {
+		if service, ok := node.Services[t.Name]; ok && service.GetPackageName() == t.Package {
 			node.Fields[paramName] = &types.ServiceField{
 				FieldInfo: types.FieldInfo{
 					Ast:  field,
@@ -265,77 +257,6 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string, i
 		},
 	}
 }
-
-/* // saveFieldWithType saves the service or database fields defined in the structure
-func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string, idx int) {
-	switch t := field.Type.(type) {
-
-	// if the type is from the current package, then it is probably a service import
-	// so we need to check the type and if the type correponds to an existing service
-	case *ast.Ident:
-		// the field indeed corresponds to another service
-		// so the package of the variable is the same
-		if _, ok := node.Services[t.Name]; ok {
-			node.Fields[paramName] = &types.ServiceField{
-				FieldInfo: types.FieldInfo{
-					Ast:  field,
-					Name: paramName,
-					Type: &types.UserType{
-						Name:    t.Name,
-						Package: node.Package,
-					},
-				},
-				Idx: idx,
-			}
-		}
-
-	// probably selecting from a specific package
-	case *ast.SelectorExpr:
-		// e.g. backend.Queue
-		//      ^ ident ^ selector
-		if ident, ok := t.X.(*ast.Ident); ok {
-			if impt, ok := node.Imports[ident.Name]; ok {
-				// check if the matched package is a database package imported from blueprint
-				if impt.IsBlueprintBackend && frameworks.IsBlueprintBackend(t.Sel.Name) {
-					newField := &types.DatabaseField{
-						FieldInfo: types.FieldInfo{
-							Ast:  field,
-							Name: paramName,
-							Type: &types.UserType{
-								Name:    t.Sel.Name,
-								Package: impt.Package,
-							},
-						},
-						IsQueue: frameworks.IsBlueprintBackendQueue(t.Sel.Name),
-						Idx:     idx,
-					}
-					if frameworks.IsBlueprintBackendQueue(t.Sel.Name) {
-						newField.IsQueue = true
-						node.ImplementsQueue = true
-					}
-					node.Fields[paramName] = newField
-				}
-				// check if the import matches the path of any of existing services
-				for _, s := range node.Services {
-					if s.Package == impt.Package {
-						node.Fields[paramName] = &types.ServiceField{
-							FieldInfo: types.FieldInfo{
-								Ast:  field,
-								Name: paramName,
-								Type: &types.UserType{
-									Name:    t.Sel.Name,
-									Package: s.Package,
-								},
-							},
-						}
-					}
-				}
-			}
-		}
-	default:
-		logger.Logger.Warnf("unknown field type %s for service %s", field.Type, node.Name)
-	}
-} */
 
 func (node *ServiceNode) funcImplementsQueue(funcDecl *ast.FuncDecl, recvIdent *ast.Ident) (implements bool, dbInstance types.DatabaseInstance) {
 	// inspect methods
@@ -457,11 +378,10 @@ func (node *ServiceNode) findMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 							Pos:         funcCall.Pos(),
 							Method:      targetMethod,
 						},
-						CallerTypeName: &types.ServiceType{Name: node.Name, Package: node.Package},
+						CallerTypeName: &types.ServiceType{Name: node.Name, Package: node.GetPackageName()},
 						CalleeTypeName: serviceField.GetType(),
 					}
 					parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, svcParsedCallExpr)
-					logger.Logger.Debugf("[PARSER] found new service call %s (params: %v)", svcParsedCallExpr.String(), svcParsedCallExpr.Params)
 				}
 				// if the field corresponds to a database field
 				if databaseField, ok := field.(*types.DatabaseField); ok {
@@ -478,7 +398,7 @@ func (node *ServiceNode) findMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 							Pos:         funcCall.Pos(),
 							Method:      frameworks.GetBackendMethod(fmt.Sprintf("%s.%s", targetDatabaseType, methodIdent.Name)),
 						},
-						CallerTypeName: &types.ServiceType{Name: node.Name, Package: node.Package},
+						CallerTypeName: &types.ServiceType{Name: node.Name, Package: node.GetPackageName()},
 						DbInstance:     databaseField.DbInstance,
 					}
 					parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, dbCall)
@@ -494,7 +414,7 @@ func (node *ServiceNode) findMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 					Method:   funcDecl,
 					Pos:      funcCall.Pos(),
 				},
-				ServiceTypeName: &types.ServiceType{Name: node.Name, Package: node.Package},
+				ServiceTypeName: &types.ServiceType{Name: node.Name, Package: node.GetPackageName()},
 			}
 			parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, internalCall)
 			logger.Logger.Debugf("[PARSER] found new internal call %s (params: %v)", internalCall.String(), internalCall.Params)
@@ -510,7 +430,7 @@ func (node *ServiceNode) ParseConstructor(constructorArgs []string, dbInstancesC
 		if !ok {
 			return true
 		}
-		if ident, ok := compositeLit.Type.(*ast.Ident); ok && ident.Name == node.Impl {
+		if ident, ok := compositeLit.Type.(*ast.Ident); ok && ident.Name == node.ImplName {
 			// iterate all key value pairs passed during the service definition
 			for _, elt := range compositeLit.Elts {
 				if kv, ok := elt.(*ast.KeyValueExpr); ok {

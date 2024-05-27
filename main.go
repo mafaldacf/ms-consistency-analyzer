@@ -45,6 +45,7 @@ func main() {
 	}
 	app.RegisterDatabaseInstances(databases)
 	app.RegisterServiceNodes(services)
+	app.ParseServiceNodes()
 
 	abstractGraph := abstractgraph.Build(app, frontends)
 

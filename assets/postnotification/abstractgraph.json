@@ -198,7 +198,7 @@
               "variable": {
                 "name": "PostID",
                 "type": "\u003c common.Int64ToString()",
-                "id": 12
+                "id": 11
               },
               "params": [
                 {
@@ -214,7 +214,7 @@
               "variable": {
                 "name": "ReqID",
                 "type": "\u003c common.Int64ToString()",
-                "id": 11
+                "id": 12
               },
               "params": [
                 {

@@ -42,7 +42,7 @@ func CreateTypeVariable(name string, t Type) Variable {
 				Id:   VARIABLE_UNASSIGNED_ID,
 			},
 		}
-	/* case *StructType:
+	case *StructType:
 		return &StructVariable{
 			VariableInfo: &VariableInfo{
 				Name: name,
@@ -50,7 +50,7 @@ func CreateTypeVariable(name string, t Type) Variable {
 				Id:   VARIABLE_UNASSIGNED_ID,
 			},
 			Fields: make(map[string]Variable),
-		} */
+		}
 	case *MapType:
 		return &MapVariable{
 			VariableInfo: &VariableInfo{
@@ -60,24 +60,24 @@ func CreateTypeVariable(name string, t Type) Variable {
 			},
 			KeyValues: make(map[Variable]Variable, 0),
 		}
-	/* case *ArrayType:
+	case *ArrayType:
 		return &ArrayVariable{
 			VariableInfo: &VariableInfo{
 				Name: name,
 				Type: e,
 				Id:   VARIABLE_UNASSIGNED_ID,
 			},
-		} */
+		}
 	}
 	logger.Logger.Fatalf("could not create variable %s for type %s", name, t)
 	return nil
 }
 
-func computeUserType(name string, importedPkg string) Type {
+func computeUserType(impt *Import, name string) Type {
 	return nil
 }
 
-func ComputeType(typeExpr ast.Expr, pkg string, importMap map[string]string) Type {
+func ComputeType(typeExpr ast.Expr, file *File) Type {
 	switch e := typeExpr.(type) {
 	case *ast.Ident:
 		if utils.IsBasicType(e.Name) {
@@ -87,39 +87,39 @@ func ComputeType(typeExpr ast.Expr, pkg string, importMap map[string]string) Typ
 		}
 		return &UserType{
 			Name:    e.Name,
-			Package: pkg,
+			Package: file.Package.Name,
 		}
 	case *ast.SelectorExpr:
 		if pkgIdent, ok := e.X.(*ast.Ident); ok {
-			if fullImpt, ok := importMap[pkgIdent.Name]; ok {
+			if impt, ok := file.GetImport(pkgIdent.Name); ok {
 				return &UserType{
 					Name:    e.Sel.Name,
 					Package: pkgIdent.Name,
-					Type:    computeUserType(e.Sel.Name, fullImpt),
+					Type:    computeUserType(impt, e.Sel.Name),
 				}
 			}
 		}
 	case *ast.ChanType:
 		return &ChanType{
-			ChanType: ComputeType(e.Value, pkg, importMap),
+			ChanType: ComputeType(e.Value, file),
 		}
 	case *ast.MapType:
 		return &MapType{
-			KeyType:   ComputeType(e.Key, pkg, importMap),
-			ValueType: ComputeType(e.Value, pkg, importMap),
+			KeyType:   ComputeType(e.Key, file),
+			ValueType: ComputeType(e.Value, file),
 		}
 	case *ast.InterfaceType:
 		return &InterfaceType{}
 	case *ast.ArrayType:
 		return &ArrayType{
-			ElementsType: ComputeType(e.Elt, pkg, importMap),
+			ElementsType: ComputeType(e.Elt, file),
 		}
 	case *ast.StructType:
 		return &StructType{
 			// FIXME: struct type must not have a name, only a user type can have it
 		}
 	}
-	logger.Logger.Fatalf("could not compute type for expr %v (type = %s), pkg %s, importMap %v", typeExpr, utils.GetType(typeExpr), pkg, importMap)
+	logger.Logger.Fatalf("could not compute type for expr %v (type = %s), pkg %s, importMap %v", typeExpr, utils.GetType(typeExpr), file.Package.Name, file.Imports)
 	return nil
 }
 
@@ -147,32 +147,26 @@ func computeFunctionCallName(expr ast.Expr) string {
 	return ""
 }
 
-func GetDeclaredUserType(expr ast.Expr, pkg string, typesMap map[string]*UserType, importMap map[string]string) (*UserType, bool) {
-	if typesMap == nil {
-		// FIX THIS HARDCODED CODE
-		typesMap = make(map[string]*UserType)
-		typesMap["Post"] = &UserType{
-			Name: "Post",
-			Package: pkg,
-			UserType: &StructType{},
-		}
-		typesMap["Message"] = &UserType{
-			Name: "Message",
-			Package: pkg,
-			UserType: &StructType{},
-		}
-	}
+func GetDeclaredUserType(file *File, expr ast.Expr) (*UserType, bool) {
+	// FIX THIS HARDCODED CODE
+	file.Package.DeclaredTypes["Post"] = &StructType{}
+	file.Package.DeclaredTypes["Message"] = &StructType{}
+
 	switch e := expr.(type) {
 	case *ast.Ident:
-		if userType, ok := typesMap[e.Name]; ok {
-			return userType, true
+		if t, ok := file.Package.DeclaredTypes[e.Name]; ok {
+			return &UserType{
+				Name: e.Name,
+				Package: file.Package.Name,
+				UserType: t,
+			}, true
 		}
 	}
 	logger.Logger.Fatalf("could not get declared type for expr %s (type = %s)", expr, utils.GetType(expr))
 	return nil, false
 }
 
-func LookupVariables(blockVars []Variable, expr ast.Expr, pkg string, importMap map[string]string) (variable Variable) {
+func LookupVariables(file *File, blockVars []Variable, expr ast.Expr) (variable Variable) {
 	switch e := expr.(type) {
 	case *ast.Ident:
 		variable = GetDeclaredVariable(e.Name, blockVars)
@@ -190,7 +184,8 @@ func LookupVariables(blockVars []Variable, expr ast.Expr, pkg string, importMap 
 	// FIXME: ACTUALLY THE TYPE OF A STRUCT SHOULD REFERENCE A USER TYPE THAT WAS PREVIOUSLY DEFINED
 	case *ast.CompositeLit:
 		if ident, ok := e.Type.(*ast.Ident); ok {
-			if userType, found := GetDeclaredUserType(ident, pkg, nil, importMap); found {
+			if userType, found := GetDeclaredUserType(file, ident); found {
+
 				if _, ok := userType.UserType.(*StructType); ok {
 					variable = &StructVariable{
 						VariableInfo: &VariableInfo{
@@ -202,7 +197,7 @@ func LookupVariables(blockVars []Variable, expr ast.Expr, pkg string, importMap 
 					for _, elt := range e.Elts {
 						keyvalue := elt.(*ast.KeyValueExpr)
 						key := keyvalue.Key.(*ast.Ident)
-						eltVar := LookupVariables(blockVars, keyvalue.Value, pkg, importMap)
+						eltVar := LookupVariables(file, blockVars, keyvalue.Value)
 						if eltVar.GetVariableInfo().Name == "" {
 							eltVar.GetVariableInfo().SetName(key.Name)
 						}
@@ -212,7 +207,7 @@ func LookupVariables(blockVars []Variable, expr ast.Expr, pkg string, importMap 
 			}
 		} else if arrayTypeAst, ok := e.Type.(*ast.ArrayType); ok {
 			arrayType := &ArrayType{
-				ElementsType: ComputeType(arrayTypeAst.Elt, pkg, importMap),
+				ElementsType: ComputeType(arrayTypeAst.Elt, file),
 			}
 			variable = &ArrayVariable{
 				VariableInfo: &VariableInfo{
@@ -221,13 +216,13 @@ func LookupVariables(blockVars []Variable, expr ast.Expr, pkg string, importMap 
 				},
 			}
 			for _, elt := range e.Elts {
-				eltVar := LookupVariables(blockVars, elt, pkg, importMap)
+				eltVar := LookupVariables(file, blockVars, elt)
 				variable.(*ArrayVariable).AddElement(eltVar)
 			}
 		}
 
 	case *ast.SelectorExpr:
-		variable = LookupVariables(blockVars, e.X, pkg, importMap)
+		variable = LookupVariables(file, blockVars, e.X)
 		if structVar, ok := variable.(*StructVariable); ok {
 			variable = structVar.Fields[e.Sel.Name]
 		}
@@ -239,19 +234,19 @@ func LookupVariables(blockVars []Variable, expr ast.Expr, pkg string, importMap 
 		callStr := computeFunctionCallName(e.Fun) + "()"
 		genVar := createInlineVariable(callStr)
 		for _, arg := range e.Args {
-			argVar := LookupVariables(blockVars, arg, pkg, importMap)
+			argVar := LookupVariables(file, blockVars, arg)
 			genVar.Params = append(genVar.Params, argVar)
 		}
 		variable = genVar
 	case *ast.TypeAssertExpr:
-		variable = LookupVariables(blockVars, e.X, pkg, importMap)
+		variable = LookupVariables(file, blockVars, e.X)
 	case *ast.IndexExpr:
-		variable = LookupVariables(blockVars, e.X, pkg, importMap)
+		variable = LookupVariables(file, blockVars, e.X)
 		if arrayVar, ok := variable.(*ArrayVariable); ok {
 			variable = arrayVar.Elements[computeArrayIndex(e.Index)]
 		}
 		if mapVar, ok := variable.(*MapVariable); ok {
-			key := LookupVariables(blockVars, e.Index, pkg, importMap)
+			key := LookupVariables(file, blockVars, e.Index)
 			variable, ok = mapVar.KeyValues[key]
 			if !ok {
 				logger.Logger.Warnf("got map %v with unassigned value for key %s", mapVar.String(), key.String())
@@ -260,7 +255,7 @@ func LookupVariables(blockVars []Variable, expr ast.Expr, pkg string, importMap 
 		}
 	case *ast.UnaryExpr:
 		if e.Op == token.AND { // e.g. &post
-			variable = LookupVariables(blockVars, e.X, pkg, importMap)
+			variable = LookupVariables(file, blockVars, e.X)
 			addrType := &AddressType{
 				AddressOf: variable.GetVariableInfo().Type,
 			}
@@ -273,7 +268,7 @@ func LookupVariables(blockVars []Variable, expr ast.Expr, pkg string, importMap 
 				},
 			}
 		} else if e.Op == token.MUL { // e.g. *post
-			variable = LookupVariables(blockVars, e.X, pkg, importMap)
+			variable = LookupVariables(file, blockVars, e.X)
 			addrType := &AddressType{
 				AddressOf: variable.GetVariableInfo().Type,
 			}
@@ -287,7 +282,7 @@ func LookupVariables(blockVars []Variable, expr ast.Expr, pkg string, importMap 
 			}
 
 		} else {
-			variable = LookupVariables(blockVars, e.X, pkg, importMap)
+			variable = LookupVariables(file, blockVars, e.X)
 		}
 	default:
 		logger.Logger.Fatalf("unknown type in LookupVariables for type %s: %v", utils.GetType(e), e)
@@ -295,23 +290,23 @@ func LookupVariables(blockVars []Variable, expr ast.Expr, pkg string, importMap 
 	return variable
 }
 
-func IsVarDeclOrAssign(blockVars []Variable, node ast.Node, pkg string, importMap map[string]string) []Variable {
+func IsVarDeclOrAssign(file *File, blockVars []Variable, node ast.Node) []Variable {
 	var vars []Variable
 	switch n := node.(type) {
 	case *ast.DeclStmt:
 		for _, spec := range n.Decl.(*ast.GenDecl).Specs {
-			v := IsVarDeclOrAssign(blockVars, spec, pkg, importMap)
+			v := IsVarDeclOrAssign(file, blockVars, spec)
 			vars = append(vars, v...)
 		}
 	case *ast.ValueSpec:
-		t := ComputeType(n.Type, pkg, importMap)
+		t := ComputeType(n.Type, file)
 		for _, ident := range n.Names {
 			decl := CreateTypeVariable(ident.Name, t)
 			vars = append(vars, decl)
 		}
 	case *ast.AssignStmt:
 		for i, rvalue := range n.Rhs {
-			field := LookupVariables(blockVars, rvalue, pkg, importMap)
+			field := LookupVariables(file, blockVars, rvalue)
 			lvalue := n.Lhs[i]
 
 			field.GetVariableInfo().SetName(lvalue.(*ast.Ident).Name)

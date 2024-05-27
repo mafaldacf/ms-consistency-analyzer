@@ -28,6 +28,7 @@ type App struct {
 	Path      string                            `json:"-"`
 	Services  map[string]*service.ServiceNode   `json:"app_services,omitempty"`
 	Databases map[string]types.DatabaseInstance `json:"app_databases,omitempty"`
+	Packages  map[string]*types.Package 		`json:"packages,omitempty"`
 }
 
 // MarshalJSON is used by app.Save()
@@ -60,6 +61,7 @@ func Init(name string, path string) (*App, error) {
 		Path:      fullPath,
 		Services:  make(map[string]*service.ServiceNode),
 		Databases: make(map[string]types.DatabaseInstance),
+		Packages:  make(map[string]*types.Package),
 	}
 	logger.Logger.Infof("[APP] initialized app at %s", app.Path)
 	return app, nil
@@ -119,20 +121,21 @@ func (app *App) RegisterDatabaseInstances(databases map[string]ir.IRNode) {
 	}
 }
 
-func (app *App) RegisterServiceNodes(specs map[*workflowspec.Service][]golang.Service) error {
-	servicesToSpec, err := app.createServiceNodes(specs)
-	if err != nil {
-		return err
-	}
+func (app *App) RegisterServiceNodes(specs map[*workflowspec.Service][]golang.Service) {
+	servicesToSpec := app.createServiceNodes(specs)
 	app.matchServiceEdges()
-	app.parseServicesInfo(servicesToSpec, specs)
-	app.parseServicesMethods()
-	app.parseServicesMethodsBody()
+	app.parseServicesInfo()
+
+	for _, node := range app.Services {
+		serviceSpec := servicesToSpec[node]
+		serviceArgs := specs[serviceSpec]
+		app.MatchServiceDatabases(node, serviceSpec, serviceArgs)
+	}
+
 
 	for _, node := range app.Services {
 		logger.Logger.Infof("[APP] registered service node %s with %d service(s) and %d database(s)", node.Name, len(node.Services), len(node.Databases))
 	}
-	return nil
 }
 
 func (app *App) matchServiceEdges() {
@@ -143,21 +146,43 @@ func (app *App) matchServiceEdges() {
 	}
 }
 
-// inspired by blueprint
-// findConstructorsOfIface() at blueprint/plugins/workflow/workflowspec/service.go
-func getConstructorNameFromSpec(spec *workflowspec.Service) string {
-	for _, pkg := range spec.Iface.File.Package.Module.Packages {
-		for _, f := range pkg.Funcs {
-			if workflowspec.IsConstructorOfIface(f, spec.Iface) {
-				return f.Name
-			}
-		}
+func (app *App) parseServicesInfo() {
+	for _, node := range app.Services {
+		logger.Logger.Warnf("[PARSER] APP service %s", node.Name)
+		node.ParseImports()
+		node.RegisterConstructor()
+		node.RegisterStructure()
+		node.ParseFields()
 	}
-	return ""
 }
 
-func (app *App) matchServiceDatabases(serviceNode *service.ServiceNode, serviceSpec *workflowspec.Service, specs map[*workflowspec.Service][]golang.Service) {
-	serviceArgs := specs[serviceSpec]
+func (app *App) ParseServiceNodes() {
+	// parse service methods
+	for _, node := range app.Services {
+		node.ParseMethods()
+	}
+	// keep this order
+	// parse service methods body
+	for _, node := range app.Services {
+		fmt.Printf("\n ################################## %s ##################################\n", node.Name)
+		node.ParseMethodsBody()
+
+		var parseCFGsHelper = func (node *service.ServiceNode, methods map[string]*service.ParsedFuncDecl, visibility string) {
+			for _, method := range methods {
+				fmt.Printf("\n[%s] ------------------- %s -------------------\n", strings.ToUpper(visibility), method)
+				controlflow.GenerateMethodCFG(method)
+				controlflow.ParseServiceMethodCFG(node, method)
+				fmt.Printf("\n-------------------------------------------------------\n")
+			}
+		}
+		parseCFGsHelper(node, node.ExposedMethods, "exposed")
+		parseCFGsHelper(node, node.QueueHandlerMethods, "worker")
+		parseCFGsHelper(node, node.InternalMethods, "internal")
+	}
+}
+
+
+func (app *App) MatchServiceDatabases(serviceNode *service.ServiceNode, serviceSpec *workflowspec.Service, serviceArgs []golang.Service) {
 	var constructorArgs []string
 	// key: index in constructor for database argument
 	// value: database instance to be referenced
@@ -179,66 +204,58 @@ func (app *App) matchServiceDatabases(serviceNode *service.ServiceNode, serviceS
 	serviceNode.ParseConstructor(constructorArgs, dbInstancesConstructorIdx)
 }
 
-func (app *App) parseServicesInfo(servicesToSpec map[*service.ServiceNode]*workflowspec.Service, specs map[*workflowspec.Service][]golang.Service) {
-	for _, node := range app.Services {
-		logger.Logger.Warnf("[PARSER] APP service %s", node.Name)
-		node.ParseImports()
-		node.RegisterConstructor(getConstructorNameFromSpec(servicesToSpec[node]))
-		node.RegisterStructure()
-		node.ParseFields()
-		app.matchServiceDatabases(node, servicesToSpec[node], specs)
+func (app *App) getOrCreatePackage(name string) *types.Package {
+	if pkg, ok := app.Packages[name]; ok {
+		return pkg
 	}
+	pkg := &types.Package{
+		Name: 				name,
+		DeclaredTypes: 		make(map[string]types.Type),
+		DeclaredVariables: 	make(map[string]types.Variable),
+	}
+	app.Packages[name] = pkg
+	return pkg
 }
 
-func (app *App) parseServicesMethods() {
-	for _, node := range app.Services {
-		node.ParseMethods()
+func getConstructorNameFromSpec(spec *workflowspec.Service) string {
+	for _, pkg := range spec.Iface.File.Package.Module.Packages {
+		for _, f := range pkg.Funcs {
+			if workflowspec.IsConstructorOfIface(f, spec.Iface) {
+				return f.Name
+			}
+		}
 	}
+	logger.Logger.Fatalf("could not find constructor name from spec")
+	return ""
 }
 
-func (app *App) parseServicesMethodsBody() {
-	for _, node := range app.Services {
-		fmt.Printf("\n ################################## %s ##################################\n", node.Name)
-		node.ParseMethodsBody()
-		parseCFGsHelper(node, node.ExposedMethods, "exposed")
-		parseCFGsHelper(node, node.QueueHandlerMethods, "worker")
-		parseCFGsHelper(node, node.InternalMethods, "internal")
-	}
-}
-
-func parseCFGsHelper(node *service.ServiceNode, methods map[string]*service.ParsedFuncDecl, visibility string) {
-	for _, method := range methods {
-		fmt.Printf("\n[%s] ------------------- %s -------------------\n", strings.ToUpper(visibility), method)
-		controlflow.GenerateMethodCFG(method)
-		controlflow.ParseServiceMethodCFG(node, method)
-		fmt.Printf("\n-------------------------------------------------------\n")
-	}
-}
-
-func (app *App) createServiceNodes(specs map[*workflowspec.Service][]golang.Service) (map[*service.ServiceNode]*workflowspec.Service, error) {
+func (app *App) createServiceNodes(specs map[*workflowspec.Service][]golang.Service) map[*service.ServiceNode]*workflowspec.Service {
 	serviceSpec := make(map[*service.ServiceNode]*workflowspec.Service)
 	logger.Logger.Debugf("[APP] loading #%d specs", len(specs))
 	// services also include blueprint backends
 	for spec, edges := range specs {
 		fset := token.NewFileSet()
 		filepath := spec.Iface.File.Name
-		file, err := parser.ParseFile(fset, filepath, nil, parser.ParseComments)
+		fileAst, err := parser.ParseFile(fset, filepath, nil, parser.ParseComments)
 		if err != nil {
-			logger.Logger.Errorf("error parsing file %s: %s", filepath, err.Error())
-			return serviceSpec, err
+			logger.Logger.Fatalf("error parsing file %s: %s", filepath, err.Error())
+		}
+		file := &types.File{
+			Ast: 		fileAst,
+			Path: 		filepath,
+			Package:  	app.getOrCreatePackage(fileAst.Name.Name),
+			Imports:    make(map[string]*types.Import),
 		}
 		node := &service.ServiceNode{
 			Name:                spec.Iface.Name,
-			Package:             spec.Iface.File.Package.Name,
-			Filepath:            filepath,
-			File:                file,
+			File:             	 file,
 			Fields:              make(map[string]types.Field),
-			Imports:             make(map[string]*service.ParsedImportSpec),
 			Services:            make(map[string]*service.ServiceNode),
 			Databases:           make(map[string]types.DatabaseInstance),
 			ExposedMethods:      make(map[string]*service.ParsedFuncDecl),
 			QueueHandlerMethods: make(map[string]*service.ParsedFuncDecl),
 			InternalMethods:     make(map[string]*service.ParsedFuncDecl),
+			ConstructorName: 	 getConstructorNameFromSpec(spec),
 		}
 		serviceSpec[node] = spec
 		// add entry for methods that will be later parsed
@@ -257,5 +274,5 @@ func (app *App) createServiceNodes(specs map[*workflowspec.Service][]golang.Serv
 		app.Services[node.Name] = node
 		logger.Logger.Infof("[APP] created service node: %s", node.Name)
 	}
-	return serviceSpec, nil
+	return serviceSpec
 }

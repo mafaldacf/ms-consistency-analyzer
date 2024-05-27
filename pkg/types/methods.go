@@ -7,11 +7,3 @@ type Method interface {
 	IsQueueWrite() bool
 	IsQueueRead() bool
 }
-
-type DatabaseInstance interface {
-	String() string
-	IsQueue() bool
-	GetTypeName() string
-	GetName() string
-	Equals() bool
-}

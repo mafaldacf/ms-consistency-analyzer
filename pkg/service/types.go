@@ -22,23 +22,23 @@ type ParsedFuncDecl struct {
 
 	// used to fetch the params when generating the basic cfg
 	// to store in the variables array of the function
-	Params  []*types.FunctionParameter
+	Params []*types.FunctionParameter
 }
 
-func (f *ParsedFuncDecl) GetAst() *ast.FuncDecl { 
-	return f.Ast 
+func (f *ParsedFuncDecl) GetAst() *ast.FuncDecl {
+	return f.Ast
 }
-func (f *ParsedFuncDecl) GetBody() *ast.BlockStmt { 
+func (f *ParsedFuncDecl) GetBody() *ast.BlockStmt {
 	return f.Ast.Body
 }
 func (f *ParsedFuncDecl) SetParsedCFG(parsedCfg *types.ParsedCFG) {
 	f.ParsedCfg = parsedCfg
 }
-func (*ParsedFuncDecl) IsQueueWrite() bool { 
-	return false 
+func (*ParsedFuncDecl) IsQueueWrite() bool {
+	return false
 }
-func (*ParsedFuncDecl) IsQueueRead() bool  { 
-	return false 
+func (*ParsedFuncDecl) IsQueueRead() bool {
+	return false
 }
 
 func (p *ParsedFuncDecl) String() string {
@@ -55,13 +55,6 @@ func (p *ParsedFuncDecl) String() string {
 
 func (p *ParsedFuncDecl) GetParams() []*types.FunctionParameter {
 	return p.Params
-}
-type ParsedImportSpec struct {
-	Ast                *ast.ImportSpec
-	Alias              string
-	Path               string
-	Package            string
-	IsBlueprintBackend bool
 }
 
 type Call interface {
@@ -219,13 +212,12 @@ func (internalCall *InternalTempParsedCallExpr) GetParams() []types.Variable {
 }
 
 type ServiceNode struct {
-	Name     string
-	Impl     string
-	Filepath string
-	Package  string
-	File     *ast.File
+	Name     		string
+	ImplName     	string
+	ConstructorName string
+
+	File     *types.File
 	Fields   map[string]types.Field
-	Imports  map[string]*ParsedImportSpec
 	// the map key is the service type (e.g. StorageService in 'storageService StorageService')
 	Services  map[string]*ServiceNode
 	Databases map[string]types.DatabaseInstance
@@ -239,12 +231,11 @@ type ServiceNode struct {
 	ImplementsQueue bool
 }
 
-func (node *ServiceNode) GetImportsMap() map[string]string {
-	imports := make(map[string]string, 0)
-	for key, importSpec := range node.Imports {
-		imports[key] = importSpec.Path
-	}
-	return imports
+func (node *ServiceNode) GetPackage() *types.Package {
+	return node.File.Package
+}
+func (node *ServiceNode) GetPackageName() string {
+	return node.File.Package.Name
 }
 
 func (node *ServiceNode) GetQueueHandlersForDatabase(database types.DatabaseInstance) []*ParsedFuncDecl {
