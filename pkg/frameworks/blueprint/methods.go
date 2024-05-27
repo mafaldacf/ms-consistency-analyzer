@@ -87,6 +87,8 @@ func (b *BlueprintBackend) GetWrittenKeyIndex() int {
 	switch b.Name {
 	case "Cache.Put":
 		return 1
+	case "Queue.Push":
+		return 1
 	}
 	return -1
 }
@@ -94,6 +96,8 @@ func (b *BlueprintBackend) GetWrittenKeyIndex() int {
 func (b *BlueprintBackend) GetReadKeyIndex() int {
 	switch b.Name {
 	case "Cache.Get":
+		return 1
+	case "Queue.Pop":
 		return 1
 	}
 	return -1

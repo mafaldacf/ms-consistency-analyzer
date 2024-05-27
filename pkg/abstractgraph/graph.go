@@ -191,6 +191,7 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				Service:    parsedCall.CallerTypeName.GetName(),
 				Method:     parsedCall.Method.String(),
 				DbInstance: parsedCall.DbInstance,
+				Subscriber: rootIsQueueHandler,
 			}
 			rootParent.AddChild(child)
 

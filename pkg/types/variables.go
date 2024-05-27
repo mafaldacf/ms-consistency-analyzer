@@ -14,15 +14,15 @@ type Reference struct {
 
 func (ref *Reference) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Name         string `json:"name"`
-		Creator      string `json:"creator"`
-		Id           int64  `json:"id"`
+		Name    string `json:"name"`
+		Creator string `json:"creator"`
+		Id      int64  `json:"id"`
 		/* IndirectDeps string `json:"indirect_deps"` */
 		/* Params 			[]Variable 		`json:"ref_params"` */
 	}{
-		Name:         ref.Variable.GetVariableInfo().GetName(),
-		Creator:      ref.Creator,
-		Id:           ref.Variable.GetVariableInfo().GetId(),
+		Name:    ref.Variable.GetVariableInfo().GetName(),
+		Creator: ref.Creator,
+		Id:      ref.Variable.GetVariableInfo().GetId(),
 		/* IndirectDeps: getDependenciesString(getIndirectDependencies(ref)...), */
 		/* Params:  		ref.Variable.GetDependencies(), */
 	})
@@ -66,22 +66,23 @@ type VariableInfo struct {
 
 func (v *VariableInfo) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Name      string     `json:"name,omitempty"`
-		Type      string     `json:"type,omitempty"`
-		Id        int64      `json:"id,omitempty"`
-		Reference *Reference `json:"ref,omitempty"`
+		Name      string `json:"name,omitempty"`
+		Type      string `json:"type,omitempty"`
+		Id        int64  `json:"id,omitempty"`
+		Reference bool   `json:"ref,omitempty"`
+		//Reference *Reference `json:"ref,omitempty"`
 	}{
 		Name:      v.Name,
 		Type:      v.Type.String(),
 		Id:        v.Id,
-		Reference: v.Reference,
+		Reference: v.Reference != nil,
 	})
 }
 
 type GenericVariable struct {
 	Variable     `json:"-"`
 	VariableInfo *VariableInfo `json:"variable"`
-	Params       []Variable    `json:"params,omitempty"`
+	Params       []Variable    `json:"-"` //`json:"params,omitempty"`
 }
 
 type ParameterVariable struct {
@@ -92,31 +93,31 @@ type ParameterVariable struct {
 type StructVariable struct {
 	Variable     `json:"-"`
 	VariableInfo *VariableInfo       `json:"variable"`
-	Fields       map[string]Variable `json:"fields,omitempty"`
+	Fields       map[string]Variable `json:"-"` //`json:"fields,omitempty"`
 }
 
 type MapVariable struct {
 	Variable     `json:"-"`
 	VariableInfo *VariableInfo         `json:"variable"`
-	KeyValues    map[Variable]Variable `json:"key_values,omitempty"`
+	KeyValues    map[Variable]Variable `json:"-"` //`json:"key_values,omitempty"`
 }
 
 type ArrayVariable struct {
 	Variable     `json:"-"`
 	VariableInfo *VariableInfo `json:"variable"`
-	Elements     []Variable    `json:"elements"`
+	Elements     []Variable    `json:"-"` //`json:"elements"`
 }
 
 type PointerVariable struct {
 	Variable     `json:"-"`
 	VariableInfo *VariableInfo `json:"variable"`
-	PointerTo    Variable      `json:"pointer_to"`
+	PointerTo    Variable      `json:"-"` //`json:"pointer_to"`
 }
 
 type AddressVariable struct {
 	Variable     `json:"-"`
 	VariableInfo *VariableInfo `json:"variable"`
-	AddressOf    Variable      `json:"address_of"`
+	AddressOf    Variable      `json:"-"` //`json:"address_of"`
 }
 
 // ----------------
@@ -263,6 +264,15 @@ func getIndirectDependencies(v Variable) []Variable {
 	for _, dep := range v.GetDependencies() {
 		indirectDeps = append(indirectDeps, getIndirectDependencies(dep)...)
 	}
+
+	// edge cases
+	if addressVariable, ok := v.(*AddressVariable); ok {
+		indirectDeps = append(indirectDeps, getIndirectDependencies(addressVariable.AddressOf)...)
+	}
+	if pointerVariable, ok := v.(*PointerVariable); ok {
+		indirectDeps = append(indirectDeps, getIndirectDependencies(pointerVariable.PointerTo)...)
+	}
+
 	return indirectDeps
 }
 
@@ -277,7 +287,7 @@ func getDependenciesString(deps ...Variable) string {
 	return out
 }
 
-func HasSameWrittenObject(current Variable, target Variable) bool {
+func ContainsMatchingDependencies(current Variable, target Variable) bool {
 	currentDeps := getIndirectDependencies(current)
 	logger.Logger.Warnf("%s: got current dependencies: %v", getDependenciesString(current), getDependenciesString(currentDeps...))
 	targetDeps := getIndirectDependencies(target)

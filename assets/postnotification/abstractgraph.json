@@ -1,111 +1,10 @@
 {
   "method": "UploadService.UploadPost(ctx, username, text)",
   "caller": "Client",
-  "params": [
-    {
-      "variable": {
-        "name": "ctx",
-        "type": "context.Context",
-        "id": 1,
-        "ref": {
-          "name": "ctx",
-          "creator": "Client",
-          "id": 4
-        }
-      }
-    },
-    {
-      "variable": {
-        "name": "username",
-        "type": "string",
-        "id": 2,
-        "ref": {
-          "name": "username",
-          "creator": "Client",
-          "id": 5
-        }
-      }
-    },
-    {
-      "variable": {
-        "name": "text",
-        "type": "string",
-        "id": 3,
-        "ref": {
-          "name": "text",
-          "creator": "Client",
-          "id": 6
-        }
-      }
-    }
-  ],
   "edges": [
     {
       "method": "StorageService.StorePost(ctx, reqID, post)",
       "caller": "UploadService",
-      "params": [
-        {
-          "variable": {
-            "name": "ctx",
-            "type": "context.Context",
-            "id": 1,
-            "ref": {
-              "name": "ctx",
-              "creator": "UploadService",
-              "id": 1
-            }
-          }
-        },
-        {
-          "variable": {
-            "name": "reqID",
-            "type": "\u003c rand.Int63()",
-            "id": 7
-          }
-        },
-        {
-          "variable": {
-            "name": "post",
-            "type": "struct postnotification.Post",
-            "id": 10
-          },
-          "fields": {
-            "Creator": {
-              "variable": {
-                "name": "Creator",
-                "type": "string (\"some wild creator\")",
-                "id": 9
-              }
-            },
-            "PostID": {
-              "variable": {
-                "name": "PostID",
-                "type": "\u003c rand.Int63()",
-                "id": 8
-              }
-            },
-            "ReqID": {
-              "variable": {
-                "name": "reqID",
-                "type": "\u003c rand.Int63()",
-                "id": 7
-              }
-            },
-            "Text": {
-              "variable": {
-                "name": "text",
-                "type": "string",
-                "id": 3,
-                "ref": {
-                  "name": "text",
-                  "creator": "UploadService",
-                  "id": 3
-                }
-              }
-            }
-          }
-        }
-      ],
       "edges": [
         {
           "method": "Cache.Put(ctx, key, value)",
@@ -116,11 +15,7 @@
                 "name": "ctx",
                 "type": "context.Context",
                 "id": 1,
-                "ref": {
-                  "name": "ctx",
-                  "creator": "StorageService",
-                  "id": 1
-                }
+                "ref": true
               }
             },
             {
@@ -128,38 +23,14 @@
                 "name": "postIDStr",
                 "type": "\u003c strconv.FormatInt()",
                 "id": 15
-              },
-              "params": [
-                {
-                  "variable": {
-                    "name": "post",
-                    "type": "postnotification.Post",
-                    "id": 10,
-                    "ref": {
-                      "name": "post",
-                      "creator": "StorageService",
-                      "id": 10
-                    }
-                  }
-                },
-                {
-                  "variable": {
-                    "type": "int (10)",
-                    "id": 14
-                  }
-                }
-              ]
+              }
             },
             {
               "variable": {
                 "name": "post",
                 "type": "postnotification.Post",
                 "id": 10,
-                "ref": {
-                  "name": "post",
-                  "creator": "StorageService",
-                  "id": 10
-                }
+                "ref": true
               }
             }
           ],
@@ -180,11 +51,7 @@
             "name": "ctx",
             "type": "context.Context",
             "id": 1,
-            "ref": {
-              "name": "ctx",
-              "creator": "UploadService",
-              "id": 1
-            }
+            "ref": true
           }
         },
         {
@@ -192,40 +59,6 @@
             "name": "message",
             "type": "struct postnotification.Message",
             "id": 13
-          },
-          "fields": {
-            "PostID": {
-              "variable": {
-                "name": "PostID",
-                "type": "\u003c common.Int64ToString()",
-                "id": 11
-              },
-              "params": [
-                {
-                  "variable": {
-                    "name": "PostID",
-                    "type": "\u003c rand.Int63()",
-                    "id": 8
-                  }
-                }
-              ]
-            },
-            "ReqID": {
-              "variable": {
-                "name": "ReqID",
-                "type": "\u003c common.Int64ToString()",
-                "id": 12
-              },
-              "params": [
-                {
-                  "variable": {
-                    "name": "reqID",
-                    "type": "\u003c rand.Int63()",
-                    "id": 7
-                  }
-                }
-              ]
-            }
           }
         }
       ],
@@ -234,22 +67,6 @@
           "handler": {
             "method": "NotifyService.workerThread(ctx, workerID)",
             "caller": "UploadService",
-            "params": [
-              {
-                "variable": {
-                  "name": "ctx",
-                  "type": "context.Context",
-                  "id": 16
-                }
-              },
-              {
-                "variable": {
-                  "name": "workerID",
-                  "type": "int",
-                  "id": 17
-                }
-              }
-            ],
             "edges": [
               {
                 "method": "Queue.Pop(ctx, item)",
@@ -260,30 +77,13 @@
                       "name": "ctx",
                       "type": "context.Context",
                       "id": 16,
-                      "ref": {
-                        "name": "ctx",
-                        "creator": "NotifyService",
-                        "id": 16
-                      }
+                      "ref": true
                     }
                   },
                   {
                     "variable": {
                       "name": "message",
                       "type": "\u0026map[string]interface{}"
-                    },
-                    "address_of": {
-                      "variable": {
-                        "name": "message",
-                        "type": "map[string]interface{}",
-                        "id": 13,
-                        "ref": {
-                          "name": "message",
-                          "creator": "UploadService",
-                          "id": 13
-                        }
-                      },
-                      "key_values": null
                     }
                   }
                 ],
@@ -291,67 +91,12 @@
                   "name": "notification_queue",
                   "type": "Queue",
                   "kind": "RabbitMQ"
-                }
+                },
+                "subscriber": true
               },
               {
                 "method": "StorageService.ReadPost(ctx, reqID, postID)",
                 "caller": "NotifyService",
-                "params": [
-                  {
-                    "variable": {
-                      "name": "ctx",
-                      "type": "context.Context",
-                      "id": 16,
-                      "ref": {
-                        "name": "ctx",
-                        "creator": "NotifyService",
-                        "id": 16
-                      }
-                    }
-                  },
-                  {
-                    "variable": {
-                      "name": "reqID",
-                      "type": "\u003c common.StringToInt64()",
-                      "id": 19
-                    },
-                    "params": [
-                      {
-                        "variable": {
-                          "name": "message",
-                          "type": "postnotification.Message",
-                          "id": 18,
-                          "ref": {
-                            "name": "notification",
-                            "creator": "NotifyService",
-                            "id": 18
-                          }
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "variable": {
-                      "name": "postID",
-                      "type": "\u003c common.StringToInt64()",
-                      "id": 20
-                    },
-                    "params": [
-                      {
-                        "variable": {
-                          "name": "message",
-                          "type": "postnotification.Message",
-                          "id": 18,
-                          "ref": {
-                            "name": "notification",
-                            "creator": "NotifyService",
-                            "id": 18
-                          }
-                        }
-                      }
-                    ]
-                  }
-                ],
                 "edges": [
                   {
                     "method": "Cache.Get(ctx, key, value)",
@@ -362,11 +107,7 @@
                           "name": "ctx",
                           "type": "context.Context",
                           "id": 16,
-                          "ref": {
-                            "name": "ctx",
-                            "creator": "StorageService",
-                            "id": 16
-                          }
+                          "ref": true
                         }
                       },
                       {
@@ -374,40 +115,13 @@
                           "name": "postIDStr",
                           "type": "\u003c strconv.FormatInt()",
                           "id": 22
-                        },
-                        "params": [
-                          {
-                            "variable": {
-                              "name": "postID",
-                              "type": "int64",
-                              "id": 20,
-                              "ref": {
-                                "name": "postID",
-                                "creator": "StorageService",
-                                "id": 20
-                              }
-                            }
-                          },
-                          {
-                            "variable": {
-                              "type": "int (10)",
-                              "id": 21
-                            }
-                          }
-                        ]
+                        }
                       },
                       {
                         "variable": {
                           "name": "post",
                           "type": "\u0026postnotification.Post",
                           "id": 23
-                        },
-                        "address_of": {
-                          "variable": {
-                            "name": "post",
-                            "type": "postnotification.Post",
-                            "id": -1
-                          }
                         }
                       }
                     ],

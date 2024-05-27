@@ -1,32 +1,52 @@
 {
-  "inconsistencies": [
+  "xcy_violations": [
     {
-      "key": "postIDStr (22)",
-      "service": "StorageService",
-      "write": {
-        "key": "postIDStr (15)",
-        "object": "post (10)",
+      "previous_write": {
+        "key": "postIDStr (#15)",
+        "object": "post (#10)",
         "service": "StorageService",
-        "database": "post_db",
-        "call": "cache.Put(ctx context.Context, postIDStr \u003c strconv.FormatInt(), post postnotification.Post)"
+        "method": "Cache.Put(ctx, key, value)",
+        "database": "post_db"
       },
-      "database": "post_db",
-      "call": "cache.Get(ctx context.Context, postIDStr \u003c strconv.FormatInt(), post \u0026postnotification.Post)"
+      "inconsistent_read": {
+        "key": "postIDStr (#22)",
+        "object": "post (#23)",
+        "service": "StorageService",
+        "method": "Cache.Get(ctx, key, value)",
+        "database": "post_db"
+      }
     }
   ],
   "writes": [
     {
-      "key": "postIDStr (15)",
-      "object": "post (10)",
+      "key": "postIDStr (#15)",
+      "object": "post (#10)",
       "service": "StorageService",
-      "database": "post_db",
-      "call": "cache.Put(ctx context.Context, postIDStr \u003c strconv.FormatInt(), post postnotification.Post)"
+      "method": "Cache.Put(ctx, key, value)",
+      "database": "post_db"
     },
     {
-      "object": "message (13)",
+      "key": "message (#13)",
+      "object": "message (#13)",
       "service": "UploadService",
-      "database": "notification_queue",
-      "call": "queue.Push(ctx context.Context, message struct postnotification.Message)"
+      "method": "Queue.Push(ctx, item)",
+      "database": "notification_queue"
+    }
+  ],
+  "reads": [
+    {
+      "key": "message (#0)",
+      "object": "message (#0)",
+      "service": "NotifyService",
+      "method": "Queue.Pop(ctx, item)",
+      "database": "notification_queue"
+    },
+    {
+      "key": "postIDStr (#22)",
+      "object": "post (#23)",
+      "service": "StorageService",
+      "method": "Cache.Get(ctx, key, value)",
+      "database": "post_db"
     }
   ]
 }

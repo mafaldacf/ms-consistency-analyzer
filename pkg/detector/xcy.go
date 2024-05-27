@@ -11,82 +11,82 @@ import (
 	"strings"
 )
 
-type Write struct {
+type Parameters interface {
+	String() string
+}
+type KeyValue struct {
+	Parameters
+	Key   types.Variable
+	Value types.Variable
+}
+
+func (kv *KeyValue) String() string {
+	return fmt.Sprintf("KV { key: %s (#%d), value: %s (#%d) }",
+		kv.Key.GetVariableInfo().GetName(), kv.Key.GetVariableInfo().GetId(),
+		kv.Value.GetVariableInfo().GetName(), kv.Value.GetVariableInfo().GetId(),
+	)
+}
+
+type Message struct {
+	Parameters
+	Message types.Variable
+}
+
+func (m *Message) String() string {
+	return fmt.Sprintf("MSG { message: %s (#%d) }",
+		m.Message.GetVariableInfo().GetName(), m.Message.GetVariableInfo().GetId(),
+	)
+}
+
+type Operation struct {
 	Key      types.Variable
 	Object   types.Variable
 	Service  string
 	Database types.DatabaseInstance
-	Call     string
+	Method   string
 }
 
-func (w *Write) MarshalJSON() ([]byte, error) {
-	if w.Key != nil {
-		return json.Marshal(&struct {
-			Key      string `json:"key"`
-			Object   string `json:"object"`
-			Service  string `json:"service"`
-			Database string `json:"database"`
-			Call     string `json:"call"`
-		}{
-			Key:      fmt.Sprintf("%s (%d)", w.Key.GetVariableInfo().GetName(), w.Key.GetVariableInfo().GetId()),
-			Object:   fmt.Sprintf("%s (%d)", w.Object.GetVariableInfo().GetName(), w.Object.GetVariableInfo().GetId()),
-			Service:  w.Service,
-			Database: w.Database.GetName(),
-			Call:     w.Call,
-		})
-	}
+func (op *Operation) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
+		Key      string `json:"key"`
 		Object   string `json:"object"`
 		Service  string `json:"service"`
+		Method   string `json:"method"`
 		Database string `json:"database"`
-		Call     string `json:"call"`
 	}{
-		Object:   fmt.Sprintf("%s (%d)", w.Object.GetVariableInfo().GetName(), w.Object.GetVariableInfo().GetId()),
-		Service:  w.Service,
-		Database: w.Database.GetName(),
-		Call:     w.Call,
+		Key:      fmt.Sprintf("%s (#%d)", op.Key.GetVariableInfo().GetName(), op.Key.GetVariableInfo().GetId()),
+		Object:   fmt.Sprintf("%s (#%d)", op.Object.GetVariableInfo().GetName(), op.Object.GetVariableInfo().GetId()),
+		Service:  op.Service,
+		Method:   op.Method,
+		Database: op.Database.GetName(),
 	})
 }
 
-type Read struct {
-	Key      types.Variable
-	Service  string
-	Write    *Write
-	Database types.DatabaseInstance
-	Call     string
+func (op *Operation) String() string {
+	return fmt.Sprintf("{ %s \t > datastore: %s, key: %s (#%d), value: %s (#%d) }",
+		op.Service,
+		op.Database.GetName(),
+		op.Key.GetVariableInfo().GetName(),
+		op.Key.GetVariableInfo().GetId(),
+		op.Object.GetVariableInfo().GetName(),
+		op.Object.GetVariableInfo().GetId(),
+	)
 }
 
-func (r *Read) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		ReadKey  string `json:"key"`
-		Service  string `json:"service"`
-		Write    *Write `json:"write"`
-		Database string `json:"database"`
-		Call     string `json:"call"`
-	}{
-		ReadKey:  fmt.Sprintf("%s (%d)", r.Key.GetVariableInfo().GetName(), r.Key.GetVariableInfo().GetId()),
-		Service:  r.Service,
-		Database: r.Database.GetName(),
-		Write:    r.Write,
-		Call:     r.Call,
-	})
+type Inconsistency struct {
+	Write *Operation `json:"previous_write"`
+	Read  *Operation `json:"inconsistent_read"`
 }
 
-func (write *Write) String() string {
-	if write.Key != nil {
-		return fmt.Sprintf("{ %s(%d):%s(%d) @ %s by %s }", write.Key.GetVariableInfo().GetName(), write.Key.GetVariableInfo().GetId(), write.Object.GetVariableInfo().GetName(), write.Object.GetVariableInfo().GetId(), write.Database.GetName(), write.Service)
-	}
-	return fmt.Sprintf("{ :%s (%d) @ %s by %s }", write.Object.GetVariableInfo().GetName(), write.Object.GetVariableInfo().GetId(), write.Database.GetName(), write.Service)
-}
-
-func (read *Read) String() string {
-	return fmt.Sprintf("{ :%s (%d) by %s - WRITE: %s}", read.Key.GetVariableInfo().GetName(), read.Key.GetVariableInfo().GetId(), read.Service, read.Write.String())
+func (i *Inconsistency) String() string {
+	return fmt.Sprintf("READ: %v / WRITE: %v", i.Read.String(), i.Write.String())
 }
 
 type Request struct {
 	EntryNode       abstractgraph.AbstractNode `json:"-"`
-	Inconsistencies []*Read                    `json:"inconsistencies"`
-	Writes          []*Write                   `json:"writes"`
+	Inconsistencies []*Inconsistency           `json:"xcy_violations"`
+	Writes          []*Operation               `json:"writes"`
+	Reads           []*Operation               `json:"reads"`
 }
 
 func InitRequest(entryNode abstractgraph.AbstractNode) *Request {
@@ -95,59 +95,83 @@ func InitRequest(entryNode abstractgraph.AbstractNode) *Request {
 	}
 }
 
-func (request *Request) addWrite(key types.Variable, object types.Variable, call *abstractgraph.AbstractDatabaseCall) {
-	write := &Write{
+func createOperation(key types.Variable, object types.Variable, call *abstractgraph.AbstractDatabaseCall) *Operation {
+	return &Operation{
 		Key:      key,
 		Object:   object,
 		Service:  call.Service,
 		Database: call.DbInstance,
-		Call:     call.String(),
+		Method:   call.Method,
 	}
+}
+
+func (request *Request) saveWriteOperation(key types.Variable, object types.Variable, call *abstractgraph.AbstractDatabaseCall) *Operation {
+	write := createOperation(key, object, call)
 	request.Writes = append(request.Writes, write)
-	logger.Logger.Infof("added write %s", write.String())
+	logger.Logger.Infof("saved write %s", write.String())
+	return write
 }
 
-func (request *Request) addInconsistency(prevWrite *Write, readKey types.Variable, call *abstractgraph.AbstractDatabaseCall) {
-	read := &Read{
-		Key:      readKey,
-		Service:  call.GetCallerStr(),
-		Database: prevWrite.Database,
-		Write:    prevWrite,
-		Call:     call.String(),
+func (request *Request) saveReadOperation(key types.Variable, object types.Variable, call *abstractgraph.AbstractDatabaseCall) *Operation {
+	read := createOperation(key, object, call)
+	request.Reads = append(request.Reads, read)
+	logger.Logger.Infof("saved read %s", read.String())
+	return read
+}
+
+func (request *Request) addInconsistency(write *Operation, read *Operation) {
+	inconsistency := &Inconsistency{
+		Write: write,
+		Read:  read,
 	}
-	logger.Logger.Infof("[XCY] found inconsistency: %s", read.String())
-	request.Inconsistencies = append(request.Inconsistencies, read)
-	logger.Logger.Infof("added xcy violation %s", read.String())
+	request.Inconsistencies = append(request.Inconsistencies, inconsistency)
+	logger.Logger.Infof("[XCY] found inconsistency %s", inconsistency.String())
 }
 
-func (request *Request) CaptureInconsistencies() {
+func (request *Request) TransverseRequestOperations() {
 	for _, edge := range request.EntryNode.GetChildren() {
-		request.captureInconsistencies(edge)
+		request.transverseOperations(edge)
 	}
 }
 
-func (request *Request) captureInconsistencies(node abstractgraph.AbstractNode) {
+func (request *Request) captureInconsistency(read *Operation, readCall *abstractgraph.AbstractDatabaseCall) {
+	if readCall.Subscriber {
+		return
+	}
+	// iterate in reverse
+	for i := len(request.Writes) - 1; i >= 0; i-- {
+		write := request.Writes[i]
+		logger.Logger.Infof("evaluating XCY violation for read (%s @ %s) and write (%s @ %s)",
+			read.Key.GetVariableInfo().Name,
+			readCall.DbInstance.GetName(),
+			write.Key.GetVariableInfo().Name,
+			write.Database.GetName(),
+		)
+		if readCall.DbInstance == write.Database {
+			if types.ContainsMatchingDependencies(read.Key, write.Object) {
+				request.addInconsistency(write, read)
+			}
+		}
+	}
+}
+
+func (request *Request) transverseOperations(node abstractgraph.AbstractNode) {
 	if dbCall, ok := node.(*abstractgraph.AbstractDatabaseCall); ok {
 		if backend, ok := dbCall.ParsedCall.Method.(*frameworks.BlueprintBackend); ok {
 			if backend.IsWrite() {
 				key := dbCall.GetParam(backend.GetWrittenKeyIndex())
 				object := dbCall.GetParam(backend.GetWrittenObjectIndex())
-				request.addWrite(key, object, dbCall)
-			} else if !backend.IsQueueRead() {
+				request.saveWriteOperation(key, object, dbCall)
+			} else {
 				key := dbCall.GetParam(backend.GetReadKeyIndex())
-				for _, prevWrite := range request.Writes {
-					if dbCall.DbInstance == prevWrite.Database {
-						if types.HasSameWrittenObject(key, prevWrite.Object) {
-							request.addInconsistency(prevWrite, key, dbCall)
-						}
-					}
-				}
+				object := dbCall.GetParam(backend.GetReadObjectIndex())
+				read := request.saveReadOperation(key, object, dbCall)
+				request.captureInconsistency(read, dbCall)
 			}
 		}
 	}
-
 	for _, edge := range node.GetChildren() {
-		request.captureInconsistencies(edge)
+		request.transverseOperations(edge)
 	}
 }
 

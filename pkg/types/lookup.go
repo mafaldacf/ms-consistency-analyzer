@@ -9,7 +9,7 @@ import (
 	"strings"
 )
 
-func GetDeclaredVariable(name string, variables []Variable) Variable {
+func GetDeclaredVariableReverse(name string, variables []Variable) Variable {
 	for i := len(variables) - 1; i >= 0; i-- {
 		v := variables[i]
 		if name == v.GetVariableInfo().GetName() {
@@ -136,7 +136,7 @@ func computeArrayIndex(expr ast.Expr) int {
 	return 0
 }
 
-func computeFunctionCallName(expr ast.Expr) string { 
+func computeFunctionCallName(expr ast.Expr) string {
 	switch e := expr.(type) {
 	case *ast.Ident:
 		return e.Name
@@ -156,8 +156,8 @@ func GetDeclaredUserType(file *File, expr ast.Expr) (*UserType, bool) {
 	case *ast.Ident:
 		if t, ok := file.Package.DeclaredTypes[e.Name]; ok {
 			return &UserType{
-				Name: e.Name,
-				Package: file.Package.Name,
+				Name:     e.Name,
+				Package:  file.Package.Name,
 				UserType: t,
 			}, true
 		}
@@ -169,7 +169,7 @@ func GetDeclaredUserType(file *File, expr ast.Expr) (*UserType, bool) {
 func LookupVariables(file *File, blockVars []Variable, expr ast.Expr) (variable Variable) {
 	switch e := expr.(type) {
 	case *ast.Ident:
-		variable = GetDeclaredVariable(e.Name, blockVars)
+		variable = GetDeclaredVariableReverse(e.Name, blockVars)
 	case *ast.BasicLit:
 		basicType := &BasicType{
 			Name:  strings.ToLower(e.Kind.String()),

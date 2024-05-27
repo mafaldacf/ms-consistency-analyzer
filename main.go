@@ -3,9 +3,9 @@ package main
 import (
 	"analyzer/pkg/abstractgraph"
 	"analyzer/pkg/app"
-	"analyzer/pkg/frameworks/blueprint"
-	"analyzer/pkg/logger"
 	"analyzer/pkg/detector"
+	frameworks "analyzer/pkg/frameworks/blueprint"
+	"analyzer/pkg/logger"
 	"flag"
 	"fmt"
 
@@ -18,8 +18,8 @@ import (
 	// 		analyzer/apps/postnotification/workflow/postnotification'
 	// but the existing packages in the mod.Package represents the root of the app
 	// 		'postnotification/workflow/postnotification'
-	pn_specs "github.com/blueprint-uservices/blueprint/examples/postnotification/wiring/specs"
 	fb_specs "github.com/blueprint-uservices/blueprint/examples/foobar/wiring/specs"
+	pn_specs "github.com/blueprint-uservices/blueprint/examples/postnotification/wiring/specs"
 	"github.com/blueprint-uservices/blueprint/plugins/cmdbuilder"
 )
 
@@ -52,10 +52,11 @@ func main() {
 	var requests []*detector.Request
 	for _, entryNode := range abstractGraph.Nodes {
 		request := detector.InitRequest(entryNode)
-		request.CaptureInconsistencies()
+		request.TransverseRequestOperations()
 		requests = append(requests, request)
 	}
-
+	fmt.Println()
+	fmt.Println()
 	app.Save()
 	abstractGraph.Save()
 	for _, request := range requests {
