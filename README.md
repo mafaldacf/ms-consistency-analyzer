@@ -2,6 +2,15 @@
 
 **Microservices Consistency Analyzer** is a toolkit that statically analyzes microservice applications written in frameworks (e.g. [Service Weaver](https://dl.acm.org/doi/10.1145/3593856.3595909) and [Blueprint](https://dl.acm.org/doi/10.1145/3600006.3613138)) that introduce a new modular approach for building and deploying microservices. The goal is to detect potential consistency violations at configuration time by leveraging the global view over the entire application, including the relationship between services and operations to underlying databases. At the moment, the toolkit supports Blueprint ([code](https://github.com/Blueprint-uServices/blueprint)), and is capable of capturing *cross-service inconsistencies*, introduced in [Antipode](https://dl.acm.org/doi/10.1145/3600006.3613176). In the future, we aim to support a wide variety of similar frameworks and capture additional consistency anomalies.
 
+## Getting Started
+
+After cloning the repository, fetch submodules for `blueprint` repository
+
+```zsh
+cd ms-consistency-analyzer
+git submodule update --init --recursive
+```
+
 ## Requirements
 
 - [Golang](https://go.dev/doc/install) >= 1.22.2
