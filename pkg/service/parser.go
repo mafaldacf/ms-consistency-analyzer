@@ -1,6 +1,7 @@
 package service
 
 import (
+	"analyzer/pkg/datastores"
 	frameworks "analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
@@ -258,7 +259,7 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string, i
 	}
 }
 
-func (node *ServiceNode) funcImplementsQueue(funcDecl *ast.FuncDecl, recvIdent *ast.Ident) (implements bool, dbInstance types.DatabaseInstance) {
+func (node *ServiceNode) funcImplementsQueue(funcDecl *ast.FuncDecl, recvIdent *ast.Ident) (implements bool, dbInstance datastores.DatabaseInstance) {
 	// inspect methods
 	ast.Inspect(funcDecl, func(n ast.Node) bool {
 		ok, _, methodIdent, fieldIdent, _ := selectedFieldOrInternalFuncInCall(n, recvIdent)
@@ -279,7 +280,7 @@ func (node *ServiceNode) funcImplementsQueue(funcDecl *ast.FuncDecl, recvIdent *
 	return implements, dbInstance
 }
 
-func (node *ServiceNode) addQueueHandlerMethod(funcDecl *ast.FuncDecl, recvIdent *ast.Ident, dbInstance types.DatabaseInstance) {
+func (node *ServiceNode) addQueueHandlerMethod(funcDecl *ast.FuncDecl, recvIdent *ast.Ident, dbInstance datastores.DatabaseInstance) {
 	params := node.parseFuncDeclParams(funcDecl)
 	parsedFuncDecl := &ParsedFuncDecl{
 		Ast:     funcDecl,
@@ -423,7 +424,7 @@ func (node *ServiceNode) findMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 	})
 }
 
-func (node *ServiceNode) ParseConstructor(paramDBs map[string]types.DatabaseInstance) {
+func (node *ServiceNode) ParseConstructor(paramDBs map[string]datastores.DatabaseInstance) {
 	constructor := node.Constructor
 	ast.Inspect(constructor.GetBody(), func(n ast.Node) bool {
 		compositeLit, ok := n.(*ast.CompositeLit)

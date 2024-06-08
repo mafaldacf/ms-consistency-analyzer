@@ -1,6 +1,7 @@
 package service
 
 import (
+	"analyzer/pkg/datastores"
 	"analyzer/pkg/types"
 	"encoding/json"
 	"fmt"
@@ -18,7 +19,7 @@ type ParsedFuncDecl struct {
 	Service   string           `json:"-"`
 	ParsedCfg *types.ParsedCFG `json:"-"`
 
-	DbInstances []types.DatabaseInstance `json:"-"`
+	DbInstances []datastores.DatabaseInstance `json:"-"`
 
 	// used to fetch the params when generating the basic cfg
 	// to store in the variables array of the function
@@ -149,7 +150,7 @@ func (svcCall *ServiceParsedCallExpr) GetParams() []types.Variable {
 type DatabaseParsedCallExpr struct {
 	Call
 	ParsedCallExpr
-	DbInstance     types.DatabaseInstance
+	DbInstance     datastores.DatabaseInstance
 	CallerTypeName types.Type
 }
 
@@ -165,7 +166,7 @@ func (dbCall *DatabaseParsedCallExpr) SimpleString() string {
 	return dbCall.ParsedCallExpr.SimpleString()
 }
 
-func (dbCall *DatabaseParsedCallExpr) GetTargetedDatabaseInstance() types.DatabaseInstance {
+func (dbCall *DatabaseParsedCallExpr) GetTargetedDatabaseInstance() datastores.DatabaseInstance {
 	return dbCall.DbInstance
 }
 
@@ -212,15 +213,15 @@ func (internalCall *InternalTempParsedCallExpr) GetParams() []types.Variable {
 }
 
 type ServiceNode struct {
-	Name     		string
-	ImplName     	string
+	Name            string
+	ImplName        string
 	ConstructorName string
 
-	File     *types.File
-	Fields   map[string]types.Field
+	File   *types.File
+	Fields map[string]types.Field
 	// the map key is the service type (e.g. StorageService in 'storageService StorageService')
 	Services  map[string]*ServiceNode
-	Databases map[string]types.DatabaseInstance
+	Databases map[string]datastores.DatabaseInstance
 	// safe because methods are unique since Golang does not allow overloading
 	// also this captures all exposed methods because they must be defined within the service struct file
 	ExposedMethods      map[string]*ParsedFuncDecl
@@ -238,7 +239,7 @@ func (node *ServiceNode) GetPackageName() string {
 	return node.File.Package.Name
 }
 
-func (node *ServiceNode) GetQueueHandlersForDatabase(database types.DatabaseInstance) []*ParsedFuncDecl {
+func (node *ServiceNode) GetQueueHandlersForDatabase(database datastores.DatabaseInstance) []*ParsedFuncDecl {
 	if _, ok := node.Databases[database.GetName()]; !ok {
 		return nil
 	}

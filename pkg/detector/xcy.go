@@ -2,6 +2,7 @@ package detector
 
 import (
 	"analyzer/pkg/abstractgraph"
+	"analyzer/pkg/datastores"
 	frameworks "analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
@@ -42,7 +43,7 @@ type Operation struct {
 	Key      types.Variable
 	Object   types.Variable
 	Service  string
-	Database types.DatabaseInstance
+	Database datastores.DatabaseInstance
 	Method   string
 }
 

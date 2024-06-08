@@ -2,6 +2,7 @@ package app
 
 import (
 	"analyzer/pkg/controlflow"
+	"analyzer/pkg/datastores"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
@@ -15,19 +16,19 @@ import (
 )
 
 type App struct {
-	Name      string                            `json:"app_name,omitempty"`
-	Path      string                            `json:"-"`
-	Services  map[string]*service.ServiceNode   `json:"app_services,omitempty"`
-	Databases map[string]types.DatabaseInstance `json:"app_databases,omitempty"`
-	Packages  map[string]*types.Package         `json:"packages,omitempty"`
+	Name      string                                 `json:"app_name,omitempty"`
+	Path      string                                 `json:"-"`
+	Services  map[string]*service.ServiceNode        `json:"app_services,omitempty"`
+	Databases map[string]datastores.DatabaseInstance `json:"app_databases,omitempty"`
+	Packages  map[string]*types.Package              `json:"packages,omitempty"`
 }
 
 // MarshalJSON is used by app.Save()
 func (app *App) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Name      string                            `json:"name"`
-		Services  map[string]*service.ServiceNode   `json:"app_services"`
-		Databases map[string]types.DatabaseInstance `json:"app_databases"`
+		Name      string                                 `json:"name"`
+		Services  map[string]*service.ServiceNode        `json:"app_services"`
+		Databases map[string]datastores.DatabaseInstance `json:"app_databases"`
 	}{
 		Name:      app.Name,
 		Services:  app.Services,
@@ -51,7 +52,7 @@ func Init(name string, path string) (*App, error) {
 		Name:      name,
 		Path:      fullPath,
 		Services:  make(map[string]*service.ServiceNode),
-		Databases: make(map[string]types.DatabaseInstance),
+		Databases: make(map[string]datastores.DatabaseInstance),
 		Packages:  make(map[string]*types.Package),
 	}
 	logger.Logger.Infof("[APP] initialized app at %s", app.Path)
@@ -77,7 +78,7 @@ func (app *App) Save() {
 	logger.Logger.Infof("[JSON] app saved at %s", path)
 }
 
-func (app *App) RegisterDatabaseInstances(instances []types.DatabaseInstance) {
+func (app *App) RegisterDatabaseInstances(instances []datastores.DatabaseInstance) {
 	for _, instance := range instances {
 		app.Databases[instance.GetName()] = instance
 		logger.Logger.Infof("[APP] registered database instance %s", instance.String())
@@ -137,7 +138,7 @@ func (app *App) ParseServiceNodes() {
 func (app *App) matchServiceDatabases(servicesInfo []*types.ServiceInfo) {
 	for _, info := range servicesInfo {
 		node := app.Services[info.Name]
-		paramsDBs := make(map[string]types.DatabaseInstance, 0)
+		paramsDBs := make(map[string]datastores.DatabaseInstance, 0)
 		for param, instanceName := range info.ConstructorDBs {
 			dbInstance := app.Databases[instanceName]
 			paramsDBs[param] = dbInstance
@@ -182,7 +183,7 @@ func (app *App) createServiceNodes(servicesInfo []*types.ServiceInfo) {
 			File:                file,
 			Fields:              make(map[string]types.Field),
 			Services:            make(map[string]*service.ServiceNode),
-			Databases:           make(map[string]types.DatabaseInstance),
+			Databases:           make(map[string]datastores.DatabaseInstance),
 			ExposedMethods:      make(map[string]*service.ParsedFuncDecl),
 			QueueHandlerMethods: make(map[string]*service.ParsedFuncDecl),
 			InternalMethods:     make(map[string]*service.ParsedFuncDecl),

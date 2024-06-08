@@ -1,18 +1,19 @@
 package types
 
 import (
+	"analyzer/pkg/datastores"
 	"fmt"
 	"go/ast"
 )
 
 type Field interface {
-	String() 			string
-	GetName() 			string
-	GetType() 			Type
+	String() string
+	GetName() string
+	GetType() Type
 	SetType(t Type)
-	GetTypeString() 	string
-	GetTypeName() 		string
-	GetIndex() 			int
+	GetTypeString() string
+	GetTypeName() string
+	GetIndex() int
 }
 
 type FieldInfo struct {
@@ -23,23 +24,23 @@ type FieldInfo struct {
 
 type FunctionParameter struct {
 	Field
-	FieldInfo  FieldInfo
+	FieldInfo FieldInfo
 }
 type GenericField struct {
 	Field
-	Idx    	  int
+	Idx       int
 	FieldInfo FieldInfo
 }
 type ServiceField struct {
 	Field
 	FieldInfo FieldInfo
-	Idx    	  int
+	Idx       int
 }
 type DatabaseField struct {
 	Field
 	FieldInfo  FieldInfo
 	IsQueue    bool
-	DbInstance DatabaseInstance
+	DbInstance datastores.DatabaseInstance
 	Idx        int
 }
 

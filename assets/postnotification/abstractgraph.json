@@ -34,10 +34,14 @@
               }
             }
           ],
-          "db_instance": {
+          "ds_instance": {
             "name": "post_db",
-            "type": "Cache",
-            "kind": "Redis"
+            "datastore": {
+              "name": "post_db",
+              "type": "Cache",
+              "kind": "Redis",
+              "schema": null
+            }
           }
         }
       ]
@@ -87,10 +91,14 @@
                     }
                   }
                 ],
-                "db_instance": {
+                "ds_instance": {
                   "name": "notification_queue",
-                  "type": "Queue",
-                  "kind": "RabbitMQ"
+                  "datastore": {
+                    "name": "notification_queue",
+                    "type": "Queue",
+                    "kind": "RabbitMQ",
+                    "schema": null
+                  }
                 },
                 "subscriber": true
               },
@@ -125,27 +133,39 @@
                         }
                       }
                     ],
-                    "db_instance": {
+                    "ds_instance": {
                       "name": "post_db",
-                      "type": "Cache",
-                      "kind": "Redis"
+                      "datastore": {
+                        "name": "post_db",
+                        "type": "Cache",
+                        "kind": "Redis",
+                        "schema": null
+                      }
                     }
                   }
                 ]
               }
             ]
           },
-          "db_instance": {
+          "ds_instance": {
             "name": "notification_queue",
-            "type": "Queue",
-            "kind": "RabbitMQ"
+            "datastore": {
+              "name": "notification_queue",
+              "type": "Queue",
+              "kind": "RabbitMQ",
+              "schema": null
+            }
           }
         }
       ],
-      "db_instance": {
+      "ds_instance": {
         "name": "notification_queue",
-        "type": "Queue",
-        "kind": "RabbitMQ"
+        "datastore": {
+          "name": "notification_queue",
+          "type": "Queue",
+          "kind": "RabbitMQ",
+          "schema": null
+        }
       }
     }
   ]

@@ -38,13 +38,21 @@
   "app_databases": {
     "notification_queue": {
       "name": "notification_queue",
-      "type": "Queue",
-      "kind": "RabbitMQ"
+      "datastore": {
+        "name": "notification_queue",
+        "type": "Queue",
+        "kind": "RabbitMQ",
+        "schema": null
+      }
     },
     "post_db": {
       "name": "post_db",
-      "type": "Cache",
-      "kind": "Redis"
+      "datastore": {
+        "name": "post_db",
+        "type": "Cache",
+        "kind": "Redis",
+        "schema": null
+      }
     }
   }
 }

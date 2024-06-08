@@ -1,6 +1,7 @@
 package frameworks
 
 import (
+	"analyzer/pkg/datastores"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
 	"analyzer/pkg/utils"
@@ -19,7 +20,7 @@ import (
 	pn_specs "github.com/blueprint-uservices/blueprint/examples/postnotification/wiring/specs"
 )
 
-func BuildBlueprintAppInfo(appName string) ([]*types.ServiceInfo, []types.DatabaseInstance, []string) {
+func BuildBlueprintAppInfo(appName string) ([]*types.ServiceInfo, []datastores.DatabaseInstance, []string) {
 	var spec cmdbuilder.SpecOption
 	if appName == "postnotification" {
 		spec = pn_specs.Docker
@@ -88,8 +89,8 @@ func buildBlueprintServicesInfo(appSpecs map[*workflowspec.Service][]golang.Serv
 	return services
 }
 
-func buildDatabasesInstances(databases map[string]ir.IRNode) []types.DatabaseInstance {
-	var dbInstances []types.DatabaseInstance
+func buildDatabasesInstances(databases map[string]ir.IRNode) []datastores.DatabaseInstance {
+	var dbInstances []datastores.DatabaseInstance
 	for name, node := range databases {
 		name = getUniqueName(name)
 		switch node.(type) {
@@ -97,14 +98,24 @@ func buildDatabasesInstances(databases map[string]ir.IRNode) []types.DatabaseIns
 			dbInstances = append(dbInstances, &CacheInstance{
 				BlueprintDatabaseInstance: BlueprintDatabaseInstance{
 					Name: name,
-					Kind: "Redis",
+					//FIXME, we can have many replicas
+					Datastore: &datastores.Datastore{
+						Type: datastores.Cache,
+						Kind: datastores.Redis,
+						Name: name,
+					},
 				},
 			})
 		case *rabbitmq.RabbitmqGoClient:
 			dbInstances = append(dbInstances, &QueueInstance{
 				BlueprintDatabaseInstance: BlueprintDatabaseInstance{
 					Name: name,
-					Kind: "RabbitMQ",
+					//FIXME, we can have many replicas
+					Datastore: &datastores.Datastore{
+						Type: datastores.Queue,
+						Kind: datastores.RabbitMQ,
+						Name: name,
+					},
 				},
 			})
 		default:

@@ -1,17 +1,20 @@
 package frameworks
 
 import (
-	"analyzer/pkg/types"
+	"analyzer/pkg/datastores"
 	"encoding/json"
 )
 
-
 type BlueprintDatabaseInstance struct {
-	types.DatabaseInstance 	`json:"-"`
-	Name string 			`json:"name"`
-	// specific subtype of database (e.g. Redis in Cache)
-	Kind string 			`json:"kind"`
+	datastores.DatabaseInstance 	`json:"-"`
+	Name      string 				`json:"name"`
+	Datastore *datastores.Datastore `json:"datastore"`
 }
+
+func (i *BlueprintDatabaseInstance) GetDatastore() *datastores.Datastore {
+	return i.Datastore
+}
+
 type QueueInstance struct {
 	BlueprintDatabaseInstance
 }
@@ -35,13 +38,11 @@ func (q *QueueInstance) GetTypeName() string {
 // MarshalJSON is used by app.Save()
 func (q *QueueInstance) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Name  string `json:"name"`
-		Type  string `json:"type"`
-		Kind  string `json:"kind"`
+		Name      string 			   	`json:"name"`
+		Datastore *datastores.Datastore `json:"datastore"`
 	}{
-		Name: q.GetName(),
-		Type: q.GetTypeName(),
-		Kind: q.Kind,
+		Name:      q.GetName(),
+		Datastore: q.GetDatastore(),
 	})
 }
 
@@ -68,12 +69,10 @@ func (c *CacheInstance) GetTypeName() string {
 // MarshalJSON is used by app.Save()
 func (c *CacheInstance) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Name  string `json:"name"`
-		Type  string `json:"type"`
-		Kind  string `json:"kind"`
+		Name      string `json:"name"`
+		Datastore *datastores.Datastore `json:"datastore"`
 	}{
-		Name: c.GetName(),
-		Type: c.GetTypeName(),
-		Kind: c.Kind,
+		Name:      c.GetName(),
+		Datastore: c.GetDatastore(),
 	})
 }

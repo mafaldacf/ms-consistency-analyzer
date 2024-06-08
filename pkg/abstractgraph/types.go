@@ -1,6 +1,7 @@
 package abstractgraph
 
 import (
+	"analyzer/pkg/datastores"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
@@ -139,15 +140,15 @@ type AbstractDatabaseCall struct {
 	Params       []types.Variable                `json:"params"`
 	ParsedCall   *service.DatabaseParsedCallExpr `json:"-"` // omit from json
 	Children     []AbstractNode                  `json:"queue_handlers,omitempty"`
-	DbInstance   types.DatabaseInstance          `json:"db_instance"`
-	Subscriber 	 bool 							 `json:"subscriber,omitempty"`
+	DbInstance   datastores.DatabaseInstance     `json:"ds_instance"`
+	Subscriber   bool                            `json:"subscriber,omitempty"`
 }
 
 type AbstractQueueHandler struct {
 	AbstractServiceCall `json:"handler"`
-	DbInstance          types.DatabaseInstance `json:"db_instance"`
-	Publisher           *AbstractDatabaseCall  `json:"-"`
-	Receiver            bool                   `json:"-"`
+	DbInstance          datastores.DatabaseInstance `json:"ds_instance"`
+	Publisher           *AbstractDatabaseCall       `json:"-"`
+	Receiver            bool                        `json:"-"`
 }
 
 func (call *AbstractQueueHandler) HasQueueReceiver() bool {
