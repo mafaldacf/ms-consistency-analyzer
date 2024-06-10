@@ -1,51 +1,51 @@
 {
   "xcy_violations": [
     {
-      "previous_write": {
-        "key": "postIDStr (#15)",
-        "object": "post (#10)",
+      "write": {
         "service": "StorageService",
-        "method": "Cache.Put(ctx, key, value)",
+        "method": "Cache.Put(ctx context.Context, key string, value interface{})",
+        "key": "postIDStr (#14)",
+        "object": "post (#10)",
         "database": "post_db"
       },
-      "inconsistent_read": {
-        "key": "postIDStr (#22)",
-        "object": "post (#23)",
+      "read": {
         "service": "StorageService",
-        "method": "Cache.Get(ctx, key, value)",
+        "method": "Cache.Get(ctx context.Context, key string, value interface{})",
+        "key": "postIDStr (#20)",
+        "object": "post (#21)",
         "database": "post_db"
       }
     }
   ],
   "writes": [
     {
-      "key": "postIDStr (#15)",
-      "object": "post (#10)",
       "service": "StorageService",
-      "method": "Cache.Put(ctx, key, value)",
+      "method": "Cache.Put(ctx context.Context, key string, value interface{})",
+      "key": "postIDStr (#14)",
+      "object": "post (#10)",
       "database": "post_db"
     },
     {
+      "service": "UploadService",
+      "method": "Queue.Push(ctx context.Context, item interface{})",
       "key": "message (#13)",
       "object": "message (#13)",
-      "service": "UploadService",
-      "method": "Queue.Push(ctx, item)",
       "database": "notification_queue"
     }
   ],
   "reads": [
     {
+      "service": "NotifyService",
+      "method": "Queue.Pop(ctx context.Context, item interface{})",
       "key": "message (#0)",
       "object": "message (#0)",
-      "service": "NotifyService",
-      "method": "Queue.Pop(ctx, item)",
       "database": "notification_queue"
     },
     {
-      "key": "postIDStr (#22)",
-      "object": "post (#23)",
       "service": "StorageService",
-      "method": "Cache.Get(ctx, key, value)",
+      "method": "Cache.Get(ctx context.Context, key string, value interface{})",
+      "key": "postIDStr (#20)",
+      "object": "post (#21)",
       "database": "post_db"
     }
   ]

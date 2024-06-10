@@ -5,6 +5,7 @@ import (
 	"analyzer/pkg/utils"
 	"go/ast"
 	"go/token"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -21,8 +22,8 @@ func GetDeclaredVariableReverse(name string, variables []Variable) Variable {
 }
 
 // FIXME!!!!! this is just temporary
-func createInlineVariable(typeName string) *GenericVariable {
-	return &GenericVariable{
+func createInlineVariable(typeName string) *CompositeVariable {
+	return &CompositeVariable{
 		VariableInfo: &VariableInfo{
 			Type: &GenericType{
 				Name: typeName,
@@ -35,7 +36,7 @@ func createInlineVariable(typeName string) *GenericVariable {
 func CreateTypeVariable(name string, t Type) Variable {
 	switch e := t.(type) {
 	case *UserType, *BasicType, *ChanType, *InterfaceType:
-		return &GenericVariable{
+		return &CompositeVariable{
 			VariableInfo: &VariableInfo{
 				Name: name,
 				Type: e,
@@ -43,6 +44,7 @@ func CreateTypeVariable(name string, t Type) Variable {
 			},
 		}
 	case *StructType:
+		e.FieldTypes = make(map[string]Type)
 		return &StructVariable{
 			VariableInfo: &VariableInfo{
 				Name: name,
@@ -73,10 +75,6 @@ func CreateTypeVariable(name string, t Type) Variable {
 	return nil
 }
 
-func computeUserType(impt *Import, name string) Type {
-	return nil
-}
-
 func ComputeType(typeExpr ast.Expr, file *File) Type {
 	switch e := typeExpr.(type) {
 	case *ast.Ident:
@@ -85,18 +83,18 @@ func ComputeType(typeExpr ast.Expr, file *File) Type {
 				Name: e.Name,
 			}
 		}
-		return &UserType{
-			Name:    e.Name,
-			Package: file.Package.Name,
+		if userType, ok := GetDeclaredUserType(file, typeExpr); ok {
+			return userType
 		}
 	case *ast.SelectorExpr:
 		if pkgIdent, ok := e.X.(*ast.Ident); ok {
 			if impt, ok := file.GetImport(pkgIdent.Name); ok {
-				return &UserType{
-					Name:    e.Sel.Name,
-					Package: pkgIdent.Name,
-					Type:    computeUserType(impt, e.Sel.Name),
+				userType := &UserType{
+					Name:     e.Sel.Name,
+					Package:  impt.Alias,
+					UserType: nil,
 				}
+				return userType
 			}
 		}
 	case *ast.ChanType:
@@ -120,6 +118,48 @@ func ComputeType(typeExpr ast.Expr, file *File) Type {
 		}
 	}
 	logger.Logger.Fatalf("could not compute type for expr %v (type = %s), pkg %s, importMap %v", typeExpr, utils.GetType(typeExpr), file.Package.Name, file.Imports)
+	return nil
+}
+
+func CreateVariableFromType(name string, t Type) Variable {
+	info := &VariableInfo{
+		Id:   VARIABLE_UNASSIGNED_ID,
+		Name: name,
+		Type: t,
+	}
+	switch e := t.(type) {
+	case *BasicType:
+		return &BasicVariable{VariableInfo: info}
+	case *ChanType:
+		return &ChanVariable{VariableInfo: info}
+	case *MapType:
+		return &MapVariable{VariableInfo: info}
+	case *InterfaceType:
+		return &InterfaceVariable{VariableInfo: info}
+	case *ArrayType:
+		return &ArrayVariable{VariableInfo: info}
+	case *StructType:
+		// if we are here due to a recursive call (e.g. from UserType)
+		// then we want to make sure we are not reseting the map
+		if e.FieldTypes == nil {
+			e.FieldTypes = make(map[string]Type)
+		}
+		return &StructVariable{
+			VariableInfo: info,
+			Fields:       make(map[string]Variable),
+		}
+	case *UserType:
+		if e.UserType != nil {
+			variable := CreateVariableFromType(name, e.UserType)
+			variable.GetVariableInfo().Type = e
+			return variable
+		}
+		// e.g. context.Context is nil
+		return &GenericVariable{VariableInfo: info}
+	case *ImportedType:
+		return &GenericVariable{VariableInfo: info}
+	}
+	logger.Logger.Fatalf("could not create variable from type %v", t)
 	return nil
 }
 
@@ -149,12 +189,27 @@ func computeFunctionCallName(expr ast.Expr) string {
 
 func GetDeclaredUserType(file *File, expr ast.Expr) (*UserType, bool) {
 	// FIX THIS HARDCODED CODE
-	file.Package.DeclaredTypes["Post"] = &StructType{}
-	file.Package.DeclaredTypes["Message"] = &StructType{}
+	file.Package.DeclaredTypes["Post"] = &StructType{
+		FieldTypes: map[string]Type{
+			"ReqID":     &BasicType{Name: "int64"},
+			"PostID":    &BasicType{Name: "int64"},
+			"Text":      &BasicType{Name: "string"},
+			"Timestamp": &BasicType{Name: "int64"},
+			"Creator":   &BasicType{Name: "string"},
+		},
+	}
+	file.Package.DeclaredTypes["Message"] = &StructType{
+		FieldTypes: map[string]Type{
+			"ReqID":     &BasicType{Name: "int64"},
+			"PostID":    &BasicType{Name: "int64"},
+			"Timestamp": &BasicType{Name: "int64"},
+		},
+	}
+	services := []string{"StorageService", "NotifyService", "UploadService"}
 
 	switch e := expr.(type) {
 	case *ast.Ident:
-		if t, ok := file.Package.DeclaredTypes[e.Name]; ok {
+		if t, ok := file.Package.DeclaredTypes[e.Name]; ok || slices.Contains(services, e.Name) {
 			return &UserType{
 				Name:     e.Name,
 				Package:  file.Package.Name,
@@ -175,7 +230,7 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr) (variable 
 			Name:  strings.ToLower(e.Kind.String()),
 			Value: e.Value,
 		}
-		variable = &GenericVariable{
+		variable = &InlineVariable{
 			VariableInfo: &VariableInfo{
 				Type: basicType,
 				Id:   VARIABLE_INLINE_ID,
@@ -187,7 +242,7 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr) (variable 
 			if userType, found := GetDeclaredUserType(file, ident); found {
 
 				if _, ok := userType.UserType.(*StructType); ok {
-					variable = &StructVariable{
+					structVariable := &StructVariable{
 						VariableInfo: &VariableInfo{
 							Type: userType,
 							Id:   VARIABLE_INLINE_ID,
@@ -201,8 +256,9 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr) (variable 
 						if eltVar.GetVariableInfo().Name == "" {
 							eltVar.GetVariableInfo().SetName(key.Name)
 						}
-						variable.(*StructVariable).AddField(key.Name, eltVar)
+						structVariable.AddFieldIfNotExists(key.Name, eltVar)
 					}
+					variable = structVariable
 				}
 			}
 		} else if arrayTypeAst, ok := e.Type.(*ast.ArrayType); ok {
@@ -223,21 +279,43 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr) (variable 
 
 	case *ast.SelectorExpr:
 		variable = LookupVariables(file, blockVars, e.X)
-		if structVar, ok := variable.(*StructVariable); ok {
-			variable = structVar.Fields[e.Sel.Name]
-		}
-		//FIXME: this is happening for function parameters!!
-		if genericVar, ok := variable.(*GenericVariable); ok {
-			logger.Logger.Warnf("got generic variable %v for selector %s", genericVar.String(), e.Sel.Name)
+		switch v := variable.(type) {
+		case *StructVariable:
+			logger.Logger.Warnf("GOT SELECTOR FOR %s", e.Sel.Name)
+			//variable = v.GetOrCreateField(e.Sel.Name)
+			variable = v
+		case *CompositeVariable:
+			//FIXME: this is happening for function parameters!!
+			logger.Logger.Fatalf("got composite variable %v for selector %s", v.String(), e.Sel.Name)
+		default:
+			logger.Logger.Fatalf("could not find variable for selector %s with type %s", variable.String(), utils.GetType(variable))
 		}
 	case *ast.CallExpr:
-		callStr := computeFunctionCallName(e.Fun) + "()"
-		genVar := createInlineVariable(callStr)
+		// NOTE: for now we only care about known functions that return a new object
+		// e.g. we don't care about direct transformations like obj2 := common.StringToInt64(obj1)
+
+		//FIXME: we need to try to find methods that are declared in this package with known return type
+		callStr := computeFunctionCallName(e.Fun) + "(...)"
+		genericVariable := createInlineVariable(callStr)
+		if len(e.Args) == 1 {
+			argVar := LookupVariables(file, blockVars, e.Args[0])
+			if !slices.Contains(blockVars, argVar) {
+				logger.Logger.Warnf("ignoring undeclared variable %v in function call %s", argVar, callStr)
+				return argVar
+			}
+		}
 		for _, arg := range e.Args {
 			argVar := LookupVariables(file, blockVars, arg)
-			genVar.Params = append(genVar.Params, argVar)
+			// a direct transformation from one or more existing variables
+			if slices.Contains(blockVars, argVar) {
+				genericVariable.Params = append(genericVariable.Params, argVar)
+			} else {
+				logger.Logger.Warnf("ignoring undeclared variable %s in function call %s", argVar.String(), callStr)
+			}
 		}
-		variable = genVar
+		variable = genericVariable
+		//variable = &PlaceholderVariable{VariableInfo: &VariableInfo{Name: "placeholder", Type: &PlaceholderType{}}}
+
 	case *ast.TypeAssertExpr:
 		variable = LookupVariables(file, blockVars, e.X)
 	case *ast.IndexExpr:
@@ -287,15 +365,18 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr) (variable 
 	default:
 		logger.Logger.Fatalf("unknown type in LookupVariables for type %s: %v", utils.GetType(e), e)
 	}
+	if variable == nil {
+		logger.Logger.Fatalf("nil variable for %s: %v", utils.GetType(expr), expr)
+	}
 	return variable
 }
 
-func IsVarDeclOrAssign(file *File, blockVars []Variable, node ast.Node) []Variable {
+func IsVarDeclOrAssign(file *File, blockVars []Variable, node ast.Node) ([]Variable, bool) {
 	var vars []Variable
 	switch n := node.(type) {
 	case *ast.DeclStmt:
 		for _, spec := range n.Decl.(*ast.GenDecl).Specs {
-			v := IsVarDeclOrAssign(file, blockVars, spec)
+			v, _ := IsVarDeclOrAssign(file, blockVars, spec)
 			vars = append(vars, v...)
 		}
 	case *ast.ValueSpec:
@@ -326,5 +407,5 @@ func IsVarDeclOrAssign(file *File, blockVars []Variable, node ast.Node) []Variab
 	default:
 		logger.Logger.Fatalf("unknown type in isVarDeclOrAssign for type %s: %v", utils.GetType(node), node)
 	}
-	return vars
+	return vars, len(vars) != 0
 }

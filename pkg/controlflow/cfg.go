@@ -15,17 +15,22 @@ func GenerateMethodCFG(parsedFuncDecl *service.ParsedFuncDecl) {
 	parsedFuncDecl.SetParsedCFG(parsedCfg)
 	entryBlock := parsedCfg.GetEntryParsedBlock()
 	for i, param := range parsedFuncDecl.Params {
-		entryBlock.Vars = append(entryBlock.Vars, &types.GenericVariable{
-			VariableInfo: &types.VariableInfo{
-				Id:            types.VARIABLE_UNASSIGNED_ID,
-				Name:          param.GetName(),
-				Type:          param.GetType(),
-				IsBlockParam:  true,
-				BlockParamIdx: i,
-			},
-		})
+		if u, ok := param.GetType().(*types.UserType); ok {
+			if s, ok := u.UserType.(*types.StructType); ok {
+				logger.Logger.Warnf("param %s: %v", param.String(), s.FieldTypes)
+			}
+		}
+		v := types.CreateVariableFromType(param.GetName(), param.GetType())
+		if u, ok := v.GetVariableInfo().GetType().(*types.UserType); ok {
+			if s, ok := u.UserType.(*types.StructType); ok {
+				logger.Logger.Warnf("param %s: %v", param.String(), s.FieldTypes)
+			}
+		}
+		v.GetVariableInfo().IsBlockParam = true
+		v.GetVariableInfo().BlockParamIdx = i
+		entryBlock.Vars = append(entryBlock.Vars, v)
 	}
-	logger.Logger.Infof("[CFG] parsed CFG %s", parsedCfg.String())
+	logger.Logger.Infof("[CFG] parsed CFG %s with block variables %v", parsedCfg.FullMethod, entryBlock.Vars)
 	//logger.Logger.Info(parsedCfg.FullString())
 }
 

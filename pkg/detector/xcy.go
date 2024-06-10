@@ -40,25 +40,25 @@ func (m *Message) String() string {
 }
 
 type Operation struct {
+	Service  string
+	Method   string
 	Key      types.Variable
 	Object   types.Variable
-	Service  string
 	Database datastores.DatabaseInstance
-	Method   string
 }
 
 func (op *Operation) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Key      string `json:"key"`
-		Object   string `json:"object"`
 		Service  string `json:"service"`
 		Method   string `json:"method"`
+		Key      string `json:"key"`
+		Object   string `json:"object"`
 		Database string `json:"database"`
 	}{
-		Key:      fmt.Sprintf("%s (#%d)", op.Key.GetVariableInfo().GetName(), op.Key.GetVariableInfo().GetId()),
-		Object:   fmt.Sprintf("%s (#%d)", op.Object.GetVariableInfo().GetName(), op.Object.GetVariableInfo().GetId()),
 		Service:  op.Service,
 		Method:   op.Method,
+		Key:      fmt.Sprintf("%s (#%d)", op.Key.GetVariableInfo().GetName(), op.Key.GetVariableInfo().GetId()),
+		Object:   fmt.Sprintf("%s (#%d)", op.Object.GetVariableInfo().GetName(), op.Object.GetVariableInfo().GetId()),
 		Database: op.Database.GetName(),
 	})
 }
@@ -75,8 +75,8 @@ func (op *Operation) String() string {
 }
 
 type Inconsistency struct {
-	Write *Operation `json:"previous_write"`
-	Read  *Operation `json:"inconsistent_read"`
+	Write *Operation `json:"write"`
+	Read  *Operation `json:"read"`
 }
 
 func (i *Inconsistency) String() string {
@@ -109,14 +109,14 @@ func createOperation(key types.Variable, object types.Variable, call *abstractgr
 func (request *Request) saveWriteOperation(key types.Variable, object types.Variable, call *abstractgraph.AbstractDatabaseCall) *Operation {
 	write := createOperation(key, object, call)
 	request.Writes = append(request.Writes, write)
-	logger.Logger.Infof("saved write %s", write.String())
+	logger.Logger.Debugf("saved write %s", write.String())
 	return write
 }
 
 func (request *Request) saveReadOperation(key types.Variable, object types.Variable, call *abstractgraph.AbstractDatabaseCall) *Operation {
 	read := createOperation(key, object, call)
 	request.Reads = append(request.Reads, read)
-	logger.Logger.Infof("saved read %s", read.String())
+	logger.Logger.Debugf("saved read %s", read.String())
 	return read
 }
 
@@ -126,7 +126,7 @@ func (request *Request) addInconsistency(write *Operation, read *Operation) {
 		Read:  read,
 	}
 	request.Inconsistencies = append(request.Inconsistencies, inconsistency)
-	logger.Logger.Infof("[XCY] found inconsistency %s", inconsistency.String())
+	logger.Logger.Infof("[XCY] found inconsistency at datastore %s", inconsistency.Write.Database.GetName())
 }
 
 func (request *Request) TransverseRequestOperations() {
@@ -142,7 +142,7 @@ func (request *Request) captureInconsistency(read *Operation, readCall *abstract
 	// iterate in reverse
 	for i := len(request.Writes) - 1; i >= 0; i-- {
 		write := request.Writes[i]
-		logger.Logger.Infof("evaluating XCY violation for read (%s @ %s) and write (%s @ %s)",
+		logger.Logger.Debugf("evaluating XCY violation for read (%s @ %s) and write (%s @ %s)",
 			read.Key.GetVariableInfo().Name,
 			readCall.DbInstance.GetName(),
 			write.Key.GetVariableInfo().Name,

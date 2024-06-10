@@ -16,19 +16,19 @@ import (
 )
 
 type App struct {
-	Name      string                                 `json:"app_name,omitempty"`
-	Path      string                                 `json:"-"`
-	Services  map[string]*service.ServiceNode        `json:"app_services,omitempty"`
-	Databases map[string]datastores.DatabaseInstance `json:"app_databases,omitempty"`
-	Packages  map[string]*types.Package              `json:"packages,omitempty"`
+	Name      string
+	Path      string
+	Services  map[string]*service.ServiceNode
+	Databases map[string]datastores.DatabaseInstance
+	Packages  map[string]*types.Package
 }
 
 // MarshalJSON is used by app.Save()
 func (app *App) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Name      string                                 `json:"name"`
-		Services  map[string]*service.ServiceNode        `json:"app_services"`
-		Databases map[string]datastores.DatabaseInstance `json:"app_databases"`
+		Services  map[string]*service.ServiceNode        `json:"services"`
+		Databases map[string]datastores.DatabaseInstance `json:"datastores"`
 	}{
 		Name:      app.Name,
 		Services:  app.Services,
@@ -102,7 +102,6 @@ func (app *App) matchServiceEdges() {
 
 func (app *App) parseServicesInfo() {
 	for _, node := range app.Services {
-		logger.Logger.Warnf("[PARSER] APP service %s", node.Name)
 		node.ParseImports()
 		node.RegisterConstructor()
 		node.RegisterStructure()
@@ -199,6 +198,6 @@ func (app *App) createServiceNodes(servicesInfo []*types.ServiceInfo) {
 		}
 
 		app.Services[node.Name] = node
-		logger.Logger.Infof("[APP] created service node: %s", node.Name)
+		logger.Logger.Infof("[APP] created service node %s", node.Name)
 	}
 }

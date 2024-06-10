@@ -6,4 +6,5 @@ type Method interface {
 	GetReturns() []*FunctionParameter
 	IsQueueWrite() bool
 	IsQueueRead() bool
+	IsWrite() bool
 }

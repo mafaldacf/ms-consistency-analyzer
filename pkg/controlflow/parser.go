@@ -59,8 +59,11 @@ func getStmtsIfInlineGoRoutine(node ast.Node) ([]ast.Node, bool) {
 }
 
 func saveDeclsAndAssigns(serviceNode *service.ServiceNode, parsedBlock *types.ParsedBlock, node ast.Node) {
-	vars := types.IsVarDeclOrAssign(serviceNode.File, parsedBlock.Vars, node)
-	parsedBlock.AddVariables(vars)
+	vars, ok := types.IsVarDeclOrAssign(serviceNode.File, parsedBlock.Vars, node)
+	if ok {
+		logger.Logger.Debugf("adding variables %v to block", vars)
+		parsedBlock.AddVariables(vars)
+	}
 }
 
 // hasFuncCall
@@ -158,9 +161,12 @@ func saveCallIfValid(serviceNode *service.ServiceNode, node *ast.CallExpr, parse
 	parsedCall, ok := getParsedCallAtPosition(parsedFuncDecl, node.Pos())
 	if !ok {
 		return false
-	}
-	for _, arg := range node.Args {
+		}
+	for i, arg := range node.Args {
 		param := types.LookupVariables(serviceNode.File, parsedBlock.Vars, arg)
+		if _, ok := param.GetVariableInfo().Type.(*types.GenericType); ok {
+			param.GetVariableInfo().Type = parsedCall.GetMethod().GetParams()[i].GetType()
+		}
 		parsedCall.AddParam(param)
 	}
 	logger.Logger.Infof("[CFG] found call %s", parsedCall.String())

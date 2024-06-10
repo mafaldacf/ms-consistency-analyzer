@@ -45,7 +45,7 @@ func (*ParsedFuncDecl) IsQueueRead() bool {
 func (p *ParsedFuncDecl) String() string {
 	repr := fmt.Sprintf("%s.%s(", p.Service, p.Name)
 	for i, arg := range p.Params {
-		repr += arg.GetName()
+		repr += arg.String()
 		if i < len(p.Params)-1 {
 			repr += ", "
 		}
@@ -61,6 +61,7 @@ func (p *ParsedFuncDecl) GetParams() []*types.FunctionParameter {
 type Call interface {
 	String() string
 	GetName() string
+	GetMethod() types.Method
 	SimpleString() string
 	IsAtPos(token.Pos) bool
 	AddParam(param types.Variable)
@@ -147,6 +148,10 @@ func (svcCall *ServiceParsedCallExpr) GetParams() []types.Variable {
 	return svcCall.Params
 }
 
+func (svcCall *ServiceParsedCallExpr) GetMethod() types.Method {
+	return svcCall.Method
+}
+
 type DatabaseParsedCallExpr struct {
 	Call
 	ParsedCallExpr
@@ -182,6 +187,10 @@ func (dbCall *DatabaseParsedCallExpr) GetParams() []types.Variable {
 	return dbCall.Params
 }
 
+func (dbCall *DatabaseParsedCallExpr) GetMethod() types.Method {
+	return dbCall.Method
+}
+
 type InternalTempParsedCallExpr struct {
 	Call
 	ParsedCallExpr
@@ -210,6 +219,10 @@ func (internalCall *InternalTempParsedCallExpr) AddParam(param types.Variable) {
 
 func (internalCall *InternalTempParsedCallExpr) GetParams() []types.Variable {
 	return internalCall.Params
+}
+
+func (internalCall *InternalTempParsedCallExpr) GetMethod() types.Method {
+	return internalCall.Method
 }
 
 type ServiceNode struct {

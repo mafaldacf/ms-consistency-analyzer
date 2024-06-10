@@ -43,4 +43,9 @@ func main() {
 	for _, request := range requests {
 		request.SaveInconsistencies(app.Name)
 	}
+	fmt.Println()
+	fmt.Println()
+	for _, entryNode := range abstractGraph.Nodes {
+		abstractgraph.BuildSchema(entryNode)
+	}
 }

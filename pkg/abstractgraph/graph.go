@@ -1,8 +1,8 @@
 package abstractgraph
 
 import (
-	frameworks "analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/app"
+	frameworks "analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
@@ -11,7 +11,6 @@ import (
 	"fmt"
 	"os"
 )
-
 
 func Build(app *app.App, frontends []string) *AbstractGraph {
 	graph := &AbstractGraph{
@@ -124,7 +123,7 @@ func (graph *AbstractGraph) createDummyAbstractServiceCall(node *service.Service
 		Method: method.String(),
 	}
 	for _, p := range method.GetParams() {
-		call.ParsedCall.Params = append(call.ParsedCall.Params, &types.GenericVariable{
+		call.ParsedCall.Params = append(call.ParsedCall.Params, &types.CompositeVariable{
 			VariableInfo: &types.VariableInfo{
 				Name: p.GetName(),
 				Type: p.GetType(),
@@ -144,7 +143,7 @@ func (graph *AbstractGraph) addEntry(node *service.ServiceNode, method *service.
 	for _, param := range entryCall.Params {
 		param.GetVariableInfo().Reference = &types.Reference{
 			Creator: "Client",
-			Variable: &types.GenericVariable{
+			Variable: &types.CompositeVariable{
 				VariableInfo: &types.VariableInfo{
 					Name: param.GetVariableInfo().GetName(),
 					Id:   graph.getAndIncGIndex(),
@@ -162,18 +161,20 @@ func (graph *AbstractGraph) recurseBuild(app *app.App, abstractNode AbstractNode
 
 	switch node := abstractNode.(type) {
 	case *AbstractServiceCall:
+		logger.Logger.Debugf("[GRAPH] visiting abstract service call: %s", node.String())
 		targetMethod := graph.Services[node.Callee].GetExposedMethod(node.ParsedCall.Name)
 		graph.appendAbstractEdges(node, node, targetMethod)
 	case *AbstractDatabaseCall:
+		logger.Logger.Debugf("[GRAPH] visiting abstract database call: %s", node.String())
 		if node.ParsedCall.Method.IsQueueWrite() {
 			graph.appendPublisherQueueHandlers(app, node)
 		}
 	case *AbstractQueueHandler:
+		logger.Logger.Debugf("[GRAPH] visiting abstract queue handler: %s", node.String())
 		targetMethod := graph.Services[node.Callee].GetQueueHandlerMethod(node.ParsedCall.Name)
 		graph.appendAbstractEdges(node, node, targetMethod)
 	default:
-		logger.Logger.Warnf("Error recursing build for %s\nUnknown node type: %s", node, utils.GetType(node))
-		return
+		logger.Logger.Fatalf("Error recursing build for %s\nUnknown node type: %s", node, utils.GetType(node))
 	}
 	for _, edge := range abstractNode.GetChildren() {
 		graph.recurseBuild(app, edge)
@@ -194,6 +195,7 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				Subscriber: rootIsQueueHandler,
 			}
 			rootParent.AddChild(child)
+			logger.Logger.Debugf("[GRAPH] added node for abstract database call: %s", child.String())
 
 			if rootIsQueueHandler && !rootQueueHandler.HasQueueReceiver() {
 				if !graph.referencePublisherParams(rootQueueHandler, child) {
@@ -211,6 +213,7 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				Method:     parsedCall.Method.String(),
 			}
 			rootParent.AddChild(child)
+			logger.Logger.Debugf("[GRAPH] added node abstract service call: %s", child.String())
 			graph.referenceServiceCallerParams(rootParent, directParent, child)
 		case *service.InternalTempParsedCallExpr:
 			tempChild := &AbstractTempInternalCall{
@@ -237,7 +240,7 @@ func (graph *AbstractGraph) appendPublisherQueueHandlers(app *app.App, publisher
 				Publisher:           publisher,
 			}
 			for _, p := range handlerMethod.GetParams() {
-				abstractHandler.ParsedCall.Params = append(abstractHandler.ParsedCall.Params, &types.GenericVariable{
+				abstractHandler.ParsedCall.Params = append(abstractHandler.ParsedCall.Params, &types.CompositeVariable{
 					VariableInfo: &types.VariableInfo{
 						Name: p.GetName(),
 						Type: p.GetType(),
@@ -309,7 +312,7 @@ func (graph *AbstractGraph) referenceServiceCallerParams(rootParent AbstractNode
 							// this can happen with the context variable (e.g. handleMessage called by the workerThread in the NotifyService)
 							dep.GetVariableInfo().AddOriginalReferenceWithID(callerParam.GetVariableInfo().GetReference())
 						} else {
-							dep.GetVariableInfo().AddReferenceWithID(callerParam, child.GetCallerStr())
+							dep.GetVariableInfo().AddReferenceWithID(callerParam, rootParent.GetName())
 						}
 						break
 					}

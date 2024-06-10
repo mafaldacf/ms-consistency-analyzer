@@ -103,6 +103,7 @@ func buildDatabasesInstances(databases map[string]ir.IRNode) []datastores.Databa
 						Type: datastores.Cache,
 						Kind: datastores.Redis,
 						Name: name,
+						Schema: &datastores.Schema{},
 					},
 				},
 			})
@@ -115,6 +116,7 @@ func buildDatabasesInstances(databases map[string]ir.IRNode) []datastores.Databa
 						Type: datastores.Queue,
 						Kind: datastores.RabbitMQ,
 						Name: name,
+						Schema: &datastores.Schema{},
 					},
 				},
 			})

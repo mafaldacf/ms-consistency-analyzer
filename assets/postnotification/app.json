@@ -1,6 +1,6 @@
 {
   "name": "postnotification",
-  "app_services": {
+  "services": {
     "NotifyService": {
       "fields": {
         "numWorkers": "",
@@ -35,14 +35,16 @@
       ]
     }
   },
-  "app_databases": {
+  "datastores": {
     "notification_queue": {
       "name": "notification_queue",
       "datastore": {
         "name": "notification_queue",
         "type": "Queue",
         "kind": "RabbitMQ",
-        "schema": null
+        "schema": {
+          "fields": null
+        }
       }
     },
     "post_db": {
@@ -51,7 +53,9 @@
         "name": "post_db",
         "type": "Cache",
         "kind": "Redis",
-        "schema": null
+        "schema": {
+          "fields": null
+        }
       }
     }
   }

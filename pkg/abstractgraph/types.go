@@ -41,12 +41,13 @@ type AbstractServiceCall struct {
 
 	Caller string `json:"caller"`
 	Callee string `json:"-"`
-
-	Params     []types.Variable               `json:"-"`
-	ParsedCall *service.ServiceParsedCallExpr `json:"-"` // omit from json
-
+	
 	// nodes representing database calls cannot contain children as well
 	Children []AbstractNode `json:"edges"`
+
+	Params     []types.Variable               `json:"params"`
+	ParsedCall *service.ServiceParsedCallExpr `json:"-"` // omit from json
+
 }
 
 func (call *AbstractServiceCall) GetParams() []types.Variable {

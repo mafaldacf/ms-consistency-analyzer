@@ -27,7 +27,7 @@ type BlueprintBackend struct {
 func (b *BlueprintBackend) String() string {
 	repr := fmt.Sprintf("%s(", b.Name)
 	for i, param := range b.Params {
-		repr += param.GetName()
+		repr += param.String()
 		if i < len(b.Params)-1 {
 			repr += ", "
 		}
@@ -123,7 +123,7 @@ var ctxParam = types.FunctionParameter{
 		Type: &types.UserType{
 			Name:    "Context",
 			Package: "context",
-			UserType: &types.InterfaceType{},
+			UserType: nil,
 		},
 	},
 }

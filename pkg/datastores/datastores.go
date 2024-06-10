@@ -1,6 +1,8 @@
 package datastores
 
-import "encoding/json"
+import (
+	"encoding/json"
+)
 
 type DatastoreType int
 const (

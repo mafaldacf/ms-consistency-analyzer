@@ -66,23 +66,30 @@ type VariableInfo struct {
 
 func (v *VariableInfo) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Name      string `json:"name,omitempty"`
-		Type      string `json:"type,omitempty"`
-		Id        int64  `json:"id,omitempty"`
-		Reference bool   `json:"ref,omitempty"`
-		//Reference *Reference `json:"ref,omitempty"`
+		Name string `json:"name,omitempty"`
+		Type string `json:"type,omitempty"`
+		Id   int64  `json:"id,omitempty"`
+		//Reference bool   `json:"ref,omitempty"`
+		Reference *Reference `json:"ref,omitempty"`
 	}{
-		Name:      v.Name,
-		Type:      v.Type.String(),
-		Id:        v.Id,
-		Reference: v.Reference != nil,
+		Name: v.Name,
+		Type: v.Type.String(),
+		Id:   v.Id,
+		//Reference: v.Reference != nil,
+		Reference: v.Reference,
 	})
+}
+
+type CompositeVariable struct {
+	Variable     `json:"-"`
+	VariableInfo *VariableInfo `json:"variable"`
+	Params       []Variable    `json:"composite_params,omitempty"`
 }
 
 type GenericVariable struct {
 	Variable     `json:"-"`
 	VariableInfo *VariableInfo `json:"variable"`
-	Params       []Variable    `json:"-"` //`json:"params,omitempty"`
+	Params       []Variable    `json:"generic_params,omitempty"`
 }
 
 type ParameterVariable struct {
@@ -93,32 +100,61 @@ type ParameterVariable struct {
 type StructVariable struct {
 	Variable     `json:"-"`
 	VariableInfo *VariableInfo       `json:"variable"`
-	Fields       map[string]Variable `json:"-"` //`json:"fields,omitempty"`
+	Fields       map[string]Variable `json:"struct_fields,omitempty"`
 }
 
 type MapVariable struct {
 	Variable     `json:"-"`
 	VariableInfo *VariableInfo         `json:"variable"`
-	KeyValues    map[Variable]Variable `json:"-"` //`json:"key_values,omitempty"`
+	KeyValues    map[Variable]Variable `json:"map_kvs,omitempty"`
 }
 
 type ArrayVariable struct {
 	Variable     `json:"-"`
 	VariableInfo *VariableInfo `json:"variable"`
-	Elements     []Variable    `json:"-"` //`json:"elements"`
+	Elements     []Variable    `json:"array_elems,omitempty"`
 }
 
 type PointerVariable struct {
 	Variable     `json:"-"`
 	VariableInfo *VariableInfo `json:"variable"`
-	PointerTo    Variable      `json:"-"` //`json:"pointer_to"`
+	PointerTo    Variable      `json:"ptr_to,omitempty"`
 }
 
 type AddressVariable struct {
 	Variable     `json:"-"`
 	VariableInfo *VariableInfo `json:"variable"`
-	AddressOf    Variable      `json:"-"` //`json:"address_of"`
+	AddressOf    Variable      `json:"addr_of,omitempty"`
 }
+type InterfaceVariable struct {
+	Variable     `json:"-"`
+	VariableInfo *VariableInfo `json:"variable"`
+}
+type ChanVariable struct {
+	Variable     `json:"-"`
+	VariableInfo *VariableInfo `json:"variable"`
+}
+type BasicVariable struct {
+	Variable     `json:"-"`
+	VariableInfo *VariableInfo `json:"variable"`
+}
+
+type InlineVariable struct {
+	Variable     `json:"-"`
+	VariableInfo *VariableInfo `json:"variable"`
+}
+type SelectorVariable struct {
+	Variable     			`json:"wrapped_variable"`
+	ParentVariable Variable `json:"-"`
+	SelectorField  string 	`json:"selector_field"`
+}
+
+// ------------------
+// COMPOSITE VARIABLE
+// ------------------
+func (v *CompositeVariable) String() string                 { return v.VariableInfo.String() }
+func (v *CompositeVariable) GetVariableInfo() *VariableInfo { return v.VariableInfo }
+func (v *CompositeVariable) GetDependencies() []Variable    { return v.Params }
 
 // ----------------
 // GENERIC VARIABLE
@@ -130,16 +166,49 @@ func (v *GenericVariable) GetDependencies() []Variable    { return v.Params }
 // ---------------
 // STRUCT VARIABLE
 // ---------------
-func (v *StructVariable) String() string                       { return v.VariableInfo.String() }
-func (v *StructVariable) GetVariableInfo() *VariableInfo       { return v.VariableInfo }
-func (v *StructVariable) AddField(name string, field Variable) { v.Fields[name] = field }
-
+func (v *StructVariable) String() string                 { return v.VariableInfo.String() }
+func (v *StructVariable) GetVariableInfo() *VariableInfo { return v.VariableInfo }
 func (v *StructVariable) GetDependencies() []Variable {
 	var deps []Variable
 	for _, field := range v.Fields {
 		deps = append(deps, field)
 	}
 	return deps
+}
+
+func (v *StructVariable) AddFieldIfNotExists(name string, field Variable) {
+	if _, exists := v.Fields[name]; !exists {
+		v.Fields[name] = field
+	} else {
+		logger.Logger.Warnf("field %s already exists in structure %s", name, v.String())
+	}
+}
+
+func (v *StructVariable) GetOrCreateField(name string) Variable {
+	variable, exists := v.Fields[name]
+	if !exists {
+		fieldType, ok := v.GetStructType().FieldTypes[name]
+		if !ok {
+			logger.Logger.Fatalf("invalid field name %s in structure variable %s with fields types %v", name, v.String(), v.GetStructType().FieldTypes)
+		}
+		variable = CreateVariableFromType(name, fieldType)
+		wrapper := &SelectorVariable{
+			Variable:  		variable,
+			ParentVariable: v,
+			SelectorField:  name,
+		}
+		v.Fields[name] = wrapper
+		logger.Logger.Warnf("added new variable %s for field %s in structure variable %s", variable.String(), name, v.String())
+	}
+	return variable
+}
+
+func (v *StructVariable) GetStructType() *StructType {
+	structType, ok := v.VariableInfo.Type.(*StructType)
+	if !ok {
+		structType = v.VariableInfo.Type.(*UserType).UserType.(*StructType)
+	}
+	return structType
 }
 
 // ------------
@@ -201,6 +270,41 @@ func (v *AddressVariable) String() string                 { return v.VariableInf
 func (v *AddressVariable) GetVariableInfo() *VariableInfo { return v.VariableInfo }
 func (v *AddressVariable) GetDependencies() []Variable    { return v.AddressOf.GetDependencies() }
 func (v *AddressVariable) GetAddressOf() Variable         { return v.AddressOf }
+
+// ---------------
+// INLINE VARIABLE
+// ---------------
+func (v *InlineVariable) String() string                 { return v.VariableInfo.String() }
+func (v *InlineVariable) GetVariableInfo() *VariableInfo { return v.VariableInfo }
+func (v *InlineVariable) GetDependencies() []Variable    { return nil }
+
+// --------------
+// BASIC VARIABLE
+// --------------
+func (v *BasicVariable) String() string                 { return v.VariableInfo.String() }
+func (v *BasicVariable) GetVariableInfo() *VariableInfo { return v.VariableInfo }
+func (v *BasicVariable) GetDependencies() []Variable    { return nil }
+
+// -----------------
+// INTEFACE VARIABLE
+// -----------------
+func (v *InterfaceVariable) String() string                 { return v.VariableInfo.String() }
+func (v *InterfaceVariable) GetVariableInfo() *VariableInfo { return v.VariableInfo }
+func (v *InterfaceVariable) GetDependencies() []Variable    { return nil }
+
+// -------------
+// CHAN VARIABLE
+// -------------
+func (v *ChanVariable) String() string                 { return v.VariableInfo.String() }
+func (v *ChanVariable) GetVariableInfo() *VariableInfo { return v.VariableInfo }
+func (v *ChanVariable) GetDependencies() []Variable    { return nil }
+
+// -----------------
+// SELECTOR VARIABLE
+// -----------------
+func (v *SelectorVariable) String() string                 { return v.Variable.String() }
+func (v *SelectorVariable) GetVariableInfo() *VariableInfo { return v.Variable.GetVariableInfo() }
+func (v *SelectorVariable) GetDependencies() []Variable    { return v.Variable.GetDependencies() }
 
 // -------------
 // VARIABLE INFO
@@ -289,9 +393,9 @@ func getDependenciesString(deps ...Variable) string {
 
 func ContainsMatchingDependencies(current Variable, target Variable) bool {
 	currentDeps := getIndirectDependencies(current)
-	logger.Logger.Warnf("%s: got current dependencies: %v", getDependenciesString(current), getDependenciesString(currentDeps...))
+	logger.Logger.Debugf("%s: got current dependencies: %v", getDependenciesString(current), getDependenciesString(currentDeps...))
 	targetDeps := getIndirectDependencies(target)
-	logger.Logger.Warnf("%s: got target dependencies: %v", getDependenciesString(target), getDependenciesString(targetDeps...))
+	logger.Logger.Debugf("%s: got target dependencies: %v", getDependenciesString(target), getDependenciesString(targetDeps...))
 
 	for _, d := range currentDeps {
 		if slices.Contains(targetDeps, d) {

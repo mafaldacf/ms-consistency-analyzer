@@ -85,12 +85,8 @@ func (node *ServiceNode) isMethodExposedByService(funcDecl *ast.FuncDecl) bool {
 }
 
 func (node *ServiceNode) parseFuncDeclParams(funcDecl *ast.FuncDecl) []*types.FunctionParameter {
-	return node.ParseFieldList(funcDecl.Type.Params)
-}
-
-func (node *ServiceNode) ParseFieldList(params *ast.FieldList) []*types.FunctionParameter {
 	var funcParams []*types.FunctionParameter
-	for _, field := range params.List {
+	for _, field := range funcDecl.Type.Params.List {
 		paramType := types.ComputeType(field.Type, node.File)
 		for _, ident := range field.Names {
 			param := &types.FunctionParameter{
@@ -317,7 +313,7 @@ func (node *ServiceNode) addExposedMethod(funcDecl *ast.FuncDecl, rcvIdent *ast.
 		Service: node.Name,
 	}
 	node.ExposedMethods[parsedFuncDecl.Name] = parsedFuncDecl
-	logger.Logger.Debugf("[PARSER] added exposed method %s to service %s", parsedFuncDecl.String(), node.Name)
+	logger.Logger.Warnf("[PARSER] added exposed method %s to service %s", parsedFuncDecl.String(), node.Name)
 }
 
 func hasCurrentServiceRecvIdent(selectorExpr *ast.SelectorExpr, expectedRecvIdent *ast.Ident) (bool, *ast.Ident) {
@@ -383,6 +379,7 @@ func (node *ServiceNode) findMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 						CalleeTypeName: serviceField.GetType(),
 					}
 					parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, svcParsedCallExpr)
+					logger.Logger.Debugf("[PARSER] found new service call %s", svcParsedCallExpr.Name)
 				}
 				// if the field corresponds to a database field
 				if databaseField, ok := field.(*types.DatabaseField); ok {
@@ -390,7 +387,7 @@ func (node *ServiceNode) findMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 					// 2. get the target database node
 					// 3. add the target method for the current call expression
 					targetDatabaseType := databaseField.GetTypeName()
-					dbCall := &DatabaseParsedCallExpr{
+					dbParsedCallExpr := &DatabaseParsedCallExpr{
 						ParsedCallExpr: ParsedCallExpr{
 							Ast:         funcCall,
 							Receiver:    serviceRecvIdent.Name,
@@ -402,8 +399,8 @@ func (node *ServiceNode) findMethodBodyCalls(parsedFuncDecl *ParsedFuncDecl) {
 						CallerTypeName: &types.ServiceType{Name: node.Name, Package: node.GetPackageName()},
 						DbInstance:     databaseField.DbInstance,
 					}
-					parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, dbCall)
-					logger.Logger.Debugf("[PARSER] found new database call %s (params: %v)", dbCall.String(), dbCall.Params)
+					parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, dbParsedCallExpr)
+					logger.Logger.Debugf("[PARSER] found new database call %s", dbParsedCallExpr.Name)
 				}
 			}
 		} else if funcDecl, ok := node.InternalMethods[methodIdent.Name]; ok {

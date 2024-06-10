@@ -21,8 +21,14 @@ type UserType struct {
 	Package string
 	Name    string
 }
+type ImportedType struct {
+	Type     `json:"-"`
+	Package string
+	Name    string
+}
 type StructType struct {
-	Type   `json:"-"`
+	Type   		`json:"-"`
+	FieldTypes 	map[string]Type
 }
 type MapType struct {
 	Type   `json:"-"`
@@ -72,12 +78,19 @@ func (t *ServiceType) GetName() string {
 }
 // User
 func (t *UserType) String() string {
-	if t.UserType != nil {
+	/* if t.UserType != nil {
 		return fmt.Sprintf("%s %s.%s", t.UserType.String(), packageAlias(t.Package), t.Name)
-	}
+	} */
 	return fmt.Sprintf("%s.%s", packageAlias(t.Package), t.Name)
 }
 func (t *UserType) GetName() string {
+	return t.Name
+}
+// Imported
+func (t *ImportedType) String() string {
+	return fmt.Sprintf("%s.%s", packageAlias(t.Package), t.Name)
+}
+func (t *ImportedType) GetName() string {
 	return t.Name
 }
 // Pointer
@@ -134,9 +147,9 @@ func (t *StructType) GetName() string {
 }
 // Generic
 func (t *GenericType) String() string {
-	if t.Name != "" {
-		return fmt.Sprintf("< %s", t.Name)
-	}
+	/* if t.Name != "" {
+		return t.Name
+	} */
 	return "undefined"
 }
 func (t *GenericType) GetName() string {
