@@ -27,19 +27,27 @@ type Datastore struct {
 	Schema  *Schema
 }
 
-func (ds *Datastore) MarshalJSON() ([]byte, error) {
+func (ds *Datastore) GetTypeString() string {
 	var typeToString = map[DatastoreType]string{
 		SQL: 	"SQL",
 		Cache:	"Cache",
 		NoSQL: 	"NoSQL",
 		Queue: 	"Queue",
 	}
+	return typeToString[ds.Type]
+}
+
+func (ds *Datastore) GetKindString() string {
 	var kindToString = map[DatastoreKind]string{
 		MySQL: 		"MySQL",
 		Redis:		"Redis",
 		MongoDB: 	"MongoDB",
 		RabbitMQ: 	"RabbitMQ",
 	}
+	return kindToString[ds.Kind]
+}
+
+func (ds *Datastore) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Name	string  `json:"name"`
 		Type 	string  `json:"type"`
@@ -47,8 +55,8 @@ func (ds *Datastore) MarshalJSON() ([]byte, error) {
 		Schema 	*Schema `json:"schema"`
 	}{
 		Name:  	ds.Name,
-		Type:  	typeToString[ds.Type],
-		Kind:  	kindToString[ds.Kind],
+		Type:  	ds.GetTypeString(),
+		Kind:  	ds.GetKindString(),
 		Schema: ds.Schema,
 	})
 }

@@ -78,9 +78,9 @@ func (t *ServiceType) GetName() string {
 }
 // User
 func (t *UserType) String() string {
-	/* if t.UserType != nil {
-		return fmt.Sprintf("%s %s.%s", t.UserType.String(), packageAlias(t.Package), t.Name)
-	} */
+	if t.UserType != nil {
+		return fmt.Sprintf("%s.%s %s", packageAlias(t.Package), t.Name, t.UserType.String())
+	}
 	return fmt.Sprintf("%s.%s", packageAlias(t.Package), t.Name)
 }
 func (t *UserType) GetName() string {

@@ -18,7 +18,10 @@ require github.com/blueprint-uservices/blueprint/examples/postnotification/wirin
 
 require github.com/blueprint-uservices/blueprint/examples/foobar/workflow v0.0.0 // indirect
 
-require github.com/blueprint-uservices/blueprint/examples/foobar/wiring v0.0.0
+require (
+	github.com/blueprint-uservices/blueprint/examples/foobar/wiring v0.0.0
+	gopkg.in/yaml.v2 v2.4.0
+)
 
 require (
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect

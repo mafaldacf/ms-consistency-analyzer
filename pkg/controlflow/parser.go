@@ -164,8 +164,11 @@ func saveCallIfValid(serviceNode *service.ServiceNode, node *ast.CallExpr, parse
 		}
 	for i, arg := range node.Args {
 		param := types.LookupVariables(serviceNode.File, parsedBlock.Vars, arg)
+
+		// upgrade variable with known type from function method
 		if _, ok := param.GetVariableInfo().Type.(*types.GenericType); ok {
 			param.GetVariableInfo().Type = parsedCall.GetMethod().GetParams()[i].GetType()
+			logger.Logger.Warnf("upgrading variable %s with new type %s", param.GetVariableInfo().Name, param.GetVariableInfo().Type.String())
 		}
 		parsedCall.AddParam(param)
 	}

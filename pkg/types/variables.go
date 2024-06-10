@@ -54,6 +54,16 @@ type Variable interface {
 	GetVariableInfo() *VariableInfo
 	GetDependencies() []Variable
 }
+
+type Dataflow struct {
+	DirectWrite bool
+	Datastore 	string
+	Service 	string
+
+	// if it is not a direct write
+	// then we set the variable that is the source of the write
+	Source  	Variable
+}
 type VariableInfo struct {
 	Name string
 	Type Type
@@ -62,6 +72,8 @@ type VariableInfo struct {
 	Reference     *Reference
 	IsBlockParam  bool
 	BlockParamIdx int
+
+	Dataflow  	 *Dataflow
 }
 
 func (v *VariableInfo) MarshalJSON() ([]byte, error) {
@@ -70,7 +82,7 @@ func (v *VariableInfo) MarshalJSON() ([]byte, error) {
 		Type string `json:"type,omitempty"`
 		Id   int64  `json:"id,omitempty"`
 		//Reference bool   `json:"ref,omitempty"`
-		Reference *Reference `json:"ref,omitempty"`
+		Reference *Reference `json:"ref"`
 	}{
 		Name: v.Name,
 		Type: v.Type.String(),
@@ -80,10 +92,32 @@ func (v *VariableInfo) MarshalJSON() ([]byte, error) {
 	})
 }
 
+func (v *VariableInfo) SetDirectWrite(datastore string, service string) () {
+	if v.Dataflow != nil && v.Dataflow.Datastore != datastore && v.Dataflow.Service != service {
+		logger.Logger.Fatalf("data flow already exists for variable %s", v.String())
+	}
+	if v.Dataflow != nil && !v.Dataflow.DirectWrite {
+		logger.Logger.Warnf("upgrading data flow for variable %s", v.String())
+	}
+	v.Dataflow = &Dataflow{
+		DirectWrite: true,
+		Datastore: datastore,
+		Service: service,
+	}
+}
+
+func (v *VariableInfo) SetIndirectWrite(variable Variable) () {
+	v.Dataflow = &Dataflow{
+		Source: variable,
+		Datastore: variable.GetVariableInfo().Dataflow.Datastore,
+		Service: variable.GetVariableInfo().Dataflow.Service,
+	}
+}
+
 type CompositeVariable struct {
 	Variable     `json:"-"`
 	VariableInfo *VariableInfo `json:"variable"`
-	Params       []Variable    `json:"composite_params,omitempty"`
+	Params       []Variable    `json:"composition,omitempty"`
 }
 
 type GenericVariable struct {
@@ -191,13 +225,13 @@ func (v *StructVariable) GetOrCreateField(name string) Variable {
 		if !ok {
 			logger.Logger.Fatalf("invalid field name %s in structure variable %s with fields types %v", name, v.String(), v.GetStructType().FieldTypes)
 		}
-		variable = CreateVariableFromType(name, fieldType)
-		wrapper := &SelectorVariable{
-			Variable:  		variable,
+		wrapper := CreateVariableFromType(name, fieldType)
+		variable = &SelectorVariable{
+			Variable:  		wrapper,
 			ParentVariable: v,
 			SelectorField:  name,
 		}
-		v.Fields[name] = wrapper
+		v.Fields[name] = variable
 		logger.Logger.Warnf("added new variable %s for field %s in structure variable %s", variable.String(), name, v.String())
 	}
 	return variable
@@ -358,23 +392,23 @@ func (vinfo *VariableInfo) AddOriginalReferenceWithID(ref *Reference) {
 	vinfo.Reference = ref
 }
 
-func getIndirectDependencies(v Variable) []Variable {
+func GetIndirectDependencies(v Variable) []Variable {
 	indirectDeps := []Variable{v}
 	// indirect dependencies from reference
 	if v.GetVariableInfo().HasReference() {
-		indirectDeps = append(indirectDeps, getIndirectDependencies(v.GetVariableInfo().GetReference())...)
+		indirectDeps = append(indirectDeps, GetIndirectDependencies(v.GetVariableInfo().GetReference())...)
 	}
 	// direct dependencies
 	for _, dep := range v.GetDependencies() {
-		indirectDeps = append(indirectDeps, getIndirectDependencies(dep)...)
+		indirectDeps = append(indirectDeps, GetIndirectDependencies(dep)...)
 	}
 
 	// edge cases
 	if addressVariable, ok := v.(*AddressVariable); ok {
-		indirectDeps = append(indirectDeps, getIndirectDependencies(addressVariable.AddressOf)...)
+		indirectDeps = append(indirectDeps, GetIndirectDependencies(addressVariable.AddressOf)...)
 	}
 	if pointerVariable, ok := v.(*PointerVariable); ok {
-		indirectDeps = append(indirectDeps, getIndirectDependencies(pointerVariable.PointerTo)...)
+		indirectDeps = append(indirectDeps, GetIndirectDependencies(pointerVariable.PointerTo)...)
 	}
 
 	return indirectDeps
@@ -392,9 +426,9 @@ func getDependenciesString(deps ...Variable) string {
 }
 
 func ContainsMatchingDependencies(current Variable, target Variable) bool {
-	currentDeps := getIndirectDependencies(current)
+	currentDeps := GetIndirectDependencies(current)
 	logger.Logger.Debugf("%s: got current dependencies: %v", getDependenciesString(current), getDependenciesString(currentDeps...))
-	targetDeps := getIndirectDependencies(target)
+	targetDeps := GetIndirectDependencies(target)
 	logger.Logger.Debugf("%s: got target dependencies: %v", getDependenciesString(target), getDependenciesString(targetDeps...))
 
 	for _, d := range currentDeps {

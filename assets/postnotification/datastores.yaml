@@ -1,0 +1,18 @@
+notification_queue:
+  backend: Queue
+  kind: RabbitMQ
+  schema:
+  - name: message
+    type: postnotification.Message struct
+  - name: post
+    type: postnotification.Post struct
+  - name: post
+    type: postnotification.Post struct
+post_db:
+  backend: Cache
+  kind: Redis
+  schema:
+  - name: postIDStr
+    type: string
+  - name: post
+    type: postnotification.Post struct

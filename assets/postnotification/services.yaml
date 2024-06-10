@@ -1,0 +1,29 @@
+NotifyService:
+  datastores:
+  - notification_queue
+  fields:
+  - name: storageService
+    type: StorageService
+  - name: queue
+    type: Queue
+  - name: numWorkers
+    type: ""
+  services:
+  - StorageService
+StorageService:
+  datastores:
+  - post_db
+  fields:
+  - name: cache
+    type: Cache
+  services: []
+UploadService:
+  datastores:
+  - notification_queue
+  fields:
+  - name: storageService
+    type: StorageService
+  - name: queue
+    type: Queue
+  services:
+  - StorageService

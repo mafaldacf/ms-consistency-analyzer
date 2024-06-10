@@ -22,7 +22,7 @@ func GetDeclaredVariableReverse(name string, variables []Variable) Variable {
 }
 
 // FIXME!!!!! this is just temporary
-func createInlineVariable(typeName string) *CompositeVariable {
+func createCompositeVariable(typeName string) *CompositeVariable {
 	return &CompositeVariable{
 		VariableInfo: &VariableInfo{
 			Type: &GenericType{
@@ -284,9 +284,6 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr) (variable 
 			logger.Logger.Warnf("GOT SELECTOR FOR %s", e.Sel.Name)
 			//variable = v.GetOrCreateField(e.Sel.Name)
 			variable = v
-		case *CompositeVariable:
-			//FIXME: this is happening for function parameters!!
-			logger.Logger.Fatalf("got composite variable %v for selector %s", v.String(), e.Sel.Name)
 		default:
 			logger.Logger.Fatalf("could not find variable for selector %s with type %s", variable.String(), utils.GetType(variable))
 		}
@@ -296,22 +293,24 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr) (variable 
 
 		//FIXME: we need to try to find methods that are declared in this package with known return type
 		callStr := computeFunctionCallName(e.Fun) + "(...)"
-		genericVariable := createInlineVariable(callStr)
-		if len(e.Args) == 1 {
+		genericVariable := createCompositeVariable(callStr)
+		/* if len(e.Args) == 1 {
 			argVar := LookupVariables(file, blockVars, e.Args[0])
 			if !slices.Contains(blockVars, argVar) {
 				logger.Logger.Warnf("ignoring undeclared variable %v in function call %s", argVar, callStr)
 				return argVar
 			}
-		}
+		} */
 		for _, arg := range e.Args {
 			argVar := LookupVariables(file, blockVars, arg)
+			genericVariable.Params = append(genericVariable.Params, argVar)
+
 			// a direct transformation from one or more existing variables
-			if slices.Contains(blockVars, argVar) {
+			/* if slices.Contains(blockVars, argVar) {
 				genericVariable.Params = append(genericVariable.Params, argVar)
 			} else {
 				logger.Logger.Warnf("ignoring undeclared variable %s in function call %s", argVar.String(), callStr)
-			}
+			} */
 		}
 		variable = genericVariable
 		//variable = &PlaceholderVariable{VariableInfo: &VariableInfo{Name: "placeholder", Type: &PlaceholderType{}}}
