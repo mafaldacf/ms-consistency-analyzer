@@ -41,31 +41,7 @@
       "datastore": {
         "name": "notification_queue",
         "type": "Queue",
-        "kind": "RabbitMQ",
-        "schema": {
-          "fields": [
-            {
-              "name": "message",
-              "type": "postnotification.Message struct"
-            },
-            {
-              "name": "post",
-              "type": "postnotification.Post struct",
-              "reference": {
-                "name": "post",
-                "type": "postnotification.Post struct"
-              }
-            },
-            {
-              "name": "post",
-              "type": "postnotification.Post struct",
-              "reference": {
-                "name": "post",
-                "type": "postnotification.Post struct"
-              }
-            }
-          ]
-        }
+        "kind": "RabbitMQ"
       }
     },
     "post_db": {
@@ -73,19 +49,7 @@
       "datastore": {
         "name": "post_db",
         "type": "Cache",
-        "kind": "Redis",
-        "schema": {
-          "fields": [
-            {
-              "name": "postIDStr",
-              "type": "string"
-            },
-            {
-              "name": "post",
-              "type": "postnotification.Post struct"
-            }
-          ]
-        }
+        "kind": "Redis"
       }
     }
   }

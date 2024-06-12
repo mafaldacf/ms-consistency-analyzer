@@ -221,7 +221,7 @@ func GetDeclaredUserType(file *File, expr ast.Expr) (*UserType, bool) {
 	return nil, false
 }
 
-func LookupVariables(file *File, blockVars []Variable, expr ast.Expr) (variable Variable) {
+func LookupVariables(file *File, blockVars []Variable, expr ast.Expr, assign bool) (variable Variable) {
 	switch e := expr.(type) {
 	case *ast.Ident:
 		variable = GetDeclaredVariableReverse(e.Name, blockVars)
@@ -230,7 +230,7 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr) (variable 
 			Name:  strings.ToLower(e.Kind.String()),
 			Value: e.Value,
 		}
-		variable = &InlineVariable{
+		variable = &BasicVariable{
 			VariableInfo: &VariableInfo{
 				Type: basicType,
 				Id:   VARIABLE_INLINE_ID,
@@ -252,7 +252,7 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr) (variable 
 					for _, elt := range e.Elts {
 						keyvalue := elt.(*ast.KeyValueExpr)
 						key := keyvalue.Key.(*ast.Ident)
-						eltVar := LookupVariables(file, blockVars, keyvalue.Value)
+						eltVar := LookupVariables(file, blockVars, keyvalue.Value, false)
 						if eltVar.GetVariableInfo().Name == "" {
 							eltVar.GetVariableInfo().SetName(key.Name)
 						}
@@ -272,18 +272,18 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr) (variable 
 				},
 			}
 			for _, elt := range e.Elts {
-				eltVar := LookupVariables(file, blockVars, elt)
+				eltVar := LookupVariables(file, blockVars, elt, false)
 				variable.(*ArrayVariable).AddElement(eltVar)
 			}
 		}
 
 	case *ast.SelectorExpr:
-		variable = LookupVariables(file, blockVars, e.X)
+		variable = LookupVariables(file, blockVars, e.X, assign)
 		switch v := variable.(type) {
 		case *StructVariable:
 			logger.Logger.Warnf("GOT SELECTOR FOR %s", e.Sel.Name)
-			//variable = v.GetOrCreateField(e.Sel.Name)
-			variable = v
+			variable = v.GetOrCreateField(e.Sel.Name)
+			//variable = v
 		default:
 			logger.Logger.Fatalf("could not find variable for selector %s with type %s", variable.String(), utils.GetType(variable))
 		}
@@ -295,14 +295,14 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr) (variable 
 		callStr := computeFunctionCallName(e.Fun) + "(...)"
 		genericVariable := createCompositeVariable(callStr)
 		/* if len(e.Args) == 1 {
-			argVar := LookupVariables(file, blockVars, e.Args[0])
+			argVar := LookupVariables(file, blockVars, e.Args[0], false)
 			if !slices.Contains(blockVars, argVar) {
 				logger.Logger.Warnf("ignoring undeclared variable %v in function call %s", argVar, callStr)
 				return argVar
 			}
 		} */
 		for _, arg := range e.Args {
-			argVar := LookupVariables(file, blockVars, arg)
+			argVar := LookupVariables(file, blockVars, arg, false)
 			genericVariable.Params = append(genericVariable.Params, argVar)
 
 			// a direct transformation from one or more existing variables
@@ -316,14 +316,14 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr) (variable 
 		//variable = &PlaceholderVariable{VariableInfo: &VariableInfo{Name: "placeholder", Type: &PlaceholderType{}}}
 
 	case *ast.TypeAssertExpr:
-		variable = LookupVariables(file, blockVars, e.X)
+		variable = LookupVariables(file, blockVars, e.X, assign)
 	case *ast.IndexExpr:
-		variable = LookupVariables(file, blockVars, e.X)
+		variable = LookupVariables(file, blockVars, e.X, assign)
 		if arrayVar, ok := variable.(*ArrayVariable); ok {
 			variable = arrayVar.Elements[computeArrayIndex(e.Index)]
 		}
 		if mapVar, ok := variable.(*MapVariable); ok {
-			key := LookupVariables(file, blockVars, e.Index)
+			key := LookupVariables(file, blockVars, e.Index, false)
 			variable, ok = mapVar.KeyValues[key]
 			if !ok {
 				logger.Logger.Warnf("got map %v with unassigned value for key %s", mapVar.String(), key.String())
@@ -332,7 +332,7 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr) (variable 
 		}
 	case *ast.UnaryExpr:
 		if e.Op == token.AND { // e.g. &post
-			variable = LookupVariables(file, blockVars, e.X)
+			variable = LookupVariables(file, blockVars, e.X, assign)
 			addrType := &AddressType{
 				AddressOf: variable.GetVariableInfo().Type,
 			}
@@ -345,7 +345,7 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr) (variable 
 				},
 			}
 		} else if e.Op == token.MUL { // e.g. *post
-			variable = LookupVariables(file, blockVars, e.X)
+			variable = LookupVariables(file, blockVars, e.X, assign)
 			addrType := &AddressType{
 				AddressOf: variable.GetVariableInfo().Type,
 			}
@@ -359,7 +359,7 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr) (variable 
 			}
 
 		} else {
-			variable = LookupVariables(file, blockVars, e.X)
+			variable = LookupVariables(file, blockVars, e.X, assign)
 		}
 	default:
 		logger.Logger.Fatalf("unknown type in LookupVariables for type %s: %v", utils.GetType(e), e)
@@ -386,7 +386,7 @@ func IsVarDeclOrAssign(file *File, blockVars []Variable, node ast.Node) ([]Varia
 		}
 	case *ast.AssignStmt:
 		for i, rvalue := range n.Rhs {
-			field := LookupVariables(file, blockVars, rvalue)
+			field := LookupVariables(file, blockVars, rvalue, true)
 			lvalue := n.Lhs[i]
 
 			field.GetVariableInfo().SetName(lvalue.(*ast.Ident).Name)

@@ -1,35 +1,18 @@
 {
-  "xcy_violations": [
-    {
-      "write": {
-        "service": "StorageService",
-        "method": "Cache.Put(ctx context.Context, key string, value interface{})",
-        "key": "postIDStr (#15)",
-        "object": "post (#10)",
-        "database": "post_db"
-      },
-      "read": {
-        "service": "StorageService",
-        "method": "Cache.Get(ctx context.Context, key string, value interface{})",
-        "key": "postIDStr (#22)",
-        "object": "post (#23)",
-        "database": "post_db"
-      }
-    }
-  ],
+  "xcy_violations": null,
   "writes": [
     {
       "service": "StorageService",
       "method": "Cache.Put(ctx context.Context, key string, value interface{})",
-      "key": "postIDStr (#15)",
-      "object": "post (#10)",
+      "key": "postIDStr (#-1)",
+      "object": "post (#-1)",
       "database": "post_db"
     },
     {
       "service": "UploadService",
       "method": "Queue.Push(ctx context.Context, item interface{})",
-      "key": "message (#13)",
-      "object": "message (#13)",
+      "key": "message (#-1)",
+      "object": "message (#-1)",
       "database": "notification_queue"
     }
   ],
@@ -44,8 +27,8 @@
     {
       "service": "StorageService",
       "method": "Cache.Get(ctx context.Context, key string, value interface{})",
-      "key": "postIDStr (#22)",
-      "object": "post (#23)",
+      "key": "postIDStr (#-1)",
+      "object": "post (#0)",
       "database": "post_db"
     }
   ]

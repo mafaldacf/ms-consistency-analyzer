@@ -2,6 +2,7 @@ package service
 
 import (
 	"analyzer/pkg/datastores"
+	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
 	"encoding/json"
 	"fmt"
@@ -80,6 +81,13 @@ type ParsedCallExpr struct {
 	Pos    token.Pos
 	Params []types.Variable
 	Method types.Method
+}
+
+func (call ParsedCallExpr) GetArgument(i int) types.Variable {
+	if i > len(call.Params) {
+		logger.Logger.Fatalf("invalid argument index %d for length %d in params: %v", i, (call.Params), call.Params)
+	}
+	return call.Params[i]
 }
 
 func (call *ParsedCallExpr) String() string {

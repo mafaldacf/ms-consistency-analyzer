@@ -161,9 +161,9 @@ func saveCallIfValid(serviceNode *service.ServiceNode, node *ast.CallExpr, parse
 	parsedCall, ok := getParsedCallAtPosition(parsedFuncDecl, node.Pos())
 	if !ok {
 		return false
-		}
+	}
 	for i, arg := range node.Args {
-		param := types.LookupVariables(serviceNode.File, parsedBlock.Vars, arg)
+		param := types.LookupVariables(serviceNode.File, parsedBlock.Vars, arg, false)
 
 		// upgrade variable with known type from function method
 		if _, ok := param.GetVariableInfo().Type.(*types.GenericType); ok {

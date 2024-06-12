@@ -2,6 +2,7 @@ package types
 
 import (
 	"analyzer/pkg/logger"
+	"analyzer/pkg/utils"
 	"encoding/json"
 	"fmt"
 	"slices"
@@ -53,16 +54,17 @@ type Variable interface {
 	String() string
 	GetVariableInfo() *VariableInfo
 	GetDependencies() []Variable
+	AddReferenceWithID(target Variable, creator string)
 }
 
 type Dataflow struct {
 	DirectWrite bool
-	Datastore 	string
-	Service 	string
+	Datastore   string
+	Service     string
 
 	// if it is not a direct write
 	// then we set the variable that is the source of the write
-	Source  	Variable
+	Source Variable
 }
 type VariableInfo struct {
 	Name string
@@ -73,7 +75,7 @@ type VariableInfo struct {
 	IsBlockParam  bool
 	BlockParamIdx int
 
-	Dataflow  	 *Dataflow
+	Dataflow *Dataflow
 }
 
 func (v *VariableInfo) MarshalJSON() ([]byte, error) {
@@ -82,7 +84,7 @@ func (v *VariableInfo) MarshalJSON() ([]byte, error) {
 		Type string `json:"type,omitempty"`
 		Id   int64  `json:"id,omitempty"`
 		//Reference bool   `json:"ref,omitempty"`
-		Reference *Reference `json:"ref"`
+		Reference *Reference `json:"ref,omitempty"`
 	}{
 		Name: v.Name,
 		Type: v.Type.String(),
@@ -92,7 +94,7 @@ func (v *VariableInfo) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func (v *VariableInfo) SetDirectWrite(datastore string, service string) () {
+func (v *VariableInfo) SetDirectWrite(datastore string, service string) {
 	if v.Dataflow != nil && v.Dataflow.Datastore != datastore && v.Dataflow.Service != service {
 		logger.Logger.Fatalf("data flow already exists for variable %s", v.String())
 	}
@@ -101,16 +103,16 @@ func (v *VariableInfo) SetDirectWrite(datastore string, service string) () {
 	}
 	v.Dataflow = &Dataflow{
 		DirectWrite: true,
-		Datastore: datastore,
-		Service: service,
+		Datastore:   datastore,
+		Service:     service,
 	}
 }
 
-func (v *VariableInfo) SetIndirectWrite(variable Variable) () {
+func (v *VariableInfo) SetIndirectWrite(variable Variable) {
 	v.Dataflow = &Dataflow{
-		Source: variable,
+		Source:    variable,
 		Datastore: variable.GetVariableInfo().Dataflow.Datastore,
-		Service: variable.GetVariableInfo().Dataflow.Service,
+		Service:   variable.GetVariableInfo().Dataflow.Service,
 	}
 }
 
@@ -178,9 +180,21 @@ type InlineVariable struct {
 	VariableInfo *VariableInfo `json:"variable"`
 }
 type SelectorVariable struct {
-	Variable     			`json:"wrapped_variable"`
-	ParentVariable Variable `json:"-"`
-	SelectorField  string 	`json:"selector_field"`
+	Variable `json:"wrapped_variable"`
+	Parent   Variable `json:"-"`
+	Field    string   `json:"selector"`
+}
+
+func (v *SelectorVariable) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Variable Variable `json:"wrapped_variable"`
+		Parent   string   `json:"parent"`
+		Field    string   `json:"selector"`
+	}{
+		Variable: v.Variable,
+		Parent:   v.Parent.GetVariableInfo().Name,
+		Field:    v.Field,
+	})
 }
 
 // ------------------
@@ -190,12 +204,43 @@ func (v *CompositeVariable) String() string                 { return v.VariableI
 func (v *CompositeVariable) GetVariableInfo() *VariableInfo { return v.VariableInfo }
 func (v *CompositeVariable) GetDependencies() []Variable    { return v.Params }
 
+func (v *CompositeVariable) AddReferenceWithID(target Variable, creator string) {
+	v.VariableInfo.AddReferenceWithID(target, creator)
+	if targetComposite, ok := target.(*CompositeVariable); ok {
+		for i, p := range v.Params {
+			if i > len(targetComposite.Params) {
+				logger.Logger.Warnf("invalid argument index %d for length %d in params: %v", i, (targetComposite.Params), targetComposite.Params)
+			} else {
+				p.AddReferenceWithID(targetComposite.Params[i], creator)
+			}
+		}
+	} else {
+		logger.Logger.Warnf("referenced variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
+	}
+	logger.Logger.Debugf("added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
+}
+
 // ----------------
 // GENERIC VARIABLE
 // ----------------
 func (v *GenericVariable) String() string                 { return v.VariableInfo.String() }
 func (v *GenericVariable) GetVariableInfo() *VariableInfo { return v.VariableInfo }
 func (v *GenericVariable) GetDependencies() []Variable    { return v.Params }
+func (v *GenericVariable) AddReferenceWithID(target Variable, creator string) {
+	v.VariableInfo.AddReferenceWithID(target, creator)
+	if targetGeneric, ok := target.(*GenericVariable); ok {
+		for i, p := range v.Params {
+			if i > len(targetGeneric.Params) {
+				logger.Logger.Warnf("invalid argument index %d for length %d in params: %v", i, (targetGeneric.Params), targetGeneric.Params)
+			} else {
+				p.AddReferenceWithID(targetGeneric.Params[i], creator)
+			}
+		}
+	} else {
+		logger.Logger.Warnf("referenced variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
+	}
+	logger.Logger.Debugf("added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
+}
 
 // ---------------
 // STRUCT VARIABLE
@@ -220,20 +265,18 @@ func (v *StructVariable) AddFieldIfNotExists(name string, field Variable) {
 
 func (v *StructVariable) GetOrCreateField(name string) Variable {
 	variable, exists := v.Fields[name]
-	if !exists {
-		fieldType, ok := v.GetStructType().FieldTypes[name]
-		if !ok {
-			logger.Logger.Fatalf("invalid field name %s in structure variable %s with fields types %v", name, v.String(), v.GetStructType().FieldTypes)
-		}
-		wrapper := CreateVariableFromType(name, fieldType)
-		variable = &SelectorVariable{
-			Variable:  		wrapper,
-			ParentVariable: v,
-			SelectorField:  name,
-		}
-		v.Fields[name] = variable
-		logger.Logger.Warnf("added new variable %s for field %s in structure variable %s", variable.String(), name, v.String())
+	if exists {
+		return variable
 	}
+
+	fieldType, ok := v.GetStructType().FieldTypes[name]
+	if !ok {
+		logger.Logger.Fatalf("invalid field name %s in structure variable %s with fields types %v", name, v.String(), v.GetStructType().FieldTypes)
+	}
+
+	variable = CreateVariableFromType(name, fieldType)
+	v.Fields[name] = variable
+	logger.Logger.Warnf("added new variable %s for field %s in structure variable %s", variable.String(), name, v.String())
 	return variable
 }
 
@@ -243,6 +286,24 @@ func (v *StructVariable) GetStructType() *StructType {
 		structType = v.VariableInfo.Type.(*UserType).UserType.(*StructType)
 	}
 	return structType
+}
+
+func (v *StructVariable) AddReferenceWithID(target Variable, creator string) {
+	v.VariableInfo.AddReferenceWithID(target, creator)
+	if targetStruct, ok := target.(*StructVariable); ok {
+		for name, field := range v.Fields {
+			targetField, ok := targetStruct.Fields[name]
+			if !ok {
+				logger.Logger.Warnf("invalid target field %s in struct fields: %v", name, targetStruct.Fields)
+			} else {
+				field.AddReferenceWithID(targetField, creator)
+			}
+		}
+	} else {
+		logger.Logger.Warnf("referenced variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
+	}
+
+	logger.Logger.Debugf("added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
 }
 
 // ------------
@@ -281,6 +342,24 @@ func (v *MapVariable) MarshalJSON() ([]byte, error) {
 	}, "", " ")
 }
 
+func (v *MapVariable) AddReferenceWithID(target Variable, creator string) {
+	v.VariableInfo.AddReferenceWithID(target, creator)
+	if targetMap, ok := target.(*MapVariable); ok {
+		for key, value := range v.KeyValues {
+			targetValue, ok := targetMap.KeyValues[key]
+			if !ok {
+				logger.Logger.Warnf("invalid target key %s in map: %v", key, targetMap)
+			} else {
+				targetValue.AddReferenceWithID(value, creator)
+			}
+		}
+	} else {
+		logger.Logger.Warnf("referenced variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
+	}
+
+	logger.Logger.Debugf("added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
+}
+
 // --------------
 // ARRAY VARIABLE
 // --------------
@@ -296,6 +375,13 @@ func (v *PointerVariable) String() string                 { return v.VariableInf
 func (v *PointerVariable) GetVariableInfo() *VariableInfo { return v.VariableInfo }
 func (v *PointerVariable) GetDependencies() []Variable    { return v.PointerTo.GetDependencies() }
 func (v *PointerVariable) GetPointerTo() Variable         { return v.PointerTo }
+func (v *PointerVariable) AddReferenceWithID(target Variable, creator string) {
+	if targetPointerTo, ok := target.(*PointerVariable); ok {
+		v.PointerTo.AddReferenceWithID(targetPointerTo.PointerTo, creator)
+	} else {
+		logger.Logger.Warnf("referenced variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
+	}
+}
 
 // ----------------
 // ADDRESS VARIABLE
@@ -304,6 +390,13 @@ func (v *AddressVariable) String() string                 { return v.VariableInf
 func (v *AddressVariable) GetVariableInfo() *VariableInfo { return v.VariableInfo }
 func (v *AddressVariable) GetDependencies() []Variable    { return v.AddressOf.GetDependencies() }
 func (v *AddressVariable) GetAddressOf() Variable         { return v.AddressOf }
+func (v *AddressVariable) AddReferenceWithID(target Variable, creator string) {
+	if targetAddressOf, ok := target.(*AddressVariable); ok {
+		v.AddressOf.AddReferenceWithID(targetAddressOf.AddressOf, creator)
+	} else {
+		logger.Logger.Warnf("referenced variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
+	}
+}
 
 // ---------------
 // INLINE VARIABLE
@@ -311,6 +404,9 @@ func (v *AddressVariable) GetAddressOf() Variable         { return v.AddressOf }
 func (v *InlineVariable) String() string                 { return v.VariableInfo.String() }
 func (v *InlineVariable) GetVariableInfo() *VariableInfo { return v.VariableInfo }
 func (v *InlineVariable) GetDependencies() []Variable    { return nil }
+func (v *InlineVariable) AddReferenceWithID(target Variable, creator string) {
+	logger.Logger.Warnf("IGNORING REFERENCES FOR INLINE VARIABLE!!")
+}
 
 // --------------
 // BASIC VARIABLE
@@ -318,6 +414,9 @@ func (v *InlineVariable) GetDependencies() []Variable    { return nil }
 func (v *BasicVariable) String() string                 { return v.VariableInfo.String() }
 func (v *BasicVariable) GetVariableInfo() *VariableInfo { return v.VariableInfo }
 func (v *BasicVariable) GetDependencies() []Variable    { return nil }
+func (v *BasicVariable) AddReferenceWithID(target Variable, creator string) {
+	v.VariableInfo.AddReferenceWithID(target, creator)
+}
 
 // -----------------
 // INTEFACE VARIABLE
@@ -325,6 +424,9 @@ func (v *BasicVariable) GetDependencies() []Variable    { return nil }
 func (v *InterfaceVariable) String() string                 { return v.VariableInfo.String() }
 func (v *InterfaceVariable) GetVariableInfo() *VariableInfo { return v.VariableInfo }
 func (v *InterfaceVariable) GetDependencies() []Variable    { return nil }
+func (v *InterfaceVariable) AddReferenceWithID(target Variable, creator string) {
+	v.VariableInfo.AddReferenceWithID(target, creator)
+}
 
 // -------------
 // CHAN VARIABLE
@@ -332,6 +434,9 @@ func (v *InterfaceVariable) GetDependencies() []Variable    { return nil }
 func (v *ChanVariable) String() string                 { return v.VariableInfo.String() }
 func (v *ChanVariable) GetVariableInfo() *VariableInfo { return v.VariableInfo }
 func (v *ChanVariable) GetDependencies() []Variable    { return nil }
+func (v *ChanVariable) AddReferenceWithID(target Variable, creator string) {
+	v.VariableInfo.AddReferenceWithID(target, creator)
+}
 
 // -----------------
 // SELECTOR VARIABLE
@@ -339,6 +444,9 @@ func (v *ChanVariable) GetDependencies() []Variable    { return nil }
 func (v *SelectorVariable) String() string                 { return v.Variable.String() }
 func (v *SelectorVariable) GetVariableInfo() *VariableInfo { return v.Variable.GetVariableInfo() }
 func (v *SelectorVariable) GetDependencies() []Variable    { return v.Variable.GetDependencies() }
+func (v *SelectorVariable) AddReferenceWithID(target Variable, creator string) {
+	logger.Logger.Warnf("IGNORING REFERENCES FOR SELECTOR VARIABLE!!")
+}
 
 // -------------
 // VARIABLE INFO
@@ -384,7 +492,7 @@ func (vinfo *VariableInfo) AddReferenceWithID(target Variable, creator string) {
 		Creator:  creator,
 		Variable: target,
 	}
-	logger.Logger.Debugf("added reference (%s) -> (%s) with id = %d (creator: %s)", vinfo.Name, target.GetVariableInfo().GetName(), vinfo.Id, creator)
+	logger.Logger.Infof("\t added reference (%s) -> (%s) with id = %d (creator: %s)", vinfo.Name, target.GetVariableInfo().GetName(), vinfo.Id, creator)
 }
 
 func (vinfo *VariableInfo) AddOriginalReferenceWithID(ref *Reference) {
@@ -401,14 +509,6 @@ func GetIndirectDependencies(v Variable) []Variable {
 	// direct dependencies
 	for _, dep := range v.GetDependencies() {
 		indirectDeps = append(indirectDeps, GetIndirectDependencies(dep)...)
-	}
-
-	// edge cases
-	if addressVariable, ok := v.(*AddressVariable); ok {
-		indirectDeps = append(indirectDeps, GetIndirectDependencies(addressVariable.AddressOf)...)
-	}
-	if pointerVariable, ok := v.(*PointerVariable); ok {
-		indirectDeps = append(indirectDeps, GetIndirectDependencies(pointerVariable.PointerTo)...)
 	}
 
 	return indirectDeps

@@ -4,10 +4,6 @@ notification_queue:
   schema:
   - name: message
     type: postnotification.Message struct
-  - name: post
-    type: postnotification.Post struct
-  - name: post
-    type: postnotification.Post struct
 post_db:
   backend: Cache
   kind: Redis

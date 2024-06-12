@@ -52,7 +52,7 @@ func (ds *Datastore) MarshalJSON() ([]byte, error) {
 		Name	string  `json:"name"`
 		Type 	string  `json:"type"`
 		Kind 	string  `json:"kind"`
-		Schema 	*Schema `json:"schema"`
+		Schema 	*Schema `json:"-"`
 	}{
 		Name:  	ds.Name,
 		Type:  	ds.GetTypeString(),

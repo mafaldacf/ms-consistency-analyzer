@@ -32,6 +32,7 @@ type AbstractNode interface {
 	IsVisited() bool
 	GetCallerStr() string
 	GetCallee() string
+	GetParsedCall() service.ParsedCallExpr
 }
 
 type AbstractServiceCall struct {
@@ -91,6 +92,10 @@ func (call *AbstractServiceCall) GetCallerStr() string {
 	return call.Caller
 }
 
+func (call *AbstractServiceCall) GetParsedCall() service.ParsedCallExpr {
+	return call.ParsedCall.ParsedCallExpr
+}
+
 type AbstractTempInternalCall struct {
 	AbstractNode `json:"-"`
 	Visited      bool                                `json:"-"`
@@ -131,6 +136,10 @@ func (call *AbstractTempInternalCall) SetVisited(v bool) {
 
 func (call *AbstractTempInternalCall) GetCallerStr() string {
 	return call.Service
+}
+
+func (call *AbstractTempInternalCall) GetParsedCall() service.ParsedCallExpr {
+	return call.ParsedCall.ParsedCallExpr
 }
 
 type AbstractDatabaseCall struct {
@@ -198,4 +207,8 @@ func (call *AbstractDatabaseCall) IsVisited() bool {
 
 func (call *AbstractDatabaseCall) GetCallerStr() string {
 	return call.Service
+}
+
+func (call *AbstractDatabaseCall) GetParsedCall() service.ParsedCallExpr {
+	return call.ParsedCall.ParsedCallExpr
 }

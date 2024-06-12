@@ -22,12 +22,6 @@ func GetIndirectDependencies(first bool, v types.Variable) []types.Variable {
 	for _, dep := range v.GetDependencies() {
 		indirectDeps = append(indirectDeps, GetIndirectDependencies(false, dep)...)
 	}
-	// edge cases
-	if addressVariable, ok := v.(*types.AddressVariable); ok {
-		indirectDeps = append(indirectDeps, GetIndirectDependencies(false, addressVariable.AddressOf)...)
-	} else if pointerVariable, ok := v.(*types.PointerVariable); ok {
-		indirectDeps = append(indirectDeps, GetIndirectDependencies(false, pointerVariable.PointerTo)...)
-	}
 
 	return indirectDeps
 }
@@ -42,18 +36,13 @@ func GetForeignDependencies(first bool, v types.Variable) []types.Variable {
 	}
 
 	// indirect dependencies from potential reference
-	if v.GetVariableInfo().HasReference() {
+	//FIXME
+	/* if v.GetVariableInfo().HasReference() {
 		foreignDeps = append(foreignDeps, GetForeignDependencies(false, v.GetVariableInfo().GetReference())...)
-	}
+	} */
 	// direct dependencies
 	for _, dep := range v.GetDependencies() {
 		foreignDeps = append(foreignDeps, GetForeignDependencies(false, dep)...)
-	}
-	// edge cases
-	if addressVariable, ok := v.(*types.AddressVariable); ok {
-		foreignDeps = append(foreignDeps, GetForeignDependencies(false, addressVariable.AddressOf)...)
-	} else if pointerVariable, ok := v.(*types.PointerVariable); ok {
-		foreignDeps = append(foreignDeps, GetForeignDependencies(false, pointerVariable.PointerTo)...)
 	}
 
 	return foreignDeps
