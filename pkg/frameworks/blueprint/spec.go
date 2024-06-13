@@ -22,12 +22,13 @@ import (
 
 func BuildBlueprintAppInfo(appName string) ([]*types.ServiceInfo, []datastores.DatabaseInstance, []string) {
 	var spec cmdbuilder.SpecOption
-	if appName == "postnotification" {
-		spec = pn_specs.Docker
-	} else if appName == "foobar" {
-		spec = fb_specs.Docker
-	} else {
-		logger.Logger.Fatalf("unknown application %s", appName)
+	switch appName {
+		case "postnotification":
+			spec = pn_specs.Docker
+		case "foobar":
+			spec = fb_specs.Docker
+		default:
+			logger.Logger.Fatalf("unknown application %s", appName)
 	}
 
 	servicesSpec, databasesNodes, frontends := BuildAndInspectIR(appName, spec)
@@ -57,12 +58,15 @@ func getUniqueName(name string) string {
 	return ""
 }
 
+
+
 func buildBlueprintServicesInfo(appSpecs map[*workflowspec.Service][]golang.Service) []*types.ServiceInfo {
 	var services []*types.ServiceInfo
 	for spec, serviceArgs := range appSpecs {
 		constructorMethod := findConstructorFromSpec(spec)
 		serviceInfo := &types.ServiceInfo{
 			Name:            spec.Iface.Name,
+			PackageName:     spec.Iface.File.Package.ShortName,
 			Filepath:        spec.Iface.File.Name,
 			ConstructorName: constructorMethod.GetName(),
 			ConstructorDBs:  make(map[string]string),

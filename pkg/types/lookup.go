@@ -189,31 +189,41 @@ func computeFunctionCallName(expr ast.Expr) string {
 
 func GetDeclaredUserType(file *File, expr ast.Expr) (*UserType, bool) {
 	// FIX THIS HARDCODED CODE
-	file.Package.DeclaredTypes["Post"] = &StructType{
-		FieldTypes: map[string]Type{
-			"ReqID":     &BasicType{Name: "int64"},
-			"PostID":    &BasicType{Name: "int64"},
-			"Text":      &BasicType{Name: "string"},
-			"Timestamp": &BasicType{Name: "int64"},
-			"Creator":   &BasicType{Name: "string"},
+	file.Package.DeclaredTypes["Post"] = &UserType{
+		Name:    "Post",
+		Package: file.Package.Name,
+		UserType: &StructType{
+			FieldTypes: map[string]Type{
+				"ReqID":     &BasicType{Name: "int64"},
+				"PostID":    &BasicType{Name: "int64"},
+				"Text":      &BasicType{Name: "string"},
+				"Timestamp": &BasicType{Name: "int64"},
+				"Creator":   &BasicType{Name: "string"},
+			},
 		},
 	}
-	file.Package.DeclaredTypes["Message"] = &StructType{
-		FieldTypes: map[string]Type{
-			"ReqID":     &BasicType{Name: "int64"},
-			"PostID":    &BasicType{Name: "int64"},
-			"Timestamp": &BasicType{Name: "int64"},
+	file.Package.DeclaredTypes["Message"] = &UserType{
+		Name:    "Message",
+		Package: file.Package.Name,
+		UserType: &StructType{
+			FieldTypes: map[string]Type{
+				"ReqID":     &BasicType{Name: "int64"},
+				"PostID":    &BasicType{Name: "int64"},
+				"Timestamp": &BasicType{Name: "int64"},
+			},
 		},
 	}
 	services := []string{"StorageService", "NotifyService", "UploadService"}
 
 	switch e := expr.(type) {
 	case *ast.Ident:
-		if t, ok := file.Package.DeclaredTypes[e.Name]; ok || slices.Contains(services, e.Name) {
+		if namedType, ok := file.Package.DeclaredTypes[e.Name]; ok {
+			return namedType, true
+		} else if slices.Contains(services, e.Name) {
 			return &UserType{
 				Name:     e.Name,
 				Package:  file.Package.Name,
-				UserType: t,
+				UserType: nil,
 			}, true
 		}
 	}

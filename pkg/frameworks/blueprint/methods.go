@@ -5,6 +5,10 @@ import (
 	"fmt"
 )
 
+func IsBlueprintPackage(name string) bool {
+	return name == "github.com/blueprint-uservices/blueprint/runtime/core/backend"
+}
+
 func IsBlueprintBackend(name string) bool {
 	switch name {
 	case "Queue", "NoSQLDatabase", "Cache":

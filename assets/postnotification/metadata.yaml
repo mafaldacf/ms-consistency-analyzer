@@ -1,0 +1,45 @@
+---
+
+common:
+- Package Name: 	common
+- Package Path: 	github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification/common
+- Module: 		github.com/blueprint-uservices/blueprint/examples/postnotification/workflow
+- Files:
+	 - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/common/utils.go
+- Declared Types:
+- Imported Types:
+	 - .error
+- Service Types:
+- Datastore Types:
+- Declared Variables:
+---
+
+postnotification:
+- Package Name: 	postnotification
+- Package Path: 	github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification
+- Module: 		github.com/blueprint-uservices/blueprint/examples/postnotification/workflow
+- Files:
+	 - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/NotifyService.go
+	 - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/StorageService.go
+	 - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/UploadService.go
+	 - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/models.go
+- Declared Types:
+	 - postnotification.UploadServiceImpl struct { storageService postnotification.StorageService, queue backend.Queue }
+	 - postnotification.StorageServiceImpl struct { cache backend.Cache }
+	 - postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator string }
+	 - postnotification.Message struct { ReqID string, PostID string, Timestamp string }
+	 - postnotification.NotifyServiceImpl struct { numWorkers int, storageService postnotification.StorageService, queue backend.Queue }
+- Imported Types:
+	 - context.Context
+	 - .error
+	 - sync.WaitGroup
+- Service Types:
+	 - postnotification.StorageService
+	 - postnotification.UploadService
+	 - postnotification.NotifyService
+- Datastore Types:
+	 - backend.Cache
+	 - backend.Queue
+- Declared Variables:
+---
+

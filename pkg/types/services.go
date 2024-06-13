@@ -5,6 +5,7 @@ import "fmt"
 type ServiceInfo struct {
 	Name 			string
 	Filepath 		string
+	PackageName 	string
 	ConstructorName string
 	// maps the parameters in constructors to the corresponding database instance name passed in the wiring
 	ConstructorDBs	map[string]string
