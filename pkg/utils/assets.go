@@ -29,6 +29,18 @@ func SaveToYamlFile(data interface{}, appname string, filename string){
 		}
 		yamlStr = newYamlStr
 	}
+	// \{[^\{\}]* matches the opening brace { and all chars until the new line
+	// \n\s+ matches the unwanted new line and spaces
+	// [^\{\}]*\} matches all chars up to the closing brace }
+	// $1 $2 replaces the matched new lines with a space, combining the content within the braces into a single line
+	re = regexp.MustCompile(`(\([^\(\)]*)\n\s+([^\(\)]*\))`)
+	for {
+		newYamlStr := re.ReplaceAllString(yamlStr, "$1 $2")
+		if newYamlStr == yamlStr {
+			break
+		}
+		yamlStr = newYamlStr
+	}
 
 
 	path := fmt.Sprintf("assets/%s/%s.yaml", appname, filename)

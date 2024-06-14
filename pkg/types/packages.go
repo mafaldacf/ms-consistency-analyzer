@@ -14,6 +14,7 @@ type Package struct {
 	PackagePath       string
 	Files             []*File
 
+	TypesInfo 		 *gotypes.Info
 	DeclaredVariables map[string]Variable
 	DeclaredTypes     map[string]Type
 	ServiceTypes 	  map[string]*ServiceType
@@ -139,8 +140,17 @@ func (p *Package) GenerateUnderlyingTypesFromGoType(goType gotypes.Type) Type {
 		return &InterfaceType{
 			Content: goType.String(),
 		}
+	case *gotypes.Signature:
+		signatureType := &SignatureType{}
+		for i := 0; i < t.Results().Len(); i++ {
+			var v* gotypes.Var = t.Results().At(i)
+			signatureType.ReturnTypes = append(signatureType.ReturnTypes, p.GenerateUnderlyingTypesFromGoType(v.Type()))
+		}
+		return signatureType
 	default:
-		logger.Logger.Fatalf("unknown gotype %s for %v", utils.GetType(goType), goType)
+		if goType != nil {
+			logger.Logger.Fatalf("unknown gotype %s for %v", utils.GetType(goType), goType)
+		}
 	}
 	return nil
 }

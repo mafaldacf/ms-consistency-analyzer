@@ -18,6 +18,9 @@ var basicTypes = []string{
 }
 
 func GetType(node interface{}) string {
+	if node == nil {
+		return "INVALID TYPE FOR <nil>"
+	}
 	return reflect.TypeOf(node).Elem().Name()
 }
 

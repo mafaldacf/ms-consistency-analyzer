@@ -16,9 +16,11 @@
     },
     "StorageService": {
       "fields": {
-        "cache": "Cache"
+        "cache": "Cache",
+        "db": "NoSQLDatabase"
       },
       "databases": [
+        "post_cache",
         "post_db"
       ]
     },
@@ -42,6 +44,14 @@
         "name": "notification_queue",
         "type": "Queue",
         "kind": "RabbitMQ"
+      }
+    },
+    "post_cache": {
+      "name": "post_cache",
+      "datastore": {
+        "name": "post_cache",
+        "type": "Cache",
+        "kind": "Redis"
       }
     },
     "post_db": {

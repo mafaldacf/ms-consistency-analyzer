@@ -115,8 +115,12 @@ func GetBackendMethod(name string) *BlueprintBackend {
 		return &BlueprintBackend{Name: name, Write: false, Params: []*types.FunctionParameter{&ctxParam, &keyParam, &valueParam}}
 	case "Queue.Push":
 		return &BlueprintBackend{Name: name, Write: true, Params: []*types.FunctionParameter{&ctxParam, &itemParam}}
-	case "Queue.Pop":
-		return &BlueprintBackend{Name: name, Write: false, Params: []*types.FunctionParameter{&ctxParam, &itemParam}}
+		case "Queue.Pop":
+			return &BlueprintBackend{Name: name, Write: false, Params: []*types.FunctionParameter{&ctxParam, &itemParam}}
+	case "NoSQLCollection.InsertOne": // InsertOne(ctx context.Context, document interface{}) error
+		return &BlueprintBackend{Name: name, Write: false, Params: []*types.FunctionParameter{&ctxParam, &docParam}}
+	case "NoSQLCollection.FindOne": // FindOne(ctx context.Context, filter bson.D, projection ...bson.D) (NoSQLCursor, error)
+		return &BlueprintBackend{Name: name, Write: false, Params: []*types.FunctionParameter{&ctxParam, &filterParam, &projectionParam}}
 	}
 	return nil
 }
@@ -149,5 +153,29 @@ var itemParam = types.FunctionParameter{
 	FieldInfo: types.FieldInfo{
 		Name: "item",
 		Type: &types.InterfaceType{},
+	},
+}
+var docParam = types.FunctionParameter{
+	FieldInfo: types.FieldInfo{
+		Name: "document",
+		Type: &types.InterfaceType{},
+	},
+}
+var filterParam = types.FunctionParameter{
+	FieldInfo: types.FieldInfo{
+		Name: "filter",
+		Type: &types.UserType{
+			Name: "D",
+			Package: "bson",
+		},
+	},
+}
+var projectionParam = types.FunctionParameter{
+	FieldInfo: types.FieldInfo{
+		Name: "projection",
+		Type: &types.UserType{
+			Name: "D",
+			Package: "bson",
+		},
 	},
 }

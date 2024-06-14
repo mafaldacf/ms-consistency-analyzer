@@ -26,6 +26,16 @@ type UserType struct {
 	Package string
 	Name    string
 }
+type FuncType struct {
+	Type     `json:"-"`
+	Name 		string
+	Package 	string
+	SignatureType *SignatureType
+}
+type SignatureType struct {
+	Type     `json:"-"`
+	ReturnTypes []Type
+}
 type DatastoreType struct {
 	Type    `json:"-"`
 	Package string
@@ -124,6 +134,49 @@ func (t *UserType) GetName() string {
 }
 func (t *UserType) GetPackage() string {
 	return t.Package
+}
+// FuncType
+func (t *FuncType) String() string {
+	return fmt.Sprintf("%s.%s", packageAlias(t.Package), t.Name)
+}
+func (t *FuncType) FullString() string {
+	return fmt.Sprintf("%s.%s (...) %s", packageAlias(t.Package), t.Name, t.SignatureType.String())
+}
+func (t *FuncType) GetName() string {
+	return t.Name
+}
+func (t *FuncType) GetPackage() string {
+	return t.Package
+}
+// SignatureType
+func (t *SignatureType) String() string {
+	if len(t.ReturnTypes) == 0 {
+		return ""
+	}
+	if len(t.ReturnTypes) == 1 {
+		return t.ReturnTypes[0].FullString()
+	}
+	s := "( "
+	for i, ft := range t.ReturnTypes {
+		s += ft.FullString()
+		if i < len(t.ReturnTypes) - 1 {
+			s += ", "
+		}
+	}
+	s += " )"
+	return s
+}
+func (t *SignatureType) FullString() string {
+	return t.String()
+}
+func (t *SignatureType) GetName() string {
+	return ""
+}
+func (t *SignatureType) GetPackage() string {
+	return ""
+}
+func (t *SignatureType) GetReturns() []Type {
+	return t.ReturnTypes
 }
 // Imported
 func (t *ImportedType) String() string {

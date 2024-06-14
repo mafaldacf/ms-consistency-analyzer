@@ -2,20 +2,23 @@ NotifyService:
   datastores:
   - notification_queue
   fields:
-  - name: storageService
-    type: StorageService
   - name: queue
     type: Queue
   - name: numWorkers
     type: ""
+  - name: storageService
+    type: StorageService
   services:
   - StorageService
 StorageService:
   datastores:
+  - post_cache
   - post_db
   fields:
   - name: cache
     type: Cache
+  - name: db
+    type: NoSQLDatabase
   services: []
 UploadService:
   datastores:

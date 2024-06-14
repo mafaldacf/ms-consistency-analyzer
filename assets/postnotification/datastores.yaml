@@ -4,7 +4,7 @@ notification_queue:
   schema:
   - name: message
     type: postnotification.Message struct
-post_db:
+post_cache:
   backend: Cache
   kind: Redis
   schema:
@@ -12,3 +12,7 @@ post_db:
     type: string
   - name: post
     type: postnotification.Post struct
+post_db:
+  backend: Cache
+  kind: Redis
+  schema: []

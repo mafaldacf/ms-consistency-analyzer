@@ -242,6 +242,10 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr, assign boo
 				eltVar := LookupVariables(file, blockVars, elt, false)
 				variable.(*ArrayVariable).AddElement(eltVar)
 			}
+		} else if selectorExpr, ok := e.Type.(*ast.SelectorExpr); ok {
+			logger.Logger.Fatalf("nil variable for composite lit with sel = %v and x = %v", utils.GetType(e.Type), selectorExpr.Sel.Name, selectorExpr.X)
+		} else {
+			logger.Logger.Fatalf("nil variable for composite lit (e.Type = %s): %v", utils.GetType(e.Type), e)
 		}
 
 	case *ast.SelectorExpr:

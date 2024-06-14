@@ -6,7 +6,7 @@
       "method": "Cache.Put(ctx context.Context, key string, value interface{})",
       "key": "postIDStr (#-1)",
       "object": "post (#-1)",
-      "database": "post_db"
+      "database": "post_cache"
     },
     {
       "service": "UploadService",
@@ -29,7 +29,7 @@
       "method": "Cache.Get(ctx context.Context, key string, value interface{})",
       "key": "postIDStr (#-1)",
       "object": "post (#0)",
-      "database": "post_db"
+      "database": "post_cache"
     }
   ]
 }

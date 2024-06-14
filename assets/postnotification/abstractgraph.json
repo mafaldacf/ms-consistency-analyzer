@@ -56,9 +56,9 @@
             }
           ],
           "ds_instance": {
-            "name": "post_db",
+            "name": "post_cache",
             "datastore": {
-              "name": "post_db",
+              "name": "post_cache",
               "type": "Cache",
               "kind": "Redis"
             }
@@ -320,9 +320,9 @@
                       }
                     ],
                     "ds_instance": {
-                      "name": "post_db",
+                      "name": "post_cache",
                       "datastore": {
-                        "name": "post_db",
+                        "name": "post_cache",
                         "type": "Cache",
                         "kind": "Redis"
                       }
