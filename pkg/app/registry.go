@@ -82,9 +82,8 @@ func (app *App) BuildServiceNodes() {
 	// parse service methods body
 	for _, node := range app.Services {
 		fmt.Printf("\n ################################## %s ##################################\n", node.Name)
-		node.ParseMethodsBody()
 
-		var parseCFGsHelper = func(node *service.ServiceNode, methods map[string]*service.ParsedFuncDecl, visibility string) {
+		var parser = func(node *service.ServiceNode, methods map[string]*service.ParsedFuncDecl, visibility string) {
 			for _, method := range methods {
 				fmt.Printf("\n[%s] ------------------- %s -------------------\n", strings.ToUpper(visibility), method)
 				controlflow.GenerateMethodCFG(method)
@@ -92,9 +91,9 @@ func (app *App) BuildServiceNodes() {
 				fmt.Printf("\n-------------------------------------------------------\n")
 			}
 		}
-		parseCFGsHelper(node, node.ExposedMethods, "exposed")
-		parseCFGsHelper(node, node.QueueHandlerMethods, "worker")
-		parseCFGsHelper(node, node.InternalMethods, "internal")
+		parser(node, node.ExposedMethods, "exposed")
+		parser(node, node.QueueHandlerMethods, "worker")
+		parser(node, node.InternalMethods, "internal")
 	}
 }
 

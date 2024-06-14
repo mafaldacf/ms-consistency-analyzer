@@ -1,10 +1,11 @@
 package controlflow
 
 import (
+	frameworks "analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
+	"fmt"
 	"go/ast"
-	"go/token"
 
 	"analyzer/pkg/service"
 	"analyzer/pkg/utils"
@@ -148,21 +149,116 @@ func saveCalls(node *service.ServiceNode, blockNode ast.Node, parsedBlock *types
 	return false
 }
 
-func getParsedCallAtPosition(parsedFuncDecl *service.ParsedFuncDecl, pos token.Pos) (service.Call, bool) {
-	for _, call := range parsedFuncDecl.Calls {
-		if call.IsAtPos(pos) {
-			return call, true
+func hasCurrentServiceRecvIdent(selectorExpr *ast.SelectorExpr, expectedRecvIdent *ast.Ident) (bool, *ast.Ident) {
+	if serviceRecvIdent, ok := selectorExpr.X.(*ast.Ident); ok {
+		if serviceRecvIdent.Name == expectedRecvIdent.Name {
+			return true, serviceRecvIdent
 		}
 	}
-	return nil, false
+	return false, nil
 }
 
-func saveCallIfValid(serviceNode *service.ServiceNode, node *ast.CallExpr, parsedBlock *types.ParsedBlock, parsedFuncDecl *service.ParsedFuncDecl) bool {
-	parsedCall, ok := getParsedCallAtPosition(parsedFuncDecl, node.Pos())
+func getFuncCallIfSelectedServiceField(node ast.Node, expectedRecvIdent *ast.Ident) (ok bool, funcCall *ast.CallExpr, methodIdent *ast.Ident, fieldIdent *ast.Ident, serviceRecvIdent *ast.Ident) {
+	// e.g. f.queue.Push
+	//    ^ident2 ^ident ^method
+	// e.g. f.storageService.StorePost
+	//      ^ident2  ^ident    ^method
+	if funcCall, ok := node.(*ast.CallExpr); ok {
+		if methodSel, ok := funcCall.Fun.(*ast.SelectorExpr); ok {
+			// get first selector (e.g. storageService)
+			if fieldSel, ok := methodSel.X.(*ast.SelectorExpr); ok {
+				if ok, serviceRecvIdent := hasCurrentServiceRecvIdent(fieldSel, expectedRecvIdent); ok {
+					return true, funcCall, methodSel.Sel, fieldSel.Sel, serviceRecvIdent
+				}
+			} else if ok, serviceRecvIdent := hasCurrentServiceRecvIdent(methodSel, expectedRecvIdent); ok {
+				return true, funcCall, methodSel.Sel, nil, serviceRecvIdent
+			}
+		}
+	}
+	return false, nil, nil, nil, nil
+}
+
+func saveFuncCallIfValid(node *service.ServiceNode, callExpr *ast.CallExpr, parsedFuncDecl *service.ParsedFuncDecl) service.Call {
+	ok, funcCall, methodIdent, fieldIdent, serviceRecvIdent := getFuncCallIfSelectedServiceField(callExpr, parsedFuncDecl.Recv)
 	if !ok {
+		return nil
+	}
+	if fieldIdent != nil {
+		// if the targeted variable corresponds to a service field
+		if field, ok := node.Fields[fieldIdent.Name]; ok {
+			// store function call either as service call or database call
+			// if the field corresponds to a service field
+			if serviceField, ok := field.(*types.ServiceField); ok {
+				// 1. extract the service field from the current service
+				// 2. get the target node service for the type
+				// 3. add the targeted method of the other service for the current call expression
+				targetServiceType := serviceField.GetTypeName()
+				targetServiceNode := node.Services[targetServiceType]
+				targetMethod := targetServiceNode.ExposedMethods[methodIdent.Name]
+				svcParsedCallExpr := &service.ServiceParsedCallExpr{
+					ParsedCallExpr: service.ParsedCallExpr{
+						Ast:         funcCall,
+						Receiver:    serviceRecvIdent.Name,
+						TargetField: fieldIdent.Name,
+						Name:        methodIdent.Name,
+						Pos:         funcCall.Pos(),
+						Method:      targetMethod,
+					},
+					CallerTypeName: &types.ServiceType{Name: node.Name, Package: node.GetPackageName()},
+					CalleeTypeName: serviceField.GetType(),
+				}
+				parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, svcParsedCallExpr)
+				logger.Logger.Warnf("[CFG] found new service call %s", svcParsedCallExpr.Name)
+				return svcParsedCallExpr
+			}
+			// if the field corresponds to a database field
+			if databaseField, ok := field.(*types.DatabaseField); ok {
+				// 1. extract the service field from the current service
+				// 2. get the target database node
+				// 3. add the target method for the current call expression
+				targetDatabaseType := databaseField.GetTypeName()
+				dbParsedCallExpr := &service.DatabaseParsedCallExpr{
+					ParsedCallExpr: service.ParsedCallExpr{
+						Ast:         funcCall,
+						Receiver:    serviceRecvIdent.Name,
+						TargetField: fieldIdent.Name,
+						Name:        methodIdent.Name,
+						Pos:         funcCall.Pos(),
+						Method:      frameworks.GetBackendMethod(fmt.Sprintf("%s.%s", targetDatabaseType, methodIdent.Name)),
+					},
+					CallerTypeName: &types.ServiceType{Name: node.Name, Package: node.GetPackageName()},
+					DbInstance:     databaseField.DbInstance,
+				}
+				parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, dbParsedCallExpr)
+				logger.Logger.Warnf("[CFG] found new database call %s", dbParsedCallExpr.Name)
+				return dbParsedCallExpr
+			}
+		}
+	} else if funcDecl, ok := node.InternalMethods[methodIdent.Name]; ok {
+		internalCall := &service.InternalTempParsedCallExpr{
+			ParsedCallExpr: service.ParsedCallExpr{
+				Ast:      funcCall,
+				Receiver: serviceRecvIdent.Name,
+				Name:     methodIdent.Name,
+				Method:   funcDecl,
+				Pos:      funcCall.Pos(),
+			},
+			ServiceTypeName: &types.ServiceType{Name: node.Name, Package: node.GetPackageName()},
+		}
+		parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, internalCall)
+		logger.Logger.Warnf("[CFG] found new internal call %s", internalCall.Name)
+		return internalCall
+	}
+	return nil
+}
+
+func saveCallIfValid(serviceNode *service.ServiceNode, callExpr *ast.CallExpr, parsedBlock *types.ParsedBlock, parsedFuncDecl *service.ParsedFuncDecl) bool {
+	parsedCall := saveFuncCallIfValid(serviceNode, callExpr, parsedFuncDecl)
+	if parsedCall == nil {
+		logger.Logger.Warnf("invalid call %s", callExpr.Fun)
 		return false
 	}
-	for i, arg := range node.Args {
+	for i, arg := range callExpr.Args {
 		param := types.GetOrCreateVariable(serviceNode.File, parsedBlock.Vars, arg, false)
 
 		// upgrade variable with known type from function method
