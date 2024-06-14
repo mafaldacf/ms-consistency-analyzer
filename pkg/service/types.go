@@ -24,7 +24,14 @@ type ParsedFuncDecl struct {
 
 	// used to fetch the params when generating the basic cfg
 	// to store in the variables array of the function
-	Params []*types.FunctionParameter
+	Params  []*types.FunctionField
+	Returns []*types.FunctionField
+}
+
+func (f *ParsedFuncDecl) Yaml() map[string]interface{} {
+	data := make(map[string]interface{})
+	data["Parsed CFG"] = f.ParsedCfg.Yaml()
+	return data
 }
 
 func (f *ParsedFuncDecl) GetAst() *ast.FuncDecl {
@@ -55,7 +62,34 @@ func (p *ParsedFuncDecl) String() string {
 	return repr
 }
 
-func (p *ParsedFuncDecl) GetParams() []*types.FunctionParameter {
+// TODO: missing returns!!
+func (p *ParsedFuncDecl) Signature() string {
+	repr := fmt.Sprintf("%s(", p.Name)
+	for i, arg := range p.Params {
+		repr += arg.String()
+		if i < len(p.Params)-1 {
+			repr += ", "
+		}
+	}
+	repr += ")"
+	if len(p.Returns) == 0 {
+		return repr
+	}
+	if len(p.Returns) == 1 {
+		return repr + " " + p.Returns[0].String()
+	}
+
+	repr += " ("
+	for i, arg := range p.Returns {
+		repr += arg.String()
+		if i < len(p.Returns)-1 {
+			repr += ", "
+		}
+	}
+	return repr + ")"
+}
+
+func (p *ParsedFuncDecl) GetParams() []*types.FunctionField {
 	return p.Params
 }
 
@@ -251,6 +285,29 @@ type ServiceNode struct {
 	Constructor         *ParsedFuncDecl
 
 	ImplementsQueue bool
+}
+
+func (node *ServiceNode) Yaml() map[string]interface{} {
+	data := make(map[string]interface{})
+	// exposed methods
+	exposedMethods := make(map[string]interface{})
+	for _, method := range node.ExposedMethods {
+		exposedMethods[method.Signature()] = method.Yaml()
+	}
+	data["Exposed Methods"] = exposedMethods
+	// queue handler methods COMMENTED
+	queueHandlerMethods := make(map[string]interface{})
+	/* for _, method := range node.QueueHandlerMethods {
+		queueHandlerMethods[method.Signature()] = method.Yaml()
+	} */
+	data["Queue Handler Methods"] = queueHandlerMethods
+	// exposed methods COMMENTED
+	internalMethods := make(map[string]interface{})
+	/* for _, method := range node.InternalMethods {
+		internalMethods[method.Signature()] = method.Yaml()
+	} */
+	data["Internal Methods"] = internalMethods
+	return data
 }
 
 func (node *ServiceNode) GetPackage() *types.Package {

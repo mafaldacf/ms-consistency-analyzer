@@ -4,6 +4,7 @@ import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/utils"
 	"fmt"
+	"go/ast"
 	gotypes "go/types"
 	"slices"
 )
@@ -28,6 +29,10 @@ type Package struct {
 
 func (p *Package) String() string {
 	return p.Name
+}
+
+func (p *Package) GetTypeInfo(expr ast.Expr) gotypes.Type {
+	return p.TypesInfo.TypeOf(expr)
 }
 
 func (p *Package) HasPath(path string) bool {
@@ -85,13 +90,21 @@ func (p *Package) LinkFile(file *File) {
 	file.Package = p
 }
 
+func (p *Package) GetImportedTypeFromPath(fullPath string) (Type, bool) {
+	if e, ok := p.ImportedTypes[fullPath]; ok {
+		return e, true
+	}
+	logger.Logger.Fatalf("unknown imported package %s in package %s", fullPath, p.Name)
+	return nil, false
+}
+
 
 func (p *Package) GetImportedType(packagePath string, typeName string) (Type, bool) {
 	key := importedTypeKey(packagePath, typeName)
 	if e, ok := p.ImportedTypes[key]; ok {
 		return e, true
 	}
-	logger.Logger.Fatalf("unknown imported package %s in package %s with imported types list %v", key, p.Name, p.ImportedTypes)
+	logger.Logger.Fatalf("unknown imported package %s in package %s", key, p.Name)
 	return nil, false
 }
 

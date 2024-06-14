@@ -5,6 +5,7 @@ import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
+	"analyzer/pkg/utils"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -64,6 +65,12 @@ func Init(name string, path string) (*App, error) {
 }
 
 func (app *App) Save() {
+	app.saveJson()
+	app.saveYamlMetadata()
+	app.saveYamlControlFlow()
+}
+
+func (app *App) saveJson() {
 	// print in JSON format
 	// https://omute.net/editor
 	path := fmt.Sprintf("assets/%s/app.json", app.Name)
@@ -82,10 +89,18 @@ func (app *App) Save() {
 	logger.Logger.Infof("[JSON] app saved at %s", path)
 }
 
-func (app *App) Yaml() map[string]interface{} {
+func (app *App) saveYamlMetadata() {
 	data := make(map[string]interface{})
 	for _, p := range app.Packages {
 		data[p.Name] = p.Yaml()
 	}
-	return data
+	utils.SaveToYamlFile(data, app.Name, "metadata")
+}
+
+func (app *App) saveYamlControlFlow() {
+	data := make(map[string]interface{})
+	for name, service := range app.Services {
+		data[name] = service.Yaml()
+	}
+	utils.SaveToYamlFile(data, app.Name, "controlflow")
 }

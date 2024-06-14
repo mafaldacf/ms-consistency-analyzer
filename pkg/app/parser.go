@@ -4,7 +4,6 @@ import (
 	bp "analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
-	"analyzer/pkg/utils"
 	gotypes "go/types"
 	"path/filepath"
 	"slices"
@@ -173,7 +172,4 @@ func (app *App) ParsePackages(servicesInfo []*types.ServiceInfo) {
 		}
 		logger.Logger.Debugf("[APP] added new package %s", pkg.Name)
 	}
-
-	yamlData := app.Yaml()
-	utils.SaveToYamlFile(yamlData, app.Name, "metadata")
 }

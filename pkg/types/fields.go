@@ -22,7 +22,7 @@ type FieldInfo struct {
 	Type Type
 }
 
-type FunctionParameter struct {
+type FunctionField struct {
 	Field
 	FieldInfo FieldInfo
 }
@@ -122,24 +122,27 @@ func (f *DatabaseField) SetType(t Type) {
 // ------------------
 // FUNCTION PARAMETER
 // ------------------
-func (f *FunctionParameter) String() string {
-	return fmt.Sprintf("%s %s", f.FieldInfo.Name, f.FieldInfo.Type.String())
-}
-func (f *FunctionParameter) GetTypeString() string {
+func (f *FunctionField) String() string {
+	if f.FieldInfo.Name != "" {
+		return fmt.Sprintf("%s %s", f.FieldInfo.Name, f.FieldInfo.Type.String())
+	}
 	return f.FieldInfo.Type.String()
 }
-func (f *FunctionParameter) GetTypeName() string {
+func (f *FunctionField) GetTypeString() string {
+	return f.FieldInfo.Type.String()
+}
+func (f *FunctionField) GetTypeName() string {
 	return f.FieldInfo.Type.GetName()
 }
-func (f *FunctionParameter) GetIndex() int {
+func (f *FunctionField) GetIndex() int {
 	return -1
 }
-func (f *FunctionParameter) GetName() string {
+func (f *FunctionField) GetName() string {
 	return f.FieldInfo.Name
 }
-func (f *FunctionParameter) GetType() Type {
+func (f *FunctionField) GetType() Type {
 	return f.FieldInfo.Type
 }
-func (f *FunctionParameter) SetType(t Type) {
+func (f *FunctionField) SetType(t Type) {
 	f.FieldInfo.Type = t
 }

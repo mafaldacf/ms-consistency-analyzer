@@ -274,7 +274,7 @@ func (v *StructVariable) GetOrCreateField(name string) Variable {
 		logger.Logger.Fatalf("invalid field name %s in structure variable %s with fields types %v", name, v.String(), v.GetStructType().FieldTypes)
 	}
 
-	variable = CreateVariableFromType(name, fieldType)
+	variable = GetOrCreateVariableFromType(name, fieldType)
 	v.Fields[name] = variable
 	logger.Logger.Warnf("added new variable %s for field %s in structure variable %s", variable.String(), name, v.String())
 	return variable

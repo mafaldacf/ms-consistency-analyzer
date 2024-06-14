@@ -31,8 +31,8 @@ func (node *ServiceNode) ParseImports() {
 		}
 
 		impt := &types.Import{
-			Alias: 		 alias,
-			ImportPath:  path,
+			Alias:      alias,
+			ImportPath: path,
 			//FIXME
 			PackagePath: path,
 			PackageName: "",
@@ -86,22 +86,36 @@ func (node *ServiceNode) isMethodExposedByService(funcDecl *ast.FuncDecl) bool {
 	return ok
 }
 
-func (node *ServiceNode) parseFuncDeclParams(funcDecl *ast.FuncDecl) []*types.FunctionParameter {
-	var funcParams []*types.FunctionParameter
-	for _, field := range funcDecl.Type.Params.List {
-		paramType := types.ComputeType(field.Type, node.File)
-		for _, ident := range field.Names {
-			param := &types.FunctionParameter{
-				FieldInfo: types.FieldInfo{
-					Ast:  field,
-					Type: paramType,
-					Name: ident.Name,
-				},
+func (node *ServiceNode) parseFuncDeclParameters(funcDecl *ast.FuncDecl) ([]*types.FunctionField, []*types.FunctionField) {
+	parser := func(fieldsList []*ast.Field) []*types.FunctionField {
+		var params []*types.FunctionField
+		for _, field := range fieldsList {
+			paramType := types.ComputeType(field.Type, node.File)
+			// returns with types only, which is usually the most frequent scenario
+			if len(field.Names) == 0 {
+				param := &types.FunctionField{
+					FieldInfo: types.FieldInfo{
+						Ast:  field,
+						Type: paramType,
+					},
+				}
+				params = append(params, param)
 			}
-			funcParams = append(funcParams, param)
+			for _, ident := range field.Names {
+				param := &types.FunctionField{
+					FieldInfo: types.FieldInfo{
+						Ast:  field,
+						Type: paramType,
+						Name: ident.Name,
+					},
+				}
+				params = append(params, param)
+			}
 		}
+		return params
 	}
-	return funcParams
+	return parser(funcDecl.Type.Params.List), parser(funcDecl.Type.Results.List)
+
 }
 
 func (node *ServiceNode) ParseMethods() {
@@ -267,12 +281,13 @@ func (node *ServiceNode) funcImplementsQueue(funcDecl *ast.FuncDecl, recvIdent *
 }
 
 func (node *ServiceNode) addQueueHandlerMethod(funcDecl *ast.FuncDecl, recvIdent *ast.Ident, dbInstance datastores.DatabaseInstance) {
-	params := node.parseFuncDeclParams(funcDecl)
+	params, returns := node.parseFuncDeclParameters(funcDecl)
 	parsedFuncDecl := &ParsedFuncDecl{
 		Ast:     funcDecl,
 		Name:    funcDecl.Name.Name,
 		Recv:    recvIdent,
 		Params:  params,
+		Returns: returns,
 		Service: node.Name,
 	}
 	parsedFuncDecl.DbInstances = append(parsedFuncDecl.DbInstances, dbInstance)
@@ -281,11 +296,12 @@ func (node *ServiceNode) addQueueHandlerMethod(funcDecl *ast.FuncDecl, recvIdent
 }
 
 func (node *ServiceNode) addInternalMethod(funcDecl *ast.FuncDecl, rcvIdent *ast.Ident) {
-	params := node.parseFuncDeclParams(funcDecl)
+	params, returns := node.parseFuncDeclParameters(funcDecl)
 	parsedFuncDecl := &ParsedFuncDecl{
 		Ast:     funcDecl,
 		Name:    funcDecl.Name.Name,
 		Params:  params,
+		Returns: returns,
 		Recv:    rcvIdent,
 		Service: node.Name,
 	}
@@ -294,16 +310,17 @@ func (node *ServiceNode) addInternalMethod(funcDecl *ast.FuncDecl, rcvIdent *ast
 }
 
 func (node *ServiceNode) addExposedMethod(funcDecl *ast.FuncDecl, rcvIdent *ast.Ident) {
-	params := node.parseFuncDeclParams(funcDecl)
+	params, returns := node.parseFuncDeclParameters(funcDecl)
 	parsedFuncDecl := &ParsedFuncDecl{
 		Ast:     funcDecl,
 		Name:    funcDecl.Name.Name,
 		Recv:    rcvIdent,
 		Params:  params,
+		Returns: returns,
 		Service: node.Name,
 	}
 	node.ExposedMethods[parsedFuncDecl.Name] = parsedFuncDecl
-	logger.Logger.Warnf("[PARSER] added exposed method %s to service %s", parsedFuncDecl.String(), node.Name)
+	logger.Logger.Debugf("[PARSER] added exposed method %s to service %s", parsedFuncDecl.String(), node.Name)
 }
 
 func hasCurrentServiceRecvIdent(selectorExpr *ast.SelectorExpr, expectedRecvIdent *ast.Ident) (bool, *ast.Ident) {

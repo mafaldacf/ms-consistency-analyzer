@@ -17,13 +17,13 @@ func GenerateMethodCFG(parsedFuncDecl *service.ParsedFuncDecl) {
 	for i, param := range parsedFuncDecl.Params {
 		if u, ok := param.GetType().(*types.UserType); ok {
 			if s, ok := u.UserType.(*types.StructType); ok {
-				logger.Logger.Warnf("param %s: %v", param.String(), s.FieldTypes)
+				logger.Logger.Debugf("param %s: %v", param.String(), s.FieldTypes)
 			}
 		}
-		v := types.CreateVariableFromType(param.GetName(), param.GetType())
+		v := types.GetOrCreateVariableFromType(param.GetName(), param.GetType())
 		if u, ok := v.GetVariableInfo().GetType().(*types.UserType); ok {
 			if s, ok := u.UserType.(*types.StructType); ok {
-				logger.Logger.Warnf("param %s: %v", param.String(), s.FieldTypes)
+				logger.Logger.Debugf("param %s: %v", param.String(), s.FieldTypes)
 			}
 		}
 		v.GetVariableInfo().IsBlockParam = true

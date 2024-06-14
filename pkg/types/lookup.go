@@ -16,7 +16,7 @@ func GetDeclaredVariableReverse(name string, variables []Variable) Variable {
 			return v
 		}
 	}
-	logger.Logger.Fatalf("variable '%s' not found in declared blockVars: %v", name, variables)
+	logger.Logger.Warnf("variable '%s' not found in declared blockVars: %v", name, variables)
 	return nil
 }
 
@@ -85,18 +85,30 @@ func ComputeType(typeExpr ast.Expr, file *File) Type {
 		if namedType, ok := file.Package.GetNamedType(e.Name); ok {
 			return namedType
 		}
+
 		logger.Logger.Fatalf("cannot compute type for ident: %s", e)
 	case *ast.SelectorExpr:
 		if xIdent, ok := e.X.(*ast.Ident); ok {
-			// e.X is the alias
+			// e.X is the package alias
 			if impt, ok := file.GetImport(xIdent.Name); ok {
-				if importedType, ok := file.Package.GetImportedType(impt.PackagePath, e.Sel.Name); ok {
+				imptPath := impt.PackagePath
+				// import path does not always match the object impt path
+				// e.g. in "bson.D", the bson code actually defines "D" as "type D = primitive.D"
+				// so instead of the original imported path go.mongodb.org/mongo-driver/bson.D
+				// we have go.mongodb.org/mongo-driver/bson/primitive.D
+				// can be either e.Sel or just e
+				goType := file.Package.GetTypeInfo(e.Sel)
+				if goType.String() != imptPath {
+					logger.Logger.Warnf("replacing imported package path '%s' with go type path '%s'", imptPath, goType.String())
+					imptPath = goType.String()
+				}
+				if importedType, ok := file.Package.GetImportedTypeFromPath(imptPath); ok {
 					return importedType
 				}
 			}
 			//TODO: user can be trying to select a field or something?
 		}
-		logger.Logger.Fatalf("cannot compute type for selector expr: %s", e)
+		logger.Logger.Fatalf("cannot compute type for selector expr (e.X type = %s): %s", utils.GetType(e.X), e)
 	case *ast.ChanType:
 		return &ChanType{
 			ChanType: ComputeType(e.Value, file),
@@ -121,11 +133,15 @@ func ComputeType(typeExpr ast.Expr, file *File) Type {
 	return nil
 }
 
-func CreateVariableFromType(name string, t Type) Variable {
+func GetOrCreateVariableFromType(name string, t Type) Variable {
 	info := &VariableInfo{
-		Id:   VARIABLE_UNASSIGNED_ID,
 		Name: name,
 		Type: t,
+	}
+	if name == "" {
+		info.Id = VARIABLE_INLINE_ID
+	} else {
+		info.Id = VARIABLE_UNASSIGNED_ID
 	}
 	switch e := t.(type) {
 	case *BasicType:
@@ -150,7 +166,7 @@ func CreateVariableFromType(name string, t Type) Variable {
 		}
 	case *UserType:
 		if e.UserType != nil {
-			variable := CreateVariableFromType(name, e.UserType)
+			variable := GetOrCreateVariableFromType(name, e.UserType)
 			variable.GetVariableInfo().Type = e
 			return variable
 		}
@@ -187,10 +203,20 @@ func computeFunctionCallName(expr ast.Expr) string {
 	return ""
 }
 
-func LookupVariables(file *File, blockVars []Variable, expr ast.Expr, assign bool) (variable Variable) {
+func GetOrCreateVariable(file *File, blockVars []Variable, expr ast.Expr, assign bool) (variable Variable) {
 	switch e := expr.(type) {
 	case *ast.Ident:
 		variable = GetDeclaredVariableReverse(e.Name, blockVars)
+		// if its not a variable in the block then it can be either
+		// 1. a declared variable in the package
+		// 2. a ident from a import (which is dealt with in the switch case for the selectorExpr)
+		if variable == nil {
+			variable = file.Package.DeclaredVariables[e.Name]
+			if variable == nil {
+				logger.Logger.Warnf("variable '%s' not found in package %s with declared variables list: %v", e.Name, file.Package.Name, file.Package.DeclaredVariables)
+			}
+		}
+		return variable
 	case *ast.BasicLit:
 		basicType := &BasicType{
 			Name:  strings.ToLower(e.Kind.String()),
@@ -218,7 +244,7 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr, assign boo
 						for _, elt := range e.Elts {
 							keyvalue := elt.(*ast.KeyValueExpr)
 							key := keyvalue.Key.(*ast.Ident)
-							eltVar := LookupVariables(file, blockVars, keyvalue.Value, false)
+							eltVar := GetOrCreateVariable(file, blockVars, keyvalue.Value, false)
 							if eltVar.GetVariableInfo().Name == "" {
 								eltVar.GetVariableInfo().SetName(key.Name)
 							}
@@ -239,18 +265,27 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr, assign boo
 				},
 			}
 			for _, elt := range e.Elts {
-				eltVar := LookupVariables(file, blockVars, elt, false)
+				eltVar := GetOrCreateVariable(file, blockVars, elt, false)
 				variable.(*ArrayVariable).AddElement(eltVar)
 			}
 		} else if selectorExpr, ok := e.Type.(*ast.SelectorExpr); ok {
-			logger.Logger.Fatalf("nil variable for composite lit with sel = %v and x = %v", utils.GetType(e.Type), selectorExpr.Sel.Name, selectorExpr.X)
+			logger.Logger.Warnf("got selector %v (expr type = %s)", selectorExpr, utils.GetType(selectorExpr.X))
+			variable = GetOrCreateVariable(file, blockVars, selectorExpr, assign)
 		} else {
 			logger.Logger.Fatalf("nil variable for composite lit (e.Type = %s): %v", utils.GetType(e.Type), e)
 		}
 
 	case *ast.SelectorExpr:
-		variable = LookupVariables(file, blockVars, e.X, assign)
+		variable = GetOrCreateVariable(file, blockVars, e.X, assign)
+		// if it was not found, maybe it can be the alias for an import
+		if variable == nil {
+			newType := ComputeType(e, file)
+			variable = GetOrCreateVariableFromType("", newType)
+		}
+
 		switch v := variable.(type) {
+		case *GenericVariable:
+			// continue
 		case *StructVariable:
 			logger.Logger.Warnf("GOT SELECTOR FOR %s", e.Sel.Name)
 			variable = v.GetOrCreateField(e.Sel.Name)
@@ -258,6 +293,8 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr, assign boo
 		default:
 			logger.Logger.Fatalf("could not find variable for selector %s with type %s", variable.String(), utils.GetType(variable))
 		}
+		/* newType := ComputeType(e, file)
+		logger.Logger.Fatalf("GOT NEW TYPE %v", newType) */
 	case *ast.CallExpr:
 		// NOTE: for now we only care about known functions that return a new object
 		// e.g. we don't care about direct transformations like obj2 := common.StringToInt64(obj1)
@@ -266,14 +303,14 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr, assign boo
 		callStr := computeFunctionCallName(e.Fun) + "(...)"
 		genericVariable := createCompositeVariable(callStr)
 		/* if len(e.Args) == 1 {
-			argVar := LookupVariables(file, blockVars, e.Args[0], false)
+			argVar := GetOrCreateVariable(file, blockVars, e.Args[0], false)
 			if !slices.Contains(blockVars, argVar) {
 				logger.Logger.Warnf("ignoring undeclared variable %v in function call %s", argVar, callStr)
 				return argVar
 			}
 		} */
 		for _, arg := range e.Args {
-			argVar := LookupVariables(file, blockVars, arg, false)
+			argVar := GetOrCreateVariable(file, blockVars, arg, false)
 			genericVariable.Params = append(genericVariable.Params, argVar)
 
 			// a direct transformation from one or more existing variables
@@ -287,14 +324,14 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr, assign boo
 		//variable = &PlaceholderVariable{VariableInfo: &VariableInfo{Name: "placeholder", Type: &PlaceholderType{}}}
 
 	case *ast.TypeAssertExpr:
-		variable = LookupVariables(file, blockVars, e.X, assign)
+		variable = GetOrCreateVariable(file, blockVars, e.X, assign)
 	case *ast.IndexExpr:
-		variable = LookupVariables(file, blockVars, e.X, assign)
+		variable = GetOrCreateVariable(file, blockVars, e.X, assign)
 		if arrayVar, ok := variable.(*ArrayVariable); ok {
 			variable = arrayVar.Elements[computeArrayIndex(e.Index)]
 		}
 		if mapVar, ok := variable.(*MapVariable); ok {
-			key := LookupVariables(file, blockVars, e.Index, false)
+			key := GetOrCreateVariable(file, blockVars, e.Index, false)
 			variable, ok = mapVar.KeyValues[key]
 			if !ok {
 				logger.Logger.Warnf("got map %v with unassigned value for key %s", mapVar.String(), key.String())
@@ -303,7 +340,7 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr, assign boo
 		}
 	case *ast.UnaryExpr:
 		if e.Op == token.AND { // e.g. &post
-			variable = LookupVariables(file, blockVars, e.X, assign)
+			variable = GetOrCreateVariable(file, blockVars, e.X, assign)
 			addrType := &AddressType{
 				AddressOf: variable.GetVariableInfo().Type,
 			}
@@ -316,7 +353,7 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr, assign boo
 				},
 			}
 		} else if e.Op == token.MUL { // e.g. *post
-			variable = LookupVariables(file, blockVars, e.X, assign)
+			variable = GetOrCreateVariable(file, blockVars, e.X, assign)
 			addrType := &AddressType{
 				AddressOf: variable.GetVariableInfo().Type,
 			}
@@ -330,10 +367,10 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr, assign boo
 			}
 
 		} else {
-			variable = LookupVariables(file, blockVars, e.X, assign)
+			variable = GetOrCreateVariable(file, blockVars, e.X, assign)
 		}
 	default:
-		logger.Logger.Fatalf("unknown type in LookupVariables for type %s: %v", utils.GetType(e), e)
+		logger.Logger.Fatalf("unknown type in GetOrCreateVariable for type %s: %v", utils.GetType(e), e)
 	}
 	if variable == nil {
 		logger.Logger.Fatalf("nil variable for %s: %v", utils.GetType(expr), expr)
@@ -357,7 +394,7 @@ func IsVarDeclOrAssign(file *File, blockVars []Variable, node ast.Node) ([]Varia
 		}
 	case *ast.AssignStmt:
 		for i, rvalue := range n.Rhs {
-			field := LookupVariables(file, blockVars, rvalue, true)
+			field := GetOrCreateVariable(file, blockVars, rvalue, true)
 			lvalue := n.Lhs[i]
 
 			field.GetVariableInfo().SetName(lvalue.(*ast.Ident).Name)

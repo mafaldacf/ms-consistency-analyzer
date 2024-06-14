@@ -7,9 +7,9 @@ common:
     - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/common/utils.go
   datastore types: []
   declared types (3):
-  - common.StringToInt64 (...) ( int64, .error )
   - .error
   - common.Int64ToString (...) string
+  - common.StringToInt64 (...) ( int64, .error )
   declared variables: []
   imported types: []
   service types: []
@@ -24,38 +24,38 @@ postnotification:
     - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/UploadService.go
     - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/models.go
   datastore types (3):
-  - backend.Queue
   - backend.NoSQLDatabase
+  - backend.Queue
   - backend.Cache
   declared types (18):
+  - postnotification.UploadServiceImpl struct { storageService postnotification.StorageService, queue backend.Queue }
+  - postnotification.UploadService
   - postnotification.NewStorageServiceImpl (...) ( postnotification.StorageService, .error )
   - postnotification.workerThread (...) .error
-  - postnotification.Message struct { ReqID string, PostID string, Timestamp string }
-  - postnotification.ReadPostNoSQL (...) ( postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator string }, .error )
-  - postnotification.UploadService
-  - postnotification.UploadServiceImpl struct { storageService postnotification.StorageService, queue backend.Queue }
   - postnotification.NotifyService
-  - postnotification.StorageServiceImpl struct { cache backend.Cache, db backend.NoSQLDatabase }
-  - postnotification.NotifyServiceImpl struct { storageService postnotification.StorageService, queue backend.Queue, numWorkers int }
-  - postnotification.UploadPost (...) ( int64, .error )
-  - postnotification.handleMessage (...) .error
-  - postnotification.Run (...) .error
-  - postnotification.Post struct { Text string, Timestamp int64, Creator string, ReqID int64, PostID int64 }
-  - postnotification.StorageService
-  - postnotification.NewNotifyServiceImpl (...) ( postnotification.NotifyService, .error )
-  - .error
   - postnotification.StorePostNoSQL (...) .error
+  - postnotification.NewNotifyServiceImpl (...) ( postnotification.NotifyService, .error )
+  - postnotification.Message struct { ReqID string, PostID string, Timestamp string }
+  - postnotification.NotifyServiceImpl struct { storageService postnotification.StorageService, queue backend.Queue, numWorkers int }
+  - postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator string }
+  - .error
+  - postnotification.ReadPostNoSQL (...) ( postnotification.Post struct { Timestamp int64, Creator string, ReqID int64, PostID int64, Text string }, .error )
+  - postnotification.handleMessage (...) .error
+  - postnotification.UploadPost (...) ( int64, .error )
   - postnotification.NewUploadServiceImpl (...) ( postnotification.UploadService, .error )
+  - postnotification.StorageServiceImpl struct { cache backend.Cache, db backend.NoSQLDatabase }
+  - postnotification.StorageService
+  - postnotification.Run (...) .error
   declared variables: []
   imported types (8):
-  - backend.NoSQLCursor
-  - backend.Queue
-  - backend.NoSQLDatabase
   - backend.Cache
-  - backend.NoSQLCollection
   - sync.WaitGroup
   - primitive.D
+  - backend.NoSQLDatabase
   - context.Context
+  - backend.Queue
+  - backend.NoSQLCursor
+  - backend.NoSQLCollection
   service types (3):
   - postnotification.UploadService
   - postnotification.StorageService

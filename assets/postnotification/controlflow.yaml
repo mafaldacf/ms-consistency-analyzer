@@ -1,0 +1,186 @@
+NotifyService:
+  Exposed Methods:
+    Run(ctx context.Context) error:
+      Parsed CFG:
+        block 0 (Body):
+        - ctx context.Context
+        - wg sync.WaitGroup
+        - i int (1)
+        block 1 (ForBody):
+        - ctx context.Context
+        - wg sync.WaitGroup
+        - i int (1)
+        - err undefined
+        block 2 (ForDone):
+        - ctx context.Context
+        - wg sync.WaitGroup
+        - i int (1)
+        - err undefined
+        - ctx context.Context
+        - wg sync.WaitGroup
+        - i int (1)
+        block 3 (ForLoop):
+        - ctx context.Context
+        - wg sync.WaitGroup
+        - i int (1)
+        - err undefined
+        - ctx context.Context
+        - wg sync.WaitGroup
+        - i int (1)
+        block 4 (ForPost):
+        - ctx context.Context
+        - wg sync.WaitGroup
+        - i int (1)
+        - err undefined
+        block 5 (Unreachable): []
+  Internal Methods: {}
+  Queue Handler Methods: {}
+StorageService:
+  Exposed Methods:
+    ReadPost(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct, error):
+      Parsed CFG:
+        block 0 (Body):
+        - ctx context.Context
+        - reqID int64
+        - postID int64
+        - post postnotification.Post struct
+        - postIDStr string
+        - _ undefined
+        block 1 (IfThen):
+        - ctx context.Context
+        - reqID int64
+        - postID int64
+        - post postnotification.Post struct
+        - postIDStr string
+        - _ undefined
+        block 2 (IfDone):
+        - ctx context.Context
+        - reqID int64
+        - postID int64
+        - post postnotification.Post struct
+        - postIDStr string
+        - _ undefined
+        block 3 (Unreachable): []
+        block 4 (Unreachable): []
+    ReadPostNoSQL(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct, error):
+      Parsed CFG:
+        block 0 (Body):
+        - ctx context.Context
+        - reqID int64
+        - postID int64
+        - post postnotification.Post struct
+        - collection undefined
+        block 1 (IfThen):
+        - ctx context.Context
+        - reqID int64
+        - postID int64
+        - post postnotification.Post struct
+        - collection undefined
+        block 2 (IfDone):
+        - ctx context.Context
+        - reqID int64
+        - postID int64
+        - post postnotification.Post struct
+        - collection undefined
+        - query primitive.D
+        - result undefined
+        block 3 (Unreachable): []
+        block 4 (IfThen):
+        - ctx context.Context
+        - reqID int64
+        - postID int64
+        - post postnotification.Post struct
+        - collection undefined
+        - query primitive.D
+        - result undefined
+        block 5 (IfDone):
+        - ctx context.Context
+        - reqID int64
+        - postID int64
+        - post postnotification.Post struct
+        - collection undefined
+        - query primitive.D
+        - result undefined
+        - res undefined
+        block 6 (Unreachable): []
+        block 7 (IfThen):
+        - ctx context.Context
+        - reqID int64
+        - postID int64
+        - post postnotification.Post struct
+        - collection undefined
+        - query primitive.D
+        - result undefined
+        - res undefined
+        block 8 (IfDone):
+        - ctx context.Context
+        - reqID int64
+        - postID int64
+        - post postnotification.Post struct
+        - collection undefined
+        - query primitive.D
+        - result undefined
+        - res undefined
+        block 9 (Unreachable): []
+        block 10 (Unreachable): []
+    StorePost(ctx context.Context, reqID int64, post postnotification.Post struct) error:
+      Parsed CFG:
+        block 0 (Body):
+        - ctx context.Context
+        - reqID int64
+        - post postnotification.Post struct
+        - postIDStr string
+        block 1 (Unreachable): []
+    StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct) error:
+      Parsed CFG:
+        block 0 (Body):
+        - ctx context.Context
+        - reqID int64
+        - post postnotification.Post struct
+        - collection undefined
+        block 1 (IfThen):
+        - ctx context.Context
+        - reqID int64
+        - post postnotification.Post struct
+        - collection undefined
+        block 2 (IfDone):
+        - ctx context.Context
+        - reqID int64
+        - post postnotification.Post struct
+        - collection undefined
+        block 3 (Unreachable): []
+        block 4 (Unreachable): []
+  Internal Methods: {}
+  Queue Handler Methods: {}
+UploadService:
+  Exposed Methods:
+    UploadPost(ctx context.Context, username string, text string) (int64, error):
+      Parsed CFG:
+        block 0 (Body):
+        - ctx context.Context
+        - username string
+        - text string
+        - reqID int64
+        - post postnotification.Post struct
+        - message postnotification.Message struct
+        - _ undefined
+        block 1 (IfThen):
+        - ctx context.Context
+        - username string
+        - text string
+        - reqID int64
+        - post postnotification.Post struct
+        - message postnotification.Message struct
+        - _ undefined
+        block 2 (IfDone):
+        - ctx context.Context
+        - username string
+        - text string
+        - reqID int64
+        - post postnotification.Post struct
+        - message postnotification.Message struct
+        - _ undefined
+        block 3 (Unreachable): []
+        block 4 (Unreachable): []
+  Internal Methods: {}
+  Queue Handler Methods: {}

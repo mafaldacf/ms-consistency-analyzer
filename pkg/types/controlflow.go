@@ -29,6 +29,14 @@ func InitParsedCFG(cfg *cfg.CFG, fullMethod string) *ParsedCFG {
 	return parsedCfg
 }
 
+func (cfg *ParsedCFG) Yaml() map[string][]string {
+	data := make(map[string][]string)
+	for _, block := range cfg.ParsedBlocks {
+		data[block.Block.String()] = block.Yaml()
+	}
+	return data
+}
+
 func (cfg *ParsedCFG) String() string {
 	str := fmt.Sprintf("%s: ", cfg.FullMethod)
 	for i, block := range cfg.ParsedBlocks {
@@ -71,6 +79,14 @@ type ParsedBlock struct {
 	// blocks can contain inline go routines
 	Vars []Variable
 	Info BlockInfo
+}
+
+func (block *ParsedBlock) Yaml() []string {
+	data := []string{}
+	for _, v := range block.Vars {
+		data = append(data, v.String())
+	}
+	return data
 }
 
 type BlockInfo struct {

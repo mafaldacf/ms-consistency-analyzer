@@ -20,8 +20,8 @@
         "db": "NoSQLDatabase"
       },
       "databases": [
-        "post_cache",
-        "post_db"
+        "post_db",
+        "post_cache"
       ]
     },
     "UploadService": {
