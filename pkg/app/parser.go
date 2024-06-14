@@ -7,6 +7,7 @@ import (
 	gotypes "go/types"
 	"path/filepath"
 	"slices"
+	"strings"
 
 	"golang.org/x/tools/go/packages"
 )
@@ -14,48 +15,94 @@ import (
 var postnotification_package_path string = "github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification"
 var foobar_package_path string = "github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar"
 
+func createPackage(goPackage *packages.Package, basePackagePath string) *types.Package {
+	modulePath := ""
+	if goPackage.Module != nil {
+		modulePath = goPackage.Module.Path
+	}
+
+	external := true
+	if strings.HasPrefix(goPackage.PkgPath, basePackagePath) {
+		logger.Logger.Infof("[APP] found internal package %s", goPackage.String())
+		external = false
+	} else {
+		logger.Logger.Infof("[APP] found external package %s", goPackage.String())
+	}
+
+	return &types.Package{
+		Name:              goPackage.Name,	// e.g. models
+		PackagePath:       goPackage.PkgPath,    // e.g. github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification/models
+		Module:            modulePath, 		// e.g. github.com/blueprint-uservices/blueprint/examples/postnotification/workflow
+		ExternalPackage:   external,
+		Imports:   		   make(map[string]*types.Package),
+		DeclaredTypes:     make(map[string]types.Type),
+		ServiceTypes:      make(map[string]*types.ServiceType),
+		DatastoreTypes:    make(map[string]*types.DatastoreType),
+		DeclaredVariables: make(map[string]types.Variable),
+		ImportedTypes:     make(map[string]types.Type),
+		TypesInfo: 		   goPackage.TypesInfo,
+	}
+}
+
 func (app *App) ParsePackages(servicesInfo []*types.ServiceInfo) {
-	var pkgName string
+	var basePackagePath string
 	switch app.Name {
 	case "postnotification":
-		pkgName = postnotification_package_path
+		basePackagePath = postnotification_package_path
 	case "foobar":
-		pkgName = foobar_package_path
+		basePackagePath = foobar_package_path
 	default:
 		logger.Logger.Fatalf("unknown application name %s", app.Name)
 	}
 
-	pkgPattern := pkgName + "/..."
-	pkgs, err := packages.Load(&packages.Config{Mode: packages.NeedName | packages.NeedModule | packages.NeedFiles | packages.NeedTypes | packages.NeedTypesInfo | packages.NeedSyntax}, pkgPattern)
+	packagesPattern := basePackagePath + "/..."
+	pkgs, err := packages.Load(&packages.Config{Mode: packages.NeedName | packages.NeedModule | packages.NeedFiles | packages.NeedTypes | packages.NeedTypesInfo | packages.NeedSyntax | packages.NeedImports}, packagesPattern)
 	if err != nil {
-		logger.Logger.Fatalf("error loading packages from %s: %s", pkgName, err.Error())
+		logger.Logger.Fatalf("error loading packages from %s: %s", basePackagePath, err.Error())
 	}
-
+	
 	var services []string
 	for _, info := range servicesInfo {
 		services = append(services, info.Name)
 	}
-
+	
+	allPackages := make(map[string]*types.Package)
+	allGoPackages := make(map[*types.Package]*packages.Package)
 	for _, goPkg := range pkgs {
-		logger.Logger.Infof("[APP] found new package %s", goPkg)
+		if _, exists := allPackages[goPkg.PkgPath]; !exists {
+			newPackage := createPackage(goPkg, basePackagePath)
+			allPackages[goPkg.PkgPath] = newPackage
+			allGoPackages[newPackage] = goPkg
 
-		pkg := &types.Package{
-			Name:              goPkg.Name,        // e.g. models
-			PackagePath:       goPkg.PkgPath,     // e.g. github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification/models
-			Module:            goPkg.Module.Path, // e.g. github.com/blueprint-uservices/blueprint/examples/postnotification/workflow
-			DeclaredTypes:     make(map[string]types.Type),
-			ServiceTypes:      make(map[string]*types.ServiceType),
-			DatastoreTypes:    make(map[string]*types.DatastoreType),
-			DeclaredVariables: make(map[string]types.Variable),
-			ImportedTypes:     make(map[string]types.Type),
-			TypesInfo: 		   goPkg.TypesInfo,
+			for k, p := range goPkg.Imports {
+				importedPackage, exists := allPackages[p.PkgPath]
+				if !exists {
+					importedPackage = createPackage(p, basePackagePath)
+					allPackages[p.PkgPath] = importedPackage
+					allGoPackages[importedPackage] = goPkg
+				}
+				newPackage.Imports[k] = importedPackage
+			}
 		}
+	}
+
+	for pkg, goPkg := range allGoPackages {
+		if pkg.ExternalPackage {
+			continue // skip parsing of external packages
+		}
+
+		logger.Logger.Infof("[APP] parsing package package %s", goPkg)
 		app.Packages[pkg.Name] = pkg
 
 		underlyingTypes := make(map[string]gotypes.Type)
 		visitedNamedTypes := make(map[string]bool)
 
-		for _, def := range goPkg.TypesInfo.Defs {
+		for key, t := range goPkg.TypesInfo.Types {
+			logger.Logger.Debugf("- TYPES %s: %v", key, t.Type)
+		}
+
+		for name, def := range goPkg.TypesInfo.Defs {
+			logger.Logger.Debugf("- DEFS %s: %v", name, def)
 			if def == nil {
 				continue
 			}

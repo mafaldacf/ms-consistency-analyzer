@@ -45,21 +45,24 @@ StorageService:
         - postID int64
         - post postnotification.Post struct
         - postIDStr string
-        - _ undefined
+        - _ err
+        - err error
         block 1 (IfThen):
         - ctx context.Context
         - reqID int64
         - postID int64
         - post postnotification.Post struct
         - postIDStr string
-        - _ undefined
+        - _ err
+        - err error
         block 2 (IfDone):
         - ctx context.Context
         - reqID int64
         - postID int64
         - post postnotification.Post struct
         - postIDStr string
-        - _ undefined
+        - _ err
+        - err error
         block 3 (Unreachable): []
         block 4 (Unreachable): []
     ReadPostNoSQL(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct, error):
@@ -69,58 +72,73 @@ StorageService:
         - reqID int64
         - postID int64
         - post postnotification.Post struct
-        - collection undefined
+        - collection backend.NoSQLCollection
+        - err error
         block 1 (IfThen):
         - ctx context.Context
         - reqID int64
         - postID int64
         - post postnotification.Post struct
-        - collection undefined
+        - collection backend.NoSQLCollection
+        - err error
         block 2 (IfDone):
         - ctx context.Context
         - reqID int64
         - postID int64
         - post postnotification.Post struct
-        - collection undefined
+        - collection backend.NoSQLCollection
+        - err error
         - query primitive.D
         - result undefined
+        - err undefined
         block 3 (Unreachable): []
         block 4 (IfThen):
         - ctx context.Context
         - reqID int64
         - postID int64
         - post postnotification.Post struct
-        - collection undefined
+        - collection backend.NoSQLCollection
+        - err error
         - query primitive.D
         - result undefined
+        - err undefined
         block 5 (IfDone):
         - ctx context.Context
         - reqID int64
         - postID int64
         - post postnotification.Post struct
-        - collection undefined
+        - collection backend.NoSQLCollection
+        - err error
         - query primitive.D
         - result undefined
+        - err undefined
         - res undefined
+        - err undefined
         block 6 (Unreachable): []
         block 7 (IfThen):
         - ctx context.Context
         - reqID int64
         - postID int64
         - post postnotification.Post struct
-        - collection undefined
+        - collection backend.NoSQLCollection
+        - err error
         - query primitive.D
         - result undefined
+        - err undefined
         - res undefined
+        - err undefined
         block 8 (IfDone):
         - ctx context.Context
         - reqID int64
         - postID int64
         - post postnotification.Post struct
-        - collection undefined
+        - collection backend.NoSQLCollection
+        - err error
         - query primitive.D
         - result undefined
+        - err undefined
         - res undefined
+        - err undefined
         block 9 (Unreachable): []
         block 10 (Unreachable): []
     StorePost(ctx context.Context, reqID int64, post postnotification.Post struct) error:
@@ -137,17 +155,20 @@ StorageService:
         - ctx context.Context
         - reqID int64
         - post postnotification.Post struct
-        - collection undefined
+        - collection backend.NoSQLCollection
+        - err error
         block 1 (IfThen):
         - ctx context.Context
         - reqID int64
         - post postnotification.Post struct
-        - collection undefined
+        - collection backend.NoSQLCollection
+        - err error
         block 2 (IfDone):
         - ctx context.Context
         - reqID int64
         - post postnotification.Post struct
-        - collection undefined
+        - collection backend.NoSQLCollection
+        - err error
         block 3 (Unreachable): []
         block 4 (Unreachable): []
   Internal Methods: {}
@@ -163,7 +184,8 @@ UploadService:
         - reqID int64
         - post postnotification.Post struct
         - message postnotification.Message struct
-        - _ undefined
+        - _ err
+        - err error
         block 1 (IfThen):
         - ctx context.Context
         - username string
@@ -171,7 +193,8 @@ UploadService:
         - reqID int64
         - post postnotification.Post struct
         - message postnotification.Message struct
-        - _ undefined
+        - _ err
+        - err error
         block 2 (IfDone):
         - ctx context.Context
         - username string
@@ -179,7 +202,8 @@ UploadService:
         - reqID int64
         - post postnotification.Post struct
         - message postnotification.Message struct
-        - _ undefined
+        - _ err
+        - err error
         block 3 (Unreachable): []
         block 4 (Unreachable): []
   Internal Methods: {}

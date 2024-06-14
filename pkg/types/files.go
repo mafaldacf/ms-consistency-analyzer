@@ -1,7 +1,6 @@
 package types
 
 import (
-	"fmt"
 	"go/ast"
 )
 
@@ -26,23 +25,4 @@ func (f *File) GetImport(alias string) (*Import, bool) {
 
 func (f *File) String() string {
 	return f.AbsPath
-}
-
-// ---------------------
-// ------- Import ------
-// ---------------------
-type Import struct {
-	Alias   		string
-	ImportPath    	string
-	PackageName 	string
-	// real pack of the imported package
-	// FIXME: if dev uses go.mod to replace paths then we have to translate to the real path
-	PackagePath 	string
-}
-
-func (i *Import) IsBlueprintPackage() bool {
-	return i.PackagePath == "github.com/blueprint-uservices/blueprint/runtime/core/backend"
-}
-func (i *Import) String() string {
-	return fmt.Sprintf("%s \"%s\" (package: %s)", i.Alias, i.ImportPath, i.PackagePath)
 }

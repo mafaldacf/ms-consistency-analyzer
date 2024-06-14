@@ -68,6 +68,10 @@ type BasicType struct {
 	Name 	string
 	Value 	string
 }
+type TupleType struct {
+	Type `json:"-"`
+	Types []Type
+}
 type InterfaceType struct {
 	Type `json:"-"`
 	Content string
@@ -220,6 +224,19 @@ func (t *BasicType) FullString() string {
 }
 func (t *BasicType) GetName() string {
 	return t.Value
+}
+// Tuple
+func (t *TupleType) String() string {
+	return ""
+}
+func (t *TupleType) FullString() string {
+	return ""
+}
+func (t *TupleType) GetName() string {
+	return ""
+}
+func (t *TupleType) GetTypes() []Type {
+	return t.Types
 }
 // Array
 func (t *ArrayType) String() string {

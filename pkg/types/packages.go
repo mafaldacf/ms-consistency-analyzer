@@ -15,13 +15,23 @@ type Package struct {
 	PackagePath       string
 	Files             []*File
 
+	// if it is a package outside of the application
+	// then it was not parsed and the fields below are nil
+	ExternalPackage   bool
+
+	// maps the package path to another parsed package
+	// REMINDER: IDK if key is the same of the package path (CHECK IF THIS CONCERNS THE REPLACEMENT IN GO.MODULE)
+	Imports 		  map[string]*Package
+
 	TypesInfo 		 *gotypes.Info
 	DeclaredVariables map[string]Variable
 	DeclaredTypes     map[string]Type
 	ServiceTypes 	  map[string]*ServiceType
+
 	// contains blueprint backend types for datastores
 	// key: type_name (e.g. Cache, Queue, etc)
 	DatastoreTypes 	  map[string]*DatastoreType
+	
 	// contains all imported types, including blueprint backend types for datastores
 	// key: package_path.type_name, where package_path is the real package name
 	ImportedTypes 	  map[string]Type
@@ -174,16 +184,27 @@ func (p *Package) Yaml() map[string]interface{} {
 	var key string
 	// info
 	info := make(map[string]interface{})
+	data["_info"] = info
+	// info - _package name
 	info["_package name"] = p.Name
+	// info - _package path
 	info["_package path"] = p.PackagePath
+	// info - _module
 	info["_module"] = p.Module
+	// info - files
 	files := []string{}
 	for _, f := range p.Files {
 		files = append(files, f.String())
-		}
+	}
 	key = fmt.Sprintf("files (%d)", len(files))
 	info[key] = files
-	data["_info"] = info
+	// info - imports
+	imports := []string{}
+	for k := range p.Imports {
+		imports = append(imports, k)
+	}
+	key = fmt.Sprintf("imports (%d)", len(imports))
+	info[key] = imports
 	// declared types
 	declaredTypes := []string{}
 	for _, f := range p.DeclaredTypes {

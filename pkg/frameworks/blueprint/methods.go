@@ -1,6 +1,7 @@
 package frameworks
 
 import (
+	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
 	"fmt"
 )
@@ -25,6 +26,7 @@ type BlueprintBackend struct {
 	types.Method
 	Name   string
 	Params []*types.FunctionField
+	Returns []*types.FunctionField
 	Write  bool
 }
 
@@ -42,6 +44,10 @@ func (b *BlueprintBackend) String() string {
 
 func (b *BlueprintBackend) GetParams() []*types.FunctionField {
 	return b.Params
+}
+
+func (b *BlueprintBackend) GetReturns() []*types.FunctionField {
+	return b.Returns
 }
 
 func (b *BlueprintBackend) IsWrite() bool {
@@ -109,18 +115,43 @@ func (b *BlueprintBackend) GetReadKeyIndex() int {
 
 func GetBackendMethod(name string) *BlueprintBackend {
 	switch name {
-	case "Cache.Put":
-		return &BlueprintBackend{Name: name, Write: true, Params: []*types.FunctionField{&ctxParam, &keyParam, &valueParam}}
-	case "Cache.Get":
-		return &BlueprintBackend{Name: name, Write: false, Params: []*types.FunctionField{&ctxParam, &keyParam, &valueParam}}
-	case "Queue.Push":
-		return &BlueprintBackend{Name: name, Write: true, Params: []*types.FunctionField{&ctxParam, &itemParam}}
-	case "Queue.Pop":
-		return &BlueprintBackend{Name: name, Write: false, Params: []*types.FunctionField{&ctxParam, &itemParam}}
+	case "Cache.Put": // Put(ctx context.Context, key string, value interface{}) error
+		return &BlueprintBackend{Name: name, Write: true, 
+			Params: []*types.FunctionField{&ctxParam, &keyParam, &valueParam},
+			Returns: []*types.FunctionField{&errorReturn},
+		}
+	case "Cache.Get": // Get(ctx context.Context, key string, val interface{}) (bool, error)
+		return &BlueprintBackend{Name: name, Write: false, 
+			Params: []*types.FunctionField{&ctxParam, &keyParam, &valueParam},
+			Returns: []*types.FunctionField{&boolReturn, &errorReturn},
+	}
+	case "Queue.Push": // Push(ctx context.Context, item interface{}) (bool, error)
+		return &BlueprintBackend{Name: name, Write: true, 
+			Params: []*types.FunctionField{&ctxParam, &itemParam},
+			Returns: []*types.FunctionField{&boolReturn, &errorReturn},
+		}
+	case "Queue.Pop": // Pop(ctx context.Context, dst interface{}) (bool, error)
+		return &BlueprintBackend{Name: name, Write: false, 
+			Params: []*types.FunctionField{&ctxParam, &itemParam},
+			Returns: []*types.FunctionField{&boolReturn, &errorReturn},
+		}
+	case "NoSQLDatabase.GetCollection": // GetCollection(ctx context.Context, db_name string, collection_name string) (NoSQLCollection, error)
+		return &BlueprintBackend{Name: name, Write: false, 
+			Params: []*types.FunctionField{&ctxParam, &dbNameParam, &collectionNameParam},
+			Returns: []*types.FunctionField{&NoSQLCollection, &errorReturn},
+		}
 	case "NoSQLCollection.InsertOne": // InsertOne(ctx context.Context, document interface{}) error
-		return &BlueprintBackend{Name: name, Write: false, Params: []*types.FunctionField{&ctxParam, &docParam}}
+		return &BlueprintBackend{Name: name, Write: false, 
+			Params: []*types.FunctionField{&ctxParam, &docParam},
+			Returns: []*types.FunctionField{&errorReturn},
+		}
 	case "NoSQLCollection.FindOne": // FindOne(ctx context.Context, filter bson.D, projection ...bson.D) (NoSQLCursor, error)
-		return &BlueprintBackend{Name: name, Write: false, Params: []*types.FunctionField{&ctxParam, &filterParam, &projectionParam}}
+		return &BlueprintBackend{Name: name, Write: false, 
+			Params: []*types.FunctionField{&ctxParam, &filterParam, &projectionParam},
+			Returns: []*types.FunctionField{&errorReturn},
+		}
+	default:
+		logger.Logger.Fatalf("could not find blueprint backend method with name %s", name)
 	}
 	return nil
 }
@@ -176,6 +207,52 @@ var projectionParam = types.FunctionField{
 		Type: &types.UserType{
 			Name:    "D",
 			Package: "bson",
+		},
+	},
+}
+var dbNameParam = types.FunctionField{
+	FieldInfo: types.FieldInfo{
+		Name: "db_name",
+		Type: &types.BasicType{
+			Name:    "string",
+		},
+	},
+}
+var collectionNameParam = types.FunctionField{
+	FieldInfo: types.FieldInfo{
+		Name: "collection_name",
+		Type: &types.BasicType{
+			Name:    "string",
+		},
+	},
+}
+var boolReturn = types.FunctionField{
+	FieldInfo: types.FieldInfo{
+		Type: &types.BasicType{
+			Name:    "err",
+		},
+	},
+}
+var NoSQLCursor = types.FunctionField{
+	FieldInfo: types.FieldInfo{
+		Type: &types.UserType{
+			Name:    "NoSQLCursor",
+			Package: "github.com/blueprint-uservices/blueprint/runtime/core/backend",
+		},
+	},
+}
+var NoSQLCollection = types.FunctionField{
+	FieldInfo: types.FieldInfo{
+		Type: &types.UserType{
+			Name:    "NoSQLCollection",
+			Package: "github.com/blueprint-uservices/blueprint/runtime/core/backend",
+		},
+	},
+}
+var errorReturn = types.FunctionField{
+	FieldInfo: types.FieldInfo{
+		Type: &types.BasicType{
+			Name:    "error",
 		},
 	},
 }

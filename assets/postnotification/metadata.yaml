@@ -5,6 +5,8 @@ common:
     _package path: github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification/common
     files (1):
     - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/common/utils.go
+    imports (1):
+    - strconv
   datastore types: []
   declared types (3):
   - .error
@@ -23,40 +25,48 @@ postnotification:
     - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/StorageService.go
     - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/UploadService.go
     - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/models.go
+    imports (7):
+    - strconv
+    - sync
+    - context
+    - github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification/common
+    - github.com/blueprint-uservices/blueprint/runtime/core/backend
+    - go.mongodb.org/mongo-driver/bson
+    - math/rand
   datastore types (3):
+  - backend.Cache
   - backend.NoSQLDatabase
   - backend.Queue
-  - backend.Cache
   declared types (18):
+  - postnotification.StorageService
+  - postnotification.UploadPost (...) ( int64, .error )
+  - postnotification.workerThread (...) .error
+  - postnotification.NewNotifyServiceImpl (...) ( postnotification.NotifyService, .error )
+  - postnotification.NotifyServiceImpl struct { storageService postnotification.StorageService, queue backend.Queue, numWorkers int }
+  - postnotification.Post struct { PostID int64, Text string, Timestamp int64, Creator string, ReqID int64 }
+  - postnotification.Message struct { ReqID string, PostID string, Timestamp string }
+  - postnotification.NewUploadServiceImpl (...) ( postnotification.UploadService, .error )
+  - postnotification.Run (...) .error
+  - postnotification.StorePost (...) .error
+  - postnotification.NewStorageServiceImpl (...) ( postnotification.StorageService, .error )
+  - postnotification.StorageServiceImpl struct { cache backend.Cache, db backend.NoSQLDatabase }
+  - postnotification.ReadPostNoSQL (...) ( postnotification.Post struct { PostID int64, Text string, Timestamp int64, Creator string, ReqID int64 }, .error )
+  - postnotification.handleMessage (...) .error
   - postnotification.UploadServiceImpl struct { storageService postnotification.StorageService, queue backend.Queue }
   - postnotification.UploadService
-  - postnotification.NewStorageServiceImpl (...) ( postnotification.StorageService, .error )
-  - postnotification.workerThread (...) .error
-  - postnotification.NotifyService
-  - postnotification.StorePostNoSQL (...) .error
-  - postnotification.NewNotifyServiceImpl (...) ( postnotification.NotifyService, .error )
-  - postnotification.Message struct { ReqID string, PostID string, Timestamp string }
-  - postnotification.NotifyServiceImpl struct { storageService postnotification.StorageService, queue backend.Queue, numWorkers int }
-  - postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator string }
   - .error
-  - postnotification.ReadPostNoSQL (...) ( postnotification.Post struct { Timestamp int64, Creator string, ReqID int64, PostID int64, Text string }, .error )
-  - postnotification.handleMessage (...) .error
-  - postnotification.UploadPost (...) ( int64, .error )
-  - postnotification.NewUploadServiceImpl (...) ( postnotification.UploadService, .error )
-  - postnotification.StorageServiceImpl struct { cache backend.Cache, db backend.NoSQLDatabase }
-  - postnotification.StorageService
-  - postnotification.Run (...) .error
+  - postnotification.NotifyService
   declared variables: []
   imported types (8):
-  - backend.Cache
-  - sync.WaitGroup
-  - primitive.D
-  - backend.NoSQLDatabase
-  - context.Context
   - backend.Queue
   - backend.NoSQLCursor
+  - backend.Cache
+  - backend.NoSQLDatabase
+  - context.Context
+  - primitive.D
+  - sync.WaitGroup
   - backend.NoSQLCollection
   service types (3):
-  - postnotification.UploadService
-  - postnotification.StorageService
   - postnotification.NotifyService
+  - postnotification.StorageService
+  - postnotification.UploadService

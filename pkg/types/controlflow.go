@@ -99,6 +99,17 @@ func (block *ParsedBlock) GetVariables() []Variable {
 	return block.Vars
 }
 
+func (block *ParsedBlock) GetLastestVariable(name string) Variable {
+	for i := len(block.Vars) - 1; i >= 0; i-- {
+		v := block.Vars[i]
+		if name == v.GetVariableInfo().GetName() {
+			return v
+		}
+	}
+	logger.Logger.Warnf("variable '%s' not found in declared block: %v", name, block.Vars)
+	return nil
+}
+
 func (block *ParsedBlock) AddVariables(variables []Variable) {
 	block.Vars = append(block.Vars, variables...)
 }

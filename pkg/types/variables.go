@@ -55,6 +55,7 @@ type Variable interface {
 	GetVariableInfo() *VariableInfo
 	GetDependencies() []Variable
 	AddReferenceWithID(target Variable, creator string)
+	DeepCopy() Variable
 }
 
 type Dataflow struct {
@@ -114,6 +115,11 @@ func (v *VariableInfo) SetIndirectWrite(variable Variable) {
 		Datastore: variable.GetVariableInfo().Dataflow.Datastore,
 		Service:   variable.GetVariableInfo().Dataflow.Service,
 	}
+}
+
+type TupleVariable struct {
+	Variable     `json:"-"`
+	Variables     []Variable    `json:"tuple_variables,omitempty"`
 }
 
 type CompositeVariable struct {
@@ -203,6 +209,15 @@ func (v *SelectorVariable) MarshalJSON() ([]byte, error) {
 func (v *CompositeVariable) String() string                 { return v.VariableInfo.String() }
 func (v *CompositeVariable) GetVariableInfo() *VariableInfo { return v.VariableInfo }
 func (v *CompositeVariable) GetDependencies() []Variable    { return v.Params }
+func (v *CompositeVariable) DeepCopy() Variable { 
+	copy := &CompositeVariable{
+		VariableInfo: v.VariableInfo,
+	}
+	for _, p := range v.Params {
+		copy.Params = append(copy.Params, p.DeepCopy())
+	}
+	return copy
+}
 
 func (v *CompositeVariable) AddReferenceWithID(target Variable, creator string) {
 	v.VariableInfo.AddReferenceWithID(target, creator)
@@ -241,6 +256,15 @@ func (v *GenericVariable) AddReferenceWithID(target Variable, creator string) {
 	}
 	logger.Logger.Debugf("added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
 }
+func (v *GenericVariable) DeepCopy() Variable { 
+	copy := &GenericVariable{
+		VariableInfo: v.VariableInfo,
+	}
+	for _, p := range v.Params {
+		copy.Params = append(copy.Params, p.DeepCopy())
+	}
+	return copy
+}
 
 // ---------------
 // STRUCT VARIABLE
@@ -253,6 +277,17 @@ func (v *StructVariable) GetDependencies() []Variable {
 		deps = append(deps, field)
 	}
 	return deps
+}
+
+func (v *StructVariable) DeepCopy() Variable { 
+	copy := &StructVariable{
+		VariableInfo: v.VariableInfo,
+		Fields: make(map[string]Variable),
+	}
+	for n, p := range v.Fields {
+		copy.Fields[n] = p.DeepCopy()
+	}
+	return copy
 }
 
 func (v *StructVariable) AddFieldIfNotExists(name string, field Variable) {
@@ -319,6 +354,17 @@ func (v *MapVariable) GetDependencies() []Variable {
 	}
 	return dependencies
 }
+
+func (v *MapVariable) DeepCopy() Variable { 
+	copy := &MapVariable{
+		VariableInfo: v.VariableInfo,
+	}
+	for k, v := range v.KeyValues {
+		copy.KeyValues[k] = v.DeepCopy()
+	}
+	return copy
+}
+
 func (v *MapVariable) MarshalJSON() ([]byte, error) {
 	type kvstruct struct {
 		Key   Variable
@@ -366,7 +412,31 @@ func (v *MapVariable) AddReferenceWithID(target Variable, creator string) {
 func (v *ArrayVariable) String() string                 { return v.VariableInfo.String() }
 func (v *ArrayVariable) GetVariableInfo() *VariableInfo { return v.VariableInfo }
 func (v *ArrayVariable) AddElement(element Variable)    { v.Elements = append(v.Elements, element) }
+func (v *ArrayVariable) AddElements(element []Variable)    { v.Elements = append(v.Elements, element...) }
 func (v *ArrayVariable) GetDependencies() []Variable    { return v.Elements }
+func (v *ArrayVariable) DeepCopy() Variable { 
+	copy := &ArrayVariable{
+		VariableInfo: v.VariableInfo,
+	}
+	for _, v := range v.Elements {
+		copy.Elements = append(copy.Elements, v.DeepCopy())
+	}
+	return copy
+}
+
+// --------------
+// TUPLE VARIABLE
+// --------------
+func (v *TupleVariable) String() string { return "tuple variable"}
+func (v *TupleVariable) GetVariableInfo() *VariableInfo { return nil }
+func (v *TupleVariable) GetDependencies() []Variable    { return nil }
+func (v *TupleVariable) DeepCopy() Variable { 
+	copy := &TupleVariable{}
+	for _, v := range v.Variables {
+		copy.Variables = append(copy.Variables, v.DeepCopy())
+	}
+	return copy
+}
 
 // ----------------
 // POINTER VARIABLE
@@ -381,6 +451,13 @@ func (v *PointerVariable) AddReferenceWithID(target Variable, creator string) {
 	} else {
 		logger.Logger.Warnf("referenced variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
 	}
+}
+func (v *PointerVariable) DeepCopy() Variable { 
+	copy := &PointerVariable{
+		VariableInfo: v.VariableInfo,
+		PointerTo: v.PointerTo.DeepCopy(),
+	}
+	return copy
 }
 
 // ----------------
@@ -397,6 +474,13 @@ func (v *AddressVariable) AddReferenceWithID(target Variable, creator string) {
 		logger.Logger.Warnf("referenced variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
 	}
 }
+func (v *AddressVariable) DeepCopy() Variable { 
+	copy := &AddressVariable{
+		VariableInfo: v.VariableInfo,
+		AddressOf: v.AddressOf.DeepCopy(),
+	}
+	return copy
+}
 
 // ---------------
 // INLINE VARIABLE
@@ -406,6 +490,12 @@ func (v *InlineVariable) GetVariableInfo() *VariableInfo { return v.VariableInfo
 func (v *InlineVariable) GetDependencies() []Variable    { return nil }
 func (v *InlineVariable) AddReferenceWithID(target Variable, creator string) {
 	logger.Logger.Warnf("IGNORING REFERENCES FOR INLINE VARIABLE!!")
+}
+func (v *InlineVariable) DeepCopy() Variable { 
+	copy := &InlineVariable{
+		VariableInfo: v.VariableInfo,
+	}
+	return copy
 }
 
 // --------------
@@ -417,6 +507,12 @@ func (v *BasicVariable) GetDependencies() []Variable    { return nil }
 func (v *BasicVariable) AddReferenceWithID(target Variable, creator string) {
 	v.VariableInfo.AddReferenceWithID(target, creator)
 }
+func (v *BasicVariable) DeepCopy() Variable { 
+	copy := &BasicVariable{
+		VariableInfo: v.VariableInfo,
+	}
+	return copy
+}
 
 // -----------------
 // INTEFACE VARIABLE
@@ -426,6 +522,12 @@ func (v *InterfaceVariable) GetVariableInfo() *VariableInfo { return v.VariableI
 func (v *InterfaceVariable) GetDependencies() []Variable    { return nil }
 func (v *InterfaceVariable) AddReferenceWithID(target Variable, creator string) {
 	v.VariableInfo.AddReferenceWithID(target, creator)
+}
+func (v *InterfaceVariable) DeepCopy() Variable { 
+	copy := &InterfaceVariable{
+		VariableInfo: v.VariableInfo,
+	}
+	return copy
 }
 
 // -------------
@@ -437,6 +539,12 @@ func (v *ChanVariable) GetDependencies() []Variable    { return nil }
 func (v *ChanVariable) AddReferenceWithID(target Variable, creator string) {
 	v.VariableInfo.AddReferenceWithID(target, creator)
 }
+func (v *ChanVariable) DeepCopy() Variable { 
+	copy := &ChanVariable{
+		VariableInfo: v.VariableInfo,
+	}
+	return copy
+}
 
 // -----------------
 // SELECTOR VARIABLE
@@ -446,6 +554,13 @@ func (v *SelectorVariable) GetVariableInfo() *VariableInfo { return v.Variable.G
 func (v *SelectorVariable) GetDependencies() []Variable    { return v.Variable.GetDependencies() }
 func (v *SelectorVariable) AddReferenceWithID(target Variable, creator string) {
 	logger.Logger.Warnf("IGNORING REFERENCES FOR SELECTOR VARIABLE!!")
+}
+func (v *SelectorVariable) DeepCopy() Variable { 
+	copy := &SelectorVariable{
+		Parent: v.Parent.DeepCopy(),
+		Field: v.Field,
+	}
+	return copy
 }
 
 // -------------

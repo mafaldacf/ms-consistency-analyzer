@@ -12,8 +12,8 @@ NotifyService:
   - StorageService
 StorageService:
   datastores:
-  - post_db
   - post_cache
+  - post_db
   fields:
   - name: cache
     type: Cache

@@ -19,134 +19,69 @@ func ParseServiceMethodCFG(node *service.ServiceNode, method *service.ParsedFunc
 	logger.Logger.Debugln()
 }
 
-func visitBasicBlock(node *service.ServiceNode, parsedFuncDecl *service.ParsedFuncDecl, parsedBlock *types.ParsedBlock, visited map[int32]bool) {
+func visitBasicBlock(node *service.ServiceNode, method *service.ParsedFuncDecl, parsedBlock *types.ParsedBlock, visited map[int32]bool) {
 	if visited[parsedBlock.GetIndex()] {
 		return
 	}
 	visited[parsedBlock.GetIndex()] = true
 	for _, blockNode := range parsedBlock.GetNodes() {
-		// variable declaration and assignments
-		stmts, found := getStmtsIfInlineGoRoutine(blockNode)
-		if found {
-			for _, stmt := range stmts {
-				saveDeclsAndAssigns(node, parsedBlock, stmt)
-			}
-		} else {
-			saveDeclsAndAssigns(node, parsedBlock, blockNode)
-		}
-		// service, function, and database calls
-		saveCalls(node, blockNode, parsedBlock, parsedFuncDecl)
+		parseExpressions(node, method, parsedBlock, blockNode)
 	}
 
 	for _, succ := range parsedBlock.GetSuccs() {
-		parsedSucc := parsedFuncDecl.ParsedCfg.GetParsedBlockAtIndex(succ.Index)
+		parsedSucc := method.ParsedCfg.GetParsedBlockAtIndex(succ.Index)
 		parsedSucc.CopyVarsFromPredecessor(parsedBlock)
-		visitBasicBlock(node, parsedFuncDecl, parsedSucc, visited)
+		visitBasicBlock(node, method, parsedSucc, visited)
 	}
 }
 
-func getStmtsIfInlineGoRoutine(node ast.Node) ([]ast.Node, bool) {
-	var stmts []ast.Node
-	var found bool = false
-	if goStmt, ok := node.(*ast.GoStmt); ok {
-		if funcLit, ok := goStmt.Call.Fun.(*ast.FuncLit); ok {
-			for _, stmt := range funcLit.Body.List {
-				stmts = append(stmts, stmt)
-				found = true
-			}
-		}
-	}
-	return stmts, found
-}
-
-func saveDeclsAndAssigns(serviceNode *service.ServiceNode, parsedBlock *types.ParsedBlock, node ast.Node) {
-	vars, ok := types.IsVarDeclOrAssign(serviceNode.File, parsedBlock.Vars, node)
-	if ok {
-		logger.Logger.Debugf("adding variables %v to block", vars)
-		parsedBlock.AddVariables(vars)
-	}
-}
-
-// hasFuncCall
-// check if we found an ast node representing a database or service function call
-//
-// note that function calls can be embedded into:
-//  1. ExprStmt 	 - simple function call
-//  2. AssignStmt - assignment like errors from the return values of the function
-//  3. ParenExpr  - e.g. when used as a bool value in an if statement (assumes it is inside a parentheses)
-//     in this case, the unfolded node from ParenExpr is a CallExpr
-func saveCalls(node *service.ServiceNode, blockNode ast.Node, parsedBlock *types.ParsedBlock, parsedFuncDecl *service.ParsedFuncDecl) bool {
-	switch n := blockNode.(type) {
-	case *ast.ExprStmt:
-		return saveCalls(node, n.X, parsedBlock, parsedFuncDecl)
-	case *ast.AssignStmt:
-		found := false
-		for _, rvalue := range n.Rhs {
-			found = saveCalls(node, rvalue, parsedBlock, parsedFuncDecl)
-		}
-		return found
-	case *ast.ParenExpr:
-		return saveCalls(node, n.X, parsedBlock, parsedFuncDecl)
+func saveCalls(service *service.ServiceNode, method *service.ParsedFuncDecl, parsedBlock *types.ParsedBlock, node ast.Node) {
+	logger.Logger.Infof("---------- %v", utils.GetType(node))
+	switch e := node.(type) {
 	case *ast.CallExpr:
-		return saveCallIfValid(node, n, parsedBlock, parsedFuncDecl)
-	case *ast.IncDecStmt:
-		return saveCalls(node, n.X, parsedBlock, parsedFuncDecl)
+		logger.Logger.Infof("FFFOOOOUNNDDD CALL EXPR %v", e)
+		saveCallIfValid(service, method, parsedBlock, e)
 	case *ast.CompositeLit:
-		for _, elt := range n.Elts {
-			saveCalls(node, elt, parsedBlock, parsedFuncDecl)
+		// e.g. creating a structure where a field is obtained from a function call
+		logger.Logger.Infof("FFFOOOOUNNDDD COMPOSITE LITE %v", e)
+		for _, elt := range e.Elts {
+			saveCalls(service, method, parsedBlock, elt)
 		}
 	case *ast.KeyValueExpr:
-		saveCalls(node, n.Key, parsedBlock, parsedFuncDecl)
-		saveCalls(node, n.Value, parsedBlock, parsedFuncDecl)
-	case *ast.DeferStmt:
-		return saveCalls(node, n.Call.Fun, parsedBlock, parsedFuncDecl)
+		logger.Logger.Infof("FFFOOOOUNNDDD KEYYY VALLUEEEEE EXPR %v", e)
+		saveCalls(service, method, parsedBlock, e.Key)
+		saveCalls(service, method, parsedBlock, e.Value)
 	case *ast.SelectorExpr:
-		return saveCalls(node, n.X, parsedBlock, parsedFuncDecl)
-	// ------------
-	// Go Routines
-	// ------------
-	case *ast.GoStmt:
-		stmts, found := getStmtsIfInlineGoRoutine(blockNode)
-		if found {
-			for _, stmt := range stmts {
-				saveCalls(node, stmt, parsedBlock, parsedFuncDecl)
-			}
-		}
-	// -------------------
-	// Declaring Variables
-	// ------------------
-	case *ast.DeclStmt:
-		for _, spec := range n.Decl.(*ast.GenDecl).Specs {
-			saveCalls(node, spec, parsedBlock, parsedFuncDecl)
-		}
-	// ----------------------
-	// Nodes with expressions
-	// ----------------------
-	case *ast.UnaryExpr: // e.g. <-forever
-		saveCalls(node, n.X, parsedBlock, parsedFuncDecl)
-	case *ast.BinaryExpr: // e.g. if err != nil
-		saveCalls(node, n.X, parsedBlock, parsedFuncDecl)
-		saveCalls(node, n.Y, parsedBlock, parsedFuncDecl)
-	case *ast.ReturnStmt:
-		for _, r := range n.Results {
-			saveCalls(node, r, parsedBlock, parsedFuncDecl)
-		}
-	case *ast.ValueSpec:
-		for _, v := range n.Values {
-			saveCalls(node, v, parsedBlock, parsedFuncDecl)
-		}
-	// ---------
-	// Remaining
-	// ---------
+		logger.Logger.Infof("FFFOOOOUNNDDD SELECTOR EXPR %v", e)
+		saveCalls(service, method, parsedBlock, e.X)
 	case *ast.Ident:
+		logger.Logger.Infof("FFFOOOOUNNDDD IDENT %v", e)
 	case *ast.TypeAssertExpr:
+		logger.Logger.Infof("FFFOOOOUNNDDD TYPE ASSERT EXPR %v", e)
 	case *ast.BasicLit: // e.g. integers (1), strings ("foo"), etc
-	case *ast.IfStmt:
+		logger.Logger.Infof("FFFOOOOUNNDDD BASIC LIT %v", e)
 	default:
-		logger.Logger.Fatalf("unknown type in saveCalls for type %s: %v", utils.GetType(n), n)
+		logger.Logger.Fatalf("unknown type in saveCalls for type %s: %v", utils.GetType(e), e)
 	}
+}
 
-	return false
+func saveCallIfValid(service *service.ServiceNode, method *service.ParsedFuncDecl, parsedBlock *types.ParsedBlock, callExpr *ast.CallExpr) bool {
+	parsedCall := saveFuncCallIfValid(service, method, callExpr)
+	if parsedCall == nil {
+		return false
+	}
+	for i, arg := range callExpr.Args {
+		param := getOrCreateVariable(service, method, parsedBlock, arg, false)
+
+		// upgrade variable with known type from function method
+		if _, ok := param.GetVariableInfo().Type.(*types.GenericType); ok {
+			param.GetVariableInfo().Type = parsedCall.GetMethod().GetParams()[i].GetType()
+			logger.Logger.Warnf("upgrading variable %s with new type %s", param.GetVariableInfo().Name, param.GetVariableInfo().Type.String())
+		}
+		parsedCall.AddParam(param)
+	}
+	logger.Logger.Infof("[CFG] found call %s", parsedCall.String())
+	return true
 }
 
 func hasCurrentServiceRecvIdent(selectorExpr *ast.SelectorExpr, expectedRecvIdent *ast.Ident) (bool, *ast.Ident) {
@@ -163,7 +98,7 @@ func getFuncCallIfSelectedServiceField(node ast.Node, expectedRecvIdent *ast.Ide
 	//    ^ident2 ^ident ^method
 	// e.g. f.storageService.StorePost
 	//      ^ident2  ^ident    ^method
-	if funcCall, ok := node.(*ast.CallExpr); ok {
+	if funcCall, ok := node.(*ast.CallExpr); ok {		
 		if methodSel, ok := funcCall.Fun.(*ast.SelectorExpr); ok {
 			// get first selector (e.g. storageService)
 			if fieldSel, ok := methodSel.X.(*ast.SelectorExpr); ok {
@@ -178,8 +113,8 @@ func getFuncCallIfSelectedServiceField(node ast.Node, expectedRecvIdent *ast.Ide
 	return false, nil, nil, nil, nil
 }
 
-func saveFuncCallIfValid(node *service.ServiceNode, callExpr *ast.CallExpr, parsedFuncDecl *service.ParsedFuncDecl) service.Call {
-	ok, funcCall, methodIdent, fieldIdent, serviceRecvIdent := getFuncCallIfSelectedServiceField(callExpr, parsedFuncDecl.Recv)
+func saveFuncCallIfValid(node *service.ServiceNode, method *service.ParsedFuncDecl, callExpr *ast.CallExpr) service.Call {
+	ok, funcCall, methodIdent, fieldIdent, serviceRecvIdent := getFuncCallIfSelectedServiceField(callExpr, method.Recv)
 	if !ok {
 		return nil
 	}
@@ -207,7 +142,7 @@ func saveFuncCallIfValid(node *service.ServiceNode, callExpr *ast.CallExpr, pars
 					CallerTypeName: &types.ServiceType{Name: node.Name, Package: node.GetPackageName()},
 					CalleeTypeName: serviceField.GetType(),
 				}
-				parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, svcParsedCallExpr)
+				method.Calls = append(method.Calls, svcParsedCallExpr)
 				logger.Logger.Warnf("[CFG] found new service call %s", svcParsedCallExpr.Name)
 				return svcParsedCallExpr
 			}
@@ -229,7 +164,7 @@ func saveFuncCallIfValid(node *service.ServiceNode, callExpr *ast.CallExpr, pars
 					CallerTypeName: &types.ServiceType{Name: node.Name, Package: node.GetPackageName()},
 					DbInstance:     databaseField.DbInstance,
 				}
-				parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, dbParsedCallExpr)
+				method.Calls = append(method.Calls, dbParsedCallExpr)
 				logger.Logger.Warnf("[CFG] found new database call %s", dbParsedCallExpr.Name)
 				return dbParsedCallExpr
 			}
@@ -245,29 +180,9 @@ func saveFuncCallIfValid(node *service.ServiceNode, callExpr *ast.CallExpr, pars
 			},
 			ServiceTypeName: &types.ServiceType{Name: node.Name, Package: node.GetPackageName()},
 		}
-		parsedFuncDecl.Calls = append(parsedFuncDecl.Calls, internalCall)
+		method.Calls = append(method.Calls, internalCall)
 		logger.Logger.Warnf("[CFG] found new internal call %s", internalCall.Name)
 		return internalCall
 	}
 	return nil
-}
-
-func saveCallIfValid(serviceNode *service.ServiceNode, callExpr *ast.CallExpr, parsedBlock *types.ParsedBlock, parsedFuncDecl *service.ParsedFuncDecl) bool {
-	parsedCall := saveFuncCallIfValid(serviceNode, callExpr, parsedFuncDecl)
-	if parsedCall == nil {
-		logger.Logger.Warnf("invalid call %s", callExpr.Fun)
-		return false
-	}
-	for i, arg := range callExpr.Args {
-		param := types.GetOrCreateVariable(serviceNode.File, parsedBlock.Vars, arg, false)
-
-		// upgrade variable with known type from function method
-		if _, ok := param.GetVariableInfo().Type.(*types.GenericType); ok {
-			param.GetVariableInfo().Type = parsedCall.GetMethod().GetParams()[i].GetType()
-			logger.Logger.Warnf("upgrading variable %s with new type %s", param.GetVariableInfo().Name, param.GetVariableInfo().Type.String())
-		}
-		parsedCall.AddParam(param)
-	}
-	logger.Logger.Infof("[CFG] found call %s", parsedCall.String())
-	return true
 }

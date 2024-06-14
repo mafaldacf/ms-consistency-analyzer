@@ -92,6 +92,9 @@ func (p *ParsedFuncDecl) Signature() string {
 func (p *ParsedFuncDecl) GetParams() []*types.FunctionField {
 	return p.Params
 }
+func (p *ParsedFuncDecl) GetReturns() []*types.FunctionField {
+	return p.Returns
+}
 
 type Call interface {
 	String() string
