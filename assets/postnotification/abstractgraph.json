@@ -347,7 +347,7 @@
                       {
                         "variable": {
                           "name": "ReqID",
-                          "type": "int64",
+                          "type": "string",
                           "id": -1
                         }
                       }
@@ -363,7 +363,7 @@
                       {
                         "variable": {
                           "name": "PostID",
-                          "type": "int64",
+                          "type": "string",
                           "id": -1
                         }
                       }

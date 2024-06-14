@@ -4,9 +4,9 @@ import (
 	bp "analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
-	"fmt"
+	"analyzer/pkg/utils"
 	gotypes "go/types"
-	"os"
+	"path/filepath"
 	"slices"
 
 	"golang.org/x/tools/go/packages"
@@ -37,7 +37,6 @@ func (app *App) ParsePackages(servicesInfo []*types.ServiceInfo) {
 		services = append(services, info.Name)
 	}
 
-	repr := "---\n\n"
 	for _, goPkg := range pkgs {
 		logger.Logger.Infof("[APP] found new package %s", goPkg)
 
@@ -45,11 +44,11 @@ func (app *App) ParsePackages(servicesInfo []*types.ServiceInfo) {
 			Name:              goPkg.Name,        // e.g. models
 			PackagePath:       goPkg.PkgPath,     // e.g. github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification/models
 			Module:            goPkg.Module.Path, // e.g. github.com/blueprint-uservices/blueprint/examples/postnotification/workflow
-			DeclaredTypes:     make(map[string]*types.UserType),
+			DeclaredTypes:     make(map[string]types.Type),
 			ServiceTypes:      make(map[string]*types.ServiceType),
 			DatastoreTypes:    make(map[string]*types.DatastoreType),
 			DeclaredVariables: make(map[string]types.Variable),
-			ImportedTypes:     make(map[string]*types.UserType),
+			ImportedTypes:     make(map[string]types.Type),
 		}
 		app.Packages[pkg.Name] = pkg
 
@@ -61,7 +60,7 @@ func (app *App) ParsePackages(servicesInfo []*types.ServiceInfo) {
 			}
 			if namedGoType, ok := def.Type().(*gotypes.Named); ok {
 				typeName := namedGoType.Obj().Name()
-				objPkg := namedGoType.Obj().Pkg()
+				objectPackage := namedGoType.Obj().Pkg()
 
 				if visitedNamedTypes[typeName] {
 					continue
@@ -69,35 +68,34 @@ func (app *App) ParsePackages(servicesInfo []*types.ServiceInfo) {
 				visitedNamedTypes[typeName] = true
 
 				// sanity check, e.g. 'error' is an interface type with no package path
-				pkgPath := ""
-				pkgName := ""
-				if objPkg != nil {
-					pkgName = objPkg.Name()
-					pkgPath = objPkg.Path()
+				objectPackagePath := ""
+				if objectPackage != nil {
+					objectPackagePath = objectPackage.Path()
 				}
 
-				if _, isInterface := namedGoType.Underlying().(*gotypes.Interface); isInterface && pkgPath != "" {
-					packageName := namedGoType.Obj().Pkg().Path()
-					if slices.Contains(services, typeName) {
-						serviceType := &types.ServiceType{
-							Name: 		typeName,
-							Package: 	packageName,
-						}
-						pkg.ServiceTypes[typeName] = serviceType
-						logger.Logger.Debugf("added service type for interface %s @ %s", typeName, packageName)
-						continue
-					} else if bp.IsBlueprintPackage(packageName) && bp.IsBlueprintBackend(typeName) {
-						datastoreType := &types.DatastoreType{
-							Name: typeName,
-							Package: packageName,
-						}
-						pkg.DatastoreTypes[typeName] = datastoreType
-						logger.Logger.Debugf("added datastore type for interface %s @ %s", typeName, packageName)
-						continue
+				_, isInterface := namedGoType.Underlying().(*gotypes.Interface)
+				if isInterface && bp.IsBlueprintPackage(objectPackagePath) && bp.IsBlueprintBackend(typeName) {
+					datastoreType := &types.DatastoreType{
+						Name: typeName,
+						Package: objectPackagePath,
 					}
-				}
-
-				if pkgPath == pkg.PackagePath {
+					pkg.AddDatastoreType(datastoreType)
+					pkg.AddImportedType(datastoreType)
+					logger.Logger.Warnf("added datastore type for interface %s @ %s", typeName, objectPackagePath)
+				} else if isInterface && objectPackagePath != "" && slices.Contains(services, typeName) {
+					//TODO confirm that service package is the same of the object package
+					serviceType := &types.ServiceType{
+						Name: 		typeName,
+						Package: 	objectPackagePath,
+					}
+					pkg.AddServiceType(serviceType)
+					if pkg.HasPath(objectPackagePath) {
+						pkg.AddDeclaredType(serviceType)
+					} else {
+						pkg.AddImportedType(serviceType)
+					}
+					logger.Logger.Debugf("added service type for interface %s @ %s", typeName, objectPackagePath)
+				} else if pkg.HasPath(objectPackagePath) {
 					// new type defined in the current package
 					namedType := &types.UserType{
 						Name:    typeName,
@@ -105,43 +103,37 @@ func (app *App) ParsePackages(servicesInfo []*types.ServiceInfo) {
 					}
 					// since we can have nested structures with definitions out of order
 					// there, here we only add an entry and latter we generate the subtypes
-					pkg.DeclaredTypes[typeName] = namedType
+					pkg.AddDeclaredType(namedType)
 					underlyingTypes[typeName] = namedGoType.Underlying()
 					logger.Logger.Infof("\t [APP] added named type %s", namedType.String())
 				} else {
 					importedType := &types.UserType{
 						Name: typeName,
-						Package: pkgName,
+						Package: objectPackagePath, // this is the real package name
 					}
-					pkg.ImportedTypes[typeName] = importedType
+					pkg.AddImportedType(importedType)
 				}
 			}
 		}
-		for n, namedType := range pkg.DeclaredTypes {
-			namedType.UserType = types.GenerateUnderlyingTypesFromGoType(pkg, underlyingTypes[n])
+		for n, declaredType := range pkg.DeclaredTypes {
+			if userType, ok := declaredType.(*types.UserType); ok {
+				userType.UserType = pkg.GenerateUnderlyingTypesFromGoType(underlyingTypes[n])
+			}
 		}
 
 		for i, fileAst := range goPkg.Syntax {
 			file := &types.File{
 				Ast:     fileAst,
+				Name: 	 filepath.Base(goPkg.GoFiles[i]),
 				AbsPath: goPkg.GoFiles[i],
 				Package: pkg,
 				Imports: make(map[string]*types.Import),
 			}
-			pkg.Files = append(pkg.Files, file)
+			pkg.LinkFile(file)
 		}
-		str := pkg.FullString()
-		logger.Logger.Infof("[APP] added new package %s", str)
-		repr += str + "---\n\n"
-		fmt.Println("----")
+		logger.Logger.Debugf("[APP] added new package %s", pkg.Name)
 	}
 
-
-	path := fmt.Sprintf("assets/%s/metadata.yaml", app.Name)
-	file, err := os.Create(path)
-	if err != nil {
-		logger.Logger.Fatalf("error creating file %s: %s", path, err.Error())
-	}
-	defer file.Close()
-	file.WriteString(repr)
+	yamlData := app.Yaml()
+	utils.SaveToYamlFile(yamlData, app.Name, "metadata")
 }

@@ -6,11 +6,9 @@ import (
 	"analyzer/pkg/detector"
 	bp "analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
+	"analyzer/pkg/utils"
 	"flag"
 	"fmt"
-	"os"
-
-	"gopkg.in/yaml.v2"
 )
 
 func main() {
@@ -30,7 +28,6 @@ func main() {
 		return
 	}
 	app.ParsePackages(servicesInfo)
-	return
 	app.RegisterDatabaseInstances(databaseInstances)
 	app.RegisterServiceNodes(servicesInfo)
 	app.BuildServiceNodes()
@@ -65,8 +62,7 @@ func main() {
 }
 
 func saveDatastores(app *app.App) {
-	schemaRepresentation := make(map[string]interface{})
-
+	data := make(map[string]interface{})
 	for _, ds := range app.Databases {
 		schema := make(map[string]interface{})
 		var fields []map[string]string
@@ -76,18 +72,13 @@ func saveDatastores(app *app.App) {
 		schema["backend"] = ds.GetDatastore().GetTypeString()
 		schema["kind"] = ds.GetDatastore().GetKindString()
 		schema["schema"] = fields
-		schemaRepresentation[ds.GetName()] = schema
+		data[ds.GetName()] = schema
 	}
-
-	// Marshal the schema into YAML
-	yamlData, _ := yaml.Marshal(schemaRepresentation)
-	path := fmt.Sprintf("assets/%s/datastores.yaml", app.Name)
-	os.WriteFile(path, yamlData, 0644)
+	utils.SaveToYamlFile(data, app.Name, "datastores")
 }
 
 func saveServices(app *app.App) {
-	schemaRepresentation := make(map[string]interface{})
-
+	data := make(map[string]interface{})
 	for _, service := range app.Services {
 		properties := make(map[string]interface{})
 		
@@ -107,11 +98,7 @@ func saveServices(app *app.App) {
 		properties["fields"] = fields
 		properties["services"] = services
 		properties["datastores"] = datastores
-		schemaRepresentation[service.Name] = properties
+		data[service.Name] = properties
 	}
-
-	// Marshal the schema into YAML
-	yamlData, _ := yaml.Marshal(schemaRepresentation)
-	path := fmt.Sprintf("assets/%s/services.yaml", app.Name)
-	os.WriteFile(path, yamlData, 0644)
+	utils.SaveToYamlFile(data, app.Name, "services")
 }

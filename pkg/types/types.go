@@ -9,14 +9,13 @@ type Type interface {
 	String() string
 	FullString() string
 	GetName() string
+	// only fore UserType, ServiceType, and DatastoreType
+	GetPackage() string
 }
 
+// NOTE: package is always the real package path
+
 type ServiceType struct {
-	Type    `json:"-"`
-	Package string
-	Name    string
-}
-type DatastoreType struct {
 	Type    `json:"-"`
 	Package string
 	Name    string
@@ -24,6 +23,11 @@ type DatastoreType struct {
 type UserType struct {
 	Type     `json:"-"`
 	UserType Type
+	Package string
+	Name    string
+}
+type DatastoreType struct {
+	Type    `json:"-"`
 	Package string
 	Name    string
 }
@@ -86,6 +90,9 @@ func (t *ServiceType) FullString() string {
 func (t *ServiceType) GetName() string {
 	return t.Name
 }
+func (t *ServiceType) GetPackage() string {
+	return t.Package
+}
 // Backend
 func (t *DatastoreType) String() string {
 	return fmt.Sprintf("%s.%s", packageAlias(t.Package), t.Name)
@@ -95,6 +102,9 @@ func (t *DatastoreType) FullString() string {
 }
 func (t *DatastoreType) GetName() string {
 	return t.Name
+}
+func (t *DatastoreType) GetPackage() string {
+	return t.Package
 }
 // User
 func (t *UserType) String() string {
@@ -111,6 +121,9 @@ func (t *UserType) FullString() string {
 }
 func (t *UserType) GetName() string {
 	return t.Name
+}
+func (t *UserType) GetPackage() string {
+	return t.Package
 }
 // Imported
 func (t *ImportedType) String() string {
@@ -199,7 +212,8 @@ func (t *StructType) FullString() string {
 		}
 		i++
 	}
-	return s + " }"
+	s += " }"
+	return s
 }
 func (t *StructType) GetName() string {
 	return t.String()

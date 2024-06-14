@@ -4,61 +4,33 @@ import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/utils"
 	"fmt"
-	"go/ast"
 	gotypes "go/types"
+	"slices"
 )
 
-// ---------------------
-// ------ Package ------
-// ---------------------
 type Package struct {
 	Name              string
 	Module            string
 	PackagePath       string
-	DeclaredTypes     map[string]*UserType
-	ImportedTypes 	  map[string]*UserType
-
-	ServiceTypes 	  map[string]*ServiceType
-	DatastoreTypes 	  map[string]*DatastoreType
+	Files             []*File
 
 	DeclaredVariables map[string]Variable
-	Files             []*File
+	DeclaredTypes     map[string]Type
+	ServiceTypes 	  map[string]*ServiceType
+	// contains blueprint backend types for datastores
+	// key: type_name (e.g. Cache, Queue, etc)
+	DatastoreTypes 	  map[string]*DatastoreType
+	// contains all imported types, including blueprint backend types for datastores
+	// key: package_path.type_name, where package_path is the real package name
+	ImportedTypes 	  map[string]Type
 }
 
 func (p *Package) String() string {
 	return p.Name
 }
 
-func (p *Package) FullString() string {
-	s := p.Name + ":\n"
-	s += "- Package Name: \t" + p.Name + "\n"
-	s += "- Package Path: \t" + p.PackagePath + "\n"
-	s += "- Module: \t\t" + p.Module + "\n"
-	s += "- Files:\n"
-	for _, f := range p.Files {
-		s += fmt.Sprintf("\t - %s\n", f.String())
-	}
-	s += "- Declared Types:\n"
-	for _, t := range p.DeclaredTypes {
-		s += fmt.Sprintf("\t - %s\n", t.FullString())
-	}
-	s += "- Imported Types:\n"
-	for _, t := range p.ImportedTypes {
-		s += fmt.Sprintf("\t - %s\n", t.FullString())
-	}
-	s += "- Service Types:\n"
-	for _, t := range p.ServiceTypes {
-		s += fmt.Sprintf("\t - %s\n", t.FullString())
-	}
-	s += "- Datastore Types:\n"
-	for _, t := range p.DatastoreTypes {
-		s += fmt.Sprintf("\t - %s\n", t.FullString())
-	}
-	s += "- Declared Variables:\n"
-	for _, t := range p.DeclaredVariables {
-		s += fmt.Sprintf("\t - %s\n", t.String())
-	}
-	return s
+func (p *Package) HasPath(path string) bool {
+	return p.PackagePath == path
 }
 
 func (p *Package) GetFile(filepath string) *File {
@@ -71,27 +43,92 @@ func (p *Package) GetFile(filepath string) *File {
 	return nil
 }
 
-func GenerateUnderlyingTypesFromGoType(pkg *Package, goType gotypes.Type) Type {
+func importedTypeKey(packagePath string, typeName string) string {
+	return packagePath + "." + typeName
+}
+
+func (p *Package) AddDeclaredType(t Type) {
+	if _, exists := p.DeclaredTypes[t.GetName()]; exists {
+		logger.Logger.Fatalf("package %s already constains declared type %s", p.Name, t.String())
+	}
+	p.DeclaredTypes[t.GetName()] = t
+}
+
+func (p *Package) AddImportedType(t Type) {
+	key := importedTypeKey(t.GetPackage(), t.GetName())
+	if _, exists := p.ImportedTypes[key]; exists {
+		logger.Logger.Fatalf("package %s already constains imported type %s", p.Name, t.String())
+	}
+	p.ImportedTypes[key] = t
+}
+
+func (p *Package) AddServiceType(t *ServiceType) {
+	if _, exists := p.ServiceTypes[t.Name]; exists {
+		logger.Logger.Fatalf("package %s already constains service type %s", p.Name, t.String())
+	}
+	p.ServiceTypes[t.Name] = t
+}
+
+func (p *Package) AddDatastoreType(t *DatastoreType) {
+	if _, exists := p.DatastoreTypes[t.Name]; exists {
+		logger.Logger.Fatalf("package %s already constains datastore type %s", p.Name, t.String())
+	}
+	p.DatastoreTypes[t.Name] = t
+}
+
+func (p *Package) LinkFile(file *File) {
+	if slices.Contains(p.Files, file) {
+		logger.Logger.Fatalf("package %s already constains file %s", p.Name, file.Name)
+	}
+	p.Files = append(p.Files, file)
+	file.Package = p
+}
+
+
+func (p *Package) GetImportedType(packagePath string, typeName string) (Type, bool) {
+	key := importedTypeKey(packagePath, typeName)
+	if e, ok := p.ImportedTypes[key]; ok {
+		return e, true
+	}
+	logger.Logger.Fatalf("unknown imported package %s in package %s with imported types list %v", key, p.Name, p.ImportedTypes)
+	return nil, false
+}
+
+func (p *Package) GetNamedType(name string) (Type, bool) {
+	if e, ok := p.DeclaredTypes[name]; ok {
+		return e, true
+	}
+	if e, ok := p.ServiceTypes[name]; ok {
+		return e, true
+	}
+	if e, ok := p.DatastoreTypes[name]; ok {
+		return e, true
+	}
+	logger.Logger.Fatalf("unknown named type %s in package %s", name, p.Name)
+	return nil, false
+}
+
+func (p *Package) GenerateUnderlyingTypesFromGoType(goType gotypes.Type) Type {
 	switch t := goType.(type) {
 	case *gotypes.Named:
 		name := t.Obj().Name()
-		if namedType, ok := pkg.DeclaredTypes[name]; ok {
+		if namedType, ok := p.DeclaredTypes[name]; ok {
 			return namedType
 		}
-		if serviceType, ok := pkg.ServiceTypes[name]; ok {
+		if serviceType, ok := p.ServiceTypes[name]; ok {
 			return serviceType
 		}
-		if datastoreType, ok := pkg.DatastoreTypes[name]; ok {
+		if datastoreType, ok := p.DatastoreTypes[name]; ok {
 			return datastoreType
 		}
-		logger.Logger.Fatalf("named type %s not declared in package %s", t.String(), pkg.String())
+		logger.Logger.Fatalf("named type %s not declared in package %s", t.String(), p.String())
 	case *gotypes.Struct:
 		structType := &StructType{
 			FieldTypes: make(map[string]Type),
 		}
 		for i := 0; i < t.NumFields(); i++ {
 			var v *gotypes.Var = t.Field(i)
-			structType.FieldTypes[v.Name()] = GenerateUnderlyingTypesFromGoType(pkg, v.Type())
+			structType.FieldTypes[v.Name()] = p.GenerateUnderlyingTypesFromGoType(v.Type())
 		}
 		return structType
 	case *gotypes.Basic:
@@ -108,41 +145,71 @@ func GenerateUnderlyingTypesFromGoType(pkg *Package, goType gotypes.Type) Type {
 	return nil
 }
 
-// ---------------------
-// -------- File -------
-// ---------------------
-type File struct {
-	Ast     *ast.File
-	Package *Package
-	// absolute filepath
-	AbsPath string
-	// key is the alias of the import
-	Imports map[string]*Import
-}
 
-func (f *File) GetImport(alias string) (*Import, bool) {
-	impt, ok := f.Imports[alias]
-	return impt, ok
-}
-func (f *File) String() string {
-	return f.AbsPath
-}
-
-// ---------------------
-// ------- Import ------
-// ---------------------
-type Import struct {
-	Alias   string
-	Path    string
-	Package string
-}
-
-func (i *Import) IsBlueprintPackage() bool {
-	return i.Package == "github.com/blueprint-uservices/blueprint/runtime/core/backend"
-}
-func (i *Import) BuildPackageName() {
-	i.Package = i.Path
-}
-func (i *Import) String() string {
-	return fmt.Sprintf("%s \"%s\" (package: %s)", i.Alias, i.Path, i.Package)
+func (p *Package) Yaml() map[string]interface{} {
+	data := make(map[string]interface{})
+	var key string
+	// info
+	info := make(map[string]interface{})
+	info["_package name"] = p.Name
+	info["_package path"] = p.PackagePath
+	info["_module"] = p.Module
+	files := []string{}
+	for _, f := range p.Files {
+		files = append(files, f.String())
+		}
+	key = fmt.Sprintf("files (%d)", len(files))
+	info[key] = files
+	data["_info"] = info
+	// declared types
+	declaredTypes := []string{}
+	for _, f := range p.DeclaredTypes {
+		declaredTypes = append(declaredTypes, f.FullString())
+	}
+	key = "declared types"
+	if len(declaredTypes) > 0 {
+		key += fmt.Sprintf(" (%d)", len(declaredTypes))
+	}
+	data[key] = declaredTypes
+	// imported types
+	importedTypes := []string{}
+	for _, f := range p.ImportedTypes {
+		importedTypes = append(importedTypes, f.FullString())
+	}
+	key = "imported types"
+	if len(importedTypes) > 0 {
+		key += fmt.Sprintf(" (%d)", len(importedTypes))
+	}
+	data[key] = importedTypes
+	// service types
+	serviceTypes := []string{}
+	for _, f := range p.ServiceTypes {
+		serviceTypes = append(serviceTypes, f.FullString())
+	}
+	key = "service types"
+	if len(serviceTypes) > 0 {
+		key += fmt.Sprintf(" (%d)", len(serviceTypes))
+	}
+	data[key] = serviceTypes
+	// datastore types
+	datastoreTypes := []string{}
+	for _, f := range p.DatastoreTypes {
+		datastoreTypes = append(datastoreTypes, f.FullString())
+	}
+	key = "datastore types"
+	if len(datastoreTypes) > 0 {
+		key += fmt.Sprintf(" (%d)", len(datastoreTypes))
+	}
+	data[key] = datastoreTypes
+	// declared variables
+	declaredVariables := []string{}
+	for _, f := range p.DeclaredVariables {
+		declaredVariables = append(declaredVariables, f.String())
+	}
+	key = "declared variables"
+	if len(declaredVariables) > 0 {
+		key += fmt.Sprintf(" (%d)", len(declaredVariables))
+	}
+	data[key] = declaredVariables
+	return data
 }

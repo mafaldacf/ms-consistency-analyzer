@@ -111,16 +111,3 @@ func (app *App) matchServiceDatabases(servicesInfo []*types.ServiceInfo) {
 		logger.Logger.Infof("[APP] registered service node %s with %d service(s) and %d database(s)", node.Name, len(node.Services), len(node.Databases))
 	}
 }
-
-func (app *App) getOrCreatePackage(name string) *types.Package {
-	if pkg, ok := app.Packages[name]; ok {
-		return pkg
-	}
-	pkg := &types.Package{
-		Name:              name,
-		DeclaredTypes:     make(map[string]*types.UserType),
-		DeclaredVariables: make(map[string]types.Variable),
-	}
-	app.Packages[name] = pkg
-	return pkg
-}

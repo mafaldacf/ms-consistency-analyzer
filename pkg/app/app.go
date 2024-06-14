@@ -81,3 +81,11 @@ func (app *App) Save() {
 	file.Write(data)
 	logger.Logger.Infof("[JSON] app saved at %s", path)
 }
+
+func (app *App) Yaml() map[string]interface{} {
+	data := make(map[string]interface{})
+	for _, p := range app.Packages {
+		data[p.Name] = p.Yaml()
+	}
+	return data
+}

@@ -5,7 +5,6 @@ import (
 	"analyzer/pkg/utils"
 	"go/ast"
 	"go/token"
-	"slices"
 	"strconv"
 	"strings"
 )
@@ -83,20 +82,21 @@ func ComputeType(typeExpr ast.Expr, file *File) Type {
 				Name: e.Name,
 			}
 		}
-		if userType, ok := GetDeclaredUserType(file, typeExpr); ok {
-			return userType
+		if namedType, ok := file.Package.GetNamedType(e.Name); ok {
+			return namedType
 		}
+		logger.Logger.Fatalf("cannot compute type for ident: %s", e)
 	case *ast.SelectorExpr:
-		if pkgIdent, ok := e.X.(*ast.Ident); ok {
-			if impt, ok := file.GetImport(pkgIdent.Name); ok {
-				userType := &UserType{
-					Name:     e.Sel.Name,
-					Package:  impt.Alias,
-					UserType: nil,
+		if xIdent, ok := e.X.(*ast.Ident); ok {
+			// e.X is the alias
+			if impt, ok := file.GetImport(xIdent.Name); ok {
+				if importedType, ok := file.Package.GetImportedType(impt.PackagePath, e.Sel.Name); ok {
+					return importedType
 				}
-				return userType
 			}
+			//TODO: user can be trying to select a field or something?
 		}
+		logger.Logger.Fatalf("cannot compute type for selector expr: %s", e)
 	case *ast.ChanType:
 		return &ChanType{
 			ChanType: ComputeType(e.Value, file),
@@ -187,50 +187,6 @@ func computeFunctionCallName(expr ast.Expr) string {
 	return ""
 }
 
-func GetDeclaredUserType(file *File, expr ast.Expr) (*UserType, bool) {
-	// FIX THIS HARDCODED CODE
-	file.Package.DeclaredTypes["Post"] = &UserType{
-		Name:    "Post",
-		Package: file.Package.Name,
-		UserType: &StructType{
-			FieldTypes: map[string]Type{
-				"ReqID":     &BasicType{Name: "int64"},
-				"PostID":    &BasicType{Name: "int64"},
-				"Text":      &BasicType{Name: "string"},
-				"Timestamp": &BasicType{Name: "int64"},
-				"Creator":   &BasicType{Name: "string"},
-			},
-		},
-	}
-	file.Package.DeclaredTypes["Message"] = &UserType{
-		Name:    "Message",
-		Package: file.Package.Name,
-		UserType: &StructType{
-			FieldTypes: map[string]Type{
-				"ReqID":     &BasicType{Name: "int64"},
-				"PostID":    &BasicType{Name: "int64"},
-				"Timestamp": &BasicType{Name: "int64"},
-			},
-		},
-	}
-	services := []string{"StorageService", "NotifyService", "UploadService"}
-
-	switch e := expr.(type) {
-	case *ast.Ident:
-		if namedType, ok := file.Package.DeclaredTypes[e.Name]; ok {
-			return namedType, true
-		} else if slices.Contains(services, e.Name) {
-			return &UserType{
-				Name:     e.Name,
-				Package:  file.Package.Name,
-				UserType: nil,
-			}, true
-		}
-	}
-	logger.Logger.Fatalf("could not get declared type for expr %s (type = %s)", expr, utils.GetType(expr))
-	return nil, false
-}
-
 func LookupVariables(file *File, blockVars []Variable, expr ast.Expr, assign bool) (variable Variable) {
 	switch e := expr.(type) {
 	case *ast.Ident:
@@ -249,26 +205,27 @@ func LookupVariables(file *File, blockVars []Variable, expr ast.Expr, assign boo
 	// FIXME: ACTUALLY THE TYPE OF A STRUCT SHOULD REFERENCE A USER TYPE THAT WAS PREVIOUSLY DEFINED
 	case *ast.CompositeLit:
 		if ident, ok := e.Type.(*ast.Ident); ok {
-			if userType, found := GetDeclaredUserType(file, ident); found {
-
-				if _, ok := userType.UserType.(*StructType); ok {
-					structVariable := &StructVariable{
-						VariableInfo: &VariableInfo{
-							Type: userType,
-							Id:   VARIABLE_INLINE_ID,
-						},
-						Fields: make(map[string]Variable),
-					}
-					for _, elt := range e.Elts {
-						keyvalue := elt.(*ast.KeyValueExpr)
-						key := keyvalue.Key.(*ast.Ident)
-						eltVar := LookupVariables(file, blockVars, keyvalue.Value, false)
-						if eltVar.GetVariableInfo().Name == "" {
-							eltVar.GetVariableInfo().SetName(key.Name)
+			if namedType, found := file.Package.GetNamedType(ident.Name); found {
+				if userType, ok := namedType.(*UserType); ok {
+					if _, ok := userType.UserType.(*StructType); ok {
+						structVariable := &StructVariable{
+							VariableInfo: &VariableInfo{
+								Type: userType,
+								Id:   VARIABLE_INLINE_ID,
+							},
+							Fields: make(map[string]Variable),
 						}
-						structVariable.AddFieldIfNotExists(key.Name, eltVar)
+						for _, elt := range e.Elts {
+							keyvalue := elt.(*ast.KeyValueExpr)
+							key := keyvalue.Key.(*ast.Ident)
+							eltVar := LookupVariables(file, blockVars, keyvalue.Value, false)
+							if eltVar.GetVariableInfo().Name == "" {
+								eltVar.GetVariableInfo().SetName(key.Name)
+							}
+							structVariable.AddFieldIfNotExists(key.Name, eltVar)
+						}
+						variable = structVariable
 					}
-					variable = structVariable
 				}
 			}
 		} else if arrayTypeAst, ok := e.Type.(*ast.ArrayType); ok {

@@ -31,10 +31,12 @@ func (node *ServiceNode) ParseImports() {
 		}
 
 		impt := &types.Import{
-			Alias: alias,
-			Path:  path,
+			Alias: 		 alias,
+			ImportPath:  path,
+			//FIXME
+			PackagePath: path,
+			PackageName: "",
 		}
-		impt.BuildPackageName()
 		node.File.Imports[alias] = impt
 		logger.Logger.Debugf("> %s for %s\n", alias, path)
 	}
@@ -209,49 +211,37 @@ func (node *ServiceNode) RegisterStructure() {
 func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string, idx int) {
 	fieldType := types.ComputeType(field.Type, node.File)
 	switch t := fieldType.(type) {
-	case *types.UserType:
-		if t.Package != "" {
-			// check if it is a blueprint backend import
-			if impt, ok := node.File.Imports[t.Package]; ok && impt.IsBlueprintPackage() && frameworks.IsBlueprintBackend(t.Name) {
-				dbField := &types.DatabaseField{
-					FieldInfo: types.FieldInfo{
-						Ast:  field,
-						Name: paramName,
-						Type: t,
-					},
-					IsQueue: frameworks.IsBlueprintBackendQueue(t.Name),
-					Idx:     idx,
-				}
-				if dbField.IsQueue {
-					node.ImplementsQueue = true
-				}
-				node.Fields[paramName] = dbField
-				return
-			}
+	case *types.DatastoreType:
+		dbField := &types.DatabaseField{
+			FieldInfo: types.FieldInfo{
+				Ast:  field,
+				Name: paramName,
+				Type: t,
+			},
+			IsQueue: frameworks.IsBlueprintBackendQueue(t.Name),
+			Idx:     idx,
 		}
-		// upgrade to service field
-		if service, ok := node.Services[t.Name]; ok && service.GetPackageName() == t.Package {
-			node.Fields[paramName] = &types.ServiceField{
-				FieldInfo: types.FieldInfo{
-					Ast:  field,
-					Name: paramName,
-					Type: &types.ServiceType{
-						Name:    t.Name,
-						Package: t.Package,
-					},
-				},
-			}
-			// clear to signar garbage collector
-			t = nil
-			return
+		if dbField.IsQueue {
+			node.ImplementsQueue = true
 		}
-	}
-	node.Fields[paramName] = &types.GenericField{
-		FieldInfo: types.FieldInfo{
-			Ast:  field,
-			Name: paramName,
-			Type: fieldType,
-		},
+		node.Fields[paramName] = dbField
+	case *types.ServiceType:
+		node.Fields[paramName] = &types.ServiceField{
+			FieldInfo: types.FieldInfo{
+				Ast:  field,
+				Name: paramName,
+				Type: t,
+			},
+		}
+	default:
+		logger.Logger.Warnf("SAVED GENERIC FIELD for %s", paramName)
+		node.Fields[paramName] = &types.GenericField{
+			FieldInfo: types.FieldInfo{
+				Ast:  field,
+				Name: paramName,
+				Type: fieldType,
+			},
+		}
 	}
 }
 
