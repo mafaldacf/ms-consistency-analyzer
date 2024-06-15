@@ -6,28 +6,12 @@ import (
 	"fmt"
 )
 
-func IsBlueprintPackage(name string) bool {
-	return name == "github.com/blueprint-uservices/blueprint/runtime/core/backend"
-}
-
-func IsBlueprintBackend(name string) bool {
-	switch name {
-	case "Queue", "NoSQLDatabase", "Cache":
-		return true
-	}
-	return false
-}
-
-func IsBlueprintBackendQueue(name string) bool {
-	return name == "Queue"
-}
-
 type BlueprintBackend struct {
 	types.Method
-	Name   string
-	Params []*types.FunctionField
+	Name    string
+	Params  []*types.FunctionField
 	Returns []*types.FunctionField
-	Write  bool
+	Write   bool
 }
 
 func (b *BlueprintBackend) String() string {
@@ -113,41 +97,101 @@ func (b *BlueprintBackend) GetReadKeyIndex() int {
 	return -1
 }
 
+func BuildBackendComponentMethods(name string) []*BlueprintBackend {
+	var methods []*BlueprintBackend
+	switch name {
+	// --------
+	// Backends
+	// --------
+	case "Cache":
+		// Put(ctx context.Context, key string, value interface{}) error
+		methods = append(methods, &BlueprintBackend{Name: name, Write: true,
+			Params:  []*types.FunctionField{&ctxParam, &keyParam, &valueParam},
+			Returns: []*types.FunctionField{&errorReturn},
+		})
+		// Get(ctx context.Context, key string, val interface{}) (bool, error)
+		methods = append(methods, &BlueprintBackend{Name: name, Write: false,
+			Params:  []*types.FunctionField{&ctxParam, &keyParam, &valueParam},
+			Returns: []*types.FunctionField{&boolReturn, &errorReturn},
+		})
+	case "Queue":
+		// Push(ctx context.Context, item interface{}) (bool, error)
+		methods = append(methods, &BlueprintBackend{Name: name, Write: true,
+			Params:  []*types.FunctionField{&ctxParam, &itemParam},
+			Returns: []*types.FunctionField{&boolReturn, &errorReturn},
+		})
+		// // Pop(ctx context.Context, dst interface{}) (bool, error)
+		methods = append(methods, &BlueprintBackend{Name: name, Write: false,
+			Params:  []*types.FunctionField{&ctxParam, &itemParam},
+			Returns: []*types.FunctionField{&boolReturn, &errorReturn},
+		})
+	case "NoSQLDatabase":
+		// GetCollection(ctx context.Context, db_name string, collection_name string) (NoSQLCollection, error)
+		methods = append(methods, &BlueprintBackend{Name: name, Write: false,
+			Params:  []*types.FunctionField{&ctxParam, &dbNameParam, &collectionNameParam},
+			Returns: []*types.FunctionField{&NoSQLCollection, &errorReturn},
+		})
+	// ----------------
+	// NoSQL Components
+	// ----------------
+	case "NoSQLCollection":
+		// InsertOne(ctx context.Context, document interface{}) error
+		methods = append(methods, &BlueprintBackend{Name: name, Write: false,
+			Params:  []*types.FunctionField{&ctxParam, &docParam},
+			Returns: []*types.FunctionField{&errorReturn},
+		})
+		// FindOne(ctx context.Context, filter bson.D, projection ...bson.D) (NoSQLCursor, error)
+		methods = append(methods, &BlueprintBackend{Name: name, Write: false,
+			Params:  []*types.FunctionField{&ctxParam, &filterParam, &projectionParam},
+			Returns: []*types.FunctionField{&errorReturn},
+		})
+	case "NoSQLCursor":
+		// One(ctx context.Context, obj interface{}) (bool, error)
+		methods = append(methods, &BlueprintBackend{Name: name, Write: false,
+			Params:  []*types.FunctionField{&ctxParam, &objParam},
+			Returns: []*types.FunctionField{&boolReturn, &errorReturn},
+		})
+	default:
+		logger.Logger.Fatalf("could not build methods for backend %s", name)
+	}
+	return methods
+}
+
 func GetBackendMethod(name string) *BlueprintBackend {
 	switch name {
 	case "Cache.Put": // Put(ctx context.Context, key string, value interface{}) error
-		return &BlueprintBackend{Name: name, Write: true, 
-			Params: []*types.FunctionField{&ctxParam, &keyParam, &valueParam},
+		return &BlueprintBackend{Name: name, Write: true,
+			Params:  []*types.FunctionField{&ctxParam, &keyParam, &valueParam},
 			Returns: []*types.FunctionField{&errorReturn},
 		}
 	case "Cache.Get": // Get(ctx context.Context, key string, val interface{}) (bool, error)
-		return &BlueprintBackend{Name: name, Write: false, 
-			Params: []*types.FunctionField{&ctxParam, &keyParam, &valueParam},
+		return &BlueprintBackend{Name: name, Write: false,
+			Params:  []*types.FunctionField{&ctxParam, &keyParam, &valueParam},
 			Returns: []*types.FunctionField{&boolReturn, &errorReturn},
-	}
+		}
 	case "Queue.Push": // Push(ctx context.Context, item interface{}) (bool, error)
-		return &BlueprintBackend{Name: name, Write: true, 
-			Params: []*types.FunctionField{&ctxParam, &itemParam},
+		return &BlueprintBackend{Name: name, Write: true,
+			Params:  []*types.FunctionField{&ctxParam, &itemParam},
 			Returns: []*types.FunctionField{&boolReturn, &errorReturn},
 		}
 	case "Queue.Pop": // Pop(ctx context.Context, dst interface{}) (bool, error)
-		return &BlueprintBackend{Name: name, Write: false, 
-			Params: []*types.FunctionField{&ctxParam, &itemParam},
+		return &BlueprintBackend{Name: name, Write: false,
+			Params:  []*types.FunctionField{&ctxParam, &itemParam},
 			Returns: []*types.FunctionField{&boolReturn, &errorReturn},
 		}
 	case "NoSQLDatabase.GetCollection": // GetCollection(ctx context.Context, db_name string, collection_name string) (NoSQLCollection, error)
-		return &BlueprintBackend{Name: name, Write: false, 
-			Params: []*types.FunctionField{&ctxParam, &dbNameParam, &collectionNameParam},
+		return &BlueprintBackend{Name: name, Write: false,
+			Params:  []*types.FunctionField{&ctxParam, &dbNameParam, &collectionNameParam},
 			Returns: []*types.FunctionField{&NoSQLCollection, &errorReturn},
 		}
 	case "NoSQLCollection.InsertOne": // InsertOne(ctx context.Context, document interface{}) error
-		return &BlueprintBackend{Name: name, Write: false, 
-			Params: []*types.FunctionField{&ctxParam, &docParam},
+		return &BlueprintBackend{Name: name, Write: false,
+			Params:  []*types.FunctionField{&ctxParam, &docParam},
 			Returns: []*types.FunctionField{&errorReturn},
 		}
 	case "NoSQLCollection.FindOne": // FindOne(ctx context.Context, filter bson.D, projection ...bson.D) (NoSQLCursor, error)
-		return &BlueprintBackend{Name: name, Write: false, 
-			Params: []*types.FunctionField{&ctxParam, &filterParam, &projectionParam},
+		return &BlueprintBackend{Name: name, Write: false,
+			Params:  []*types.FunctionField{&ctxParam, &filterParam, &projectionParam},
 			Returns: []*types.FunctionField{&errorReturn},
 		}
 	default:
@@ -192,6 +236,12 @@ var docParam = types.FunctionField{
 		Type: &types.InterfaceType{},
 	},
 }
+var objParam = types.FunctionField{
+	FieldInfo: types.FieldInfo{
+		Name: "obj",
+		Type: &types.InterfaceType{},
+	},
+}
 var filterParam = types.FunctionField{
 	FieldInfo: types.FieldInfo{
 		Name: "filter",
@@ -214,7 +264,7 @@ var dbNameParam = types.FunctionField{
 	FieldInfo: types.FieldInfo{
 		Name: "db_name",
 		Type: &types.BasicType{
-			Name:    "string",
+			Name: "string",
 		},
 	},
 }
@@ -222,14 +272,14 @@ var collectionNameParam = types.FunctionField{
 	FieldInfo: types.FieldInfo{
 		Name: "collection_name",
 		Type: &types.BasicType{
-			Name:    "string",
+			Name: "string",
 		},
 	},
 }
 var boolReturn = types.FunctionField{
 	FieldInfo: types.FieldInfo{
 		Type: &types.BasicType{
-			Name:    "err",
+			Name: "err",
 		},
 	},
 }
@@ -251,8 +301,7 @@ var NoSQLCollection = types.FunctionField{
 }
 var errorReturn = types.FunctionField{
 	FieldInfo: types.FieldInfo{
-		Type: &types.BasicType{
-			Name:    "error",
-		},
+		// error is actually an interface
+		Type: &types.InterfaceType{},
 	},
 }

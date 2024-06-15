@@ -2,8 +2,10 @@ package app
 
 import (
 	bp "analyzer/pkg/frameworks/blueprint"
+	frameworks "analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
+	"analyzer/pkg/utils"
 	gotypes "go/types"
 	"path/filepath"
 	"slices"
@@ -12,35 +14,97 @@ import (
 	"golang.org/x/tools/go/packages"
 )
 
-var postnotification_package_path string = "github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification"
-var foobar_package_path string = "github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar"
+const (
+	PACKAGE_PATH_POST_NOTIFICATION string = "github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification"
+	PACKAGE_PATH_FOOBAR            string = "github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar"
+	// blueprint backend package
+	PACKAGE_PATH_BLUEPRINT string = "github.com/blueprint-uservices/blueprint/runtime/core/backend"
+)
 
-func createPackage(goPackage *packages.Package, basePackagePath string) *types.Package {
+func isBlueprintPackagePath(name string) bool {
+	return name == PACKAGE_PATH_BLUEPRINT
+}
+
+func createPackage(app *App, goPackage *packages.Package, basePackagePath string) *types.Package {
 	modulePath := ""
 	if goPackage.Module != nil {
 		modulePath = goPackage.Module.Path
 	}
 
-	external := true
-	if strings.HasPrefix(goPackage.PkgPath, basePackagePath) {
-		logger.Logger.Infof("[APP] found internal package %s", goPackage.String())
-		external = false
-	} else {
-		logger.Logger.Infof("[APP] found external package %s", goPackage.String())
-	}
-
-	return &types.Package{
-		Name:              goPackage.Name,	// e.g. models
-		PackagePath:       goPackage.PkgPath,    // e.g. github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification/models
-		Module:            modulePath, 		// e.g. github.com/blueprint-uservices/blueprint/examples/postnotification/workflow
-		ExternalPackage:   external,
-		Imports:   		   make(map[string]*types.Package),
+	newPackage := &types.Package{
+		Name:              goPackage.Name,    // e.g. models
+		PackagePath:       goPackage.PkgPath, // e.g. github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification/models
+		Module:            modulePath,        // e.g. github.com/blueprint-uservices/blueprint/examples/postnotification/workflow
+		ImportedPackages:  make(map[string]*types.Package),
 		DeclaredTypes:     make(map[string]types.Type),
 		ServiceTypes:      make(map[string]*types.ServiceType),
-		DatastoreTypes:    make(map[string]*types.DatastoreType),
+		DatastoreTypes:    make(map[string]types.Type),
 		DeclaredVariables: make(map[string]types.Variable),
 		ImportedTypes:     make(map[string]types.Type),
-		TypesInfo: 		   goPackage.TypesInfo,
+		TypesInfo:         goPackage.TypesInfo,
+	}
+
+	//TODO ADD FLAG FOR BLUEPRINT PACKAGE
+	if strings.HasPrefix(goPackage.PkgPath, basePackagePath) {
+		logger.Logger.Debugf("[APP] found internal package %s", goPackage.String())
+		newPackage.Type = types.APP
+		app.Packages[newPackage.Name] = newPackage
+	} else if goPackage.PkgPath == PACKAGE_PATH_BLUEPRINT {
+		logger.Logger.Debugf("[APP] found blueprint package %s", goPackage.String())
+		newPackage.Type = types.BLUEPRINT
+		app.BlueprintPackages[newPackage.Name] = newPackage
+	} else {
+		logger.Logger.Debugf("[APP] found external package %s", goPackage.String())
+		newPackage.Type = types.EXTERNAL
+	}
+
+	return newPackage
+}
+
+func parseBlueprintPackage(bpPackage *types.Package) {
+	packagesPattern := bpPackage.PackagePath
+	pkgs, err := packages.Load(&packages.Config{Mode: packages.NeedName | packages.NeedModule | packages.NeedFiles | packages.NeedTypes | packages.NeedTypesInfo | packages.NeedSyntax | packages.NeedImports}, packagesPattern)
+	if err != nil {
+		logger.Logger.Fatalf("error loading packages from %s: %s", bpPackage.PackagePath, err.Error())
+	}
+	// should be only one package
+	if len(pkgs) != 1 {
+		logger.Logger.Fatalf("unexpected number of packages (%d) in blueprint backend %s", len(pkgs), bpPackage.PackagePath)
+	}
+	goPkg := pkgs[0]
+	visitedNamedTypes := make(map[string]bool)
+	for _, def := range goPkg.TypesInfo.Defs {
+		if def == nil {
+			continue
+		}
+		if _, isInterface := def.Type().Underlying().(*gotypes.Interface); isInterface {
+			if namedGoType, ok := def.Type().(*gotypes.Named); ok {
+				if visitedNamedTypes[namedGoType.String()] {
+					continue
+				}
+				visitedNamedTypes[namedGoType.String()] = true
+
+				typeName := namedGoType.Obj().Name()
+				objectPackage := namedGoType.Obj().Pkg()
+				if objectPackage == nil || objectPackage.Path() != bpPackage.PackagePath {
+					continue
+				}
+
+				if bp.IsBlueprintBackendComponent(typeName) {
+					backendType := &frameworks.BlueprintBackendType{
+						Name:           typeName,
+						Package:        objectPackage.Path(),
+						NoSQLComponent: bp.IsBlueprintNoSQLComponent(typeName),
+					}
+					backendType.Methods = frameworks.BuildBackendComponentMethods(backendType.Name)
+					bpPackage.AddDeclaredType(backendType)
+					logger.Logger.Debugf("[BLUEPRINT] added blueprint backend %s", backendType.String())
+
+				} else {
+					logger.Logger.Debugf("[BLUEPRINT] ignoring type %s (%s): %v", utils.GetType(def.Type()), utils.GetType(def.Type().Underlying()), def.Type().String())
+				}
+			}
+		}
 	}
 }
 
@@ -48,9 +112,9 @@ func (app *App) ParsePackages(servicesInfo []*types.ServiceInfo) {
 	var basePackagePath string
 	switch app.Name {
 	case "postnotification":
-		basePackagePath = postnotification_package_path
+		basePackagePath = PACKAGE_PATH_POST_NOTIFICATION
 	case "foobar":
-		basePackagePath = foobar_package_path
+		basePackagePath = PACKAGE_PATH_FOOBAR
 	default:
 		logger.Logger.Fatalf("unknown application name %s", app.Name)
 	}
@@ -60,88 +124,96 @@ func (app *App) ParsePackages(servicesInfo []*types.ServiceInfo) {
 	if err != nil {
 		logger.Logger.Fatalf("error loading packages from %s: %s", basePackagePath, err.Error())
 	}
-	
+
 	var services []string
 	for _, info := range servicesInfo {
 		services = append(services, info.Name)
 	}
-	
+
 	allPackages := make(map[string]*types.Package)
 	allGoPackages := make(map[*types.Package]*packages.Package)
 	for _, goPkg := range pkgs {
 		if _, exists := allPackages[goPkg.PkgPath]; !exists {
-			newPackage := createPackage(goPkg, basePackagePath)
+			newPackage := createPackage(app, goPkg, basePackagePath)
 			allPackages[goPkg.PkgPath] = newPackage
 			allGoPackages[newPackage] = goPkg
 
-			for k, p := range goPkg.Imports {
-				importedPackage, exists := allPackages[p.PkgPath]
+			for k, imptGoPkg := range goPkg.Imports {
+				importedPackage, exists := allPackages[imptGoPkg.PkgPath]
 				if !exists {
-					importedPackage = createPackage(p, basePackagePath)
-					allPackages[p.PkgPath] = importedPackage
-					allGoPackages[importedPackage] = goPkg
+					importedPackage = createPackage(app, imptGoPkg, basePackagePath)
+					allPackages[imptGoPkg.PkgPath] = importedPackage
+					allGoPackages[importedPackage] = imptGoPkg
 				}
-				newPackage.Imports[k] = importedPackage
+				newPackage.ImportedPackages[k] = importedPackage
 			}
 		}
 	}
 
-	for pkg, goPkg := range allGoPackages {
-		if pkg.ExternalPackage {
-			continue // skip parsing of external packages
-		}
+	for _, pkg := range app.BlueprintPackages {
+		logger.Logger.Infof("[APP] parsing blueprint package %s", pkg.PackagePath)
+		parseBlueprintPackage(pkg)
+	}
 
-		logger.Logger.Infof("[APP] parsing package package %s", goPkg)
-		app.Packages[pkg.Name] = pkg
+	for _, pkg := range app.Packages {
+		goPkg := allGoPackages[pkg]
+		logger.Logger.Infof("[APP] parsing app package %s", goPkg)
 
 		underlyingTypes := make(map[string]gotypes.Type)
 		visitedNamedTypes := make(map[string]bool)
 
-		for key, t := range goPkg.TypesInfo.Types {
-			logger.Logger.Debugf("- TYPES %s: %v", key, t.Type)
-		}
-
-		for name, def := range goPkg.TypesInfo.Defs {
-			logger.Logger.Debugf("- DEFS %s: %v", name, def)
+		for _, def := range goPkg.TypesInfo.Defs {
 			if def == nil {
 				continue
 			}
 			if namedGoType, ok := def.Type().(*gotypes.Named); ok {
-				typeName := namedGoType.Obj().Name()
-				objectPackage := namedGoType.Obj().Pkg()
 				if visitedNamedTypes[namedGoType.String()] {
 					continue
 				}
 				visitedNamedTypes[namedGoType.String()] = true
-				// sanity check, e.g. 'error' is an interface type with no package path
+
+				typeName := namedGoType.Obj().Name()
+				objectPackage := namedGoType.Obj().Pkg()
 				objectPackagePath := ""
-				if objectPackage != nil {
+				if objectPackage != nil { // e.g. 'error' is an interface type with no package path TODO: ignore it
 					objectPackagePath = objectPackage.Path()
 				}
 
-				_, isInterface := namedGoType.Underlying().(*gotypes.Interface)
-				if isInterface && bp.IsBlueprintPackage(objectPackagePath) && bp.IsBlueprintBackend(typeName) {
-					datastoreType := &types.DatastoreType{
-						Name: typeName,
+				// different package implies imported object
+				if !pkg.HasPath(objectPackagePath) {
+					if isBlueprintPackagePath(objectPackagePath) {
+						bpPackage := pkg.GetImportedPackage(objectPackagePath)
+						declaredType := bpPackage.GetDeclaredType(typeName)
+						pkg.AddImportedType(declaredType)
+						pkg.AddDatastoreType(declaredType)
+						logger.Logger.Debugf("added imported blueprint type %s", declaredType.String())
+					} else if slices.Contains(services, typeName) {
+						//FIXME: verify is service is also in the same package
+						serviceType := &types.ServiceType{
+							Name:    typeName,
+							Package: objectPackagePath,
+						}
+						pkg.AddImportedType(serviceType)
+						pkg.AddServiceType(serviceType)
+						logger.Logger.Debugf("added imported service type %s", serviceType.String())
+					} else {
+						importedType := &types.UserType{
+							Name:    typeName,
+							Package: objectPackagePath, // this is the real package name
+						}
+						pkg.AddImportedType(importedType)
+						logger.Logger.Debugf("added imported type %s", importedType.String())
+					}
+				} else if slices.Contains(services, typeName) {
+					//FIXME: verify is service is also in the same package
+					serviceType := &types.ServiceType{
+						Name:    typeName,
 						Package: objectPackagePath,
 					}
-					pkg.AddDatastoreType(datastoreType)
-					pkg.AddImportedType(datastoreType)
-					logger.Logger.Debugf("added datastore type for interface %s @ %s", typeName, objectPackagePath)
-				} else if isInterface && objectPackagePath != "" && slices.Contains(services, typeName) {
-					//TODO confirm that service package is the same of the object package
-					serviceType := &types.ServiceType{
-						Name: 		typeName,
-						Package: 	objectPackagePath,
-					}
+					logger.Logger.Debugf("added declared service type %s", serviceType.String())
+					pkg.AddDeclaredType(serviceType)
 					pkg.AddServiceType(serviceType)
-					if pkg.HasPath(objectPackagePath) {
-						pkg.AddDeclaredType(serviceType)
-					} else {
-						pkg.AddImportedType(serviceType)
-					}
-					logger.Logger.Debugf("added service type for interface %s @ %s", typeName, objectPackagePath)
-				} else if pkg.HasPath(objectPackagePath) {
+				} else {
 					// new type defined in the current package
 					namedType := &types.UserType{
 						Name:    typeName,
@@ -150,67 +222,26 @@ func (app *App) ParsePackages(servicesInfo []*types.ServiceInfo) {
 					// since we can have nested structures with definitions out of order
 					// there, here we only add an entry and latter we generate the subtypes
 					pkg.AddDeclaredType(namedType)
+					logger.Logger.Debugf("added declared type %s", namedType.String())
 					underlyingTypes[typeName] = namedGoType.Underlying()
-					logger.Logger.Debugf("\t [APP] added named type %s", namedType.String())
-				} else if objectPackagePath == "" {
-					// edge case for .error
-					userType := &types.UserType{
-						Name: typeName,
-						Package: objectPackagePath, // this is the real package name
-					}
-					pkg.AddDeclaredType(userType)
-					logger.Logger.Debugf("added imported type %s for package %s", typeName, objectPackagePath)
-				} else {
-					importedType := &types.UserType{
-						Name: typeName,
-						Package: objectPackagePath, // this is the real package name
-					}
-					pkg.AddImportedType(importedType)
-					logger.Logger.Debugf("added imported type %s for package %s", typeName, objectPackagePath)
 				}
-			} else if funcGoType, ok := def.(*gotypes.Func); ok {
-				funcName := funcGoType.Name()
-				funcPackage := funcGoType.Pkg()
-				// use Type() because we can have func ptrs (in impl interfaces) and func only (in calls)
-				if visitedNamedTypes[funcGoType.Type().String()] {
-					continue
-				}
-				visitedNamedTypes[funcGoType.Type().String()] = true
-				objectPackagePath := ""
-				if funcPackage != nil {
-					objectPackagePath = funcPackage.Path()
-				}
-				funcType := &types.FuncType{
-					Name: 	 funcGoType.Name(),
-					Package: objectPackagePath,
-				}
-				if pkg.HasPath(objectPackagePath) {
-					pkg.AddDeclaredType(funcType)
-				} else {
-					pkg.AddImportedType(funcType)
-				}
-				underlyingTypes[funcName] = def.Type()
 			}
 		}
 		for n, declaredType := range pkg.DeclaredTypes {
 			if userType, ok := declaredType.(*types.UserType); ok {
 				userType.UserType = pkg.GenerateUnderlyingTypesFromGoType(underlyingTypes[n])
-			} else if funcType, ok := declaredType.(*types.FuncType); ok {
-				funcType.SignatureType = pkg.GenerateUnderlyingTypesFromGoType(underlyingTypes[n]).(*types.SignatureType)
 			}
 		}
 		for n, importedType := range pkg.ImportedTypes {
 			if userType, ok := importedType.(*types.UserType); ok {
 				userType.UserType = pkg.GenerateUnderlyingTypesFromGoType(underlyingTypes[n])
-			} else if funcType, ok := importedType.(*types.FuncType); ok {
-				funcType.SignatureType = pkg.GenerateUnderlyingTypesFromGoType(underlyingTypes[n]).(*types.SignatureType)
 			}
 		}
 
 		for i, fileAst := range goPkg.Syntax {
 			file := &types.File{
 				Ast:     fileAst,
-				Name: 	 filepath.Base(goPkg.GoFiles[i]),
+				Name:    filepath.Base(goPkg.GoFiles[i]),
 				AbsPath: goPkg.GoFiles[i],
 				Package: pkg,
 				Imports: make(map[string]*types.Import),

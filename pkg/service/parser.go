@@ -5,6 +5,7 @@ import (
 	frameworks "analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
+	"analyzer/pkg/utils"
 	"go/ast"
 	"slices"
 	"strings"
@@ -129,6 +130,7 @@ func (node *ServiceNode) ParseMethods() {
 			} else if node.ImplementsQueue {
 				if funcImplementsQueue, dbInstance := node.funcImplementsQueue(funcDecl, rcvIdent); funcImplementsQueue {
 					node.addQueueHandlerMethod(funcDecl, rcvIdent, dbInstance)
+					node.addInternalMethod(funcDecl, rcvIdent)
 					return true
 				}
 			}
@@ -208,14 +210,14 @@ func (node *ServiceNode) RegisterStructure() {
 func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string, idx int) {
 	fieldType := types.ComputeType(field.Type, node.File)
 	switch t := fieldType.(type) {
-	case *types.DatastoreType:
+	case *frameworks.BlueprintBackendType:
 		dbField := &types.DatabaseField{
 			FieldInfo: types.FieldInfo{
 				Ast:  field,
 				Name: paramName,
 				Type: t,
 			},
-			IsQueue: frameworks.IsBlueprintBackendQueue(t.Name),
+			IsQueue: t.IsQueue(),
 			Idx:     idx,
 		}
 		if dbField.IsQueue {
@@ -231,7 +233,7 @@ func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string, i
 			},
 		}
 	default:
-		logger.Logger.Warnf("SAVED GENERIC FIELD for %s", paramName)
+		logger.Logger.Warnf("saved generic field for %s (type = %s)", paramName, utils.GetType(fieldType))
 		node.Fields[paramName] = &types.GenericField{
 			FieldInfo: types.FieldInfo{
 				Ast:  field,
@@ -316,7 +318,7 @@ func (node *ServiceNode) addInternalMethod(funcDecl *ast.FuncDecl, rcvIdent *ast
 		Service: node.Name,
 	}
 	node.InternalMethods[parsedFuncDecl.Name] = parsedFuncDecl
-	logger.Logger.Debugf("[PARSER] added internal method %s to service %s", parsedFuncDecl.String(), node.Name)
+	logger.Logger.Infof("[PARSER] added internal method %s to service %s", parsedFuncDecl.String(), node.Name)
 }
 
 func (node *ServiceNode) addExposedMethod(funcDecl *ast.FuncDecl, rcvIdent *ast.Ident) {

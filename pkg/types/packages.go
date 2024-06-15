@@ -9,36 +9,72 @@ import (
 	"slices"
 )
 
+type PackageType int
+
+const (
+	APP       PackageType = iota
+	BLUEPRINT             // blueprint backend package
+	EXTERNAL
+)
+
 type Package struct {
-	Name              string
-	Module            string
-	PackagePath       string
-	Files             []*File
+	Name        string
+	Module      string
+	PackagePath string
+	Files       []*File
 
 	// if it is a package outside of the application
 	// then it was not parsed and the fields below are nil
-	ExternalPackage   bool
+	Type PackageType
 
 	// maps the package path to another parsed package
 	// REMINDER: IDK if key is the same of the package path (CHECK IF THIS CONCERNS THE REPLACEMENT IN GO.MODULE)
-	Imports 		  map[string]*Package
+	ImportedPackages map[string]*Package
 
-	TypesInfo 		 *gotypes.Info
+	TypesInfo         *gotypes.Info
 	DeclaredVariables map[string]Variable
 	DeclaredTypes     map[string]Type
-	ServiceTypes 	  map[string]*ServiceType
+	ServiceTypes      map[string]*ServiceType
 
 	// contains blueprint backend types for datastores
 	// key: type_name (e.g. Cache, Queue, etc)
-	DatastoreTypes 	  map[string]*DatastoreType
-	
+	DatastoreTypes map[string]Type
+
 	// contains all imported types, including blueprint backend types for datastores
 	// key: package_path.type_name, where package_path is the real package name
-	ImportedTypes 	  map[string]Type
+	ImportedTypes map[string]Type
+}
+
+func (p *Package) IsAppPackage() bool {
+	return p.Type == APP
+}
+
+func (p *Package) IsBlueprintBackendPackage() bool {
+	return p.Type == BLUEPRINT
+}
+
+func (p *Package) IsExternalPackage() bool {
+	return p.Type == EXTERNAL
 }
 
 func (p *Package) String() string {
 	return p.Name
+}
+
+func (p *Package) GetDeclaredType(name string) Type {
+	decl, ok := p.DeclaredTypes[name]
+	if !ok {
+		logger.Logger.Fatalf("type %s not found in declared types of package %s", name, p.Name)
+	}
+	return decl
+}
+
+func (p *Package) GetImportedPackage(name string) *Package {
+	imptPkg, ok := p.ImportedPackages[name]
+	if !ok {
+		logger.Logger.Fatalf("package %s not found in imports of package %s", name, p.Name)
+	}
+	return imptPkg
 }
 
 func (p *Package) GetTypeInfo(expr ast.Expr) gotypes.Type {
@@ -85,11 +121,11 @@ func (p *Package) AddServiceType(t *ServiceType) {
 	p.ServiceTypes[t.Name] = t
 }
 
-func (p *Package) AddDatastoreType(t *DatastoreType) {
-	if _, exists := p.DatastoreTypes[t.Name]; exists {
+func (p *Package) AddDatastoreType(t Type) {
+	if _, exists := p.DatastoreTypes[t.GetName()]; exists {
 		logger.Logger.Fatalf("package %s already constains datastore type %s", p.Name, t.String())
 	}
-	p.DatastoreTypes[t.Name] = t
+	p.DatastoreTypes[t.GetName()] = t
 }
 
 func (p *Package) LinkFile(file *File) {
@@ -107,7 +143,6 @@ func (p *Package) GetImportedTypeFromPath(fullPath string) (Type, bool) {
 	logger.Logger.Fatalf("unknown imported package %s in package %s", fullPath, p.Name)
 	return nil, false
 }
-
 
 func (p *Package) GetImportedType(packagePath string, typeName string) (Type, bool) {
 	key := importedTypeKey(packagePath, typeName)
@@ -136,6 +171,7 @@ func (p *Package) GenerateUnderlyingTypesFromGoType(goType gotypes.Type) Type {
 	switch t := goType.(type) {
 	case *gotypes.Named:
 		name := t.Obj().Name()
+		path := t.Obj().Pkg().Path()
 		if namedType, ok := p.DeclaredTypes[name]; ok {
 			return namedType
 		}
@@ -144,6 +180,9 @@ func (p *Package) GenerateUnderlyingTypesFromGoType(goType gotypes.Type) Type {
 		}
 		if datastoreType, ok := p.DatastoreTypes[name]; ok {
 			return datastoreType
+		}
+		if importedType, ok := p.ImportedTypes[importedTypeKey(path, name)]; ok {
+			return importedType
 		}
 		logger.Logger.Fatalf("named type %s not declared in package %s", t.String(), p.String())
 	case *gotypes.Struct:
@@ -166,7 +205,7 @@ func (p *Package) GenerateUnderlyingTypesFromGoType(goType gotypes.Type) Type {
 	case *gotypes.Signature:
 		signatureType := &SignatureType{}
 		for i := 0; i < t.Results().Len(); i++ {
-			var v* gotypes.Var = t.Results().At(i)
+			var v *gotypes.Var = t.Results().At(i)
 			signatureType.ReturnTypes = append(signatureType.ReturnTypes, p.GenerateUnderlyingTypesFromGoType(v.Type()))
 		}
 		return signatureType
@@ -177,7 +216,6 @@ func (p *Package) GenerateUnderlyingTypesFromGoType(goType gotypes.Type) Type {
 	}
 	return nil
 }
-
 
 func (p *Package) Yaml() map[string]interface{} {
 	data := make(map[string]interface{})
@@ -200,7 +238,7 @@ func (p *Package) Yaml() map[string]interface{} {
 	info[key] = files
 	// info - imports
 	imports := []string{}
-	for k := range p.Imports {
+	for k := range p.ImportedPackages {
 		imports = append(imports, k)
 	}
 	key = fmt.Sprintf("imports (%d)", len(imports))

@@ -47,7 +47,7 @@ func parseExpressions(service *service.ServiceNode, method *service.ParsedFuncDe
 			saveCalls(service, method, block, rvalue)
 		} */
 		for _, rvalue := range e.Rhs {
-			logger.Logger.Infof("IN ASSIGNMENT FOR CREATING VARIABLE (type = %s)", utils.GetType(rvalue))
+			logger.Logger.Debugf("IN ASSIGNMENT FOR CREATING VARIABLE (type = %s)", utils.GetType(rvalue))
 			variable := getOrCreateVariable(service, method, block, rvalue, true)
 
 			if tupleVariable, ok := variable.(*types.TupleVariable); ok {
@@ -80,7 +80,7 @@ func parseExpressions(service *service.ServiceNode, method *service.ParsedFuncDe
 		parseExpressions(service, method, block, e.X)
 	case *ast.CompositeLit:
 		// e.g. creating a structure where a field is obtained from a function call
-		logger.Logger.Infof("FFFOOOOUNNDDD COMPOSITE LITE %v", e.Elts)
+		logger.Logger.Debugf("FFFOOOOUNNDDD COMPOSITE LITE %v", e.Elts)
 		for _, elt := range e.Elts {
 			parseExpressions(service, method, block, elt)
 		}
@@ -131,7 +131,7 @@ func parseExpressions(service *service.ServiceNode, method *service.ParsedFuncDe
 }
 
 func createVariableFromCallExpr(service *service.ServiceNode, method *service.ParsedFuncDecl, block *types.ParsedBlock, callExpr *ast.CallExpr) service.Call {
-	logger.Logger.Warnf(">>>>>GOT GO TYPE: %v", utils.GetType(service.GetPackage().GetTypeInfo(callExpr)))
+	logger.Logger.Debugf(">>>>>GOT GO TYPE: %v", utils.GetType(service.GetPackage().GetTypeInfo(callExpr)))
 	parsedCall := saveFuncCallIfValid(service, method, callExpr)
 	if parsedCall == nil {
 		return nil
@@ -198,7 +198,7 @@ func getOrCreateVariable(service *service.ServiceNode, method *service.ParsedFun
 					genericVariable.Params = append(genericVariable.Params, argVar)
 				}
 				tupleVar.Variables = append(tupleVar.Variables, genericVariable)
-				logger.Logger.Warnf("SKIPPING!!! %v", utils.GetType(goTypeInfo))
+				logger.Logger.Debugf("SKIPPING!!! %v", utils.GetType(goTypeInfo))
 			}
 		}
 		variable = tupleVar
@@ -237,7 +237,7 @@ func getOrCreateVariable(service *service.ServiceNode, method *service.ParsedFun
 		case *types.GenericVariable:
 			// continue
 		case *types.StructVariable:
-			logger.Logger.Warnf("GOT SELECTOR FOR %s", e.Sel.Name)
+			logger.Logger.Debugf("GOT SELECTOR FOR %s", e.Sel.Name)
 			variable = v.GetOrCreateField(e.Sel.Name)
 			//variable = v
 		default:

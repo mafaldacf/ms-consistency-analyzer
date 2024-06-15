@@ -36,11 +36,6 @@ type SignatureType struct {
 	Type     `json:"-"`
 	ReturnTypes []Type
 }
-type DatastoreType struct {
-	Type    `json:"-"`
-	Package string
-	Name    string
-}
 type ImportedType struct {
 	Type     `json:"-"`
 	Package string
@@ -105,19 +100,6 @@ func (t *ServiceType) GetName() string {
 	return t.Name
 }
 func (t *ServiceType) GetPackage() string {
-	return t.Package
-}
-// Backend
-func (t *DatastoreType) String() string {
-	return fmt.Sprintf("%s.%s", packageAlias(t.Package), t.Name)
-}
-func (t *DatastoreType) FullString() string {
-	return t.String()
-}
-func (t *DatastoreType) GetName() string {
-	return t.Name
-}
-func (t *DatastoreType) GetPackage() string {
 	return t.Package
 }
 // User

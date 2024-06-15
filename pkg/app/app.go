@@ -13,11 +13,12 @@ import (
 )
 
 type App struct {
-	Name      string
-	Path      string
-	Services  map[string]*service.ServiceNode
-	Databases map[string]datastores.DatabaseInstance
-	Packages  map[string]*types.Package
+	Name      			string
+	Path      			string
+	Services  			map[string]*service.ServiceNode
+	Databases 			map[string]datastores.DatabaseInstance
+	Packages  			map[string]*types.Package
+	BlueprintPackages  	map[string]*types.Package
 }
 
 // MarshalJSON is used by app.Save()
@@ -54,11 +55,12 @@ func Init(name string, path string) (*App, error) {
 		return nil, fmt.Errorf(msg)
 	}
 	app := &App{
-		Name:      name,
-		Path:      fullPath,
-		Services:  make(map[string]*service.ServiceNode),
-		Databases: make(map[string]datastores.DatabaseInstance),
-		Packages:  make(map[string]*types.Package),
+		Name:      			name,
+		Path:      			fullPath,
+		Services:  			make(map[string]*service.ServiceNode),
+		Databases: 			make(map[string]datastores.DatabaseInstance),
+		Packages:  			make(map[string]*types.Package),
+		BlueprintPackages: 	make(map[string]*types.Package),
 	}
 	logger.Logger.Infof("[APP] initialized app at %s", app.Path)
 	return app, nil
@@ -93,6 +95,9 @@ func (app *App) saveYamlMetadata() {
 	data := make(map[string]interface{})
 	for _, p := range app.Packages {
 		data[p.Name] = p.Yaml()
+	}
+	for _, p := range app.BlueprintPackages {
+		data["_" + p.Name] = p.Yaml()
 	}
 	utils.SaveToYamlFile(data, app.Name, "metadata")
 }

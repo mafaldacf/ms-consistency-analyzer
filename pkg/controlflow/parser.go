@@ -121,16 +121,16 @@ func saveFuncCallIfValid(node *service.ServiceNode, method *service.ParsedFuncDe
 	if fieldIdent != nil {
 		// if the targeted variable corresponds to a service field
 		if field, ok := node.Fields[fieldIdent.Name]; ok {
-			// store function call either as service call or database call
-			// if the field corresponds to a service field
 			if serviceField, ok := field.(*types.ServiceField); ok {
+				// store function call either as service call or database call
+				// if the field corresponds to a service field
 				// 1. extract the service field from the current service
 				// 2. get the target node service for the type
 				// 3. add the targeted method of the other service for the current call expression
 				targetServiceType := serviceField.GetTypeName()
 				targetServiceNode := node.Services[targetServiceType]
 				targetMethod := targetServiceNode.ExposedMethods[methodIdent.Name]
-				svcParsedCallExpr := &service.ServiceParsedCallExpr{
+				parsedCall := &service.ServiceParsedCallExpr{
 					ParsedCallExpr: service.ParsedCallExpr{
 						Ast:         funcCall,
 						Receiver:    serviceRecvIdent.Name,
@@ -142,17 +142,16 @@ func saveFuncCallIfValid(node *service.ServiceNode, method *service.ParsedFuncDe
 					CallerTypeName: &types.ServiceType{Name: node.Name, Package: node.GetPackageName()},
 					CalleeTypeName: serviceField.GetType(),
 				}
-				method.Calls = append(method.Calls, svcParsedCallExpr)
-				logger.Logger.Warnf("[CFG] found new service call %s", svcParsedCallExpr.Name)
-				return svcParsedCallExpr
-			}
-			// if the field corresponds to a database field
-			if databaseField, ok := field.(*types.DatabaseField); ok {
+				method.Calls = append(method.Calls, parsedCall)
+				logger.Logger.Warnf("[CFG] found new service call %s", parsedCall.Name)
+				return parsedCall
+			} else if databaseField, ok := field.(*types.DatabaseField); ok {
+				// if the field corresponds to a database field
 				// 1. extract the service field from the current service
 				// 2. get the target database node
 				// 3. add the target method for the current call expression
 				targetDatabaseType := databaseField.GetTypeName()
-				dbParsedCallExpr := &service.DatabaseParsedCallExpr{
+				parsedCall := &service.DatabaseParsedCallExpr{
 					ParsedCallExpr: service.ParsedCallExpr{
 						Ast:         funcCall,
 						Receiver:    serviceRecvIdent.Name,
@@ -164,13 +163,16 @@ func saveFuncCallIfValid(node *service.ServiceNode, method *service.ParsedFuncDe
 					CallerTypeName: &types.ServiceType{Name: node.Name, Package: node.GetPackageName()},
 					DbInstance:     databaseField.DbInstance,
 				}
-				method.Calls = append(method.Calls, dbParsedCallExpr)
-				logger.Logger.Warnf("[CFG] found new database call %s", dbParsedCallExpr.Name)
-				return dbParsedCallExpr
+				method.Calls = append(method.Calls, parsedCall)
+				logger.Logger.Warnf("[CFG] found new database call %s", parsedCall.Name)
+				return parsedCall
+			} else {
+				logger.Logger.Warnf("[CFG] unknown call %v for field %s with type %s", callExpr.Fun, field.String(), utils.GetType(field))
 			}
 		}
-	} else if funcDecl, ok := node.InternalMethods[methodIdent.Name]; ok {
-		internalCall := &service.InternalTempParsedCallExpr{
+	} 
+	if funcDecl, ok := node.InternalMethods[methodIdent.Name]; ok {
+		parsedCall := &service.InternalTempParsedCallExpr{
 			ParsedCallExpr: service.ParsedCallExpr{
 				Ast:      funcCall,
 				Receiver: serviceRecvIdent.Name,
@@ -180,9 +182,11 @@ func saveFuncCallIfValid(node *service.ServiceNode, method *service.ParsedFuncDe
 			},
 			ServiceTypeName: &types.ServiceType{Name: node.Name, Package: node.GetPackageName()},
 		}
-		method.Calls = append(method.Calls, internalCall)
-		logger.Logger.Warnf("[CFG] found new internal call %s", internalCall.Name)
-		return internalCall
+		method.Calls = append(method.Calls, parsedCall)
+		logger.Logger.Warnf("[CFG] found new internal call %s", parsedCall.Name)
+		return parsedCall
 	}
+
+	logger.Logger.Fatalf("[CFG] unknown call %v (fields = %v) (ident = %v) internal methods list %v", callExpr.Fun, node.Fields, fieldIdent, node.InternalMethods)
 	return nil
 }
