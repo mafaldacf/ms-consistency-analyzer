@@ -94,7 +94,6 @@ func parseBlueprintPackage(bpPackage *types.Package) {
 					backendType := &frameworks.BlueprintBackendType{
 						Name:           typeName,
 						Package:        objectPackage.Path(),
-						NoSQLComponent: bp.IsBlueprintNoSQLComponent(typeName),
 					}
 					backendType.Methods = frameworks.BuildBackendComponentMethods(backendType.Name)
 					bpPackage.AddDeclaredType(backendType)

@@ -5,7 +5,6 @@ import (
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
-	"fmt"
 )
 
 func GetIndirectDependencies(first bool, v types.Variable) []types.Variable {
@@ -53,9 +52,9 @@ func GetForeignDependencies(first bool, v types.Variable) []types.Variable {
 
 func BuildSchema(app *app.App, node AbstractNode) {
 	if dbCall, ok := node.(*AbstractDatabaseCall); ok && dbCall.ParsedCall.Method.IsWrite() {
-		logger.Logger.Infof("building schema for abstract node %s", dbCall.String())
 		datastore := dbCall.DbInstance.GetDatastore()
 		params := dbCall.Params
+		logger.Logger.Infof("building schema for abstract node %s with params = %v", dbCall.String(), params)
 		switch datastore.Type {
 			case datastores.Cache:
 				key := params[1]
@@ -74,8 +73,6 @@ func BuildSchema(app *app.App, node AbstractNode) {
 					logger.Logger.Debugf("SET INDIRECT WRITE FOR KEY: %v (id = %d)", v, v.GetVariableInfo().Id)
 					v.GetVariableInfo().SetIndirectWrite(key)
 				}
-				
-				fmt.Println()
 
 				logger.Logger.Debugf("SET DIRECT WRITE FOR VALUE: %v (id = %d)", value, value.GetVariableInfo().Id)
 				value.GetVariableInfo().SetDirectWrite(datastore.Name, dbCall.Service)
@@ -84,7 +81,6 @@ func BuildSchema(app *app.App, node AbstractNode) {
 					logger.Logger.Debugf("SET INDIRECT WRITE FOR VALUE: %v (id = %d)", v, v.GetVariableInfo().Id)
 					v.GetVariableInfo().SetIndirectWrite(value)
 				}
-				fmt.Println()
 				logger.Logger.Infof("added kv to schema  %s", datastore.Schema)
 
 			case datastores.Queue:
@@ -102,7 +98,6 @@ func BuildSchema(app *app.App, node AbstractNode) {
 					foreignField := foreignDatastore.GetDatastore().Schema.GetField(foreignVariable.GetVariableInfo().Name)
 					datastore.Schema.AddForeignEntry(foreignVariable.GetVariableInfo().GetName(), foreignVariable.GetVariableInfo().Type.String(), foreignField)
 				}
-				fmt.Println()
 				logger.Logger.Infof("added kv to schema %s", datastore.Schema)
 		}
 	}

@@ -5,32 +5,36 @@ NotifyService:
         block 0 (Body):
         - ctx context.Context
         - wg sync.WaitGroup
-        - i int (1)
+        - i 1 int
         block 1 (ForBody):
         - ctx context.Context
         - wg sync.WaitGroup
-        - i int (1)
+        - i 1 int
+        - err error
         - err error
         block 2 (ForDone):
         - ctx context.Context
         - wg sync.WaitGroup
-        - i int (1)
+        - i 1 int
+        - err error
         - err error
         - ctx context.Context
         - wg sync.WaitGroup
-        - i int (1)
+        - i 1 int
         block 3 (ForLoop):
         - ctx context.Context
         - wg sync.WaitGroup
-        - i int (1)
+        - i 1 int
+        - err error
         - err error
         - ctx context.Context
         - wg sync.WaitGroup
-        - i int (1)
+        - i 1 int
         block 4 (ForPost):
         - ctx context.Context
         - wg sync.WaitGroup
-        - i int (1)
+        - i 1 int
+        - err error
         - err error
         block 5 (Unreachable): []
   Internal Methods: {}
@@ -47,6 +51,8 @@ StorageService:
         - postIDStr string
         - _ err
         - err interface{}
+        - _ err
+        - err interface{}
         block 1 (IfThen):
         - ctx context.Context
         - reqID int64
@@ -55,12 +61,16 @@ StorageService:
         - postIDStr string
         - _ err
         - err interface{}
+        - _ err
+        - err interface{}
         block 2 (IfDone):
         - ctx context.Context
         - reqID int64
         - postID int64
         - post postnotification.Post struct
         - postIDStr string
+        - _ err
+        - err interface{}
         - _ err
         - err interface{}
         block 3 (Unreachable): []
@@ -72,21 +82,27 @@ StorageService:
         - reqID int64
         - postID int64
         - post postnotification.Post struct
-        - collection backend.NoSQLCollection
+        - collection NoSQLCollection
+        - err interface{}
+        - collection NoSQLCollection
         - err interface{}
         block 1 (IfThen):
         - ctx context.Context
         - reqID int64
         - postID int64
         - post postnotification.Post struct
-        - collection backend.NoSQLCollection
+        - collection NoSQLCollection
+        - err interface{}
+        - collection NoSQLCollection
         - err interface{}
         block 2 (IfDone):
         - ctx context.Context
         - reqID int64
         - postID int64
         - post postnotification.Post struct
-        - collection backend.NoSQLCollection
+        - collection NoSQLCollection
+        - err interface{}
+        - collection NoSQLCollection
         - err interface{}
         - query primitive.D
         - result undefined
@@ -97,7 +113,9 @@ StorageService:
         - reqID int64
         - postID int64
         - post postnotification.Post struct
-        - collection backend.NoSQLCollection
+        - collection NoSQLCollection
+        - err interface{}
+        - collection NoSQLCollection
         - err interface{}
         - query primitive.D
         - result undefined
@@ -107,7 +125,9 @@ StorageService:
         - reqID int64
         - postID int64
         - post postnotification.Post struct
-        - collection backend.NoSQLCollection
+        - collection NoSQLCollection
+        - err interface{}
+        - collection NoSQLCollection
         - err interface{}
         - query primitive.D
         - result undefined
@@ -120,7 +140,9 @@ StorageService:
         - reqID int64
         - postID int64
         - post postnotification.Post struct
-        - collection backend.NoSQLCollection
+        - collection NoSQLCollection
+        - err interface{}
+        - collection NoSQLCollection
         - err interface{}
         - query primitive.D
         - result undefined
@@ -132,7 +154,9 @@ StorageService:
         - reqID int64
         - postID int64
         - post postnotification.Post struct
-        - collection backend.NoSQLCollection
+        - collection NoSQLCollection
+        - err interface{}
+        - collection NoSQLCollection
         - err interface{}
         - query primitive.D
         - result undefined
@@ -155,19 +179,25 @@ StorageService:
         - ctx context.Context
         - reqID int64
         - post postnotification.Post struct
-        - collection backend.NoSQLCollection
+        - collection NoSQLCollection
+        - err interface{}
+        - collection NoSQLCollection
         - err interface{}
         block 1 (IfThen):
         - ctx context.Context
         - reqID int64
         - post postnotification.Post struct
-        - collection backend.NoSQLCollection
+        - collection NoSQLCollection
+        - err interface{}
+        - collection NoSQLCollection
         - err interface{}
         block 2 (IfDone):
         - ctx context.Context
         - reqID int64
         - post postnotification.Post struct
-        - collection backend.NoSQLCollection
+        - collection NoSQLCollection
+        - err interface{}
+        - collection NoSQLCollection
         - err interface{}
         block 3 (Unreachable): []
         block 4 (Unreachable): []
@@ -181,27 +211,33 @@ UploadService:
         - ctx context.Context
         - username string
         - text string
-        - reqID int64
+        - reqID undefined
         - post postnotification.Post struct
         - message postnotification.Message struct
+        - _ err
+        - err interface{}
         - _ err
         - err interface{}
         block 1 (IfThen):
         - ctx context.Context
         - username string
         - text string
-        - reqID int64
+        - reqID undefined
         - post postnotification.Post struct
         - message postnotification.Message struct
+        - _ err
+        - err interface{}
         - _ err
         - err interface{}
         block 2 (IfDone):
         - ctx context.Context
         - username string
         - text string
-        - reqID int64
+        - reqID undefined
         - post postnotification.Post struct
         - message postnotification.Message struct
+        - _ err
+        - err interface{}
         - _ err
         - err interface{}
         block 3 (Unreachable): []

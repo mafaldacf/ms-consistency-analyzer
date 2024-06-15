@@ -90,7 +90,7 @@ func (node *ServiceNode) parseFuncDeclParameters(funcDecl *ast.FuncDecl) ([]*typ
 	parser := func(fieldsList []*ast.Field) []*types.FunctionField {
 		var params []*types.FunctionField
 		for _, field := range fieldsList {
-			paramType := types.ComputeType(field.Type, node.File)
+			paramType := node.File.ComputeTypeForExpr(field.Type)
 			// returns with types only, which is usually the most frequent scenario
 			if len(field.Names) == 0 {
 				param := &types.FunctionField{
@@ -208,7 +208,7 @@ func (node *ServiceNode) RegisterStructure() {
 }
 
 func (node *ServiceNode) saveFieldWithType(field *ast.Field, paramName string, idx int) {
-	fieldType := types.ComputeType(field.Type, node.File)
+	fieldType := node.File.ComputeTypeForExpr(field.Type)
 	switch t := fieldType.(type) {
 	case *frameworks.BlueprintBackendType:
 		dbField := &types.DatabaseField{
@@ -357,7 +357,7 @@ func (node *ServiceNode) ParseConstructor(paramDBs map[string]datastores.Databas
 								logger.Logger.Fatalf("could not find database instance for constructor parameter %s in %s", valueIdent.Name, node.Name)
 							}
 							dbField.DbInstance = dbInstance
-							logger.Logger.Debugf("[PARSER] [%s] linked database field '%s' to instance '%s'", node.Name, dbField.GetName(), dbField.DbInstance.GetName())
+							logger.Logger.Infof("[PARSER] [%s] linked database field '%s' to instance '%s'", node.Name, dbField.GetName(), dbField.DbInstance.GetName())
 						}
 					}
 				}

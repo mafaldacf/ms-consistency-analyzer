@@ -11,6 +11,7 @@ import (
 	"github.com/blueprint-uservices/blueprint/plugins/cmdbuilder"
 	"github.com/blueprint-uservices/blueprint/plugins/golang"
 	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
+	"github.com/blueprint-uservices/blueprint/plugins/mongodb"
 	"github.com/blueprint-uservices/blueprint/plugins/rabbitmq"
 	"github.com/blueprint-uservices/blueprint/plugins/redis"
 	"github.com/blueprint-uservices/blueprint/plugins/workflow"
@@ -119,6 +120,19 @@ func buildDatabasesInstances(databases map[string]ir.IRNode) []datastores.Databa
 					Datastore: &datastores.Datastore{
 						Type: datastores.Queue,
 						Kind: datastores.RabbitMQ,
+						Name: name,
+						Schema: &datastores.Schema{},
+					},
+				},
+			})
+		case *mongodb.MongoDBGoClient:
+			dbInstances = append(dbInstances, &NoSQLInstance{
+				BlueprintDatabaseInstance: BlueprintDatabaseInstance{
+					Name: name,
+					//FIXME, we can have many replicas
+					Datastore: &datastores.Datastore{
+						Type: datastores.NoSQL,
+						Kind: datastores.MongoDB,
 						Name: name,
 						Schema: &datastores.Schema{},
 					},

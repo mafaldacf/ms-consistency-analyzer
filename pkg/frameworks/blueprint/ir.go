@@ -6,19 +6,20 @@ import (
 	"reflect"
 
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/blueprint/logging"
-	"github.com/blueprint-uservices/blueprint/blueprint/pkg/coreplugins/namespaceutil"
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/coreplugins/address"
+	"github.com/blueprint-uservices/blueprint/blueprint/pkg/coreplugins/namespaceutil"
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/ir"
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/wiring"
 	"github.com/blueprint-uservices/blueprint/plugins/cmdbuilder"
 	"github.com/blueprint-uservices/blueprint/plugins/golang"
 	"github.com/blueprint-uservices/blueprint/plugins/goproc"
+	"github.com/blueprint-uservices/blueprint/plugins/http"
 	"github.com/blueprint-uservices/blueprint/plugins/linuxcontainer"
+	"github.com/blueprint-uservices/blueprint/plugins/mongodb"
 	"github.com/blueprint-uservices/blueprint/plugins/rabbitmq"
 	"github.com/blueprint-uservices/blueprint/plugins/redis"
 	"github.com/blueprint-uservices/blueprint/plugins/workflow"
 	"github.com/blueprint-uservices/blueprint/plugins/workflow/workflowspec"
-	"github.com/blueprint-uservices/blueprint/plugins/http"
 )
 
 func BuildAndInspectIR(name string, spec cmdbuilder.SpecOption) (map[*workflowspec.Service][]golang.Service, map[string]ir.IRNode, []string) {
@@ -100,6 +101,10 @@ func inspectIR(builder *cmdbuilder.CmdBuilder) (map[*workflowspec.Service][]gola
 											services[workflowHandler.ServiceInfo] = append(services[workflowHandler.ServiceInfo], rabbitClient)
 											databases[rabbitClient.Name()] = rabbitClient
 											logger.Logger.Debugf("[HANDLER ARG] [rabbitmq.RabbitmqGoClient] got node %s", rabbitClient.Name())
+										} else if mongoDbClient, ok := arg.(*mongodb.MongoDBGoClient); ok {
+											services[workflowHandler.ServiceInfo] = append(services[workflowHandler.ServiceInfo], mongoDbClient)
+											databases[mongoDbClient.Name()] = mongoDbClient
+											logger.Logger.Debugf("[HANDLER ARG] [mongodb.MongoDBGoClient] got node %s", mongoDbClient.Name())
 										} else if workflowClient, ok := arg.(*workflow.WorkflowClient); ok {
 											services[workflowHandler.ServiceInfo] = append(services[workflowHandler.ServiceInfo], workflowClient)
 											logger.Logger.Debugf("[HANDLER ARG] [workflow.WorkflowClient] got node %s (service_type = %v)", workflowClient.Name(), workflowClient.ServiceType)
@@ -118,6 +123,8 @@ func inspectIR(builder *cmdbuilder.CmdBuilder) (map[*workflowspec.Service][]gola
 			logger.Logger.Debugf("ignoring redis.RedisContainer for node %s, interface %s", redisContainer.Name(), redisContainer.Iface)
 		} else if rabbitContainer, ok := node.(*rabbitmq.RabbitmqContainer); ok {
 			logger.Logger.Debugf("ignoring rabbitmq.RabbitmqContainer for node %s, interface %s", rabbitContainer.Name(), rabbitContainer.Iface)
+		} else if mongoDbContainer, ok := node.(*mongodb.MongoDBContainer); ok {
+			logger.Logger.Debugf("ignoring mongodb.MongoDBContainer for node %s, interface %s", mongoDbContainer.Name(), mongoDbContainer.Iface)
 		}
 	}
 

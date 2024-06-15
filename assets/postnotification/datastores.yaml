@@ -13,6 +13,6 @@ post_cache:
   - name: post
     type: postnotification.Post struct
 post_db:
-  backend: Cache
-  kind: Redis
+  backend: NoSQL
+  kind: MongoDB
   schema: []

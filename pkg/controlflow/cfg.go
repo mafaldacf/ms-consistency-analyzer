@@ -20,7 +20,7 @@ func GenerateMethodCFG(parsedFuncDecl *service.ParsedFuncDecl) {
 				logger.Logger.Debugf("param %s: %v", param.String(), s.FieldTypes)
 			}
 		}
-		v := types.GetOrCreateVariableFromType(param.GetName(), param.GetType())
+		v := getOrCreateVariableFromType(param.GetName(), param.GetType())
 		if u, ok := v.GetVariableInfo().GetType().(*types.UserType); ok {
 			if s, ok := u.UserType.(*types.StructType); ok {
 				logger.Logger.Debugf("param %s: %v", param.String(), s.FieldTypes)

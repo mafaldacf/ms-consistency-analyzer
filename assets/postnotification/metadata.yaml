@@ -7,12 +7,12 @@ _backend:
     imports (0): []
   datastore types: []
   declared types (5):
-  - Cache interface { Cache(ctx context.Context, key string, value interface{}), Cache(ctx context.Context, key string, value interface{}) }
-  - NoSQLDatabase interface { NoSQLDatabase(ctx context.Context, db_name string, collection_name string) }
-  - Queue interface { Queue(ctx context.Context, item interface{}), Queue(ctx context.Context, item interface{}) }
-  - NoSQLCollection interface { NoSQLCollection(ctx context.Context, document interface{}),
-    NoSQLCollection(ctx context.Context, filter bson.D, projection bson.D) }
-  - NoSQLCursor interface { NoSQLCursor(ctx context.Context, obj interface{}) }
+  - Cache interface { Cache.Put(ctx context.Context, key string, value interface{}),
+    Cache.Get(ctx context.Context, key string, value interface{}) }
+  - NoSQLCollection interface {  }
+  - Queue interface { Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{}) }
+  - NoSQLDatabase interface { NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string) }
+  - NoSQLCursor interface {  }
   declared variables: []
   imported types: []
   service types: []
@@ -42,44 +42,44 @@ postnotification:
     - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/UploadService.go
     - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/models.go
     imports (7):
+    - strconv
+    - sync
+    - context
     - github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification/common
     - github.com/blueprint-uservices/blueprint/runtime/core/backend
     - go.mongodb.org/mongo-driver/bson
     - math/rand
-    - strconv
-    - sync
-    - context
   datastore types (5):
-  - NoSQLCollection interface { NoSQLCollection(ctx context.Context, document interface{}),
-    NoSQLCollection(ctx context.Context, filter bson.D, projection bson.D) }
-  - Cache interface { Cache(ctx context.Context, key string, value interface{}), Cache(ctx context.Context, key string, value interface{}) }
-  - Queue interface { Queue(ctx context.Context, item interface{}), Queue(ctx context.Context, item interface{}) }
-  - NoSQLCursor interface { NoSQLCursor(ctx context.Context, obj interface{}) }
-  - NoSQLDatabase interface { NoSQLDatabase(ctx context.Context, db_name string, collection_name string) }
+  - NoSQLCursor interface {  }
+  - Cache interface { Cache.Put(ctx context.Context, key string, value interface{}),
+    Cache.Get(ctx context.Context, key string, value interface{}) }
+  - NoSQLCollection interface {  }
+  - Queue interface { Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{}) }
+  - NoSQLDatabase interface { NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string) }
   declared types (8):
-  - postnotification.StorageService
-  - postnotification.NotifyServiceImpl struct { storageService postnotification.StorageService,
-    queue Queue interface { Queue(ctx context.Context, item interface{}), Queue(ctx context.Context, item interface{}) }, numWorkers int }
-  - postnotification.Post struct { Text string, Timestamp int64, Creator string, ReqID int64, PostID int64 }
-  - postnotification.Message struct { ReqID string, PostID string, Timestamp string }
   - postnotification.NotifyService
-  - postnotification.StorageServiceImpl struct { cache Cache interface { Cache(ctx context.Context, key string, value interface{}), Cache(ctx context.Context, key string, value interface{}) }, db NoSQLDatabase interface { NoSQLDatabase(ctx context.Context, db_name string, collection_name string) } }
-  - postnotification.UploadServiceImpl struct { storageService postnotification.StorageService,
-    queue Queue interface { Queue(ctx context.Context, item interface{}), Queue(ctx context.Context, item interface{}) } }
+  - postnotification.StorageService
+  - postnotification.Post struct { Timestamp int64, Creator string, ReqID int64, PostID int64, Text string }
+  - postnotification.Message struct { Timestamp string, ReqID string, PostID string }
+  - postnotification.NotifyServiceImpl struct { storageService postnotification.StorageService,
+    queue Queue interface { Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{}) }, numWorkers int }
   - postnotification.UploadService
+  - postnotification.StorageServiceImpl struct { cache Cache interface { Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{}) }, db NoSQLDatabase interface { NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string) } }
+  - postnotification.UploadServiceImpl struct { storageService postnotification.StorageService,
+    queue Queue interface { Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{}) } }
   declared variables: []
   imported types (9):
-  - sync.WaitGroup
-  - NoSQLDatabase interface { NoSQLDatabase(ctx context.Context, db_name string, collection_name string) }
-  - Cache interface { Cache(ctx context.Context, key string, value interface{}), Cache(ctx context.Context, key string, value interface{}) }
-  - Queue interface { Queue(ctx context.Context, item interface{}), Queue(ctx context.Context, item interface{}) }
+  - Queue interface { Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{}) }
+  - NoSQLDatabase interface { NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string) }
+  - NoSQLCursor interface {  }
   - primitive.D
-  - NoSQLCursor interface { NoSQLCursor(ctx context.Context, obj interface{}) }
-  - context.Context
-  - NoSQLCollection interface { NoSQLCollection(ctx context.Context, document interface{}),
-    NoSQLCollection(ctx context.Context, filter bson.D, projection bson.D) }
+  - sync.WaitGroup
   - .error
+  - context.Context
+  - Cache interface { Cache.Put(ctx context.Context, key string, value interface{}),
+    Cache.Get(ctx context.Context, key string, value interface{}) }
+  - NoSQLCollection interface {  }
   service types (3):
-  - postnotification.StorageService
   - postnotification.NotifyService
+  - postnotification.StorageService
   - postnotification.UploadService

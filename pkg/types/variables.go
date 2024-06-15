@@ -298,23 +298,6 @@ func (v *StructVariable) AddFieldIfNotExists(name string, field Variable) {
 	}
 }
 
-func (v *StructVariable) GetOrCreateField(name string) Variable {
-	variable, exists := v.Fields[name]
-	if exists {
-		return variable
-	}
-
-	fieldType, ok := v.GetStructType().FieldTypes[name]
-	if !ok {
-		logger.Logger.Fatalf("invalid field name %s in structure variable %s with fields types %v", name, v.String(), v.GetStructType().FieldTypes)
-	}
-
-	variable = GetOrCreateVariableFromType(name, fieldType)
-	v.Fields[name] = variable
-	logger.Logger.Warnf("added new variable %s for field %s in structure variable %s", variable.String(), name, v.String())
-	return variable
-}
-
 func (v *StructVariable) GetStructType() *StructType {
 	structType, ok := v.VariableInfo.Type.(*StructType)
 	if !ok {

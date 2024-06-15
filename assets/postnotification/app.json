@@ -20,8 +20,8 @@
         "db": "NoSQLDatabase"
       },
       "databases": [
-        "post_cache",
-        "post_db"
+        "post_db",
+        "post_cache"
       ]
     },
     "UploadService": {
@@ -58,8 +58,8 @@
       "name": "post_db",
       "datastore": {
         "name": "post_db",
-        "type": "Cache",
-        "kind": "Redis"
+        "type": "NoSQL",
+        "kind": "MongoDB"
       }
     }
   }

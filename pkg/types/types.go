@@ -1,6 +1,7 @@
 package types
 
 import (
+	"analyzer/pkg/logger"
 	"fmt"
 	"strings"
 )
@@ -11,6 +12,7 @@ type Type interface {
 	GetName() string
 	// only fore UserType, ServiceType, and DatastoreType
 	GetPackage() string
+	GetBasicValue() string
 }
 
 // NOTE: package is always the real package path
@@ -26,20 +28,9 @@ type UserType struct {
 	Package string
 	Name    string
 }
-type FuncType struct {
-	Type     `json:"-"`
-	Name 		string
-	Package 	string
-	SignatureType *SignatureType
-}
 type SignatureType struct {
 	Type     `json:"-"`
 	ReturnTypes []Type
-}
-type ImportedType struct {
-	Type     `json:"-"`
-	Package string
-	Name    string
 }
 type StructType struct {
 	Type   		`json:"-"`
@@ -89,7 +80,9 @@ func packageAlias(pkg string) string {
 	return splits[len(splits)-1]
 }
 
+// -------
 // Service
+// -------
 func (t *ServiceType) String() string {
 	return fmt.Sprintf("%s.%s", packageAlias(t.Package), t.Name)
 }
@@ -102,7 +95,13 @@ func (t *ServiceType) GetName() string {
 func (t *ServiceType) GetPackage() string {
 	return t.Package
 }
+func (t *ServiceType) GetBasicValue() string {
+	logger.Logger.Fatalf("unable to get value for service type %s", t.String())
+	return ""
+}
+// ----
 // User
+// ----
 func (t *UserType) String() string {
 	if t.UserType != nil {
 		return fmt.Sprintf("%s.%s %s", packageAlias(t.Package), t.Name, t.UserType.String())
@@ -121,20 +120,12 @@ func (t *UserType) GetName() string {
 func (t *UserType) GetPackage() string {
 	return t.Package
 }
-// FuncType
-func (t *FuncType) String() string {
-	return fmt.Sprintf("%s.%s", packageAlias(t.Package), t.Name)
+func (t *UserType) GetBasicValue() string {
+	return t.UserType.GetBasicValue()
 }
-func (t *FuncType) FullString() string {
-	return fmt.Sprintf("%s.%s (...) %s", packageAlias(t.Package), t.Name, t.SignatureType.String())
-}
-func (t *FuncType) GetName() string {
-	return t.Name
-}
-func (t *FuncType) GetPackage() string {
-	return t.Package
-}
+// -------------
 // SignatureType
+// -------------
 func (t *SignatureType) String() string {
 	if len(t.ReturnTypes) == 0 {
 		return ""
@@ -164,17 +155,13 @@ func (t *SignatureType) GetPackage() string {
 func (t *SignatureType) GetReturns() []Type {
 	return t.ReturnTypes
 }
-// Imported
-func (t *ImportedType) String() string {
-	return fmt.Sprintf("%s.%s", packageAlias(t.Package), t.Name)
+func (t *SignatureType) GetBasicValue() string {
+	logger.Logger.Fatalf("unable to get value for signature type %s", t.String())
+	return ""
 }
-func (t *ImportedType) FullString() string {
-	return t.String()
-}
-func (t *ImportedType) GetName() string {
-	return t.Name
-}
+// -------
 // Pointer
+// -------
 func (t *PointerType) String() string {
 	return fmt.Sprintf("*%s", t.PointerTo.String())
 }
@@ -184,7 +171,12 @@ func (t *PointerType) FullString() string {
 func (t *PointerType) GetName() string {
 	return t.String()
 }
+func (t *PointerType) GetBasicValue() string {
+	return t.PointerTo.GetBasicValue()
+}
+// -------
 // Address
+// -------
 func (t *AddressType) String() string {
 	return fmt.Sprintf("&%s", t.AddressOf.String())
 }
@@ -194,10 +186,15 @@ func (t *AddressType) FullString() string {
 func (t *AddressType) GetName() string {
 	return t.String()
 }
+func (t *AddressType) GetBasicValue() string {
+	return t.AddressOf.GetBasicValue()
+}
+// -----
 // Basic
+// -----
 func (t *BasicType) String() string {
 	if t.Value != "" {
-		return fmt.Sprintf("%s (%s)", t.Name, t.Value)
+		return fmt.Sprintf("%s %s", t.Value, t.Name)
 	}
 	return t.Name
 }
@@ -207,7 +204,12 @@ func (t *BasicType) FullString() string {
 func (t *BasicType) GetName() string {
 	return t.Value
 }
+func (t *BasicType) GetBasicValue() string {
+	return t.Value
+}
+// -----
 // Tuple
+// -----
 func (t *TupleType) String() string {
 	return ""
 }
@@ -220,7 +222,13 @@ func (t *TupleType) GetName() string {
 func (t *TupleType) GetTypes() []Type {
 	return t.Types
 }
+func (t *TupleType) GetBasicValue() string {
+	logger.Logger.Fatalf("unable to get value for tuple type %s", t.String())
+	return ""
+}
+// -----
 // Array
+// -----
 func (t *ArrayType) String() string {
 	return "[]" + t.ElementsType.String()
 }
@@ -230,7 +238,13 @@ func (t *ArrayType) FullString() string {
 func (t *ArrayType) GetName() string {
 	return t.String()
 }
+func (t *ArrayType) GetBasicValue() string {
+	logger.Logger.Fatalf("unable to get value for array type %s", t.String())
+	return ""
+}
+// ---
 // Map
+// ---
 func (t *MapType) String() string {
 	return fmt.Sprintf("map[%s]%s", t.KeyType.String(), t.ValueType.String())
 }
@@ -240,7 +254,13 @@ func (t *MapType) FullString() string {
 func (t *MapType) GetName() string {
 	return t.String()
 }
+func (t *MapType) GetBasicValue() string {
+	logger.Logger.Fatalf("unable to get value for map type %s", t.String())
+	return ""
+}
+// ----
 // Chan
+// ----
 func (t *ChanType) String() string {
 	return fmt.Sprintf("chan %s", t.ChanType.String())
 }
@@ -250,7 +270,13 @@ func (t *ChanType) FullString() string {
 func (t *ChanType) GetName() string {
 	return t.String()
 }
+func (t *ChanType) GetBasicValue() string {
+	logger.Logger.Fatalf("unable to get value for chan type %s", t.String())
+	return ""
+}
+// ------
 // Struct
+// ------
 func (t *StructType) String() string {
 	return "struct"
 }
@@ -270,7 +296,13 @@ func (t *StructType) FullString() string {
 func (t *StructType) GetName() string {
 	return t.String()
 }
+func (t *StructType) GetBasicValue() string {
+	logger.Logger.Fatalf("unable to get value for struct type %s", t.String())
+	return ""
+}
+// -------
 // Generic
+// -------
 func (t *GenericType) String() string {
 	/* if t.Name != "" {
 		return t.Name
@@ -283,7 +315,13 @@ func (t *GenericType) FullString() string {
 func (t *GenericType) GetName() string {
 	return t.String()
 }
+func (t *GenericType) GetBasicValue() string {
+	logger.Logger.Fatalf("unable to get value for generic type %s", t.String())
+	return ""
+}
+// ---------
 // Interface
+// ---------
 func (t *InterfaceType) String() string {
 	if t.Content != "" {
 		return fmt.Sprintf("interface{ %s }", t.Content)
@@ -295,4 +333,8 @@ func (t *InterfaceType) FullString() string {
 }
 func (t *InterfaceType) GetName() string {
 	return t.String()
+}
+func (t *InterfaceType) GetBasicValue() string {
+	logger.Logger.Fatalf("unable to get value for interface type %s", t.String())
+	return ""
 }

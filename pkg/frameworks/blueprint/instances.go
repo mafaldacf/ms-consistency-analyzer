@@ -76,3 +76,34 @@ func (c *CacheInstance) MarshalJSON() ([]byte, error) {
 		Datastore: c.GetDatastore(),
 	})
 }
+
+type NoSQLInstance struct {
+	BlueprintDatabaseInstance
+}
+
+func (c *NoSQLInstance) GetName() string {
+	return c.Name
+}
+
+func (c *NoSQLInstance) String() string {
+	return c.Name + " " + c.GetTypeName()
+}
+
+func (c *NoSQLInstance) IsQueue() bool {
+	return false
+}
+
+func (c *NoSQLInstance) GetTypeName() string {
+	return "Cache"
+}
+
+// MarshalJSON is used by app.Save()
+func (c *NoSQLInstance) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Name      string `json:"name"`
+		Datastore *datastores.Datastore `json:"datastore"`
+	}{
+		Name:      c.GetName(),
+		Datastore: c.GetDatastore(),
+	})
+}

@@ -108,6 +108,7 @@ func createOperation(key types.Variable, object types.Variable, call *abstractgr
 
 func (request *Request) saveWriteOperation(key types.Variable, object types.Variable, call *abstractgraph.AbstractDatabaseCall) *Operation {
 	write := createOperation(key, object, call)
+	logger.Logger.Warnf("created operation with key (%s) and object (%s)", key, object)
 	request.Writes = append(request.Writes, write)
 	logger.Logger.Debugf("saved write %s", write.String())
 	return write
@@ -160,12 +161,14 @@ func (request *Request) transverseOperations(node abstractgraph.AbstractNode) {
 	if dbCall, ok := node.(*abstractgraph.AbstractDatabaseCall); ok {
 		if backend, ok := dbCall.ParsedCall.Method.(*frameworks.BlueprintBackend); ok {
 			if backend.IsWrite() {
+				logger.Logger.Infof("visiting write %s", backend.String())
 				key := dbCall.GetParam(backend.GetWrittenKeyIndex())
 				object := dbCall.GetParam(backend.GetWrittenObjectIndex())
 				request.saveWriteOperation(key, object, dbCall)
 			} else {
 				key := dbCall.GetParam(backend.GetReadKeyIndex())
 				object := dbCall.GetParam(backend.GetReadObjectIndex())
+				logger.Logger.Infof("visiting read %s", backend.String())
 				read := request.saveReadOperation(key, object, dbCall)
 				request.captureInconsistency(read, dbCall)
 			}

@@ -4,7 +4,6 @@ import (
 	frameworks "analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
-	"fmt"
 	"go/ast"
 
 	"analyzer/pkg/service"
@@ -35,12 +34,130 @@ func visitBasicBlock(node *service.ServiceNode, method *service.ParsedFuncDecl, 
 	}
 }
 
+func parseExpressions(service *service.ServiceNode, method *service.ParsedFuncDecl, block *types.ParsedBlock, node ast.Node) {
+	switch e := node.(type) {
+	// ------------
+	// Go Routines
+	// ------------
+	case *ast.GoStmt:
+		parseExpressions(service, method, block, e.Call.Fun)
+	case *ast.FuncLit:
+		for _, stmt := range e.Body.List {
+			parseExpressions(service, method, block, stmt)
+		}
+	// ----------------------------
+	// Declarations and Assignments
+	// ----------------------------
+	case *ast.DeclStmt:
+		for _, spec := range e.Decl.(*ast.GenDecl).Specs {
+			parseExpressions(service, method, block, spec)
+		}
+	case *ast.ValueSpec:
+		// FIXME
+		for _, v := range e.Values {
+			saveCalls(service, method, block, v)
+		}
+		t := service.File.ComputeTypeForExpr(e.Type)
+		for _, ident := range e.Names {
+			decl := createVariableFromType(ident.Name, t)
+			block.AddVariable(decl)
+		}
+	case *ast.AssignStmt:
+		//FIXME: assignments can be from func calls
+		/* for _, rvalue := range e.Rhs {
+			logger.Logger.Info("IN ASSIGNMENT FOR SAVING CALL")
+			saveCalls(service, method, block, rvalue)
+		} */
+		for _, rvalue := range e.Rhs {
+			logger.Logger.Debugf("IN ASSIGNMENT FOR CREATING VARIABLE (type = %s)", utils.GetType(rvalue))
+			variable := getOrCreateVariable(service, method, block, rvalue, true)
+
+			if tupleVariable, ok := variable.(*types.TupleVariable); ok {
+				if len(e.Lhs) != len(tupleVariable.Variables) {
+					logger.Logger.Fatalf("number of left values (%d) does not match length of tuple variables (%d) for assignment %v", len(e.Lhs), len(tupleVariable.Variables), e)
+				}
+				for i, lvalue := range e.Lhs {
+					variable = tupleVariable.Variables[i]
+					variable.GetVariableInfo().SetName(lvalue.(*ast.Ident).Name)
+					variable.GetVariableInfo().SetUnassigned()
+					block.AddVariable(variable)
+				}
+			} else {
+				for _, lvalue := range e.Lhs {
+					// copy rh since there can be more lhs than rhs
+					variableCopy := variable.DeepCopy()
+					variableCopy.GetVariableInfo().SetName(lvalue.(*ast.Ident).Name)
+					variableCopy.GetVariableInfo().SetUnassigned()
+					block.AddVariable(variableCopy)
+				}
+			}
+		}
+	// -----------------------------
+	// Expressions for new Variables
+	// -----------------------------
+	case *ast.KeyValueExpr: // e.g. from structure declarations
+		parseExpressions(service, method, block, e.Key)
+		parseExpressions(service, method, block, e.Value)
+	case *ast.SelectorExpr:
+		parseExpressions(service, method, block, e.X)
+	case *ast.CompositeLit:
+		// e.g. creating a structure where a field is obtained from a function call
+		logger.Logger.Debugf("FFFOOOOUNNDDD COMPOSITE LITE %v", e.Elts)
+		for _, elt := range e.Elts {
+			parseExpressions(service, method, block, elt)
+		}
+	// -----------------------------------
+	// Calls and Parenthesized Expressions
+	// -----------------------------------
+	case *ast.CallExpr:
+		// a call expr can also happen upon a structure assignment
+		// e.g. post := Post { ... }
+		saveFuncCallIfValid(service, method, block, e)
+	case *ast.ParenExpr:
+		// e.g. when used as a bool value in an if statement (assumes it is inside a parentheses)
+		// in this case, the unfolded node from ParenExpr is a CallExpr
+		parseExpressions(service, method, block, e.X)
+	// -----------------
+	// Other Expressions
+	// -----------------
+	case *ast.ExprStmt:
+		parseExpressions(service, method, block, e.X)
+	case *ast.UnaryExpr: // e.g. <-forever
+		parseExpressions(service, method, block, e.X)
+	case *ast.BinaryExpr: // e.g. if err != nil
+		parseExpressions(service, method, block, e.X)
+		parseExpressions(service, method, block, e.Y)
+	// ----------------
+	// Other Statements
+	// ----------------
+	case *ast.IncDecStmt: // e.g. decrement in loop
+		parseExpressions(service, method, block, e.X)
+	case *ast.ReturnStmt:
+		for _, r := range e.Results {
+			parseExpressions(service, method, block, r)
+		}
+	case *ast.DeferStmt:
+		parseExpressions(service, method, block, e.Call.Fun)
+	// ----------------
+	// Ignore Remaining
+	// ----------------
+	// following types can only happen within "loose" expressions with no assignments
+	case *ast.Ident: // e.g. err in err != nil
+	case *ast.TypeAssertExpr:
+	case *ast.BasicLit: // e.g. integers (1), strings ("foo"), etc
+	case *ast.IfStmt:
+
+	default:
+		logger.Logger.Fatalf("unknown type in parseExpressions for type %s: %v", utils.GetType(node), node)
+	}
+}
+
 func saveCalls(service *service.ServiceNode, method *service.ParsedFuncDecl, parsedBlock *types.ParsedBlock, node ast.Node) {
 	logger.Logger.Infof("---------- %v", utils.GetType(node))
 	switch e := node.(type) {
 	case *ast.CallExpr:
 		logger.Logger.Infof("FFFOOOOUNNDDD CALL EXPR %v", e)
-		saveCallIfValid(service, method, parsedBlock, e)
+		saveFuncCallIfValid(service, method, parsedBlock, e)
 	case *ast.CompositeLit:
 		// e.g. creating a structure where a field is obtained from a function call
 		logger.Logger.Infof("FFFOOOOUNNDDD COMPOSITE LITE %v", e)
@@ -65,12 +182,42 @@ func saveCalls(service *service.ServiceNode, method *service.ParsedFuncDecl, par
 	}
 }
 
-func saveCallIfValid(service *service.ServiceNode, method *service.ParsedFuncDecl, parsedBlock *types.ParsedBlock, callExpr *ast.CallExpr) bool {
-	parsedCall := saveFuncCallIfValid(service, method, callExpr)
-	if parsedCall == nil {
-		return false
+func getReceiverIfValid(selectorExpr *ast.SelectorExpr, methodRecvIdent *ast.Ident, block *types.ParsedBlock) (*ast.Ident, types.Variable, bool) {
+	if recvIdent, ok := selectorExpr.X.(*ast.Ident); ok {
+		// current method receiver
+		if recvIdent.Name == methodRecvIdent.Name {
+			return recvIdent, nil, true
+		}
+		// an NoSQL collection from a previous field
+		if variable := block.GetLastestVariable(recvIdent.Name); variable != nil {
+			return recvIdent, variable, true
+		}
 	}
-	for i, arg := range callExpr.Args {
+	return nil, nil, false
+}
+
+func getCallIfSelectedField(node ast.Node, methodRecvIdent *ast.Ident, block *types.ParsedBlock) (funcCall *ast.CallExpr, methodIdent *ast.Ident, fieldIdent *ast.Ident, serviceRecvIdent *ast.Ident, variable types.Variable, ok bool) {
+	if funcCall, ok := node.(*ast.CallExpr); ok {		
+		// e.g. f.queue.Push
+		//    ^ident2 ^ident ^method
+		// e.g. f.storageService.StorePost
+		//      ^ident2  ^ident    ^method
+		if methodSel, ok := funcCall.Fun.(*ast.SelectorExpr); ok {
+			// get first selector (e.g. storageService)
+			if fieldSel, ok := methodSel.X.(*ast.SelectorExpr); ok {
+				if recvIdent, _, ok := getReceiverIfValid(fieldSel, methodRecvIdent, block); ok && recvIdent != nil {
+					return funcCall, methodSel.Sel, fieldSel.Sel, recvIdent, nil, true
+				}
+			} else if recvIdent, variable, ok := getReceiverIfValid(methodSel, methodRecvIdent, block); ok {
+				return funcCall, methodSel.Sel, nil, recvIdent, variable, true
+			}
+		}
+	}
+	return nil, nil, nil, nil, nil, false
+}
+
+func saveFuncCallParams(service *service.ServiceNode, method *service.ParsedFuncDecl, parsedBlock *types.ParsedBlock, parsedCall service.Call, args []ast.Expr) {
+	for i, arg := range args {
 		param := getOrCreateVariable(service, method, parsedBlock, arg, false)
 
 		// upgrade variable with known type from function method
@@ -80,41 +227,11 @@ func saveCallIfValid(service *service.ServiceNode, method *service.ParsedFuncDec
 		}
 		parsedCall.AddParam(param)
 	}
-	logger.Logger.Infof("[CFG] found call %s", parsedCall.String())
-	return true
+	logger.Logger.Infof("[CFG] added params to func call %s", parsedCall.String())
 }
 
-func hasCurrentServiceRecvIdent(selectorExpr *ast.SelectorExpr, expectedRecvIdent *ast.Ident) (bool, *ast.Ident) {
-	if serviceRecvIdent, ok := selectorExpr.X.(*ast.Ident); ok {
-		if serviceRecvIdent.Name == expectedRecvIdent.Name {
-			return true, serviceRecvIdent
-		}
-	}
-	return false, nil
-}
-
-func getFuncCallIfSelectedServiceField(node ast.Node, expectedRecvIdent *ast.Ident) (ok bool, funcCall *ast.CallExpr, methodIdent *ast.Ident, fieldIdent *ast.Ident, serviceRecvIdent *ast.Ident) {
-	// e.g. f.queue.Push
-	//    ^ident2 ^ident ^method
-	// e.g. f.storageService.StorePost
-	//      ^ident2  ^ident    ^method
-	if funcCall, ok := node.(*ast.CallExpr); ok {		
-		if methodSel, ok := funcCall.Fun.(*ast.SelectorExpr); ok {
-			// get first selector (e.g. storageService)
-			if fieldSel, ok := methodSel.X.(*ast.SelectorExpr); ok {
-				if ok, serviceRecvIdent := hasCurrentServiceRecvIdent(fieldSel, expectedRecvIdent); ok {
-					return true, funcCall, methodSel.Sel, fieldSel.Sel, serviceRecvIdent
-				}
-			} else if ok, serviceRecvIdent := hasCurrentServiceRecvIdent(methodSel, expectedRecvIdent); ok {
-				return true, funcCall, methodSel.Sel, nil, serviceRecvIdent
-			}
-		}
-	}
-	return false, nil, nil, nil, nil
-}
-
-func saveFuncCallIfValid(node *service.ServiceNode, method *service.ParsedFuncDecl, callExpr *ast.CallExpr) service.Call {
-	ok, funcCall, methodIdent, fieldIdent, serviceRecvIdent := getFuncCallIfSelectedServiceField(callExpr, method.Recv)
+func saveFuncCallIfValid(node *service.ServiceNode, method *service.ParsedFuncDecl, block *types.ParsedBlock, callExpr *ast.CallExpr) service.Call {
+	funcCall, methodIdent, fieldIdent, serviceRecvIdent, variable, ok := getCallIfSelectedField(callExpr, method.Recv, block)
 	if !ok {
 		return nil
 	}
@@ -142,15 +259,17 @@ func saveFuncCallIfValid(node *service.ServiceNode, method *service.ParsedFuncDe
 					CallerTypeName: &types.ServiceType{Name: node.Name, Package: node.GetPackageName()},
 					CalleeTypeName: serviceField.GetType(),
 				}
+				saveFuncCallParams(node, method, block, parsedCall, callExpr.Args)
 				method.Calls = append(method.Calls, parsedCall)
-				logger.Logger.Warnf("[CFG] found new service call %s", parsedCall.Name)
+				logger.Logger.Infof("[CFG] found new service call %s", parsedCall.Name)
 				return parsedCall
 			} else if databaseField, ok := field.(*types.DatabaseField); ok {
 				// if the field corresponds to a database field
 				// 1. extract the service field from the current service
 				// 2. get the target database node
 				// 3. add the target method for the current call expression
-				targetDatabaseType := databaseField.GetTypeName()
+				blueprintType := databaseField.FieldInfo.Type.(*frameworks.BlueprintBackendType)
+				blueprintMethod := blueprintType.GetMethod(methodIdent.Name)
 				parsedCall := &service.DatabaseParsedCallExpr{
 					ParsedCallExpr: service.ParsedCallExpr{
 						Ast:         funcCall,
@@ -158,19 +277,51 @@ func saveFuncCallIfValid(node *service.ServiceNode, method *service.ParsedFuncDe
 						TargetField: fieldIdent.Name,
 						Name:        methodIdent.Name,
 						Pos:         funcCall.Pos(),
-						Method:      frameworks.GetBackendMethod(fmt.Sprintf("%s.%s", targetDatabaseType, methodIdent.Name)),
+						Method: 	 blueprintMethod,
 					},
 					CallerTypeName: &types.ServiceType{Name: node.Name, Package: node.GetPackageName()},
 					DbInstance:     databaseField.DbInstance,
 				}
-				method.Calls = append(method.Calls, parsedCall)
-				logger.Logger.Warnf("[CFG] found new database call %s", parsedCall.Name)
+				saveFuncCallParams(node, method, block, parsedCall, callExpr.Args)
+
+				// maybe user is just getting the collection
+				if blueprintType.IsNoSQLDatabase() && blueprintMethod.IsNoSQLGetCollectionCall() {
+					blueprintMethod.SetNoSQLDatabaseCollection(
+						parsedCall.Params[1].GetVariableInfo().Type.GetBasicValue(),
+						parsedCall.Params[2].GetVariableInfo().Type.GetBasicValue(),
+						databaseField.DbInstance,
+					)
+					logger.Logger.Infof("[CFG] found blueprint backend call NoSQLDatabase.GetCollection() %s", parsedCall.Name)
+				} else {
+					method.Calls = append(method.Calls, parsedCall)
+					logger.Logger.Infof("[CFG] found new database call %s", parsedCall.Name)
+				}
 				return parsedCall
 			} else {
-				logger.Logger.Warnf("[CFG] unknown call %v for field %s with type %s", callExpr.Fun, field.String(), utils.GetType(field))
+				logger.Logger.Fatalf("[CFG] unknown call %v for field %s with type %s", callExpr.Fun, field.String(), utils.GetType(field))
 			}
 		}
-	} 
+	} else if variable != nil {
+		if collectionVariable, ok := variable.(*frameworks.NoSQLCollectionVariable); ok {
+			blueprintType := collectionVariable.VariableInfo.Type.(*frameworks.BlueprintBackendType)
+			blueprintMethod := blueprintType.GetMethod(methodIdent.Name)
+			parsedCall := &service.DatabaseParsedCallExpr{
+				ParsedCallExpr: service.ParsedCallExpr{
+					Ast:         funcCall,
+					Receiver:    serviceRecvIdent.Name,
+					TargetField: collectionVariable.VariableInfo.GetName(),
+					Name:        methodIdent.Name,
+					Pos:         funcCall.Pos(),
+					Method: 	 blueprintMethod,
+				},
+				CallerTypeName: &types.ServiceType{Name: node.Name, Package: node.GetPackageName()},
+				DbInstance:   	blueprintType.DbInstance,
+			}
+			saveFuncCallParams(node, method, block, parsedCall, callExpr.Args)
+			method.Calls = append(method.Calls, parsedCall)
+			logger.Logger.Infof("[CFG] found new database call for NoSQL collection %s", parsedCall.Name)
+		}
+	}
 	if funcDecl, ok := node.InternalMethods[methodIdent.Name]; ok {
 		parsedCall := &service.InternalTempParsedCallExpr{
 			ParsedCallExpr: service.ParsedCallExpr{
@@ -182,11 +333,12 @@ func saveFuncCallIfValid(node *service.ServiceNode, method *service.ParsedFuncDe
 			},
 			ServiceTypeName: &types.ServiceType{Name: node.Name, Package: node.GetPackageName()},
 		}
+		saveFuncCallParams(node, method, block, parsedCall, callExpr.Args)
 		method.Calls = append(method.Calls, parsedCall)
-		logger.Logger.Warnf("[CFG] found new internal call %s", parsedCall.Name)
+		logger.Logger.Infof("[CFG] found new internal call %s", parsedCall.Name)
 		return parsedCall
 	}
 
-	logger.Logger.Fatalf("[CFG] unknown call %v (fields = %v) (ident = %v) internal methods list %v", callExpr.Fun, node.Fields, fieldIdent, node.InternalMethods)
+	logger.Logger.Warnf("[CFG] cannot save unknown call %v", callExpr.Fun)
 	return nil
 }
