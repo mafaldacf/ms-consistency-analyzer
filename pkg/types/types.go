@@ -1,9 +1,10 @@
 package types
 
 import (
-	"analyzer/pkg/logger"
 	"fmt"
 	"strings"
+
+	"analyzer/pkg/logger"
 )
 
 type Type interface {
@@ -13,6 +14,7 @@ type Type interface {
 	// only fore UserType, ServiceType, and DatastoreType
 	GetPackage() string
 	GetBasicValue() string
+	AddValue(value string)
 }
 
 // NOTE: package is always the real package path
@@ -25,46 +27,50 @@ type ServiceType struct {
 type UserType struct {
 	Type     `json:"-"`
 	UserType Type
-	Package string
-	Name    string
+	Package  string
+	Name     string
 }
 type SignatureType struct {
-	Type     `json:"-"`
+	Type        `json:"-"`
 	ReturnTypes []Type
 }
 type StructType struct {
-	Type   		`json:"-"`
-	FieldTypes 	map[string]Type
+	Type       `json:"-"`
+	FieldTypes map[string]Type
+
+	// order fields by index
+	// FIXME: in the future, this should not be necessary if we have a new FieldType (also with annotations e.g. for json parsing)
+	FieldNames []string
 }
 type MapType struct {
-	Type   `json:"-"`
-	KeyType 	Type
-	ValueType 	Type
+	Type      `json:"-"`
+	KeyType   Type
+	ValueType Type
 }
 type ChanType struct {
-	Type   `json:"-"`
-	ChanType   Type
+	Type     `json:"-"`
+	ChanType Type
 }
 type ArrayType struct {
-	Type   			`json:"-"`
-	ElementsType  	Type
+	Type         `json:"-"`
+	ElementsType Type
 }
 type BasicType struct {
-	Type `json:"-"`
-	Name 	string
-	Value 	string
+	Type  `json:"-"`
+	Name  string
+	Value string
 }
 type TupleType struct {
-	Type `json:"-"`
+	Type  `json:"-"`
 	Types []Type
 }
 type InterfaceType struct {
-	Type `json:"-"`
+	Type    `json:"-"`
 	Content string
 }
 type GenericType struct {
 	Type `json:"-"`
-	Name  string
+	Name string
 }
 type PointerType struct {
 	Type      `json:"-"`
@@ -99,6 +105,10 @@ func (t *ServiceType) GetBasicValue() string {
 	logger.Logger.Fatalf("unable to get value for service type %s", t.String())
 	return ""
 }
+func (t *ServiceType) AddValue(value string) {
+	logger.Logger.Fatalf("unable to add value for service type %s", t.String())
+}
+
 // ----
 // User
 // ----
@@ -123,6 +133,7 @@ func (t *UserType) GetPackage() string {
 func (t *UserType) GetBasicValue() string {
 	return t.UserType.GetBasicValue()
 }
+
 // -------------
 // SignatureType
 // -------------
@@ -136,7 +147,7 @@ func (t *SignatureType) String() string {
 	s := "( "
 	for i, ft := range t.ReturnTypes {
 		s += ft.FullString()
-		if i < len(t.ReturnTypes) - 1 {
+		if i < len(t.ReturnTypes)-1 {
 			s += ", "
 		}
 	}
@@ -159,6 +170,10 @@ func (t *SignatureType) GetBasicValue() string {
 	logger.Logger.Fatalf("unable to get value for signature type %s", t.String())
 	return ""
 }
+func (t *SignatureType) AddValue(value string) {
+	logger.Logger.Fatalf("unable to add value for signature type %s", t.String())
+}
+
 // -------
 // Pointer
 // -------
@@ -174,6 +189,10 @@ func (t *PointerType) GetName() string {
 func (t *PointerType) GetBasicValue() string {
 	return t.PointerTo.GetBasicValue()
 }
+func (t *PointerType) AddValue(value string) {
+	t.PointerTo.AddValue(value)
+}
+
 // -------
 // Address
 // -------
@@ -189,6 +208,10 @@ func (t *AddressType) GetName() string {
 func (t *AddressType) GetBasicValue() string {
 	return t.AddressOf.GetBasicValue()
 }
+func (t *AddressType) AddValue(value string) {
+	t.AddressOf.AddValue(value)
+}
+
 // -----
 // Basic
 // -----
@@ -202,11 +225,15 @@ func (t *BasicType) FullString() string {
 	return t.String()
 }
 func (t *BasicType) GetName() string {
-	return t.Value
+	return t.String()
 }
 func (t *BasicType) GetBasicValue() string {
 	return t.Value
 }
+func (t *BasicType) AddValue(value string) {
+	t.Value = value
+}
+
 // -----
 // Tuple
 // -----
@@ -226,6 +253,10 @@ func (t *TupleType) GetBasicValue() string {
 	logger.Logger.Fatalf("unable to get value for tuple type %s", t.String())
 	return ""
 }
+func (t *TupleType) AddValue(value string) {
+	logger.Logger.Fatalf("unable to add value for tuple type %s", t.String())
+}
+
 // -----
 // Array
 // -----
@@ -242,6 +273,10 @@ func (t *ArrayType) GetBasicValue() string {
 	logger.Logger.Fatalf("unable to get value for array type %s", t.String())
 	return ""
 }
+func (t *ArrayType) AddValue(value string) {
+	logger.Logger.Fatalf("unable to add value for array type %s", t.String())
+}
+
 // ---
 // Map
 // ---
@@ -258,6 +293,10 @@ func (t *MapType) GetBasicValue() string {
 	logger.Logger.Fatalf("unable to get value for map type %s", t.String())
 	return ""
 }
+func (t *MapType) AddValue(value string) {
+	logger.Logger.Fatalf("unable to add value for map type %s", t.String())
+}
+
 // ----
 // Chan
 // ----
@@ -274,6 +313,10 @@ func (t *ChanType) GetBasicValue() string {
 	logger.Logger.Fatalf("unable to get value for chan type %s", t.String())
 	return ""
 }
+func (t *ChanType) AddValue(value string) {
+	logger.Logger.Fatalf("unable to add value for chan type %s", t.String())
+}
+
 // ------
 // Struct
 // ------
@@ -281,11 +324,16 @@ func (t *StructType) String() string {
 	return "struct"
 }
 func (t *StructType) FullString() string {
+	if len(t.FieldNames) == 0 {
+		return "struct {}"
+	}
 	s := "struct { "
 	i := 0
-	for name, ft := range t.FieldTypes {
-		s += name + " " + ft.FullString()
-		if i < len(t.FieldTypes) - 1 {
+	// get by index order
+	for _, name := range t.FieldNames {
+		field := t.FieldTypes[name]
+		s += name + " " + field.FullString()
+		if i < len(t.FieldTypes)-1 {
 			s += ", "
 		}
 		i++
@@ -300,6 +348,10 @@ func (t *StructType) GetBasicValue() string {
 	logger.Logger.Fatalf("unable to get value for struct type %s", t.String())
 	return ""
 }
+func (t *StructType) AddValue(value string) {
+	logger.Logger.Fatalf("unable to add value for struct type %s", t.String())
+}
+
 // -------
 // Generic
 // -------
@@ -319,6 +371,10 @@ func (t *GenericType) GetBasicValue() string {
 	logger.Logger.Fatalf("unable to get value for generic type %s", t.String())
 	return ""
 }
+func (t *GenericType) AddValue(value string) {
+	logger.Logger.Fatalf("unable to add value for generic type %s", t.String())
+}
+
 // ---------
 // Interface
 // ---------
@@ -337,4 +393,7 @@ func (t *InterfaceType) GetName() string {
 func (t *InterfaceType) GetBasicValue() string {
 	logger.Logger.Fatalf("unable to get value for interface type %s", t.String())
 	return ""
+}
+func (t *InterfaceType) AddValue(value string) {
+	logger.Logger.Fatalf("unable to add value for interface type %s", t.String())
 }

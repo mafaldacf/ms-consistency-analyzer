@@ -6,12 +6,12 @@ import "fmt"
 // ------- Import ------
 // ---------------------
 type Import struct {
-	Alias   		string
-	ImportPath    	string
-	PackageName 	string
+	Alias       string
+	ImportPath  string
+	PackageName string
 	// real pack of the imported package
 	// FIXME: if dev uses go.mod to replace paths then we have to translate to the real path
-	PackagePath 	string
+	PackagePath string
 }
 
 func (i *Import) IsBlueprintPackage() bool {

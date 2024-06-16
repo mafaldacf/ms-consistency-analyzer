@@ -1,9 +1,10 @@
 package types
 
 import (
-	"analyzer/pkg/datastores"
 	"fmt"
 	"go/ast"
+
+	"analyzer/pkg/datastores"
 )
 
 type Field interface {
@@ -22,7 +23,7 @@ type FieldInfo struct {
 	Type Type
 }
 
-type FunctionField struct {
+type MethodField struct {
 	Field
 	FieldInfo FieldInfo
 }
@@ -122,27 +123,27 @@ func (f *DatabaseField) SetType(t Type) {
 // ------------------
 // FUNCTION PARAMETER
 // ------------------
-func (f *FunctionField) String() string {
+func (f *MethodField) String() string {
 	if f.FieldInfo.Name != "" {
 		return fmt.Sprintf("%s %s", f.FieldInfo.Name, f.FieldInfo.Type.String())
 	}
 	return f.FieldInfo.Type.String()
 }
-func (f *FunctionField) GetTypeString() string {
+func (f *MethodField) GetTypeString() string {
 	return f.FieldInfo.Type.String()
 }
-func (f *FunctionField) GetTypeName() string {
+func (f *MethodField) GetTypeName() string {
 	return f.FieldInfo.Type.GetName()
 }
-func (f *FunctionField) GetIndex() int {
+func (f *MethodField) GetIndex() int {
 	return -1
 }
-func (f *FunctionField) GetName() string {
+func (f *MethodField) GetName() string {
 	return f.FieldInfo.Name
 }
-func (f *FunctionField) GetType() Type {
+func (f *MethodField) GetType() Type {
 	return f.FieldInfo.Type
 }
-func (f *FunctionField) SetType(t Type) {
+func (f *MethodField) SetType(t Type) {
 	f.FieldInfo.Type = t
 }

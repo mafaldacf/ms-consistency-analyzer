@@ -1,24 +1,23 @@
 package app
 
 import (
-	bp "analyzer/pkg/frameworks/blueprint"
-	frameworks "analyzer/pkg/frameworks/blueprint"
-	"analyzer/pkg/logger"
-	"analyzer/pkg/types"
-	"analyzer/pkg/utils"
 	gotypes "go/types"
 	"path/filepath"
-	"slices"
 	"strings"
 
 	"golang.org/x/tools/go/packages"
+
+	"analyzer/pkg/frameworks"
+	"analyzer/pkg/frameworks/blueprint"
+	"analyzer/pkg/logger"
+	"analyzer/pkg/types"
+	"analyzer/pkg/utils"
 )
 
 const (
 	PACKAGE_PATH_POST_NOTIFICATION string = "github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification"
 	PACKAGE_PATH_FOOBAR            string = "github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar"
-	// blueprint backend package
-	PACKAGE_PATH_BLUEPRINT string = "github.com/blueprint-uservices/blueprint/runtime/core/backend"
+	PACKAGE_PATH_BLUEPRINT         string = "github.com/blueprint-uservices/blueprint/runtime/core/backend"
 )
 
 func isBlueprintPackagePath(name string) bool {
@@ -90,12 +89,12 @@ func parseBlueprintPackage(bpPackage *types.Package) {
 					continue
 				}
 
-				if bp.IsBlueprintBackendComponent(typeName) {
-					backendType := &frameworks.BlueprintBackendType{
-						Name:           typeName,
-						Package:        objectPackage.Path(),
+				if blueprint.IsBackendComponent(typeName) {
+					backendType := &blueprint.BackendType{
+						Name:    typeName,
+						Package: objectPackage.Path(),
 					}
-					backendType.Methods = frameworks.BuildBackendComponentMethods(backendType.Name)
+					backendType.Methods = blueprint.BuildBackendComponentMethods(backendType.Name)
 					bpPackage.AddDeclaredType(backendType)
 					logger.Logger.Debugf("[BLUEPRINT] added blueprint backend %s", backendType.String())
 
@@ -107,7 +106,7 @@ func parseBlueprintPackage(bpPackage *types.Package) {
 	}
 }
 
-func (app *App) ParsePackages(servicesInfo []*types.ServiceInfo) {
+func (app *App) ParsePackages(servicesInfo []*frameworks.ServiceInfo) {
 	var basePackagePath string
 	switch app.Name {
 	case "postnotification":
@@ -124,9 +123,9 @@ func (app *App) ParsePackages(servicesInfo []*types.ServiceInfo) {
 		logger.Logger.Fatalf("error loading packages from %s: %s", basePackagePath, err.Error())
 	}
 
-	var services []string
+	servicesPkgPath := make(map[string]string)
 	for _, info := range servicesInfo {
-		services = append(services, info.Name)
+		servicesPkgPath[info.Name] = info.PackagePath
 	}
 
 	allPackages := make(map[string]*types.Package)
@@ -186,8 +185,7 @@ func (app *App) ParsePackages(servicesInfo []*types.ServiceInfo) {
 						pkg.AddImportedType(declaredType)
 						pkg.AddDatastoreType(declaredType)
 						logger.Logger.Debugf("added imported blueprint type %s", declaredType.String())
-					} else if slices.Contains(services, typeName) {
-						//FIXME: verify is service is also in the same package
+					} else if servicePkgPath, ok := servicesPkgPath[typeName]; ok && servicePkgPath == objectPackagePath {
 						serviceType := &types.ServiceType{
 							Name:    typeName,
 							Package: objectPackagePath,
@@ -203,8 +201,7 @@ func (app *App) ParsePackages(servicesInfo []*types.ServiceInfo) {
 						pkg.AddImportedType(importedType)
 						logger.Logger.Debugf("added imported type %s", importedType.String())
 					}
-				} else if slices.Contains(services, typeName) {
-					//FIXME: verify is service is also in the same package
+				} else if servicePkgPath, ok := servicesPkgPath[typeName]; ok && servicePkgPath == objectPackagePath {
 					serviceType := &types.ServiceType{
 						Name:    typeName,
 						Package: objectPackagePath,

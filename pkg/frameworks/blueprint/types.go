@@ -1,16 +1,17 @@
-package frameworks
+package blueprint
 
 import (
+	"go/types"
+
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/logger"
-	"go/types"
 )
 
-func IsBlueprintBackendComponent(name string) bool {
-	return IsBlueprintBackend(name) || IsBlueprintNoSQLComponent(name)
+func IsBackendComponent(name string) bool {
+	return IsBackend(name) || IsNoSQLComponent(name)
 }
 
-func IsBlueprintBackend(name string) bool {
+func IsBackend(name string) bool {
 	switch name {
 	case "Queue", "Cache", "NoSQLDatabase":
 		return true
@@ -18,7 +19,7 @@ func IsBlueprintBackend(name string) bool {
 	return false
 }
 
-func IsBlueprintNoSQLComponent(name string) bool {
+func IsNoSQLComponent(name string) bool {
 	switch name {
 	case "NoSQLCollection", "NoSQLCursor":
 		return true
@@ -26,65 +27,71 @@ func IsBlueprintNoSQLComponent(name string) bool {
 	return false
 }
 
-type BlueprintNoSQLComponent struct {
-	Database 	string
-	Collection 	string
+type NoSQLComponent struct {
+	Database   string
+	Collection string
 }
 
-type BlueprintBackendType struct {
+type BackendType struct {
 	types.Type     `json:"-"`
 	Name           string
 	Package        string
-	Methods        []*BlueprintBackend
-
-	DbInstance datastores.DatabaseInstance
-	NoSQLComponent *BlueprintNoSQLComponent
+	Methods        []*BackendMethod
+	DbInstance     datastores.DatabaseInstance
+	NoSQLComponent *NoSQLComponent
 }
 
-func (t *BlueprintBackendType) String() string {
+func (t *BackendType) String() string {
 	return t.Name
 }
-func (t *BlueprintBackendType) FullString() string {
-	s := t.Name + " interface { "
+func (t *BackendType) FullString() string {
+	if len(t.Methods) == 0 {
+		return t.Name + " interface{}"
+	}
+	s := t.Name + " interface{ "
 	for i, m := range t.Methods {
 		s += m.String()
 		if i < len(t.Methods)-1 {
 			s += ", "
 		}
 	}
-	return s + " }"
+	return s + "}"
 }
 
-func (t *BlueprintBackendType) GetName() string {
+func (t *BackendType) GetName() string {
 	return t.Name
 }
 
-func (t *BlueprintBackendType) GetPackage() string {
+func (t *BackendType) GetPackage() string {
 	return t.Package
 }
 
-func (t *BlueprintBackendType) GetBasicValue() string {
+func (t *BackendType) GetBasicValue() string {
 	logger.Logger.Fatalf("unable to get value for blueprint backend type type %s", t.String())
 	return ""
 }
 
-func (t *BlueprintBackendType) IsNoSQLComponent() bool {
+func (t *BackendType) AddValue(value string) {
+	logger.Logger.Fatalf("unable to add value for blueprint backend type type %s", t.String())
+}
+
+func (t *BackendType) IsNoSQLComponent() bool {
 	return t.NoSQLComponent != nil
 }
 
-func (t *BlueprintBackendType) IsQueue() bool {
+func (t *BackendType) IsQueue() bool {
 	return t.Name == "Queue"
 }
 
-func (t *BlueprintBackendType) IsNoSQLDatabase() bool {
+func (t *BackendType) IsNoSQLDatabase() bool {
 	return t.Name == "NoSQLDatabase"
 }
 
-func (t *BlueprintBackendType) GetMethods() []*BlueprintBackend {
+func (t *BackendType) GetMethods() []*BackendMethod {
 	return t.Methods
 }
 
-func (t *BlueprintBackendType) GetMethod(name string) *BlueprintBackend {
+func (t *BackendType) GetMethod(name string) *BackendMethod {
 	for _, m := range t.Methods {
 		if m.Name == name {
 			return m

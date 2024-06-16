@@ -1,9 +1,10 @@
 package types
 
 import (
+	"go/ast"
+
 	"analyzer/pkg/logger"
 	"analyzer/pkg/utils"
-	"go/ast"
 )
 
 // ---------------------
@@ -12,12 +13,9 @@ import (
 type File struct {
 	Ast     *ast.File
 	Package *Package
-	// name of the file (e.g. UploadService.go)
-	Name  	string
-	// absolute filepath
+	Name    string
 	AbsPath string
-	// key is the alias of the import
-	Imports map[string]*Import
+	Imports map[string]*Import // key is the alias of the import
 }
 
 func (f *File) GetImport(alias string) (*Import, bool) {

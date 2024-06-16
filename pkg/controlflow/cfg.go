@@ -1,20 +1,20 @@
 package controlflow
 
 import (
-	"analyzer/pkg/logger"
-	"analyzer/pkg/service"
-	"analyzer/pkg/types"
 	"go/ast"
 
 	"golang.org/x/tools/go/cfg"
+
+	"analyzer/pkg/logger"
+	"analyzer/pkg/types"
 )
 
-func GenerateMethodCFG(parsedFuncDecl *service.ParsedFuncDecl) {
-	cfg := cfg.New(parsedFuncDecl.GetBody(), mayReturn)
-	parsedCfg := types.InitParsedCFG(cfg, parsedFuncDecl.Name)
-	parsedFuncDecl.SetParsedCFG(parsedCfg)
+func GenerateMethodCFG(parsedMethod *types.ParsedMethod) {
+	cfg := cfg.New(parsedMethod.GetBody(), mayReturn)
+	parsedCfg := types.InitParsedCFG(cfg, parsedMethod.Name)
+	parsedMethod.SetParsedCFG(parsedCfg)
 	entryBlock := parsedCfg.GetEntryParsedBlock()
-	for i, param := range parsedFuncDecl.Params {
+	for i, param := range parsedMethod.Params {
 		if u, ok := param.GetType().(*types.UserType); ok {
 			if s, ok := u.UserType.(*types.StructType); ok {
 				logger.Logger.Debugf("param %s: %v", param.String(), s.FieldTypes)

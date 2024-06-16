@@ -1,14 +1,14 @@
 package main
 
 import (
+	"flag"
+	"fmt"
+
 	"analyzer/pkg/abstractgraph"
 	"analyzer/pkg/app"
 	"analyzer/pkg/detector"
 	bp "analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
-	"analyzer/pkg/utils"
-	"flag"
-	"fmt"
 )
 
 func main() {
@@ -16,9 +16,9 @@ func main() {
 	appName := flag.String("app", "", "The name of the application to be analyzed")
 	flag.Parse()
 	switch *appName {
-		case "postnotification", "foobar":
-		default: 
-			logger.Logger.Fatal(fmt.Sprintf("invalid app name (%s) must provide an application name ('postnotification' or 'foobar') using the -app flag", *appName))
+	case "postnotification", "foobar":
+	default:
+		logger.Logger.Fatal(fmt.Sprintf("invalid app name (%s) must provide an application name ('postnotification' or 'foobar') using the -app flag", *appName))
 	}
 
 	servicesInfo, databaseInstances, frontends := bp.BuildBlueprintAppInfo(*appName)
@@ -49,56 +49,11 @@ func main() {
 
 	fmt.Println()
 	fmt.Println()
-	app.Save()
-	abstractGraph.Save()
+	app.Dump()
+	abstractGraph.Dump()
 	for _, request := range requests {
 		request.SaveInconsistencies(app.Name)
 	}
 
 	fmt.Println()
-
-	saveServices(app)
-	saveDatastores(app)
-}
-
-func saveDatastores(app *app.App) {
-	data := make(map[string]interface{})
-	for _, ds := range app.Databases {
-		schema := make(map[string]interface{})
-		var fields []map[string]string
-		for _, f := range ds.GetDatastore().Schema.Fields {
-			fields = append(fields, map[string]string{"name": f.GetName(), "type": f.GetType()})
-		}
-		schema["backend"] = ds.GetDatastore().GetTypeString()
-		schema["kind"] = ds.GetDatastore().GetKindString()
-		schema["schema"] = fields
-		data[ds.GetName()] = schema
-	}
-	utils.SaveToYamlFile(data, app.Name, "datastores")
-}
-
-func saveServices(app *app.App) {
-	data := make(map[string]interface{})
-	for _, service := range app.Services {
-		properties := make(map[string]interface{})
-		
-		var fields []map[string]string
-		for _, f := range service.Fields {
-			fields = append(fields, map[string]string{"name": f.GetName(), "type": f.GetTypeName()})
-		}
-		var services []string
-		for _, childService := range service.Services {
-			services = append(services, childService.Name)
-		}
-		var datastores []string
-		for _, datastore := range service.Databases {
-			datastores = append(datastores, datastore.GetName())
-		}
-
-		properties["fields"] = fields
-		properties["services"] = services
-		properties["datastores"] = datastores
-		data[service.Name] = properties
-	}
-	utils.SaveToYamlFile(data, app.Name, "services")
 }

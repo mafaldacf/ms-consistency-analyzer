@@ -1,16 +1,17 @@
-package types
+package frameworks
 
 import "fmt"
 
 type ServiceInfo struct {
-	Name 			string
-	Filepath 		string
-	PackageName 	string
+	Name            string
+	Filepath        string
+	Package     	string
+	PackagePath     string
 	ConstructorName string
 	// maps the parameters in constructors to the corresponding database instance name passed in the wiring
-	ConstructorDBs	map[string]string
-	Methods 		[]string
-	Edges 		    []string
+	ConstructorDBs map[string]string
+	Methods        []string
+	Edges          []string
 }
 
 func (si *ServiceInfo) String() string {

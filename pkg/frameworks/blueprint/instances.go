@@ -1,14 +1,15 @@
-package frameworks
+package blueprint
 
 import (
-	"analyzer/pkg/datastores"
 	"encoding/json"
+
+	"analyzer/pkg/datastores"
 )
 
 type BlueprintDatabaseInstance struct {
-	datastores.DatabaseInstance 	`json:"-"`
-	Name      string 				`json:"name"`
-	Datastore *datastores.Datastore `json:"datastore"`
+	datastores.DatabaseInstance `json:"-"`
+	Name                        string                `json:"name"`
+	Datastore                   *datastores.Datastore `json:"datastore"`
 }
 
 func (i *BlueprintDatabaseInstance) GetDatastore() *datastores.Datastore {
@@ -38,7 +39,7 @@ func (q *QueueInstance) GetTypeName() string {
 // MarshalJSON is used by app.Save()
 func (q *QueueInstance) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Name      string 			   	`json:"name"`
+		Name      string                `json:"name"`
 		Datastore *datastores.Datastore `json:"datastore"`
 	}{
 		Name:      q.GetName(),
@@ -69,7 +70,7 @@ func (c *CacheInstance) GetTypeName() string {
 // MarshalJSON is used by app.Save()
 func (c *CacheInstance) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Name      string `json:"name"`
+		Name      string                `json:"name"`
 		Datastore *datastores.Datastore `json:"datastore"`
 	}{
 		Name:      c.GetName(),
@@ -100,7 +101,7 @@ func (c *NoSQLInstance) GetTypeName() string {
 // MarshalJSON is used by app.Save()
 func (c *NoSQLInstance) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Name      string `json:"name"`
+		Name      string                `json:"name"`
 		Datastore *datastores.Datastore `json:"datastore"`
 	}{
 		Name:      c.GetName(),

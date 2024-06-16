@@ -1,31 +1,30 @@
 package app
 
 import (
+	"encoding/json"
+	"fmt"
+	"path/filepath"
+
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
-	"analyzer/pkg/utils"
-	"encoding/json"
-	"fmt"
-	"os"
-	"path/filepath"
 )
 
 type App struct {
-	Name      			string
-	Path      			string
-	Services  			map[string]*service.ServiceNode
-	Databases 			map[string]datastores.DatabaseInstance
-	Packages  			map[string]*types.Package
-	BlueprintPackages  	map[string]*types.Package
+	Name              string
+	Path              string
+	Services          map[string]*service.Service
+	Databases         map[string]datastores.DatabaseInstance
+	Packages          map[string]*types.Package
+	BlueprintPackages map[string]*types.Package
 }
 
 // MarshalJSON is used by app.Save()
 func (app *App) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Name      string                                 `json:"name"`
-		Services  map[string]*service.ServiceNode        `json:"services"`
+		Services  map[string]*service.Service            `json:"services"`
 		Databases map[string]datastores.DatabaseInstance `json:"datastores"`
 	}{
 		Name:      app.Name,
@@ -47,6 +46,13 @@ func (app *App) GetPackage(pkgName string) *types.Package {
 	return pkg
 }
 
+func (app *App) GetServiceIfExists(name string) *service.Service {
+	if service, ok := app.Services[name]; ok {
+		return service
+	}
+	return nil
+}
+
 func Init(name string, path string) (*App, error) {
 	fullPath, err := filepath.Abs(path)
 	if err != nil {
@@ -55,57 +61,13 @@ func Init(name string, path string) (*App, error) {
 		return nil, fmt.Errorf(msg)
 	}
 	app := &App{
-		Name:      			name,
-		Path:      			fullPath,
-		Services:  			make(map[string]*service.ServiceNode),
-		Databases: 			make(map[string]datastores.DatabaseInstance),
-		Packages:  			make(map[string]*types.Package),
-		BlueprintPackages: 	make(map[string]*types.Package),
+		Name:              name,
+		Path:              fullPath,
+		Services:          make(map[string]*service.Service),
+		Databases:         make(map[string]datastores.DatabaseInstance),
+		Packages:          make(map[string]*types.Package),
+		BlueprintPackages: make(map[string]*types.Package),
 	}
 	logger.Logger.Infof("[APP] initialized app at %s", app.Path)
 	return app, nil
-}
-
-func (app *App) Save() {
-	app.saveJson()
-	app.saveYamlMetadata()
-	app.saveYamlControlFlow()
-}
-
-func (app *App) saveJson() {
-	// print in JSON format
-	// https://omute.net/editor
-	path := fmt.Sprintf("assets/%s/app.json", app.Name)
-	file, err := os.Create(path)
-	if err != nil {
-		fmt.Println("Error creating file:", err)
-		return
-	}
-	defer file.Close()
-	data, err := json.MarshalIndent(app, "", "  ")
-	if err != nil {
-		logger.Logger.Error("error marshaling json:", err)
-		return
-	}
-	file.Write(data)
-	logger.Logger.Infof("[JSON] app saved at %s", path)
-}
-
-func (app *App) saveYamlMetadata() {
-	data := make(map[string]interface{})
-	for _, p := range app.Packages {
-		data[p.Name] = p.Yaml()
-	}
-	for _, p := range app.BlueprintPackages {
-		data["_" + p.Name] = p.Yaml()
-	}
-	utils.SaveToYamlFile(data, app.Name, "metadata")
-}
-
-func (app *App) saveYamlControlFlow() {
-	data := make(map[string]interface{})
-	for name, service := range app.Services {
-		data[name] = service.Yaml()
-	}
-	utils.SaveToYamlFile(data, app.Name, "controlflow")
 }

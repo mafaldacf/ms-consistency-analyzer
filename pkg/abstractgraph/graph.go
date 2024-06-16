@@ -1,15 +1,14 @@
 package abstractgraph
 
 import (
+	"fmt"
+
 	"analyzer/pkg/app"
-	frameworks "analyzer/pkg/frameworks/blueprint"
+	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
 	"analyzer/pkg/utils"
-	"encoding/json"
-	"fmt"
-	"os"
 )
 
 func Build(app *app.App, frontends []string) *AbstractGraph {
@@ -72,28 +71,7 @@ func getVariableIfPointer(variable types.Variable) types.Variable {
 	return variable
 }
 
-func (graph *AbstractGraph) Save() {
-	// print in JSON format
-	// https://omute.net/editor
-	path := fmt.Sprintf("assets/%s/abstractgraph.json", graph.AppName)
-	file, err := os.Create(path)
-	if err != nil {
-		fmt.Println("Error creating file:", err)
-		return
-	}
-	defer file.Close()
-	for _, node := range graph.Nodes {
-		data, err := json.MarshalIndent(node, "", "  ")
-		if err != nil {
-			logger.Logger.Error("error marshaling json:", err)
-			return
-		}
-		file.Write(data)
-	}
-	logger.Logger.Infof("[JSON] graph saved at %s", path)
-}
-
-func (graph *AbstractGraph) initBuild(app *app.App, serviceNode *service.ServiceNode, targetMethod *service.ParsedFuncDecl) {
+func (graph *AbstractGraph) initBuild(app *app.App, serviceNode *service.Service, targetMethod *types.ParsedMethod) {
 	graph.addEntry(serviceNode, targetMethod)
 	for _, abstractEntry := range graph.Nodes {
 		if abstractServiceEntry, ok := abstractEntry.(*AbstractServiceCall); ok { // sanity check
@@ -102,7 +80,7 @@ func (graph *AbstractGraph) initBuild(app *app.App, serviceNode *service.Service
 	}
 }
 
-func (graph *AbstractGraph) createDummyAbstractServiceCall(node *service.ServiceNode, method *service.ParsedFuncDecl, parent *AbstractDatabaseCall) AbstractServiceCall {
+func (graph *AbstractGraph) createDummyAbstractServiceCall(node *service.Service, method *types.ParsedMethod, parent *AbstractDatabaseCall) AbstractServiceCall {
 	logger.Logger.Debugf("[GRAPH - DUMMY] create dummy abstract service call for node %s and method %s with params %v", node.Name, method.Name, method.GetParams())
 
 	var callerStr = "Client"
@@ -111,8 +89,8 @@ func (graph *AbstractGraph) createDummyAbstractServiceCall(node *service.Service
 	}
 
 	call := AbstractServiceCall{
-		ParsedCall: &service.ServiceParsedCallExpr{
-			ParsedCallExpr: service.ParsedCallExpr{
+		ParsedCall: &types.ParsedServiceCall{
+			ParsedCall: types.ParsedCall{
 				TargetField: node.Name,
 				Name:        method.Name,
 				Method:      method,
@@ -135,7 +113,7 @@ func (graph *AbstractGraph) createDummyAbstractServiceCall(node *service.Service
 	return call
 }
 
-func (graph *AbstractGraph) addEntry(node *service.ServiceNode, method *service.ParsedFuncDecl) {
+func (graph *AbstractGraph) addEntry(node *service.Service, method *types.ParsedMethod) {
 	// add entry node to graph
 	entryCall := graph.createDummyAbstractServiceCall(node, method, nil)
 	graph.Nodes = append(graph.Nodes, &entryCall)
@@ -181,11 +159,11 @@ func (graph *AbstractGraph) recurseBuild(app *app.App, abstractNode AbstractNode
 	}
 }
 
-func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directParent AbstractNode, targetMethod *service.ParsedFuncDecl) {
+func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directParent AbstractNode, targetMethod *types.ParsedMethod) {
 	for _, call := range targetMethod.Calls {
 		rootQueueHandler, rootIsQueueHandler := rootParent.(*AbstractQueueHandler)
 		switch parsedCall := call.(type) {
-		case *service.DatabaseParsedCallExpr:
+		case *types.ParsedDatabaseCall:
 			child := &AbstractDatabaseCall{
 				ParsedCall: parsedCall,
 				Params:     parsedCall.Params,
@@ -204,7 +182,7 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 			} else {
 				graph.referenceServiceCallerParams(rootParent, directParent, child)
 			}
-		case *service.ServiceParsedCallExpr:
+		case *types.ParsedServiceCall:
 			child := &AbstractServiceCall{
 				ParsedCall: parsedCall,
 				Caller:     parsedCall.CallerTypeName.GetName(),
@@ -215,7 +193,7 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 			rootParent.AddChild(child)
 			logger.Logger.Debugf("[GRAPH] added node abstract service call: %s", child.String())
 			graph.referenceServiceCallerParams(rootParent, directParent, child)
-		case *service.InternalTempParsedCallExpr:
+		case *types.ParsedInternalCall:
 			tempChild := &AbstractTempInternalCall{
 				ParsedCall: parsedCall,
 				Service:    parsedCall.ServiceTypeName.GetName(),
@@ -254,7 +232,7 @@ func (graph *AbstractGraph) appendPublisherQueueHandlers(app *app.App, publisher
 
 func (graph *AbstractGraph) referencePublisherParams(queueHandler *AbstractQueueHandler, child *AbstractDatabaseCall) bool {
 	if child.ParsedCall.Method.IsQueueRead() && queueHandler.Publisher.DbInstance == child.ParsedCall.DbInstance {
-		pushMethod, ok := queueHandler.Publisher.ParsedCall.Method.(*frameworks.BlueprintBackend)
+		pushMethod, ok := queueHandler.Publisher.ParsedCall.Method.(*blueprint.BackendMethod)
 		if !ok {
 			return false
 		}
@@ -282,20 +260,12 @@ func (graph *AbstractGraph) referencePublisherParams(queueHandler *AbstractQueue
 	return false
 }
 
-func getIndirectParamDeps(v types.Variable) []types.Variable {
-	var deps []types.Variable
-	for _, d := range v.GetDependencies() {
-		deps = append(deps, getIndirectParamDeps(d)...)
-	}
-	return append(deps, v)
-}
-
 func (graph *AbstractGraph) referenceServiceCallerParams(parent AbstractNode, caller AbstractNode, child AbstractNode) {
 	fmt.Println()
 
 	_, parentIsService := parent.(*AbstractServiceCall)
 	childDatastore, childIsDatastore := child.(*AbstractDatabaseCall)
-	// ignore when child is a datastore, unless the parent is also a datastore 
+	// ignore when child is a datastore, unless the parent is also a datastore
 	// (e.g. queue.Push and the corresponding queue.Pop)
 	if parentIsService && childIsDatastore {
 		childDatastore.Params = child.GetParsedCall().Params

@@ -47,7 +47,6 @@ func GetForeignDependencies(first bool, v types.Variable) []types.Variable {
 	return foreignDeps
 }
 
-
 //var writes map[*datastores.Datastore][]types.Variable = make(map[*datastores.Datastore][]types.Variable)
 
 func BuildSchema(app *app.App, node AbstractNode) {
@@ -56,49 +55,48 @@ func BuildSchema(app *app.App, node AbstractNode) {
 		params := dbCall.Params
 		logger.Logger.Infof("building schema for abstract node %s with params = %v", dbCall.String(), params)
 		switch datastore.Type {
-			case datastores.Cache:
-				key := params[1]
-				value := params[2]
+		case datastores.Cache:
+			key := params[1]
+			value := params[2]
 
-				
-				datastore.Schema.AddKey(key.GetVariableInfo().GetName(), key.GetVariableInfo().Type.String())
-				datastore.Schema.AddEntry(value.GetVariableInfo().GetName(), value.GetVariableInfo().Type.String())
-				
-				//writes[datastore] = append(writes[datastore], value)
+			datastore.Schema.AddKey(key.GetVariableInfo().GetName(), key.GetVariableInfo().Type.String())
+			datastore.Schema.AddEntry(value.GetVariableInfo().GetName(), value.GetVariableInfo().Type.String())
 
-				logger.Logger.Debugf("SET DIRECT WRITE FOR KEY: %v (id = %d)", key, key.GetVariableInfo().Id)
-				key.GetVariableInfo().SetDirectWrite(datastore.Name, dbCall.Service)
-				indirectDependencies := GetIndirectDependencies(true, key)
-				for _, v := range indirectDependencies {
-					logger.Logger.Debugf("SET INDIRECT WRITE FOR KEY: %v (id = %d)", v, v.GetVariableInfo().Id)
-					v.GetVariableInfo().SetIndirectWrite(key)
+			//writes[datastore] = append(writes[datastore], value)
+
+			logger.Logger.Debugf("SET DIRECT WRITE FOR KEY: %v (id = %d)", key, key.GetVariableInfo().Id)
+			key.GetVariableInfo().SetDirectWrite(datastore.Name, dbCall.Service)
+			indirectDependencies := GetIndirectDependencies(true, key)
+			for _, v := range indirectDependencies {
+				logger.Logger.Debugf("SET INDIRECT WRITE FOR KEY: %v (id = %d)", v, v.GetVariableInfo().Id)
+				v.GetVariableInfo().SetIndirectWrite(key)
+			}
+
+			logger.Logger.Debugf("SET DIRECT WRITE FOR VALUE: %v (id = %d)", value, value.GetVariableInfo().Id)
+			value.GetVariableInfo().SetDirectWrite(datastore.Name, dbCall.Service)
+			indirectDependencies = GetIndirectDependencies(true, value)
+			for _, v := range indirectDependencies {
+				logger.Logger.Debugf("SET INDIRECT WRITE FOR VALUE: %v (id = %d)", v, v.GetVariableInfo().Id)
+				v.GetVariableInfo().SetIndirectWrite(value)
+			}
+			logger.Logger.Infof("added kv to schema  %s", datastore.Schema)
+
+		case datastores.Queue:
+			obj := params[1]
+			datastore.Schema.AddEntry(obj.GetVariableInfo().GetName(), obj.GetVariableInfo().Type.String())
+
+			foreignDependencies := GetForeignDependencies(true, obj)
+			for _, v := range foreignDependencies {
+				logger.Logger.Warnf("GOT FOREIGN DEPENDENCY: %v", v)
+				foreignVariable := v
+				if !v.GetVariableInfo().Dataflow.DirectWrite {
+					foreignVariable = v.GetVariableInfo().Dataflow.Source
 				}
-
-				logger.Logger.Debugf("SET DIRECT WRITE FOR VALUE: %v (id = %d)", value, value.GetVariableInfo().Id)
-				value.GetVariableInfo().SetDirectWrite(datastore.Name, dbCall.Service)
-				indirectDependencies = GetIndirectDependencies(true, value)
-				for _, v := range indirectDependencies {
-					logger.Logger.Debugf("SET INDIRECT WRITE FOR VALUE: %v (id = %d)", v, v.GetVariableInfo().Id)
-					v.GetVariableInfo().SetIndirectWrite(value)
-				}
-				logger.Logger.Infof("added kv to schema  %s", datastore.Schema)
-
-			case datastores.Queue:
-				obj := params[1]
-				datastore.Schema.AddEntry(obj.GetVariableInfo().GetName(), obj.GetVariableInfo().Type.String())
-
-				foreignDependencies := GetForeignDependencies(true, obj)
-				for _, v := range foreignDependencies {
-					logger.Logger.Warnf("GOT FOREIGN DEPENDENCY: %v", v)
-					foreignVariable := v
-					if !v.GetVariableInfo().Dataflow.DirectWrite {
-						foreignVariable = v.GetVariableInfo().Dataflow.Source
-					}
-					foreignDatastore := app.Databases[foreignVariable.GetVariableInfo().Dataflow.Datastore]
-					foreignField := foreignDatastore.GetDatastore().Schema.GetField(foreignVariable.GetVariableInfo().Name)
-					datastore.Schema.AddForeignEntry(foreignVariable.GetVariableInfo().GetName(), foreignVariable.GetVariableInfo().Type.String(), foreignField)
-				}
-				logger.Logger.Infof("added kv to schema %s", datastore.Schema)
+				foreignDatastore := app.Databases[foreignVariable.GetVariableInfo().Dataflow.Datastore]
+				foreignField := foreignDatastore.GetDatastore().Schema.GetField(foreignVariable.GetVariableInfo().Name)
+				datastore.Schema.AddForeignEntry(foreignVariable.GetVariableInfo().GetName(), foreignVariable.GetVariableInfo().Type.String(), foreignField)
+			}
+			logger.Logger.Infof("added kv to schema %s", datastore.Schema)
 		}
 	}
 	for _, child := range node.GetChildren() {

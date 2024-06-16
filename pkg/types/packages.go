@@ -1,12 +1,13 @@
 package types
 
 import (
-	"analyzer/pkg/logger"
-	"analyzer/pkg/utils"
-	"fmt"
 	"go/ast"
 	gotypes "go/types"
 	"slices"
+	"sort"
+
+	"analyzer/pkg/logger"
+	"analyzer/pkg/utils"
 )
 
 type PackageType int
@@ -23,8 +24,9 @@ type Package struct {
 	PackagePath string
 	Files       []*File
 
-	// if it is a package outside of the application
-	// then it was not parsed and the fields below are nil
+	// app packages are fully parsed
+	// blueprint packages only contain declared types and package metadata (above)
+	// external packages are not parsed
 	Type PackageType
 
 	// maps the package path to another parsed package
@@ -192,6 +194,7 @@ func (p *Package) GenerateUnderlyingTypesFromGoType(goType gotypes.Type) Type {
 		for i := 0; i < t.NumFields(); i++ {
 			var v *gotypes.Var = t.Field(i)
 			structType.FieldTypes[v.Name()] = p.GenerateUnderlyingTypesFromGoType(v.Type())
+			structType.FieldNames = append(structType.FieldNames, v.Name())
 		}
 		return structType
 	case *gotypes.Basic:
@@ -217,81 +220,79 @@ func (p *Package) GenerateUnderlyingTypesFromGoType(goType gotypes.Type) Type {
 	return nil
 }
 
-func (p *Package) Yaml() map[string]interface{} {
-	data := make(map[string]interface{})
-	var key string
-	// info
-	info := make(map[string]interface{})
-	data["_info"] = info
-	// info - _package name
-	info["_package name"] = p.Name
-	// info - _package path
-	info["_package path"] = p.PackagePath
-	// info - _module
-	info["_module"] = p.Module
-	// info - files
+// for blueprint packages
+func (p *Package) DumpShortYaml() utils.OrderedProperties {
+	propsData := utils.NewOrderedPropertyList()
+
+	// metadata
+	propsMetadata := utils.NewOrderedPropertyList()
+	propsMetadata.AddOrderedProperty("package", p.Name)
+	propsMetadata.AddOrderedProperty("package path", p.PackagePath)
+	propsMetadata.AddOrderedProperty("module", p.Module)
+	// save metadata
+	propsData.AddOrderedProperty("metadata", propsMetadata.Result())
+
+	// declared types
+	declaredTypes := []string{}
+	for _, t := range p.DeclaredTypes {
+		declaredTypes = append(declaredTypes, t.FullString())
+	}
+	sort.Strings(declaredTypes)
+	propsData.AddOrderedProperty("declared types", declaredTypes)
+
+	// save final data
+	return propsData.Result()
+}
+
+func (p *Package) DumpYaml() utils.OrderedProperties {
+	propsData := utils.NewOrderedPropertyList()
+
+	// metadata
+	propsMetadata := utils.NewOrderedPropertyList()
+	propsMetadata.AddOrderedProperty("package", p.Name)
+	propsMetadata.AddOrderedProperty("package path", p.PackagePath)
+	propsMetadata.AddOrderedProperty("module", p.Module)
+	// metadata > files
 	files := []string{}
 	for _, f := range p.Files {
 		files = append(files, f.String())
 	}
-	key = fmt.Sprintf("files (%d)", len(files))
-	info[key] = files
-	// info - imports
+	sort.Strings(files)
+	propsMetadata.AddOrderedProperty("files", files)
+	// metadata > imports
 	imports := []string{}
-	for k := range p.ImportedPackages {
-		imports = append(imports, k)
+	for key := range p.ImportedPackages {
+		imports = append(imports, key)
 	}
-	key = fmt.Sprintf("imports (%d)", len(imports))
-	info[key] = imports
-	// declared types
-	declaredTypes := []string{}
-	for _, f := range p.DeclaredTypes {
-		declaredTypes = append(declaredTypes, f.FullString())
-	}
-	key = "declared types"
-	if len(declaredTypes) > 0 {
-		key += fmt.Sprintf(" (%d)", len(declaredTypes))
-	}
-	data[key] = declaredTypes
+	sort.Strings(imports)
+	propsMetadata.AddOrderedProperty("imports", imports)
+	// save metadata
+	propsData.AddOrderedProperty("metadata", propsMetadata.Result())
+
 	// imported types
 	importedTypes := []string{}
-	for _, f := range p.ImportedTypes {
-		importedTypes = append(importedTypes, f.FullString())
+	for _, t := range p.ImportedTypes {
+		importedTypes = append(importedTypes, t.FullString())
 	}
-	key = "imported types"
-	if len(importedTypes) > 0 {
-		key += fmt.Sprintf(" (%d)", len(importedTypes))
+	sort.Strings(importedTypes)
+	propsData.AddOrderedProperty("imported types", importedTypes)
+
+	// declared types
+	declaredTypes := []string{}
+	for _, t := range p.DeclaredTypes {
+		declaredTypes = append(declaredTypes, t.FullString())
 	}
-	data[key] = importedTypes
-	// service types
-	serviceTypes := []string{}
-	for _, f := range p.ServiceTypes {
-		serviceTypes = append(serviceTypes, f.FullString())
-	}
-	key = "service types"
-	if len(serviceTypes) > 0 {
-		key += fmt.Sprintf(" (%d)", len(serviceTypes))
-	}
-	data[key] = serviceTypes
-	// datastore types
-	datastoreTypes := []string{}
-	for _, f := range p.DatastoreTypes {
-		datastoreTypes = append(datastoreTypes, f.FullString())
-	}
-	key = "datastore types"
-	if len(datastoreTypes) > 0 {
-		key += fmt.Sprintf(" (%d)", len(datastoreTypes))
-	}
-	data[key] = datastoreTypes
+	sort.Strings(declaredTypes)
+	propsData.AddOrderedProperty("declared types", declaredTypes)
+
 	// declared variables
 	declaredVariables := []string{}
-	for _, f := range p.DeclaredVariables {
-		declaredVariables = append(declaredVariables, f.String())
+	for _, v := range p.DeclaredVariables {
+		declaredVariables = append(declaredVariables, v.String())
 	}
-	key = "declared variables"
-	if len(declaredVariables) > 0 {
-		key += fmt.Sprintf(" (%d)", len(declaredVariables))
-	}
-	data[key] = declaredVariables
-	return data
+	sort.Strings(declaredVariables)
+	propsData.AddOrderedProperty("declared variables", declaredVariables)
+
+	// save final data
+	return propsData.Result()
 }

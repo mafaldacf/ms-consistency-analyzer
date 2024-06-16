@@ -1,15 +1,16 @@
 package detector
 
 import (
-	"analyzer/pkg/abstractgraph"
-	"analyzer/pkg/datastores"
-	frameworks "analyzer/pkg/frameworks/blueprint"
-	"analyzer/pkg/logger"
-	"analyzer/pkg/types"
 	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
+
+	"analyzer/pkg/abstractgraph"
+	"analyzer/pkg/datastores"
+	"analyzer/pkg/frameworks/blueprint"
+	"analyzer/pkg/logger"
+	"analyzer/pkg/types"
 )
 
 type Parameters interface {
@@ -159,7 +160,7 @@ func (request *Request) captureInconsistency(read *Operation, readCall *abstract
 
 func (request *Request) transverseOperations(node abstractgraph.AbstractNode) {
 	if dbCall, ok := node.(*abstractgraph.AbstractDatabaseCall); ok {
-		if backend, ok := dbCall.ParsedCall.Method.(*frameworks.BlueprintBackend); ok {
+		if backend, ok := dbCall.ParsedCall.Method.(*blueprint.BackendMethod); ok {
 			if backend.IsWrite() {
 				logger.Logger.Infof("visiting write %s", backend.String())
 				key := dbCall.GetParam(backend.GetWrittenKeyIndex())

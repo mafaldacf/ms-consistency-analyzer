@@ -1,18 +1,15 @@
 notification_queue:
-  backend: Queue
-  kind: RabbitMQ
-  schema:
-  - name: message
-    type: postnotification.Message struct
+- type: Queue
+- kind: RabbitMQ
+- schema:
+  - message: postnotification.Message struct
 post_cache:
-  backend: Cache
-  kind: Redis
-  schema:
-  - name: postIDStr
-    type: string
-  - name: post
-    type: postnotification.Post struct
+- type: Cache
+- kind: Redis
+- schema:
+  - postIDStr: string
+  - post: postnotification.Post struct
 post_db:
-  backend: NoSQL
-  kind: MongoDB
-  schema: []
+- type: NoSQLDatabase
+- kind: MongoDB
+- schema: []

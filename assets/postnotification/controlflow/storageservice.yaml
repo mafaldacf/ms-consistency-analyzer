@@ -1,0 +1,156 @@
+StorageService.ReadPost(ctx context.Context, reqID int64, postID int64):
+  block 0 (Body):
+  - ctx context.Context
+  - reqID int64
+  - postID int64
+  - post postnotification.Post struct
+  - postIDStr string
+  - _ err
+  - err interface{}
+  - _ err
+  - err interface{}
+  block 1 (IfThen):
+  - ctx context.Context
+  - reqID int64
+  - postID int64
+  - post postnotification.Post struct
+  - postIDStr string
+  - _ err
+  - err interface{}
+  - _ err
+  - err interface{}
+  block 2 (IfDone):
+  - ctx context.Context
+  - reqID int64
+  - postID int64
+  - post postnotification.Post struct
+  - postIDStr string
+  - _ err
+  - err interface{}
+  - _ err
+  - err interface{}
+  block 3 (Unreachable): []
+  block 4 (Unreachable): []
+StorageService.ReadPostNoSQL(ctx context.Context, reqID int64, postID int64):
+  block 0 (Body):
+  - ctx context.Context
+  - reqID int64
+  - postID int64
+  - post postnotification.Post struct
+  - collection NoSQLCollection
+  - err interface{}
+  - collection NoSQLCollection
+  - err interface{}
+  block 1 (IfThen):
+  - ctx context.Context
+  - reqID int64
+  - postID int64
+  - post postnotification.Post struct
+  - collection NoSQLCollection
+  - err interface{}
+  - collection NoSQLCollection
+  - err interface{}
+  block 2 (IfDone):
+  - ctx context.Context
+  - reqID int64
+  - postID int64
+  - post postnotification.Post struct
+  - collection NoSQLCollection
+  - err interface{}
+  - collection NoSQLCollection
+  - err interface{}
+  - query primitive.D
+  - result undefined
+  - err undefined
+  block 3 (Unreachable): []
+  block 4 (IfThen):
+  - ctx context.Context
+  - reqID int64
+  - postID int64
+  - post postnotification.Post struct
+  - collection NoSQLCollection
+  - err interface{}
+  - collection NoSQLCollection
+  - err interface{}
+  - query primitive.D
+  - result undefined
+  - err undefined
+  block 5 (IfDone):
+  - ctx context.Context
+  - reqID int64
+  - postID int64
+  - post postnotification.Post struct
+  - collection NoSQLCollection
+  - err interface{}
+  - collection NoSQLCollection
+  - err interface{}
+  - query primitive.D
+  - result undefined
+  - err undefined
+  - res undefined
+  - err undefined
+  block 6 (Unreachable): []
+  block 7 (IfThen):
+  - ctx context.Context
+  - reqID int64
+  - postID int64
+  - post postnotification.Post struct
+  - collection NoSQLCollection
+  - err interface{}
+  - collection NoSQLCollection
+  - err interface{}
+  - query primitive.D
+  - result undefined
+  - err undefined
+  - res undefined
+  - err undefined
+  block 8 (IfDone):
+  - ctx context.Context
+  - reqID int64
+  - postID int64
+  - post postnotification.Post struct
+  - collection NoSQLCollection
+  - err interface{}
+  - collection NoSQLCollection
+  - err interface{}
+  - query primitive.D
+  - result undefined
+  - err undefined
+  - res undefined
+  - err undefined
+  block 9 (Unreachable): []
+  block 10 (Unreachable): []
+StorageService.StorePost(ctx context.Context, reqID int64, post postnotification.Post struct):
+  block 0 (Body):
+  - ctx context.Context
+  - reqID int64
+  - post postnotification.Post struct
+  - postIDStr string
+  block 1 (Unreachable): []
+StorageService.StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct):
+  block 0 (Body):
+  - ctx context.Context
+  - reqID int64
+  - post postnotification.Post struct
+  - collection NoSQLCollection
+  - err interface{}
+  - collection NoSQLCollection
+  - err interface{}
+  block 1 (IfThen):
+  - ctx context.Context
+  - reqID int64
+  - post postnotification.Post struct
+  - collection NoSQLCollection
+  - err interface{}
+  - collection NoSQLCollection
+  - err interface{}
+  block 2 (IfDone):
+  - ctx context.Context
+  - reqID int64
+  - post postnotification.Post struct
+  - collection NoSQLCollection
+  - err interface{}
+  - collection NoSQLCollection
+  - err interface{}
+  block 3 (Unreachable): []
+  block 4 (Unreachable): []

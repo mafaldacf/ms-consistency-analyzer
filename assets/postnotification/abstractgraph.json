@@ -64,14 +64,7 @@
               }
             }
           ],
-          "ds_instance": {
-            "name": "post_cache",
-            "datastore": {
-              "name": "post_cache",
-              "type": "Cache",
-              "kind": "Redis"
-            }
-          }
+          "datastore": "post_cache"
         }
       ],
       "params": [
@@ -413,14 +406,7 @@
                     }
                   }
                 ],
-                "ds_instance": {
-                  "name": "notification_queue",
-                  "datastore": {
-                    "name": "notification_queue",
-                    "type": "Queue",
-                    "kind": "RabbitMQ"
-                  }
-                },
+                "datastore": "notification_queue",
                 "subscriber": true
               },
               {
@@ -473,14 +459,7 @@
                         }
                       }
                     ],
-                    "ds_instance": {
-                      "name": "post_cache",
-                      "datastore": {
-                        "name": "post_cache",
-                        "type": "Cache",
-                        "kind": "Redis"
-                      }
-                    }
+                    "datastore": "post_cache"
                   }
                 ],
                 "params": [
@@ -575,24 +554,10 @@
               }
             ]
           },
-          "ds_instance": {
-            "name": "notification_queue",
-            "datastore": {
-              "name": "notification_queue",
-              "type": "Queue",
-              "kind": "RabbitMQ"
-            }
-          }
+          "datastore": "notification_queue"
         }
       ],
-      "ds_instance": {
-        "name": "notification_queue",
-        "datastore": {
-          "name": "notification_queue",
-          "type": "Queue",
-          "kind": "RabbitMQ"
-        }
-      }
+      "datastore": "notification_queue"
     }
   ],
   "params": [

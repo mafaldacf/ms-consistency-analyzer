@@ -1,8 +1,9 @@
 package utils
 
 import (
-	"analyzer/pkg/logger"
 	"go/ast"
+
+	"analyzer/pkg/logger"
 )
 
 func GetExprType(expr ast.Expr) string {

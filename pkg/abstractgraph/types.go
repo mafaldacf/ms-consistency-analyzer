@@ -1,6 +1,8 @@
 package abstractgraph
 
 import (
+	"encoding/json"
+
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
@@ -11,7 +13,7 @@ import (
 type AbstractGraph struct {
 	AppName  string
 	Nodes    []AbstractNode
-	Services map[string]*service.ServiceNode
+	Services map[string]*service.Service
 	GIndex   int64
 }
 
@@ -32,23 +34,19 @@ type AbstractNode interface {
 	IsVisited() bool
 	GetCallerStr() string
 	GetCallee() string
-	GetParsedCall() service.ParsedCallExpr
+	GetParsedCall() types.ParsedCall
 }
 
 type AbstractServiceCall struct {
 	AbstractNode `json:"-"` // omit from json
 	Visited      bool       `json:"-"` // omit from json
 	Method       string     `json:"method"`
-
-	Caller string `json:"caller"`
-	Callee string `json:"-"`
-	
+	Caller       string     `json:"caller"`
+	Callee       string     `json:"-"`
 	// nodes representing database calls cannot contain children as well
-	Children []AbstractNode `json:"edges"`
-
-	Params     []types.Variable               `json:"params"`
-	ParsedCall *service.ServiceParsedCallExpr `json:"-"` // omit from json
-
+	Children   []AbstractNode           `json:"edges"`
+	Params     []types.Variable         `json:"params"`
+	ParsedCall *types.ParsedServiceCall `json:"-"` // omit from json
 }
 
 func (call *AbstractServiceCall) GetParams() []types.Variable {
@@ -92,18 +90,18 @@ func (call *AbstractServiceCall) GetCallerStr() string {
 	return call.Caller
 }
 
-func (call *AbstractServiceCall) GetParsedCall() service.ParsedCallExpr {
-	return call.ParsedCall.ParsedCallExpr
+func (call *AbstractServiceCall) GetParsedCall() types.ParsedCall {
+	return call.ParsedCall.ParsedCall
 }
 
 type AbstractTempInternalCall struct {
 	AbstractNode `json:"-"`
-	Visited      bool                                `json:"-"`
-	Method       string                              `json:"method"`
-	Service      string                              `json:"service"`
-	Params       []types.Variable                    `json:"params"`
-	ParsedCall   *service.InternalTempParsedCallExpr `json:"-"`
-	Children     []AbstractNode                      `json:"edges"`
+	Visited      bool                      `json:"-"`
+	Method       string                    `json:"method"`
+	Service      string                    `json:"service"`
+	Params       []types.Variable          `json:"params"`
+	ParsedCall   *types.ParsedInternalCall `json:"-"`
+	Children     []AbstractNode            `json:"edges"`
 }
 
 func (call *AbstractTempInternalCall) GetChildren() []AbstractNode {
@@ -138,27 +136,55 @@ func (call *AbstractTempInternalCall) GetCallerStr() string {
 	return call.Service
 }
 
-func (call *AbstractTempInternalCall) GetParsedCall() service.ParsedCallExpr {
-	return call.ParsedCall.ParsedCallExpr
+func (call *AbstractTempInternalCall) GetParsedCall() types.ParsedCall {
+	return call.ParsedCall.ParsedCall
 }
 
 type AbstractDatabaseCall struct {
-	AbstractNode `json:"-"`                      // omit from json
-	Visited      bool                            `json:"-"` // omit from json
-	Method       string                          `json:"method"`
-	Service      string                          `json:"caller"`
-	Params       []types.Variable                `json:"params"`
-	ParsedCall   *service.DatabaseParsedCallExpr `json:"-"` // omit from json
-	Children     []AbstractNode                  `json:"queue_handlers,omitempty"`
-	DbInstance   datastores.DatabaseInstance     `json:"ds_instance"`
-	Subscriber   bool                            `json:"subscriber,omitempty"`
+	AbstractNode
+	Visited    bool
+	Method     string
+	Service    string
+	Params     []types.Variable
+	ParsedCall *types.ParsedDatabaseCall
+	Children   []AbstractNode
+	DbInstance datastores.DatabaseInstance
+	Subscriber bool
+}
+
+func (call *AbstractDatabaseCall) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Method     string           `json:"method"`
+		Service    string           `json:"caller"`
+		Params     []types.Variable `json:"params"`
+		Children   []AbstractNode   `json:"queue_handlers,omitempty"`
+		DbInstance string           `json:"datastore"`
+		Subscriber bool             `json:"subscriber,omitempty"`
+	}{
+		Method:     call.Method,
+		Service:    call.Service,
+		Params:     call.Params,
+		Children:   call.Children,
+		DbInstance: call.DbInstance.GetName(),
+		Subscriber: call.Subscriber,
+	})
 }
 
 type AbstractQueueHandler struct {
 	AbstractServiceCall `json:"handler"`
-	DbInstance          datastores.DatabaseInstance `json:"ds_instance"`
+	DbInstance          datastores.DatabaseInstance `json:"datastore"`
 	Publisher           *AbstractDatabaseCall       `json:"-"`
 	Receiver            bool                        `json:"-"`
+}
+
+func (call *AbstractQueueHandler) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		AbstractServiceCall `json:"handler"`
+		DbInstance          string `json:"datastore"`
+	}{
+		AbstractServiceCall: call.AbstractServiceCall,
+		DbInstance:          call.DbInstance.GetName(),
+	})
 }
 
 func (call *AbstractQueueHandler) HasQueueReceiver() bool {
@@ -209,6 +235,6 @@ func (call *AbstractDatabaseCall) GetCallerStr() string {
 	return call.Service
 }
 
-func (call *AbstractDatabaseCall) GetParsedCall() service.ParsedCallExpr {
-	return call.ParsedCall.ParsedCallExpr
+func (call *AbstractDatabaseCall) GetParsedCall() types.ParsedCall {
+	return call.ParsedCall.ParsedCall
 }

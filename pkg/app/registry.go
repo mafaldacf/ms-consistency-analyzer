@@ -1,13 +1,15 @@
 package app
 
 import (
+	"fmt"
+	"strings"
+
 	"analyzer/pkg/controlflow"
 	"analyzer/pkg/datastores"
+	"analyzer/pkg/frameworks"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
-	"fmt"
-	"strings"
 )
 
 func (app *App) RegisterDatabaseInstances(instances []datastores.DatabaseInstance) {
@@ -17,29 +19,29 @@ func (app *App) RegisterDatabaseInstances(instances []datastores.DatabaseInstanc
 	}
 }
 
-func (app *App) RegisterServiceNodes(servicesInfo []*types.ServiceInfo) {
+func (app *App) RegisterServiceNodes(servicesInfo []*frameworks.ServiceInfo) {
 	app.createServiceNodes(servicesInfo)
 	app.matchServiceEdges()
 	app.buildServiceInfo()
-	app.matchServiceDatabases(servicesInfo)
+	app.loadFieldsFromConstructor(servicesInfo)
 }
 
-func (app *App) createServiceNodes(servicesInfo []*types.ServiceInfo) {
+func (app *App) createServiceNodes(servicesInfo []*frameworks.ServiceInfo) {
 	logger.Logger.Debugf("[APP] loading #%d specs", len(servicesInfo))
 	// services also include blueprint backends
 	for _, info := range servicesInfo {
-		pkg := app.GetPackage(info.PackageName)
+		pkg := app.GetPackage(info.Package)
 		file := pkg.GetFile(info.Filepath)
 
-		node := &service.ServiceNode{
+		node := &service.Service{
 			Name:                info.Name,
 			File:                file,
 			Fields:              make(map[string]types.Field),
-			Services:            make(map[string]*service.ServiceNode),
+			Services:            make(map[string]*service.Service),
 			Databases:           make(map[string]datastores.DatabaseInstance),
-			ExposedMethods:      make(map[string]*service.ParsedFuncDecl),
-			QueueHandlerMethods: make(map[string]*service.ParsedFuncDecl),
-			InternalMethods:     make(map[string]*service.ParsedFuncDecl),
+			ExposedMethods:      make(map[string]*types.ParsedMethod),
+			QueueHandlerMethods: make(map[string]*types.ParsedMethod),
+			InternalMethods:     make(map[string]*types.ParsedMethod),
 			ConstructorName:     info.ConstructorName,
 		}
 
@@ -83,7 +85,7 @@ func (app *App) BuildServiceNodes() {
 	for _, node := range app.Services {
 		fmt.Printf("\n ################################## %s ##################################\n", node.Name)
 
-		var parser = func(node *service.ServiceNode, methods map[string]*service.ParsedFuncDecl, visibility string) {
+		var parser = func(node *service.Service, methods map[string]*types.ParsedMethod, visibility string) {
 			for _, method := range methods {
 				fmt.Printf("\n[%s] ------------------- %s -------------------\n", strings.ToUpper(visibility), method)
 				controlflow.GenerateMethodCFG(method)
@@ -97,7 +99,7 @@ func (app *App) BuildServiceNodes() {
 	}
 }
 
-func (app *App) matchServiceDatabases(servicesInfo []*types.ServiceInfo) {
+func (app *App) loadFieldsFromConstructor(servicesInfo []*frameworks.ServiceInfo) {
 	for _, info := range servicesInfo {
 		node := app.Services[info.Name]
 		paramsDBs := make(map[string]datastores.DatabaseInstance, 0)
@@ -106,7 +108,7 @@ func (app *App) matchServiceDatabases(servicesInfo []*types.ServiceInfo) {
 			paramsDBs[param] = dbInstance
 			node.Databases[dbInstance.GetName()] = dbInstance
 		}
-		node.ParseConstructor(paramsDBs)
+		node.ParseConstructorAndLoadFields(paramsDBs)
 		logger.Logger.Infof("[APP] registered service node %s with %d service(s) and %d database(s)", node.Name, len(node.Services), len(node.Databases))
 	}
 }

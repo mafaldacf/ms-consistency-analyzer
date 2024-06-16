@@ -1,13 +1,11 @@
-package frameworks
+package blueprint
 
 import (
-	"analyzer/pkg/datastores"
-	"analyzer/pkg/logger"
-	"analyzer/pkg/types"
-	"analyzer/pkg/utils"
 	"strings"
 
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/ir"
+	specs_foobar "github.com/blueprint-uservices/blueprint/examples/foobar/wiring/specs"
+	specs_postnotification "github.com/blueprint-uservices/blueprint/examples/postnotification/wiring/specs"
 	"github.com/blueprint-uservices/blueprint/plugins/cmdbuilder"
 	"github.com/blueprint-uservices/blueprint/plugins/golang"
 	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
@@ -17,19 +15,21 @@ import (
 	"github.com/blueprint-uservices/blueprint/plugins/workflow"
 	"github.com/blueprint-uservices/blueprint/plugins/workflow/workflowspec"
 
-	fb_specs "github.com/blueprint-uservices/blueprint/examples/foobar/wiring/specs"
-	pn_specs "github.com/blueprint-uservices/blueprint/examples/postnotification/wiring/specs"
+	"analyzer/pkg/datastores"
+	"analyzer/pkg/frameworks"
+	"analyzer/pkg/logger"
+	"analyzer/pkg/utils"
 )
 
-func BuildBlueprintAppInfo(appName string) ([]*types.ServiceInfo, []datastores.DatabaseInstance, []string) {
+func BuildBlueprintAppInfo(appName string) ([]*frameworks.ServiceInfo, []datastores.DatabaseInstance, []string) {
 	var spec cmdbuilder.SpecOption
 	switch appName {
-		case "postnotification":
-			spec = pn_specs.Docker
-		case "foobar":
-			spec = fb_specs.Docker
-		default:
-			logger.Logger.Fatalf("unknown application %s", appName)
+	case "postnotification":
+		spec = specs_postnotification.Docker
+	case "foobar":
+		spec = specs_foobar.Docker
+	default:
+		logger.Logger.Fatalf("unknown application %s", appName)
 	}
 
 	servicesSpec, databasesNodes, frontends := BuildAndInspectIR(appName, spec)
@@ -59,15 +59,14 @@ func getUniqueName(name string) string {
 	return ""
 }
 
-
-
-func buildBlueprintServicesInfo(appSpecs map[*workflowspec.Service][]golang.Service) []*types.ServiceInfo {
-	var services []*types.ServiceInfo
+func buildBlueprintServicesInfo(appSpecs map[*workflowspec.Service][]golang.Service) []*frameworks.ServiceInfo {
+	var services []*frameworks.ServiceInfo
 	for spec, serviceArgs := range appSpecs {
 		constructorMethod := findConstructorFromSpec(spec)
-		serviceInfo := &types.ServiceInfo{
+		serviceInfo := &frameworks.ServiceInfo{
 			Name:            spec.Iface.Name,
-			PackageName:     spec.Iface.File.Package.ShortName,
+			Package:    	 spec.Iface.File.Package.ShortName,
+			PackagePath:     spec.Iface.File.Package.Name,
 			Filepath:        spec.Iface.File.Name,
 			ConstructorName: constructorMethod.GetName(),
 			ConstructorDBs:  make(map[string]string),
@@ -105,9 +104,9 @@ func buildDatabasesInstances(databases map[string]ir.IRNode) []datastores.Databa
 					Name: name,
 					//FIXME, we can have many replicas
 					Datastore: &datastores.Datastore{
-						Type: datastores.Cache,
-						Kind: datastores.Redis,
-						Name: name,
+						Type:   datastores.Cache,
+						Kind:   datastores.Redis,
+						Name:   name,
 						Schema: &datastores.Schema{},
 					},
 				},
@@ -118,9 +117,9 @@ func buildDatabasesInstances(databases map[string]ir.IRNode) []datastores.Databa
 					Name: name,
 					//FIXME, we can have many replicas
 					Datastore: &datastores.Datastore{
-						Type: datastores.Queue,
-						Kind: datastores.RabbitMQ,
-						Name: name,
+						Type:   datastores.Queue,
+						Kind:   datastores.RabbitMQ,
+						Name:   name,
 						Schema: &datastores.Schema{},
 					},
 				},
@@ -131,9 +130,9 @@ func buildDatabasesInstances(databases map[string]ir.IRNode) []datastores.Databa
 					Name: name,
 					//FIXME, we can have many replicas
 					Datastore: &datastores.Datastore{
-						Type: datastores.NoSQL,
-						Kind: datastores.MongoDB,
-						Name: name,
+						Type:   datastores.NoSQL,
+						Kind:   datastores.MongoDB,
+						Name:   name,
 						Schema: &datastores.Schema{},
 					},
 				},

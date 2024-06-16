@@ -1,19 +1,20 @@
 package controlflow
 
 import (
-	frameworks "analyzer/pkg/frameworks/blueprint"
-	"analyzer/pkg/logger"
-	"analyzer/pkg/service"
-	"analyzer/pkg/types"
-	"analyzer/pkg/utils"
 	"go/ast"
 	"go/token"
 	gotypes "go/types"
 	"strconv"
 	"strings"
+
+	"analyzer/pkg/frameworks/blueprint"
+	"analyzer/pkg/logger"
+	"analyzer/pkg/service"
+	"analyzer/pkg/types"
+	"analyzer/pkg/utils"
 )
 
-func getOrCreateVariable(service *service.ServiceNode, method *service.ParsedFuncDecl, block *types.ParsedBlock, expr ast.Expr, assign bool) (variable types.Variable) {
+func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, block *types.Block, expr ast.Expr, assign bool) (variable types.Variable) {
 	switch e := expr.(type) {
 	case *ast.CallExpr:
 		tupleVar := &types.TupleVariable{}
@@ -323,9 +324,9 @@ func createVariableFromType(name string, t types.Type) types.Variable {
 				Id:   types.VARIABLE_UNASSIGNED_ID,
 			},
 		}
-	case *frameworks.BlueprintBackendType:
+	case *blueprint.BackendType:
 		if e.IsNoSQLComponent() {
-			return &frameworks.NoSQLCollectionVariable{
+			return &blueprint.NoSQLCollectionVariable{
 				VariableInfo: &types.VariableInfo{
 					Name: name,
 					Type: e,

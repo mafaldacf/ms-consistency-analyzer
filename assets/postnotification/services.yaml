@@ -1,32 +1,25 @@
 NotifyService:
-  datastores:
-  - notification_queue
-  fields:
-  - name: numWorkers
-    type: ""
-  - name: storageService
-    type: StorageService
-  - name: queue
-    type: Queue
-  services:
-  - StorageService
+- fields:
+    numWorkers: 4 int
+    queue: Queue
+    storageService: StorageService
+- services:
+    StorageService: postnotification.StorageService
+- datastores:
+    notification_queue: Queue
 StorageService:
-  datastores:
-  - post_db
-  - post_cache
-  fields:
-  - name: cache
-    type: Cache
-  - name: db
-    type: NoSQLDatabase
-  services: []
+- fields:
+    cache: Cache
+    db: NoSQLDatabase
+- services: {}
+- datastores:
+    post_cache: Cache
+    post_db: Cache
 UploadService:
-  datastores:
-  - notification_queue
-  fields:
-  - name: storageService
-    type: StorageService
-  - name: queue
-    type: Queue
-  services:
-  - StorageService
+- fields:
+    queue: Queue
+    storageService: StorageService
+- services:
+    StorageService: postnotification.StorageService
+- datastores:
+    notification_queue: Queue

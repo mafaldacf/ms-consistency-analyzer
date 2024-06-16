@@ -1,8 +1,6 @@
-package frameworks
+package blueprint
 
 import (
-	"analyzer/pkg/logger"
-	"analyzer/pkg/utils"
 	"reflect"
 
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/blueprint/logging"
@@ -20,6 +18,9 @@ import (
 	"github.com/blueprint-uservices/blueprint/plugins/redis"
 	"github.com/blueprint-uservices/blueprint/plugins/workflow"
 	"github.com/blueprint-uservices/blueprint/plugins/workflow/workflowspec"
+
+	"analyzer/pkg/logger"
+	"analyzer/pkg/utils"
 )
 
 func BuildAndInspectIR(name string, spec cmdbuilder.SpecOption) (map[*workflowspec.Service][]golang.Service, map[string]ir.IRNode, []string) {

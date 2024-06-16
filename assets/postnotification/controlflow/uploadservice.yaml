@@ -1,0 +1,36 @@
+UploadService.UploadPost(ctx context.Context, username string, text string):
+  block 0 (Body):
+  - ctx context.Context
+  - username string
+  - text string
+  - reqID undefined
+  - post postnotification.Post struct
+  - message postnotification.Message struct
+  - _ err
+  - err interface{}
+  - _ err
+  - err interface{}
+  block 1 (IfThen):
+  - ctx context.Context
+  - username string
+  - text string
+  - reqID undefined
+  - post postnotification.Post struct
+  - message postnotification.Message struct
+  - _ err
+  - err interface{}
+  - _ err
+  - err interface{}
+  block 2 (IfDone):
+  - ctx context.Context
+  - username string
+  - text string
+  - reqID undefined
+  - post postnotification.Post struct
+  - message postnotification.Message struct
+  - _ err
+  - err interface{}
+  - _ err
+  - err interface{}
+  block 3 (Unreachable): []
+  block 4 (Unreachable): []
