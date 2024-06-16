@@ -38,7 +38,7 @@ func (node *Service) Yaml() map[string]interface{} {
 	for _, method := range node.QueueHandlerMethods {
 		data[method.String()] = method.Yaml()
 	}
-	// internal methods
+	// internal methods (already contain handlers)
 	for _, method := range node.InternalMethods {
 		data[method.String()] = method.Yaml()
 	}

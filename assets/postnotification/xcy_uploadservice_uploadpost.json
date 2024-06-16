@@ -3,10 +3,10 @@
   "writes": [
     {
       "service": "StorageService",
-      "method": "Cache.Put(ctx context.Context, key string, value interface{})",
-      "key": "postIDStr (#-1)",
+      "method": "NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{})",
+      "key": "post (#-1)",
       "object": "post (#-1)",
-      "database": "post_cache"
+      "database": "post_db"
     },
     {
       "service": "UploadService",
@@ -26,10 +26,10 @@
     },
     {
       "service": "StorageService",
-      "method": "Cache.Get(ctx context.Context, key string, value interface{})",
-      "key": "postIDStr (#-1)",
-      "object": "post (#0)",
-      "database": "post_cache"
+      "method": "NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+      "key": "query (#-1)",
+      "object": "err (#-1)",
+      "database": "post_db"
     }
   ]
 }

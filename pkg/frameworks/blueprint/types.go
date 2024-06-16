@@ -1,6 +1,7 @@
 package blueprint
 
 import (
+	"fmt"
 	"go/types"
 
 	"analyzer/pkg/datastores"
@@ -27,9 +28,27 @@ func IsNoSQLComponent(name string) bool {
 	return false
 }
 
+type NoSQLComponentType int
+
+const (
+	NoSQLCollection NoSQLComponentType = iota
+	NoSQLCursor
+)
+
 type NoSQLComponent struct {
+	Type       NoSQLComponentType
 	Database   string
 	Collection string
+}
+
+func (t *NoSQLComponent) String() string {
+	prefix := ""
+	if t.Type == NoSQLCollection {
+		prefix = "NoSQLCollection"
+	} else if t.Type == NoSQLCursor {
+		prefix = "NoSQLCursor"
+	}
+	return fmt.Sprintf("%s {database: %s, collection: %s}", prefix, t.Database, t.Collection)
 }
 
 type BackendType struct {
@@ -42,6 +61,9 @@ type BackendType struct {
 }
 
 func (t *BackendType) String() string {
+	if t.NoSQLComponent != nil {
+		return t.NoSQLComponent.String()
+	}
 	return t.Name
 }
 func (t *BackendType) FullString() string {
@@ -77,6 +99,14 @@ func (t *BackendType) AddValue(value string) {
 
 func (t *BackendType) IsNoSQLComponent() bool {
 	return t.NoSQLComponent != nil
+}
+
+func (t *BackendType) IsNoSQLCollection() bool {
+	return t.NoSQLComponent.Type == NoSQLCollection
+}
+
+func (t *BackendType) IsNoSQLCursor() bool {
+	return t.NoSQLComponent.Type == NoSQLCursor
 }
 
 func (t *BackendType) IsQueue() bool {

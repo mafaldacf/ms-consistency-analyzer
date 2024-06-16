@@ -65,6 +65,12 @@ func (op *Operation) MarshalJSON() ([]byte, error) {
 }
 
 func (op *Operation) String() string {
+	if op.Key == nil {
+		logger.Logger.Fatalf("nil key in %s", op.Method)
+	}
+	if op.Object == nil {
+		logger.Logger.Fatalf("nil object in %s", op.Method)
+	}
 	return fmt.Sprintf("{ %s \t > datastore: %s, key: %s (#%d), value: %s (#%d) }",
 		op.Service,
 		op.Database.GetName(),
@@ -107,18 +113,37 @@ func createOperation(key types.Variable, object types.Variable, call *abstractgr
 	}
 }
 
-func (request *Request) saveWriteOperation(key types.Variable, object types.Variable, call *abstractgraph.AbstractDatabaseCall) *Operation {
+func (request *Request) saveWriteOperation(call *abstractgraph.AbstractDatabaseCall, backend *blueprint.BackendMethod) *Operation {
+	keyIndex := backend.GetWrittenKeyIndex()
+	objIndex := backend.GetWrittenObjectIndex()
+	key := call.GetParam(keyIndex)
+	object := call.GetParam(objIndex)
+
 	write := createOperation(key, object, call)
-	logger.Logger.Warnf("created operation with key (%s) and object (%s)", key, object)
 	request.Writes = append(request.Writes, write)
-	logger.Logger.Debugf("saved write %s", write.String())
+	logger.Logger.Infof("created write %s", write.String())
 	return write
 }
 
-func (request *Request) saveReadOperation(key types.Variable, object types.Variable, call *abstractgraph.AbstractDatabaseCall) *Operation {
+func (request *Request) saveReadOperation(call *abstractgraph.AbstractDatabaseCall, backend *blueprint.BackendMethod) *Operation {
+	keyIndex := backend.GetReadKeyIndex()
+	objIndex := backend.GetReadObjectIndex()
+
+	var object types.Variable
+	key := call.GetParam(keyIndex)
+	
+	if objIndex >= 0 {
+		object = call.GetParam(objIndex)
+	} else {
+		// gives index in inverse
+		// e.g. -1 is 0 | -2 is 1 | -3 is 2 |
+		objIndex = -objIndex - 1
+		object = call.GetReturn(objIndex)
+	}
+
 	read := createOperation(key, object, call)
 	request.Reads = append(request.Reads, read)
-	logger.Logger.Debugf("saved read %s", read.String())
+	logger.Logger.Infof("created read %s", read.String())
 	return read
 }
 
@@ -162,15 +187,9 @@ func (request *Request) transverseOperations(node abstractgraph.AbstractNode) {
 	if dbCall, ok := node.(*abstractgraph.AbstractDatabaseCall); ok {
 		if backend, ok := dbCall.ParsedCall.Method.(*blueprint.BackendMethod); ok {
 			if backend.IsWrite() {
-				logger.Logger.Infof("visiting write %s", backend.String())
-				key := dbCall.GetParam(backend.GetWrittenKeyIndex())
-				object := dbCall.GetParam(backend.GetWrittenObjectIndex())
-				request.saveWriteOperation(key, object, dbCall)
+				request.saveWriteOperation(dbCall, backend)
 			} else {
-				key := dbCall.GetParam(backend.GetReadKeyIndex())
-				object := dbCall.GetParam(backend.GetReadObjectIndex())
-				logger.Logger.Infof("visiting read %s", backend.String())
-				read := request.saveReadOperation(key, object, dbCall)
+				read := request.saveReadOperation(dbCall, backend)
 				request.captureInconsistency(read, dbCall)
 			}
 		}

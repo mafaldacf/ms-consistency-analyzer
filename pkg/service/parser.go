@@ -300,7 +300,7 @@ func (service *Service) addQueueHandlerMethod(funcDecl *ast.FuncDecl, recvIdent 
 	parsedMethod := &types.ParsedMethod{
 		Ast:     funcDecl,
 		Name:    funcDecl.Name.Name,
-		Recv:    recvIdent,
+		Recv:    &types.MethodReceiver{Name: recvIdent.Name},
 		Params:  params,
 		Returns: returns,
 		Service: service.Name,
@@ -317,7 +317,7 @@ func (service *Service) addInternalMethod(funcDecl *ast.FuncDecl, rcvIdent *ast.
 		Name:    funcDecl.Name.Name,
 		Params:  params,
 		Returns: returns,
-		Recv:    rcvIdent,
+		Recv:    &types.MethodReceiver{Name: rcvIdent.Name},
 		Service: service.Name,
 	}
 	service.InternalMethods[parsedMethod.Name] = parsedMethod
@@ -329,7 +329,7 @@ func (service *Service) addExposedMethod(funcDecl *ast.FuncDecl, rcvIdent *ast.I
 	parsedMethod := &types.ParsedMethod{
 		Ast:     funcDecl,
 		Name:    funcDecl.Name.Name,
-		Recv:    rcvIdent,
+		Recv:    &types.MethodReceiver{Name: rcvIdent.Name},
 		Params:  params,
 		Returns: returns,
 		Service: service.Name,

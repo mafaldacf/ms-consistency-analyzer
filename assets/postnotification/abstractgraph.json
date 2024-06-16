@@ -3,11 +3,11 @@
   "caller": "Client",
   "edges": [
     {
-      "method": "StorageService.StorePost(ctx context.Context, reqID int64, post postnotification.Post struct)",
+      "method": "StorageService.StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct)",
       "caller": "UploadService",
       "edges": [
         {
-          "method": "Cache.Put(ctx context.Context, key string, value interface{})",
+          "method": "NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{})",
           "caller": "StorageService",
           "params": [
             {
@@ -19,52 +19,13 @@
             },
             {
               "variable": {
-                "name": "postIDStr",
-                "type": "string",
-                "id": -1
-              },
-              "composition": [
-                {
-                  "variable": {
-                    "name": "post",
-                    "type": "postnotification.Post struct",
-                    "id": -1
-                  },
-                  "struct_fields": {
-                    "PostID": {
-                      "variable": {
-                        "name": "PostID",
-                        "type": "int64",
-                        "id": -1
-                      }
-                    }
-                  }
-                },
-                {
-                  "variable": {
-                    "type": "10 int"
-                  }
-                }
-              ]
-            },
-            {
-              "variable": {
                 "name": "post",
                 "type": "postnotification.Post struct",
                 "id": -1
-              },
-              "struct_fields": {
-                "PostID": {
-                  "variable": {
-                    "name": "PostID",
-                    "type": "int64",
-                    "id": -1
-                  }
-                }
               }
             }
           ],
-          "datastore": "post_cache"
+          "datastore": "post_db"
         }
       ],
       "params": [
@@ -82,61 +43,13 @@
         },
         {
           "variable": {
-            "name": "post",
-            "type": "postnotification.Post struct",
+            "name": "reqID",
+            "type": "int64",
             "id": 8,
             "ref": {
-              "name": "post",
+              "name": "reqID",
               "creator": "UploadService",
               "id": 8
-            }
-          },
-          "struct_fields": {
-            "Creator": {
-              "variable": {
-                "name": "Creator",
-                "type": "\"some wild creator\" string",
-                "ref": {
-                  "name": "Creator",
-                  "creator": "UploadService",
-                  "id": 0
-                }
-              }
-            },
-            "PostID": {
-              "variable": {
-                "name": "PostID",
-                "type": "undefined",
-                "ref": {
-                  "name": "PostID",
-                  "creator": "UploadService",
-                  "id": 0
-                }
-              }
-            },
-            "ReqID": {
-              "variable": {
-                "name": "reqID",
-                "type": "undefined",
-                "id": -1,
-                "ref": {
-                  "name": "reqID",
-                  "creator": "UploadService",
-                  "id": -1
-                }
-              }
-            },
-            "Text": {
-              "variable": {
-                "name": "text",
-                "type": "string",
-                "id": -1,
-                "ref": {
-                  "name": "text",
-                  "creator": "UploadService",
-                  "id": -1
-                }
-              }
             }
           }
         },
@@ -144,11 +57,11 @@
           "variable": {
             "name": "post",
             "type": "postnotification.Post struct",
-            "id": 8,
+            "id": 9,
             "ref": {
               "name": "post",
               "creator": "UploadService",
-              "id": 8
+              "id": 9
             }
           },
           "struct_fields": {
@@ -166,23 +79,24 @@
             "PostID": {
               "variable": {
                 "name": "PostID",
-                "type": "undefined",
+                "type": "int64",
+                "id": -1,
                 "ref": {
                   "name": "PostID",
                   "creator": "UploadService",
-                  "id": 0
+                  "id": -1
                 }
               }
             },
             "ReqID": {
               "variable": {
                 "name": "reqID",
-                "type": "undefined",
-                "id": -1,
+                "type": "int64",
+                "id": 8,
                 "ref": {
                   "name": "reqID",
                   "creator": "UploadService",
-                  "id": -1
+                  "id": 8
                 }
               }
             },
@@ -228,139 +142,33 @@
             "PostID": {
               "variable": {
                 "name": "PostID",
-                "type": "undefined"
-              },
-              "composition": [
-                {
-                  "variable": {
-                    "name": "post",
-                    "type": "postnotification.Post struct",
-                    "id": 8,
-                    "ref": {
-                      "name": "post",
-                      "creator": "UploadService",
-                      "id": 8
-                    }
-                  },
-                  "struct_fields": {
-                    "Creator": {
-                      "variable": {
-                        "name": "Creator",
-                        "type": "\"some wild creator\" string",
-                        "ref": {
-                          "name": "Creator",
-                          "creator": "UploadService",
-                          "id": 0
-                        }
-                      }
-                    },
-                    "PostID": {
-                      "variable": {
-                        "name": "PostID",
-                        "type": "undefined",
-                        "ref": {
-                          "name": "PostID",
-                          "creator": "UploadService",
-                          "id": 0
-                        }
-                      }
-                    },
-                    "ReqID": {
-                      "variable": {
-                        "name": "reqID",
-                        "type": "undefined",
-                        "id": -1,
-                        "ref": {
-                          "name": "reqID",
-                          "creator": "UploadService",
-                          "id": -1
-                        }
-                      }
-                    },
-                    "Text": {
-                      "variable": {
-                        "name": "text",
-                        "type": "string",
-                        "id": -1,
-                        "ref": {
-                          "name": "text",
-                          "creator": "UploadService",
-                          "id": -1
-                        }
-                      }
-                    }
-                  }
-                }
-              ]
+                "type": "string",
+                "id": -1
+              }
             },
             "ReqID": {
               "variable": {
                 "name": "ReqID",
-                "type": "undefined"
-              },
-              "composition": [
-                {
-                  "variable": {
-                    "name": "post",
-                    "type": "postnotification.Post struct",
-                    "id": 8,
-                    "ref": {
-                      "name": "post",
-                      "creator": "UploadService",
-                      "id": 8
-                    }
-                  },
-                  "struct_fields": {
-                    "Creator": {
-                      "variable": {
-                        "name": "Creator",
-                        "type": "\"some wild creator\" string",
-                        "ref": {
-                          "name": "Creator",
-                          "creator": "UploadService",
-                          "id": 0
-                        }
-                      }
-                    },
-                    "PostID": {
-                      "variable": {
-                        "name": "PostID",
-                        "type": "undefined",
-                        "ref": {
-                          "name": "PostID",
-                          "creator": "UploadService",
-                          "id": 0
-                        }
-                      }
-                    },
-                    "ReqID": {
-                      "variable": {
-                        "name": "reqID",
-                        "type": "undefined",
-                        "id": -1,
-                        "ref": {
-                          "name": "reqID",
-                          "creator": "UploadService",
-                          "id": -1
-                        }
-                      }
-                    },
-                    "Text": {
-                      "variable": {
-                        "name": "text",
-                        "type": "string",
-                        "id": -1,
-                        "ref": {
-                          "name": "text",
-                          "creator": "UploadService",
-                          "id": -1
-                        }
-                      }
-                    }
-                  }
-                }
-              ]
+                "type": "string",
+                "id": -1
+              }
             }
+          }
+        }
+      ],
+      "returns": [
+        {
+          "variable": {
+            "name": "_",
+            "type": "err",
+            "id": -1
+          }
+        },
+        {
+          "variable": {
+            "name": "err",
+            "type": "interface{}",
+            "id": -1
           }
         }
       ],
@@ -378,11 +186,11 @@
                     "variable": {
                       "name": "ctx",
                       "type": "context.Context",
-                      "id": 11,
+                      "id": 12,
                       "ref": {
                         "name": "ctx",
                         "creator": "NotifyService",
-                        "id": 11
+                        "id": 12
                       }
                     }
                   },
@@ -410,11 +218,11 @@
                 "subscriber": true
               },
               {
-                "method": "StorageService.ReadPost(ctx context.Context, reqID int64, postID int64)",
+                "method": "StorageService.ReadPostNoSQL(ctx context.Context, reqID int64, postID int64)",
                 "caller": "NotifyService",
                 "edges": [
                   {
-                    "method": "Cache.Get(ctx context.Context, key string, value interface{})",
+                    "method": "NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
                     "caller": "StorageService",
                     "params": [
                       {
@@ -426,40 +234,29 @@
                       },
                       {
                         "variable": {
-                          "name": "postIDStr",
-                          "type": "string",
+                          "name": "query",
+                          "type": "primitive.D",
                           "id": -1
-                        },
-                        "composition": [
-                          {
-                            "variable": {
-                              "name": "postID",
-                              "type": "int64",
-                              "id": -1
-                            }
-                          },
-                          {
-                            "variable": {
-                              "type": "10 int"
-                            }
-                          }
-                        ]
-                      },
-                      {
-                        "variable": {
-                          "name": "post",
-                          "type": "\u0026postnotification.Post struct"
-                        },
-                        "addr_of": {
-                          "variable": {
-                            "name": "post",
-                            "type": "postnotification.Post struct",
-                            "id": -1
-                          }
                         }
                       }
                     ],
-                    "datastore": "post_cache"
+                    "returns": [
+                      {
+                        "variable": {
+                          "name": "result",
+                          "type": "NoSQLCursor {database: \"post\", collection: \"post\"}",
+                          "id": -1
+                        }
+                      },
+                      {
+                        "variable": {
+                          "name": "err",
+                          "type": "interface{}",
+                          "id": -1
+                        }
+                      }
+                    ],
+                    "datastore": "post_db"
                   }
                 ],
                 "params": [
@@ -467,72 +264,38 @@
                     "variable": {
                       "name": "ctx",
                       "type": "context.Context",
-                      "id": 13
+                      "id": 14
                     }
                   },
                   {
                     "variable": {
                       "name": "reqID",
                       "type": "int64",
-                      "id": 14
-                    },
-                    "composition": [
-                      {
-                        "variable": {
-                          "name": "message",
-                          "type": "postnotification.Message struct",
-                          "id": -1
-                        },
-                        "struct_fields": {
-                          "PostID": {
-                            "variable": {
-                              "name": "PostID",
-                              "type": "string",
-                              "id": -1
-                            }
-                          },
-                          "ReqID": {
-                            "variable": {
-                              "name": "ReqID",
-                              "type": "string",
-                              "id": -1
-                            }
-                          }
-                        }
-                      }
-                    ]
+                      "id": 15
+                    }
                   },
                   {
                     "variable": {
                       "name": "postID",
                       "type": "int64",
-                      "id": 15
-                    },
-                    "composition": [
-                      {
-                        "variable": {
-                          "name": "message",
-                          "type": "postnotification.Message struct",
-                          "id": -1
-                        },
-                        "struct_fields": {
-                          "PostID": {
-                            "variable": {
-                              "name": "PostID",
-                              "type": "string",
-                              "id": -1
-                            }
-                          },
-                          "ReqID": {
-                            "variable": {
-                              "name": "ReqID",
-                              "type": "string",
-                              "id": -1
-                            }
-                          }
-                        }
-                      }
-                    ]
+                      "id": 16
+                    }
+                  }
+                ],
+                "returns": [
+                  {
+                    "variable": {
+                      "name": "_",
+                      "type": "struct",
+                      "id": -1
+                    }
+                  },
+                  {
+                    "variable": {
+                      "name": "err",
+                      "type": "error",
+                      "id": -1
+                    }
                   }
                 ]
               }
@@ -542,14 +305,14 @@
                 "variable": {
                   "name": "ctx",
                   "type": "context.Context",
-                  "id": 9
+                  "id": 10
                 }
               },
               {
                 "variable": {
                   "name": "workerID",
                   "type": "int",
-                  "id": 10
+                  "id": 11
                 }
               }
             ]

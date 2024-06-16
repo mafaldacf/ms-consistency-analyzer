@@ -6,9 +6,7 @@ notification_queue:
 post_cache:
 - type: Cache
 - kind: Redis
-- schema:
-  - postIDStr: string
-  - post: postnotification.Post struct
+- schema: []
 post_db:
 - type: NoSQLDatabase
 - kind: MongoDB

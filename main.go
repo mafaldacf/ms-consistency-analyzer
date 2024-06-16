@@ -31,7 +31,7 @@ func main() {
 	app.RegisterDatabaseInstances(databaseInstances)
 	app.RegisterServiceNodes(servicesInfo)
 	app.BuildServiceNodes()
-
+	
 	abstractGraph := abstractgraph.Build(app, frontends)
 
 	var requests []*detector.Request

@@ -96,10 +96,10 @@ func parseBlueprintPackage(bpPackage *types.Package) {
 					}
 					backendType.Methods = blueprint.BuildBackendComponentMethods(backendType.Name)
 					bpPackage.AddDeclaredType(backendType)
-					logger.Logger.Debugf("[BLUEPRINT] added blueprint backend %s", backendType.String())
+					logger.Logger.Infof("[BLUEPRINT] added blueprint backend %s", backendType.String())
 
 				} else {
-					logger.Logger.Debugf("[BLUEPRINT] ignoring type %s (%s): %v", utils.GetType(def.Type()), utils.GetType(def.Type().Underlying()), def.Type().String())
+					logger.Logger.Warnf("[BLUEPRINT] ignoring type %s (%s): %v", utils.GetType(def.Type()), utils.GetType(def.Type().Underlying()), def.Type().String())
 				}
 			}
 		}

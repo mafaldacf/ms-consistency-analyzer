@@ -291,12 +291,14 @@ func (v *StructVariable) DeepCopy() Variable {
 	return copy
 }
 
-func (v *StructVariable) AddFieldIfNotExists(name string, field Variable) {
+func (v *StructVariable) AddFieldIfNotExists(name string, field Variable) bool {
 	if _, exists := v.Fields[name]; !exists {
 		v.Fields[name] = field
+		return true
 	} else {
 		logger.Logger.Warnf("field %s already exists in structure %s", name, v.String())
 	}
+	return false
 }
 
 func (v *StructVariable) GetStructType() *StructType {
@@ -411,9 +413,20 @@ func (v *ArrayVariable) DeepCopy() Variable {
 // --------------
 // TUPLE VARIABLE
 // --------------
-func (v *TupleVariable) String() string                 { return "tuple variable" }
 func (v *TupleVariable) GetVariableInfo() *VariableInfo { return nil }
 func (v *TupleVariable) GetDependencies() []Variable    { return nil }
+
+func (v *TupleVariable) String() string {
+	s := "("
+	for i, elem := range v.Variables {
+		s += elem.String()
+		if i < len(v.Variables) - 1 {
+			s += ", "
+		}
+	}
+	return s + ")"
+}
+
 func (v *TupleVariable) DeepCopy() Variable {
 	copy := &TupleVariable{}
 	for _, v := range v.Variables {

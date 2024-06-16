@@ -3,8 +3,12 @@ UploadService.UploadPost(ctx context.Context, username string, text string):
   - ctx context.Context
   - username string
   - text string
-  - reqID undefined
+  - reqID int64
+  - reqID int64
+  - PostID int64
   - post postnotification.Post struct
+  - ReqID string
+  - PostID string
   - message postnotification.Message struct
   - _ err
   - err interface{}
@@ -14,8 +18,12 @@ UploadService.UploadPost(ctx context.Context, username string, text string):
   - ctx context.Context
   - username string
   - text string
-  - reqID undefined
+  - reqID int64
+  - reqID int64
+  - PostID int64
   - post postnotification.Post struct
+  - ReqID string
+  - PostID string
   - message postnotification.Message struct
   - _ err
   - err interface{}
@@ -25,8 +33,12 @@ UploadService.UploadPost(ctx context.Context, username string, text string):
   - ctx context.Context
   - username string
   - text string
-  - reqID undefined
+  - reqID int64
+  - reqID int64
+  - PostID int64
   - post postnotification.Post struct
+  - ReqID string
+  - PostID string
   - message postnotification.Message struct
   - _ err
   - err interface{}

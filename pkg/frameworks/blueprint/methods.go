@@ -42,23 +42,42 @@ func (b *BackendMethod) FullName() string {
 }
 
 // FIXME: this is messing up with previous assignments!
-func (b *BackendMethod) SetNoSQLDatabaseCollection(databaseName string, collectionName string, dbInstance datastores.DatabaseInstance) []*types.MethodField {
-	if b.Name == "GetCollection" {
-		collection := b.Returns[0]
-		collection.GetType().(*BackendType).DbInstance = dbInstance
-		collection.GetType().(*BackendType).NoSQLComponent = &NoSQLComponent{
-			Database:   databaseName,
-			Collection: collectionName,
-		}
-		logger.Logger.Warnf("[BLUEPRINT] setting NoSQL database collection for (%s, %s)", databaseName, collectionName)
-	} else {
-		logger.Logger.Fatalf("[BLUEPRINT] method %s is not NoSQLDatabase.GetCollection()", b.Name)
+func (b *BackendMethod) SetNoSQLDatabaseCollection(databaseName string, collectionName string, dbInstance datastores.DatabaseInstance) {
+	collection := b.Returns[0]
+	collection.GetType().(*BackendType).DbInstance = dbInstance
+	collection.GetType().(*BackendType).NoSQLComponent = &NoSQLComponent{
+		Database:   databaseName,
+		Collection: collectionName,
+		Type:       NoSQLCollection,
 	}
-	return b.Returns
+	logger.Logger.Warnf("[BLUEPRINT] setting NoSQL collection for (%s, %s)", databaseName, collectionName)
 }
 
-func (b *BackendMethod) IsNoSQLGetCollectionCall() bool {
+// FIXME: this is messing up with previous assignments!
+func (b *BackendMethod) SetNoSQLDatabaseCursor(databaseName string, collectionName string, dbInstance datastores.DatabaseInstance) {
+	if len(b.Returns) > 0 {
+		collection := b.Returns[0]
+		if backendType, ok := collection.GetType().(*BackendType); ok {
+			backendType.DbInstance = dbInstance
+			backendType.NoSQLComponent = &NoSQLComponent{
+				Database:   databaseName,
+				Collection: collectionName,
+				// upgrade type
+				Type:       NoSQLCursor,
+			}
+			logger.Logger.Warnf("[BLUEPRINT] setting NoSQL cursor for (%s, %s) ", databaseName, collectionName)
+		} else {
+			logger.Logger.Fatalf("[BLUEPRINT] cannot set NoSQL cursor for (%s, %s)", databaseName, collectionName)
+		}
+	}
+}
+
+func (b *BackendMethod) ReturnsNoSQLCollection() bool {
 	return b.Name == "GetCollection"
+}
+
+func (b *BackendMethod) ReturnsNoSQLCursor() bool {
+	return b.Name == "FindOne" || b.Name == "FindMany"
 }
 
 func (b *BackendMethod) IsWrite() bool {
@@ -103,7 +122,7 @@ func (b *BackendMethod) GetReadObjectIndex() int {
 	case "Cache.Get":
 		return 2
 	case "NoSQLDatabase.NoSQLCollection.FindOne":
-		return -1
+		return -2
 	case "Queue.Pop":
 		return 1
 	default:
@@ -132,7 +151,7 @@ func (b *BackendMethod) GetReadKeyIndex() int {
 	case "Cache.Get":
 		return 1
 	case "NoSQLDatabase.NoSQLCollection.FindOne":
-		return -1
+		return 1
 	case "Queue.Pop":
 		return 1
 	default:
@@ -173,44 +192,42 @@ func BuildBackendComponentMethods(name string) []*BackendMethod {
 		// GetCollection(ctx context.Context, db_name string, collection_name string) (NoSQLCollection, error)
 		methods = append(methods, &BackendMethod{Name: "GetCollection", Backend: "NoSQLDatabase", Write: false,
 			Params:  []*types.MethodField{&ctxParam, &dbNameParam, &collectionNameParam},
-			Returns: []*types.MethodField{&NoSQLCollection, &errorReturn},
+			Returns: []*types.MethodField{&NoSQLCollectionReturn, &errorReturn},
 		})
 	// ----------------
 	// NoSQL Components
 	// ----------------
 	case "NoSQLCollection":
-		buildBackendNoSQLComponentMethods(name)
+		buildBackendNoSQLCollectionMethods()
 	case "NoSQLCursor":
-		buildBackendNoSQLComponentMethods(name)
+		buildBackendNoSQLCursorMethods()
 	default:
 		logger.Logger.Fatalf("could not build methods for backend %s", name)
 	}
 	return methods
 }
 
-func buildBackendNoSQLComponentMethods(name string) []*BackendMethod {
+func buildBackendNoSQLCollectionMethods() []*BackendMethod {
 	var methods []*BackendMethod
-	switch name {
-	case "NoSQLCollection":
-		// InsertOne(ctx context.Context, document interface{}) error
-		methods = append(methods, &BackendMethod{Name: "InsertOne", Backend: "NoSQLDatabase.NoSQLCollection", Write: true,
-			Params:  []*types.MethodField{&ctxParam, &docParam},
-			Returns: []*types.MethodField{&errorReturn},
-		})
-		// FindOne(ctx context.Context, filter bson.D, projection ...bson.D) (NoSQLCursor, error)
-		methods = append(methods, &BackendMethod{Name: "FindOne", Backend: "NoSQLDatabase.NoSQLCollection", Write: false,
-			Params:  []*types.MethodField{&ctxParam, &filterParam, &projectionParam},
-			Returns: []*types.MethodField{&errorReturn},
-		})
-	case "NoSQLCursor":
-		// One(ctx context.Context, obj interface{}) (bool, error)
-		methods = append(methods, &BackendMethod{Name: "One", Backend: "NoSQLDatabase.NoSQLCursor", Write: false,
-			Params:  []*types.MethodField{&ctxParam, &objParam},
-			Returns: []*types.MethodField{&boolReturn, &errorReturn},
-		})
-	default:
-		logger.Logger.Fatalf("could not build methods for backend %s", name)
-	}
+	// InsertOne(ctx context.Context, document interface{}) error
+	methods = append(methods, &BackendMethod{Name: "InsertOne", Backend: "NoSQLDatabase.NoSQLCollection", Write: true,
+		Params:  []*types.MethodField{&ctxParam, &docParam},
+		Returns: []*types.MethodField{&errorReturn},
+	})
+	// FindOne(ctx context.Context, filter bson.D, projection ...bson.D) (NoSQLCursor, error)
+	methods = append(methods, &BackendMethod{Name: "FindOne", Backend: "NoSQLDatabase.NoSQLCollection", Write: false,
+		Params:  []*types.MethodField{&ctxParam, &filterParam, &projectionParam},
+		Returns: []*types.MethodField{&NoSQLCursorReturn, &errorReturn},
+	})
+	return methods
+}
+
+func buildBackendNoSQLCursorMethods() []*BackendMethod {
+	var methods []*BackendMethod
+	methods = append(methods, &BackendMethod{Name: "One", Backend: "NoSQLDatabase.NoSQLCursor", Write: false,
+		Params:  []*types.MethodField{&ctxParam, &objParam},
+		Returns: []*types.MethodField{&boolReturn, &errorReturn},
+	})
 	return methods
 }
 
@@ -297,21 +314,21 @@ var boolReturn = types.MethodField{
 		},
 	},
 }
-var NoSQLCursor = types.MethodField{
+var NoSQLCursorReturn = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Type: &BackendType{
 			Name:    "NoSQLCursor",
 			Package: "github.com/blueprint-uservices/blueprint/runtime/core/backend",
-			Methods: buildBackendNoSQLComponentMethods("NoSQLCursor"),
+			Methods: buildBackendNoSQLCursorMethods(),
 		},
 	},
 }
-var NoSQLCollection = types.MethodField{
+var NoSQLCollectionReturn = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Type: &BackendType{
 			Name:    "NoSQLCollection",
 			Package: "github.com/blueprint-uservices/blueprint/runtime/core/backend",
-			Methods: buildBackendNoSQLComponentMethods("NoSQLCollection"),
+			Methods: buildBackendNoSQLCollectionMethods(),
 		},
 	},
 }

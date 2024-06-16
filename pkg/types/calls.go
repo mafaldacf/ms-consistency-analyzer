@@ -16,6 +16,7 @@ type Call interface {
 	SimpleString() string
 	IsAtPos(token.Pos) bool
 	AddParam(param Variable)
+	AddReturn(ret Variable)
 	GetParams() []Variable
 }
 
@@ -28,9 +29,10 @@ type ParsedCall struct {
 	Receiver    string
 	TargetField string
 
-	Pos    token.Pos
-	Params []Variable
-	Method Method
+	Pos     token.Pos
+	Params  []Variable
+	Returns []Variable
+	Method  Method
 }
 
 func (call ParsedCall) GetArgument(i int) Variable {
@@ -102,6 +104,10 @@ func (svcCall *ParsedServiceCall) AddParam(param Variable) {
 	svcCall.Params = append(svcCall.Params, param)
 }
 
+func (svcCall *ParsedServiceCall) AddReturn(ret Variable) {
+	svcCall.Returns = append(svcCall.Returns, ret)
+}
+
 func (svcCall *ParsedServiceCall) GetParams() []Variable {
 	return svcCall.Params
 }
@@ -141,6 +147,10 @@ func (dbCall *ParsedDatabaseCall) AddParam(param Variable) {
 	dbCall.Params = append(dbCall.Params, param)
 }
 
+func (dbCall *ParsedDatabaseCall) AddReturn(ret Variable) {
+	dbCall.Returns = append(dbCall.Returns, ret)
+}
+
 func (dbCall *ParsedDatabaseCall) GetParams() []Variable {
 	return dbCall.Params
 }
@@ -173,6 +183,10 @@ func (internalCall *ParsedInternalCall) GetName() string {
 
 func (internalCall *ParsedInternalCall) AddParam(param Variable) {
 	internalCall.Params = append(internalCall.Params, param)
+}
+
+func (internalCall *ParsedInternalCall) AddReturn(ret Variable) {
+	internalCall.Returns = append(internalCall.Returns, ret)
 }
 
 func (internalCall *ParsedInternalCall) GetParams() []Variable {

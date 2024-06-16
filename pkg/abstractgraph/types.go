@@ -46,6 +46,7 @@ type AbstractServiceCall struct {
 	// nodes representing database calls cannot contain children as well
 	Children   []AbstractNode           `json:"edges"`
 	Params     []types.Variable         `json:"params"`
+	Returns    []types.Variable         `json:"returns,omitempty"`
 	ParsedCall *types.ParsedServiceCall `json:"-"` // omit from json
 }
 
@@ -100,6 +101,7 @@ type AbstractTempInternalCall struct {
 	Method       string                    `json:"method"`
 	Service      string                    `json:"service"`
 	Params       []types.Variable          `json:"params"`
+	Returns      []types.Variable          `json:"returns,omitempty"`
 	ParsedCall   *types.ParsedInternalCall `json:"-"`
 	Children     []AbstractNode            `json:"edges"`
 }
@@ -146,6 +148,7 @@ type AbstractDatabaseCall struct {
 	Method     string
 	Service    string
 	Params     []types.Variable
+	Returns    []types.Variable
 	ParsedCall *types.ParsedDatabaseCall
 	Children   []AbstractNode
 	DbInstance datastores.DatabaseInstance
@@ -157,6 +160,7 @@ func (call *AbstractDatabaseCall) MarshalJSON() ([]byte, error) {
 		Method     string           `json:"method"`
 		Service    string           `json:"caller"`
 		Params     []types.Variable `json:"params"`
+		Returns    []types.Variable `json:"returns,omitempty"`
 		Children   []AbstractNode   `json:"queue_handlers,omitempty"`
 		DbInstance string           `json:"datastore"`
 		Subscriber bool             `json:"subscriber,omitempty"`
@@ -164,6 +168,7 @@ func (call *AbstractDatabaseCall) MarshalJSON() ([]byte, error) {
 		Method:     call.Method,
 		Service:    call.Service,
 		Params:     call.Params,
+		Returns:    call.Returns,
 		Children:   call.Children,
 		DbInstance: call.DbInstance.GetName(),
 		Subscriber: call.Subscriber,
@@ -203,6 +208,15 @@ func (call *AbstractDatabaseCall) GetParam(index int) types.Variable {
 	if index > 0 && index < len(call.Params) {
 		return call.Params[index]
 	}
+	logger.Logger.Fatalf("cannot get param with index %d for call %s", index, call.String())
+	return nil
+}
+
+func (call *AbstractDatabaseCall) GetReturn(index int) types.Variable {
+	if index > 0 && index < len(call.Returns) {
+		return call.Returns[index]
+	}
+	logger.Logger.Fatalf("cannot get return with index %d for call %s", index, call.String())
 	return nil
 }
 

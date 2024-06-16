@@ -95,6 +95,7 @@ func (app *App) BuildServiceNodes() {
 		}
 		parser(node, node.ExposedMethods, "exposed")
 		parser(node, node.QueueHandlerMethods, "worker")
+		// internal already contains workers
 		parser(node, node.InternalMethods, "internal")
 	}
 }

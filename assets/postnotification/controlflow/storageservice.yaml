@@ -3,7 +3,8 @@ StorageService.ReadPost(ctx context.Context, reqID int64, postID int64):
   - ctx context.Context
   - reqID int64
   - postID int64
-  - post postnotification.Post struct
+  - post struct
+  - postIDStr string
   - postIDStr string
   - _ err
   - err interface{}
@@ -13,7 +14,8 @@ StorageService.ReadPost(ctx context.Context, reqID int64, postID int64):
   - ctx context.Context
   - reqID int64
   - postID int64
-  - post postnotification.Post struct
+  - post struct
+  - postIDStr string
   - postIDStr string
   - _ err
   - err interface{}
@@ -23,7 +25,8 @@ StorageService.ReadPost(ctx context.Context, reqID int64, postID int64):
   - ctx context.Context
   - reqID int64
   - postID int64
-  - post postnotification.Post struct
+  - post struct
+  - postIDStr string
   - postIDStr string
   - _ err
   - err interface{}
@@ -36,88 +39,104 @@ StorageService.ReadPostNoSQL(ctx context.Context, reqID int64, postID int64):
   - ctx context.Context
   - reqID int64
   - postID int64
-  - post postnotification.Post struct
-  - collection NoSQLCollection
+  - post struct
+  - 'collection NoSQLCollection {database: "post", collection: "post"}'
   - err interface{}
-  - collection NoSQLCollection
+  - 'collection NoSQLCollection {database: "post", collection: "post"}'
   - err interface{}
   block 1 (IfThen):
   - ctx context.Context
   - reqID int64
   - postID int64
-  - post postnotification.Post struct
-  - collection NoSQLCollection
+  - post struct
+  - 'collection NoSQLCollection {database: "post", collection: "post"}'
   - err interface{}
-  - collection NoSQLCollection
+  - 'collection NoSQLCollection {database: "post", collection: "post"}'
   - err interface{}
   block 2 (IfDone):
   - ctx context.Context
   - reqID int64
   - postID int64
-  - post postnotification.Post struct
-  - collection NoSQLCollection
+  - post struct
+  - 'collection NoSQLCollection {database: "post", collection: "post"}'
   - err interface{}
-  - collection NoSQLCollection
+  - 'collection NoSQLCollection {database: "post", collection: "post"}'
   - err interface{}
   - query primitive.D
-  - result undefined
-  - err undefined
+  - 'result NoSQLCursor {database: "post", collection: "post"}'
+  - err interface{}
+  - 'result NoSQLCursor {database: "post", collection: "post"}'
+  - err interface{}
   block 3 (Unreachable): []
   block 4 (IfThen):
   - ctx context.Context
   - reqID int64
   - postID int64
-  - post postnotification.Post struct
-  - collection NoSQLCollection
+  - post struct
+  - 'collection NoSQLCollection {database: "post", collection: "post"}'
   - err interface{}
-  - collection NoSQLCollection
+  - 'collection NoSQLCollection {database: "post", collection: "post"}'
   - err interface{}
   - query primitive.D
-  - result undefined
-  - err undefined
+  - 'result NoSQLCursor {database: "post", collection: "post"}'
+  - err interface{}
+  - 'result NoSQLCursor {database: "post", collection: "post"}'
+  - err interface{}
   block 5 (IfDone):
   - ctx context.Context
   - reqID int64
   - postID int64
-  - post postnotification.Post struct
-  - collection NoSQLCollection
+  - post struct
+  - 'collection NoSQLCollection {database: "post", collection: "post"}'
   - err interface{}
-  - collection NoSQLCollection
+  - 'collection NoSQLCollection {database: "post", collection: "post"}'
   - err interface{}
   - query primitive.D
-  - result undefined
-  - err undefined
-  - res undefined
-  - err undefined
+  - 'result NoSQLCursor {database: "post", collection: "post"}'
+  - err interface{}
+  - 'result NoSQLCursor {database: "post", collection: "post"}'
+  - err interface{}
+  - res bool
+  - err .error
+  - res bool
+  - err .error
   block 6 (Unreachable): []
   block 7 (IfThen):
   - ctx context.Context
   - reqID int64
   - postID int64
-  - post postnotification.Post struct
-  - collection NoSQLCollection
+  - post struct
+  - 'collection NoSQLCollection {database: "post", collection: "post"}'
   - err interface{}
-  - collection NoSQLCollection
+  - 'collection NoSQLCollection {database: "post", collection: "post"}'
   - err interface{}
   - query primitive.D
-  - result undefined
-  - err undefined
-  - res undefined
-  - err undefined
+  - 'result NoSQLCursor {database: "post", collection: "post"}'
+  - err interface{}
+  - 'result NoSQLCursor {database: "post", collection: "post"}'
+  - err interface{}
+  - res bool
+  - err .error
+  - res bool
+  - err .error
   block 8 (IfDone):
   - ctx context.Context
   - reqID int64
   - postID int64
-  - post postnotification.Post struct
-  - collection NoSQLCollection
+  - post struct
+  - 'collection NoSQLCollection {database: "post", collection: "post"}'
   - err interface{}
-  - collection NoSQLCollection
+  - 'collection NoSQLCollection {database: "post", collection: "post"}'
   - err interface{}
   - query primitive.D
-  - result undefined
-  - err undefined
-  - res undefined
-  - err undefined
+  - 'result NoSQLCursor {database: "post", collection: "post"}'
+  - err interface{}
+  - 'result NoSQLCursor {database: "post", collection: "post"}'
+  - err interface{}
+  - res bool
+  - err .error
+  - res bool
+  - err .error
   block 9 (Unreachable): []
   block 10 (Unreachable): []
 StorageService.StorePost(ctx context.Context, reqID int64, post postnotification.Post struct):
@@ -126,31 +145,32 @@ StorageService.StorePost(ctx context.Context, reqID int64, post postnotification
   - reqID int64
   - post postnotification.Post struct
   - postIDStr string
+  - postIDStr string
   block 1 (Unreachable): []
 StorageService.StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct):
   block 0 (Body):
   - ctx context.Context
   - reqID int64
   - post postnotification.Post struct
-  - collection NoSQLCollection
+  - 'collection NoSQLCollection {database: "post", collection: "post"}'
   - err interface{}
-  - collection NoSQLCollection
+  - 'collection NoSQLCollection {database: "post", collection: "post"}'
   - err interface{}
   block 1 (IfThen):
   - ctx context.Context
   - reqID int64
   - post postnotification.Post struct
-  - collection NoSQLCollection
+  - 'collection NoSQLCollection {database: "post", collection: "post"}'
   - err interface{}
-  - collection NoSQLCollection
+  - 'collection NoSQLCollection {database: "post", collection: "post"}'
   - err interface{}
   block 2 (IfDone):
   - ctx context.Context
   - reqID int64
   - post postnotification.Post struct
-  - collection NoSQLCollection
+  - 'collection NoSQLCollection {database: "post", collection: "post"}'
   - err interface{}
-  - collection NoSQLCollection
+  - 'collection NoSQLCollection {database: "post", collection: "post"}'
   - err interface{}
   block 3 (Unreachable): []
   block 4 (Unreachable): []

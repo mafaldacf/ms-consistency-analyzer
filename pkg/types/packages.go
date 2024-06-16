@@ -45,10 +45,21 @@ type Package struct {
 	// contains all imported types, including blueprint backend types for datastores
 	// key: package_path.type_name, where package_path is the real package name
 	ImportedTypes map[string]Type
+
+	ParsedMethods []*ParsedMethod
 }
 
 func (p *Package) IsAppPackage() bool {
 	return p.Type == APP
+}
+
+func (p *Package) GetParsedMethodIfExists(methodName string, recvTypeName string) *ParsedMethod {
+	for _, m := range p.ParsedMethods {
+		if m.Name == methodName && m.Recv.Type != nil && m.Recv.Type.GetName() == recvTypeName {
+			return m
+		}
+	}
+	return nil
 }
 
 func (p *Package) IsBlueprintBackendPackage() bool {
@@ -173,7 +184,10 @@ func (p *Package) GenerateUnderlyingTypesFromGoType(goType gotypes.Type) Type {
 	switch t := goType.(type) {
 	case *gotypes.Named:
 		name := t.Obj().Name()
-		path := t.Obj().Pkg().Path()
+		path := ""
+		if t.Obj().Pkg() != nil { // error never has an object
+			path = t.Obj().Pkg().Path()
+		}
 		if namedType, ok := p.DeclaredTypes[name]; ok {
 			return namedType
 		}
@@ -212,6 +226,13 @@ func (p *Package) GenerateUnderlyingTypesFromGoType(goType gotypes.Type) Type {
 			signatureType.ReturnTypes = append(signatureType.ReturnTypes, p.GenerateUnderlyingTypesFromGoType(v.Type()))
 		}
 		return signatureType
+	case *gotypes.Tuple:
+		tupleType := &TupleType{}
+		for i := 0; i < t.Len(); i++ {
+			var v *gotypes.Var = t.At(i)
+			tupleType.Types = append(tupleType.Types, p.GenerateUnderlyingTypesFromGoType(v.Type()))
+		}
+		return tupleType
 	default:
 		if goType != nil {
 			logger.Logger.Fatalf("unknown gotype %s for %v", utils.GetType(goType), goType)

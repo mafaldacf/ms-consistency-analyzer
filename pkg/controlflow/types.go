@@ -20,15 +20,24 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 		tupleVar := &types.TupleVariable{}
 		//FIXME: this is kinda hard coded and must be automated
 		goTypeInfo := service.GetPackage().GetTypeInfo(e)
-		if parsedCall := saveFuncCallIfValid(service, method, block, e); parsedCall != nil {
-			logger.Logger.Warnf("GOT PARSED CALL %s \n\t\t\t\tMETHOD: %s", parsedCall.String(), parsedCall.GetMethod())
-			for _, rt := range parsedCall.GetMethod().GetReturns() {
-				newVar := createVariableFromType("", rt.GetType())
+		call, saved := parseAndSaveCallIfValid(service, method, block, e)
+		if call != nil && saved {
+			for _, rt := range call.GetMethod().GetReturns() {
+				newVar := createVariableFromType(service, "", rt.GetType())
 				block.AddVariable(newVar)
+				call.AddReturn(newVar)
 				tupleVar.Variables = append(tupleVar.Variables, newVar)
 			}
-		} else {
-			logger.Logger.Warnf("GOT UNKNOWN CALL %v", e.Fun)
+		} else if signatureGoType, ok := service.File.Package.GetTypeInfo(e.Fun).(*gotypes.Signature); ok && call == nil {
+
+			tupleType := service.File.Package.GenerateUnderlyingTypesFromGoType(signatureGoType.Results())
+			for _, rt := range tupleType.(*types.TupleType).Types {
+				newVar := createVariableFromType(service, "", rt)
+				block.AddVariable(newVar)
+				tupleVar.Variables = append(tupleVar.Variables, newVar)
+				logger.Logger.Warnf("added new var %s (type = %s) from return type %s", newVar, utils.GetType(newVar), utils.GetType(rt))
+			}
+		} else if call != nil {
 			//callStr := computeFunctionCallName(e.Fun) + "(...)"
 			// FIXME: THIS IS VEEEEEEERRYYYYYY HARD CODE AND MUUUUUUSSST BE AUTOMATED
 			if goTupleType, ok := goTypeInfo.(*gotypes.Tuple); ok {
@@ -67,6 +76,8 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 				tupleVar.Variables = append(tupleVar.Variables, genericVariable)
 				logger.Logger.Debugf("SKIPPING!!! %v", utils.GetType(goTypeInfo))
 			}
+		} else {
+			logger.Logger.Fatalf("FIXME: unable to parse call (%v) %s", call, utils.GetType(service.File.Package.GetTypeInfo(e.Fun)))
 		}
 		variable = tupleVar
 	case *ast.BasicLit:
@@ -104,7 +115,6 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 		case *types.GenericVariable:
 			// continue
 		case *types.StructVariable:
-			logger.Logger.Debugf("GOT SELECTOR FOR %s", e.Sel.Name)
 			structName := e.Sel.Name
 			field, exists := v.Fields[structName]
 			if !exists {
@@ -113,10 +123,10 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 					logger.Logger.Fatalf("invalid field name %s in structure variable %s with fields types %v", structName, v.String(), v.GetStructType().FieldTypes)
 				}
 				field = getOrCreateVariableFromType(structName, fieldType)
+				v.Fields[structName] = field
+				logger.Logger.Fatalf("added new variable %s for field %s in structure variable %s", variable.String(), structName, v.String())
 			}
-			v.Fields[structName] = field
-			logger.Logger.Warnf("added new variable %s for field %s in structure variable %s", variable.String(), structName, v.String())
-			return variable
+			return field
 			//variable = v
 		default:
 			logger.Logger.Fatalf("could not find variable for selector %s with type %s", variable.String(), utils.GetType(variable))
@@ -287,54 +297,42 @@ func getOrCreateVariableFromType(name string, t types.Type) types.Variable {
 	return nil
 }
 
-func createVariableFromType(name string, t types.Type) types.Variable {
+func createVariableFromType(service *service.Service, name string, t types.Type) types.Variable {
+	info := &types.VariableInfo{
+		Name: name,
+		Type: t,
+		Id:   types.VARIABLE_UNASSIGNED_ID,
+	}
+
 	switch e := t.(type) {
-	case *types.UserType, *types.BasicType, *types.ChanType, *types.InterfaceType:
-		return &types.CompositeVariable{
-			VariableInfo: &types.VariableInfo{
-				Name: name,
-				Type: e,
-				Id:   types.VARIABLE_UNASSIGNED_ID,
-			},
+	case *types.UserType:
+		if e.UserType != nil {
+			return createVariableFromType(service, name, e.UserType)
 		}
-	case *types.StructType:
-		e.FieldTypes = make(map[string]types.Type)
-		return &types.StructVariable{
-			VariableInfo: &types.VariableInfo{
-				Name: name,
-				Type: e,
-				Id:   types.VARIABLE_UNASSIGNED_ID,
-			},
-			Fields: make(map[string]types.Variable),
-		}
-	case *types.MapType:
-		return &types.MapVariable{
-			VariableInfo: &types.VariableInfo{
-				Name: name,
-				Type: e,
-				Id:   types.VARIABLE_UNASSIGNED_ID,
-			},
-			KeyValues: make(map[types.Variable]types.Variable, 0),
-		}
+		logger.Logger.Warnf("user type %s with nil underlying type", e.String())
+		return &types.GenericVariable{VariableInfo: info}
+	case *types.ChanType:
+		return &types.ChanVariable{VariableInfo: info}
+	case *types.BasicType:
+		return &types.BasicVariable{VariableInfo: info}
+	case *types.InterfaceType:
+		return &types.InterfaceVariable{VariableInfo: info}
 	case *types.ArrayType:
-		return &types.ArrayVariable{
-			VariableInfo: &types.VariableInfo{
-				Name: name,
-				Type: e,
-				Id:   types.VARIABLE_UNASSIGNED_ID,
-			},
-		}
+		return &types.ArrayVariable{VariableInfo: info}
+	case *types.StructType:
+		return &types.StructVariable{VariableInfo: info, Fields: make(map[string]types.Variable)}
+	case *types.MapType:
+		return &types.MapVariable{VariableInfo: info, KeyValues: make(map[types.Variable]types.Variable, 0)}
 	case *blueprint.BackendType:
 		if e.IsNoSQLComponent() {
-			return &blueprint.NoSQLCollectionVariable{
-				VariableInfo: &types.VariableInfo{
-					Name: name,
-					Type: e,
-					Id:   types.VARIABLE_UNASSIGNED_ID,
-				},
+			logger.Logger.Infof("created variable for NoSQL collection %s", e.NoSQLComponent.String())
+			if e.IsNoSQLCollection() {
+				return &blueprint.NoSQLCollectionVariable{VariableInfo: info}
+			} else if e.IsNoSQLCursor() {
+				return &blueprint.NoSQLCursorVariable{VariableInfo: info}
 			}
 		}
-		logger.Logger.Fatalf("unexpected blueprint backend type %s", e.String())
+		logger.Logger.Fatalf("unexpected blueprint backend type %s (type = %s)", e.String(), utils.GetType(e))
 	}
 	logger.Logger.Fatalf("could not create variable %s for type %s", name, t)
 	return nil

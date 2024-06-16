@@ -82,9 +82,15 @@ func (file *File) ComputeTypeForExpr(typeExpr ast.Expr) Type {
 			ElementsType: file.ComputeTypeForExpr(e.Elt),
 		}
 	case *ast.StructType:
-		return &StructType{
-			// FIXME: struct type must not have a name, only a user type can have it
+		structType := &StructType{
+			FieldTypes: make(map[string]Type),
 		}
+		for _, f := range e.Fields.List {
+			name := f.Names[0].Name
+			structType.FieldTypes[name] = file.ComputeTypeForExpr(f.Type)
+			structType.FieldNames = append(structType.FieldNames, name)
+		}
+		return structType
 	}
 	logger.Logger.Fatalf("could not compute type for expr %v (type = %s), pkg %s, importMap %v", typeExpr, utils.GetType(typeExpr), file.Package.Name, file.Imports)
 	return nil

@@ -139,17 +139,17 @@ func (graph *AbstractGraph) recurseBuild(app *app.App, abstractNode AbstractNode
 
 	switch node := abstractNode.(type) {
 	case *AbstractServiceCall:
-		logger.Logger.Debugf("[GRAPH] visiting abstract service call: %s", node.String())
 		targetMethod := graph.Services[node.Callee].GetExposedMethod(node.ParsedCall.Name)
+		logger.Logger.Debugf("[GRAPH] visiting abstract service call (%d calls): %s", len(targetMethod.Calls), node.String())
 		graph.appendAbstractEdges(node, node, targetMethod)
 	case *AbstractDatabaseCall:
-		logger.Logger.Debugf("[GRAPH] visiting abstract database call: %s", node.String())
 		if node.ParsedCall.Method.IsQueueWrite() {
+			logger.Logger.Debugf("[GRAPH] visiting abstract database call: %s", node.String())
 			graph.appendPublisherQueueHandlers(app, node)
 		}
 	case *AbstractQueueHandler:
-		logger.Logger.Debugf("[GRAPH] visiting abstract queue handler: %s", node.String())
 		targetMethod := graph.Services[node.Callee].GetQueueHandlerMethod(node.ParsedCall.Name)
+		logger.Logger.Debugf("[GRAPH] visiting abstract queue handler (%d calls): %s", len(targetMethod.Calls), node.String())
 		graph.appendAbstractEdges(node, node, targetMethod)
 	default:
 		logger.Logger.Fatalf("Error recursing build for %s\nUnknown node type: %s", node, utils.GetType(node))
@@ -167,6 +167,7 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 			child := &AbstractDatabaseCall{
 				ParsedCall: parsedCall,
 				Params:     parsedCall.Params,
+				Returns:    parsedCall.Returns,
 				Service:    parsedCall.CallerTypeName.GetName(),
 				Method:     parsedCall.Method.String(),
 				DbInstance: parsedCall.DbInstance,
@@ -188,21 +189,24 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				Caller:     parsedCall.CallerTypeName.GetName(),
 				Callee:     parsedCall.CalleeTypeName.GetName(),
 				Params:     parsedCall.Params,
+				Returns:    parsedCall.Returns,
 				Method:     parsedCall.Method.String(),
 			}
 			rootParent.AddChild(child)
-			logger.Logger.Debugf("[GRAPH] added node abstract service call: %s", child.String())
+			logger.Logger.Debugf("[GRAPH] added node for abstract service call: %s", child.String())
 			graph.referenceServiceCallerParams(rootParent, directParent, child)
 		case *types.ParsedInternalCall:
 			tempChild := &AbstractTempInternalCall{
 				ParsedCall: parsedCall,
 				Service:    parsedCall.ServiceTypeName.GetName(),
 				Params:     parsedCall.Params,
+				Returns:    parsedCall.Returns,
 				Method:     parsedCall.Method.String(),
 			}
 			graph.referenceServiceCallerParams(rootParent, directParent, tempChild)
 			tempMethod := graph.Services[tempChild.Service].GetInternalMethod(tempChild.ParsedCall.Name)
 			graph.appendAbstractEdges(rootParent, tempChild, tempMethod)
+			logger.Logger.Debugf("[GRAPH] added temporary node for abstract service call: %s", tempChild.String())
 		}
 	}
 }

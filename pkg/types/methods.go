@@ -16,14 +16,20 @@ type Method interface {
 	IsWrite() bool
 }
 
+type MethodReceiver struct {
+	Name string
+	//TODO: set name when creating ParsedMethod
+	Type Type
+}
+
 type ParsedMethod struct {
 	Method
-	Ast       *ast.FuncDecl `json:"-"`
-	Name      string        `json:"name"`
-	Recv      *ast.Ident    `json:"-"`
-	Calls     []Call        `json:"-"`
-	Service   string        `json:"-"`
-	ParsedCfg *CFG          `json:"-"`
+	Ast       *ast.FuncDecl 	`json:"-"`
+	Name      string        	`json:"name"`
+	Recv      *MethodReceiver   `json:"-"`
+	Calls     []Call        	`json:"-"`
+	Service   string        	`json:"-"`
+	ParsedCfg *CFG          	`json:"-"`
 
 	DbInstances []datastores.DatabaseInstance `json:"-"`
 

@@ -332,6 +332,10 @@ func (t *StructType) FullString() string {
 	// get by index order
 	for _, name := range t.FieldNames {
 		field := t.FieldTypes[name]
+		if field == nil {
+			logger.Logger.Warnf("unexpected nil field %s for structure with types list %v and field names %v", name, t.FieldTypes, t.FieldNames)
+			continue
+		}
 		s += name + " " + field.FullString()
 		if i < len(t.FieldTypes)-1 {
 			s += ", "
