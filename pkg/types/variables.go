@@ -420,7 +420,7 @@ func (v *TupleVariable) String() string {
 	s := "("
 	for i, elem := range v.Variables {
 		s += elem.String()
-		if i < len(v.Variables) - 1 {
+		if i < len(v.Variables)-1 {
 			s += ", "
 		}
 	}

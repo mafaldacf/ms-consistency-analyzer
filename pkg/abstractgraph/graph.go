@@ -268,18 +268,17 @@ func (graph *AbstractGraph) referenceServiceCallerParams(parent AbstractNode, ca
 	fmt.Println()
 
 	_, parentIsService := parent.(*AbstractServiceCall)
-	childDatastore, childIsDatastore := child.(*AbstractDatabaseCall)
+	_, childIsDatastore := child.(*AbstractDatabaseCall)
 	// ignore when child is a datastore, unless the parent is also a datastore
 	// (e.g. queue.Push and the corresponding queue.Pop)
 	if parentIsService && childIsDatastore {
-		childDatastore.Params = child.GetParsedCall().Params
 		logger.Logger.Warnf("ignoring references between parent service (%s) and child datastore (%s)", parent.GetName(), child.GetName())
 		return
 	}
 
 	for i, childParam := range child.GetParams() {
 		callArg := child.GetParsedCall().GetArgument(i)
-		logger.Logger.Infof("[REF] %s: referencing %v and %v", child.GetName(), childParam, callArg)
+		logger.Logger.Infof("\t[REF] %s: referencing (%v) --> (%v)", child.GetName(), callArg, childParam)
 
 		if childParam.GetVariableInfo().HasReference() {
 			continue

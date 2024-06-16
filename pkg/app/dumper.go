@@ -41,14 +41,23 @@ func (app *App) dumpYamlPackages() {
 func (app *App) dumpYamlDatastores() {
 	data := make(map[string]utils.OrderedProperties)
 	for _, datastore := range app.Databases {
-		var schema []map[string]string
+		schema := utils.NewOrderedPropertyList()
+		var fields []map[string]string
 		for _, f := range datastore.GetDatastore().Schema.Fields {
-			schema = append(schema, map[string]string{f.GetName(): f.GetType()})
+			fields = append(fields, map[string]string{f.GetName(): f.GetType()})
 		}
+		schema.AddOrderedProperty("fields", fields)
+
+		var unfoldedFields []map[string]string
+		for _, f := range datastore.GetDatastore().Schema.UnfoldedFields {
+			unfoldedFields = append(unfoldedFields, map[string]string{f.GetName(): f.GetType()})
+		}
+		schema.AddOrderedProperty("unfolded_fields", unfoldedFields)
+
 		props := utils.NewOrderedPropertyList()
 		props.AddOrderedProperty("type", datastore.GetDatastore().GetTypeString())
 		props.AddOrderedProperty("kind", datastore.GetDatastore().GetKindString())
-		props.AddOrderedProperty("schema", schema)
+		props.AddOrderedProperty("schema", schema.Result())
 		data[datastore.GetName()] = props.Result()
 	}
 	utils.DumpToYamlFile(data, app.Name, "datastores")

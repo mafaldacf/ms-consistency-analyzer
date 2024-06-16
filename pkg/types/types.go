@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"regexp"
 	"strings"
 
 	"analyzer/pkg/logger"
@@ -15,6 +16,7 @@ type Type interface {
 	GetPackage() string
 	GetBasicValue() string
 	AddValue(value string)
+	GetNestedTypes(prefix string) ([]Type, []string)
 }
 
 // NOTE: package is always the real package path
@@ -37,6 +39,7 @@ type SignatureType struct {
 type StructType struct {
 	Type       `json:"-"`
 	FieldTypes map[string]Type
+	FieldTags  map[string]string
 
 	// order fields by index
 	// FIXME: in the future, this should not be necessary if we have a new FieldType (also with annotations e.g. for json parsing)
@@ -132,6 +135,9 @@ func (t *UserType) GetPackage() string {
 }
 func (t *UserType) GetBasicValue() string {
 	return t.UserType.GetBasicValue()
+}
+func (t *UserType) GetNestedTypes(prefix string) ([]Type, []string) {
+	return t.UserType.GetNestedTypes(prefix)
 }
 
 // -------------
@@ -232,6 +238,9 @@ func (t *BasicType) GetBasicValue() string {
 }
 func (t *BasicType) AddValue(value string) {
 	t.Value = value
+}
+func (t *BasicType) GetNestedTypes(prefix string) ([]Type, []string) {
+	return nil, nil
 }
 
 // -----
@@ -337,6 +346,9 @@ func (t *StructType) FullString() string {
 			continue
 		}
 		s += name + " " + field.FullString()
+		/* if tag, ok := t.FieldTags[name]; ok {
+			s += " `" + tag + "`"
+		} */
 		if i < len(t.FieldTypes)-1 {
 			s += ", "
 		}
@@ -354,6 +366,37 @@ func (t *StructType) GetBasicValue() string {
 }
 func (t *StructType) AddValue(value string) {
 	logger.Logger.Fatalf("unable to add value for struct type %s", t.String())
+}
+func (t *StructType) getFieldJsonTag(field string) string {
+	if tag, ok := t.FieldTags[field]; ok {
+		re := regexp.MustCompile(`json:"([^"]+)"`)
+		matches := re.FindStringSubmatch(tag)
+		if len(matches) >= 2 {
+			return matches[1]
+		}
+	}
+	return ""
+}
+func (t *StructType) GetNestedTypes(prefix string) ([]Type, []string) {
+	var types []Type
+	var ids []string
+
+	for _, name := range t.FieldNames {
+		field := t.FieldTypes[name]
+
+		fieldPrefix := prefix + "." + name
+		if tag := t.getFieldJsonTag(name); tag != "" {
+			fieldPrefix = prefix + "." + tag
+		}
+
+		ids = append(ids, fieldPrefix)
+		types = append(types, field)
+
+		r1, r2 := field.GetNestedTypes(fieldPrefix)
+		types = append(types, r1...)
+		ids = append(ids, r2...)
+	}
+	return types, ids
 }
 
 // -------

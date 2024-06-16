@@ -31,8 +31,16 @@ func main() {
 	app.RegisterDatabaseInstances(databaseInstances)
 	app.RegisterServiceNodes(servicesInfo)
 	app.BuildServiceNodes()
-	
+
+	fmt.Println()
+	fmt.Println(" -------------------------------------------- BUILD ABSTRACT GRAPH -------------------------------------------- ")
+	fmt.Println()
+
 	abstractGraph := abstractgraph.Build(app, frontends)
+
+	fmt.Println()
+	fmt.Println(" -------------------------------------------- CHECK XCY VIOLATIONS -------------------------------------------- ")
+	fmt.Println()
 
 	var requests []*detector.Request
 	for _, entryNode := range abstractGraph.Nodes {
@@ -42,13 +50,13 @@ func main() {
 	}
 
 	fmt.Println()
+	fmt.Println(" -------------------------------------------- BUILD DATASTORES SCHEMA -------------------------------------------- ")
 	fmt.Println()
+
 	for _, entryNode := range abstractGraph.Nodes {
 		abstractgraph.BuildSchema(app, entryNode)
 	}
 
-	fmt.Println()
-	fmt.Println()
 	app.Dump()
 	abstractGraph.Dump()
 	for _, request := range requests {

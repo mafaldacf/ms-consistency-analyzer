@@ -3,6 +3,13 @@
   "writes": [
     {
       "service": "StorageService",
+      "method": "Cache.Put(ctx context.Context, key string, value interface{})",
+      "key": "postIDStr (#-1)",
+      "object": "post (#-1)",
+      "database": "post_cache"
+    },
+    {
+      "service": "StorageService",
       "method": "NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{})",
       "key": "post (#-1)",
       "object": "post (#-1)",

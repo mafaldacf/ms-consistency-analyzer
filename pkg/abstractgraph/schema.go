@@ -59,8 +59,18 @@ func BuildSchema(app *app.App, node AbstractNode) {
 			key := params[1]
 			value := params[2]
 
-			datastore.Schema.AddKey(key.GetVariableInfo().GetName(), key.GetVariableInfo().Type.String())
-			datastore.Schema.AddEntry(value.GetVariableInfo().GetName(), value.GetVariableInfo().Type.String())
+			//keyName := key.GetVariableInfo().GetName()
+			datastore.Schema.AddKey("key", key.GetVariableInfo().Type.GetName())
+			
+			//valName := value.GetVariableInfo().GetName()
+			valType := value.GetVariableInfo().GetType()
+			datastore.Schema.AddEntry("value", valType.FullString())
+			datastore.Schema.AddUnfoldedField(valType.GetName(), valType.FullString())
+			types, names := valType.GetNestedTypes(valType.GetName())
+			for i, t := range types {
+				name := names[i]
+				datastore.Schema.AddUnfoldedField(name, t.FullString())
+			}
 
 			//writes[datastore] = append(writes[datastore], value)
 
@@ -83,7 +93,42 @@ func BuildSchema(app *app.App, node AbstractNode) {
 
 		case datastores.Queue:
 			obj := params[1]
-			datastore.Schema.AddEntry(obj.GetVariableInfo().GetName(), obj.GetVariableInfo().Type.String())
+
+			//objName := obj.GetVariableInfo().GetName()
+			objType := obj.GetVariableInfo().GetType()
+			datastore.Schema.AddEntry("message", objType.FullString())
+			datastore.Schema.AddUnfoldedField(objType.GetName(), objType.FullString())
+			types, names := objType.GetNestedTypes(objType.GetName())
+			for i, t := range types {
+				name := names[i]
+				datastore.Schema.AddUnfoldedField(name, t.FullString())
+			}
+
+			foreignDependencies := GetForeignDependencies(true, obj)
+			for _, v := range foreignDependencies {
+				logger.Logger.Warnf("GOT FOREIGN DEPENDENCY: %v", v)
+				foreignVariable := v
+				if !v.GetVariableInfo().Dataflow.DirectWrite {
+					foreignVariable = v.GetVariableInfo().Dataflow.Source
+				}
+				foreignDatastore := app.Databases[foreignVariable.GetVariableInfo().Dataflow.Datastore]
+				foreignField := foreignDatastore.GetDatastore().Schema.GetField(foreignVariable.GetVariableInfo().Name)
+				datastore.Schema.AddForeignEntry(foreignVariable.GetVariableInfo().GetName(), foreignVariable.GetVariableInfo().Type.String(), foreignField)
+			}
+			logger.Logger.Infof("added kv to schema %s", datastore.Schema)
+
+		case datastores.NoSQL:
+			obj := params[1]
+
+			//objName := obj.GetVariableInfo().GetName()
+			objType := obj.GetVariableInfo().GetType()
+			datastore.Schema.AddEntry("document", objType.FullString())
+			datastore.Schema.AddUnfoldedField(objType.GetName(), objType.FullString())
+			types, names := objType.GetNestedTypes(objType.GetName())
+			for i, t := range types {
+				name := names[i]
+				datastore.Schema.AddUnfoldedField(name, t.FullString())
+			}
 
 			foreignDependencies := GetForeignDependencies(true, obj)
 			for _, v := range foreignDependencies {
@@ -98,6 +143,7 @@ func BuildSchema(app *app.App, node AbstractNode) {
 			}
 			logger.Logger.Infof("added kv to schema %s", datastore.Schema)
 		}
+
 	}
 	for _, child := range node.GetChildren() {
 		BuildSchema(app, child)

@@ -54,10 +54,11 @@ packages:
       - primitive.D
       - sync.WaitGroup
     - declared types:
+      - postnotification.Creator struct { Username string }
       - postnotification.Message struct { ReqID string, PostID string, Timestamp string }
       - postnotification.NotifyService
       - postnotification.NotifyServiceImpl struct { storageService postnotification.StorageService, queue Queue interface{ Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{}) }, numWorkers int }
-      - postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator string }
+      - postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }
       - postnotification.StorageService
       - postnotification.StorageServiceImpl struct { cache Cache interface{ Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{}) }, db NoSQLDatabase interface{ NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string) } }
       - postnotification.UploadService

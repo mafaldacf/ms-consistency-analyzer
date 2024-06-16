@@ -2,9 +2,9 @@ package blueprint
 
 import (
 	"fmt"
-	"go/types"
 
 	"analyzer/pkg/datastores"
+	"analyzer/pkg/types"
 	"analyzer/pkg/logger"
 )
 
@@ -119,6 +119,11 @@ func (t *BackendType) IsNoSQLDatabase() bool {
 
 func (t *BackendType) GetMethods() []*BackendMethod {
 	return t.Methods
+}
+
+func (t *BackendType) GetNestedTypes(prefix string) ([]types.Type, []string) {
+	logger.Logger.Fatalf("unable to get nested types blueprint backend type type %s", t.String())
+	return nil, nil
 }
 
 func (t *BackendType) GetMethod(name string) *BackendMethod {

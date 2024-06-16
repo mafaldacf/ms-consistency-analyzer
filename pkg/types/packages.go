@@ -204,10 +204,14 @@ func (p *Package) GenerateUnderlyingTypesFromGoType(goType gotypes.Type) Type {
 	case *gotypes.Struct:
 		structType := &StructType{
 			FieldTypes: make(map[string]Type),
+			FieldTags: make(map[string]string),
 		}
 		for i := 0; i < t.NumFields(); i++ {
 			var v *gotypes.Var = t.Field(i)
 			structType.FieldTypes[v.Name()] = p.GenerateUnderlyingTypesFromGoType(v.Type())
+			if tag := t.Tag(i); tag != "" {
+				structType.FieldTags[v.Name()] = tag
+			}
 			structType.FieldNames = append(structType.FieldNames, v.Name())
 		}
 		return structType

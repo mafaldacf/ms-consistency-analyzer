@@ -3,7 +3,8 @@ package datastores
 import "analyzer/pkg/logger"
 
 type Schema struct {
-	Fields []Field `json:"fields"`
+	Fields         []Field `json:"fields"`
+	UnfoldedFields []Field `json:"unfolded_fields"`
 }
 
 func (s *Schema) String() string {
@@ -32,6 +33,12 @@ func (s *Schema) AddForeignEntry(name string, t string, reference Field) {
 }
 func (s *Schema) AddEntry(name string, t string) {
 	s.Fields = append(s.Fields, &Entry{
+		Name: name,
+		Type: t,
+	})
+}
+func (s *Schema) AddUnfoldedField(name string, t string) {
+	s.UnfoldedFields = append(s.UnfoldedFields, &Entry{
 		Name: name,
 		Type: t,
 	})

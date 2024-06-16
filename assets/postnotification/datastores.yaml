@@ -2,12 +2,39 @@ notification_queue:
 - type: Queue
 - kind: RabbitMQ
 - schema:
-  - message: postnotification.Message struct
+  - fields:
+    - message: postnotification.Message struct { ReqID string, PostID string, Timestamp string }
+  - unfolded_fields:
+    - Message: postnotification.Message struct { ReqID string, PostID string, Timestamp string }
+    - Message.ReqID: string
+    - Message.PostID: string
+    - Message.Timestamp: string
 post_cache:
 - type: Cache
 - kind: Redis
-- schema: []
+- schema:
+  - fields:
+    - key: string
+    - value: postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }
+  - unfolded_fields:
+    - Post: postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }
+    - Post.ReqID: int64
+    - Post.PostID: int64
+    - Post.Text: string
+    - Post.Timestamp: int64
+    - Post.Creator: postnotification.Creator struct { Username string }
+    - Post.Creator.Username: string
 post_db:
 - type: NoSQLDatabase
 - kind: MongoDB
-- schema: []
+- schema:
+  - fields:
+    - document: postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }
+  - unfolded_fields:
+    - Post: postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }
+    - Post.ReqID: int64
+    - Post.PostID: int64
+    - Post.Text: string
+    - Post.Timestamp: int64
+    - Post.Creator: postnotification.Creator struct { Username string }
+    - Post.Creator.Username: string

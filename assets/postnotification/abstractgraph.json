@@ -3,6 +3,140 @@
   "caller": "Client",
   "edges": [
     {
+      "method": "StorageService.StorePost(ctx context.Context, reqID int64, post postnotification.Post struct)",
+      "caller": "UploadService",
+      "edges": [
+        {
+          "method": "Cache.Put(ctx context.Context, key string, value interface{})",
+          "caller": "StorageService",
+          "params": [
+            {
+              "variable": {
+                "name": "ctx",
+                "type": "context.Context",
+                "id": -1
+              }
+            },
+            {
+              "variable": {
+                "name": "postIDStr",
+                "type": "string",
+                "id": -1
+              }
+            },
+            {
+              "variable": {
+                "name": "post",
+                "type": "postnotification.Post struct",
+                "id": -1
+              }
+            }
+          ],
+          "datastore": "post_cache"
+        }
+      ],
+      "params": [
+        {
+          "variable": {
+            "name": "ctx",
+            "type": "context.Context",
+            "id": 7,
+            "ref": {
+              "name": "ctx",
+              "creator": "UploadService",
+              "id": 7
+            }
+          }
+        },
+        {
+          "variable": {
+            "name": "reqID",
+            "type": "int64",
+            "id": 8,
+            "ref": {
+              "name": "reqID",
+              "creator": "UploadService",
+              "id": 8
+            }
+          }
+        },
+        {
+          "variable": {
+            "name": "post",
+            "type": "postnotification.Post struct",
+            "id": 9,
+            "ref": {
+              "name": "post",
+              "creator": "UploadService",
+              "id": 9
+            }
+          },
+          "struct_fields": {
+            "Creator": {
+              "variable": {
+                "name": "Creator",
+                "type": "postnotification.Creator struct",
+                "ref": {
+                  "name": "Creator",
+                  "creator": "UploadService",
+                  "id": 0
+                }
+              },
+              "struct_fields": {
+                "Username": {
+                  "variable": {
+                    "name": "Username",
+                    "type": "\"some username\" string",
+                    "ref": {
+                      "name": "Username",
+                      "creator": "UploadService",
+                      "id": 0
+                    }
+                  }
+                }
+              }
+            },
+            "PostID": {
+              "variable": {
+                "name": "PostID",
+                "type": "int64",
+                "id": -1,
+                "ref": {
+                  "name": "PostID",
+                  "creator": "UploadService",
+                  "id": -1
+                }
+              }
+            },
+            "ReqID": {
+              "variable": {
+                "name": "reqID",
+                "type": "int64",
+                "id": 8,
+                "ref": {
+                  "name": "reqID",
+                  "creator": "UploadService",
+                  "id": 8
+                }
+              }
+            },
+            "Text": {
+              "variable": {
+                "name": "text",
+                "type": "string",
+                "id": -1,
+                "ref": {
+                  "name": "text",
+                  "creator": "UploadService",
+                  "id": -1
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
       "method": "StorageService.StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct)",
       "caller": "UploadService",
       "edges": [
@@ -68,11 +202,24 @@
             "Creator": {
               "variable": {
                 "name": "Creator",
-                "type": "\"some wild creator\" string",
+                "type": "postnotification.Creator struct",
                 "ref": {
                   "name": "Creator",
                   "creator": "UploadService",
                   "id": 0
+                }
+              },
+              "struct_fields": {
+                "Username": {
+                  "variable": {
+                    "name": "Username",
+                    "type": "\"some username\" string",
+                    "ref": {
+                      "name": "Username",
+                      "creator": "UploadService",
+                      "id": 0
+                    }
+                  }
                 }
               }
             },
