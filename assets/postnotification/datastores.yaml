@@ -9,6 +9,10 @@ notification_queue:
     - Message.ReqID: string
     - Message.PostID: string
     - Message.Timestamp: string
+  - foreign_keys:
+    - post: post_cache.value
+    - post: post_db.document
+    - postIDStr: post_cache.key
 post_cache:
 - type: Cache
 - kind: Redis
@@ -24,6 +28,7 @@ post_cache:
     - Post.Timestamp: int64
     - Post.Creator: postnotification.Creator struct { Username string }
     - Post.Creator.Username: string
+  - foreign_keys: []
 post_db:
 - type: NoSQLDatabase
 - kind: MongoDB
@@ -38,3 +43,6 @@ post_db:
     - Post.Timestamp: int64
     - Post.Creator: postnotification.Creator struct { Username string }
     - Post.Creator.Username: string
+  - foreign_keys:
+    - post: post_cache.value
+    - postIDStr: post_cache.key

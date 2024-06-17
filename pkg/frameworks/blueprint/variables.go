@@ -27,6 +27,13 @@ func (v *NoSQLCollectionVariable) DeepCopy() types.Variable {
 	}
 	return copy
 }
+func (v *NoSQLCollectionVariable) GetUnassaignedVariables() []types.Variable {
+	var variables []types.Variable
+	if v.GetVariableInfo().IsUnassigned() {
+		variables = append(variables, v)
+	}
+	return variables
+}
 
 type NoSQLCursorVariable struct {
 	types.Variable `json:"-"`
@@ -50,4 +57,11 @@ func (v *NoSQLCursorVariable) DeepCopy() types.Variable {
 		VariableInfo: v.VariableInfo,
 	}
 	return copy
+}
+func (v *NoSQLCursorVariable) GetUnassaignedVariables() []types.Variable {
+	var variables []types.Variable
+	if v.GetVariableInfo().IsUnassigned() {
+		variables = append(variables, v)
+	}
+	return variables
 }

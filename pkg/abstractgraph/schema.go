@@ -1,6 +1,8 @@
 package abstractgraph
 
 import (
+	"fmt"
+
 	"analyzer/pkg/app"
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/logger"
@@ -25,123 +27,122 @@ func GetIndirectDependencies(first bool, v types.Variable) []types.Variable {
 	return indirectDeps
 }
 
-func GetForeignDependencies(first bool, v types.Variable) []types.Variable {
+func GetNestedDependencies(first bool, v types.Variable) ([]types.Variable, []string) {
 	foreignDeps := []types.Variable{}
-	if !first && v.GetVariableInfo().Dataflow != nil {
-		if v.GetVariableInfo().Dataflow.DirectWrite {
-			return []types.Variable{v}
+	foreignNames := []string{}
+	if !first && v.GetVariableInfo().Dataflows != nil {
+		for _, df := range v.GetVariableInfo().Dataflows {
+			if df.DirectWrite {
+				foreignDeps = append(foreignDeps, v)
+				foreignNames = append(foreignNames, v.GetVariableInfo().GetType().GetName())
+			} else {
+				foreignDeps = append(foreignDeps, df.IndirectSource)
+				foreignNames = append(foreignNames, df.IndirectSource.GetVariableInfo().GetType().GetName())
+			}
 		}
-		return []types.Variable{v.GetVariableInfo().Dataflow.Source}
 	}
 
-	// indirect dependencies from potential reference
-	//FIXME
-	/* if v.GetVariableInfo().HasReference() {
-		foreignDeps = append(foreignDeps, GetForeignDependencies(false, v.GetVariableInfo().GetReference())...)
-	} */
-	// direct dependencies
+	if v.GetVariableInfo().HasReference() {
+		r1, r2 := GetNestedDependencies(false, v.GetVariableInfo().GetReference())
+		foreignDeps = append(foreignDeps, r1...)
+		foreignNames = append(foreignNames, r2...)
+	}
+
 	for _, dep := range v.GetDependencies() {
-		foreignDeps = append(foreignDeps, GetForeignDependencies(false, dep)...)
+		deps2, names2 := GetNestedDependencies(false, dep)
+		for _, n := range names2 {
+			n = v.GetVariableInfo().GetType().GetName() + "." + n
+			foreignNames = append(foreignNames, n)
+		}
+		foreignDeps = append(foreignDeps, deps2...)
 	}
 
-	return foreignDeps
+	return foreignDeps, foreignNames
 }
 
-//var writes map[*datastores.Datastore][]types.Variable = make(map[*datastores.Datastore][]types.Variable)
+func addNestedDatastoreEntry(variable types.Variable, entryName string, datastore *datastores.Datastore) {
+	objType := variable.GetVariableInfo().GetType()
+	datastore.Schema.AddEntry(entryName, objType.FullString(), variable.GetVariableInfo().GetId())
+	datastore.Schema.AddUnfoldedFieldWithId(objType.GetName(), objType.FullString(), variable.GetVariableInfo().GetId())
+
+	// add nested unfolded types
+	types, names := objType.GetNestedTypes(objType.GetName())
+	for i, t := range types {
+		name := names[i]
+		datastore.Schema.AddUnfoldedField(name, t.FullString())
+	}
+}
+
+func addDatastoreEntry(variable types.Variable, entryName string, datastore *datastores.Datastore) {
+	objType := variable.GetVariableInfo().GetType()
+	datastore.Schema.AddEntry(entryName, objType.GetName(), variable.GetVariableInfo().GetId())
+}
+
+func addDataflow(variable types.Variable, call *AbstractDatabaseCall, datastore *datastores.Datastore) {
+	logger.Logger.Infof("\t\t[DIRECT DATAFLOW] set direct write for %v (id = %d)", variable, variable.GetVariableInfo().Id)
+	variable.GetVariableInfo().SetDirectDataflow(datastore.Name, call.Service, variable)
+	indirectDependencies := GetIndirectDependencies(true, variable)
+	for _, v := range indirectDependencies {
+		logger.Logger.Warnf("\t\t\t[INDIRECT DATAFLOW] set indirect write for %v (id = %d)", v, v.GetVariableInfo().Id)
+		v.GetVariableInfo().SetIndirectDataflow(variable)
+	}
+}
+
+func searchForeignDataflow(variable types.Variable, datastore *datastores.Datastore, app *app.App) {
+	fmt.Printf("\n------------------------ SEARCH FOREIGN DATAFLOW @ %s ------------------------\n\n", datastore.Name)
+	foreignDependencies, _ := GetNestedDependencies(false, variable)
+	for _, v := range foreignDependencies {
+		var foreignVariables []types.Variable
+		var foreignDatastores []datastores.DatabaseInstance
+
+		for _, df := range v.GetVariableInfo().GetForeignDataflows(datastore) {
+			foreignVariables = append(foreignVariables, df.GetVariable())
+			foreignDatastores = append(foreignDatastores, app.Databases[df.GetDatastore()])
+		}
+
+		for i, foreignVariable := range foreignVariables {
+			foreignDatastore := foreignDatastores[i]
+			logger.Logger.Infof("foreign variable %s (id = %d) @ %s", foreignVariable.String(), foreignVariable.GetVariableInfo().Id, foreignDatastore.GetName())
+			foreignField := foreignDatastore.GetDatastore().Schema.GetFieldById(foreignVariable.GetVariableInfo().Id)
+			if foreignField != nil {
+				datastore.Schema.AddFKReference(foreignVariable.GetVariableInfo().GetName(), foreignVariable.GetVariableInfo().Type.String(), foreignField, foreignDatastore.GetDatastore().Name)
+			} else {
+				// this is duplicating if not else
+				foreignField = foreignDatastore.GetDatastore().Schema.GetField(foreignVariable.GetVariableInfo().GetType().GetName())
+				if foreignField != nil {
+					datastore.Schema.AddFKReference(foreignVariable.GetVariableInfo().GetName(), foreignVariable.GetVariableInfo().Type.String(), foreignField, foreignDatastore.GetDatastore().Name)
+				}
+			}
+		}
+	}
+}
 
 func BuildSchema(app *app.App, node AbstractNode) {
 	if dbCall, ok := node.(*AbstractDatabaseCall); ok && dbCall.ParsedCall.Method.IsWrite() {
 		datastore := dbCall.DbInstance.GetDatastore()
 		params := dbCall.Params
-		logger.Logger.Infof("building schema for abstract node %s with params = %v", dbCall.String(), params)
+		logger.Logger.Infof("[SCHEMA] building schema for abstract node %s with params = %v", dbCall.String(), params)
 		switch datastore.Type {
 		case datastores.Cache:
 			key := params[1]
 			value := params[2]
-
-			//keyName := key.GetVariableInfo().GetName()
-			datastore.Schema.AddKey("key", key.GetVariableInfo().Type.GetName())
-			
-			//valName := value.GetVariableInfo().GetName()
-			valType := value.GetVariableInfo().GetType()
-			datastore.Schema.AddEntry("value", valType.FullString())
-			datastore.Schema.AddUnfoldedField(valType.GetName(), valType.FullString())
-			types, names := valType.GetNestedTypes(valType.GetName())
-			for i, t := range types {
-				name := names[i]
-				datastore.Schema.AddUnfoldedField(name, t.FullString())
-			}
-
-			//writes[datastore] = append(writes[datastore], value)
-
-			logger.Logger.Debugf("SET DIRECT WRITE FOR KEY: %v (id = %d)", key, key.GetVariableInfo().Id)
-			key.GetVariableInfo().SetDirectWrite(datastore.Name, dbCall.Service)
-			indirectDependencies := GetIndirectDependencies(true, key)
-			for _, v := range indirectDependencies {
-				logger.Logger.Debugf("SET INDIRECT WRITE FOR KEY: %v (id = %d)", v, v.GetVariableInfo().Id)
-				v.GetVariableInfo().SetIndirectWrite(key)
-			}
-
-			logger.Logger.Debugf("SET DIRECT WRITE FOR VALUE: %v (id = %d)", value, value.GetVariableInfo().Id)
-			value.GetVariableInfo().SetDirectWrite(datastore.Name, dbCall.Service)
-			indirectDependencies = GetIndirectDependencies(true, value)
-			for _, v := range indirectDependencies {
-				logger.Logger.Debugf("SET INDIRECT WRITE FOR VALUE: %v (id = %d)", v, v.GetVariableInfo().Id)
-				v.GetVariableInfo().SetIndirectWrite(value)
-			}
-			logger.Logger.Infof("added kv to schema  %s", datastore.Schema)
-
-		case datastores.Queue:
-			obj := params[1]
-
-			//objName := obj.GetVariableInfo().GetName()
-			objType := obj.GetVariableInfo().GetType()
-			datastore.Schema.AddEntry("message", objType.FullString())
-			datastore.Schema.AddUnfoldedField(objType.GetName(), objType.FullString())
-			types, names := objType.GetNestedTypes(objType.GetName())
-			for i, t := range types {
-				name := names[i]
-				datastore.Schema.AddUnfoldedField(name, t.FullString())
-			}
-
-			foreignDependencies := GetForeignDependencies(true, obj)
-			for _, v := range foreignDependencies {
-				logger.Logger.Warnf("GOT FOREIGN DEPENDENCY: %v", v)
-				foreignVariable := v
-				if !v.GetVariableInfo().Dataflow.DirectWrite {
-					foreignVariable = v.GetVariableInfo().Dataflow.Source
-				}
-				foreignDatastore := app.Databases[foreignVariable.GetVariableInfo().Dataflow.Datastore]
-				foreignField := foreignDatastore.GetDatastore().Schema.GetField(foreignVariable.GetVariableInfo().Name)
-				datastore.Schema.AddForeignEntry(foreignVariable.GetVariableInfo().GetName(), foreignVariable.GetVariableInfo().Type.String(), foreignField)
-			}
-			logger.Logger.Infof("added kv to schema %s", datastore.Schema)
+			addDatastoreEntry(key, "key", datastore)
+			addNestedDatastoreEntry(value, "value", datastore)
+			addDataflow(key, dbCall, datastore)
+			addDataflow(value, dbCall, datastore)
+			searchForeignDataflow(key, datastore, app)
+			searchForeignDataflow(value, datastore, app)
 
 		case datastores.NoSQL:
-			obj := params[1]
+			doc := params[1]
+			addNestedDatastoreEntry(doc, "document", datastore)
+			addDataflow(doc, dbCall, datastore)
+			searchForeignDataflow(doc, datastore, app)
 
-			//objName := obj.GetVariableInfo().GetName()
-			objType := obj.GetVariableInfo().GetType()
-			datastore.Schema.AddEntry("document", objType.FullString())
-			datastore.Schema.AddUnfoldedField(objType.GetName(), objType.FullString())
-			types, names := objType.GetNestedTypes(objType.GetName())
-			for i, t := range types {
-				name := names[i]
-				datastore.Schema.AddUnfoldedField(name, t.FullString())
-			}
-
-			foreignDependencies := GetForeignDependencies(true, obj)
-			for _, v := range foreignDependencies {
-				logger.Logger.Warnf("GOT FOREIGN DEPENDENCY: %v", v)
-				foreignVariable := v
-				if !v.GetVariableInfo().Dataflow.DirectWrite {
-					foreignVariable = v.GetVariableInfo().Dataflow.Source
-				}
-				foreignDatastore := app.Databases[foreignVariable.GetVariableInfo().Dataflow.Datastore]
-				foreignField := foreignDatastore.GetDatastore().Schema.GetField(foreignVariable.GetVariableInfo().Name)
-				datastore.Schema.AddForeignEntry(foreignVariable.GetVariableInfo().GetName(), foreignVariable.GetVariableInfo().Type.String(), foreignField)
-			}
-			logger.Logger.Infof("added kv to schema %s", datastore.Schema)
+		case datastores.Queue:
+			msg := params[1]
+			addNestedDatastoreEntry(msg, "message", datastore)
+			searchForeignDataflow(msg, datastore, app)
 		}
 
 	}

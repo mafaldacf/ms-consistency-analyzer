@@ -42,6 +42,7 @@ func (app *App) dumpYamlDatastores() {
 	data := make(map[string]utils.OrderedProperties)
 	for _, datastore := range app.Databases {
 		schema := utils.NewOrderedPropertyList()
+
 		var fields []map[string]string
 		for _, f := range datastore.GetDatastore().Schema.Fields {
 			fields = append(fields, map[string]string{f.GetName(): f.GetType()})
@@ -53,6 +54,12 @@ func (app *App) dumpYamlDatastores() {
 			unfoldedFields = append(unfoldedFields, map[string]string{f.GetName(): f.GetType()})
 		}
 		schema.AddOrderedProperty("unfolded_fields", unfoldedFields)
+
+		var foreignKeys []map[string]string
+		for _, f := range datastore.GetDatastore().Schema.ForeignKeys {
+			foreignKeys = append(foreignKeys, map[string]string{f.GetName(): f.Datastore + "." + f.Reference.GetName()})
+		}
+		schema.AddOrderedProperty("foreign_keys", foreignKeys)
 
 		props := utils.NewOrderedPropertyList()
 		props.AddOrderedProperty("type", datastore.GetDatastore().GetTypeString())

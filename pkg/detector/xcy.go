@@ -121,7 +121,7 @@ func (request *Request) saveWriteOperation(call *abstractgraph.AbstractDatabaseC
 
 	write := createOperation(key, object, call)
 	request.Writes = append(request.Writes, write)
-	logger.Logger.Infof("created write %s", write.String())
+	logger.Logger.Infof("[XCY] created write %s", write.String())
 	return write
 }
 
@@ -143,7 +143,7 @@ func (request *Request) saveReadOperation(call *abstractgraph.AbstractDatabaseCa
 
 	read := createOperation(key, object, call)
 	request.Reads = append(request.Reads, read)
-	logger.Logger.Infof("created read %s", read.String())
+	logger.Logger.Infof("[XCY] created read %s", read.String())
 	return read
 }
 

@@ -19,12 +19,14 @@ func (ref *Reference) MarshalJSON() ([]byte, error) {
 		Name    string `json:"name"`
 		Creator string `json:"creator"`
 		Id      int64  `json:"id"`
+		//Variable Variable `json:"variable"`
 		/* IndirectDeps string `json:"indirect_deps"` */
 		/* Params 			[]Variable 		`json:"ref_params"` */
 	}{
 		Name:    ref.Variable.GetVariableInfo().GetName(),
 		Creator: ref.Creator,
 		Id:      ref.Variable.GetVariableInfo().GetId(),
+		//Variable: ref.Variable,
 		/* IndirectDeps: getDependenciesString(getIndirectDependencies(ref)...), */
 		/* Params:  		ref.Variable.GetDependencies(), */
 	})
@@ -56,17 +58,8 @@ type Variable interface {
 	GetVariableInfo() *VariableInfo
 	GetDependencies() []Variable
 	AddReferenceWithID(target Variable, creator string)
+	GetUnassaignedVariables() []Variable
 	DeepCopy() Variable
-}
-
-type Dataflow struct {
-	DirectWrite bool
-	Datastore   string
-	Service     string
-
-	// if it is not a direct write
-	// then we set the variable that is the source of the write
-	Source Variable
 }
 type VariableInfo struct {
 	Name string
@@ -77,10 +70,18 @@ type VariableInfo struct {
 	IsBlockParam  bool
 	BlockParamIdx int
 
-	Dataflow *Dataflow
+	Dataflows []*Dataflow
+}
+
+func (v *VariableInfo) GetDataflows() []*Dataflow {
+	return v.Dataflows
 }
 
 func (v *VariableInfo) MarshalJSON() ([]byte, error) {
+	/* refStr := "<nil>"
+	if v.Reference != nil {
+		refStr = v.Reference.Variable.GetVariableInfo().GetName() + fmt.Sprintf(" (%d) @ ", v.Reference.Variable.GetVariableInfo().GetId()) + v.Reference.Creator
+	} */
 	return json.Marshal(&struct {
 		Name string `json:"name,omitempty"`
 		Type string `json:"type,omitempty"`
@@ -94,28 +95,6 @@ func (v *VariableInfo) MarshalJSON() ([]byte, error) {
 		//Reference: v.Reference != nil,
 		Reference: v.Reference,
 	})
-}
-
-func (v *VariableInfo) SetDirectWrite(datastore string, service string) {
-	if v.Dataflow != nil && v.Dataflow.Datastore != datastore && v.Dataflow.Service != service {
-		logger.Logger.Fatalf("data flow already exists for variable %s", v.String())
-	}
-	if v.Dataflow != nil && !v.Dataflow.DirectWrite {
-		logger.Logger.Warnf("upgrading data flow for variable %s", v.String())
-	}
-	v.Dataflow = &Dataflow{
-		DirectWrite: true,
-		Datastore:   datastore,
-		Service:     service,
-	}
-}
-
-func (v *VariableInfo) SetIndirectWrite(variable Variable) {
-	v.Dataflow = &Dataflow{
-		Source:    variable,
-		Datastore: variable.GetVariableInfo().Dataflow.Datastore,
-		Service:   variable.GetVariableInfo().Dataflow.Service,
-	}
 }
 
 type TupleVariable struct {
@@ -235,6 +214,17 @@ func (v *CompositeVariable) AddReferenceWithID(target Variable, creator string) 
 	}
 	logger.Logger.Debugf("added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
 }
+func (v *CompositeVariable) GetUnassaignedVariables() []Variable {
+	var variables []Variable
+
+	if v.GetVariableInfo().IsUnassigned() {
+		variables = append(variables, v)
+		for _, p := range v.Params {
+			variables = append(variables, p.GetUnassaignedVariables()...)
+		}
+	}
+	return variables
+}
 
 // ----------------
 // GENERIC VARIABLE
@@ -265,6 +255,16 @@ func (v *GenericVariable) DeepCopy() Variable {
 		copy.Params = append(copy.Params, p.DeepCopy())
 	}
 	return copy
+}
+func (v *GenericVariable) GetUnassaignedVariables() []Variable {
+	var variables []Variable
+	if v.GetVariableInfo().IsUnassigned() {
+		variables = append(variables, v)
+		for _, p := range v.Params {
+			variables = append(variables, p.GetUnassaignedVariables()...)
+		}
+	}
+	return variables
 }
 
 // ---------------
@@ -310,6 +310,7 @@ func (v *StructVariable) GetStructType() *StructType {
 }
 
 func (v *StructVariable) AddReferenceWithID(target Variable, creator string) {
+	logger.Logger.Warnf("referencing in struct variable %s for target %s", v.String(), target.String())
 	v.VariableInfo.AddReferenceWithID(target, creator)
 	if targetStruct, ok := target.(*StructVariable); ok {
 		for name, field := range v.Fields {
@@ -325,6 +326,17 @@ func (v *StructVariable) AddReferenceWithID(target Variable, creator string) {
 	}
 
 	logger.Logger.Debugf("added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
+}
+
+func (v *StructVariable) GetUnassaignedVariables() []Variable {
+	var variables []Variable
+	if v.GetVariableInfo().IsUnassigned() {
+		variables = append(variables, v)
+		for _, p := range v.Fields {
+			variables = append(variables, p.GetUnassaignedVariables()...)
+		}
+	}
+	return variables
 }
 
 // ------------
@@ -392,6 +404,18 @@ func (v *MapVariable) AddReferenceWithID(target Variable, creator string) {
 	logger.Logger.Debugf("added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
 }
 
+func (v *MapVariable) GetUnassaignedVariables() []Variable {
+	var variables []Variable
+	if v.GetVariableInfo().IsUnassigned() {
+		variables = append(variables, v)
+		for k, v := range v.KeyValues {
+			variables = append(variables, k.GetUnassaignedVariables()...)
+			variables = append(variables, v.GetUnassaignedVariables()...)
+		}
+	}
+	return variables
+}
+
 // --------------
 // ARRAY VARIABLE
 // --------------
@@ -408,6 +432,16 @@ func (v *ArrayVariable) DeepCopy() Variable {
 		copy.Elements = append(copy.Elements, v.DeepCopy())
 	}
 	return copy
+}
+func (v *ArrayVariable) GetUnassaignedVariables() []Variable {
+	var variables []Variable
+	if v.GetVariableInfo().IsUnassigned() {
+		variables = append(variables, v)
+		for _, v := range v.Elements {
+			variables = append(variables, v.GetUnassaignedVariables()...)
+		}
+	}
+	return variables
 }
 
 // --------------
@@ -434,6 +468,16 @@ func (v *TupleVariable) DeepCopy() Variable {
 	}
 	return copy
 }
+func (v *TupleVariable) GetUnassaignedVariables() []Variable {
+	var variables []Variable
+	if v.GetVariableInfo().IsUnassigned() {
+		variables = append(variables, v)
+		for _, v := range v.Variables {
+			variables = append(variables, v.GetUnassaignedVariables()...)
+		}
+	}
+	return variables
+}
 
 // ----------------
 // POINTER VARIABLE
@@ -455,6 +499,14 @@ func (v *PointerVariable) DeepCopy() Variable {
 		PointerTo:    v.PointerTo.DeepCopy(),
 	}
 	return copy
+}
+func (v *PointerVariable) GetUnassaignedVariables() []Variable {
+	var variables []Variable
+	if v.GetVariableInfo().IsUnassigned() {
+		variables = append(variables, v)
+		variables = append(variables, v.PointerTo.GetUnassaignedVariables()...)
+	}
+	return variables
 }
 
 // ----------------
@@ -478,6 +530,14 @@ func (v *AddressVariable) DeepCopy() Variable {
 	}
 	return copy
 }
+func (v *AddressVariable) GetUnassaignedVariables() []Variable {
+	var variables []Variable
+	if v.GetVariableInfo().IsUnassigned() {
+		variables = append(variables, v)
+		variables = append(variables, v.AddressOf.GetUnassaignedVariables()...)
+	}
+	return variables
+}
 
 // ---------------
 // INLINE VARIABLE
@@ -493,6 +553,13 @@ func (v *InlineVariable) DeepCopy() Variable {
 		VariableInfo: v.VariableInfo,
 	}
 	return copy
+}
+func (v *InlineVariable) GetUnassaignedVariables() []Variable {
+	var variables []Variable
+	if v.GetVariableInfo().IsUnassigned() {
+		variables = append(variables, v)
+	}
+	return variables
 }
 
 // --------------
@@ -510,6 +577,13 @@ func (v *BasicVariable) DeepCopy() Variable {
 	}
 	return copy
 }
+func (v *BasicVariable) GetUnassaignedVariables() []Variable {
+	var variables []Variable
+	if v.GetVariableInfo().IsUnassigned() {
+		variables = append(variables, v)
+	}
+	return variables
+}
 
 // -----------------
 // INTEFACE VARIABLE
@@ -525,6 +599,13 @@ func (v *InterfaceVariable) DeepCopy() Variable {
 		VariableInfo: v.VariableInfo,
 	}
 	return copy
+}
+func (v *InterfaceVariable) GetUnassaignedVariables() []Variable {
+	var variables []Variable
+	if v.GetVariableInfo().IsUnassigned() {
+		variables = append(variables, v)
+	}
+	return variables
 }
 
 // -------------
@@ -542,6 +623,13 @@ func (v *ChanVariable) DeepCopy() Variable {
 	}
 	return copy
 }
+func (v *ChanVariable) GetUnassaignedVariables() []Variable {
+	var variables []Variable
+	if v.GetVariableInfo().IsUnassigned() {
+		variables = append(variables, v)
+	}
+	return variables
+}
 
 // -----------------
 // SELECTOR VARIABLE
@@ -558,6 +646,14 @@ func (v *SelectorVariable) DeepCopy() Variable {
 		Field:  v.Field,
 	}
 	return copy
+}
+func (v *SelectorVariable) GetUnassaignedVariables() []Variable {
+	var variables []Variable
+	if v.GetVariableInfo().IsUnassigned() {
+		variables = append(variables, v)
+		variables = append(variables, v.Parent.GetUnassaignedVariables()...)
+	}
+	return variables
 }
 
 // -------------
@@ -604,7 +700,7 @@ func (vinfo *VariableInfo) AddReferenceWithID(target Variable, creator string) {
 		Creator:  creator,
 		Variable: target,
 	}
-	logger.Logger.Infof("\t added reference (%s) -> (%s) with id = %d (creator: %s)", vinfo.Name, target.GetVariableInfo().GetName(), vinfo.Id, creator)
+	logger.Logger.Infof("\t\t\t[VARIABLE] added reference (%s) -> (%s) with id = %d (creator: %s)", vinfo.Name, target.GetVariableInfo().GetName(), vinfo.Id, creator)
 }
 
 func (vinfo *VariableInfo) AddOriginalReferenceWithID(ref *Reference) {

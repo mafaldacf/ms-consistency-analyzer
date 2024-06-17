@@ -64,6 +64,9 @@ func (file *File) ComputeTypeForExpr(typeExpr ast.Expr) Type {
 				}
 			}
 			//TODO: user can be trying to select a field or something?
+			logger.Logger.Warnf("FIXME: cannot compute type for selector expr (e.X type = %s): %s", utils.GetType(e.X), e)
+			return nil
+			
 		}
 		logger.Logger.Fatalf("cannot compute type for selector expr (e.X type = %s): %s", utils.GetType(e.X), e)
 	case *ast.ChanType:

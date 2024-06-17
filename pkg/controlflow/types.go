@@ -15,29 +15,62 @@ import (
 )
 
 func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, block *types.Block, expr ast.Expr, assign bool) (variable types.Variable) {
+
 	switch e := expr.(type) {
 	case *ast.CallExpr:
 		tupleVar := &types.TupleVariable{}
 		//FIXME: this is kinda hard coded and must be automated
 		goTypeInfo := service.GetPackage().GetTypeInfo(e)
-		call, saved := parseAndSaveCallIfValid(service, method, block, e)
+		call, deps, saved := parseAndSaveCallIfValid(service, method, block, e)
+		logger.Logger.Warnf("GET OR CREATE FOR EXPR %v WITH TYPE %s", expr, utils.GetType(expr))
 		if call != nil && saved {
-			for _, rt := range call.GetMethod().GetReturns() {
+			logger.Logger.Warnf("(1) GET OR CREATE FOR EXPR %v WITH TYPE %s", expr, utils.GetType(expr))
+			for i, rt := range call.GetMethod().GetReturns() {
 				newVar := createVariableFromType(service, "", rt.GetType())
-				block.AddVariable(newVar)
-				call.AddReturn(newVar)
-				tupleVar.Variables = append(tupleVar.Variables, newVar)
+				//FIXMEEEEEEE
+				if len(deps) > 0 {
+					newCompVar := &types.CompositeVariable{
+						VariableInfo: &types.VariableInfo{
+							Name: newVar.String(),
+							Type: newVar.GetVariableInfo().Type,
+							Id:   types.VARIABLE_UNASSIGNED_ID,
+						},
+						Params: []types.Variable{deps[i]},
+					}
+					block.AddVariable(newCompVar)
+					tupleVar.Variables = append(tupleVar.Variables, newCompVar)
+					call.AddReturn(newCompVar)
+				} else {
+					block.AddVariable(newVar)
+					call.AddReturn(newVar)
+					tupleVar.Variables = append(tupleVar.Variables, newVar)
+				}
 			}
 		} else if signatureGoType, ok := service.File.Package.GetTypeInfo(e.Fun).(*gotypes.Signature); ok && call == nil {
-
+			logger.Logger.Warnf("(2) GET OR CREATE FOR EXPR %v WITH TYPE %s", expr, utils.GetType(expr))
 			tupleType := service.File.Package.GenerateUnderlyingTypesFromGoType(signatureGoType.Results())
-			for _, rt := range tupleType.(*types.TupleType).Types {
+			for i, rt := range tupleType.(*types.TupleType).Types {
 				newVar := createVariableFromType(service, "", rt)
-				block.AddVariable(newVar)
-				tupleVar.Variables = append(tupleVar.Variables, newVar)
-				logger.Logger.Warnf("added new var %s (type = %s) from return type %s", newVar, utils.GetType(newVar), utils.GetType(rt))
+				logger.Logger.Infof("IN SIGNAATURE!!! %s (DEPS = %v)", newVar.String(), deps)
+				//FIXMEEEEEEE
+				if len(deps) > 0 {
+					newCompVar := &types.CompositeVariable{
+						VariableInfo: &types.VariableInfo{
+							Name: newVar.String(),
+							Type: newVar.GetVariableInfo().Type,
+							Id:   types.VARIABLE_UNASSIGNED_ID,
+						},
+						Params: []types.Variable{deps[i]},
+					}
+					block.AddVariable(newCompVar)
+					tupleVar.Variables = append(tupleVar.Variables, newCompVar)
+				} else {
+					block.AddVariable(newVar)
+					tupleVar.Variables = append(tupleVar.Variables, newVar)
+				}
 			}
 		} else if call != nil {
+			logger.Logger.Warnf("(3) GET OR CREATE FOR EXPR %v WITH TYPE %s", expr, utils.GetType(expr))
 			//callStr := computeFunctionCallName(e.Fun) + "(...)"
 			// FIXME: THIS IS VEEEEEEERRYYYYYY HARD CODE AND MUUUUUUSSST BE AUTOMATED
 			if goTupleType, ok := goTypeInfo.(*gotypes.Tuple); ok {
@@ -123,20 +156,22 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 					logger.Logger.Fatalf("invalid field name %s in structure variable %s with fields types %v", structName, v.String(), v.GetStructType().FieldTypes)
 				}
 				field = getOrCreateVariableFromType(structName, fieldType)
+				logger.Logger.Warnf("[FIXME] added new variable %s for field %s in structure variable %s (fields = %v)", variable.String(), structName, v.String(), v.Fields)
 				v.Fields[structName] = field
-				logger.Logger.Fatalf("added new variable %s for field %s in structure variable %s", variable.String(), structName, v.String())
 			}
 			return field
 			//variable = v
 		default:
-			logger.Logger.Fatalf("could not find variable for selector %s with type %s", variable.String(), utils.GetType(variable))
+			logger.Logger.Warnf("FIXME: could not find variable for selector %s", variable)
 		}
 		/* newType := ComputeType(e, file)
 		logger.Logger.Fatalf("GOT NEW TYPE %v", newType) */
 	// FIXME: ACTUALLY THE TYPE OF A STRUCT SHOULD REFERENCE A USER TYPE THAT WAS PREVIOUSLY DEFINED
 	case *ast.CompositeLit:
+		//FIX THIS!!!
 		if ident, ok := e.Type.(*ast.Ident); ok {
 			if namedType, found := service.File.Package.GetNamedType(ident.Name); found {
+				logger.Logger.Warnf("GOT NAEMD TYPE INCOMPOSITE %s", namedType.String())
 				if userType, ok := namedType.(*types.UserType); ok {
 					if _, ok := userType.UserType.(*types.StructType); ok {
 						structVariable := &types.StructVariable{
@@ -150,6 +185,7 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 							keyvalue := elt.(*ast.KeyValueExpr)
 							key := keyvalue.Key.(*ast.Ident)
 							eltVar := getOrCreateVariable(service, method, block, keyvalue.Value, false)
+							logger.Logger.Warnf("GOT ELT VAR!!! %s", eltVar.String())
 							if tupleVar, ok := eltVar.(*types.TupleVariable); ok && len(tupleVar.Variables) == 1 {
 								eltVar = tupleVar.Variables[0]
 							}
@@ -235,7 +271,7 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 		logger.Logger.Fatalf("unknown type in GetOrCreateVariable for type %s: %v", utils.GetType(e), e)
 	}
 	if variable == nil {
-		logger.Logger.Fatalf("nil variable for %s: %v", utils.GetType(expr), expr)
+		logger.Logger.Warnf("FIXME: nil variable for %s: %v", utils.GetType(expr), expr)
 	}
 	return variable
 }
@@ -293,7 +329,7 @@ func getOrCreateVariableFromType(name string, t types.Type) types.Variable {
 		// e.g. context.Context is nil
 		return &types.GenericVariable{VariableInfo: info}
 	}
-	logger.Logger.Fatalf("could not create variable from type %v", t)
+	logger.Logger.Warnf("FIXME: could not create variable from type %v", t)
 	return nil
 }
 

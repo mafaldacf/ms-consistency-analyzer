@@ -266,26 +266,48 @@ func (graph *AbstractGraph) referencePublisherParams(queueHandler *AbstractQueue
 
 func (graph *AbstractGraph) referenceServiceCallerParams(parent AbstractNode, caller AbstractNode, child AbstractNode) {
 	fmt.Println()
+	logger.Logger.Infof("[REF] visiting %s (caller = %s, parent = %s)", child.String(), caller.GetName(), parent.GetName())
 
-	_, parentIsService := parent.(*AbstractServiceCall)
+	/* _, parentIsService := parent.(*AbstractServiceCall)
 	_, childIsDatastore := child.(*AbstractDatabaseCall)
 	// ignore when child is a datastore, unless the parent is also a datastore
 	// (e.g. queue.Push and the corresponding queue.Pop)
 	if parentIsService && childIsDatastore {
+		for i, childParam := range child.GetParams() {
+			callArg := child.GetParsedCall().GetArgument(i)
+			if callArg.GetVariableInfo().IsUnassigned() {
+				unassaignedVariables := callArg.GetUnassaignedVariables()
+				for _, v := range unassaignedVariables {
+					v.GetVariableInfo().AssignID(graph.getAndIncGIndex())
+					logger.Logger.Warnf("\t\t\t[GID] assigned gid %s (%d)", v.String(), v.GetVariableInfo().Id)
+				}
+			}
+			if parent == caller {
+				childParam.AddReferenceWithID(callArg, child.GetCallerStr())
+			}
+			if childParam.GetVariableInfo().IsUnassigned() {
+				childParam.GetVariableInfo().AssignID(graph.getAndIncGIndex())
+			}
+		}
 		logger.Logger.Warnf("ignoring references between parent service (%s) and child datastore (%s)", parent.GetName(), child.GetName())
 		return
-	}
+	} */
 
-	for i, childParam := range child.GetParams() {
-		callArg := child.GetParsedCall().GetArgument(i)
-		logger.Logger.Infof("\t[REF] %s: referencing (%v) --> (%v)", child.GetName(), callArg, childParam)
+	for _, childParam := range child.GetParams() {
+		deps := GetIndirectDependencies(false, childParam)
+		logger.Logger.Infof("\t\t[REF] %s: referencing %v (deps = %v)", child.GetName(), childParam, deps)
+		/* callArg := child.GetParsedCall().GetArgument(i)
+
+		if callArg.GetVariableInfo().IsUnassigned() {
+			unassaignedVariables := callArg.GetUnassaignedVariables()
+			for _, v := range unassaignedVariables {
+				v.GetVariableInfo().AssignID(graph.getAndIncGIndex())
+				logger.Logger.Warnf("\t\t\t[GID] assigned gid %s (%d)", v.String(), v.GetVariableInfo().Id)
+			}
+		}
 
 		if childParam.GetVariableInfo().HasReference() {
 			continue
-		}
-
-		if callArg.GetVariableInfo().IsUnassigned() {
-			callArg.GetVariableInfo().AssignID(graph.getAndIncGIndex())
 		}
 
 		if parent == caller {
@@ -294,41 +316,70 @@ func (graph *AbstractGraph) referenceServiceCallerParams(parent AbstractNode, ca
 
 		if childParam.GetVariableInfo().IsUnassigned() {
 			childParam.GetVariableInfo().AssignID(graph.getAndIncGIndex())
-		}
+		} */
 
-		/* for _, dep := range getIndirectParamDeps(childParam) {
+		for _, dep := range deps {
+			logger.Logger.Infof("\t\t[REF] got dep %s (%v) caller params", dep.String(), caller.GetParams())
 			if dep.GetVariableInfo().HasReference() {
 				continue
 			}
 			for callerParamIdx, callerParam := range caller.GetParams() {
 				if dep.GetVariableInfo().IsBlockParameter() && dep.GetVariableInfo().EqualBlockParamIndex(callerParamIdx) {
 					if dep.GetVariableInfo().IsUnassigned() {
-
-						if addressVar, ok := dep.(*types.AddressVariable); ok {
-							dep = addressVar.GetAddressOf()
-						} else if ptrVar, ok := dep.(*types.PointerVariable); ok {
-							dep = ptrVar.GetPointerTo()
-						}
-
-						// we are in the remote service method
-						// that was called by the parent service
-						// otherwise, parent funcion corresponds to the caller function within the service
-						if parent == caller {
-							logger.Logger.Infof("---- ADDING REFERENCE FOR PARAM %v WITH CHILD %s and CALLER %s", callerParam, child.String(), caller.String())
-							dep.GetVariableInfo().AddReferenceWithID(callerParam, child.GetCallerStr())
-						} else if callerParam.GetVariableInfo().HasReference() {
+						if parent != caller && callerParam.GetVariableInfo().HasReference()  {
 							// this can happen with the context variable (e.g. handleMessage called by the workerThread in the NotifyService)
 							dep.GetVariableInfo().AddOriginalReferenceWithID(callerParam.GetVariableInfo().GetReference())
 						} else {
-							dep.GetVariableInfo().AddReferenceWithID(callerParam, parent.GetName())
+							if callerParam.GetVariableInfo().IsUnassigned() {
+								unassaignedVariables := callerParam.GetUnassaignedVariables()
+								for _, v := range unassaignedVariables {
+									v.GetVariableInfo().AssignID(graph.getAndIncGIndex())
+									logger.Logger.Warnf("\t\t\t[GID] assigned gid %s (%d)", v.String(), v.GetVariableInfo().Id)
+								}
+							}
+							dep.AddReferenceWithID(callerParam, child.GetCallerStr())
 						}
-						break
+					}
+					if dep.GetVariableInfo().IsUnassigned() {
+						dep.GetVariableInfo().AssignID(graph.getAndIncGIndex())
 					}
 				}
 			}
-			if dep.GetVariableInfo().IsUnassigned() {
-				dep.GetVariableInfo().AssignID(graph.getAndIncGIndex())
-			}
-		} */
+		}
 	}
+
+	/* for _, dep := range getIndirectParamDeps(childParam) {
+		if dep.GetVariableInfo().HasReference() {
+			continue
+		}
+		for callerParamIdx, callerParam := range caller.GetParams() {
+			if dep.GetVariableInfo().IsBlockParameter() && dep.GetVariableInfo().EqualBlockParamIndex(callerParamIdx) {
+				if dep.GetVariableInfo().IsUnassigned() {
+
+					if addressVar, ok := dep.(*types.AddressVariable); ok {
+						dep = addressVar.GetAddressOf()
+					} else if ptrVar, ok := dep.(*types.PointerVariable); ok {
+						dep = ptrVar.GetPointerTo()
+					}
+
+					// we are in the remote service method
+					// that was called by the parent service
+					// otherwise, parent funcion corresponds to the caller function within the service
+					if parent == caller {
+						logger.Logger.Infof("---- ADDING REFERENCE FOR PARAM %v WITH CHILD %s and CALLER %s", callerParam, child.String(), caller.String())
+						dep.GetVariableInfo().AddReferenceWithID(callerParam, child.GetCallerStr())
+					} else if callerParam.GetVariableInfo().HasReference() {
+						// this can happen with the context variable (e.g. handleMessage called by the workerThread in the NotifyService)
+						dep.GetVariableInfo().AddOriginalReferenceWithID(callerParam.GetVariableInfo().GetReference())
+					} else {
+						dep.GetVariableInfo().AddReferenceWithID(callerParam, parent.GetName())
+					}
+					break
+				}
+			}
+		}
+		if dep.GetVariableInfo().IsUnassigned() {
+			dep.GetVariableInfo().AssignID(graph.getAndIncGIndex())
+		}
+	} */
 }

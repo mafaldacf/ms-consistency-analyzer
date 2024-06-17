@@ -295,11 +295,17 @@ func TODO_parseAndSaveCallIfValid(service *service.Service, method *types.Parsed
 	return nil, false
 }
 
-func parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr) (types.Call, bool) {
+func parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr) (types.Call, []types.Variable, bool) {
 	funcCall, methodIdent, fieldIdent, serviceRecvIdent, variable, ok := getCallIfSelectedField(callExpr, method.Recv, block)
 	if !ok {
 		// return TODO_parseAndSaveCallIfValid(service, method, block, callExpr)
-		return nil, false
+		var vs []types.Variable
+		for _, expr := range callExpr.Args {
+			if v := getOrCreateVariable(service, method, block, expr, false); v != nil {
+				vs = append(vs, v)
+			}
+		}
+		return nil, vs, false
 	}
 	if fieldIdent != nil {
 		// if the targeted variable corresponds to a service field
@@ -328,7 +334,7 @@ func parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMetho
 				saveFuncCallParams(service, method, block, parsedCall, callExpr.Args)
 				method.Calls = append(method.Calls, parsedCall)
 				logger.Logger.Infof("[CFG] found new service call %s @ %s", parsedCall.Name, method.Name)
-				return parsedCall, true
+				return parsedCall, nil, true
 			} else if databaseField, ok := field.(*types.DatabaseField); ok {
 				// if the field corresponds to a database field
 				// 1. extract the service field from the current service
@@ -362,7 +368,7 @@ func parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMetho
 					method.Calls = append(method.Calls, parsedCall)
 					logger.Logger.Infof("[CFG] found new database call %s", parsedCall.Name)
 				}
-				return parsedCall, true
+				return parsedCall, nil, true
 			} else {
 				logger.Logger.Fatalf("[CFG] unknown call %v for field %s with type %s", callExpr.Fun, field.String(), utils.GetType(field))
 			}
@@ -394,7 +400,7 @@ func parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMetho
 				saveFuncCallParams(service, method, block, parsedCall, callExpr.Args)
 				method.Calls = append(method.Calls, parsedCall)
 				logger.Logger.Infof("[CFG] found new database call %s", parsedCall.Method.String())
-				return parsedCall, true
+				return parsedCall, nil, true
 			}
 		}
 	}
@@ -412,9 +418,9 @@ func parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMetho
 		saveFuncCallParams(service, method, block, parsedCall, callExpr.Args)
 		method.Calls = append(method.Calls, parsedCall)
 		logger.Logger.Infof("[CFG] found new internal call %s", parsedCall.Name)
-		return parsedCall, true
+		return parsedCall, nil, true
 	}
 
 	logger.Logger.Warnf("[CFG] cannot save unknown call %v", callExpr.Fun)
-	return nil, false
+	return nil, nil, false
 }

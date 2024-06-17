@@ -48,10 +48,12 @@ func (block *Block) GetLastestVariable(name string) Variable {
 }
 
 func (block *Block) AddVariables(variables []Variable) {
+	logger.Logger.Warnf("added variables to block: %s", variables)
 	block.Vars = append(block.Vars, variables...)
 }
 
 func (block *Block) AddVariable(variable Variable) {
+	logger.Logger.Warnf("added %s to block: %s", utils.GetType(variable), variable.String())
 	block.Vars = append(block.Vars, variable)
 }
 
