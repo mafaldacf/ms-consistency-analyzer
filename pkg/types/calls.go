@@ -7,6 +7,7 @@ import (
 
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/logger"
+	"analyzer/pkg/types/gotypes"
 )
 
 type Call interface {
@@ -76,11 +77,11 @@ func (call *ParsedCall) SimpleString() string {
 type ParsedServiceCall struct {
 	Call
 	ParsedCall
-	CallerTypeName Type
-	CalleeTypeName Type
+	CallerTypeName gotypes.Type
+	CalleeTypeName gotypes.Type
 }
 
-func (svcCall *ParsedServiceCall) GetCallTypeNames() (Type, Type) {
+func (svcCall *ParsedServiceCall) GetCallTypeNames() (gotypes.Type, gotypes.Type) {
 	return svcCall.CallerTypeName, svcCall.CalleeTypeName
 }
 
@@ -120,7 +121,7 @@ type ParsedDatabaseCall struct {
 	Call
 	ParsedCall
 	DbInstance     datastores.DatabaseInstance
-	CallerTypeName Type
+	CallerTypeName gotypes.Type
 }
 
 func (dbCall *ParsedDatabaseCall) IsAtPos(pos token.Pos) bool {
@@ -162,7 +163,7 @@ func (dbCall *ParsedDatabaseCall) GetMethod() Method {
 type ParsedInternalCall struct {
 	Call
 	ParsedCall
-	ServiceTypeName Type
+	ServiceTypeName gotypes.Type
 }
 
 func (internalCall *ParsedInternalCall) String() string {

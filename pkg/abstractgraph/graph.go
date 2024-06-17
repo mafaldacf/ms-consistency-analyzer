@@ -8,6 +8,7 @@ import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
+	"analyzer/pkg/types/gotypes"
 	"analyzer/pkg/utils"
 )
 
@@ -65,7 +66,7 @@ func getVariableIfPointer(variable types.Variable) types.Variable {
 		logger.Logger.Fatalf("missing type for variable %v", variable)
 	}
 
-	if _, ok := variable.GetVariableInfo().GetType().(*types.PointerType); ok {
+	if _, ok := variable.GetVariableInfo().GetType().(*gotypes.PointerType); ok {
 		return variable.GetDependencies()[0]
 	}
 	return variable

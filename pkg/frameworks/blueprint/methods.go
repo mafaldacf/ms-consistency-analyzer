@@ -6,6 +6,7 @@ import (
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
+	"analyzer/pkg/types/gotypes"
 )
 
 type BackendMethod struct {
@@ -234,7 +235,7 @@ func buildBackendNoSQLCursorMethods() []*BackendMethod {
 var ctxParam = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Name: "ctx",
-		Type: &types.UserType{
+		Type: &gotypes.UserType{
 			Name:     "Context",
 			Package:  "context",
 			UserType: nil,
@@ -244,7 +245,7 @@ var ctxParam = types.MethodField{
 var keyParam = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Name: "key",
-		Type: &types.BasicType{
+		Type: &gotypes.BasicType{
 			Name: "string",
 		},
 	},
@@ -252,31 +253,31 @@ var keyParam = types.MethodField{
 var valueParam = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Name: "value",
-		Type: &types.InterfaceType{},
+		Type: &gotypes.InterfaceType{},
 	},
 }
 var itemParam = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Name: "item",
-		Type: &types.InterfaceType{},
+		Type: &gotypes.InterfaceType{},
 	},
 }
 var docParam = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Name: "document",
-		Type: &types.InterfaceType{},
+		Type: &gotypes.InterfaceType{},
 	},
 }
 var objParam = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Name: "obj",
-		Type: &types.InterfaceType{},
+		Type: &gotypes.InterfaceType{},
 	},
 }
 var filterParam = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Name: "filter",
-		Type: &types.UserType{
+		Type: &gotypes.UserType{
 			Name:    "D",
 			Package: "bson",
 		},
@@ -285,7 +286,7 @@ var filterParam = types.MethodField{
 var projectionParam = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Name: "projection",
-		Type: &types.UserType{
+		Type: &gotypes.UserType{
 			Name:    "D",
 			Package: "bson",
 		},
@@ -294,7 +295,7 @@ var projectionParam = types.MethodField{
 var dbNameParam = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Name: "db_name",
-		Type: &types.BasicType{
+		Type: &gotypes.BasicType{
 			Name: "string",
 		},
 	},
@@ -302,14 +303,14 @@ var dbNameParam = types.MethodField{
 var collectionNameParam = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Name: "collection_name",
-		Type: &types.BasicType{
+		Type: &gotypes.BasicType{
 			Name: "string",
 		},
 	},
 }
 var boolReturn = types.MethodField{
 	FieldInfo: types.FieldInfo{
-		Type: &types.BasicType{
+		Type: &gotypes.BasicType{
 			Name: "err",
 		},
 	},
@@ -335,6 +336,6 @@ var NoSQLCollectionReturn = types.MethodField{
 var errorReturn = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		// error is actually an interface
-		Type: &types.InterfaceType{},
+		Type: &gotypes.InterfaceType{},
 	},
 }

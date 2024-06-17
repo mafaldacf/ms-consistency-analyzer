@@ -9,6 +9,7 @@ import (
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
+	"analyzer/pkg/types/gotypes"
 	"analyzer/pkg/utils"
 )
 
@@ -187,7 +188,7 @@ func (service *Service) saveFieldWithType(field *ast.Field, paramName string, id
 			service.ImplementsQueue = true
 		}
 		service.Fields[paramName] = dbField
-	case *types.ServiceType:
+	case *gotypes.ServiceType:
 		service.Fields[paramName] = &types.ServiceField{
 			FieldInfo: types.FieldInfo{
 				Ast:  field,

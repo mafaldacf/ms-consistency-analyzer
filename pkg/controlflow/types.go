@@ -3,7 +3,7 @@ package controlflow
 import (
 	"go/ast"
 	"go/token"
-	gotypes "go/types"
+	golangtypes "go/types"
 	"strconv"
 	"strings"
 
@@ -11,6 +11,7 @@ import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
+	"analyzer/pkg/types/gotypes"
 	"analyzer/pkg/utils"
 )
 
@@ -46,10 +47,10 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 					tupleVar.Variables = append(tupleVar.Variables, newVar)
 				}
 			}
-		} else if signatureGoType, ok := service.File.Package.GetTypeInfo(e.Fun).(*gotypes.Signature); ok && call == nil {
+		} else if signatureGoType, ok := service.File.Package.GetTypeInfo(e.Fun).(*golangtypes.Signature); ok && call == nil {
 			logger.Logger.Warnf("(2) GET OR CREATE FOR EXPR %v WITH TYPE %s", expr, utils.GetType(expr))
 			tupleType := service.File.Package.GenerateUnderlyingTypesFromGoType(signatureGoType.Results())
-			for i, rt := range tupleType.(*types.TupleType).Types {
+			for i, rt := range tupleType.(*gotypes.TupleType).Types {
 				newVar := createVariableFromType(service, "", rt)
 				logger.Logger.Infof("IN SIGNAATURE!!! %s (DEPS = %v)", newVar.String(), deps)
 				//FIXMEEEEEEE
@@ -73,11 +74,11 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 			logger.Logger.Warnf("(3) GET OR CREATE FOR EXPR %v WITH TYPE %s", expr, utils.GetType(expr))
 			//callStr := computeFunctionCallName(e.Fun) + "(...)"
 			// FIXME: THIS IS VEEEEEEERRYYYYYY HARD CODE AND MUUUUUUSSST BE AUTOMATED
-			if goTupleType, ok := goTypeInfo.(*gotypes.Tuple); ok {
+			if goTupleType, ok := goTypeInfo.(*golangtypes.Tuple); ok {
 				for i := 0; i < goTupleType.Len(); i++ {
 					//goType := goTupleType.At(i)
 					//newType, ok := service.File.Package.GetImportedTypeFromPath(goType.String())
-					newType := &types.GenericType{
+					newType := &gotypes.GenericType{
 						Name: goTupleType.String(),
 					}
 					genericVariable := &types.CompositeVariable{
@@ -93,7 +94,7 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 					tupleVar.Variables = append(tupleVar.Variables, genericVariable)
 				}
 			} else {
-				newType := &types.GenericType{
+				newType := &gotypes.GenericType{
 					Name: goTupleType.String(),
 				}
 				genericVariable := &types.CompositeVariable{
@@ -114,7 +115,7 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 		}
 		variable = tupleVar
 	case *ast.BasicLit:
-		basicType := &types.BasicType{
+		basicType := &gotypes.BasicType{
 			Name:  strings.ToLower(e.Kind.String()),
 			Value: e.Value,
 		}
@@ -172,8 +173,8 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 		if ident, ok := e.Type.(*ast.Ident); ok {
 			if namedType, found := service.File.Package.GetNamedType(ident.Name); found {
 				logger.Logger.Warnf("GOT NAEMD TYPE INCOMPOSITE %s", namedType.String())
-				if userType, ok := namedType.(*types.UserType); ok {
-					if _, ok := userType.UserType.(*types.StructType); ok {
+				if userType, ok := namedType.(*gotypes.UserType); ok {
+					if _, ok := userType.UserType.(*gotypes.StructType); ok {
 						structVariable := &types.StructVariable{
 							VariableInfo: &types.VariableInfo{
 								Type: userType,
@@ -199,7 +200,7 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 				}
 			}
 		} else if arrayTypeAst, ok := e.Type.(*ast.ArrayType); ok {
-			arrayType := &types.ArrayType{
+			arrayType := &gotypes.ArrayType{
 				ElementsType: service.File.ComputeTypeForExpr(arrayTypeAst.Elt),
 			}
 			variable = &types.ArrayVariable{
@@ -239,7 +240,7 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 	case *ast.UnaryExpr:
 		if e.Op == token.AND { // e.g. &post
 			variable = getOrCreateVariable(service, method, block, e.X, assign)
-			addrType := &types.AddressType{
+			addrType := &gotypes.AddressType{
 				AddressOf: variable.GetVariableInfo().Type,
 			}
 			variable = &types.AddressVariable{
@@ -252,7 +253,7 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 			}
 		} else if e.Op == token.MUL { // e.g. *post
 			variable = getOrCreateVariable(service, method, block, e.X, assign)
-			addrType := &types.AddressType{
+			addrType := &gotypes.AddressType{
 				AddressOf: variable.GetVariableInfo().Type,
 			}
 			variable = &types.PointerVariable{
@@ -289,7 +290,7 @@ func computeArrayIndex(expr ast.Expr) int {
 	return 0
 }
 
-func getOrCreateVariableFromType(name string, t types.Type) types.Variable {
+func getOrCreateVariableFromType(name string, t gotypes.Type) types.Variable {
 	info := &types.VariableInfo{
 		Name: name,
 		Type: t,
@@ -300,27 +301,27 @@ func getOrCreateVariableFromType(name string, t types.Type) types.Variable {
 		info.Id = types.VARIABLE_UNASSIGNED_ID
 	}
 	switch e := t.(type) {
-	case *types.BasicType:
+	case *gotypes.BasicType:
 		return &types.BasicVariable{VariableInfo: info}
-	case *types.ChanType:
+	case *gotypes.ChanType:
 		return &types.ChanVariable{VariableInfo: info}
-	case *types.MapType:
+	case *gotypes.MapType:
 		return &types.MapVariable{VariableInfo: info}
-	case *types.InterfaceType:
+	case *gotypes.InterfaceType:
 		return &types.InterfaceVariable{VariableInfo: info}
-	case *types.ArrayType:
+	case *gotypes.ArrayType:
 		return &types.ArrayVariable{VariableInfo: info}
-	case *types.StructType:
+	case *gotypes.StructType:
 		// if we are here due to a recursive call (e.g. from UserType)
 		// then we want to make sure we are not reseting the map
 		if e.FieldTypes == nil {
-			e.FieldTypes = make(map[string]types.Type)
+			e.FieldTypes = make(map[string]gotypes.Type)
 		}
 		return &types.StructVariable{
 			VariableInfo: info,
 			Fields:       make(map[string]types.Variable),
 		}
-	case *types.UserType:
+	case *gotypes.UserType:
 		if e.UserType != nil {
 			variable := getOrCreateVariableFromType(name, e.UserType)
 			variable.GetVariableInfo().Type = e
@@ -333,7 +334,7 @@ func getOrCreateVariableFromType(name string, t types.Type) types.Variable {
 	return nil
 }
 
-func createVariableFromType(service *service.Service, name string, t types.Type) types.Variable {
+func createVariableFromType(service *service.Service, name string, t gotypes.Type) types.Variable {
 	info := &types.VariableInfo{
 		Name: name,
 		Type: t,
@@ -341,23 +342,23 @@ func createVariableFromType(service *service.Service, name string, t types.Type)
 	}
 
 	switch e := t.(type) {
-	case *types.UserType:
+	case *gotypes.UserType:
 		if e.UserType != nil {
 			return createVariableFromType(service, name, e.UserType)
 		}
 		logger.Logger.Warnf("user type %s with nil underlying type", e.String())
 		return &types.GenericVariable{VariableInfo: info}
-	case *types.ChanType:
+	case *gotypes.ChanType:
 		return &types.ChanVariable{VariableInfo: info}
-	case *types.BasicType:
+	case *gotypes.BasicType:
 		return &types.BasicVariable{VariableInfo: info}
-	case *types.InterfaceType:
+	case *gotypes.InterfaceType:
 		return &types.InterfaceVariable{VariableInfo: info}
-	case *types.ArrayType:
+	case *gotypes.ArrayType:
 		return &types.ArrayVariable{VariableInfo: info}
-	case *types.StructType:
+	case *gotypes.StructType:
 		return &types.StructVariable{VariableInfo: info, Fields: make(map[string]types.Variable)}
-	case *types.MapType:
+	case *gotypes.MapType:
 		return &types.MapVariable{VariableInfo: info, KeyValues: make(map[types.Variable]types.Variable, 0)}
 	case *blueprint.BackendType:
 		if e.IsNoSQLComponent() {

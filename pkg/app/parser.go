@@ -1,7 +1,7 @@
 package app
 
 import (
-	gotypes "go/types"
+	golangtypes "go/types"
 	"path/filepath"
 	"strings"
 
@@ -11,6 +11,7 @@ import (
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
+	"analyzer/pkg/types/gotypes"
 	"analyzer/pkg/utils"
 )
 
@@ -35,11 +36,11 @@ func createPackage(app *App, goPackage *packages.Package, basePackagePath string
 		PackagePath:       goPackage.PkgPath, // e.g. github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification/models
 		Module:            modulePath,        // e.g. github.com/blueprint-uservices/blueprint/examples/postnotification/workflow
 		ImportedPackages:  make(map[string]*types.Package),
-		DeclaredTypes:     make(map[string]types.Type),
-		ServiceTypes:      make(map[string]*types.ServiceType),
-		DatastoreTypes:    make(map[string]types.Type),
+		DeclaredTypes:     make(map[string]gotypes.Type),
+		ServiceTypes:      make(map[string]*gotypes.ServiceType),
+		DatastoreTypes:    make(map[string]gotypes.Type),
 		DeclaredVariables: make(map[string]types.Variable),
-		ImportedTypes:     make(map[string]types.Type),
+		ImportedTypes:     make(map[string]gotypes.Type),
 		TypesInfo:         goPackage.TypesInfo,
 	}
 
@@ -76,8 +77,8 @@ func parseBlueprintPackage(bpPackage *types.Package) {
 		if def == nil {
 			continue
 		}
-		if _, isInterface := def.Type().Underlying().(*gotypes.Interface); isInterface {
-			if namedGoType, ok := def.Type().(*gotypes.Named); ok {
+		if _, isInterface := def.Type().Underlying().(*golangtypes.Interface); isInterface {
+			if namedGoType, ok := def.Type().(*golangtypes.Named); ok {
 				if visitedNamedTypes[namedGoType.String()] {
 					continue
 				}
@@ -157,14 +158,24 @@ func (app *App) ParsePackages(servicesInfo []*frameworks.ServiceInfo) {
 		goPkg := allGoPackages[pkg]
 		logger.Logger.Infof("[APP] parsing app package %s", goPkg)
 
-		underlyingTypes := make(map[string]gotypes.Type)
+		underlyingTypes := make(map[string]golangtypes.Type)
 		visitedNamedTypes := make(map[string]bool)
 
 		for _, def := range goPkg.TypesInfo.Defs {
 			if def == nil {
 				continue
 			}
-			if namedGoType, ok := def.Type().(*gotypes.Named); ok {
+			/* if namedGoType, ok := def.Type().(*golangtypes.Named); ok {
+				if structGoType, ok := namedGoType.Underlying().(*golangtypes.Struct); ok {
+					logger.Logger.Infof("visiting %s: %s", utils.GetType(structGoType.Underlying()), structGoType.Underlying().String())
+					for i := 0; i < structGoType.NumFields(); i++ {
+						typeParam := structGoType.Field(i)
+						logger.Logger.Infof("\t\tvisiting %s: %s", utils.GetType(typeParam), typeParam.String())
+					}
+				}
+			} */
+			if namedGoType, ok := def.Type().(*golangtypes.Named); ok {
+				logger.Logger.Debugf("visiting %s: %s", utils.GetType(namedGoType), namedGoType.String())
 				if visitedNamedTypes[namedGoType.String()] {
 					continue
 				}
@@ -186,7 +197,7 @@ func (app *App) ParsePackages(servicesInfo []*frameworks.ServiceInfo) {
 						pkg.AddDatastoreType(declaredType)
 						logger.Logger.Debugf("added imported blueprint type %s", declaredType.String())
 					} else if servicePkgPath, ok := servicesPkgPath[typeName]; ok && servicePkgPath == objectPackagePath {
-						serviceType := &types.ServiceType{
+						serviceType := &gotypes.ServiceType{
 							Name:    typeName,
 							Package: objectPackagePath,
 						}
@@ -194,7 +205,7 @@ func (app *App) ParsePackages(servicesInfo []*frameworks.ServiceInfo) {
 						pkg.AddServiceType(serviceType)
 						logger.Logger.Debugf("added imported service type %s", serviceType.String())
 					} else {
-						importedType := &types.UserType{
+						importedType := &gotypes.UserType{
 							Name:    typeName,
 							Package: objectPackagePath, // this is the real package name
 						}
@@ -202,7 +213,7 @@ func (app *App) ParsePackages(servicesInfo []*frameworks.ServiceInfo) {
 						logger.Logger.Debugf("added imported type %s", importedType.String())
 					}
 				} else if servicePkgPath, ok := servicesPkgPath[typeName]; ok && servicePkgPath == objectPackagePath {
-					serviceType := &types.ServiceType{
+					serviceType := &gotypes.ServiceType{
 						Name:    typeName,
 						Package: objectPackagePath,
 					}
@@ -211,7 +222,7 @@ func (app *App) ParsePackages(servicesInfo []*frameworks.ServiceInfo) {
 					pkg.AddServiceType(serviceType)
 				} else {
 					// new type defined in the current package
-					namedType := &types.UserType{
+					namedType := &gotypes.UserType{
 						Name:    typeName,
 						Package: pkg.Name,
 					}
@@ -224,12 +235,12 @@ func (app *App) ParsePackages(servicesInfo []*frameworks.ServiceInfo) {
 			}
 		}
 		for n, declaredType := range pkg.DeclaredTypes {
-			if userType, ok := declaredType.(*types.UserType); ok {
+			if userType, ok := declaredType.(*gotypes.UserType); ok {
 				userType.UserType = pkg.GenerateUnderlyingTypesFromGoType(underlyingTypes[n])
 			}
 		}
 		for n, importedType := range pkg.ImportedTypes {
-			if userType, ok := importedType.(*types.UserType); ok {
+			if userType, ok := importedType.(*gotypes.UserType); ok {
 				userType.UserType = pkg.GenerateUnderlyingTypesFromGoType(underlyingTypes[n])
 			}
 		}

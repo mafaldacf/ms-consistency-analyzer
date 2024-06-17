@@ -6,6 +6,7 @@ import (
 	"slices"
 
 	"analyzer/pkg/logger"
+	"analyzer/pkg/types/gotypes"
 	"analyzer/pkg/utils"
 )
 
@@ -63,7 +64,7 @@ type Variable interface {
 }
 type VariableInfo struct {
 	Name string
-	Type Type
+	Type gotypes.Type
 	Id   int64
 
 	Reference     *Reference
@@ -301,10 +302,10 @@ func (v *StructVariable) AddFieldIfNotExists(name string, field Variable) bool {
 	return false
 }
 
-func (v *StructVariable) GetStructType() *StructType {
-	structType, ok := v.VariableInfo.Type.(*StructType)
+func (v *StructVariable) GetStructType() *gotypes.StructType {
+	structType, ok := v.VariableInfo.Type.(*gotypes.StructType)
 	if !ok {
-		structType = v.VariableInfo.Type.(*UserType).UserType.(*StructType)
+		structType = v.VariableInfo.Type.(*gotypes.UserType).UserType.(*gotypes.StructType)
 	}
 	return structType
 }
@@ -749,5 +750,5 @@ func ContainsMatchingDependencies(current Variable, target Variable) bool {
 
 func (vinfo *VariableInfo) GetName() string          { return vinfo.Name }
 func (vinfo *VariableInfo) GetId() int64             { return vinfo.Id }
-func (vinfo *VariableInfo) GetType() Type            { return vinfo.Type }
+func (vinfo *VariableInfo) GetType() gotypes.Type            { return vinfo.Type }
 func (vinfo *VariableInfo) GetReference() *Reference { return vinfo.Reference }

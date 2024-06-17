@@ -5,13 +5,14 @@ import (
 	"go/ast"
 
 	"analyzer/pkg/datastores"
+	"analyzer/pkg/types/gotypes"
 )
 
 type Field interface {
 	String() string
 	GetName() string
-	GetType() Type
-	SetType(t Type)
+	GetType() gotypes.Type
+	SetType(t gotypes.Type)
 	GetTypeString() string
 	GetTypeName() string
 	GetIndex() int
@@ -20,7 +21,7 @@ type Field interface {
 type FieldInfo struct {
 	Ast  *ast.Field
 	Name string
-	Type Type
+	Type gotypes.Type
 }
 
 type MethodField struct {
@@ -60,13 +61,13 @@ func (f *GenericField) GetIndex() int {
 func (f *GenericField) GetName() string {
 	return f.FieldInfo.Name
 }
-func (f *GenericField) GetType() Type {
+func (f *GenericField) GetType() gotypes.Type {
 	return f.FieldInfo.Type
 }
 func (f *GenericField) GetTypeName() string {
 	return f.FieldInfo.Type.GetName()
 }
-func (f *GenericField) SetType(t Type) {
+func (f *GenericField) SetType(t gotypes.Type) {
 	f.FieldInfo.Type = t
 }
 
@@ -88,10 +89,10 @@ func (f *ServiceField) GetIndex() int {
 func (f *ServiceField) GetName() string {
 	return f.FieldInfo.Name
 }
-func (f *ServiceField) GetType() Type {
+func (f *ServiceField) GetType() gotypes.Type {
 	return f.FieldInfo.Type
 }
-func (f *ServiceField) SetType(t Type) {
+func (f *ServiceField) SetType(t gotypes.Type) {
 	f.FieldInfo.Type = t
 }
 
@@ -113,10 +114,10 @@ func (f *DatabaseField) GetIndex() int {
 func (f *DatabaseField) GetName() string {
 	return f.FieldInfo.Name
 }
-func (f *DatabaseField) GetType() Type {
+func (f *DatabaseField) GetType() gotypes.Type {
 	return f.FieldInfo.Type
 }
-func (f *DatabaseField) SetType(t Type) {
+func (f *DatabaseField) SetType(t gotypes.Type) {
 	f.FieldInfo.Type = t
 }
 
@@ -141,9 +142,9 @@ func (f *MethodField) GetIndex() int {
 func (f *MethodField) GetName() string {
 	return f.FieldInfo.Name
 }
-func (f *MethodField) GetType() Type {
+func (f *MethodField) GetType() gotypes.Type {
 	return f.FieldInfo.Type
 }
-func (f *MethodField) SetType(t Type) {
+func (f *MethodField) SetType(t gotypes.Type) {
 	f.FieldInfo.Type = t
 }

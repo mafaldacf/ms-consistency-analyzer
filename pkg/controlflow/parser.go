@@ -7,6 +7,7 @@ import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
+	"analyzer/pkg/types/gotypes"
 	"analyzer/pkg/utils"
 )
 
@@ -221,7 +222,7 @@ func saveFuncCallParams(service *service.Service, method *types.ParsedMethod, bl
 		param := getOrCreateVariable(service, method, block, arg, false)
 
 		// upgrade variable with known type from function method
-		if _, ok := param.GetVariableInfo().Type.(*types.GenericType); ok {
+		if _, ok := param.GetVariableInfo().Type.(*gotypes.GenericType); ok {
 			param.GetVariableInfo().Type = parsedCall.GetMethod().GetParams()[i].GetType()
 			logger.Logger.Warnf("upgrading variable %s with new type %s", param.GetVariableInfo().Name, param.GetVariableInfo().Type.String())
 		}
@@ -328,7 +329,7 @@ func parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMetho
 						Pos:         funcCall.Pos(),
 						Method:      targetMethod,
 					},
-					CallerTypeName: &types.ServiceType{Name: service.Name, Package: service.GetPackageName()},
+					CallerTypeName: &gotypes.ServiceType{Name: service.Name, Package: service.GetPackageName()},
 					CalleeTypeName: serviceField.GetType(),
 				}
 				saveFuncCallParams(service, method, block, parsedCall, callExpr.Args)
@@ -351,7 +352,7 @@ func parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMetho
 						Pos:         funcCall.Pos(),
 						Method:      blueprintMethod,
 					},
-					CallerTypeName: &types.ServiceType{Name: service.Name, Package: service.GetPackageName()},
+					CallerTypeName: &gotypes.ServiceType{Name: service.Name, Package: service.GetPackageName()},
 					DbInstance:     databaseField.DbInstance,
 				}
 				saveFuncCallParams(service, method, block, parsedCall, callExpr.Args)
@@ -386,7 +387,7 @@ func parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMetho
 					Pos:         funcCall.Pos(),
 					Method:      blueprintMethod,
 				},
-				CallerTypeName: &types.ServiceType{Name: service.Name, Package: service.GetPackageName()},
+				CallerTypeName: &gotypes.ServiceType{Name: service.Name, Package: service.GetPackageName()},
 				DbInstance:     blueprintType.DbInstance,
 			}
 			if blueprintType.IsNoSQLCollection() {
@@ -413,7 +414,7 @@ func parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMetho
 				Method:   funcDecl,
 				Pos:      funcCall.Pos(),
 			},
-			ServiceTypeName: &types.ServiceType{Name: service.Name, Package: service.GetPackageName()},
+			ServiceTypeName: &gotypes.ServiceType{Name: service.Name, Package: service.GetPackageName()},
 		}
 		saveFuncCallParams(service, method, block, parsedCall, callExpr.Args)
 		method.Calls = append(method.Calls, parsedCall)

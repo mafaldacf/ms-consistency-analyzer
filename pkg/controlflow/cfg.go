@@ -7,6 +7,7 @@ import (
 
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
+	"analyzer/pkg/types/gotypes"
 )
 
 func GenerateMethodCFG(parsedMethod *types.ParsedMethod) {
@@ -15,14 +16,14 @@ func GenerateMethodCFG(parsedMethod *types.ParsedMethod) {
 	parsedMethod.SetParsedCFG(parsedCfg)
 	entryBlock := parsedCfg.GetEntryParsedBlock()
 	for i, param := range parsedMethod.Params {
-		if u, ok := param.GetType().(*types.UserType); ok {
-			if s, ok := u.UserType.(*types.StructType); ok {
+		if u, ok := param.GetType().(*gotypes.UserType); ok {
+			if s, ok := u.UserType.(*gotypes.StructType); ok {
 				logger.Logger.Debugf("param %s: %v", param.String(), s.FieldTypes)
 			}
 		}
 		v := getOrCreateVariableFromType(param.GetName(), param.GetType())
-		if u, ok := v.GetVariableInfo().GetType().(*types.UserType); ok {
-			if s, ok := u.UserType.(*types.StructType); ok {
+		if u, ok := v.GetVariableInfo().GetType().(*gotypes.UserType); ok {
+			if s, ok := u.UserType.(*gotypes.StructType); ok {
 				logger.Logger.Debugf("param %s: %v", param.String(), s.FieldTypes)
 			}
 		}

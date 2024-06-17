@@ -5,6 +5,7 @@ import (
 	"go/ast"
 
 	"analyzer/pkg/datastores"
+	"analyzer/pkg/types/gotypes"
 )
 
 type Method interface {
@@ -19,7 +20,7 @@ type Method interface {
 type MethodReceiver struct {
 	Name string
 	//TODO: set name when creating ParsedMethod
-	Type Type
+	Type gotypes.Type
 }
 
 type ParsedMethod struct {

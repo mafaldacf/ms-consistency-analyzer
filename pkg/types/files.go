@@ -4,6 +4,7 @@ import (
 	"go/ast"
 
 	"analyzer/pkg/logger"
+	"analyzer/pkg/types/gotypes"
 	"analyzer/pkg/utils"
 )
 
@@ -31,11 +32,11 @@ func (f *File) String() string {
 // ------- Types -------
 // ---------------------
 
-func (file *File) ComputeTypeForExpr(typeExpr ast.Expr) Type {
+func (file *File) ComputeTypeForExpr(typeExpr ast.Expr) gotypes.Type {
 	switch e := typeExpr.(type) {
 	case *ast.Ident:
 		if utils.IsBasicType(e.Name) {
-			return &BasicType{
+			return &gotypes.BasicType{
 				Name: e.Name,
 			}
 		}
@@ -66,27 +67,27 @@ func (file *File) ComputeTypeForExpr(typeExpr ast.Expr) Type {
 			//TODO: user can be trying to select a field or something?
 			logger.Logger.Warnf("FIXME: cannot compute type for selector expr (e.X type = %s): %s", utils.GetType(e.X), e)
 			return nil
-			
+
 		}
 		logger.Logger.Fatalf("cannot compute type for selector expr (e.X type = %s): %s", utils.GetType(e.X), e)
 	case *ast.ChanType:
-		return &ChanType{
+		return &gotypes.ChanType{
 			ChanType: file.ComputeTypeForExpr(e.Value),
 		}
 	case *ast.MapType:
-		return &MapType{
+		return &gotypes.MapType{
 			KeyType:   file.ComputeTypeForExpr(e.Key),
 			ValueType: file.ComputeTypeForExpr(e.Value),
 		}
 	case *ast.InterfaceType:
-		return &InterfaceType{}
+		return &gotypes.InterfaceType{}
 	case *ast.ArrayType:
-		return &ArrayType{
+		return &gotypes.ArrayType{
 			ElementsType: file.ComputeTypeForExpr(e.Elt),
 		}
 	case *ast.StructType:
-		structType := &StructType{
-			FieldTypes: make(map[string]Type),
+		structType := &gotypes.StructType{
+			FieldTypes: make(map[string]gotypes.Type),
 		}
 		for _, f := range e.Fields.List {
 			name := f.Names[0].Name

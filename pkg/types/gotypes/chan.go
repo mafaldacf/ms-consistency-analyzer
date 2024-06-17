@@ -1,0 +1,37 @@
+package gotypes
+
+import (
+	"fmt"
+
+	"analyzer/pkg/logger"
+)
+
+type ChanType struct {
+	Type     `json:"-"`
+	ChanType Type
+}
+
+// ------------
+// Type Methods
+// ------------
+
+func (t *ChanType) String() string {
+	return fmt.Sprintf("chan %s", t.ChanType.String())
+}
+func (t *ChanType) FullString() string {
+	return fmt.Sprintf("chan %s", t.ChanType.FullString())
+}
+func (t *ChanType) GetName() string {
+	return t.String()
+}
+func (t *ChanType) GetBasicValue() string {
+	logger.Logger.Fatalf("unable to get value for chan type %s", t.String())
+	return ""
+}
+func (t *ChanType) AddValue(value string) {
+	logger.Logger.Fatalf("unable to add value for chan type %s", t.String())
+}
+
+// ------------
+// Chan Methods
+// ------------
