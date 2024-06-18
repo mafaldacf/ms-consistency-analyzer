@@ -1,19 +1,12 @@
 package gotypes
 
 import (
-	"regexp"
-
 	"analyzer/pkg/logger"
 )
 
 type StructType struct {
 	Type       `json:"-"`
-	FieldTypes map[string]Type
-	FieldTags  map[string]string
-
-	// order fields by index
-	// FIXME: in the future, this should not be necessary if we have a new FieldType (also with annotations e.g. for json parsing)
-	FieldNames []string
+	FieldTypes []*FieldType
 }
 
 // ------------
@@ -24,19 +17,14 @@ func (t *StructType) String() string {
 	return "struct"
 }
 func (t *StructType) FullString() string {
-	if len(t.FieldNames) == 0 {
+	if len(t.FieldTypes) == 0 {
 		return "struct {}"
 	}
 	s := "struct { "
 	i := 0
 	// get by index order
-	for _, name := range t.FieldNames {
-		field := t.FieldTypes[name]
-		if field == nil {
-			logger.Logger.Warnf("unexpected nil field %s for structure with types list %v and field names %v", name, t.FieldTypes, t.FieldNames)
-			continue
-		}
-		s += name + " " + field.FullString()
+	for _, f := range t.FieldTypes {
+		s += f.FieldName + " " + f.FullString()
 		/* if tag, ok := t.FieldTags[name]; ok {
 			s += " `" + tag + "`"
 		} */
@@ -58,38 +46,39 @@ func (t *StructType) GetBasicValue() string {
 func (t *StructType) AddValue(value string) {
 	logger.Logger.Fatalf("unable to add value for struct type %s", t.String())
 }
-func (t *StructType) getFieldJsonTag(field string) string {
-	if tag, ok := t.FieldTags[field]; ok {
-		re := regexp.MustCompile(`json:"([^"]+)"`)
-		matches := re.FindStringSubmatch(tag)
-		if len(matches) >= 2 {
-			return matches[1]
-		}
+func (t *StructType) GetNestedFieldTypes(prefix string) ([]Type, []string) {
+	var nestedTypes []Type
+	var nestedIDs []string
+
+	for _, f := range t.FieldTypes {
+		nestedFieldTypes, nestedFieldIDs := f.GetNestedFieldTypes(prefix)
+		nestedTypes = append(nestedTypes, nestedFieldTypes...)
+		nestedIDs = append(nestedIDs, nestedFieldIDs...)
 	}
-	return ""
-}
-func (t *StructType) GetNestedTypes(prefix string) ([]Type, []string) {
-	var types []Type
-	var ids []string
-
-	for _, name := range t.FieldNames {
-		field := t.FieldTypes[name]
-
-		fieldPrefix := prefix + "." + name
-		if tag := t.getFieldJsonTag(name); tag != "" {
-			fieldPrefix = prefix + "." + tag
-		}
-
-		ids = append(ids, fieldPrefix)
-		types = append(types, field)
-
-		r1, r2 := field.GetNestedTypes(fieldPrefix)
-		types = append(types, r1...)
-		ids = append(ids, r2...)
-	}
-	return types, ids
+	return nestedTypes, nestedIDs
 }
 
 // --------------
 // Struct Methods
 // --------------
+
+func (t *StructType) GetFieldTypeByName(name string) *FieldType {
+	for _, f := range t.FieldTypes {
+		if f.FieldName == name {
+			return f
+		}
+	}
+	logger.Logger.Fatalf("field %s not found for struct type %s", name, t.String())
+	return nil
+}
+
+func (t *StructType) GetFieldTypeAt(index int) *FieldType {
+	if index > len(t.FieldTypes)-1 {
+		logger.Logger.Fatalf("field at index %d not found for struct type %s", index, t.String())
+	}
+	return t.FieldTypes[index]
+}
+
+func (t *StructType) AddFieldType(field *FieldType) {
+	t.FieldTypes = append(t.FieldTypes, field)
+}

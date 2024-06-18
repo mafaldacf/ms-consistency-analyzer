@@ -92,7 +92,7 @@ func (service *Service) parseFuncDeclParameters(funcDecl *ast.FuncDecl) ([]*type
 	parser := func(fieldsList []*ast.Field) []*types.MethodField {
 		var params []*types.MethodField
 		for _, field := range fieldsList {
-			paramType := service.File.ComputeTypeForExpr(field.Type)
+			paramType := service.File.ComputeTypeForAstExpr(field.Type)
 			// returns with types only, which is usually the most frequent scenario
 			if len(field.Names) == 0 {
 				param := &types.MethodField{
@@ -172,7 +172,7 @@ func (service *Service) ParseFields() {
 }
 
 func (service *Service) saveFieldWithType(field *ast.Field, paramName string, idx int) {
-	fieldType := service.File.ComputeTypeForExpr(field.Type)
+	fieldType := service.File.ComputeTypeForAstExpr(field.Type)
 	switch t := fieldType.(type) {
 	case *blueprint.BackendType:
 		dbField := &types.DatabaseField{

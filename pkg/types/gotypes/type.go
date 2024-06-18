@@ -9,7 +9,8 @@ type Type interface {
 	GetPackage() string // package is always the real package path
 	GetBasicValue() string
 	AddValue(value string)
-	GetNestedTypes(prefix string) ([]Type, []string)
+	GetNestedFieldTypes(prefix string) ([]Type, []string)
+	GetLongFieldName() string
 }
 
 func packageAlias(pkg string) string {

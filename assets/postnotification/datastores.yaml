@@ -1,4 +1,4 @@
-notification_queue:
+NOTIFICATION_QUEUE:
 - type: Queue
 - kind: RabbitMQ
 - schema:
@@ -10,10 +10,10 @@ notification_queue:
     - Message.PostID: string
     - Message.Timestamp: string
   - foreign_keys:
-    - post: post_cache.value
-    - post: post_db.document
-    - postIDStr: post_cache.key
-post_cache:
+    - postIDStr: POST_CACHE.key
+    - post: POST_CACHE.value
+    - post: POST_NOSQL_DB.document
+POST_CACHE:
 - type: Cache
 - kind: Redis
 - schema:
@@ -29,7 +29,7 @@ post_cache:
     - Post.Creator: postnotification.Creator struct { Username string }
     - Post.Creator.Username: string
   - foreign_keys: []
-post_db:
+POST_NOSQL_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
 - schema:
@@ -44,5 +44,5 @@ post_db:
     - Post.Creator: postnotification.Creator struct { Username string }
     - Post.Creator.Username: string
   - foreign_keys:
-    - post: post_cache.value
-    - postIDStr: post_cache.key
+    - post: POST_CACHE.value
+    - postIDStr: POST_CACHE.key

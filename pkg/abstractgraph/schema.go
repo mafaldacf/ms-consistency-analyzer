@@ -66,7 +66,7 @@ func addNestedDatastoreEntry(variable types.Variable, entryName string, datastor
 	datastore.Schema.AddUnfoldedFieldWithId(objType.GetName(), objType.FullString(), variable.GetVariableInfo().GetId())
 
 	// add nested unfolded types
-	types, names := objType.GetNestedTypes(objType.GetName())
+	types, names := objType.GetNestedFieldTypes(objType.GetName())
 	for i, t := range types {
 		name := names[i]
 		datastore.Schema.AddUnfoldedField(name, t.FullString())
@@ -104,15 +104,16 @@ func searchForeignDataflow(variable types.Variable, datastore *datastores.Datast
 			foreignDatastore := foreignDatastores[i]
 			logger.Logger.Infof("foreign variable %s (id = %d) @ %s", foreignVariable.String(), foreignVariable.GetVariableInfo().Id, foreignDatastore.GetName())
 			foreignField := foreignDatastore.GetDatastore().Schema.GetFieldById(foreignVariable.GetVariableInfo().Id)
-			if foreignField != nil {
-				datastore.Schema.AddFKReference(foreignVariable.GetVariableInfo().GetName(), foreignVariable.GetVariableInfo().Type.String(), foreignField, foreignDatastore.GetDatastore().Name)
-			} else {
-				// this is duplicating if not else
+			if foreignField == nil {
 				foreignField = foreignDatastore.GetDatastore().Schema.GetField(foreignVariable.GetVariableInfo().GetType().GetName())
-				if foreignField != nil {
-					datastore.Schema.AddFKReference(foreignVariable.GetVariableInfo().GetName(), foreignVariable.GetVariableInfo().Type.String(), foreignField, foreignDatastore.GetDatastore().Name)
-				}
 			}
+
+			datastore.Schema.AddFKReference(
+				foreignVariable.GetVariableInfo().GetName(), 
+				foreignVariable.GetVariableInfo().Type.String(), 
+				foreignField, 
+				foreignDatastore.GetDatastore().Name,
+			)
 		}
 	}
 }

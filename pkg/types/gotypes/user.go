@@ -1,6 +1,8 @@
 package gotypes
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type UserType struct {
 	Type     `json:"-"`
@@ -30,14 +32,13 @@ func (t *UserType) GetPackage() string {
 func (t *UserType) GetBasicValue() string {
 	return t.UserType.GetBasicValue()
 }
-func (t *UserType) GetNestedTypes(prefix string) ([]Type, []string) {
-	return t.UserType.GetNestedTypes(prefix)
+func (t *UserType) GetNestedFieldTypes(prefix string) ([]Type, []string) {
+	return t.UserType.GetNestedFieldTypes(prefix)
 }
 
 // ------------
 // Type Methods
 // ------------
-
 
 // ------------
 // User Methods

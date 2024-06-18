@@ -113,33 +113,33 @@ func importedTypeKey(packagePath string, typeName string) string {
 	return packagePath + "." + typeName
 }
 
-func (p *Package) AddDeclaredType(t gotypes.Type) {
-	if _, exists := p.DeclaredTypes[t.GetName()]; exists {
-		logger.Logger.Fatalf("package %s already constains declared type %s", p.Name, t.String())
+func (p *Package) AddDeclaredType(e gotypes.Type) {
+	if _, exists := p.DeclaredTypes[e.GetName()]; exists {
+		logger.Logger.Fatalf("package %s already constains declared type %s", p.Name, e.String())
 	}
-	p.DeclaredTypes[t.GetName()] = t
+	p.DeclaredTypes[e.GetName()] = e
 }
 
-func (p *Package) AddImportedType(t gotypes.Type) {
-	key := importedTypeKey(t.GetPackage(), t.GetName())
+func (p *Package) AddImportedType(e gotypes.Type) {
+	key := importedTypeKey(e.GetPackage(), e.GetName())
 	if _, exists := p.ImportedTypes[key]; exists {
-		logger.Logger.Fatalf("package %s already constains imported type %s", p.Name, t.String())
+		logger.Logger.Fatalf("package %s already constains imported type %s", p.Name, e.String())
 	}
-	p.ImportedTypes[key] = t
+	p.ImportedTypes[key] = e
 }
 
-func (p *Package) AddServiceType(t *gotypes.ServiceType) {
-	if _, exists := p.ServiceTypes[t.Name]; exists {
-		logger.Logger.Fatalf("package %s already constains service type %s", p.Name, t.String())
+func (p *Package) AddServiceType(e *gotypes.ServiceType) {
+	if _, exists := p.ServiceTypes[e.Name]; exists {
+		logger.Logger.Fatalf("package %s already constains service type %s", p.Name, e.String())
 	}
-	p.ServiceTypes[t.Name] = t
+	p.ServiceTypes[e.Name] = e
 }
 
-func (p *Package) AddDatastoreType(t gotypes.Type) {
-	if _, exists := p.DatastoreTypes[t.GetName()]; exists {
-		logger.Logger.Fatalf("package %s already constains datastore type %s", p.Name, t.String())
+func (p *Package) AddDatastoreType(e gotypes.Type) {
+	if _, exists := p.DatastoreTypes[e.GetName()]; exists {
+		logger.Logger.Fatalf("package %s already constains datastore type %s", p.Name, e.String())
 	}
-	p.DatastoreTypes[t.GetName()] = t
+	p.DatastoreTypes[e.GetName()] = e
 }
 
 func (p *Package) LinkFile(file *File) {
@@ -181,70 +181,9 @@ func (p *Package) GetNamedType(name string) (gotypes.Type, bool) {
 	return nil, false
 }
 
-func (p *Package) GenerateUnderlyingTypesFromGoType(goType golangtypes.Type) gotypes.Type {
-	switch t := goType.(type) {
-	case *golangtypes.Named:
-		name := t.Obj().Name()
-		path := ""
-		if t.Obj().Pkg() != nil { // error never has an object
-			path = t.Obj().Pkg().Path()
-		}
-		if namedType, ok := p.DeclaredTypes[name]; ok {
-			return namedType
-		}
-		if serviceType, ok := p.ServiceTypes[name]; ok {
-			return serviceType
-		}
-		if datastoreType, ok := p.DatastoreTypes[name]; ok {
-			return datastoreType
-		}
-		if importedType, ok := p.ImportedTypes[importedTypeKey(path, name)]; ok {
-			return importedType
-		}
-		logger.Logger.Fatalf("named type %s not declared in package %s", t.String(), p.String())
-	case *golangtypes.Struct:
-		structType := &gotypes.StructType{
-			FieldTypes: make(map[string]gotypes.Type),
-			FieldTags:  make(map[string]string),
-		}
-		for i := 0; i < t.NumFields(); i++ {
-			var v *golangtypes.Var = t.Field(i)
-			structType.FieldTypes[v.Name()] = p.GenerateUnderlyingTypesFromGoType(v.Type())
-			if tag := t.Tag(i); tag != "" {
-				structType.FieldTags[v.Name()] = tag
-			}
-			structType.FieldNames = append(structType.FieldNames, v.Name())
-		}
-		return structType
-	case *golangtypes.Basic:
-		return &gotypes.BasicType{
-			Name: t.Name(),
-		}
-	case *golangtypes.Interface:
-		return &gotypes.InterfaceType{
-			Content: goType.String(),
-		}
-	case *golangtypes.Signature:
-		signatureType := &gotypes.SignatureType{}
-		for i := 0; i < t.Results().Len(); i++ {
-			var v *golangtypes.Var = t.Results().At(i)
-			signatureType.ReturnTypes = append(signatureType.ReturnTypes, p.GenerateUnderlyingTypesFromGoType(v.Type()))
-		}
-		return signatureType
-	case *golangtypes.Tuple:
-		tupleType := &gotypes.TupleType{}
-		for i := 0; i < t.Len(); i++ {
-			var v *golangtypes.Var = t.At(i)
-			tupleType.Types = append(tupleType.Types, p.GenerateUnderlyingTypesFromGoType(v.Type()))
-		}
-		return tupleType
-	default:
-		if goType != nil {
-			logger.Logger.Fatalf("unknown gotype %s for %v", utils.GetType(goType), goType)
-		}
-	}
-	return nil
-}
+// ------------------------
+// -------- DUMPERS -------
+// ------------------------
 
 // for blueprint packages
 func (p *Package) DumpShortYaml() utils.OrderedProperties {
@@ -260,8 +199,8 @@ func (p *Package) DumpShortYaml() utils.OrderedProperties {
 
 	// declared types
 	declaredTypes := []string{}
-	for _, t := range p.DeclaredTypes {
-		declaredTypes = append(declaredTypes, t.FullString())
+	for _, e := range p.DeclaredTypes {
+		declaredTypes = append(declaredTypes, e.FullString())
 	}
 	sort.Strings(declaredTypes)
 	propsData.AddOrderedProperty("declared types", declaredTypes)
@@ -297,16 +236,16 @@ func (p *Package) DumpYaml() utils.OrderedProperties {
 
 	// imported types
 	importedTypes := []string{}
-	for _, t := range p.ImportedTypes {
-		importedTypes = append(importedTypes, t.FullString())
+	for _, e := range p.ImportedTypes {
+		importedTypes = append(importedTypes, e.FullString())
 	}
 	sort.Strings(importedTypes)
 	propsData.AddOrderedProperty("imported types", importedTypes)
 
 	// declared types
 	declaredTypes := []string{}
-	for _, t := range p.DeclaredTypes {
-		declaredTypes = append(declaredTypes, t.FullString())
+	for _, e := range p.DeclaredTypes {
+		declaredTypes = append(declaredTypes, e.FullString())
 	}
 	sort.Strings(declaredTypes)
 	propsData.AddOrderedProperty("declared types", declaredTypes)

@@ -106,7 +106,7 @@ type TupleVariable struct {
 type CompositeVariable struct {
 	Variable     `json:"-"`
 	VariableInfo *VariableInfo `json:"variable"`
-	Params       []Variable    `json:"composition,omitempty"`
+	Params       []Variable    `json:"func_composition,omitempty"`
 }
 
 type GenericVariable struct {
@@ -137,7 +137,11 @@ type ArrayVariable struct {
 	VariableInfo *VariableInfo `json:"variable"`
 	Elements     []Variable    `json:"array_elems,omitempty"`
 }
-
+type FieldVariable struct {
+	Variable     `json:"-"`
+	VariableInfo *VariableInfo `json:"variable"`
+	Underlying   Variable      `json:"underlying_field,omitempty"`
+}
 type PointerVariable struct {
 	Variable     `json:"-"`
 	VariableInfo *VariableInfo `json:"variable"`
@@ -480,6 +484,42 @@ func (v *TupleVariable) GetUnassaignedVariables() []Variable {
 	return variables
 }
 
+// --------------
+// FIELD VARIABLE
+// --------------
+func (v *FieldVariable) String() string { 
+	return v.VariableInfo.String() 
+}
+func (v *FieldVariable) GetVariableInfo() *VariableInfo { 
+	return v.VariableInfo
+}
+func (v *FieldVariable) GetDependencies() []Variable    {
+	return v.Underlying.GetDependencies()
+}
+func (v *FieldVariable) AddReferenceWithID(target Variable, creator string) {
+	v.VariableInfo.Id = target.GetVariableInfo().GetId()
+	v.VariableInfo.Reference = &Reference{
+		Creator:  creator,
+		Variable: target,
+	}
+	v.Underlying.AddReferenceWithID(target, creator)
+}
+func (v *FieldVariable) DeepCopy() Variable {
+	copy := &FieldVariable{
+		VariableInfo: v.VariableInfo,
+		Underlying:    v.Underlying.DeepCopy(),
+	}
+	return copy
+}
+func (v *FieldVariable) GetUnassaignedVariables() []Variable {
+	var variables []Variable
+	if v.GetVariableInfo().IsUnassigned() {
+		variables = append(variables, v)
+		variables = append(variables, v.Underlying.GetUnassaignedVariables()...)
+	}
+	return variables
+}
+
 // ----------------
 // POINTER VARIABLE
 // ----------------
@@ -750,5 +790,5 @@ func ContainsMatchingDependencies(current Variable, target Variable) bool {
 
 func (vinfo *VariableInfo) GetName() string          { return vinfo.Name }
 func (vinfo *VariableInfo) GetId() int64             { return vinfo.Id }
-func (vinfo *VariableInfo) GetType() gotypes.Type            { return vinfo.Type }
+func (vinfo *VariableInfo) GetType() gotypes.Type    { return vinfo.Type }
 func (vinfo *VariableInfo) GetReference() *Reference { return vinfo.Reference }

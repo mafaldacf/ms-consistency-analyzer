@@ -236,12 +236,12 @@ func (app *App) ParsePackages(servicesInfo []*frameworks.ServiceInfo) {
 		}
 		for n, declaredType := range pkg.DeclaredTypes {
 			if userType, ok := declaredType.(*gotypes.UserType); ok {
-				userType.UserType = pkg.GenerateUnderlyingTypesFromGoType(underlyingTypes[n])
+				userType.UserType = pkg.ComputeTypesForGoTypes(underlyingTypes[n])
 			}
 		}
 		for n, importedType := range pkg.ImportedTypes {
 			if userType, ok := importedType.(*gotypes.UserType); ok {
-				userType.UserType = pkg.GenerateUnderlyingTypesFromGoType(underlyingTypes[n])
+				userType.UserType = pkg.ComputeTypesForGoTypes(underlyingTypes[n])
 			}
 		}
 

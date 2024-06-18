@@ -15,7 +15,7 @@ import (
 	"analyzer/pkg/utils"
 )
 
-func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, block *types.Block, expr ast.Expr, assign bool) (variable types.Variable) {
+func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMethod, block *types.Block, expr ast.Expr, assign bool) (variable types.Variable) {
 
 	switch e := expr.(type) {
 	case *ast.CallExpr:
@@ -49,7 +49,7 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 			}
 		} else if signatureGoType, ok := service.File.Package.GetTypeInfo(e.Fun).(*golangtypes.Signature); ok && call == nil {
 			logger.Logger.Warnf("(2) GET OR CREATE FOR EXPR %v WITH TYPE %s", expr, utils.GetType(expr))
-			tupleType := service.File.Package.GenerateUnderlyingTypesFromGoType(signatureGoType.Results())
+			tupleType := service.File.Package.ComputeTypesForGoTypes(signatureGoType.Results())
 			for i, rt := range tupleType.(*gotypes.TupleType).Types {
 				newVar := createVariableFromType(service, "", rt)
 				logger.Logger.Infof("IN SIGNAATURE!!! %s (DEPS = %v)", newVar.String(), deps)
@@ -88,7 +88,7 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 						},
 					}
 					for _, arg := range e.Args {
-						argVar := getOrCreateVariable(service, method, block, arg, false)
+						argVar := lookupVariableFromAstExpr(service, method, block, arg, false)
 						genericVariable.Params = append(genericVariable.Params, argVar)
 					}
 					tupleVar.Variables = append(tupleVar.Variables, genericVariable)
@@ -104,7 +104,7 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 					},
 				}
 				for _, arg := range e.Args {
-					argVar := getOrCreateVariable(service, method, block, arg, false)
+					argVar := lookupVariableFromAstExpr(service, method, block, arg, false)
 					genericVariable.Params = append(genericVariable.Params, argVar)
 				}
 				tupleVar.Variables = append(tupleVar.Variables, genericVariable)
@@ -138,27 +138,25 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 		}
 		return variable
 	case *ast.SelectorExpr:
-		variable = getOrCreateVariable(service, method, block, e.X, assign)
+		variable = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 		// if it was not found, maybe it can be the alias for an import
 		if variable == nil {
-			newType := service.File.ComputeTypeForExpr(e)
-			variable = getOrCreateVariableFromType("", newType)
+			newType := service.File.ComputeTypeForAstExpr(e)
+			variable = lookupVariableFromType("", newType)
 		}
 
 		switch v := variable.(type) {
 		case *types.GenericVariable:
 			// continue
 		case *types.StructVariable:
-			structName := e.Sel.Name
-			field, exists := v.Fields[structName]
+			fieldName := e.Sel.Name
+			field, exists := v.Fields[fieldName]
 			if !exists {
-				fieldType, ok := v.GetStructType().FieldTypes[structName]
-				if !ok {
-					logger.Logger.Fatalf("invalid field name %s in structure variable %s with fields types %v", structName, v.String(), v.GetStructType().FieldTypes)
-				}
-				field = getOrCreateVariableFromType(structName, fieldType)
-				logger.Logger.Warnf("[FIXME] added new variable %s for field %s in structure variable %s (fields = %v)", variable.String(), structName, v.String(), v.Fields)
-				v.Fields[structName] = field
+				v.GetStructType().GetFieldTypeByName(fieldName)
+				fieldType := v.GetStructType().GetFieldTypeByName(fieldName)
+				field = lookupVariableFromType(fieldName, fieldType)
+				logger.Logger.Warnf("[REVIEW] added new variable %s for field %s in structure variable %s (fields = %v)", variable.String(), fieldName, v.String(), v.Fields)
+				v.Fields[fieldName] = field
 			}
 			return field
 			//variable = v
@@ -185,7 +183,7 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 						for _, elt := range e.Elts {
 							keyvalue := elt.(*ast.KeyValueExpr)
 							key := keyvalue.Key.(*ast.Ident)
-							eltVar := getOrCreateVariable(service, method, block, keyvalue.Value, false)
+							eltVar := lookupVariableFromAstExpr(service, method, block, keyvalue.Value, false)
 							logger.Logger.Warnf("GOT ELT VAR!!! %s", eltVar.String())
 							if tupleVar, ok := eltVar.(*types.TupleVariable); ok && len(tupleVar.Variables) == 1 {
 								eltVar = tupleVar.Variables[0]
@@ -201,7 +199,7 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 			}
 		} else if arrayTypeAst, ok := e.Type.(*ast.ArrayType); ok {
 			arrayType := &gotypes.ArrayType{
-				ElementsType: service.File.ComputeTypeForExpr(arrayTypeAst.Elt),
+				ElementsType: service.File.ComputeTypeForAstExpr(arrayTypeAst.Elt),
 			}
 			variable = &types.ArrayVariable{
 				VariableInfo: &types.VariableInfo{
@@ -210,19 +208,19 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 				},
 			}
 			for _, elt := range e.Elts {
-				eltVar := getOrCreateVariable(service, method, block, elt, false)
+				eltVar := lookupVariableFromAstExpr(service, method, block, elt, false)
 				variable.(*types.ArrayVariable).AddElement(eltVar)
 			}
 		} else if selectorExpr, ok := e.Type.(*ast.SelectorExpr); ok {
 			logger.Logger.Warnf("got selector %v (expr type = %s)", selectorExpr, utils.GetType(selectorExpr.X))
-			variable = getOrCreateVariable(service, method, block, selectorExpr, assign)
+			variable = lookupVariableFromAstExpr(service, method, block, selectorExpr, assign)
 		} else {
 			logger.Logger.Fatalf("nil variable for composite lit (e.Type = %s): %v", utils.GetType(e.Type), e)
 		}
 	case *ast.TypeAssertExpr:
-		variable = getOrCreateVariable(service, method, block, e.X, assign)
+		variable = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 	case *ast.IndexExpr:
-		variable = getOrCreateVariable(service, method, block, e.X, assign)
+		variable = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 		if variable == nil {
 			logger.Logger.Fatalf("nil variable for index expr: %v (e.X type = %s)", e, utils.GetType(e.X))
 		}
@@ -230,7 +228,7 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 			variable = arrayVar.Elements[computeArrayIndex(e.Index)]
 		}
 		if mapVar, ok := variable.(*types.MapVariable); ok {
-			key := getOrCreateVariable(service, method, block, e.Index, false)
+			key := lookupVariableFromAstExpr(service, method, block, e.Index, false)
 			variable, ok = mapVar.KeyValues[key]
 			if !ok {
 				logger.Logger.Warnf("got map %v with unassigned value for key %s", mapVar.String(), key.String())
@@ -239,7 +237,7 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 		}
 	case *ast.UnaryExpr:
 		if e.Op == token.AND { // e.g. &post
-			variable = getOrCreateVariable(service, method, block, e.X, assign)
+			variable = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 			addrType := &gotypes.AddressType{
 				AddressOf: variable.GetVariableInfo().Type,
 			}
@@ -252,7 +250,7 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 				},
 			}
 		} else if e.Op == token.MUL { // e.g. *post
-			variable = getOrCreateVariable(service, method, block, e.X, assign)
+			variable = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 			addrType := &gotypes.AddressType{
 				AddressOf: variable.GetVariableInfo().Type,
 			}
@@ -266,7 +264,7 @@ func getOrCreateVariable(service *service.Service, method *types.ParsedMethod, b
 			}
 
 		} else {
-			variable = getOrCreateVariable(service, method, block, e.X, assign)
+			variable = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 		}
 	default:
 		logger.Logger.Fatalf("unknown type in GetOrCreateVariable for type %s: %v", utils.GetType(e), e)
@@ -290,7 +288,7 @@ func computeArrayIndex(expr ast.Expr) int {
 	return 0
 }
 
-func getOrCreateVariableFromType(name string, t gotypes.Type) types.Variable {
+func lookupVariableFromType(name string, t gotypes.Type) types.Variable {
 	info := &types.VariableInfo{
 		Name: name,
 		Type: t,
@@ -312,20 +310,21 @@ func getOrCreateVariableFromType(name string, t gotypes.Type) types.Variable {
 	case *gotypes.ArrayType:
 		return &types.ArrayVariable{VariableInfo: info}
 	case *gotypes.StructType:
-		// if we are here due to a recursive call (e.g. from UserType)
-		// then we want to make sure we are not reseting the map
-		if e.FieldTypes == nil {
-			e.FieldTypes = make(map[string]gotypes.Type)
-		}
 		return &types.StructVariable{
 			VariableInfo: info,
 			Fields:       make(map[string]types.Variable),
 		}
+	case *gotypes.FieldType:
+		info.Name = e.FieldName
+		return &types.FieldVariable{
+			VariableInfo: info,
+			Underlying: lookupVariableFromType(name, e.SubType),
+		}
 	case *gotypes.UserType:
 		if e.UserType != nil {
-			variable := getOrCreateVariableFromType(name, e.UserType)
-			variable.GetVariableInfo().Type = e
-			return variable
+			v := lookupVariableFromType(name, e.UserType)
+			v.GetVariableInfo().Type = e
+			return v
 		}
 		// e.g. context.Context is nil
 		return &types.GenericVariable{VariableInfo: info}

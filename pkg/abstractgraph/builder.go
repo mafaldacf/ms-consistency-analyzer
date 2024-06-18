@@ -12,6 +12,12 @@ import (
 	"analyzer/pkg/utils"
 )
 
+func (graph *AbstractGraph) getAndIncGIndex() int64 {
+	prev := graph.GIndex
+	graph.GIndex++
+	return prev
+}
+
 func Build(app *app.App, frontends []string) *AbstractGraph {
 	graph := &AbstractGraph{
 		AppName:  app.Name,

@@ -57,7 +57,7 @@ func (app *App) dumpYamlDatastores() {
 
 		var foreignKeys []map[string]string
 		for _, f := range datastore.GetDatastore().Schema.ForeignKeys {
-			foreignKeys = append(foreignKeys, map[string]string{f.GetName(): f.Datastore + "." + f.Reference.GetName()})
+			foreignKeys = append(foreignKeys, map[string]string{f.GetName(): strings.ToUpper(f.Datastore) + "." + f.Reference.GetName()})
 		}
 		schema.AddOrderedProperty("foreign_keys", foreignKeys)
 
@@ -65,7 +65,7 @@ func (app *App) dumpYamlDatastores() {
 		props.AddOrderedProperty("type", datastore.GetDatastore().GetTypeString())
 		props.AddOrderedProperty("kind", datastore.GetDatastore().GetKindString())
 		props.AddOrderedProperty("schema", schema.Result())
-		data[datastore.GetName()] = props.Result()
+		data[strings.ToUpper(datastore.GetName())] = props.Result()
 	}
 	utils.DumpToYamlFile(data, app.Name, "datastores")
 }

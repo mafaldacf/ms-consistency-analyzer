@@ -7,7 +7,6 @@ import (
 
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
-	"analyzer/pkg/types/gotypes"
 )
 
 func GenerateMethodCFG(parsedMethod *types.ParsedMethod) {
@@ -16,23 +15,13 @@ func GenerateMethodCFG(parsedMethod *types.ParsedMethod) {
 	parsedMethod.SetParsedCFG(parsedCfg)
 	entryBlock := parsedCfg.GetEntryParsedBlock()
 	for i, param := range parsedMethod.Params {
-		if u, ok := param.GetType().(*gotypes.UserType); ok {
-			if s, ok := u.UserType.(*gotypes.StructType); ok {
-				logger.Logger.Debugf("param %s: %v", param.String(), s.FieldTypes)
-			}
-		}
-		v := getOrCreateVariableFromType(param.GetName(), param.GetType())
-		if u, ok := v.GetVariableInfo().GetType().(*gotypes.UserType); ok {
-			if s, ok := u.UserType.(*gotypes.StructType); ok {
-				logger.Logger.Debugf("param %s: %v", param.String(), s.FieldTypes)
-			}
-		}
+		v := lookupVariableFromType(param.GetName(), param.GetType())
 		v.GetVariableInfo().IsBlockParam = true
 		v.GetVariableInfo().BlockParamIdx = i
 		entryBlock.Vars = append(entryBlock.Vars, v)
 	}
 	logger.Logger.Infof("[CFG] parsed CFG %s with block variables %v", parsedCfg.FullMethod, entryBlock.Vars)
-	//logger.Logger.Info(parsedCfg.FullString())
+	logger.Logger.Debugf("[CFG] parsed CFG: %s", parsedCfg.FullString())
 }
 
 // https://github.com/coder/go-tools/blob/master/go/analysis/passes/ctrlflow/ctrlflow_test.go

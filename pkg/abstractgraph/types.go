@@ -17,12 +17,6 @@ type AbstractGraph struct {
 	GIndex   int64
 }
 
-func (graph *AbstractGraph) getAndIncGIndex() int64 {
-	prev := graph.GIndex
-	graph.GIndex++
-	return prev
-}
-
 type AbstractNode interface {
 	GetParams() []types.Variable
 	GetParam(int) types.Variable

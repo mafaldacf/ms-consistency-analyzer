@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"analyzer/pkg/datastores"
-	"analyzer/pkg/types/gotypes"
 	"analyzer/pkg/logger"
+	"analyzer/pkg/types/gotypes"
 )
 
 func IsBackendComponent(name string) bool {
@@ -52,7 +52,7 @@ func (t *NoSQLComponent) String() string {
 }
 
 type BackendType struct {
-	gotypes.Type     `json:"-"`
+	gotypes.Type   `json:"-"`
 	Name           string
 	Package        string
 	Methods        []*BackendMethod
@@ -121,7 +121,7 @@ func (t *BackendType) GetMethods() []*BackendMethod {
 	return t.Methods
 }
 
-func (t *BackendType) GetNestedTypes(prefix string) ([]gotypes.Type, []string) {
+func (t *BackendType) GetNestedFieldTypes(prefix string) ([]gotypes.Type, []string) {
 	logger.Logger.Fatalf("unable to get nested types blueprint backend type type %s", t.String())
 	return nil, nil
 }
