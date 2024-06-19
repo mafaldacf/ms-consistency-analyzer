@@ -1,11 +1,49 @@
 package datastores
 
-import "analyzer/pkg/logger"
+import (
+	"slices"
+	"strings"
+
+	"analyzer/pkg/logger"
+)
 
 type Schema struct {
 	Fields         []Field         `json:"fields"`
 	UnfoldedFields []Field         `json:"unfolded_fields"`
 	ForeignKeys    []*ForeignEntry `json:"foreign_keys"`
+}
+
+func (s *Schema) AddField(name string, t string, id int64, datastore string) Field {
+	e := &Entry{
+		Name:      name,
+		Type:      t,
+		Id:        id,
+		Datastore: datastore,
+	}
+	s.Fields = append(s.Fields, e)
+	return e
+}
+func (s *Schema) AddUnfoldedFieldWithId(name string, t string, id int64, datastore string) Field {
+	e := &Entry{
+		Name:      name,
+		Type:      t,
+		Id:        id,
+		Datastore: datastore,
+	}
+	s.UnfoldedFields = append(s.UnfoldedFields, e)
+	return e
+}
+func (s *Schema) AddUnfoldedField(name string, t string, datastore string) {
+	s.UnfoldedFields = append(s.UnfoldedFields, &Entry{
+		Datastore: datastore,
+		Name:      name,
+		Type:      t,
+	})
+}
+func (s *Schema) AddForeignReferenceToField(current Field, reference Field) {
+	if !slices.Contains(current.(*Entry).References, reference) {
+		current.(*Entry).References = append(current.(*Entry).References, reference)
+	}
 }
 
 func (s *Schema) String() string {
@@ -25,12 +63,14 @@ func (s *Schema) String() string {
 	return str + " }"
 }
 
-func (s *Schema) AddKey(name string, t string, id int64) {
-	s.Fields = append(s.Fields, &Key{
+func (s *Schema) AddKey(name string, t string, id int64) Field {
+	k := &Key{
 		Name: name,
 		Type: t,
-		Id: id,
-	})
+		Id:   id,
+	}
+	s.Fields = append(s.Fields, k)
+	return k
 }
 func (s *Schema) AddFKReference(name string, t string, reference Field, datastore string) {
 	for _, fk := range s.ForeignKeys {
@@ -39,7 +79,7 @@ func (s *Schema) AddFKReference(name string, t string, reference Field, datastor
 			return
 		}
 	}
-	
+
 	entry := &ForeignEntry{
 		Name:      name,
 		Type:      t,
@@ -47,27 +87,17 @@ func (s *Schema) AddFKReference(name string, t string, reference Field, datastor
 		Datastore: datastore,
 	}
 	s.ForeignKeys = append(s.ForeignKeys, entry)
-	logger.Logger.Infof("added foreign reference (%s, %s)", name , entry.GetReferenceName())
+	logger.Logger.Infof("added foreign reference (%s, %s)", name, entry.GetReferenceName())
 }
-func (s *Schema) AddEntry(name string, t string, id int64) {
-	s.Fields = append(s.Fields, &Entry{
-		Name: name,
-		Type: t,
-		Id: id,
-	})
-}
-func (s *Schema) AddUnfoldedFieldWithId(name string, t string, id int64) {
-	s.UnfoldedFields = append(s.UnfoldedFields, &Entry{
-		Name: name,
-		Type: t,
-		Id: id,
-	})
-}
-func (s *Schema) AddUnfoldedField(name string, t string) {
-	s.UnfoldedFields = append(s.UnfoldedFields, &Entry{
-		Name: name,
-		Type: t,
-	})
+func (s *Schema) AddEntry(name string, t string, id int64, datastore string) Field {
+	e := &Entry{
+		Name:      name,
+		Type:      t,
+		Id:        id,
+		Datastore: datastore,
+	}
+	s.Fields = append(s.Fields, e)
+	return e
 }
 func (s *Schema) GetField(name string) Field {
 	for _, f := range s.Fields {
@@ -112,21 +142,25 @@ func (s *Schema) GetFieldById(id int64) Field {
 type Field interface {
 	String() string
 	GetName() string
+	GetFullName() string
 	HasId(id int64) bool
 	GetType() string
 	AddReference(Field)
 }
 type Key struct {
-	Field `json:"-"`
-	Name  string `json:"name"`
-	Type  string `json:"type"`
-	Id int64
+	Field     `json:"-"`
+	Name      string `json:"name"`
+	Type      string `json:"type"`
+	Datastore string `json:"datastore"`
+	Id        int64
 }
 type Entry struct {
-	Field `json:"-"`
-	Name  string `json:"name"`
-	Type  string `json:"type"`
-	Id int64
+	Field      `json:"-"`
+	Name       string  `json:"name"`
+	Type       string  `json:"type"`
+	Datastore  string  `json:"datastore"`
+	References []Field `json:"references"`
+	Id         int64
 }
 type ForeignEntry struct {
 	Field     `json:"-"`
@@ -134,12 +168,15 @@ type ForeignEntry struct {
 	Type      string `json:"type"`
 	Reference Field  `json:"reference"`
 	Datastore string `json:"datastore"`
-	Id int64
+	Id        int64
 }
 
 // Key
 func (f *Key) GetName() string {
 	return f.Name
+}
+func (f *Key) GetFullName() string {
+	return strings.ToUpper(f.Datastore) + "." + f.Name
 }
 func (f *Key) GetType() string {
 	return f.Type
@@ -155,6 +192,9 @@ func (f *Key) HasId(id int64) bool {
 func (f *Entry) GetName() string {
 	return f.Name
 }
+func (f *Entry) GetFullName() string {
+	return strings.ToUpper(f.Datastore) + "." + f.Name
+}
 func (f *Entry) GetType() string {
 	return f.Type
 }
@@ -165,10 +205,12 @@ func (f *Entry) HasId(id int64) bool {
 	return f.Id == id
 }
 
-
 // Foreign Key
 func (f *ForeignEntry) GetName() string {
 	return f.Name
+}
+func (f *ForeignEntry) GetFullName() string {
+	return strings.ToUpper(f.Datastore) + "." + f.Name
 }
 func (f *ForeignEntry) GetType() string {
 	return f.Type

@@ -61,6 +61,7 @@ func fixBraces(yamlStr string) string {
 	var sb strings.Builder
 	stack := []rune{}
 	inBraces := false
+	inEsc := false
 	inQuotes := false
 
 	for i, r := range yamlStr {
@@ -84,6 +85,24 @@ func fixBraces(yamlStr string) string {
 			// ensure space before closing brace if previous character is not a space or opening brace
 			if sb.Len() > 0 && sb.String()[sb.Len()-1] != ' ' && sb.String()[sb.Len()-1] != '{' {
 				sb.WriteRune(' ')
+			}
+			sb.WriteRune(r)
+			continue
+		} else if r == '<' && !inEsc {
+			if len(stack) > 0 {
+				stack = stack[:len(stack)-1]
+			}
+			if len(stack) == 0 {
+				inBraces = false
+			}
+			sb.WriteRune(r)
+			continue
+		} else if r == '>' && !inEsc {
+			if len(stack) > 0 {
+				stack = stack[:len(stack)-1]
+			}
+			if len(stack) == 0 {
+				inBraces = false
 			}
 			sb.WriteRune(r)
 			continue

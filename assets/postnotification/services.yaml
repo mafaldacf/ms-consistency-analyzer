@@ -6,7 +6,7 @@ NotifyService:
 - services:
     StorageService: postnotification.StorageService
 - datastores:
-    notification_queue: Queue
+    notif_queue: Queue
 StorageService:
 - fields:
     cache: Cache
@@ -14,7 +14,7 @@ StorageService:
 - services: {}
 - datastores:
     post_cache: Cache
-    post_nosql_db: Cache
+    post_nosql: Cache
 UploadService:
 - fields:
     queue: Queue
@@ -22,4 +22,4 @@ UploadService:
 - services:
     StorageService: postnotification.StorageService
 - datastores:
-    notification_queue: Queue
+    notif_queue: Queue

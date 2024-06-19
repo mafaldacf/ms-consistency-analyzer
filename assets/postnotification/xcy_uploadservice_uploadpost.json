@@ -5,23 +5,31 @@
       "service": "StorageService",
       "method": "Cache.Put(ctx context.Context, key string, value interface{})",
       "key": "postIDStr (#-1)",
-      "object": "post (#7)",
+      "object": "post (#2)",
       "database": "post_cache"
-    },
-    {
-      "service": "StorageService",
-      "method": "NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{})",
-      "key": "post (#7)",
-      "object": "post (#7)",
-      "database": "post_nosql_db"
     },
     {
       "service": "UploadService",
       "method": "Queue.Push(ctx context.Context, item interface{})",
       "key": "message (#-1)",
       "object": "message (#-1)",
-      "database": "notification_queue"
+      "database": "notif_queue"
     }
   ],
-  "reads": null
+  "reads": [
+    {
+      "service": "NotifyService",
+      "method": "Queue.Pop(ctx context.Context, item interface{})",
+      "key": "message (#0)",
+      "object": "message (#0)",
+      "database": "notif_queue"
+    },
+    {
+      "service": "StorageService",
+      "method": "NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+      "key": "query (#-1)",
+      "object": "err (#-1)",
+      "database": "post_nosql"
+    }
+  ]
 }

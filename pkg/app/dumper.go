@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"strings"
 
+	"analyzer/pkg/datastores"
 	"analyzer/pkg/utils"
 )
 
@@ -14,6 +15,7 @@ import (
 func (app *App) Dump() {
 	app.dumpYamlPackages()
 	app.dumpYamlDatastores()
+	app.dumpYamlDataflow()
 	app.dumpYamlServices()
 	app.dumpYamlControlflow()
 }
@@ -38,6 +40,20 @@ func (app *App) dumpYamlPackages() {
 	utils.DumpToYamlFile(data, app.Name, "packages")
 }
 
+func (app *App) dumpYamlDataflow() {
+	propsData := utils.NewOrderedPropertyList()
+	for k, lst := range app.PersistedVariables {
+		var dataflow []string
+		for _, v := range lst {
+			for _, df := range v.GetVariableInfo().Dataflows {
+				dataflow = append(dataflow, df.ShortString())
+			}
+		}
+		propsData.AddOrderedProperty(k, dataflow)
+	}
+	utils.DumpToYamlFile(propsData.Result(), app.Name, "dataflow")
+}
+
 func (app *App) dumpYamlDatastores() {
 	data := make(map[string]utils.OrderedProperties)
 	for _, datastore := range app.Databases {
@@ -55,11 +71,28 @@ func (app *App) dumpYamlDatastores() {
 		}
 		schema.AddOrderedProperty("unfolded_fields", unfoldedFields)
 
-		var foreignKeys []map[string]string
-		for _, f := range datastore.GetDatastore().Schema.ForeignKeys {
-			foreignKeys = append(foreignKeys, map[string]string{f.GetName(): strings.ToUpper(f.Datastore) + "." + f.Reference.GetName()})
+		propsForeignKeys := utils.NewOrderedPropertyList()
+		for _, f := range datastore.GetDatastore().Schema.Fields {
+			entry := f.(*datastores.Entry)
+			if len(entry.References) > 0 {
+				var lst []string
+				for _, r := range entry.References {
+					lst = append(lst, r.GetFullName())
+				}
+				propsForeignKeys.AddOrderedProperty(entry.GetName(), lst)
+			}
 		}
-		schema.AddOrderedProperty("foreign_keys", foreignKeys)
+		for _, f := range datastore.GetDatastore().Schema.UnfoldedFields {
+			entry := f.(*datastores.Entry)
+			if len(entry.References) > 0 {
+				var lst []string
+				for _, r := range entry.References {
+					lst = append(lst, r.GetFullName())
+				}
+				propsForeignKeys.AddOrderedProperty(entry.GetName(), lst)
+			}
+		}
+		schema.AddOrderedProperty("foreign_fields", propsForeignKeys.Result())
 
 		props := utils.NewOrderedPropertyList()
 		props.AddOrderedProperty("type", datastore.GetDatastore().GetTypeString())

@@ -30,6 +30,9 @@ func (t *FieldType) FullString() string {
 	return t.SubType.FullString()
 }
 func (t *FieldType) GetName() string {
+	if t.StructField {
+		return t.FieldName
+	}
 	return t.SubType.GetName()
 }
 func (t *FieldType) GetPackage() string {

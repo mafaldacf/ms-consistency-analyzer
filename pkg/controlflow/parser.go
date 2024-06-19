@@ -60,7 +60,7 @@ func parseExpressions(service *service.Service, method *types.ParsedMethod, bloc
 		}
 		t := service.File.ComputeTypeForAstExpr(e.Type)
 		for _, ident := range e.Names {
-			decl := createVariableFromType(service, ident.Name, t)
+			decl := CreateVariableFromType(service, ident.Name, t)
 			block.AddVariable(decl)
 		}
 	case *ast.AssignStmt:
@@ -75,7 +75,7 @@ func parseExpressions(service *service.Service, method *types.ParsedMethod, bloc
 
 			if tupleVariable, ok := variable.(*types.TupleVariable); ok {
 				if len(e.Lhs) != len(tupleVariable.Variables) {
-					logger.Logger.Fatalf("number of left values (%d) does not match length of tuple variables (%d) for assignment %v", len(e.Lhs), len(tupleVariable.Variables), e)
+					logger.Logger.Fatalf("number of left values (%d) does not match length of tuple (%s) variables (%d) for assignment %v", len(e.Lhs), tupleVariable.Variables, len(tupleVariable.Variables), e)
 				}
 				for i, lvalue := range e.Lhs {
 					variable = tupleVariable.Variables[i]
@@ -219,6 +219,7 @@ func getCallIfSelectedField(expr ast.Expr, methodRecv *types.MethodReceiver, blo
 
 func saveFuncCallParams(service *service.Service, method *types.ParsedMethod, block *types.Block, parsedCall types.Call, args []ast.Expr) {
 	for i, arg := range args {
+		logger.Logger.Infof("inside save func call params")
 		param := lookupVariableFromAstExpr(service, method, block, arg, false)
 
 		// upgrade variable with known type from function method
@@ -302,6 +303,7 @@ func parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMetho
 		// return TODO_parseAndSaveCallIfValid(service, method, block, callExpr)
 		var vs []types.Variable
 		for _, expr := range callExpr.Args {
+			logger.Logger.Infof("inside !ok in parseAndSaveCallIfValid")
 			if v := lookupVariableFromAstExpr(service, method, block, expr, false); v != nil {
 				vs = append(vs, v)
 			}

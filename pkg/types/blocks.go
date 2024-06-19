@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"go/ast"
 	"go/token"
+	"slices"
 
 	"golang.org/x/tools/go/cfg"
 
@@ -21,7 +22,25 @@ type Block struct {
 func (block *Block) Yaml() []string {
 	data := []string{}
 	for _, v := range block.Vars {
-		data = append(data, v.String())
+		dfs := append(v.GetVariableInfo().Dataflows, v.GetVariableInfo().IndirectDataflows...)
+		if len(dfs) > 0 {
+			var dbs []string
+			str := ""
+			for _, df := range dfs {
+				if !slices.Contains(dbs, df.Field.GetFullName()) {
+					dbs = append(dbs, df.Field.GetFullName())
+				}
+			}
+			for i, db := range dbs {
+				str += db
+				if i < len(dbs)-1 {
+					str += ", "
+				}
+			}
+			data = append(data, fmt.Sprintf("%s (%s) ----> (TAINTED @ %s)", v.String(), GetVariableTypeAndTypeString(v), str))
+		} else {
+			data = append(data, fmt.Sprintf("%s (%s)", v.String(), GetVariableTypeAndTypeString(v)))
+		}
 	}
 	return data
 }
@@ -53,8 +72,12 @@ func (block *Block) AddVariables(variables []Variable) {
 }
 
 func (block *Block) AddVariable(variable Variable) {
-	logger.Logger.Warnf("added %s to block: %s", utils.GetType(variable), variable.String())
-	block.Vars = append(block.Vars, variable)
+	if block.Vars[len(block.Vars)-1] != variable {
+		logger.Logger.Infof("added %s (%s) to block", variable.String(), utils.GetType(variable))
+		block.Vars = append(block.Vars, variable)
+	} else {
+		logger.Logger.Warnf("%s (%s) already exists in block", variable.String(), utils.GetType(variable))
+	}
 }
 
 func (block *Block) GetPosition() token.Pos {

@@ -12,12 +12,13 @@ import (
 )
 
 type App struct {
-	Name              string
-	Path              string
-	Services          map[string]*service.Service
-	Databases         map[string]datastores.DatabaseInstance
-	Packages          map[string]*types.Package
-	BlueprintPackages map[string]*types.Package
+	Name               string
+	Path               string
+	Services           map[string]*service.Service
+	Databases          map[string]datastores.DatabaseInstance
+	Packages           map[string]*types.Package
+	BlueprintPackages  map[string]*types.Package
+	PersistedVariables map[string][]types.Variable
 }
 
 // MarshalJSON is used by app.Save()
@@ -67,6 +68,7 @@ func Init(name string, path string) (*App, error) {
 		Databases:         make(map[string]datastores.DatabaseInstance),
 		Packages:          make(map[string]*types.Package),
 		BlueprintPackages: make(map[string]*types.Package),
+		PersistedVariables: make(map[string][]types.Variable),
 	}
 	logger.Logger.Infof("[APP] initialized app at %s", app.Path)
 	return app, nil

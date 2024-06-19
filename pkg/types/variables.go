@@ -34,7 +34,7 @@ func (ref *Reference) MarshalJSON() ([]byte, error) {
 }
 func (ref *Reference) String() string {
 	if ref.Variable != nil {
-		return ref.Variable.String() + "(created by " + ref.Creator + ")"
+		return fmt.Sprintf("ref <%s> @ %s", ref.Variable.String(), ref.Creator)
 	}
 	return "nil-reference"
 }
@@ -62,6 +62,11 @@ type Variable interface {
 	GetUnassaignedVariables() []Variable
 	DeepCopy() Variable
 }
+
+func GetVariableTypeAndTypeString(v Variable) string {
+	return utils.GetType(v) + " " + utils.GetType(v.GetVariableInfo().GetType())
+}
+
 type VariableInfo struct {
 	Name string
 	Type gotypes.Type
@@ -71,11 +76,18 @@ type VariableInfo struct {
 	IsBlockParam  bool
 	BlockParamIdx int
 
-	Dataflows []*Dataflow
+	Dataflows         []*Dataflow
+	IndirectDataflows []*Dataflow
 }
 
 func (v *VariableInfo) GetDataflows() []*Dataflow {
 	return v.Dataflows
+}
+func (v *VariableInfo) GetIndirectDataflows() []*Dataflow {
+	return v.IndirectDataflows
+}
+func (v *VariableInfo) GetAllDataflows() []*Dataflow {
+	return append(v.Dataflows, v.IndirectDataflows...)
 }
 
 func (v *VariableInfo) MarshalJSON() ([]byte, error) {
@@ -296,7 +308,7 @@ func (v *StructVariable) DeepCopy() Variable {
 	return copy
 }
 
-func (v *StructVariable) AddFieldIfNotExists(name string, field Variable) bool {
+func (v *StructVariable) AddFieldVariableIfNotExists(name string, field Variable) bool {
 	if _, exists := v.Fields[name]; !exists {
 		v.Fields[name] = field
 		return true
@@ -342,6 +354,31 @@ func (v *StructVariable) GetUnassaignedVariables() []Variable {
 		}
 	}
 	return variables
+}
+
+func (t *StructVariable) GetNestedFieldVariables(prefix string) ([]Variable, []string) {
+	var nestedVariables []Variable
+	var nestedIDs []string
+
+	logger.Logger.Warnf("FOUND %d FIELDS FOR %s", len(t.Fields), t.String())
+	for _, f := range t.Fields {
+		if fieldVariable, ok := f.(*FieldVariable); ok {
+			nestedFieldVariables, nestedFieldIDs := fieldVariable.GetNestedFieldVariables(prefix)
+			nestedVariables = append(nestedVariables, nestedFieldVariables...)
+			nestedIDs = append(nestedIDs, nestedFieldIDs...)
+		} else {
+			logger.Logger.Fatalf("[FIXME] ignoring field variable %s (%s)", f.String(), GetVariableTypeAndTypeString(f))
+		}
+	}
+	return nestedVariables, nestedIDs
+}
+
+func (t *StructVariable) CopyFrom(target *StructVariable) {
+	for name, targetField := range target.Fields {
+		if _, ok := t.Fields[name]; !ok {
+			t.Fields[name] = targetField
+		}
+	}
 }
 
 // ------------
@@ -487,13 +524,13 @@ func (v *TupleVariable) GetUnassaignedVariables() []Variable {
 // --------------
 // FIELD VARIABLE
 // --------------
-func (v *FieldVariable) String() string { 
-	return v.VariableInfo.String() 
+func (v *FieldVariable) String() string {
+	return v.VariableInfo.String()
 }
-func (v *FieldVariable) GetVariableInfo() *VariableInfo { 
+func (v *FieldVariable) GetVariableInfo() *VariableInfo {
 	return v.VariableInfo
 }
-func (v *FieldVariable) GetDependencies() []Variable    {
+func (v *FieldVariable) GetDependencies() []Variable {
 	return v.Underlying.GetDependencies()
 }
 func (v *FieldVariable) AddReferenceWithID(target Variable, creator string) {
@@ -507,7 +544,7 @@ func (v *FieldVariable) AddReferenceWithID(target Variable, creator string) {
 func (v *FieldVariable) DeepCopy() Variable {
 	copy := &FieldVariable{
 		VariableInfo: v.VariableInfo,
-		Underlying:    v.Underlying.DeepCopy(),
+		Underlying:   v.Underlying.DeepCopy(),
 	}
 	return copy
 }
@@ -518,6 +555,29 @@ func (v *FieldVariable) GetUnassaignedVariables() []Variable {
 		variables = append(variables, v.Underlying.GetUnassaignedVariables()...)
 	}
 	return variables
+}
+func (t *FieldVariable) GetNestedFieldVariables(prefix string) ([]Variable, []string) {
+	variableType := t.VariableInfo.Type
+	if userType, ok := t.GetVariableInfo().GetType().(*gotypes.UserType); ok {
+		variableType = userType.UserType
+	}
+	prefix = prefix + "." + variableType.(*gotypes.FieldType).FieldName
+
+	nestedVariables := []Variable{t}
+	nestedNames := []string{prefix}
+	if nestedField, ok := t.Underlying.(*FieldVariable); ok {
+		r1, r2 := nestedField.GetNestedFieldVariables(prefix)
+		nestedVariables = append(nestedVariables, r1...)
+		nestedNames = append(nestedNames, r2...)
+	} else if nestedStruct, ok := t.Underlying.(*StructVariable); ok {
+		r1, r2 := nestedStruct.GetNestedFieldVariables(prefix)
+		nestedVariables = append(nestedVariables, r1...)
+		nestedNames = append(nestedNames, r2...)
+	} else {
+		nestedVariables = append(nestedVariables, t.Underlying)
+		nestedNames = append(nestedNames, prefix)
+	}
+	return nestedVariables, nestedNames
 }
 
 // ----------------

@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"analyzer/pkg/app"
+	"analyzer/pkg/controlflow"
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
@@ -108,13 +109,9 @@ func (graph *AbstractGraph) createDummyAbstractServiceCall(node *service.Service
 		Method: method.String(),
 	}
 	for _, p := range method.GetParams() {
-		call.ParsedCall.Params = append(call.ParsedCall.Params, &types.CompositeVariable{
-			VariableInfo: &types.VariableInfo{
-				Name: p.GetName(),
-				Type: p.GetType(),
-				Id:   graph.getAndIncGIndex(),
-			},
-		})
+		v := controlflow.CreateVariableFromType(node, p.GetName(), p.GetType())
+		call.ParsedCall.Params = append(call.ParsedCall.Params, v)
+		logger.Logger.Debugf("created variable %s (%s)", v.String(), utils.GetType(v))
 	}
 	call.Params = call.ParsedCall.Params
 	return call
@@ -125,17 +122,14 @@ func (graph *AbstractGraph) addEntry(node *service.Service, method *types.Parsed
 	entryCall := graph.createDummyAbstractServiceCall(node, method, nil)
 	graph.Nodes = append(graph.Nodes, &entryCall)
 	// build entry node
-	for _, param := range entryCall.Params {
+	/* for _, param := range entryCall.Params {
+		v := controlflow.CreateVariableFromType(node, param.GetVariableInfo().GetName(), param.GetVariableInfo().GetType())
+		v.GetVariableInfo().Id = graph.getAndIncGIndex()
 		param.GetVariableInfo().Reference = &types.Reference{
-			Creator: "Client",
-			Variable: &types.CompositeVariable{
-				VariableInfo: &types.VariableInfo{
-					Name: param.GetVariableInfo().GetName(),
-					Id:   graph.getAndIncGIndex(),
-				},
-			},
+			Creator:  "Client",
+			Variable: v,
 		}
-	}
+	} */
 }
 
 func (graph *AbstractGraph) recurseBuild(app *app.App, abstractNode AbstractNode) {
@@ -271,6 +265,24 @@ func (graph *AbstractGraph) referencePublisherParams(queueHandler *AbstractQueue
 	return false
 }
 
+func getDependencies(first bool, v types.Variable) []types.Variable {
+	indirectDeps := []types.Variable{}
+	if !first {
+		indirectDeps = append(indirectDeps, v)
+	}
+
+	// indirect dependencySets from potential reference
+	if v.GetVariableInfo().HasReference() {
+		indirectDeps = append(indirectDeps, getDependencies(false, v.GetVariableInfo().GetReference())...)
+	}
+	// direct dependencySets
+	for _, dep := range v.GetDependencies() {
+		indirectDeps = append(indirectDeps, getDependencies(false, dep)...)
+	}
+
+	return indirectDeps
+}
+
 func (graph *AbstractGraph) referenceServiceCallerParams(parent AbstractNode, caller AbstractNode, child AbstractNode) {
 	fmt.Println()
 	logger.Logger.Infof("[REF] visiting %s (caller = %s, parent = %s)", child.String(), caller.GetName(), parent.GetName())
@@ -301,7 +313,7 @@ func (graph *AbstractGraph) referenceServiceCallerParams(parent AbstractNode, ca
 	} */
 
 	for _, childParam := range child.GetParams() {
-		deps := GetIndirectDependencies(false, childParam)
+		deps := getDependencies(false, childParam)
 		logger.Logger.Infof("\t\t[REF] %s: referencing %v (deps = %v)", child.GetName(), childParam, deps)
 		/* callArg := child.GetParsedCall().GetArgument(i)
 
@@ -333,9 +345,10 @@ func (graph *AbstractGraph) referenceServiceCallerParams(parent AbstractNode, ca
 			for callerParamIdx, callerParam := range caller.GetParams() {
 				if dep.GetVariableInfo().IsBlockParameter() && dep.GetVariableInfo().EqualBlockParamIndex(callerParamIdx) {
 					if dep.GetVariableInfo().IsUnassigned() {
-						if parent != caller && callerParam.GetVariableInfo().HasReference()  {
+						if parent != caller && callerParam.GetVariableInfo().HasReference() {
 							// this can happen with the context variable (e.g. handleMessage called by the workerThread in the NotifyService)
 							dep.GetVariableInfo().AddOriginalReferenceWithID(callerParam.GetVariableInfo().GetReference())
+							//dep = callerParam.DeepCopy()
 						} else {
 							if callerParam.GetVariableInfo().IsUnassigned() {
 								unassaignedVariables := callerParam.GetUnassaignedVariables()
@@ -344,7 +357,17 @@ func (graph *AbstractGraph) referenceServiceCallerParams(parent AbstractNode, ca
 									logger.Logger.Warnf("\t\t\t[GID] assigned gid %s (%d)", v.String(), v.GetVariableInfo().Id)
 								}
 							}
+							//dep = callerParam.DeepCopy()
 							dep.AddReferenceWithID(callerParam, child.GetCallerStr())
+
+							// FIXME: THIS IS HARD CODED
+							if structVariable, ok := childParam.(*types.StructVariable); ok {
+								if structParentVariable, ok := callerParam.(*types.StructVariable); ok {
+									structVariable.CopyFrom(structParentVariable)
+								} else {
+									logger.Logger.Fatalf("%s (%s) vs %s (%s)", childParam.String(), child.GetName(), callerParam.String(), parent.GetName())
+								}
+							}
 						}
 					}
 					if dep.GetVariableInfo().IsUnassigned() {

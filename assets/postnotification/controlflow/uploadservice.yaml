@@ -1,54 +1,48 @@
 UploadService.UploadPost(ctx context.Context, username string, text string):
   block 0 (Body):
-  - ctx context.Context
-  - username string
-  - text string
-  - reqID int64
-  - reqID int64
-  - timestamp int64
-  - timestamp int64
-  - PostID int64
-  - post postnotification.Post struct
-  - ' string string'
-  - ' string string'
-  - message postnotification.Message struct
-  - _ err
-  - err interface{}
-  - _ err
-  - err interface{}
+  - ctx context.Context (GenericVariable UserType)
+  - username string (BasicVariable BasicType)
+  - text string (BasicVariable BasicType) ----> (TAINTED @ POST_CACHE.Post.Text)
+  - reqID int64 (BasicVariable BasicType) ----> (TAINTED @ POST_CACHE.Post.ReqID)
+  - timestamp int64 (BasicVariable BasicType) ----> (TAINTED @ POST_CACHE.Post.Timestamp)
+  - ' int64 (BasicVariable BasicType)'
+  - post postnotification.Post struct (StructVariable UserType) ----> (TAINTED @ POST_CACHE.Post)
+  - ' string (CompositeVariable BasicType)'
+  - ' string (CompositeVariable BasicType)'
+  - message postnotification.Message struct (StructVariable UserType)
+  - _ err (BasicVariable BasicType)
+  - err interface{} (InterfaceVariable InterfaceType)
+  - _ err (BasicVariable BasicType)
+  - err interface{} (InterfaceVariable InterfaceType)
   block 1 (IfThen):
-  - ctx context.Context
-  - username string
-  - text string
-  - reqID int64
-  - reqID int64
-  - timestamp int64
-  - timestamp int64
-  - PostID int64
-  - post postnotification.Post struct
-  - ' string string'
-  - ' string string'
-  - message postnotification.Message struct
-  - _ err
-  - err interface{}
-  - _ err
-  - err interface{}
+  - ctx context.Context (GenericVariable UserType)
+  - username string (BasicVariable BasicType)
+  - text string (BasicVariable BasicType) ----> (TAINTED @ POST_CACHE.Post.Text)
+  - reqID int64 (BasicVariable BasicType) ----> (TAINTED @ POST_CACHE.Post.ReqID)
+  - timestamp int64 (BasicVariable BasicType) ----> (TAINTED @ POST_CACHE.Post.Timestamp)
+  - ' int64 (BasicVariable BasicType)'
+  - post postnotification.Post struct (StructVariable UserType) ----> (TAINTED @ POST_CACHE.Post)
+  - ' string (CompositeVariable BasicType)'
+  - ' string (CompositeVariable BasicType)'
+  - message postnotification.Message struct (StructVariable UserType)
+  - _ err (BasicVariable BasicType)
+  - err interface{} (InterfaceVariable InterfaceType)
+  - _ err (BasicVariable BasicType)
+  - err interface{} (InterfaceVariable InterfaceType)
   block 2 (IfDone):
-  - ctx context.Context
-  - username string
-  - text string
-  - reqID int64
-  - reqID int64
-  - timestamp int64
-  - timestamp int64
-  - PostID int64
-  - post postnotification.Post struct
-  - ' string string'
-  - ' string string'
-  - message postnotification.Message struct
-  - _ err
-  - err interface{}
-  - _ err
-  - err interface{}
+  - ctx context.Context (GenericVariable UserType)
+  - username string (BasicVariable BasicType)
+  - text string (BasicVariable BasicType) ----> (TAINTED @ POST_CACHE.Post.Text)
+  - reqID int64 (BasicVariable BasicType) ----> (TAINTED @ POST_CACHE.Post.ReqID)
+  - timestamp int64 (BasicVariable BasicType) ----> (TAINTED @ POST_CACHE.Post.Timestamp)
+  - ' int64 (BasicVariable BasicType)'
+  - post postnotification.Post struct (StructVariable UserType) ----> (TAINTED @ POST_CACHE.Post)
+  - ' string (CompositeVariable BasicType)'
+  - ' string (CompositeVariable BasicType)'
+  - message postnotification.Message struct (StructVariable UserType)
+  - _ err (BasicVariable BasicType)
+  - err interface{} (InterfaceVariable InterfaceType)
+  - _ err (BasicVariable BasicType)
+  - err interface{} (InterfaceVariable InterfaceType)
   block 3 (Unreachable): []
   block 4 (Unreachable): []
