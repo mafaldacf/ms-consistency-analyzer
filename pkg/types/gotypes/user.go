@@ -17,9 +17,9 @@ func (t *UserType) String() string {
 	}
 	return fmt.Sprintf("%s.%s", packageAlias(t.Package), t.Name)
 }
-func (t *UserType) FullString() string {
+func (t *UserType) LongString() string {
 	if t.UserType != nil {
-		return fmt.Sprintf("%s.%s %s", packageAlias(t.Package), t.Name, t.UserType.FullString())
+		return fmt.Sprintf("%s.%s %s", packageAlias(t.Package), t.Name, t.UserType.LongString())
 	}
 	return fmt.Sprintf("%s.%s", packageAlias(t.Package), t.Name)
 }

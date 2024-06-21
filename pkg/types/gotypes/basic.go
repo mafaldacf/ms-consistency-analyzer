@@ -18,7 +18,7 @@ func (t *BasicType) String() string {
 	}
 	return t.Name
 }
-func (t *BasicType) FullString() string {
+func (t *BasicType) LongString() string {
 	return t.String()
 }
 func (t *BasicType) GetName() string {

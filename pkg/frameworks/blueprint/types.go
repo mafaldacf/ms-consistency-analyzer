@@ -66,7 +66,7 @@ func (t *BackendType) String() string {
 	}
 	return t.Name
 }
-func (t *BackendType) FullString() string {
+func (t *BackendType) LongString() string {
 	if len(t.Methods) == 0 {
 		return t.Name + " interface{}"
 	}

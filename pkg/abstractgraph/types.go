@@ -7,6 +7,7 @@ import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
+	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
 )
 
@@ -18,8 +19,8 @@ type AbstractGraph struct {
 }
 
 type AbstractNode interface {
-	GetParams() []types.Variable
-	GetParam(int) types.Variable
+	GetParams() []variables.Variable
+	GetParam(int) variables.Variable
 	String() string
 	GetName() string
 	GetChildren() []AbstractNode
@@ -39,16 +40,16 @@ type AbstractServiceCall struct {
 	Callee       string     `json:"-"`
 	// nodes representing database calls cannot contain children as well
 	Children   []AbstractNode           `json:"edges"`
-	Params     []types.Variable         `json:"params"`
-	Returns    []types.Variable         `json:"returns,omitempty"`
+	Params     []variables.Variable     `json:"params"`
+	Returns    []variables.Variable     `json:"returns,omitempty"`
 	ParsedCall *types.ParsedServiceCall `json:"-"` // omit from json
 }
 
-func (call *AbstractServiceCall) GetParams() []types.Variable {
+func (call *AbstractServiceCall) GetParams() []variables.Variable {
 	return call.Params
 }
 
-func (call *AbstractServiceCall) GetParam(index int) types.Variable {
+func (call *AbstractServiceCall) GetParam(index int) variables.Variable {
 	return call.Params[index]
 }
 
@@ -94,8 +95,8 @@ type AbstractTempInternalCall struct {
 	Visited      bool                      `json:"-"`
 	Method       string                    `json:"method"`
 	Service      string                    `json:"service"`
-	Params       []types.Variable          `json:"params"`
-	Returns      []types.Variable          `json:"returns,omitempty"`
+	Params       []variables.Variable      `json:"params"`
+	Returns      []variables.Variable      `json:"returns,omitempty"`
 	ParsedCall   *types.ParsedInternalCall `json:"-"`
 	Children     []AbstractNode            `json:"edges"`
 }
@@ -108,11 +109,11 @@ func (call *AbstractTempInternalCall) String() string {
 	return call.ParsedCall.SimpleString()
 }
 
-func (call *AbstractTempInternalCall) GetParams() []types.Variable {
+func (call *AbstractTempInternalCall) GetParams() []variables.Variable {
 	return call.Params
 }
 
-func (call *AbstractTempInternalCall) GetParam(index int) types.Variable {
+func (call *AbstractTempInternalCall) GetParam(index int) variables.Variable {
 	return call.Params[index]
 }
 
@@ -141,8 +142,8 @@ type AbstractDatabaseCall struct {
 	Visited    bool
 	Method     string
 	Service    string
-	Params     []types.Variable
-	Returns    []types.Variable
+	Params     []variables.Variable
+	Returns    []variables.Variable
 	ParsedCall *types.ParsedDatabaseCall
 	Children   []AbstractNode
 	DbInstance datastores.DatabaseInstance
@@ -151,13 +152,13 @@ type AbstractDatabaseCall struct {
 
 func (call *AbstractDatabaseCall) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Method     string           `json:"method"`
-		Service    string           `json:"caller"`
-		Params     []types.Variable `json:"params"`
-		Returns    []types.Variable `json:"returns,omitempty"`
-		Children   []AbstractNode   `json:"queue_handlers,omitempty"`
-		DbInstance string           `json:"datastore"`
-		Subscriber bool             `json:"subscriber,omitempty"`
+		Method     string               `json:"method"`
+		Service    string               `json:"caller"`
+		Params     []variables.Variable `json:"params"`
+		Returns    []variables.Variable `json:"returns,omitempty"`
+		Children   []AbstractNode       `json:"queue_handlers,omitempty"`
+		DbInstance string               `json:"datastore"`
+		Subscriber bool                 `json:"subscriber,omitempty"`
 	}{
 		Method:     call.Method,
 		Service:    call.Service,
@@ -194,11 +195,11 @@ func (call *AbstractQueueHandler) EnableQueueReceiver() {
 	call.Receiver = true
 }
 
-func (call *AbstractDatabaseCall) GetParams() []types.Variable {
+func (call *AbstractDatabaseCall) GetParams() []variables.Variable {
 	return call.Params
 }
 
-func (call *AbstractDatabaseCall) GetParam(index int) types.Variable {
+func (call *AbstractDatabaseCall) GetParam(index int) variables.Variable {
 	if index > 0 && index < len(call.Params) {
 		return call.Params[index]
 	}
@@ -206,7 +207,7 @@ func (call *AbstractDatabaseCall) GetParam(index int) types.Variable {
 	return nil
 }
 
-func (call *AbstractDatabaseCall) GetReturn(index int) types.Variable {
+func (call *AbstractDatabaseCall) GetReturn(index int) variables.Variable {
 	if index > 0 && index < len(call.Returns) {
 		return call.Returns[index]
 	}

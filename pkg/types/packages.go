@@ -8,6 +8,7 @@ import (
 
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
+	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
 )
 
@@ -35,7 +36,7 @@ type Package struct {
 	ImportedPackages map[string]*Package
 
 	TypesInfo         *golangtypes.Info
-	DeclaredVariables map[string]Variable
+	DeclaredVariables map[string]variables.Variable
 	DeclaredTypes     map[string]gotypes.Type
 	ServiceTypes      map[string]*gotypes.ServiceType
 
@@ -200,7 +201,7 @@ func (p *Package) DumpShortYaml() utils.OrderedProperties {
 	// declared types
 	declaredTypes := []string{}
 	for _, e := range p.DeclaredTypes {
-		declaredTypes = append(declaredTypes, e.FullString())
+		declaredTypes = append(declaredTypes, e.LongString())
 	}
 	sort.Strings(declaredTypes)
 	propsData.AddOrderedProperty("declared types", declaredTypes)
@@ -237,7 +238,7 @@ func (p *Package) DumpYaml() utils.OrderedProperties {
 	// imported types
 	importedTypes := []string{}
 	for _, e := range p.ImportedTypes {
-		importedTypes = append(importedTypes, e.FullString())
+		importedTypes = append(importedTypes, e.LongString())
 	}
 	sort.Strings(importedTypes)
 	propsData.AddOrderedProperty("imported types", importedTypes)
@@ -245,7 +246,7 @@ func (p *Package) DumpYaml() utils.OrderedProperties {
 	// declared types
 	declaredTypes := []string{}
 	for _, e := range p.DeclaredTypes {
-		declaredTypes = append(declaredTypes, e.FullString())
+		declaredTypes = append(declaredTypes, e.LongString())
 	}
 	sort.Strings(declaredTypes)
 	propsData.AddOrderedProperty("declared types", declaredTypes)

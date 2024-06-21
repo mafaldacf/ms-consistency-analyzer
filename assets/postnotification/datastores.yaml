@@ -11,14 +11,14 @@ NOTIF_QUEUE:
     - Message.Timestamp: string
   - foreign_fields:
     - Message:
-      - POST_CACHE.Post.ReqID
-      - POST_CACHE.Post.PostID
       - POST_CACHE.Post
+      - POST_CACHE.Post.PostID
+      - POST_CACHE.Post.ReqID
     - Message.ReqID:
       - POST_CACHE.Post.ReqID
     - Message.PostID:
-      - POST_CACHE.Post.PostID
       - POST_CACHE.Post
+      - POST_CACHE.Post.PostID
 POST_CACHE:
 - type: Cache
 - kind: Redis

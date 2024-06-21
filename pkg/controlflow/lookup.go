@@ -12,14 +12,21 @@ import (
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
 	"analyzer/pkg/types/gotypes"
+	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
 )
 
-func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMethod, block *types.Block, expr ast.Expr, assign bool) (variable types.Variable) {
+func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMethod, block *types.Block, expr ast.Expr, assign bool) (variable variables.Variable) {
 	logger.Logger.Debugf("VISITING EXPR %v (%s)", expr, utils.GetType(expr))
 	switch e := expr.(type) {
 	case *ast.CallExpr:
-		tupleVar := &types.TupleVariable{}
+		tupleType := &gotypes.TupleType{}
+		tupleVar := &variables.TupleVariable{
+			VariableInfo: &variables.VariableInfo{
+				Type: tupleType,
+				Id:   variables.VARIABLE_INLINE_ID,
+			},
+		}
 		//FIXME: this is kinda hard coded and must be automated
 		goTypeInfo := service.GetPackage().GetTypeInfo(e)
 		call, deps, saved := parseAndSaveCallIfValid(service, method, block, e)
@@ -30,35 +37,37 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 				newVar := CreateVariableFromType(service, "", rt.GetType())
 				//FIXMEEEEEEE
 				if len(deps) > 0 {
-					newCompVar := &types.CompositeVariable{
-						VariableInfo: &types.VariableInfo{
+					newCompVar := &variables.CompositeVariable{
+						VariableInfo: &variables.VariableInfo{
 							Name: newVar.String(),
-							Type: newVar.GetVariableInfo().Type,
-							Id:   types.VARIABLE_UNASSIGNED_ID,
+							Type: newVar.GetType(),
+							Id:   variables.VARIABLE_UNASSIGNED_ID,
 						},
-						Params: []types.Variable{deps[i]},
+						Params: []variables.Variable{deps[i]},
 					}
 					tupleVar.Variables = append(tupleVar.Variables, newCompVar)
+					tupleType.Types = append(tupleType.Types, newCompVar.GetType())
 					block.AddVariable(newCompVar)
 					call.AddReturn(newCompVar)
 				} else {
 					call.AddReturn(newVar)
 					block.AddVariable(newVar)
 					tupleVar.Variables = append(tupleVar.Variables, newVar)
+					tupleType.Types = append(tupleType.Types, newVar.GetType())
 				}
 			}
 		} else if signatureGoType, ok := service.File.Package.GetTypeInfo(e.Fun).(*golangtypes.Signature); ok && call == nil {
 			logger.Logger.Warnf("(2) GET OR CREATE FOR EXPR %v WITH TYPE %s", expr, utils.GetType(expr))
-			tupleType := service.File.Package.ComputeTypesForGoTypes(signatureGoType.Results())
-			for _, rt := range tupleType.(*gotypes.TupleType).Types {
-				newVar := CreateVariableFromType(service, "", rt)
+			newType := service.File.Package.ComputeTypesForGoTypes(signatureGoType.Results())
+			for _, t := range newType.(*gotypes.TupleType).Types {
+				newVar := CreateVariableFromType(service, "", t)
 				logger.Logger.Infof("IN SIGNAATURE!!! %s (%s) (DEPS = %v)", newVar.String(), utils.GetType(newVar), deps)
 				//FIXMEEEEEEE
 				if len(deps) > 0 {
-					newCompVar := &types.CompositeVariable{
-						VariableInfo: &types.VariableInfo{
-							Type: newVar.GetVariableInfo().Type,
-							Id:   types.VARIABLE_UNASSIGNED_ID,
+					newCompVar := &variables.CompositeVariable{
+						VariableInfo: &variables.VariableInfo{
+							Type: newVar.GetType(),
+							Id:   variables.VARIABLE_UNASSIGNED_ID,
 						},
 						Params: deps,
 					}
@@ -66,6 +75,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 					block.AddVariable(newCompVar)
 				} else {
 					tupleVar.Variables = append(tupleVar.Variables, newVar)
+					tupleType.Types = append(tupleType.Types, newVar.GetType())
 					block.AddVariable(newVar)
 				}
 			}
@@ -77,12 +87,12 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 				for i := 0; i < goTupleType.Len(); i++ {
 					//goVar := goTupleType.At(i)
 					//newType := service.File.Package.ComputeTypesForGoTypes(goVar.Type())
-					genericVariable := &types.CompositeVariable{
-						VariableInfo: &types.VariableInfo{
+					genericVariable := &variables.CompositeVariable{
+						VariableInfo: &variables.VariableInfo{
 							Type: &gotypes.GenericType{
 								Name: goTupleType.String(),
 							},
-							Id: types.VARIABLE_INLINE_ID,
+							Id: variables.VARIABLE_INLINE_ID,
 						},
 					}
 					for _, arg := range e.Args {
@@ -90,15 +100,16 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 						genericVariable.Params = append(genericVariable.Params, argVar)
 					}
 					tupleVar.Variables = append(tupleVar.Variables, genericVariable)
+					tupleType.Types = append(tupleType.Types, genericVariable.GetType())
 					block.AddVariable(genericVariable)
 				}
 			} else {
-				genericVariable := &types.CompositeVariable{
-					VariableInfo: &types.VariableInfo{
+				genericVariable := &variables.CompositeVariable{
+					VariableInfo: &variables.VariableInfo{
 						Type: &gotypes.GenericType{
 							Name: goTupleType.String(),
 						},
-						Id: types.VARIABLE_INLINE_ID,
+						Id: variables.VARIABLE_INLINE_ID,
 					},
 				}
 				for _, arg := range e.Args {
@@ -106,6 +117,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 					genericVariable.Params = append(genericVariable.Params, argVar)
 				}
 				tupleVar.Variables = append(tupleVar.Variables, genericVariable)
+				tupleType.Types = append(tupleType.Types, genericVariable.GetType())
 				block.AddVariable(genericVariable)
 				logger.Logger.Debugf("SKIPPING!!! %v", utils.GetType(goTypeInfo))
 			}
@@ -118,10 +130,10 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			Name:  strings.ToLower(e.Kind.String()),
 			Value: e.Value,
 		}
-		variable = &types.BasicVariable{
-			VariableInfo: &types.VariableInfo{
+		variable = &variables.BasicVariable{
+			VariableInfo: &variables.VariableInfo{
 				Type: basicType,
-				Id:   types.VARIABLE_INLINE_ID,
+				Id:   variables.VARIABLE_INLINE_ID,
 			},
 		}
 	case *ast.Ident:
@@ -145,9 +157,9 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		}
 
 		switch v := variable.(type) {
-		case *types.GenericVariable:
+		case *variables.GenericVariable:
 			// continue
-		case *types.StructVariable:
+		case *variables.StructVariable:
 			fieldName := e.Sel.Name
 			field, exists := v.Fields[fieldName]
 			if !exists {
@@ -173,30 +185,30 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 				if userType, ok := namedType.(*gotypes.UserType); ok {
 					//FIXME: if its an embedded struct then we never enter here!!
 					if structType, ok := userType.UserType.(*gotypes.StructType); ok {
-						structVariable := &types.StructVariable{
-							VariableInfo: &types.VariableInfo{
+						structVariable := &variables.StructVariable{
+							VariableInfo: &variables.VariableInfo{
 								Type: userType,
-								Id:   types.VARIABLE_INLINE_ID,
+								Id:   variables.VARIABLE_INLINE_ID,
 							},
-							Fields: make(map[string]types.Variable),
+							Fields: make(map[string]variables.Variable),
 						}
 						for _, elt := range e.Elts {
 							keyvalue := elt.(*ast.KeyValueExpr)
 							key := keyvalue.Key.(*ast.Ident)
 							eltVar := lookupVariableFromAstExpr(service, method, block, keyvalue.Value, false)
 
-							if tupleVar, ok := eltVar.(*types.TupleVariable); ok && len(tupleVar.Variables) == 1 {
+							if tupleVar, ok := eltVar.(*variables.TupleVariable); ok && len(tupleVar.Variables) == 1 {
 								eltVar = tupleVar.Variables[0]
 							}
 							logger.Logger.Warnf("GOT ELT VAR!!! %s (%s)", eltVar.String(), utils.GetType(eltVar))
 
 							fieldType := structType.GetFieldTypeByName(key.Name)
 
-							fieldVar := &types.FieldVariable{
-								VariableInfo: &types.VariableInfo{
+							fieldVar := &variables.FieldVariable{
+								VariableInfo: &variables.VariableInfo{
 									Name: key.Name,
 									Type: fieldType,
-									Id:   types.VARIABLE_INLINE_ID,
+									Id:   variables.VARIABLE_INLINE_ID,
 								},
 								Underlying: eltVar,
 							}
@@ -210,15 +222,15 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			arrayType := &gotypes.ArrayType{
 				ElementsType: service.File.ComputeTypeForAstExpr(arrayTypeAst.Elt),
 			}
-			variable = &types.ArrayVariable{
-				VariableInfo: &types.VariableInfo{
+			variable = &variables.ArrayVariable{
+				VariableInfo: &variables.VariableInfo{
 					Type: arrayType,
-					Id:   types.VARIABLE_INLINE_ID,
+					Id:   variables.VARIABLE_INLINE_ID,
 				},
 			}
 			for _, elt := range e.Elts {
 				eltVar := lookupVariableFromAstExpr(service, method, block, elt, false)
-				variable.(*types.ArrayVariable).AddElement(eltVar)
+				variable.(*variables.ArrayVariable).AddElement(eltVar)
 			}
 		} else if selectorExpr, ok := e.Type.(*ast.SelectorExpr); ok {
 			logger.Logger.Warnf("got selector %v (expr type = %s)", selectorExpr, utils.GetType(selectorExpr.X))
@@ -233,10 +245,10 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		if variable == nil {
 			logger.Logger.Fatalf("nil variable for index expr: %v (e.X type = %s)", e, utils.GetType(e.X))
 		}
-		if arrayVar, ok := variable.(*types.ArrayVariable); ok {
+		if arrayVar, ok := variable.(*variables.ArrayVariable); ok {
 			variable = arrayVar.Elements[computeArrayIndex(e.Index)]
 		}
-		if mapVar, ok := variable.(*types.MapVariable); ok {
+		if mapVar, ok := variable.(*variables.MapVariable); ok {
 			key := lookupVariableFromAstExpr(service, method, block, e.Index, false)
 			variable, ok = mapVar.KeyValues[key]
 			if !ok {
@@ -248,26 +260,26 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		if e.Op == token.AND { // e.g. &post
 			variable = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 			addrType := &gotypes.AddressType{
-				AddressOf: variable.GetVariableInfo().Type,
+				AddressOf: variable.GetType(),
 			}
-			variable = &types.AddressVariable{
+			variable = &variables.AddressVariable{
 				AddressOf: variable,
-				VariableInfo: &types.VariableInfo{
+				VariableInfo: &variables.VariableInfo{
 					Type: addrType,
-					Id:   types.VARIABLE_INLINE_ID,
+					Id:   variables.VARIABLE_INLINE_ID,
 					Name: variable.GetVariableInfo().Name,
 				},
 			}
 		} else if e.Op == token.MUL { // e.g. *post
 			variable = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 			addrType := &gotypes.AddressType{
-				AddressOf: variable.GetVariableInfo().Type,
+				AddressOf: variable.GetType(),
 			}
-			variable = &types.PointerVariable{
+			variable = &variables.PointerVariable{
 				PointerTo: variable,
-				VariableInfo: &types.VariableInfo{
+				VariableInfo: &variables.VariableInfo{
 					Type: addrType,
-					Id:   types.VARIABLE_INLINE_ID,
+					Id:   variables.VARIABLE_INLINE_ID,
 					Name: variable.GetVariableInfo().Name,
 				},
 			}
@@ -297,35 +309,35 @@ func computeArrayIndex(expr ast.Expr) int {
 	return 0
 }
 
-func lookupVariableFromType(name string, t gotypes.Type) types.Variable {
-	info := &types.VariableInfo{
+func lookupVariableFromType(name string, t gotypes.Type) variables.Variable {
+	info := &variables.VariableInfo{
 		Name: name,
 		Type: t,
 	}
 	if name == "" {
-		info.Id = types.VARIABLE_INLINE_ID
+		info.Id = variables.VARIABLE_INLINE_ID
 	} else {
-		info.Id = types.VARIABLE_UNASSIGNED_ID
+		info.Id = variables.VARIABLE_UNASSIGNED_ID
 	}
 	switch e := t.(type) {
 	case *gotypes.BasicType:
-		return &types.BasicVariable{VariableInfo: info}
+		return &variables.BasicVariable{VariableInfo: info}
 	case *gotypes.ChanType:
-		return &types.ChanVariable{VariableInfo: info}
+		return &variables.ChanVariable{VariableInfo: info}
 	case *gotypes.MapType:
-		return &types.MapVariable{VariableInfo: info}
+		return &variables.MapVariable{VariableInfo: info}
 	case *gotypes.InterfaceType:
-		return &types.InterfaceVariable{VariableInfo: info}
+		return &variables.InterfaceVariable{VariableInfo: info}
 	case *gotypes.ArrayType:
-		return &types.ArrayVariable{VariableInfo: info}
+		return &variables.ArrayVariable{VariableInfo: info}
 	case *gotypes.StructType:
-		return &types.StructVariable{
+		return &variables.StructVariable{
 			VariableInfo: info,
-			Fields:       make(map[string]types.Variable),
+			Fields:       make(map[string]variables.Variable),
 		}
 	case *gotypes.FieldType:
 		info.Name = e.FieldName
-		return &types.FieldVariable{
+		return &variables.FieldVariable{
 			VariableInfo: info,
 			Underlying:   lookupVariableFromType(name, e.SubType),
 		}
@@ -336,17 +348,17 @@ func lookupVariableFromType(name string, t gotypes.Type) types.Variable {
 			return v
 		}
 		// e.g. context.Context is nil
-		return &types.GenericVariable{VariableInfo: info}
+		return &variables.GenericVariable{VariableInfo: info}
 	}
 	logger.Logger.Warnf("FIXME: could not create variable from type %v", t)
 	return nil
 }
 
-func CreateVariableFromType(service *service.Service, name string, t gotypes.Type) types.Variable {
-	info := &types.VariableInfo{
+func CreateVariableFromType(service *service.Service, name string, t gotypes.Type) variables.Variable {
+	info := &variables.VariableInfo{
 		Name: name,
 		Type: t,
-		Id:   types.VARIABLE_UNASSIGNED_ID,
+		Id:   variables.VARIABLE_UNASSIGNED_ID,
 	}
 
 	switch e := t.(type) {
@@ -355,19 +367,19 @@ func CreateVariableFromType(service *service.Service, name string, t gotypes.Typ
 			return CreateVariableFromType(service, name, e.UserType)
 		}
 		logger.Logger.Warnf("user type %s with nil underlying type", e.String())
-		return &types.GenericVariable{VariableInfo: info}
+		return &variables.GenericVariable{VariableInfo: info}
 	case *gotypes.ChanType:
-		return &types.ChanVariable{VariableInfo: info}
+		return &variables.ChanVariable{VariableInfo: info}
 	case *gotypes.BasicType:
-		return &types.BasicVariable{VariableInfo: info}
+		return &variables.BasicVariable{VariableInfo: info}
 	case *gotypes.InterfaceType:
-		return &types.InterfaceVariable{VariableInfo: info}
+		return &variables.InterfaceVariable{VariableInfo: info}
 	case *gotypes.ArrayType:
-		return &types.ArrayVariable{VariableInfo: info}
+		return &variables.ArrayVariable{VariableInfo: info}
 	case *gotypes.StructType:
-		return &types.StructVariable{VariableInfo: info, Fields: make(map[string]types.Variable)}
+		return &variables.StructVariable{VariableInfo: info, Fields: make(map[string]variables.Variable)}
 	case *gotypes.MapType:
-		return &types.MapVariable{VariableInfo: info, KeyValues: make(map[types.Variable]types.Variable, 0)}
+		return &variables.MapVariable{VariableInfo: info, KeyValues: make(map[variables.Variable]variables.Variable, 0)}
 	case *blueprint.BackendType:
 		if e.IsNoSQLComponent() {
 			logger.Logger.Infof("created variable for NoSQL collection %s", e.NoSQLComponent.String())

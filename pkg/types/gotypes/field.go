@@ -26,8 +26,8 @@ type FieldType struct {
 func (t *FieldType) String() string {
 	return t.SubType.String()
 }
-func (t *FieldType) FullString() string {
-	return t.SubType.FullString()
+func (t *FieldType) LongString() string {
+	return t.SubType.LongString()
 }
 func (t *FieldType) GetName() string {
 	if t.StructField {

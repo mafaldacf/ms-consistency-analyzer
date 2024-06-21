@@ -19,8 +19,8 @@ type MapType struct {
 func (t *MapType) String() string {
 	return fmt.Sprintf("map[%s]%s", t.KeyType.String(), t.ValueType.String())
 }
-func (t *MapType) FullString() string {
-	return fmt.Sprintf("map[%s]%s", t.KeyType.FullString(), t.ValueType.FullString())
+func (t *MapType) LongString() string {
+	return fmt.Sprintf("map[%s]%s", t.KeyType.LongString(), t.ValueType.LongString())
 }
 func (t *MapType) GetName() string {
 	return t.String()

@@ -9,13 +9,14 @@ import (
 	"golang.org/x/tools/go/cfg"
 
 	"analyzer/pkg/logger"
+	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
 )
 
 type Block struct {
 	Block *cfg.Block
 	// blocks can contain inline go routines
-	Vars []Variable
+	Vars []variables.Variable
 	Info *BlockInfo
 }
 
@@ -37,25 +38,25 @@ func (block *Block) Yaml() []string {
 					str += ", "
 				}
 			}
-			data = append(data, fmt.Sprintf("%s (%s) ----> (TAINTED @ %s)", v.String(), GetVariableTypeAndTypeString(v), str))
+			data = append(data, fmt.Sprintf("%s (%s) ----> (TAINTED @ %s)", v.String(), variables.GetVariableTypeAndTypeString(v), str))
 		} else {
-			data = append(data, fmt.Sprintf("%s (%s)", v.String(), GetVariableTypeAndTypeString(v)))
+			data = append(data, fmt.Sprintf("%s (%s)", v.String(), variables.GetVariableTypeAndTypeString(v)))
 		}
 	}
 	return data
 }
 
 type BlockInfo struct {
-	Gen []Variable
-	In  []Variable
-	Out []Variable
+	Gen []variables.Variable
+	In  []variables.Variable
+	Out []variables.Variable
 }
 
-func (block *Block) GetVariables() []Variable {
+func (block *Block) GetVariables() []variables.Variable {
 	return block.Vars
 }
 
-func (block *Block) GetLastestVariable(name string) Variable {
+func (block *Block) GetLastestVariable(name string) variables.Variable {
 	for i := len(block.Vars) - 1; i >= 0; i-- {
 		v := block.Vars[i]
 		if name == v.GetVariableInfo().GetName() {
@@ -66,12 +67,12 @@ func (block *Block) GetLastestVariable(name string) Variable {
 	return nil
 }
 
-func (block *Block) AddVariables(variables []Variable) {
+func (block *Block) AddVariables(variables []variables.Variable) {
 	logger.Logger.Warnf("added variables to block: %s", variables)
 	block.Vars = append(block.Vars, variables...)
 }
 
-func (block *Block) AddVariable(variable Variable) {
+func (block *Block) AddVariable(variable variables.Variable) {
 	if block.Vars[len(block.Vars)-1] != variable {
 		logger.Logger.Infof("added %s (%s) to block", variable.String(), utils.GetType(variable))
 		block.Vars = append(block.Vars, variable)
@@ -113,7 +114,7 @@ func (block *Block) String() string {
 	return str
 }
 
-func (block *Block) FullString() string {
+func (block *Block) LongString() string {
 	str := fmt.Sprintf("Block %d", block.Block.Index)
 	for i, v := range block.Block.Nodes {
 		str += fmt.Sprintf("\t Node %d: %s", i, utils.GetType(v))

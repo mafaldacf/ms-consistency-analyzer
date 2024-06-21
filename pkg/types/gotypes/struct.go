@@ -16,7 +16,7 @@ type StructType struct {
 func (t *StructType) String() string {
 	return "struct"
 }
-func (t *StructType) FullString() string {
+func (t *StructType) LongString() string {
 	if len(t.FieldTypes) == 0 {
 		return "struct {}"
 	}
@@ -24,7 +24,7 @@ func (t *StructType) FullString() string {
 	i := 0
 	// get by index order
 	for _, f := range t.FieldTypes {
-		s += f.FieldName + " " + f.FullString()
+		s += f.FieldName + " " + f.LongString()
 		/* if tag, ok := t.FieldTags[name]; ok {
 			s += " `" + tag + "`"
 		} */

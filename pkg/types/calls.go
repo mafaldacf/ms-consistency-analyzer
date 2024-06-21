@@ -8,6 +8,7 @@ import (
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
+	"analyzer/pkg/types/variables"
 )
 
 type Call interface {
@@ -16,9 +17,9 @@ type Call interface {
 	GetMethod() Method
 	SimpleString() string
 	IsAtPos(token.Pos) bool
-	AddParam(param Variable)
-	AddReturn(ret Variable)
-	GetParams() []Variable
+	AddParam(param variables.Variable)
+	AddReturn(ret variables.Variable)
+	GetParams() []variables.Variable
 }
 
 type ParsedCall struct {
@@ -31,12 +32,12 @@ type ParsedCall struct {
 	TargetField string
 
 	Pos     token.Pos
-	Params  []Variable
-	Returns []Variable
+	Params  []variables.Variable
+	Returns []variables.Variable
 	Method  Method
 }
 
-func (call ParsedCall) GetArgument(i int) Variable {
+func (call ParsedCall) GetArgument(i int) variables.Variable {
 	if i > len(call.Params) {
 		logger.Logger.Fatalf("invalid argument index %d for length %d in params: %v", i, (call.Params), call.Params)
 	}
@@ -101,15 +102,15 @@ func (svcCall *ParsedServiceCall) GetName() string {
 	return svcCall.Name
 }
 
-func (svcCall *ParsedServiceCall) AddParam(param Variable) {
+func (svcCall *ParsedServiceCall) AddParam(param variables.Variable) {
 	svcCall.Params = append(svcCall.Params, param)
 }
 
-func (svcCall *ParsedServiceCall) AddReturn(ret Variable) {
+func (svcCall *ParsedServiceCall) AddReturn(ret variables.Variable) {
 	svcCall.Returns = append(svcCall.Returns, ret)
 }
 
-func (svcCall *ParsedServiceCall) GetParams() []Variable {
+func (svcCall *ParsedServiceCall) GetParams() []variables.Variable {
 	return svcCall.Params
 }
 
@@ -144,15 +145,15 @@ func (dbCall *ParsedDatabaseCall) GetName() string {
 	return dbCall.Name
 }
 
-func (dbCall *ParsedDatabaseCall) AddParam(param Variable) {
+func (dbCall *ParsedDatabaseCall) AddParam(param variables.Variable) {
 	dbCall.Params = append(dbCall.Params, param)
 }
 
-func (dbCall *ParsedDatabaseCall) AddReturn(ret Variable) {
+func (dbCall *ParsedDatabaseCall) AddReturn(ret variables.Variable) {
 	dbCall.Returns = append(dbCall.Returns, ret)
 }
 
-func (dbCall *ParsedDatabaseCall) GetParams() []Variable {
+func (dbCall *ParsedDatabaseCall) GetParams() []variables.Variable {
 	return dbCall.Params
 }
 
@@ -182,15 +183,15 @@ func (internalCall *ParsedInternalCall) GetName() string {
 	return internalCall.Name
 }
 
-func (internalCall *ParsedInternalCall) AddParam(param Variable) {
+func (internalCall *ParsedInternalCall) AddParam(param variables.Variable) {
 	internalCall.Params = append(internalCall.Params, param)
 }
 
-func (internalCall *ParsedInternalCall) AddReturn(ret Variable) {
+func (internalCall *ParsedInternalCall) AddReturn(ret variables.Variable) {
 	internalCall.Returns = append(internalCall.Returns, ret)
 }
 
-func (internalCall *ParsedInternalCall) GetParams() []Variable {
+func (internalCall *ParsedInternalCall) GetParams() []variables.Variable {
 	return internalCall.Params
 }
 

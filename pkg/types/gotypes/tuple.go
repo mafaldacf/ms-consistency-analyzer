@@ -12,10 +12,17 @@ type TupleType struct {
 // ------------
 
 func (t *TupleType) String() string {
-	return ""
+	s := "("
+	for i, elem := range t.Types {
+		s += elem.String()
+		if i < len(t.Types)-1 {
+			s += ", "
+		}
+	}
+	return s + ")"
 }
-func (t *TupleType) FullString() string {
-	return ""
+func (t *TupleType) LongString() string {
+	return t.String()
 }
 func (t *TupleType) GetName() string {
 	return ""

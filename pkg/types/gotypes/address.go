@@ -14,8 +14,8 @@ type AddressType struct {
 func (t *AddressType) String() string {
 	return fmt.Sprintf("&%s", t.AddressOf.String())
 }
-func (t *AddressType) FullString() string {
-	return fmt.Sprintf("&%s", t.AddressOf.FullString())
+func (t *AddressType) LongString() string {
+	return fmt.Sprintf("&%s", t.AddressOf.LongString())
 }
 func (t *AddressType) GetName() string {
 	return t.String()

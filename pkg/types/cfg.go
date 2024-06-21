@@ -44,10 +44,10 @@ func (cfg *CFG) String() string {
 	return str + "\n"
 }
 
-func (cfg *CFG) FullString() string {
+func (cfg *CFG) LongString() string {
 	str := "\n"
 	for _, block := range cfg.ParsedBlocks {
-		str += block.FullString()
+		str += block.LongString()
 	}
 	return str + "\n"
 }

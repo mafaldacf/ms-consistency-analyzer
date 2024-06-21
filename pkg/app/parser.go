@@ -12,6 +12,7 @@ import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
 	"analyzer/pkg/types/gotypes"
+	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
 )
 
@@ -39,7 +40,7 @@ func createPackage(app *App, goPackage *packages.Package, basePackagePath string
 		DeclaredTypes:     make(map[string]gotypes.Type),
 		ServiceTypes:      make(map[string]*gotypes.ServiceType),
 		DatastoreTypes:    make(map[string]gotypes.Type),
-		DeclaredVariables: make(map[string]types.Variable),
+		DeclaredVariables: make(map[string]variables.Variable),
 		ImportedTypes:     make(map[string]gotypes.Type),
 		TypesInfo:         goPackage.TypesInfo,
 	}

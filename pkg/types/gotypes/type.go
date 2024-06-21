@@ -4,7 +4,7 @@ import "strings"
 
 type Type interface {
 	String() string
-	FullString() string
+	LongString() string
 	GetName() string
 	GetPackage() string // package is always the real package path
 	GetBasicValue() string

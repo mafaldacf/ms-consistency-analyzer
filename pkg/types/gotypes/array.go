@@ -14,8 +14,8 @@ type ArrayType struct {
 func (t *ArrayType) String() string {
 	return "[]" + t.ElementsType.String()
 }
-func (t *ArrayType) FullString() string {
-	return "[]" + t.ElementsType.FullString()
+func (t *ArrayType) LongString() string {
+	return "[]" + t.ElementsType.LongString()
 }
 func (t *ArrayType) GetName() string {
 	return t.String()

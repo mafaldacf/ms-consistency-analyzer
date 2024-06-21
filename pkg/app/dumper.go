@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"sort"
 	"strings"
 
 	"analyzer/pkg/datastores"
@@ -41,7 +42,7 @@ func (app *App) dumpYamlPackages() {
 }
 
 func (app *App) dumpYamlDataflow() {
-	propsData := utils.NewOrderedPropertyList()
+	data := make(map[string][]string)
 	for k, lst := range app.PersistedVariables {
 		var dataflow []string
 		for _, v := range lst {
@@ -49,9 +50,9 @@ func (app *App) dumpYamlDataflow() {
 				dataflow = append(dataflow, df.ShortString())
 			}
 		}
-		propsData.AddOrderedProperty(k, dataflow)
+		data[k] = dataflow
 	}
-	utils.DumpToYamlFile(propsData.Result(), app.Name, "dataflow")
+	utils.DumpToYamlFile(data, app.Name, "dataflow")
 }
 
 func (app *App) dumpYamlDatastores() {
@@ -79,6 +80,7 @@ func (app *App) dumpYamlDatastores() {
 				for _, r := range entry.References {
 					lst = append(lst, r.GetFullName())
 				}
+				sort.Strings(lst)
 				propsForeignKeys.AddOrderedProperty(entry.GetName(), lst)
 			}
 		}
@@ -89,6 +91,7 @@ func (app *App) dumpYamlDatastores() {
 				for _, r := range entry.References {
 					lst = append(lst, r.GetFullName())
 				}
+				sort.Strings(lst)
 				propsForeignKeys.AddOrderedProperty(entry.GetName(), lst)
 			}
 		}

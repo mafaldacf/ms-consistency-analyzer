@@ -10,6 +10,7 @@ import (
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
 	"analyzer/pkg/types/gotypes"
+	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
 )
 
@@ -65,15 +66,15 @@ func (graph *AbstractGraph) matchIdentifiers(node AbstractNode) {
 }
 
 // FIXME: this should be recursive!!
-func getVariableIfPointer(variable types.Variable) types.Variable {
+func getVariableIfPointer(variable variables.Variable) variables.Variable {
 	if variable.GetVariableInfo() == nil {
 		logger.Logger.Fatalf("missing info for variable %v", variable)
 	}
-	if variable.GetVariableInfo().GetType() == nil {
+	if variable.GetType() == nil {
 		logger.Logger.Fatalf("missing type for variable %v", variable)
 	}
 
-	if _, ok := variable.GetVariableInfo().GetType().(*gotypes.PointerType); ok {
+	if _, ok := variable.GetType().(*gotypes.PointerType); ok {
 		return variable.GetDependencies()[0]
 	}
 	return variable
@@ -123,8 +124,8 @@ func (graph *AbstractGraph) addEntry(node *service.Service, method *types.Parsed
 	graph.Nodes = append(graph.Nodes, &entryCall)
 	// build entry node
 	/* for _, param := range entryCall.Params {
-		v := controlflow.CreateVariableFromType(node, param.GetVariableInfo().GetName(), param.GetVariableInfo().GetType())
-		v.GetVariableInfo().Id = graph.getAndIncGIndex()
+		v := controlflow.CreateVariableFromType(node, param.GetVariableInfo().GetName(), param.GetType())
+		v.GetId() = graph.getAndIncGIndex()
 		param.GetVariableInfo().Reference = &types.Reference{
 			Creator:  "Client",
 			Variable: v,
@@ -223,8 +224,8 @@ func (graph *AbstractGraph) appendPublisherQueueHandlers(app *app.App, publisher
 				Publisher:           publisher,
 			}
 			for _, p := range handlerMethod.GetParams() {
-				abstractHandler.ParsedCall.Params = append(abstractHandler.ParsedCall.Params, &types.CompositeVariable{
-					VariableInfo: &types.VariableInfo{
+				abstractHandler.ParsedCall.Params = append(abstractHandler.ParsedCall.Params, &variables.CompositeVariable{
+					VariableInfo: &variables.VariableInfo{
 						Name: p.GetName(),
 						Type: p.GetType(),
 					},
@@ -247,9 +248,9 @@ func (graph *AbstractGraph) referencePublisherParams(queueHandler *AbstractQueue
 			popParam := child.GetParam(popParamIdx)
 			popParam = getVariableIfPointer(popParam)
 
-			if addressVar, ok := popParam.(*types.AddressVariable); ok {
+			if addressVar, ok := popParam.(*variables.AddressVariable); ok {
 				popParam = addressVar.GetAddressOf()
-			} else if ptrVar, ok := popParam.(*types.PointerVariable); ok {
+			} else if ptrVar, ok := popParam.(*variables.PointerVariable); ok {
 				popParam = ptrVar.GetPointerTo()
 			}
 
@@ -265,8 +266,8 @@ func (graph *AbstractGraph) referencePublisherParams(queueHandler *AbstractQueue
 	return false
 }
 
-func getDependencies(first bool, v types.Variable) []types.Variable {
-	indirectDeps := []types.Variable{}
+func getDependencies(first bool, v variables.Variable) []variables.Variable {
+	indirectDeps := []variables.Variable{}
 	if !first {
 		indirectDeps = append(indirectDeps, v)
 	}
@@ -298,7 +299,7 @@ func (graph *AbstractGraph) referenceServiceCallerParams(parent AbstractNode, ca
 				unassaignedVariables := callArg.GetUnassaignedVariables()
 				for _, v := range unassaignedVariables {
 					v.GetVariableInfo().AssignID(graph.getAndIncGIndex())
-					logger.Logger.Warnf("\t\t\t[GID] assigned gid %s (%d)", v.String(), v.GetVariableInfo().Id)
+					logger.Logger.Warnf("\t\t\t[GID] assigned gid %s (%d)", v.String(), v.GetId())
 				}
 			}
 			if parent == caller {
@@ -321,7 +322,7 @@ func (graph *AbstractGraph) referenceServiceCallerParams(parent AbstractNode, ca
 			unassaignedVariables := callArg.GetUnassaignedVariables()
 			for _, v := range unassaignedVariables {
 				v.GetVariableInfo().AssignID(graph.getAndIncGIndex())
-				logger.Logger.Warnf("\t\t\t[GID] assigned gid %s (%d)", v.String(), v.GetVariableInfo().Id)
+				logger.Logger.Warnf("\t\t\t[GID] assigned gid %s (%d)", v.String(), v.GetId())
 			}
 		}
 
@@ -354,15 +355,15 @@ func (graph *AbstractGraph) referenceServiceCallerParams(parent AbstractNode, ca
 								unassaignedVariables := callerParam.GetUnassaignedVariables()
 								for _, v := range unassaignedVariables {
 									v.GetVariableInfo().AssignID(graph.getAndIncGIndex())
-									logger.Logger.Warnf("\t\t\t[GID] assigned gid %s (%d)", v.String(), v.GetVariableInfo().Id)
+									logger.Logger.Warnf("\t\t\t[GID] assigned gid %s (%d)", v.String(), v.GetId())
 								}
 							}
 							//dep = callerParam.DeepCopy()
 							dep.AddReferenceWithID(callerParam, child.GetCallerStr())
 
 							// FIXME: THIS IS HARD CODED
-							if structVariable, ok := childParam.(*types.StructVariable); ok {
-								if structParentVariable, ok := callerParam.(*types.StructVariable); ok {
+							if structVariable, ok := childParam.(*variables.StructVariable); ok {
+								if structParentVariable, ok := callerParam.(*variables.StructVariable); ok {
 									structVariable.CopyFrom(structParentVariable)
 								} else {
 									logger.Logger.Fatalf("%s (%s) vs %s (%s)", childParam.String(), child.GetName(), callerParam.String(), parent.GetName())

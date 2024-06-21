@@ -21,7 +21,7 @@ func GenerateMethodCFG(parsedMethod *types.ParsedMethod) {
 		entryBlock.Vars = append(entryBlock.Vars, v)
 	}
 	logger.Logger.Infof("[CFG] parsed CFG %s with block variables %v", parsedCfg.FullMethod, entryBlock.Vars)
-	logger.Logger.Debugf("[CFG] parsed CFG: %s", parsedCfg.FullString())
+	logger.Logger.Debugf("[CFG] parsed CFG: %s", parsedCfg.LongString())
 }
 
 // https://github.com/coder/go-tools/blob/master/go/analysis/passes/ctrlflow/ctrlflow_test.go

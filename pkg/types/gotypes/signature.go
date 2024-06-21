@@ -16,11 +16,11 @@ func (t *SignatureType) String() string {
 		return ""
 	}
 	if len(t.ReturnTypes) == 1 {
-		return t.ReturnTypes[0].FullString()
+		return t.ReturnTypes[0].LongString()
 	}
 	s := "( "
 	for i, ft := range t.ReturnTypes {
-		s += ft.FullString()
+		s += ft.LongString()
 		if i < len(t.ReturnTypes)-1 {
 			s += ", "
 		}
@@ -28,7 +28,7 @@ func (t *SignatureType) String() string {
 	s += " )"
 	return s
 }
-func (t *SignatureType) FullString() string {
+func (t *SignatureType) LongString() string {
 	return t.String()
 }
 func (t *SignatureType) GetName() string {

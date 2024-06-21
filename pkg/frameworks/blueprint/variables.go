@@ -1,34 +1,48 @@
 package blueprint
 
 import (
-	"analyzer/pkg/types"
+	"analyzer/pkg/types/gotypes"
+	"analyzer/pkg/types/variables"
 )
 
 type NoSQLCollectionVariable struct {
-	types.Variable `json:"-"`
-	VariableInfo   *types.VariableInfo `json:"variable"`
+	variables.Variable `json:"-"`
+	VariableInfo       *variables.VariableInfo `json:"variable"`
 }
 
 func (v *NoSQLCollectionVariable) String() string {
 	return v.VariableInfo.String()
 }
-func (v *NoSQLCollectionVariable) GetVariableInfo() *types.VariableInfo {
+
+func (v *NoSQLCollectionVariable) GetId() int64 {
+	return v.VariableInfo.GetId()
+}
+
+func (v *NoSQLCollectionVariable) GetType() gotypes.Type {
+	return v.VariableInfo.GetType()
+}
+
+func (v *NoSQLCollectionVariable) GetVariableInfo() *variables.VariableInfo {
 	return v.VariableInfo
 }
-func (v *NoSQLCollectionVariable) GetDependencies() []types.Variable {
+
+func (v *NoSQLCollectionVariable) GetDependencies() []variables.Variable {
 	return nil
 }
-func (v *NoSQLCollectionVariable) AddReferenceWithID(target types.Variable, creator string) {
+
+func (v *NoSQLCollectionVariable) AddReferenceWithID(target variables.Variable, creator string) {
 	v.VariableInfo.AddReferenceWithID(target, creator)
 }
-func (v *NoSQLCollectionVariable) DeepCopy() types.Variable {
+
+func (v *NoSQLCollectionVariable) DeepCopy() variables.Variable {
 	copy := &NoSQLCollectionVariable{
 		VariableInfo: v.VariableInfo,
 	}
 	return copy
 }
-func (v *NoSQLCollectionVariable) GetUnassaignedVariables() []types.Variable {
-	var variables []types.Variable
+
+func (v *NoSQLCollectionVariable) GetUnassaignedVariables() []variables.Variable {
+	var variables []variables.Variable
 	if v.GetVariableInfo().IsUnassigned() {
 		variables = append(variables, v)
 	}
@@ -36,30 +50,43 @@ func (v *NoSQLCollectionVariable) GetUnassaignedVariables() []types.Variable {
 }
 
 type NoSQLCursorVariable struct {
-	types.Variable `json:"-"`
-	VariableInfo   *types.VariableInfo `json:"variable"`
+	variables.Variable `json:"-"`
+	VariableInfo       *variables.VariableInfo `json:"variable"`
 }
 
 func (v *NoSQLCursorVariable) String() string {
 	return v.VariableInfo.String()
 }
-func (v *NoSQLCursorVariable) GetVariableInfo() *types.VariableInfo {
+
+func (v *NoSQLCursorVariable) GetId() int64 {
+	return v.VariableInfo.GetId()
+}
+
+func (v *NoSQLCursorVariable) GetType() gotypes.Type {
+	return v.VariableInfo.GetType()
+}
+
+func (v *NoSQLCursorVariable) GetVariableInfo() *variables.VariableInfo {
 	return v.VariableInfo
 }
-func (v *NoSQLCursorVariable) GetDependencies() []types.Variable {
+
+func (v *NoSQLCursorVariable) GetDependencies() []variables.Variable {
 	return nil
 }
-func (v *NoSQLCursorVariable) AddReferenceWithID(target types.Variable, creator string) {
+
+func (v *NoSQLCursorVariable) AddReferenceWithID(target variables.Variable, creator string) {
 	v.VariableInfo.AddReferenceWithID(target, creator)
 }
-func (v *NoSQLCursorVariable) DeepCopy() types.Variable {
+
+func (v *NoSQLCursorVariable) DeepCopy() variables.Variable {
 	copy := &NoSQLCursorVariable{
 		VariableInfo: v.VariableInfo,
 	}
 	return copy
 }
-func (v *NoSQLCursorVariable) GetUnassaignedVariables() []types.Variable {
-	var variables []types.Variable
+
+func (v *NoSQLCursorVariable) GetUnassaignedVariables() []variables.Variable {
+	var variables []variables.Variable
 	if v.GetVariableInfo().IsUnassigned() {
 		variables = append(variables, v)
 	}

@@ -8,6 +8,7 @@ import (
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
 	"analyzer/pkg/types/gotypes"
+	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
 )
 
@@ -73,7 +74,7 @@ func parseExpressions(service *service.Service, method *types.ParsedMethod, bloc
 			logger.Logger.Debugf("IN ASSIGNMENT FOR CREATING VARIABLE (type = %s)", utils.GetType(rvalue))
 			variable := lookupVariableFromAstExpr(service, method, block, rvalue, true)
 
-			if tupleVariable, ok := variable.(*types.TupleVariable); ok {
+			if tupleVariable, ok := variable.(*variables.TupleVariable); ok {
 				if len(e.Lhs) != len(tupleVariable.Variables) {
 					logger.Logger.Fatalf("number of left values (%d) does not match length of tuple (%s) variables (%d) for assignment %v", len(e.Lhs), tupleVariable.Variables, len(tupleVariable.Variables), e)
 				}
@@ -183,7 +184,7 @@ func saveCalls(service *service.Service, method *types.ParsedMethod, block *type
 	}
 }
 
-func getReceiverIfValid(selectorExpr *ast.SelectorExpr, methodRecv *types.MethodReceiver, block *types.Block) (*ast.Ident, types.Variable, bool) {
+func getReceiverIfValid(selectorExpr *ast.SelectorExpr, methodRecv *types.MethodReceiver, block *types.Block) (*ast.Ident, variables.Variable, bool) {
 	if recvIdent, ok := selectorExpr.X.(*ast.Ident); ok {
 		// current method receiver
 		if recvIdent.Name == methodRecv.Name {
@@ -197,7 +198,7 @@ func getReceiverIfValid(selectorExpr *ast.SelectorExpr, methodRecv *types.Method
 	return nil, nil, false
 }
 
-func getCallIfSelectedField(expr ast.Expr, methodRecv *types.MethodReceiver, block *types.Block) (funcCall *ast.CallExpr, methodIdent *ast.Ident, fieldIdent *ast.Ident, serviceRecvIdent *ast.Ident, variable types.Variable, ok bool) {
+func getCallIfSelectedField(expr ast.Expr, methodRecv *types.MethodReceiver, block *types.Block) (funcCall *ast.CallExpr, methodIdent *ast.Ident, fieldIdent *ast.Ident, serviceRecvIdent *ast.Ident, variable variables.Variable, ok bool) {
 	if callExpr, ok := expr.(*ast.CallExpr); ok {
 		// e.g. f.queue.Push
 		//    ^ident2 ^ident ^method
@@ -223,9 +224,9 @@ func saveFuncCallParams(service *service.Service, method *types.ParsedMethod, bl
 		param := lookupVariableFromAstExpr(service, method, block, arg, false)
 
 		// upgrade variable with known type from function method
-		if _, ok := param.GetVariableInfo().Type.(*gotypes.GenericType); ok {
+		if _, ok := param.GetType().(*gotypes.GenericType); ok {
 			param.GetVariableInfo().Type = parsedCall.GetMethod().GetParams()[i].GetType()
-			logger.Logger.Warnf("upgrading variable %s with new type %s", param.GetVariableInfo().Name, param.GetVariableInfo().Type.String())
+			logger.Logger.Warnf("upgrading variable %s with new type %s", param.GetVariableInfo().Name, param.GetType().String())
 		}
 		parsedCall.AddParam(param)
 	}
@@ -297,11 +298,11 @@ func TODO_parseAndSaveCallIfValid(service *service.Service, method *types.Parsed
 	return nil, false
 }
 
-func parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr) (types.Call, []types.Variable, bool) {
+func parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr) (types.Call, []variables.Variable, bool) {
 	funcCall, methodIdent, fieldIdent, serviceRecvIdent, variable, ok := getCallIfSelectedField(callExpr, method.Recv, block)
 	if !ok {
 		// return TODO_parseAndSaveCallIfValid(service, method, block, callExpr)
-		var vs []types.Variable
+		var vs []variables.Variable
 		for _, expr := range callExpr.Args {
 			logger.Logger.Infof("inside !ok in parseAndSaveCallIfValid")
 			if v := lookupVariableFromAstExpr(service, method, block, expr, false); v != nil {
@@ -362,8 +363,8 @@ func parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMetho
 				// maybe user is just getting the collection
 				if blueprintType.IsNoSQLDatabase() && blueprintMethod.ReturnsNoSQLCollection() {
 					blueprintMethod.SetNoSQLDatabaseCollection(
-						parsedCall.Params[1].GetVariableInfo().Type.GetBasicValue(),
-						parsedCall.Params[2].GetVariableInfo().Type.GetBasicValue(),
+						parsedCall.Params[1].GetType().GetBasicValue(),
+						parsedCall.Params[2].GetType().GetBasicValue(),
 						databaseField.DbInstance,
 					)
 					logger.Logger.Infof("[CFG] found blueprint backend call %s", parsedCall.Method.String())

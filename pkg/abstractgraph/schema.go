@@ -7,35 +7,35 @@ import (
 	"analyzer/pkg/app"
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/logger"
-	"analyzer/pkg/types"
+	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
 )
 
 type DependencySet struct {
-	Variable        types.Variable
-	Dependencies    []types.Variable
+	Variable        variables.Variable
+	Dependencies    []variables.Variable
 	DependencyNames []string
 }
 
-func addNestedDatastoreEntry(variable types.Variable, entryName string, datastore *datastores.Datastore) {
-	objType := variable.GetVariableInfo().GetType()
-	datastore.Schema.AddField(entryName, objType.FullString(), variable.GetVariableInfo().GetId(), datastore.Name)
-	datastore.Schema.AddUnfoldedFieldWithId(objType.GetName(), objType.FullString(), variable.GetVariableInfo().GetId(), datastore.Name)
+func addNestedDatastoreEntry(variable variables.Variable, entryName string, datastore *datastores.Datastore) {
+	objType := variable.GetType()
+	datastore.Schema.AddField(entryName, objType.LongString(), variable.GetId(), datastore.Name)
+	datastore.Schema.AddUnfoldedFieldWithId(objType.GetName(), objType.LongString(), variable.GetId(), datastore.Name)
 
 	// add nested unfolded types
 	types, names := objType.GetNestedFieldTypes(objType.GetName())
 	for i, t := range types {
 		name := names[i]
-		datastore.Schema.AddUnfoldedField(name, t.FullString(), datastore.Name)
+		datastore.Schema.AddUnfoldedField(name, t.LongString(), datastore.Name)
 	}
 }
 
-func addDatastoreEntry(variable types.Variable, entryName string, datastore *datastores.Datastore) {
-	objType := variable.GetVariableInfo().GetType()
-	datastore.Schema.AddField(entryName, objType.GetName(), variable.GetVariableInfo().GetId(), datastore.Name)
+func addDatastoreEntry(variable variables.Variable, entryName string, datastore *datastores.Datastore) {
+	objType := variable.GetType()
+	datastore.Schema.AddField(entryName, objType.GetName(), variable.GetId(), datastore.Name)
 }
 
-func computeDependencySets(parentSet *DependencySet, v types.Variable) []*DependencySet {
+func computeDependencySets(parentSet *DependencySet, v variables.Variable) []*DependencySet {
 	var sets []*DependencySet
 	set := &DependencySet{
 		Variable: v,
@@ -59,32 +59,32 @@ func computeDependencySets(parentSet *DependencySet, v types.Variable) []*Depend
 	return sets
 }
 
-func GetNestedFields(variable types.Variable) []types.Variable {
-	var nestedFields []types.Variable
+func GetNestedFields(variable variables.Variable) []variables.Variable {
+	var nestedFields []variables.Variable
 	return nestedFields
 }
 
-func addDataflow(app *app.App, variable types.Variable, call *AbstractDatabaseCall, datastore *datastores.Datastore) {
-	rootField := datastore.Schema.GetField(variable.GetVariableInfo().GetType().GetName())
+func addDataflow(app *app.App, variable variables.Variable, call *AbstractDatabaseCall, datastore *datastores.Datastore) {
+	rootField := datastore.Schema.GetField(variable.GetType().GetName())
 	variable.GetVariableInfo().SetDirectDataflow(datastore.Name, call.Service, variable, rootField)
 	if !slices.Contains(app.PersistedVariables[rootField.GetFullName()], variable) {
 		app.PersistedVariables[rootField.GetFullName()] = append(app.PersistedVariables[rootField.GetFullName()], variable)
 	}
 
-	var persistedVars []types.Variable
+	var persistedVars []variables.Variable
 
 	// add nested unfolded types
-	if structVariable, ok := variable.(*types.StructVariable); ok {
-		variables := []types.Variable{structVariable}
-		names := []string{structVariable.GetVariableInfo().GetType().GetName()}
-		nestedVariables, nestedNames := structVariable.GetNestedFieldVariables(variable.GetVariableInfo().GetType().GetName())
+	if structVariable, ok := variable.(*variables.StructVariable); ok {
+		variables := []variables.Variable{structVariable}
+		names := []string{structVariable.GetType().GetName()}
+		nestedVariables, nestedNames := structVariable.GetNestedFieldVariables(variable.GetType().GetName())
 
 		variables = append(variables, nestedVariables...)
 		names = append(names, nestedNames...)
 
 		slices.Reverse(variables)
 		slices.Reverse(names)
-		
+
 		for i, v := range variables {
 			logger.Logger.Infof("VISITING VARIABLE %s", v.String())
 			name := names[i]
@@ -105,15 +105,15 @@ func addDataflow(app *app.App, variable types.Variable, call *AbstractDatabaseCa
 	//logger.Logger.Fatalf("EXITING")
 }
 
-func addForeignFields(variable types.Variable, datastore *datastores.Datastore) {
-	if structVariable, ok := variable.(*types.StructVariable); ok {
-		variables := []types.Variable{structVariable}
-		names := []string{structVariable.GetVariableInfo().GetType().GetName()}
-		nestedVariables, nestedNames := structVariable.GetNestedFieldVariables(variable.GetVariableInfo().GetType().GetName())
+func addForeignFields(variable variables.Variable, datastore *datastores.Datastore) {
+	if structVariable, ok := variable.(*variables.StructVariable); ok {
+		variables := []variables.Variable{structVariable}
+		names := []string{structVariable.GetType().GetName()}
+		nestedVariables, nestedNames := structVariable.GetNestedFieldVariables(variable.GetType().GetName())
 
 		variables = append(variables, nestedVariables...)
 		names = append(names, nestedNames...)
-		
+
 		for i, v := range variables {
 			name := names[i]
 			field := datastore.Schema.GetField(name)
@@ -134,20 +134,20 @@ func addForeignFields(variable types.Variable, datastore *datastores.Datastore) 
 	}
 }
 
-func computeForeignDependencySets(parentSet *DependencySet, v types.Variable) []*DependencySet {
+func computeForeignDependencySets(parentSet *DependencySet, v variables.Variable) []*DependencySet {
 	var sets []*DependencySet
 	set := &DependencySet{
 		Variable: v,
 	}
 	sets = append(sets, set)
 	logger.Logger.Infof("visiting %s (%s)", v.String(), utils.GetType(v))
-	appendDataflowDependencies := func(dep types.Variable, isRef bool) {
+	appendDataflowDependencies := func(dep variables.Variable, isRef bool) {
 		logger.Logger.Infof("\t\tgetting data flow dependencies for %s (%s)", dep.String(), utils.GetType(dep))
 		for _, df := range dep.GetVariableInfo().Dataflows {
 			if df.DirectWrite {
 				logger.Logger.Infof("\t\t\tappending dataflow: %s", df.String())
-				name := dep.GetVariableInfo().GetType().GetName()
-				if compositeVariable, ok := set.Variable.(*types.CompositeVariable); ok && parentSet != nil {
+				name := dep.GetType().GetName()
+				if compositeVariable, ok := set.Variable.(*variables.CompositeVariable); ok && parentSet != nil {
 					logger.Logger.Warnf("skipping composite variable %s", compositeVariable.String())
 					parentSet.Dependencies = append(parentSet.Dependencies, dep)
 					parentSet.DependencyNames = append(set.DependencyNames, name)
@@ -157,14 +157,14 @@ func computeForeignDependencySets(parentSet *DependencySet, v types.Variable) []
 				}
 
 			} else {
-				name := df.IndirectSource.GetVariableInfo().GetType().GetName()
+				name := df.IndirectSource.GetType().GetName()
 				if isRef {
-					name = v.GetVariableInfo().GetType().GetName() + "." + name
+					name = v.GetType().GetName() + "." + name
 					logger.Logger.Infof("\t\t\t appending dataflow: %s", df.String())
 				} else {
 					logger.Logger.Infof("\t\t\t appending (ref) dataflow: %s", df.String())
 				}
-				if compositeVariable, ok := set.Variable.(*types.CompositeVariable); ok && parentSet != nil {
+				if compositeVariable, ok := set.Variable.(*variables.CompositeVariable); ok && parentSet != nil {
 					logger.Logger.Warnf("skipping composite variable %s", compositeVariable.String())
 					parentSet.Dependencies = append(parentSet.Dependencies, dep)
 					parentSet.DependencyNames = append(set.DependencyNames, name)
@@ -189,14 +189,14 @@ func computeForeignDependencySets(parentSet *DependencySet, v types.Variable) []
 	return sets
 }
 
-func searchForeignDataflow(variable types.Variable, datastore *datastores.Datastore, app *app.App) {
+func searchForeignDataflow(variable variables.Variable, datastore *datastores.Datastore, app *app.App) {
 	fmt.Printf("\n------------------------ SEARCH FOREIGN DATAFLOW @ %s ------------------------\n\n", datastore.Name)
 	sets := computeForeignDependencySets(nil, variable)
 	fmt.Println()
 	for _, set := range sets {
 		logger.Logger.Infof("------ visiting set for %v ------", set.Variable.String())
 		for _, v := range set.Dependencies {
-			var foreignVariables []types.Variable
+			var foreignVariables []variables.Variable
 			var foreignDatastores []datastores.DatabaseInstance
 
 			for _, df := range v.GetVariableInfo().GetForeignDataflows(datastore) {
@@ -207,15 +207,15 @@ func searchForeignDataflow(variable types.Variable, datastore *datastores.Datast
 
 			for i, foreignVariable := range foreignVariables {
 				foreignDatastore := foreignDatastores[i]
-				logger.Logger.Infof("\t\t\t foreign variable %s (id = %d) @ %s", foreignVariable.String(), foreignVariable.GetVariableInfo().Id, foreignDatastore.GetName())
-				foreignField := foreignDatastore.GetDatastore().Schema.GetFieldById(foreignVariable.GetVariableInfo().Id)
+				logger.Logger.Infof("\t\t\t foreign variable %s (id = %d) @ %s", foreignVariable.String(), foreignVariable.GetId(), foreignDatastore.GetName())
+				foreignField := foreignDatastore.GetDatastore().Schema.GetFieldById(foreignVariable.GetId())
 				if foreignField == nil {
-					foreignField = foreignDatastore.GetDatastore().Schema.GetField(foreignVariable.GetVariableInfo().GetType().GetName())
+					foreignField = foreignDatastore.GetDatastore().Schema.GetField(foreignVariable.GetType().GetName())
 				}
 
 				datastore.Schema.AddFKReference(
 					set.Variable.GetVariableInfo().Name,
-					foreignVariable.GetVariableInfo().Type.String(),
+					foreignVariable.GetType().String(),
 					foreignField,
 					foreignDatastore.GetDatastore().Name,
 				)

@@ -18,8 +18,8 @@ type ChanType struct {
 func (t *ChanType) String() string {
 	return fmt.Sprintf("chan %s", t.ChanType.String())
 }
-func (t *ChanType) FullString() string {
-	return fmt.Sprintf("chan %s", t.ChanType.FullString())
+func (t *ChanType) LongString() string {
+	return fmt.Sprintf("chan %s", t.ChanType.LongString())
 }
 func (t *ChanType) GetName() string {
 	return t.String()

@@ -17,7 +17,7 @@ func (t *GenericType) String() string {
 	} */
 	return "undefined"
 }
-func (t *GenericType) FullString() string {
+func (t *GenericType) LongString() string {
 	return t.String()
 }
 func (t *GenericType) GetName() string {

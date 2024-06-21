@@ -14,8 +14,8 @@ type PointerType struct {
 func (t *PointerType) String() string {
 	return fmt.Sprintf("*%s", t.PointerTo.String())
 }
-func (t *PointerType) FullString() string {
-	return fmt.Sprintf("*%s", t.PointerTo.FullString())
+func (t *PointerType) LongString() string {
+	return fmt.Sprintf("*%s", t.PointerTo.LongString())
 }
 func (t *PointerType) GetName() string {
 	return t.String()

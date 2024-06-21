@@ -19,7 +19,7 @@ type ServiceType struct {
 func (t *ServiceType) String() string {
 	return fmt.Sprintf("%s.%s", packageAlias(t.Package), t.Name)
 }
-func (t *ServiceType) FullString() string {
+func (t *ServiceType) LongString() string {
 	return t.String()
 }
 func (t *ServiceType) GetName() string {

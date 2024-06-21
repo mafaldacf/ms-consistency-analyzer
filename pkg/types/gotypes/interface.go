@@ -21,7 +21,7 @@ func (t *InterfaceType) String() string {
 	}
 	return "interface{}"
 }
-func (t *InterfaceType) FullString() string {
+func (t *InterfaceType) LongString() string {
 	return t.String()
 }
 func (t *InterfaceType) GetName() string {

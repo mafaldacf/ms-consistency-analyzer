@@ -9,6 +9,7 @@ import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
+	"analyzer/pkg/types/variables"
 )
 
 type App struct {
@@ -18,7 +19,7 @@ type App struct {
 	Databases          map[string]datastores.DatabaseInstance
 	Packages           map[string]*types.Package
 	BlueprintPackages  map[string]*types.Package
-	PersistedVariables map[string][]types.Variable
+	PersistedVariables map[string][]variables.Variable
 }
 
 // MarshalJSON is used by app.Save()
@@ -62,13 +63,13 @@ func Init(name string, path string) (*App, error) {
 		return nil, fmt.Errorf(msg)
 	}
 	app := &App{
-		Name:              name,
-		Path:              fullPath,
-		Services:          make(map[string]*service.Service),
-		Databases:         make(map[string]datastores.DatabaseInstance),
-		Packages:          make(map[string]*types.Package),
-		BlueprintPackages: make(map[string]*types.Package),
-		PersistedVariables: make(map[string][]types.Variable),
+		Name:               name,
+		Path:               fullPath,
+		Services:           make(map[string]*service.Service),
+		Databases:          make(map[string]datastores.DatabaseInstance),
+		Packages:           make(map[string]*types.Package),
+		BlueprintPackages:  make(map[string]*types.Package),
+		PersistedVariables: make(map[string][]variables.Variable),
 	}
 	logger.Logger.Infof("[APP] initialized app at %s", app.Path)
 	return app, nil

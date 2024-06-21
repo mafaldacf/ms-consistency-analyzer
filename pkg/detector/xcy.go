@@ -10,7 +10,7 @@ import (
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
-	"analyzer/pkg/types"
+	"analyzer/pkg/types/variables"
 )
 
 type Parameters interface {
@@ -18,33 +18,33 @@ type Parameters interface {
 }
 type KeyValue struct {
 	Parameters
-	Key   types.Variable
-	Value types.Variable
+	Key   variables.Variable
+	Value variables.Variable
 }
 
 func (kv *KeyValue) String() string {
 	return fmt.Sprintf("KV { key: %s (#%d), value: %s (#%d) }",
-		kv.Key.GetVariableInfo().GetName(), kv.Key.GetVariableInfo().GetId(),
-		kv.Value.GetVariableInfo().GetName(), kv.Value.GetVariableInfo().GetId(),
+		kv.Key.GetVariableInfo().GetName(), kv.Key.GetId(),
+		kv.Value.GetVariableInfo().GetName(), kv.Value.GetId(),
 	)
 }
 
 type Message struct {
 	Parameters
-	Message types.Variable
+	Message variables.Variable
 }
 
 func (m *Message) String() string {
 	return fmt.Sprintf("MSG { message: %s (#%d) }",
-		m.Message.GetVariableInfo().GetName(), m.Message.GetVariableInfo().GetId(),
+		m.Message.GetVariableInfo().GetName(), m.Message.GetId(),
 	)
 }
 
 type Operation struct {
 	Service  string
 	Method   string
-	Key      types.Variable
-	Object   types.Variable
+	Key      variables.Variable
+	Object   variables.Variable
 	Database datastores.DatabaseInstance
 }
 
@@ -58,8 +58,8 @@ func (op *Operation) MarshalJSON() ([]byte, error) {
 	}{
 		Service:  op.Service,
 		Method:   op.Method,
-		Key:      fmt.Sprintf("%s (#%d)", op.Key.GetVariableInfo().GetName(), op.Key.GetVariableInfo().GetId()),
-		Object:   fmt.Sprintf("%s (#%d)", op.Object.GetVariableInfo().GetName(), op.Object.GetVariableInfo().GetId()),
+		Key:      fmt.Sprintf("%s (#%d)", op.Key.GetVariableInfo().GetName(), op.Key.GetId()),
+		Object:   fmt.Sprintf("%s (#%d)", op.Object.GetVariableInfo().GetName(), op.Object.GetId()),
 		Database: op.Database.GetName(),
 	})
 }
@@ -75,9 +75,9 @@ func (op *Operation) String() string {
 		op.Service,
 		op.Database.GetName(),
 		op.Key.GetVariableInfo().GetName(),
-		op.Key.GetVariableInfo().GetId(),
+		op.Key.GetId(),
 		op.Object.GetVariableInfo().GetName(),
-		op.Object.GetVariableInfo().GetId(),
+		op.Object.GetId(),
 	)
 }
 
@@ -103,7 +103,7 @@ func InitRequest(entryNode abstractgraph.AbstractNode) *Request {
 	}
 }
 
-func createOperation(key types.Variable, object types.Variable, call *abstractgraph.AbstractDatabaseCall) *Operation {
+func createOperation(key variables.Variable, object variables.Variable, call *abstractgraph.AbstractDatabaseCall) *Operation {
 	return &Operation{
 		Key:      key,
 		Object:   object,
@@ -129,9 +129,9 @@ func (request *Request) saveReadOperation(call *abstractgraph.AbstractDatabaseCa
 	keyIndex := backend.GetReadKeyIndex()
 	objIndex := backend.GetReadObjectIndex()
 
-	var object types.Variable
+	var object variables.Variable
 	key := call.GetParam(keyIndex)
-	
+
 	if objIndex >= 0 {
 		object = call.GetParam(objIndex)
 	} else {
@@ -176,7 +176,7 @@ func (request *Request) captureInconsistency(read *Operation, readCall *abstract
 			write.Database.GetName(),
 		)
 		if readCall.DbInstance == write.Database {
-			if types.ContainsMatchingDependencies(read.Key, write.Object) {
+			if variables.ContainsMatchingDependencies(read.Key, write.Object) {
 				request.addInconsistency(write, read)
 			}
 		}

@@ -5,10 +5,10 @@ UploadService.UploadPost(ctx context.Context, username string, text string):
   - text string (BasicVariable BasicType) ----> (TAINTED @ POST_CACHE.Post.Text)
   - reqID int64 (BasicVariable BasicType) ----> (TAINTED @ POST_CACHE.Post.ReqID)
   - timestamp int64 (BasicVariable BasicType) ----> (TAINTED @ POST_CACHE.Post.Timestamp)
-  - ' int64 (BasicVariable BasicType)'
+  - int64 (BasicVariable BasicType)
   - post postnotification.Post struct (StructVariable UserType) ----> (TAINTED @ POST_CACHE.Post)
-  - ' string (CompositeVariable BasicType)'
-  - ' string (CompositeVariable BasicType)'
+  - string (CompositeVariable BasicType)
+  - string (CompositeVariable BasicType)
   - message postnotification.Message struct (StructVariable UserType)
   - _ err (BasicVariable BasicType)
   - err interface{} (InterfaceVariable InterfaceType)
@@ -20,10 +20,10 @@ UploadService.UploadPost(ctx context.Context, username string, text string):
   - text string (BasicVariable BasicType) ----> (TAINTED @ POST_CACHE.Post.Text)
   - reqID int64 (BasicVariable BasicType) ----> (TAINTED @ POST_CACHE.Post.ReqID)
   - timestamp int64 (BasicVariable BasicType) ----> (TAINTED @ POST_CACHE.Post.Timestamp)
-  - ' int64 (BasicVariable BasicType)'
+  - int64 (BasicVariable BasicType)
   - post postnotification.Post struct (StructVariable UserType) ----> (TAINTED @ POST_CACHE.Post)
-  - ' string (CompositeVariable BasicType)'
-  - ' string (CompositeVariable BasicType)'
+  - string (CompositeVariable BasicType)
+  - string (CompositeVariable BasicType)
   - message postnotification.Message struct (StructVariable UserType)
   - _ err (BasicVariable BasicType)
   - err interface{} (InterfaceVariable InterfaceType)
@@ -35,10 +35,10 @@ UploadService.UploadPost(ctx context.Context, username string, text string):
   - text string (BasicVariable BasicType) ----> (TAINTED @ POST_CACHE.Post.Text)
   - reqID int64 (BasicVariable BasicType) ----> (TAINTED @ POST_CACHE.Post.ReqID)
   - timestamp int64 (BasicVariable BasicType) ----> (TAINTED @ POST_CACHE.Post.Timestamp)
-  - ' int64 (BasicVariable BasicType)'
+  - int64 (BasicVariable BasicType)
   - post postnotification.Post struct (StructVariable UserType) ----> (TAINTED @ POST_CACHE.Post)
-  - ' string (CompositeVariable BasicType)'
-  - ' string (CompositeVariable BasicType)'
+  - string (CompositeVariable BasicType)
+  - string (CompositeVariable BasicType)
   - message postnotification.Message struct (StructVariable UserType)
   - _ err (BasicVariable BasicType)
   - err interface{} (InterfaceVariable InterfaceType)
