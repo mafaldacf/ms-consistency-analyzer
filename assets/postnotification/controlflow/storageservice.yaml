@@ -4,6 +4,7 @@ StorageService.ReadPost(ctx context.Context, reqID int64, postID int64):
   - reqID int64 (BasicVariable BasicType)
   - postID int64 (BasicVariable BasicType)
   - post struct (StructVariable StructType)
+  - string (CompositeVariable BasicType)
   - postIDStr string (CompositeVariable BasicType)
   - _ err (BasicVariable BasicType)
   - err interface{} (InterfaceVariable InterfaceType)
@@ -14,6 +15,7 @@ StorageService.ReadPost(ctx context.Context, reqID int64, postID int64):
   - reqID int64 (BasicVariable BasicType)
   - postID int64 (BasicVariable BasicType)
   - post struct (StructVariable StructType)
+  - string (CompositeVariable BasicType)
   - postIDStr string (CompositeVariable BasicType)
   - _ err (BasicVariable BasicType)
   - err interface{} (InterfaceVariable InterfaceType)
@@ -24,6 +26,7 @@ StorageService.ReadPost(ctx context.Context, reqID int64, postID int64):
   - reqID int64 (BasicVariable BasicType)
   - postID int64 (BasicVariable BasicType)
   - post struct (StructVariable StructType)
+  - string (CompositeVariable BasicType)
   - postIDStr string (CompositeVariable BasicType)
   - _ err (BasicVariable BasicType)
   - err interface{} (InterfaceVariable InterfaceType)
@@ -165,6 +168,7 @@ StorageService.StorePost(ctx context.Context, reqID int64, post postnotification
   - ctx context.Context (GenericVariable UserType)
   - reqID int64 (BasicVariable BasicType)
   - post postnotification.Post struct (StructVariable UserType) ----> (TAINTED @ POST_CACHE.Post)
+  - string (CompositeVariable BasicType)
   - postIDStr string (CompositeVariable BasicType)
   block 1 (Unreachable): []
 StorageService.StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct):

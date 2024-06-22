@@ -2,6 +2,7 @@ package controlflow
 
 import (
 	"go/ast"
+	golangtypes "go/types"
 
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
@@ -61,7 +62,7 @@ func parseExpressions(service *service.Service, method *types.ParsedMethod, bloc
 		}
 		t := service.File.ComputeTypeForAstExpr(e.Type)
 		for _, ident := range e.Names {
-			decl := CreateVariableFromType(service, ident.Name, t)
+			decl := CreateVariableFromType(ident.Name, t)
 			block.AddVariable(decl)
 		}
 	case *ast.AssignStmt:
@@ -255,62 +256,104 @@ func getAllSelectorIdents(expr ast.Expr) []*ast.Ident {
 //   - (b) select variable in block to call
 //   - (c) call to field (method receiver, service field, etc)
 //   - (d) something from an imported package
-func TODO_parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr) (types.Call, bool) {
+func TODO_parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr) (types.Call, *variables.TupleVariable, bool) {
 	allIdents := getAllSelectorIdents(callExpr.Fun)
 	leftIdent := allIdents[0]
 	funcName := allIdents[len(allIdents)-1]
 
+	tupleType := &gotypes.TupleType{}
+	tupleVar := &variables.TupleVariable{
+		VariableInfo: &variables.VariableInfo{
+			Type: tupleType,
+			Id:   variables.VARIABLE_INLINE_ID,
+		},
+	}
+
 	// (a) call to method in current package
-	if method := service.File.Package.GetParsedMethodIfExists(funcName.Name, ""); method != nil {
-		logger.Logger.Debugf("[TODO] found method call %s", method.String())
-		return nil, false
+	if method := service.GetPackage().GetParsedMethodIfExists(funcName.Name, ""); method != nil {
+		logger.Logger.Infof("[TODO 1] found method call %s", method.String())
+		return nil, nil, false
 	}
 	// (b) call to variable in block
 	if variable := block.GetLastestVariable(leftIdent.Name); variable != nil {
-		logger.Logger.Debugf("[TODO] found call %v to variable %s in block", callExpr.Fun, variable.String())
-		return nil, false
+		logger.Logger.Infof("[TODO 2] found call to variable %s in block: %v", variable.String(), callExpr.Fun)
+		return nil, nil, false
 	}
 	// (c1) call to method receiver field
 	if leftIdent.Name == method.Recv.Name {
-		logger.Logger.Debugf("[TODO] found call %v to method receiver field %s", callExpr.Fun, method.Recv.Name)
-		return nil, false
+		logger.Logger.Infof("[TODO 3] found call to method receiver field %s: %v", method.Recv.Name, callExpr.Fun)
+		return nil, nil, false
 	}
 
 	// (c2) other fields...
 
 	// (d) call to method in imported package
 	if impt, ok := service.File.Imports[leftIdent.Name]; ok {
-		if pkg := service.File.Package.GetImportedPackage(impt.PackagePath); pkg != nil {
-			if pkg.Type == types.EXTERNAL {
-				logger.Logger.Debugf("[TODO] found imported method call %v from external package %s", callExpr.Fun, pkg.PackagePath)
-				return nil, false
-			}
-			if pkg.Type == types.BLUEPRINT {
-				logger.Logger.Debugf("[TODO] found imported method call %v from blueprint package %s", callExpr.Fun, pkg.PackagePath)
-				return nil, false
-			}
-			if pkg.Type == types.APP {
-				logger.Logger.Debugf("[TODO] found imported method call %v from app package %s", callExpr.Fun, pkg.PackagePath)
-				return nil, false
+		if pkg := service.GetPackage().GetImportedPackage(impt.PackagePath); pkg != nil {
+			switch pkg.Type {
+			case types.EXTERNAL, types.APP: // FIXME: calls within app should actually be parsed
+				logger.Logger.Infof("[TODO 4] found imported method call from internal or external package %s: %v", pkg.PackagePath, callExpr.Fun)
+				if signatureGoType, ok := service.GetPackage().GetTypeInfo(callExpr.Fun).(*golangtypes.Signature); ok {
+					var deps []variables.Variable
+					for _, expr := range callExpr.Args {
+						if v := lookupVariableFromAstExpr(service, method, block, expr, false); v != nil {
+							deps = append(deps, v)
+						}
+					}
+					newType := service.GetPackage().ComputeTypesForGoTypes(signatureGoType.Results())
+					for _, t := range newType.(*gotypes.TupleType).Types {
+						newVar := CreateVariableFromType("", t)
+						if deps == nil {
+							tupleVar.Variables = append(tupleVar.Variables, newVar)
+							tupleType.Types = append(tupleType.Types, newVar.GetType())
+							block.AddVariable(newVar)
+						} else {
+							compositeVar := &variables.CompositeVariable{
+								VariableInfo: &variables.VariableInfo{
+									Type: newVar.GetType(),
+									Id:   variables.VARIABLE_UNASSIGNED_ID,
+								},
+								Params: deps,
+							}
+							tupleVar.Variables = append(tupleVar.Variables, compositeVar)
+							block.AddVariable(compositeVar)
+						}
+					}
+					return nil, tupleVar, true
+				}
+				logger.Logger.Fatalf("unexpected type for imported method call %v from external package %s", callExpr.Fun, pkg.PackagePath)
+				return nil, nil, false
+			case types.BLUEPRINT:
+				// ignore direct calls to blueprint package
+				// we only care about backend calls to functions of well-defined interfaces (cache, queue, nosqldatabase)
+				return nil, nil, false
 			}
 		}
 	}
-	return nil, false
+	logger.Logger.Fatalf("[TODO] unexpected call: %v", callExpr.Fun)
+	return nil, nil, false
 }
 
-func parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr) (types.Call, []variables.Variable, bool) {
+func parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr) (types.Call, *variables.TupleVariable, []variables.Variable, bool) {
 	funcCall, methodIdent, fieldIdent, serviceRecvIdent, variable, ok := getCallIfSelectedField(callExpr, method.Recv, block)
 	if !ok {
-		// return TODO_parseAndSaveCallIfValid(service, method, block, callExpr)
-		var vs []variables.Variable
-		for _, expr := range callExpr.Args {
-			logger.Logger.Infof("inside !ok in parseAndSaveCallIfValid")
-			if v := lookupVariableFromAstExpr(service, method, block, expr, false); v != nil {
-				vs = append(vs, v)
+		parsedCall, variable, ok := TODO_parseAndSaveCallIfValid(service, method, block, callExpr)
+		if parsedCall == nil || variable == nil {
+			logger.Logger.Warnf("[CFG] cannot save call %v", callExpr.Fun)
+			var vs []variables.Variable
+			for _, expr := range callExpr.Args {
+				logger.Logger.Infof("inside !ok in parseAndSaveCallIfValid")
+				if v := lookupVariableFromAstExpr(service, method, block, expr, false); v != nil {
+					vs = append(vs, v)
+				}
 			}
+			return nil, nil, vs, false
 		}
-		return nil, vs, false
+
+		logger.Logger.Infof("[CFG] found and parsed call %v with return %s", callExpr.Fun, variable.LongString())
+		return parsedCall, variable, nil, ok
 	}
+	logger.Logger.Infof("[CFG] found and parsed call %v (method ident = %v, field ident = %v, service rcv ident = %v, variable = %v)", funcCall.Fun, methodIdent, fieldIdent, serviceRecvIdent, variable)
 	if fieldIdent != nil {
 		// if the targeted variable corresponds to a service field
 		if field, ok := service.Fields[fieldIdent.Name]; ok {
@@ -338,7 +381,7 @@ func parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMetho
 				saveFuncCallParams(service, method, block, parsedCall, callExpr.Args)
 				method.Calls = append(method.Calls, parsedCall)
 				logger.Logger.Infof("[CFG] found new service call %s @ %s", parsedCall.Name, method.Name)
-				return parsedCall, nil, true
+				return parsedCall, nil, nil, true
 			} else if databaseField, ok := field.(*types.DatabaseField); ok {
 				// if the field corresponds to a database field
 				// 1. extract the service field from the current service
@@ -372,7 +415,7 @@ func parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMetho
 					method.Calls = append(method.Calls, parsedCall)
 					logger.Logger.Infof("[CFG] found new database call %s", parsedCall.Name)
 				}
-				return parsedCall, nil, true
+				return parsedCall, nil, nil, true
 			} else {
 				logger.Logger.Fatalf("[CFG] unknown call %v for field %s with type %s", callExpr.Fun, field.String(), utils.GetType(field))
 			}
@@ -404,7 +447,7 @@ func parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMetho
 				saveFuncCallParams(service, method, block, parsedCall, callExpr.Args)
 				method.Calls = append(method.Calls, parsedCall)
 				logger.Logger.Infof("[CFG] found new database call %s", parsedCall.Method.String())
-				return parsedCall, nil, true
+				return parsedCall, nil, nil, true
 			}
 		}
 	}
@@ -422,9 +465,9 @@ func parseAndSaveCallIfValid(service *service.Service, method *types.ParsedMetho
 		saveFuncCallParams(service, method, block, parsedCall, callExpr.Args)
 		method.Calls = append(method.Calls, parsedCall)
 		logger.Logger.Infof("[CFG] found new internal call %s", parsedCall.Name)
-		return parsedCall, nil, true
+		return parsedCall, nil, nil, true
 	}
 
 	logger.Logger.Warnf("[CFG] cannot save unknown call %v", callExpr.Fun)
-	return nil, nil, false
+	return nil, nil, nil, false
 }

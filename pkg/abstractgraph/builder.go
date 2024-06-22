@@ -110,7 +110,7 @@ func (graph *AbstractGraph) createDummyAbstractServiceCall(node *service.Service
 		Method: method.String(),
 	}
 	for _, p := range method.GetParams() {
-		v := controlflow.CreateVariableFromType(node, p.GetName(), p.GetType())
+		v := controlflow.CreateVariableFromType(p.GetName(), p.GetType())
 		call.ParsedCall.Params = append(call.ParsedCall.Params, v)
 		logger.Logger.Debugf("created variable %s (%s)", v.String(), utils.GetType(v))
 	}
