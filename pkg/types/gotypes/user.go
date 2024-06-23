@@ -11,6 +11,10 @@ type UserType struct {
 	Name     string
 }
 
+func (t *UserType) IsSameType(other Type) bool {
+	_, ok := other.(*UserType)
+	return ok
+}
 func (t *UserType) String() string {
 	if t.UserType != nil {
 		return fmt.Sprintf("%s.%s %s", packageAlias(t.Package), t.Name, t.UserType.String())
@@ -25,6 +29,9 @@ func (t *UserType) LongString() string {
 }
 func (t *UserType) GetName() string {
 	return t.Name
+}
+func (t *UserType) GetLongName() string {
+	return t.Package + "." + t.Name
 }
 func (t *UserType) GetPackage() string {
 	return t.Package

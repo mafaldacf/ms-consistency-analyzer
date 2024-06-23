@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	"analyzer/pkg/app"
-	"analyzer/pkg/controlflow"
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
+	"analyzer/pkg/lookup"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
 	"analyzer/pkg/types/gotypes"
@@ -29,7 +29,7 @@ func Build(app *app.App, frontends []string) *AbstractGraph {
 	}
 	for _, frontend := range frontends {
 		service := app.Services[frontend]
-		for _, method := range service.ExposedMethods {
+		for _, method := range service.ExportedMethods {
 			graph.initBuild(app, app.Services[frontend], method)
 		}
 	}
@@ -55,7 +55,7 @@ func (graph *AbstractGraph) matchIdentifiers(node AbstractNode) {
 	if node.IsVisited() {
 		return
 	}
-	logger.Logger.Debugf("matching identifiers for node %s (params = %v)", node.String(), node.GetParams())
+	logger.Logger.Tracef("matching identifiers for node %s (params = %v)", node.String(), node.GetParams())
 	node.SetVisited(true)
 	/* graph.referenceCallerServiceParamss(node) */
 	/* graph.matchQueuePublishersToReceiversParams(node) */
@@ -100,9 +100,9 @@ func (graph *AbstractGraph) createDummyAbstractServiceCall(node *service.Service
 	call := AbstractServiceCall{
 		ParsedCall: &types.ParsedServiceCall{
 			ParsedCall: types.ParsedCall{
-				TargetField: node.Name,
-				Name:        method.Name,
-				Method:      method,
+				Name:    method.Name,
+				CallStr: node.Name,
+				Method:  method,
 			},
 		},
 		Caller: callerStr,
@@ -110,9 +110,9 @@ func (graph *AbstractGraph) createDummyAbstractServiceCall(node *service.Service
 		Method: method.String(),
 	}
 	for _, p := range method.GetParams() {
-		v := controlflow.CreateVariableFromType(p.GetName(), p.GetType())
+		v := lookup.CreateVariableFromType(p.GetName(), p.GetType())
 		call.ParsedCall.Params = append(call.ParsedCall.Params, v)
-		logger.Logger.Debugf("created variable %s (%s)", v.String(), utils.GetType(v))
+		logger.Logger.Debugf("[GRAPH - DUMMY] created variable %s (%s)", v.String(), utils.GetType(v))
 	}
 	call.Params = call.ParsedCall.Params
 	return call
@@ -141,17 +141,17 @@ func (graph *AbstractGraph) recurseBuild(app *app.App, abstractNode AbstractNode
 
 	switch node := abstractNode.(type) {
 	case *AbstractServiceCall:
-		targetMethod := graph.Services[node.Callee].GetExposedMethod(node.ParsedCall.Name)
-		logger.Logger.Debugf("[GRAPH] visiting abstract service call (%d calls): %s", len(targetMethod.Calls), node.String())
+		targetMethod := graph.Services[node.Callee].GetExportedMethod(node.ParsedCall.Name)
+		logger.Logger.Tracef("[GRAPH] visiting abstract service call (%d calls): %s", len(targetMethod.Calls), node.String())
 		graph.appendAbstractEdges(node, node, targetMethod)
 	case *AbstractDatabaseCall:
 		if node.ParsedCall.Method.IsQueueWrite() {
-			logger.Logger.Debugf("[GRAPH] visiting abstract database call: %s", node.String())
+			logger.Logger.Tracef("[GRAPH] visiting abstract database call: %s", node.String())
 			graph.appendPublisherQueueHandlers(app, node)
 		}
 	case *AbstractQueueHandler:
 		targetMethod := graph.Services[node.Callee].GetQueueHandlerMethod(node.ParsedCall.Name)
-		logger.Logger.Debugf("[GRAPH] visiting abstract queue handler (%d calls): %s", len(targetMethod.Calls), node.String())
+		logger.Logger.Tracef("[GRAPH] visiting abstract queue handler (%d calls): %s", len(targetMethod.Calls), node.String())
 		graph.appendAbstractEdges(node, node, targetMethod)
 	default:
 		logger.Logger.Fatalf("Error recursing build for %s\nUnknown node type: %s", node, utils.GetType(node))
@@ -315,7 +315,7 @@ func (graph *AbstractGraph) referenceServiceCallerParams(parent AbstractNode, ca
 
 	for _, childParam := range child.GetParams() {
 		deps := getDependencies(false, childParam)
-		logger.Logger.Infof("\t\t[REF] %s: referencing %v (deps = %v)", child.GetName(), childParam, deps)
+		logger.Logger.Tracef("\t\t[REF] %s: referencing %v (deps = %v)", child.GetName(), childParam, deps)
 		/* callArg := child.GetParsedCall().GetArgument(i)
 
 		if callArg.GetVariableInfo().IsUnassigned() {

@@ -169,7 +169,7 @@ func (request *Request) captureInconsistency(read *Operation, readCall *abstract
 	// iterate in reverse
 	for i := len(request.Writes) - 1; i >= 0; i-- {
 		write := request.Writes[i]
-		logger.Logger.Debugf("evaluating XCY violation for read (%s @ %s) and write (%s @ %s)",
+		logger.Logger.Tracef("[XCY] evaluating XCY violation for read (%s @ %s) and write (%s @ %s)",
 			read.Key.GetVariableInfo().Name,
 			readCall.DbInstance.GetName(),
 			write.Key.GetVariableInfo().Name,

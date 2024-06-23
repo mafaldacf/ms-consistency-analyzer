@@ -4,12 +4,10 @@ import (
 	"go/ast"
 	golangtypes "go/types"
 	"slices"
-	"sort"
 
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
 	"analyzer/pkg/types/variables"
-	"analyzer/pkg/utils"
 )
 
 type PackageType int
@@ -39,6 +37,7 @@ type Package struct {
 	DeclaredVariables map[string]variables.Variable
 	DeclaredTypes     map[string]gotypes.Type
 	ServiceTypes      map[string]*gotypes.ServiceType
+	ParsedMethods     []*ParsedMethod
 
 	// contains blueprint backend types for datastores
 	// key: type_name (e.g. Cache, Queue, etc)
@@ -47,18 +46,26 @@ type Package struct {
 	// contains all imported types, including blueprint backend types for datastores
 	// key: package_path.type_name, where package_path is the real package name
 	ImportedTypes map[string]gotypes.Type
-
-	ParsedMethods []*ParsedMethod
 }
 
 func (p *Package) IsAppPackage() bool {
 	return p.Type == APP
 }
 
+func (p *Package) GetName() string {
+	return p.Name
+}
+
+func (p *Package) AddParsedMethod(method *ParsedMethod) {
+	p.ParsedMethods = append(p.ParsedMethods, method)
+}
+
 func (p *Package) GetParsedMethodIfExists(methodName string, recvTypeName string) *ParsedMethod {
 	for _, m := range p.ParsedMethods {
-		if m.Name == methodName && m.Recv.Type != nil && m.Recv.Type.GetName() == recvTypeName {
-			return m
+		if m.Name == methodName {
+			if m.Receiver.GetType() == nil || m.Receiver.GetType().GetName() == recvTypeName {
+				return m
+			}
 		}
 	}
 	return nil
@@ -110,7 +117,7 @@ func (p *Package) GetFile(filepath string) *File {
 	return nil
 }
 
-func importedTypeKey(packagePath string, typeName string) string {
+func ImportedTypeKey(packagePath string, typeName string) string {
 	return packagePath + "." + typeName
 }
 
@@ -122,7 +129,7 @@ func (p *Package) AddDeclaredType(e gotypes.Type) {
 }
 
 func (p *Package) AddImportedType(e gotypes.Type) {
-	key := importedTypeKey(e.GetPackage(), e.GetName())
+	key := ImportedTypeKey(e.GetPackage(), e.GetName())
 	if _, exists := p.ImportedTypes[key]; exists {
 		logger.Logger.Fatalf("package %s already constains imported type %s", p.Name, e.String())
 	}
@@ -160,105 +167,27 @@ func (p *Package) GetImportedTypeFromPath(fullPath string) (gotypes.Type, bool) 
 }
 
 func (p *Package) GetImportedType(packagePath string, typeName string) (gotypes.Type, bool) {
-	key := importedTypeKey(packagePath, typeName)
+	key := ImportedTypeKey(packagePath, typeName)
 	if e, ok := p.ImportedTypes[key]; ok {
 		return e, true
 	}
-	logger.Logger.Fatalf("unknown imported package %s in package %s", key, p.Name)
+	logger.Logger.Fatalf("[PACKAGE] unknown imported package %s in package %s", key, p.Name)
 	return nil, false
 }
 
 func (p *Package) GetNamedType(name string) (gotypes.Type, bool) {
-	if e, ok := p.DeclaredTypes[name]; ok {
-		return e, true
-	}
 	if e, ok := p.ServiceTypes[name]; ok {
+		logger.Logger.Tracef("[PACKAGE] found service type for %s", name)
 		return e, true
 	}
 	if e, ok := p.DatastoreTypes[name]; ok {
+		logger.Logger.Tracef("[PACKAGE] found datastore type for %s", name)
+		return e, true
+	}
+	if e, ok := p.DeclaredTypes[name]; ok {
+		logger.Logger.Tracef("[PACKAGE] found declared type for %s", name)
 		return e, true
 	}
 	logger.Logger.Fatalf("unknown named type %s in package %s", name, p.Name)
 	return nil, false
-}
-
-// ------------------------
-// -------- DUMPERS -------
-// ------------------------
-
-// for blueprint packages
-func (p *Package) DumpShortYaml() utils.OrderedProperties {
-	propsData := utils.NewOrderedPropertyList()
-
-	// metadata
-	propsMetadata := utils.NewOrderedPropertyList()
-	propsMetadata.AddOrderedProperty("package", p.Name)
-	propsMetadata.AddOrderedProperty("package path", p.PackagePath)
-	propsMetadata.AddOrderedProperty("module", p.Module)
-	// save metadata
-	propsData.AddOrderedProperty("metadata", propsMetadata.Result())
-
-	// declared types
-	declaredTypes := []string{}
-	for _, e := range p.DeclaredTypes {
-		declaredTypes = append(declaredTypes, e.LongString())
-	}
-	sort.Strings(declaredTypes)
-	propsData.AddOrderedProperty("declared types", declaredTypes)
-
-	// save final data
-	return propsData.Result()
-}
-
-func (p *Package) DumpYaml() utils.OrderedProperties {
-	propsData := utils.NewOrderedPropertyList()
-
-	// metadata
-	propsMetadata := utils.NewOrderedPropertyList()
-	propsMetadata.AddOrderedProperty("package", p.Name)
-	propsMetadata.AddOrderedProperty("package path", p.PackagePath)
-	propsMetadata.AddOrderedProperty("module", p.Module)
-	// metadata > files
-	files := []string{}
-	for _, f := range p.Files {
-		files = append(files, f.String())
-	}
-	sort.Strings(files)
-	propsMetadata.AddOrderedProperty("files", files)
-	// metadata > imports
-	imports := []string{}
-	for key := range p.ImportedPackages {
-		imports = append(imports, key)
-	}
-	sort.Strings(imports)
-	propsMetadata.AddOrderedProperty("imports", imports)
-	// save metadata
-	propsData.AddOrderedProperty("metadata", propsMetadata.Result())
-
-	// imported types
-	importedTypes := []string{}
-	for _, e := range p.ImportedTypes {
-		importedTypes = append(importedTypes, e.LongString())
-	}
-	sort.Strings(importedTypes)
-	propsData.AddOrderedProperty("imported types", importedTypes)
-
-	// declared types
-	declaredTypes := []string{}
-	for _, e := range p.DeclaredTypes {
-		declaredTypes = append(declaredTypes, e.LongString())
-	}
-	sort.Strings(declaredTypes)
-	propsData.AddOrderedProperty("declared types", declaredTypes)
-
-	// declared variables
-	declaredVariables := []string{}
-	for _, v := range p.DeclaredVariables {
-		declaredVariables = append(declaredVariables, v.String())
-	}
-	sort.Strings(declaredVariables)
-	propsData.AddOrderedProperty("declared variables", declaredVariables)
-
-	// save final data
-	return propsData.Result()
 }

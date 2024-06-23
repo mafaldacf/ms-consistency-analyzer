@@ -18,12 +18,38 @@ func (v *MapVariable) String() string {
 	return v.VariableInfo.String()
 }
 
+func (v *MapVariable) GetKeyValueIfExists(targetKey Variable) Variable {
+	if !v.GetMapType().IsSameType(targetKey.GetType()) {
+		logger.Logger.Fatalf("[VARS MAP] provided key (%s) with type (%s) does not match expected type (%s)", targetKey.String(), utils.GetType(targetKey), utils.GetType(v.GetMapType().GetKeyType()))
+	}
+	switch t := targetKey.GetType().(type) {
+	case *gotypes.BasicType:
+		for key, value := range v.KeyValues {
+			if key.GetType().(*gotypes.BasicType).Value  == t.Value {
+				return value
+			}
+		}
+	default:
+		logger.Logger.Fatalf("unknown gotype (%s) for target key (%s)", utils.GetType(targetKey.GetType()), targetKey.String())
+	}
+	logger.Logger.Warnf("could not get or create key value pairs for target key (%s) in map (%v)", targetKey.String(), v.String())
+	return nil
+}
+
+func (v *MapVariable) AddKeyValue(key Variable, value Variable) {
+	v.KeyValues[key] = value
+}
+
 func (v *MapVariable) GetId() int64 {
 	return v.VariableInfo.GetId()
 }
 
 func (v *MapVariable) GetType() gotypes.Type {
 	return v.VariableInfo.GetType()
+}
+
+func (v *MapVariable) GetMapType() *gotypes.MapType {
+	return v.VariableInfo.GetType().(*gotypes.MapType)
 }
 
 func (v *MapVariable) GetVariableInfo() *VariableInfo {
@@ -87,10 +113,10 @@ func (v *MapVariable) AddReferenceWithID(target Variable, creator string) {
 			}
 		}
 	} else {
-		logger.Logger.Warnf("referenced variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
+		logger.Logger.Warnf("[VARS MAP] referenced variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
 	}
 
-	logger.Logger.Debugf("added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
+	logger.Logger.Debugf("[VARS MAP] added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
 }
 
 func (v *MapVariable) GetUnassaignedVariables() []Variable {

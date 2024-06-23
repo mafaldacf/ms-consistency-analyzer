@@ -102,7 +102,6 @@ func addDataflow(app *app.App, variable variables.Variable, call *AbstractDataba
 			}
 		}
 	}
-	//logger.Logger.Fatalf("EXITING")
 }
 
 func addForeignFields(variable variables.Variable, datastore *datastores.Datastore) {

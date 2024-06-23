@@ -6,6 +6,7 @@ type Type interface {
 	String() string
 	LongString() string
 	GetName() string
+	GetLongName() string
 	GetPackage() string // package is always the real package path
 	GetBasicValue() string
 	AddValue(value string)

@@ -11,6 +11,10 @@ type SignatureType struct {
 // Type Methods
 // ------------
 
+func (t *SignatureType) IsSameType(other Type) bool {
+	_, ok := other.(*SignatureType)
+	return ok
+}
 func (t *SignatureType) String() string {
 	if len(t.ReturnTypes) == 0 {
 		return ""

@@ -23,6 +23,10 @@ type FieldType struct {
 // Type Methods
 // ------------
 
+func (t *FieldType) IsSameType(other Type) bool {
+	_, ok := other.(*FieldType)
+	return ok
+}
 func (t *FieldType) String() string {
 	return t.SubType.String()
 }

@@ -24,6 +24,17 @@ func (df *Dataflow) String() string {
 	return fmt.Sprintf("indirect write <%s> by <%s> @ (%s, %s)", df.Variable.String(), df.IndirectSource.String(), df.Service, df.Datastore)
 }
 
+func (df *Dataflow) DeepCopy() *Dataflow {
+	return &Dataflow{
+		Datastore:      df.Datastore,
+		Service:        df.Service,
+		DirectWrite:    df.DirectWrite,
+		Variable:       df.Variable.DeepCopy(),
+		IndirectSource: df.Variable.DeepCopy(),
+		Field:          df.Field, //FIXME: deep copy
+	}
+}
+
 func (df *Dataflow) ShortString() string {
 	if df.DirectWrite {
 		return fmt.Sprintf("write <%s (%s)>", df.Variable.String(), utils.GetType(df.Variable))
@@ -63,7 +74,7 @@ func (v *VariableInfo) SetIndirectDataflow(datastore string, service string, cur
 		Field:          field,
 	}
 	current.GetVariableInfo().IndirectDataflows = append(current.GetVariableInfo().IndirectDataflows, df)
-	logger.Logger.Debugf("\t\t[INDIRECT DATAFLOW] %s", df.ShortString())
+	logger.Logger.Debugf("[VARS INFO] \t\t[INDIRECT DATAFLOW] %s", df.ShortString())
 	v.Dataflows = append(v.Dataflows, df)
 }
 

@@ -45,7 +45,7 @@ func (v *GenericVariable) AddReferenceWithID(target Variable, creator string) {
 	} else {
 		logger.Logger.Warnf("referenced variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
 	}
-	logger.Logger.Debugf("added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
+	logger.Logger.Tracef("[VARS GENERIC] added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
 }
 
 func (v *GenericVariable) DeepCopy() Variable {

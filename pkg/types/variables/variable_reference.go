@@ -28,6 +28,13 @@ func (ref *Reference) MarshalJSON() ([]byte, error) {
 	})
 }
 
+func (ref *Reference) DeepCopy() Variable {
+	return &Reference{
+		Variable: ref.Variable.DeepCopy(),
+		Creator:  ref.Creator,
+	}
+}
+
 func (ref *Reference) String() string {
 	if ref.Variable != nil {
 		return fmt.Sprintf("ref <%s> @ %s", ref.Variable.String(), ref.Creator)

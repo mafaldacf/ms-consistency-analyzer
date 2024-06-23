@@ -7,15 +7,20 @@ import (
 )
 
 type ServiceType struct {
-	Type    `json:"-"`
-	Package string
-	Name    string
+	Type       `json:"-"`
+	Package    string
+	Name       string
+	Methods    []string
 }
 
 // ------------
 // Type Methods
 // ------------
 
+func (t *ServiceType) IsSameType(other Type) bool {
+	_, ok := other.(*ServiceType)
+	return ok
+}
 func (t *ServiceType) String() string {
 	return fmt.Sprintf("%s.%s", packageAlias(t.Package), t.Name)
 }

@@ -5,7 +5,6 @@ import (
 	"go/ast"
 
 	"analyzer/pkg/datastores"
-	"analyzer/pkg/types/gotypes"
 )
 
 type Method interface {
@@ -17,27 +16,23 @@ type Method interface {
 	IsWrite() bool
 }
 
-type MethodReceiver struct {
-	Name string
-	//TODO: set name when creating ParsedMethod
-	Type gotypes.Type
-}
-
 type ParsedMethod struct {
 	Method
-	Ast       *ast.FuncDecl 	`json:"-"`
-	Name      string        	`json:"name"`
-	Recv      *MethodReceiver   `json:"-"`
-	Calls     []Call        	`json:"-"`
-	Service   string        	`json:"-"`
-	ParsedCfg *CFG          	`json:"-"`
-
+	Ast         *ast.FuncDecl                 `json:"-"`
+	Name        string                        `json:"name"`
+	FullName    string                        `json:"-"`
+	Calls       []Call                        `json:"-"`
+	Service     string                        `json:"-"`
+	Package     *Package                      `json:"-"`
+	ParsedCfg   *CFG                          `json:"-"`
 	DbInstances []datastores.DatabaseInstance `json:"-"`
+	Exported    bool                          `json:"-"`
 
 	// used to fetch the params when generating the basic cfg
 	// to store in the variables array of the function
-	Params  []*MethodField
-	Returns []*MethodField
+	Params   []*MethodField
+	Returns  []*MethodField
+	Receiver *MethodField `json:"-"`
 }
 
 func (f *ParsedMethod) Yaml() interface{} {
@@ -62,6 +57,22 @@ func (*ParsedMethod) IsQueueRead() bool {
 
 func (p *ParsedMethod) String() string {
 	repr := fmt.Sprintf("%s.%s(", p.Service, p.Name)
+	for i, arg := range p.Params {
+		repr += arg.String()
+		if i < len(p.Params)-1 {
+			repr += ", "
+		}
+	}
+	repr += ")"
+	return repr
+}
+
+func (p *ParsedMethod) LongString() string {
+	prefix := p.Package.Name
+	if p.Receiver != nil {
+		prefix = p.Receiver.GetTypeLongName()
+	}
+	repr := fmt.Sprintf("%s.%s(", prefix, p.Name)
 	for i, arg := range p.Params {
 		repr += arg.String()
 		if i < len(p.Params)-1 {

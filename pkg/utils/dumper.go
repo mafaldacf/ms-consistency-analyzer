@@ -45,7 +45,7 @@ func DumpToYamlFile(data interface{}, appname string, filename string) {
 		logger.Logger.Fatalf("error marshalling yaml data")
 	}
 
-	yamlStr := fixBraces(string(yamlData))
+	yamlStr := fixYamlStrings(string(yamlData))
 	path := fmt.Sprintf("assets/%s/%s.yaml", appname, filename)
 	err = os.WriteFile(path, []byte(yamlStr), 0644)
 	if err != nil {
@@ -57,74 +57,79 @@ func DumpToYamlFile(data interface{}, appname string, filename string) {
 // all of this still applies to nested braces
 // ensure there is always a space between an open brace and next char or a prev char and close brace
 // exception goes for when there is just "interface{}"", where we maintain the lack of space
-func fixBraces(yamlStr string) string {
+func fixYamlStrings(yamlStr string) string {
 	var sb strings.Builder
-	stack := []rune{}
-	inBraces := false
-	inEsc := false
-	inQuotes := false
+	inBraces := false   // { }
+	inAngles := false   // < >
+	inQuotes := false   // " " or ' '
+	inParentheses := false // ( )
 
 	for i, r := range yamlStr {
-		if r == '{' && !inQuotes {
-			inBraces = true
-			stack = append(stack, r)
-			
-			sb.WriteRune(r)
-			// ensure space after opening brace if next character is not a space, brace, or end of string
-			if i+1 < len(yamlStr) && !unicode.IsSpace(rune(yamlStr[i+1])) && yamlStr[i+1] != '{' && yamlStr[i+1] != '}' {
-				sb.WriteRune(' ')
-			}
-			continue
-		} else if r == '}' && !inQuotes {
-			if len(stack) > 0 {
-				stack = stack[:len(stack)-1]
-			}
-			if len(stack) == 0 {
-				inBraces = false
-			}
-			// ensure space before closing brace if previous character is not a space or opening brace
-			if sb.Len() > 0 && sb.String()[sb.Len()-1] != ' ' && sb.String()[sb.Len()-1] != '{' {
-				sb.WriteRune(' ')
-			}
-			sb.WriteRune(r)
-			continue
-		} else if r == '<' && !inEsc {
-			if len(stack) > 0 {
-				stack = stack[:len(stack)-1]
-			}
-			if len(stack) == 0 {
-				inBraces = false
-			}
-			sb.WriteRune(r)
-			continue
-		} else if r == '>' && !inEsc {
-			if len(stack) > 0 {
-				stack = stack[:len(stack)-1]
-			}
-			if len(stack) == 0 {
-				inBraces = false
-			}
-			sb.WriteRune(r)
-			continue
-		} else if r == '"' || r == '\'' {
-			if inQuotes {
-				if len(stack) > 0 && stack[len(stack)-1] == r {
-					inQuotes = false
-					stack = stack[:len(stack)-1]
+		if !inQuotes {
+			switch r {
+			// outside quotes: open braces
+			case '{':
+				inBraces = true
+				sb.WriteRune(r)
+				if i+1 < len(yamlStr) && !unicode.IsSpace(rune(yamlStr[i+1])) && yamlStr[i+1] != '{' && yamlStr[i+1] != '}' {
+					sb.WriteRune(' ')
 				}
-			} else {
+				continue
+			// outside quotes: close braces
+			case '}':
+				inBraces = false
+				if sb.Len() > 0 && sb.String()[sb.Len()-1] != ' ' && sb.String()[sb.Len()-1] != '{' {
+					sb.WriteRune(' ')
+				}
+				sb.WriteRune(r)
+				continue
+			// outside quotes: open angles
+			case '<':
+				inAngles = true
+				sb.WriteRune(r)
+				continue
+			// outside quotes: close angles
+			case '>':
+				inAngles = false
+				sb.WriteRune(r)
+				continue
+			// outside quotes: open parentheses
+			case '(':
+				inParentheses = true
+				sb.WriteRune(r)
+				continue
+			// outside quotes: close parentheses
+			case ')':
+				inParentheses = false
+				sb.WriteRune(r)
+				continue
+			// outside quotes: open quotes
+			case '"', '\'':
 				inQuotes = true
-				stack = append(stack, r)
+				sb.WriteRune(r)
+				continue
 			}
+		} else {
+			switch r {
+			// inside quotes: close quotes
+			case '"', '\'':
+				inQuotes = false
+			}
+			sb.WriteRune(r)
+			continue
 		}
 
-		if inBraces && r == '\n' {
-			// replace newlines inside braces with spaces
-			sb.WriteRune(' ')
-		} else if inBraces && unicode.IsSpace(r) {
-			// skip multiple spaces inside braces
-			if sb.Len() > 0 && sb.String()[sb.Len()-1] != ' ' {
+		if inBraces || inAngles || inParentheses {
+			if r == '\n' {
+				// replace newlines inside braces, angles, or parentheses with spaces
 				sb.WriteRune(' ')
+			} else if unicode.IsSpace(r) {
+				// skip multiple spaces inside braces, angles, or parentheses
+				if sb.Len() > 0 && sb.String()[sb.Len()-1] != ' ' {
+					sb.WriteRune(' ')
+				}
+			} else {
+				sb.WriteRune(r)
 			}
 		} else {
 			sb.WriteRune(r)

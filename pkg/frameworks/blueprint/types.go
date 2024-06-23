@@ -31,8 +31,8 @@ func IsNoSQLComponent(name string) bool {
 type NoSQLComponentType int
 
 const (
-	NoSQLCollection NoSQLComponentType = iota
-	NoSQLCursor
+	NoSQLCollectionType NoSQLComponentType = iota
+	NoSQLCursorType
 )
 
 type NoSQLComponent struct {
@@ -43,15 +43,19 @@ type NoSQLComponent struct {
 
 func (t *NoSQLComponent) String() string {
 	prefix := ""
-	if t.Type == NoSQLCollection {
+	if t.Type == NoSQLCollectionType {
 		prefix = "NoSQLCollection"
-	} else if t.Type == NoSQLCursor {
+	} else if t.Type == NoSQLCursorType {
 		prefix = "NoSQLCursor"
 	}
-	return fmt.Sprintf("%s {database: %s, collection: %s}", prefix, t.Database, t.Collection)
+	return fmt.Sprintf("%s {database = %s, collection = %s}", prefix, t.Database, t.Collection)
 }
 
-type BackendType struct {
+func (t *NoSQLComponent) LongString() string {
+	return t.String()
+}
+
+type BlueprintBackendType struct {
 	gotypes.Type   `json:"-"`
 	Name           string
 	Package        string
@@ -60,17 +64,26 @@ type BackendType struct {
 	NoSQLComponent *NoSQLComponent
 }
 
-func (t *BackendType) String() string {
+func (t *BlueprintBackendType) String() string {
 	if t.NoSQLComponent != nil {
 		return t.NoSQLComponent.String()
 	}
 	return t.Name
 }
-func (t *BackendType) LongString() string {
-	if len(t.Methods) == 0 {
-		return t.Name + " interface{}"
+
+func (t *BlueprintBackendType) LongString() string {
+	if t.NoSQLComponent != nil {
+		return t.NoSQLComponent.LongString()
 	}
-	s := t.Name + " interface{ "
+	instance := "<nil>"
+	if t.DbInstance != nil {
+		instance = t.DbInstance.GetName()
+	}
+	s := fmt.Sprintf("%s {instance = %s}", t.Name, instance)
+	if len(t.Methods) == 0 {
+		return s + " interface{}"
+	}
+	s += " interface{"
 	for i, m := range t.Methods {
 		s += m.String()
 		if i < len(t.Methods)-1 {
@@ -80,58 +93,58 @@ func (t *BackendType) LongString() string {
 	return s + "}"
 }
 
-func (t *BackendType) GetName() string {
+func (t *BlueprintBackendType) GetName() string {
 	return t.Name
 }
 
-func (t *BackendType) GetPackage() string {
+func (t *BlueprintBackendType) GetPackage() string {
 	return t.Package
 }
 
-func (t *BackendType) GetBasicValue() string {
-	logger.Logger.Fatalf("unable to get value for blueprint backend type type %s", t.String())
+func (t *BlueprintBackendType) GetBasicValue() string {
+	logger.Logger.Fatalf("[TYPES BLUEPRINT] unable to get value for blueprint backend type type %s", t.String())
 	return ""
 }
 
-func (t *BackendType) AddValue(value string) {
-	logger.Logger.Fatalf("unable to add value for blueprint backend type type %s", t.String())
+func (t *BlueprintBackendType) AddValue(value string) {
+	logger.Logger.Fatalf("[TYPES BLUEPRINT] unable to add value for blueprint backend type type %s", t.String())
 }
 
-func (t *BackendType) IsNoSQLComponent() bool {
+func (t *BlueprintBackendType) IsNoSQLComponent() bool {
 	return t.NoSQLComponent != nil
 }
 
-func (t *BackendType) IsNoSQLCollection() bool {
-	return t.NoSQLComponent.Type == NoSQLCollection
+func (t *BlueprintBackendType) IsNoSQLCollection() bool {
+	return t.NoSQLComponent != nil && t.NoSQLComponent.Type == NoSQLCollectionType
 }
 
-func (t *BackendType) IsNoSQLCursor() bool {
-	return t.NoSQLComponent.Type == NoSQLCursor
+func (t *BlueprintBackendType) IsNoSQLCursor() bool {
+	return t.NoSQLComponent != nil && t.NoSQLComponent.Type == NoSQLCursorType
 }
 
-func (t *BackendType) IsQueue() bool {
+func (t *BlueprintBackendType) IsQueue() bool {
 	return t.Name == "Queue"
 }
 
-func (t *BackendType) IsNoSQLDatabase() bool {
+func (t *BlueprintBackendType) IsNoSQLDatabase() bool {
 	return t.Name == "NoSQLDatabase"
 }
 
-func (t *BackendType) GetMethods() []*BackendMethod {
+func (t *BlueprintBackendType) GetMethods() []*BackendMethod {
 	return t.Methods
 }
 
-func (t *BackendType) GetNestedFieldTypes(prefix string) ([]gotypes.Type, []string) {
-	logger.Logger.Fatalf("unable to get nested types blueprint backend type type %s", t.String())
+func (t *BlueprintBackendType) GetNestedFieldTypes(prefix string) ([]gotypes.Type, []string) {
+	logger.Logger.Fatalf("[TYPES BLUEPRINT] unable to get nested types blueprint backend type type %s", t.String())
 	return nil, nil
 }
 
-func (t *BackendType) GetMethod(name string) *BackendMethod {
+func (t *BlueprintBackendType) GetMethod(name string) *BackendMethod {
 	for _, m := range t.Methods {
 		if m.Name == name {
 			return m
 		}
 	}
-	logger.Logger.Fatalf("could not find method %s for backend type %s", name, t.String())
+	logger.Logger.Fatalf("[TYPES BLUEPRINT] could not find method (%s) for backend type (%s) with methods (%v)", name, t.String(), t.Methods)
 	return nil
 }

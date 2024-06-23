@@ -16,6 +16,10 @@ func (v *AddressVariable) String() string {
 	return v.VariableInfo.String()
 }
 
+func (v *AddressVariable) LongString() string {
+	return v.VariableInfo.String() + " = " + "*" + v.AddressOf.LongString()
+}
+
 func (v *AddressVariable) GetId() int64 {
 	return v.VariableInfo.GetId()
 }

@@ -11,6 +11,10 @@ type ArrayType struct {
 // Type Methods
 // ------------
 
+func (t *ArrayType) IsSameType(other Type) bool {
+	_, ok := other.(*ArrayType)
+	return ok
+}
 func (t *ArrayType) String() string {
 	return "[]" + t.ElementsType.String()
 }

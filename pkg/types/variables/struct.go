@@ -1,6 +1,8 @@
 package variables
 
 import (
+	"fmt"
+
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
 	"analyzer/pkg/utils"
@@ -14,6 +16,27 @@ type StructVariable struct {
 
 func (v *StructVariable) String() string {
 	return v.VariableInfo.String()
+}
+
+func (v *StructVariable) LongString() string {
+	s := v.VariableInfo.LongString() + " = {"
+	i := len(v.Fields)
+	for name, f := range v.Fields {
+		s += fmt.Sprintf("%s: %s", name, f.LongString())
+		if i < len(v.Fields)-1 {
+			s += ", "
+		}
+		i++
+	}
+	return s + "}"
+}
+
+func (v *StructVariable) GetFieldVariables() map[string]*FieldVariable {
+	fields := make(map[string]*FieldVariable)
+	for n, f := range v.Fields {
+		fields[n] = f.(*FieldVariable)
+	}
+	return fields
 }
 
 func (v *StructVariable) GetId() int64 {
@@ -47,12 +70,24 @@ func (v *StructVariable) DeepCopy() Variable {
 	return copy
 }
 
+func (v *StructVariable) GetFieldVariableIfExists(name string) Variable {
+	if f, ok := v.Fields[name]; ok {
+		return f
+	}
+	logger.Logger.Warnf("[VARS STRUCT] unknown field (%s) for structure variable (%s)", name, v.LongString())
+	return nil
+}
+
+func (v *StructVariable) AddFieldVariable(name string, field Variable) {
+	v.Fields[name] = field
+}
+
 func (v *StructVariable) AddFieldVariableIfNotExists(name string, field Variable) bool {
 	if _, exists := v.Fields[name]; !exists {
 		v.Fields[name] = field
 		return true
 	} else {
-		logger.Logger.Warnf("field %s already exists in structure %s", name, v.String())
+		logger.Logger.Warnf("[VARS STRUCT] field (%s) already exists in structure (%s)", name, v.String())
 	}
 	return false
 }
@@ -66,22 +101,22 @@ func (v *StructVariable) GetStructType() *gotypes.StructType {
 }
 
 func (v *StructVariable) AddReferenceWithID(target Variable, creator string) {
-	logger.Logger.Warnf("referencing in struct variable %s for target %s", v.String(), target.String())
+	logger.Logger.Warnf("[VARS STRUCT] referencing in struct variable (%s) for target (%s)", v.String(), target.String())
 	v.VariableInfo.AddReferenceWithID(target, creator)
 	if targetStruct, ok := target.(*StructVariable); ok {
 		for name, field := range v.Fields {
 			targetField, ok := targetStruct.Fields[name]
 			if !ok {
-				logger.Logger.Warnf("invalid target field %s in struct fields: %v", name, targetStruct.Fields)
+				logger.Logger.Warnf("[VARS STRUCT] invalid target field (%s) in struct fields: %v", name, targetStruct.Fields)
 			} else {
 				field.AddReferenceWithID(targetField, creator)
 			}
 		}
 	} else {
-		logger.Logger.Warnf("referenced variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
+		logger.Logger.Warnf("[VARS STRUCT] referenced variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
 	}
 
-	logger.Logger.Debugf("added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
+	logger.Logger.Debugf("[VARS STRUCT] added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
 }
 
 func (v *StructVariable) GetUnassaignedVariables() []Variable {
@@ -99,14 +134,14 @@ func (t *StructVariable) GetNestedFieldVariables(prefix string) ([]Variable, []s
 	var nestedVariables []Variable
 	var nestedIDs []string
 
-	logger.Logger.Warnf("FOUND %d FIELDS FOR %s", len(t.Fields), t.String())
+	logger.Logger.Warnf("[VARS STRUCT] found (%d) fields for (%s)", len(t.Fields), t.String())
 	for _, f := range t.Fields {
 		if fieldVariable, ok := f.(*FieldVariable); ok {
 			nestedFieldVariables, nestedFieldIDs := fieldVariable.GetNestedFieldVariables(prefix)
 			nestedVariables = append(nestedVariables, nestedFieldVariables...)
 			nestedIDs = append(nestedIDs, nestedFieldIDs...)
 		} else {
-			logger.Logger.Fatalf("[FIXME] ignoring field variable %s (%s)", f.String(), GetVariableTypeAndTypeString(f))
+			logger.Logger.Fatalf("[VARS STRUCT] ignoring field variable (%s) for (%s)", f.String(), GetVariableTypeAndTypeString(f))
 		}
 	}
 	return nestedVariables, nestedIDs

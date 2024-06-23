@@ -20,7 +20,7 @@ type Service struct {
 	Databases map[string]datastores.DatabaseInstance
 	// safe because methods are unique since Golang does not allow overloading
 	// also this captures all exposed methods because they must be defined within the service struct file
-	ExposedMethods      map[string]*types.ParsedMethod
+	ExportedMethods     map[string]*types.ParsedMethod
 	QueueHandlerMethods map[string]*types.ParsedMethod
 	InternalMethods     map[string]*types.ParsedMethod
 	Constructor         *types.ParsedMethod
@@ -31,7 +31,7 @@ type Service struct {
 func (node *Service) Yaml() map[string]interface{} {
 	data := make(map[string]interface{})
 	// exposed methods
-	for _, method := range node.ExposedMethods {
+	for _, method := range node.ExportedMethods {
 		data[method.String()] = method.Yaml()
 	}
 	// queue handler methods
@@ -66,8 +66,8 @@ func (node *Service) GetQueueHandlersForDatabase(database datastores.DatabaseIns
 	return handlers
 }
 
-func (node *Service) GetExposedMethod(name string) *types.ParsedMethod {
-	return node.ExposedMethods[name]
+func (node *Service) GetExportedMethod(name string) *types.ParsedMethod {
+	return node.ExportedMethods[name]
 }
 
 func (node *Service) GetInternalMethod(name string) *types.ParsedMethod {

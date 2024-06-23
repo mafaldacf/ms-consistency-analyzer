@@ -55,9 +55,9 @@ func getDependenciesString(deps ...Variable) string {
 
 func ContainsMatchingDependencies(current Variable, target Variable) bool {
 	currentDeps := GetIndirectDependencies(current)
-	logger.Logger.Debugf("%s: got current dependencies: %v", getDependenciesString(current), getDependenciesString(currentDeps...))
+	logger.Logger.Debugf("[VAR] %s: got current dependencies: %v", getDependenciesString(current), getDependenciesString(currentDeps...))
 	targetDeps := GetIndirectDependencies(target)
-	logger.Logger.Debugf("%s: got target dependencies: %v", getDependenciesString(target), getDependenciesString(targetDeps...))
+	logger.Logger.Debugf("[VAR] %s: got target dependencies: %v", getDependenciesString(target), getDependenciesString(targetDeps...))
 
 	for _, d := range currentDeps {
 		if slices.Contains(targetDeps, d) {

@@ -11,6 +11,10 @@ type AddressType struct {
 // Type Methods
 // ------------
 
+func (t *AddressType) IsSameType(other Type) bool {
+	_, ok := other.(*AddressType)
+	return ok
+}
 func (t *AddressType) String() string {
 	return fmt.Sprintf("&%s", t.AddressOf.String())
 }
@@ -18,7 +22,10 @@ func (t *AddressType) LongString() string {
 	return fmt.Sprintf("&%s", t.AddressOf.LongString())
 }
 func (t *AddressType) GetName() string {
-	return t.String()
+	return "&" + t.AddressOf.GetName()
+}
+func (t *AddressType) GetLongName() string {
+	return "(*" + t.AddressOf.GetLongName() + ")"
 }
 func (t *AddressType) GetBasicValue() string {
 	return t.AddressOf.GetBasicValue()

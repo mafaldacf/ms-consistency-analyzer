@@ -25,14 +25,6 @@ func InitParsedCFG(cfg *cfg.CFG, fullMethod string) *CFG {
 	return parsedCfg
 }
 
-func (cfg *CFG) Yaml() map[string]interface{} {
-	data := make(map[string]interface{})
-	for _, block := range cfg.ParsedBlocks {
-		data[block.Block.String()] = block.Yaml()
-	}
-	return data
-}
-
 func (cfg *CFG) String() string {
 	str := fmt.Sprintf("%s: ", cfg.FullMethod)
 	for i, block := range cfg.ParsedBlocks {

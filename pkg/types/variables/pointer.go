@@ -16,6 +16,10 @@ func (v *PointerVariable) String() string {
 	return v.VariableInfo.String()
 }
 
+func (v *PointerVariable) LongString() string {
+	return v.VariableInfo.LongString() + " = " + "*" + v.PointerTo.LongString()
+}
+
 func (v *PointerVariable) GetId() int64 {
 	return v.VariableInfo.GetId()
 }

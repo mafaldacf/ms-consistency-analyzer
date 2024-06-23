@@ -23,13 +23,9 @@ type Call interface {
 }
 
 type ParsedCall struct {
-	Ast  *ast.CallExpr
-	Name string
-
-	// represents the name of the field for the interface
-	// that the method is implementing e.g. f in 'f.storageService.StorePost(...)'
-	Receiver    string
-	TargetField string
+	Ast     *ast.CallExpr
+	CallStr string
+	Name    string
 
 	Pos     token.Pos
 	Params  []variables.Variable
@@ -45,14 +41,7 @@ func (call ParsedCall) GetArgument(i int) variables.Variable {
 }
 
 func (call *ParsedCall) String() string {
-	funcCallStr := ""
-	if call.Receiver != "" {
-		funcCallStr += fmt.Sprintf("%s.", call.Receiver)
-	}
-	if call.TargetField != "" {
-		funcCallStr += fmt.Sprintf("%s.", call.TargetField)
-	}
-	funcCallStr += fmt.Sprintf("%s(", call.Name)
+	funcCallStr := fmt.Sprintf("%s(", call.CallStr)
 	for i, arg := range call.Params {
 		funcCallStr += arg.String()
 		if i < len(call.Params)-1 {
@@ -64,7 +53,7 @@ func (call *ParsedCall) String() string {
 }
 
 func (call *ParsedCall) SimpleString() string {
-	funcCallStr := fmt.Sprintf("%s.%s(", call.TargetField, call.Name)
+	funcCallStr := fmt.Sprintf("%s(", call.CallStr)
 	for i, arg := range call.Params {
 		funcCallStr += arg.String()
 		if i < len(call.Params)-1 {

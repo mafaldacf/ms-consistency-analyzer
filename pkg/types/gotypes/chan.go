@@ -15,6 +15,10 @@ type ChanType struct {
 // Type Methods
 // ------------
 
+func (t *ChanType) IsSameType(other Type) bool {
+	_, ok := other.(*ChanType)
+	return ok
+}
 func (t *ChanType) String() string {
 	return fmt.Sprintf("chan %s", t.ChanType.String())
 }

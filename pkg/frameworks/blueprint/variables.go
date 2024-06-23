@@ -5,87 +5,63 @@ import (
 	"analyzer/pkg/types/variables"
 )
 
-type NoSQLCollectionVariable struct {
+type BlueprintBackendVariable struct {
 	variables.Variable `json:"-"`
 	VariableInfo       *variables.VariableInfo `json:"variable"`
 }
 
-func (v *NoSQLCollectionVariable) String() string {
+func (v *BlueprintBackendVariable) IsNoSQLCollection() bool {
+	return v.GetBlueprintBackendType().IsNoSQLComponent() && v.GetBlueprintBackendType().IsNoSQLCollection()
+}
+
+func (v *BlueprintBackendVariable) IsNoSQLCursor() bool {
+	return v.GetBlueprintBackendType().IsNoSQLComponent() && v.GetBlueprintBackendType().IsNoSQLCursor()
+}
+
+func (v *BlueprintBackendVariable) IsNoSQLComponent() bool {
+	return v.GetBlueprintBackendType().IsNoSQLComponent()
+}
+
+func (v *BlueprintBackendVariable) String() string {
 	return v.VariableInfo.String()
 }
 
-func (v *NoSQLCollectionVariable) GetId() int64 {
+func (v *BlueprintBackendVariable) LongString() string {
+	return v.VariableInfo.String()
+}
+
+func (v *BlueprintBackendVariable) GetId() int64 {
 	return v.VariableInfo.GetId()
 }
 
-func (v *NoSQLCollectionVariable) GetType() gotypes.Type {
+func (v *BlueprintBackendVariable) GetType() gotypes.Type {
 	return v.VariableInfo.GetType()
 }
 
-func (v *NoSQLCollectionVariable) GetVariableInfo() *variables.VariableInfo {
+func (v *BlueprintBackendVariable) GetBlueprintBackendType() *BlueprintBackendType {
+	return v.VariableInfo.GetType().(*BlueprintBackendType)
+}
+
+func (v *BlueprintBackendVariable) GetVariableInfo() *variables.VariableInfo {
 	return v.VariableInfo
 }
 
-func (v *NoSQLCollectionVariable) GetDependencies() []variables.Variable {
+func (v *BlueprintBackendVariable) GetDependencies() []variables.Variable {
 	return nil
 }
 
-func (v *NoSQLCollectionVariable) AddReferenceWithID(target variables.Variable, creator string) {
+func (v *BlueprintBackendVariable) AddReferenceWithID(target variables.Variable, creator string) {
 	v.VariableInfo.AddReferenceWithID(target, creator)
 }
 
-func (v *NoSQLCollectionVariable) DeepCopy() variables.Variable {
-	copy := &NoSQLCollectionVariable{
+func (v *BlueprintBackendVariable) DeepCopy() variables.Variable {
+	copy := &BlueprintBackendVariable{
 		VariableInfo: v.VariableInfo,
 	}
 	return copy
 }
 
-func (v *NoSQLCollectionVariable) GetUnassaignedVariables() []variables.Variable {
-	var variables []variables.Variable
-	if v.GetVariableInfo().IsUnassigned() {
-		variables = append(variables, v)
-	}
-	return variables
-}
-
-type NoSQLCursorVariable struct {
-	variables.Variable `json:"-"`
-	VariableInfo       *variables.VariableInfo `json:"variable"`
-}
-
-func (v *NoSQLCursorVariable) String() string {
-	return v.VariableInfo.String()
-}
-
-func (v *NoSQLCursorVariable) GetId() int64 {
-	return v.VariableInfo.GetId()
-}
-
-func (v *NoSQLCursorVariable) GetType() gotypes.Type {
-	return v.VariableInfo.GetType()
-}
-
-func (v *NoSQLCursorVariable) GetVariableInfo() *variables.VariableInfo {
-	return v.VariableInfo
-}
-
-func (v *NoSQLCursorVariable) GetDependencies() []variables.Variable {
-	return nil
-}
-
-func (v *NoSQLCursorVariable) AddReferenceWithID(target variables.Variable, creator string) {
-	v.VariableInfo.AddReferenceWithID(target, creator)
-}
-
-func (v *NoSQLCursorVariable) DeepCopy() variables.Variable {
-	copy := &NoSQLCursorVariable{
-		VariableInfo: v.VariableInfo,
-	}
-	return copy
-}
-
-func (v *NoSQLCursorVariable) GetUnassaignedVariables() []variables.Variable {
+func (v *BlueprintBackendVariable) GetUnassaignedVariables() []variables.Variable {
 	var variables []variables.Variable
 	if v.GetVariableInfo().IsUnassigned() {
 		variables = append(variables, v)

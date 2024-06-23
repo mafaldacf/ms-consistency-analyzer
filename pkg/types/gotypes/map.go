@@ -16,6 +16,10 @@ type MapType struct {
 // Type Methods
 // ------------
 
+func (t *MapType) IsSameType(other Type) bool {
+	_, ok := other.(*MapType)
+	return ok
+}
 func (t *MapType) String() string {
 	return fmt.Sprintf("map[%s]%s", t.KeyType.String(), t.ValueType.String())
 }
@@ -36,3 +40,11 @@ func (t *MapType) AddValue(value string) {
 // -----------
 // Map Methods
 // -----------
+
+func (t *MapType) GetKeyType() Type {
+	return t.KeyType
+}
+
+func (t *MapType) GetValueType() Type {
+	return t.ValueType
+}

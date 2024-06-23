@@ -12,6 +12,10 @@ type BasicType struct {
 // Type Methods
 // ------------
 
+func (t *BasicType) IsSameType(other Type) bool {
+	_, ok := other.(*BasicType)
+	return ok
+}
 func (t *BasicType) String() string {
 	if t.Value != "" {
 		return fmt.Sprintf("%s %s", t.Value, t.Name)

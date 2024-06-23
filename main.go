@@ -28,6 +28,7 @@ func main() {
 		return
 	}
 	app.ParsePackages(servicesInfo)
+	app.Dump()
 	app.RegisterDatabaseInstances(databaseInstances)
 	app.RegisterServiceNodes(servicesInfo)
 	app.BuildServiceNodes()

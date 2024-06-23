@@ -45,11 +45,11 @@ func (b *BackendMethod) FullName() string {
 // FIXME: this is messing up with previous assignments!
 func (b *BackendMethod) SetNoSQLDatabaseCollection(databaseName string, collectionName string, dbInstance datastores.DatabaseInstance) {
 	collection := b.Returns[0]
-	collection.GetType().(*BackendType).DbInstance = dbInstance
-	collection.GetType().(*BackendType).NoSQLComponent = &NoSQLComponent{
+	collection.GetType().(*BlueprintBackendType).DbInstance = dbInstance
+	collection.GetType().(*BlueprintBackendType).NoSQLComponent = &NoSQLComponent{
 		Database:   databaseName,
 		Collection: collectionName,
-		Type:       NoSQLCollection,
+		Type:       NoSQLCollectionType,
 	}
 	logger.Logger.Warnf("[BLUEPRINT] setting NoSQL collection for (%s, %s)", databaseName, collectionName)
 }
@@ -58,13 +58,13 @@ func (b *BackendMethod) SetNoSQLDatabaseCollection(databaseName string, collecti
 func (b *BackendMethod) SetNoSQLDatabaseCursor(databaseName string, collectionName string, dbInstance datastores.DatabaseInstance) {
 	if len(b.Returns) > 0 {
 		collection := b.Returns[0]
-		if backendType, ok := collection.GetType().(*BackendType); ok {
+		if backendType, ok := collection.GetType().(*BlueprintBackendType); ok {
 			backendType.DbInstance = dbInstance
 			backendType.NoSQLComponent = &NoSQLComponent{
 				Database:   databaseName,
 				Collection: collectionName,
 				// upgrade type
-				Type:       NoSQLCursor,
+				Type: NoSQLCursorType,
 			}
 			logger.Logger.Warnf("[BLUEPRINT] setting NoSQL cursor for (%s, %s) ", databaseName, collectionName)
 		} else {
@@ -317,7 +317,7 @@ var boolReturn = types.MethodField{
 }
 var NoSQLCursorReturn = types.MethodField{
 	FieldInfo: types.FieldInfo{
-		Type: &BackendType{
+		Type: &BlueprintBackendType{
 			Name:    "NoSQLCursor",
 			Package: "github.com/blueprint-uservices/blueprint/runtime/core/backend",
 			Methods: buildBackendNoSQLCursorMethods(),
@@ -326,7 +326,7 @@ var NoSQLCursorReturn = types.MethodField{
 }
 var NoSQLCollectionReturn = types.MethodField{
 	FieldInfo: types.FieldInfo{
-		Type: &BackendType{
+		Type: &BlueprintBackendType{
 			Name:    "NoSQLCollection",
 			Package: "github.com/blueprint-uservices/blueprint/runtime/core/backend",
 			Methods: buildBackendNoSQLCollectionMethods(),

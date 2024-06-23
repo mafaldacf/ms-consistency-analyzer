@@ -11,6 +11,10 @@ type TupleType struct {
 // Type Methods
 // ------------
 
+func (t *TupleType) IsSameType(other Type) bool {
+	_, ok := other.(*TupleType)
+	return ok
+}
 func (t *TupleType) String() string {
 	s := "("
 	for i, elem := range t.Types {

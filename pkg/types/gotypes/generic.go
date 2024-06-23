@@ -11,6 +11,10 @@ type GenericType struct {
 // Type Methods
 // ------------
 
+func (t *GenericType) IsSameType(other Type) bool {
+	_, ok := other.(*GenericType)
+	return ok
+}
 func (t *GenericType) String() string {
 	/* if t.Name != "" {
 		return t.Name

@@ -10,11 +10,13 @@ import (
 
 type Field interface {
 	String() string
+	LongString() string
 	GetName() string
 	GetType() gotypes.Type
 	SetType(t gotypes.Type)
 	GetTypeString() string
 	GetTypeName() string
+	GetTypeLongName() string
 	GetIndex() int
 }
 
@@ -52,6 +54,9 @@ type DatabaseField struct {
 func (f *GenericField) String() string {
 	return fmt.Sprintf("%s %s", f.FieldInfo.Name, f.FieldInfo.Type.String())
 }
+func (f *GenericField) LongString() string {
+	return fmt.Sprintf("%s %s", f.FieldInfo.Name, f.FieldInfo.Type.LongString())
+}
 func (f *GenericField) GetTypeString() string {
 	return f.FieldInfo.Type.String()
 }
@@ -67,6 +72,9 @@ func (f *GenericField) GetType() gotypes.Type {
 func (f *GenericField) GetTypeName() string {
 	return f.FieldInfo.Type.GetName()
 }
+func (f *GenericField) GetTypeLongName() string {
+	return f.FieldInfo.Type.GetName()
+}
 func (f *GenericField) SetType(t gotypes.Type) {
 	f.FieldInfo.Type = t
 }
@@ -77,11 +85,17 @@ func (f *GenericField) SetType(t gotypes.Type) {
 func (f *ServiceField) String() string {
 	return fmt.Sprintf("%s %s", f.FieldInfo.Name, f.FieldInfo.Type.String())
 }
+func (f *ServiceField) LongString() string {
+	return fmt.Sprintf("%s %s", f.FieldInfo.Name, f.FieldInfo.Type.LongString())
+}
 func (f *ServiceField) GetTypeString() string {
 	return f.FieldInfo.Type.String()
 }
 func (f *ServiceField) GetTypeName() string {
 	return f.FieldInfo.Type.GetName()
+}
+func (f *ServiceField) GetTypeLongName() string {
+	return f.FieldInfo.Type.GetLongName()
 }
 func (f *ServiceField) GetIndex() int {
 	return f.Idx
@@ -102,11 +116,17 @@ func (f *ServiceField) SetType(t gotypes.Type) {
 func (f *DatabaseField) String() string {
 	return fmt.Sprintf("%s %s", f.FieldInfo.Name, f.FieldInfo.Type.String())
 }
+func (f *DatabaseField) LongString() string {
+	return fmt.Sprintf("%s %s", f.FieldInfo.Name, f.FieldInfo.Type.LongString())
+}
 func (f *DatabaseField) GetTypeString() string {
 	return f.FieldInfo.Type.String()
 }
 func (f *DatabaseField) GetTypeName() string {
 	return f.FieldInfo.Type.GetName()
+}
+func (f *DatabaseField) GetTypeLongName() string {
+	return f.FieldInfo.Type.GetLongName()
 }
 func (f *DatabaseField) GetIndex() int {
 	return f.Idx
@@ -130,11 +150,20 @@ func (f *MethodField) String() string {
 	}
 	return f.FieldInfo.Type.String()
 }
+func (f *MethodField) LongString() string {
+	if f.FieldInfo.Name != "" {
+		return fmt.Sprintf("%s %s", f.FieldInfo.Name, f.FieldInfo.Type.LongString())
+	}
+	return f.FieldInfo.Type.String()
+}
 func (f *MethodField) GetTypeString() string {
 	return f.FieldInfo.Type.String()
 }
 func (f *MethodField) GetTypeName() string {
 	return f.FieldInfo.Type.GetName()
+}
+func (f *MethodField) GetTypeLongName() string {
+	return f.FieldInfo.Type.GetLongName()
 }
 func (f *MethodField) GetIndex() int {
 	return -1

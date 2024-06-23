@@ -70,7 +70,7 @@ func (call *AbstractServiceCall) GetChildren() []AbstractNode {
 }
 
 func (call *AbstractServiceCall) AddChild(child AbstractNode) {
-	logger.Logger.Debugf("adding child %s (%s) > %s (%s)", call.GetName(), utils.GetType(call), child.GetName(), utils.GetType(child))
+	logger.Logger.Tracef("[ABSTRACT CALL] adding child %s (%s) > %s (%s)", call.GetName(), utils.GetType(call), child.GetName(), utils.GetType(child))
 	call.Children = append(call.Children, child)
 }
 
@@ -228,7 +228,7 @@ func (call *AbstractDatabaseCall) GetChildren() []AbstractNode {
 }
 
 func (call *AbstractDatabaseCall) AddChild(child AbstractNode) {
-	logger.Logger.Debugf("adding child %s (%s) > %s (%s)", call.GetName(), utils.GetType(call), child.GetName(), utils.GetType(child))
+	logger.Logger.Tracef("[ABSTRACT CALL] adding child %s (%s) > %s (%s)", call.GetName(), utils.GetType(call), child.GetName(), utils.GetType(child))
 	call.Children = append(call.Children, child)
 }
 

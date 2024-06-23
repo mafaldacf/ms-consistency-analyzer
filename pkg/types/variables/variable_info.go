@@ -24,11 +24,34 @@ type VariableInfo struct {
 func (vinfo *VariableInfo) GetDataflows() []*Dataflow {
 	return vinfo.Dataflows
 }
+
 func (vinfo *VariableInfo) GetIndirectDataflows() []*Dataflow {
 	return vinfo.IndirectDataflows
 }
+
 func (vinfo *VariableInfo) GetAllDataflows() []*Dataflow {
 	return append(vinfo.Dataflows, vinfo.IndirectDataflows...)
+}
+
+func (vinfo *VariableInfo) DeepCopy() *VariableInfo {
+	var dataflows []*Dataflow
+	for _, df := range vinfo.Dataflows {
+		dataflows = append(dataflows, df.DeepCopy())
+	}
+	var indirectDataflows []*Dataflow
+	for _, df := range vinfo.IndirectDataflows {
+		indirectDataflows = append(indirectDataflows, df.DeepCopy())
+	}
+	return &VariableInfo{
+		Name:              vinfo.Name,
+		Type:              vinfo.Type,
+		Id:                vinfo.Id,
+		Reference:         vinfo.Reference.DeepCopy().(*Reference),
+		IsBlockParam:      vinfo.IsBlockParam,
+		BlockParamIdx:     vinfo.BlockParamIdx,
+		Dataflows:         dataflows,
+		IndirectDataflows: indirectDataflows,
+	}
 }
 
 func (vinfo *VariableInfo) MarshalJSON() ([]byte, error) {
@@ -57,6 +80,16 @@ func (vinfo *VariableInfo) String() string {
 			return fmt.Sprintf("%s %s", vinfo.Name, vinfo.Type.String())
 		}
 		return vinfo.Type.String()
+	}
+	return fmt.Sprintf("%s (unknown)", vinfo.Name)
+}
+
+func (vinfo *VariableInfo) LongString() string {
+	if vinfo.Type != nil {
+		if vinfo.Name != "" {
+			return fmt.Sprintf("%s %s", vinfo.Name, vinfo.Type.String())
+		}
+		return vinfo.Type.LongString()
 	}
 	return fmt.Sprintf("%s (unknown)", vinfo.Name)
 }

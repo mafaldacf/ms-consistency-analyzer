@@ -47,7 +47,7 @@ func (s *Schema) AddForeignReferenceToField(current Field, reference Field) {
 }
 
 func (s *Schema) String() string {
-	str := "{ "
+	str := "{"
 	for i, f := range s.Fields {
 		str += f.String()
 		if i < len(s.Fields)-1 {
@@ -60,7 +60,7 @@ func (s *Schema) String() string {
 			str += " | "
 		}
 	}
-	return str + " }"
+	return str + "}"
 }
 
 func (s *Schema) AddKey(name string, t string, id int64) Field {
@@ -75,7 +75,7 @@ func (s *Schema) AddKey(name string, t string, id int64) Field {
 func (s *Schema) AddFKReference(name string, t string, reference Field, datastore string) {
 	for _, fk := range s.ForeignKeys {
 		if fk.Name == name && fk.Datastore == datastore && fk.Reference.GetName() == reference.GetName() {
-			logger.Logger.Debugf("found existing foreign key for name %s, type %s and datastore %s with reference %s", name, t, datastore, reference.String())
+			logger.Logger.Debugf("[SCHEMA] found existing foreign key for name %s, type %s and datastore %s with reference %s", name, t, datastore, reference.String())
 			return
 		}
 	}
