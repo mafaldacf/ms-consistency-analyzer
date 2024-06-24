@@ -47,6 +47,19 @@ func (v *StructVariable) GetType() gotypes.Type {
 	return v.VariableInfo.GetType()
 }
 
+func (v *StructVariable) GetStructType() *gotypes.StructType {
+	if structType, ok := v.GetType().(*gotypes.StructType); ok {
+		return structType
+	}
+	if userType, ok := v.GetType().(*gotypes.UserType); ok {
+		if structType, ok := userType.UserType.(*gotypes.StructType); ok {
+			return structType
+		}
+	}
+	logger.Logger.Fatalf("[VARS STRUCT] unexpected type (%s) for struct variable (%s)", utils.GetType(v.GetType()), v.String())
+	return v.VariableInfo.GetType().(*gotypes.StructType)
+}
+
 func (v *StructVariable) GetVariableInfo() *VariableInfo {
 	return v.VariableInfo
 }
@@ -74,7 +87,7 @@ func (v *StructVariable) GetFieldVariableIfExists(name string) Variable {
 	if f, ok := v.Fields[name]; ok {
 		return f
 	}
-	logger.Logger.Warnf("[VARS STRUCT] unknown field (%s) for structure variable (%s)", name, v.LongString())
+	logger.Logger.Warnf("[VARS STRUCT] unknown field (%s) for struct variable (%s)", name, v.String())
 	return nil
 }
 
@@ -90,14 +103,6 @@ func (v *StructVariable) AddFieldVariableIfNotExists(name string, field Variable
 		logger.Logger.Warnf("[VARS STRUCT] field (%s) already exists in structure (%s)", name, v.String())
 	}
 	return false
-}
-
-func (v *StructVariable) GetStructType() *gotypes.StructType {
-	structType, ok := v.VariableInfo.Type.(*gotypes.StructType)
-	if !ok {
-		structType = v.VariableInfo.Type.(*gotypes.UserType).UserType.(*gotypes.StructType)
-	}
-	return structType
 }
 
 func (v *StructVariable) AddReferenceWithID(target Variable, creator string) {

@@ -11,11 +11,23 @@ import (
 
 type BackendMethod struct {
 	types.Method
-	Name    string
-	Backend string
-	Params  []*types.MethodField
-	Returns []*types.MethodField
-	Write   bool
+	Name      string
+	Backend   string
+	Component string
+	Params    []*types.MethodField
+	Returns   []*types.MethodField
+	Write     bool
+}
+
+func (b *BackendMethod) DeepCopy() *BackendMethod {
+	return &BackendMethod{
+		Name:      b.Name,
+		Backend:   b.Backend,
+		Component: b.Component,
+		Params:    b.Params,
+		Returns:   b.Returns,
+		Write:     b.Write,
+	}
 }
 
 func (b *BackendMethod) String() string {
@@ -30,6 +42,31 @@ func (b *BackendMethod) String() string {
 	return repr
 }
 
+func (b *BackendMethod) LongString() string {
+	repr := fmt.Sprintf("%s.%s(", b.Backend, b.Name)
+	for i, param := range b.Params {
+		repr += param.String()
+		if i < len(b.Params)-1 {
+			repr += ", "
+		}
+	}
+	repr += ")"
+	if len(b.Returns) == 1 {
+		repr += " " + b.Returns[0].String()
+	}
+	if len(b.Returns) > 1 {
+		repr += " ("
+		for i, ret := range b.Returns {
+			repr += ret.String()
+			if i < len(b.Returns)-1 {
+				repr += ", "
+			}
+		}
+		repr += ")"
+	}
+	return repr
+}
+
 func (b *BackendMethod) GetParams() []*types.MethodField {
 	return b.Params
 }
@@ -39,19 +76,24 @@ func (b *BackendMethod) GetReturns() []*types.MethodField {
 }
 
 func (b *BackendMethod) FullName() string {
+	if b.Component != "" {
+		return b.Backend + "." + b.Component + "." + b.Name
+	}
 	return b.Backend + "." + b.Name
 }
 
 // FIXME: this is messing up with previous assignments!
 func (b *BackendMethod) SetNoSQLDatabaseCollection(databaseName string, collectionName string, dbInstance datastores.DatabaseInstance) {
-	collection := b.Returns[0]
-	collection.GetType().(*BlueprintBackendType).DbInstance = dbInstance
-	collection.GetType().(*BlueprintBackendType).NoSQLComponent = &NoSQLComponent{
-		Database:   databaseName,
-		Collection: collectionName,
-		Type:       NoSQLCollectionType,
+	if len(b.Returns) > 0 {
+		collection := b.Returns[0]
+		collection.GetType().(*BlueprintBackendType).DbInstance = dbInstance
+		collection.GetType().(*BlueprintBackendType).NoSQLComponent = &NoSQLComponent{
+			Database:   databaseName,
+			Collection: collectionName,
+			Type:       NoSQLCollectionType,
+		}
+		logger.Logger.Warnf("[BLUEPRINT] setting NoSQL collection for (%s, %s)", databaseName, collectionName)
 	}
-	logger.Logger.Warnf("[BLUEPRINT] setting NoSQL collection for (%s, %s)", databaseName, collectionName)
 }
 
 // FIXME: this is messing up with previous assignments!
@@ -73,12 +115,28 @@ func (b *BackendMethod) SetNoSQLDatabaseCursor(databaseName string, collectionNa
 	}
 }
 
-func (b *BackendMethod) ReturnsNoSQLCollection() bool {
-	return b.Name == "GetCollection"
+func (b *BackendMethod) IsNoSQLBackendCall() bool {
+	return b.Backend == "NoSQLDatabase" && b.Component == ""
 }
 
-func (b *BackendMethod) ReturnsNoSQLCursor() bool {
-	return b.Name == "FindOne" || b.Name == "FindMany"
+func (b *BackendMethod) IsNoSQLComponentCall() bool {
+	return b.Backend == "NoSQLDatabase" && (b.Component == "NoSQLCollection" || b.Component == "NoSQLCursor")
+}
+
+func (b *BackendMethod) IsNoSQLCollectionCall() bool {
+	return b.Backend == "NoSQLDatabase" && b.Component == "NoSQLCollection"
+}
+
+func (b *BackendMethod) IsNoSQLCursorCall() bool {
+	return b.Backend == "NoSQLDatabase" && b.Component == "NoSQLCursor"
+}
+
+func (b *BackendMethod) ReturnsNoSQLCollection() (bool, int) {
+	return b.Backend == "NoSQLDatabase" && b.Name == "GetCollection", 0 // index of collection
+}
+
+func (b *BackendMethod) ReturnsNoSQLCursor() (bool, int) {
+	return b.Backend == "NoSQLDatabase" && b.Component == "NoSQLCollection" && (b.Name == "FindOne" || b.Name == "FindMany"), 0 // index of cursor
 }
 
 func (b *BackendMethod) IsWrite() bool {
@@ -199,9 +257,9 @@ func BuildBackendComponentMethods(name string) []*BackendMethod {
 	// NoSQL Components
 	// ----------------
 	case "NoSQLCollection":
-		buildBackendNoSQLCollectionMethods()
+		methods = buildBackendNoSQLCollectionMethods()
 	case "NoSQLCursor":
-		buildBackendNoSQLCursorMethods()
+		methods = buildBackendNoSQLCursorMethods()
 	default:
 		logger.Logger.Fatalf("could not build methods for backend %s", name)
 	}
@@ -211,12 +269,12 @@ func BuildBackendComponentMethods(name string) []*BackendMethod {
 func buildBackendNoSQLCollectionMethods() []*BackendMethod {
 	var methods []*BackendMethod
 	// InsertOne(ctx context.Context, document interface{}) error
-	methods = append(methods, &BackendMethod{Name: "InsertOne", Backend: "NoSQLDatabase.NoSQLCollection", Write: true,
+	methods = append(methods, &BackendMethod{Name: "InsertOne", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Write: true,
 		Params:  []*types.MethodField{&ctxParam, &docParam},
 		Returns: []*types.MethodField{&errorReturn},
 	})
 	// FindOne(ctx context.Context, filter bson.D, projection ...bson.D) (NoSQLCursor, error)
-	methods = append(methods, &BackendMethod{Name: "FindOne", Backend: "NoSQLDatabase.NoSQLCollection", Write: false,
+	methods = append(methods, &BackendMethod{Name: "FindOne", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Write: false,
 		Params:  []*types.MethodField{&ctxParam, &filterParam, &projectionParam},
 		Returns: []*types.MethodField{&NoSQLCursorReturn, &errorReturn},
 	})
@@ -225,7 +283,7 @@ func buildBackendNoSQLCollectionMethods() []*BackendMethod {
 
 func buildBackendNoSQLCursorMethods() []*BackendMethod {
 	var methods []*BackendMethod
-	methods = append(methods, &BackendMethod{Name: "One", Backend: "NoSQLDatabase.NoSQLCursor", Write: false,
+	methods = append(methods, &BackendMethod{Name: "One", Backend: "NoSQLDatabase", Component: "NoSQLCursor", Write: false,
 		Params:  []*types.MethodField{&ctxParam, &objParam},
 		Returns: []*types.MethodField{&boolReturn, &errorReturn},
 	})
@@ -253,25 +311,25 @@ var keyParam = types.MethodField{
 var valueParam = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Name: "value",
-		Type: &gotypes.InterfaceType{},
+		Type: &gotypes.InterfaceType{Methods: make(map[string]string)},
 	},
 }
 var itemParam = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Name: "item",
-		Type: &gotypes.InterfaceType{},
+		Type: &gotypes.InterfaceType{Methods: make(map[string]string)},
 	},
 }
 var docParam = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Name: "document",
-		Type: &gotypes.InterfaceType{},
+		Type: &gotypes.InterfaceType{Methods: make(map[string]string)},
 	},
 }
 var objParam = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Name: "obj",
-		Type: &gotypes.InterfaceType{},
+		Type: &gotypes.InterfaceType{Methods: make(map[string]string)},
 	},
 }
 var filterParam = types.MethodField{
@@ -336,6 +394,6 @@ var NoSQLCollectionReturn = types.MethodField{
 var errorReturn = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		// error is actually an interface
-		Type: &gotypes.InterfaceType{},
+		Type: &gotypes.InterfaceType{Methods: make(map[string]string)},
 	},
 }

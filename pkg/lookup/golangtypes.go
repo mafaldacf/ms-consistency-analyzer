@@ -31,7 +31,7 @@ func ComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type) gotypes.T
 		}
 		logger.Logger.Fatalf("named type %s not declared in package %s", e.String(), p.String())
 	case *golangtypes.Struct:
-		structType := &gotypes.StructType{}
+		structType := &gotypes.StructType{Methods: make(map[string]string)}
 		for i := 0; i < e.NumFields(); i++ {
 			f := e.Field(i)
 			name := f.Name()
@@ -53,6 +53,7 @@ func ComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type) gotypes.T
 	case *golangtypes.Interface:
 		return &gotypes.InterfaceType{
 			Content: goType.String(),
+			Methods: make(map[string]string),
 		}
 	case *golangtypes.Signature:
 		signatureType := &gotypes.SignatureType{}

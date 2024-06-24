@@ -10,6 +10,7 @@ import (
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
 	"analyzer/pkg/types/variables"
+	"analyzer/pkg/utils"
 )
 
 func GenerateMethodCFG(service *service.Service, parsedMethod *types.ParsedMethod) {
@@ -29,7 +30,7 @@ func GenerateMethodCFG(service *service.Service, parsedMethod *types.ParsedMetho
 			structVar.Fields[name] = lookup.CreateVariableFromType(name, f.GetType())
 		}
 	}
-	logger.Logger.Infof("[CFG] added receiver %s", receiver.String())
+	logger.Logger.Tracef("[CFG] added receiver %s (%s) (%s)", receiver.String(), utils.GetType(receiver.(*variables.PointerVariable).PointerTo), utils.GetType(receiver.(*variables.PointerVariable).PointerTo.GetType()))
 
 	for i, param := range parsedMethod.Params {
 		v := lookup.CreateVariableFromType(param.GetName(), param.GetType())
@@ -37,8 +38,8 @@ func GenerateMethodCFG(service *service.Service, parsedMethod *types.ParsedMetho
 		v.GetVariableInfo().BlockParamIdx = i
 		entryBlock.Vars = append(entryBlock.Vars, v)
 	}
-	logger.Logger.Infof("[CFG] parsed CFG %s with block variables %v", parsedCfg.FullMethod, entryBlock.Vars)
-	logger.Logger.Tracef("[CFG] parsed CFG: %s", parsedCfg.LongString())
+	logger.Logger.Tracef("[CFG] parsed CFG %s with block variables %v", parsedCfg.FullMethod, entryBlock.Vars)
+	//logger.Logger.Debugf("[CFG] parsed CFG: %s", parsedCfg.LongString())
 }
 
 // https://github.com/coder/go-tools/blob/master/go/analysis/passes/ctrlflow/ctrlflow_test.go

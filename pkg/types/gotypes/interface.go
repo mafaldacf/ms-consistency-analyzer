@@ -6,11 +6,11 @@ import (
 	"analyzer/pkg/logger"
 )
 
-
 type InterfaceType struct {
-	Type    `json:"-"`
-	Content string
-	Methods []string
+	Type           `json:"-"`
+	Content        string
+	ParentUserType *UserType
+	Methods        map[string]string // maps method name to package path
 }
 
 // ------------
@@ -29,11 +29,13 @@ func (t *InterfaceType) String() string {
 }
 func (t *InterfaceType) LongString() string {
 	s := "interface{"
-	for i, m := range t.Methods {
+	i := 0
+	for m := range t.Methods {
 		s += m
 		if i < len(t.Methods) {
 			s += ", "
 		}
+		i++
 	}
 	return s + "}"
 }
@@ -47,11 +49,25 @@ func (t *InterfaceType) GetBasicValue() string {
 func (t *InterfaceType) AddValue(value string) {
 	logger.Logger.Fatalf("unable to add value for interface type %s", t.String())
 }
+func (t *InterfaceType) GetParentUserType() *UserType {
+	return t.ParentUserType
+}
+func (t *InterfaceType) SetParentUserType(userType *UserType) {
+	t.ParentUserType = userType
+}
 
 // -----------------
 // Interface Methods
 // -----------------
 
-func (t *InterfaceType) AddMethod(name string) {
-	t.Methods = append(t.Methods, name)
+func (t *InterfaceType) AddMethod(name string, pkgPath string) {
+	t.Methods[name] = pkgPath
+}
+
+func (v *InterfaceType) GetMethodPackagePath(method string) string {
+	if pkgPath, ok := v.Methods[method]; ok {
+		return pkgPath
+	}
+	logger.Logger.Fatalf("unknown method (%s) for struct type (%s)", method, v.LongString())
+	return ""
 }

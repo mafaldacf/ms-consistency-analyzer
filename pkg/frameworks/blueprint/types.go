@@ -41,6 +41,14 @@ type NoSQLComponent struct {
 	Collection string
 }
 
+func (t *NoSQLComponent) DeepCopy() *NoSQLComponent {
+	return &NoSQLComponent{
+		Type:       t.Type,
+		Database:   t.Database,
+		Collection: t.Collection,
+	}
+}
+
 func (t *NoSQLComponent) String() string {
 	prefix := ""
 	if t.Type == NoSQLCollectionType {
@@ -69,6 +77,17 @@ func (t *BlueprintBackendType) String() string {
 		return t.NoSQLComponent.String()
 	}
 	return t.Name
+}
+
+func (t *BlueprintBackendType) StringWithInstace() string {
+	if t.NoSQLComponent != nil {
+		return t.NoSQLComponent.String()
+	}
+	instance := "<nil>"
+	if t.DbInstance != nil {
+		instance = t.DbInstance.GetName()
+	}
+	return fmt.Sprintf("%s {instance = %s}", t.Name, instance)
 }
 
 func (t *BlueprintBackendType) LongString() string {
@@ -147,4 +166,40 @@ func (t *BlueprintBackendType) GetMethod(name string) *BackendMethod {
 	}
 	logger.Logger.Fatalf("[TYPES BLUEPRINT] could not find method (%s) for backend type (%s) with methods (%v)", name, t.String(), t.Methods)
 	return nil
+}
+
+func (t *BlueprintBackendType) SetNoSQLDatabaseCollection(databaseName string, collectionName string, dbInstance datastores.DatabaseInstance) {
+	t.NoSQLComponent = &NoSQLComponent{
+		Type:       NoSQLCollectionType,
+		Database:   databaseName,
+		Collection: collectionName,
+	}
+	t.DbInstance = dbInstance
+}
+
+func (t *BlueprintBackendType) SetNoSQLDatabaseCursor(databaseName string, collectionName string, dbInstance datastores.DatabaseInstance) {
+	t.NoSQLComponent = &NoSQLComponent{
+		Type:       NoSQLCursorType,
+		Database:   databaseName,
+		Collection: collectionName,
+	}
+	t.DbInstance = dbInstance
+}
+
+func (t *BlueprintBackendType) DeepCopy() *BlueprintBackendType {
+	var methods []*BackendMethod
+	for _, m := range t.Methods {
+		methods = append(methods, m.DeepCopy())
+	}
+	var noSQLComponent *NoSQLComponent
+	if t.NoSQLComponent != nil {
+		noSQLComponent = t.NoSQLComponent.DeepCopy()
+	}
+	return &BlueprintBackendType{
+		Name:           t.Name,
+		Package:        t.Package,
+		Methods:        methods,
+		DbInstance:     t.DbInstance,
+		NoSQLComponent: noSQLComponent,
+	}
 }

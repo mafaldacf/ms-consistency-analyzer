@@ -1,0 +1,81 @@
+common:
+- package: common
+- package path: github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification/common
+- module: github.com/blueprint-uservices/blueprint/examples/postnotification/workflow
+- files:
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/common/utils.go
+- imports:
+  - strconv
+- imported types:
+  - .error
+- declared types: []
+- service types: []
+- datastore types: []
+- declared variables: []
+- parsed methods:
+  - common.Int64ToString(i int64) string
+  - common.StringToInt64(s string) (int64, error)
+postnotification:
+- package: postnotification
+- package path: github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification
+- module: github.com/blueprint-uservices/blueprint/examples/postnotification/workflow
+- files:
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/NotifyService.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/StorageService.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/UploadService.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/models.go
+- imports:
+  - context
+  - github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification/common
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+  - math/rand
+  - strconv
+- imported types:
+  - .error
+  - Cache { instance = <nil> } interface{ Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{}) }
+  - NoSQLCollection { instance = <nil> } interface{ NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) }
+  - NoSQLCursor { instance = <nil> } interface{ NoSQLDatabase.One(ctx context.Context, obj interface{}) }
+  - NoSQLDatabase { instance = <nil> } interface{ NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string) }
+  - Queue { instance = <nil> } interface{ Queue.Push(ctx context.Context, item interface{}),
+    Queue.Pop(ctx context.Context, item interface{}) }
+  - context.Context
+  - primitive.D
+- declared types:
+  - postnotification.Creator struct { Username string }
+  - postnotification.Message struct { ReqID string, PostID string, Timestamp string }
+  - postnotification.NotifyService
+  - postnotification.NotifyServiceImpl struct { storageService postnotification.StorageService, queue Queue { instance = notif_queue } interface{ Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{}) }, numWorkers
+    int }
+  - postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }
+  - postnotification.StorageService
+  - postnotification.StorageServiceImpl struct { cache Cache { instance = post_cache }
+    interface{ Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{}) }, db NoSQLDatabase { instance = post_nosql } interface{ NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string) } }
+  - postnotification.UploadService
+  - postnotification.UploadServiceImpl struct { storageService postnotification.StorageService, queue Queue { instance = notif_queue } interface{ Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{}) } }
+- service types:
+  - postnotification.NotifyService
+  - postnotification.StorageService
+  - postnotification.UploadService
+- datastore types:
+  - Cache { instance = <nil> } interface{ Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{}) }
+  - NoSQLCollection { instance = <nil> } interface{ NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) }
+  - NoSQLCursor { instance = <nil> } interface{ NoSQLDatabase.One(ctx context.Context, obj interface{}) }
+  - NoSQLDatabase { instance = <nil> } interface{ NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string) }
+  - Queue { instance = <nil> } interface{ Queue.Push(ctx context.Context, item interface{}),
+    Queue.Pop(ctx context.Context, item interface{}) }
+- declared variables: []
+- parsed methods:
+  - (*postnotification.NotifyServiceImpl).Run(ctx context.Context) error
+  - (*postnotification.NotifyServiceImpl).handleMessage(ctx context.Context, message postnotification.Message struct { ReqID string, PostID string, Timestamp string })
+    error
+  - (*postnotification.NotifyServiceImpl).workerThread(ctx context.Context, workerID int) error
+  - (*postnotification.StorageServiceImpl).ReadPost(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }, error)
+  - (*postnotification.StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }, error)
+  - (*postnotification.StorageServiceImpl).StorePost(ctx context.Context, reqID int64, post postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }) error
+  - (*postnotification.StorageServiceImpl).StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }) error
+  - (*postnotification.UploadServiceImpl).UploadPost(ctx context.Context, username string, text string) (int64, error)
+  - postnotification.NewNotifyServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue) (postnotification.NotifyService, error)
+  - postnotification.NewStorageServiceImpl(ctx context.Context, cache Cache, db NoSQLDatabase)
+    (postnotification.StorageService, error)
+  - postnotification.NewUploadServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue) (postnotification.UploadService, error)

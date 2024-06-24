@@ -20,7 +20,7 @@ func GetAllSelectorIdents(expr ast.Expr) ([]*ast.Ident, string) {
 	if ident, ok := expr.(*ast.Ident); ok {
 		return []*ast.Ident{ident}, ident.Name
 	}
-	logger.Logger.Warnf("[LOOKUP SELECTOR IDENTS] unexpected expression %v (type = %s)", expr, utils.GetType(expr))
+	logger.Logger.Fatalf("[LOOKUP SELECTOR IDENTS] unexpected expression %v (type = %s)", expr, utils.GetType(expr))
 	return nil, ""
 }
 
@@ -33,7 +33,7 @@ func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 			}
 		}
 		if namedType, ok := file.Package.GetNamedType(e.Name); ok {
-			logger.Logger.Debugf("[LOOKUP AST IDENT] got named type (%s) (type = %s)", namedType.String(), utils.GetType(namedType))
+			//logger.Logger.Debugf("[LOOKUP AST IDENT] got named type (%s) (type = %s)", namedType.String(), utils.GetType(namedType))
 			return namedType
 		}
 
@@ -42,26 +42,24 @@ func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 		idents, _ := GetAllSelectorIdents(e.X)
 		leftIdent := idents[0]
 
-		logger.Logger.Debugf("HERE WITH EXPR %v", e)
+		//logger.Logger.Debugf("HERE WITH EXPR %v", e)
 		
 		// left ident is the package alias
-		if impt, ok := file.GetImport(leftIdent.Name); ok {
-			imptPath := impt.PackagePath
-			// import path does not always match the object impt path
-			// e.g. in "bson.D", the bson code actually defines "D" as "type D = primitive.D"
-			// so instead of the original imported path go.mongodb.org/mongo-driver/bson.D
-			// we have go.mongodb.org/mongo-driver/bson/primitive.D
-			// can be either e.Sel or just e
-			goType := file.Package.GetTypeInfo(e.Sel)
-			if goType.String() != imptPath {
-				logger.Logger.Warnf("[LOOKUP AST SELECTOR] replacing imported package path (%s) with go type path (%s)", imptPath, goType.String())
-				imptPath = goType.String()
-			}
-			if importedType, ok := file.Package.GetImportedTypeFromPath(imptPath); ok {
-				return importedType
-			} else {
-				logger.Logger.Fatalf("[LOOKUP AST SELECTOR] unexpected nil import type for path (%s)", imptPath)
-			}
+		imptPath := file.GetImport(leftIdent.Name).PackagePath
+		// import path does not always match the object impt path
+		// e.g. in "bson.D", the bson code actually defines "D" as "type D = primitive.D"
+		// so instead of the original imported path go.mongodb.org/mongo-driver/bson.D
+		// we have go.mongodb.org/mongo-driver/bson/primitive.D
+		// can be either e.Sel or just e
+		goType := file.Package.GetTypeInfo(e.Sel)
+		if goType.String() != imptPath {
+			logger.Logger.Warnf("[LOOKUP AST SELECTOR] replacing imported package path (%s) with go type path (%s)", imptPath, goType.String())
+			imptPath = goType.String()
+		}
+		if importedType, ok := file.Package.GetImportedTypeFromPath(imptPath); ok {
+			return importedType
+		} else {
+			logger.Logger.Fatalf("[LOOKUP AST SELECTOR] unexpected nil import type for path (%s)", imptPath)
 		}
 		
 		logger.Logger.Fatalf("[LOOKUP AST SELECTOR] cannot parse selector expr (%v)", e)
@@ -76,13 +74,13 @@ func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 			ValueType: ComputeTypeForAstExpr(file, e.Value),
 		}
 	case *ast.InterfaceType:
-		return &gotypes.InterfaceType{}
+		return &gotypes.InterfaceType{Methods: make(map[string]string)}
 	case *ast.ArrayType:
 		return &gotypes.ArrayType{
 			ElementsType: ComputeTypeForAstExpr(file, e.Elt),
 		}
 	case *ast.StructType:
-		structType := &gotypes.StructType{}
+		structType := &gotypes.StructType{Methods: make(map[string]string)}
 		for _, f := range e.Fields.List {
 			if len(f.Names) != 1 {
 				logger.Logger.Fatalf("[LOOKUP AST STRUCT] unexpected number of fields (%d) for %s", len(f.Names), typeExpr)

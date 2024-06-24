@@ -19,26 +19,30 @@ func (app *App) Dump() {
 	app.dumpYamlDataflow()
 	app.dumpYamlServices()
 	app.dumpYamlControlflow()
+	app.dumpYamlCalls()
 }
 
 func (app *App) dumpYamlPackages() {
-	data := make(map[string]utils.OrderedProperties)
-	propsPackages := utils.NewOrderedPropertyList()
 	// blueprint
 	blueprintPackages := make(map[string]interface{})
 	for _, p := range app.BlueprintPackages {
-		blueprintPackages[p.Name] = p.DumpShortYaml()
+		blueprintPackages[p.Name] = p.DumpBlueprintYaml()
 	}
-	propsPackages.AddOrderedProperty("blueprint", blueprintPackages)
+	utils.DumpToYamlFile(blueprintPackages, app.Name, "packages/blueprint")
+
 	// application
 	appPackages := make(map[string]interface{})
 	for _, p := range app.Packages {
 		appPackages[p.Name] = p.DumpYaml()
 	}
-	propsPackages.AddOrderedProperty("application", appPackages)
-	// save all
-	data["packages"] = propsPackages.Result()
-	utils.DumpToYamlFile(data, app.Name, "packages")
+	utils.DumpToYamlFile(appPackages, app.Name, "packages/app")
+
+	// external
+	externalPackages := make(map[string]interface{})
+	for _, p := range app.ExternalPackages {
+		externalPackages[p.Name] = p.DumpExternalYaml()
+	}
+	utils.DumpToYamlFile(externalPackages, app.Name, "packages/external")
 }
 
 func (app *App) dumpYamlDataflow() {
@@ -135,5 +139,12 @@ func (app *App) dumpYamlControlflow() {
 	for name, service := range app.Services {
 		data := service.Yaml()
 		utils.DumpToYamlFile(data, app.Name, fmt.Sprintf("controlflow/%s", strings.ToLower(name)))
+	}
+}
+
+func (app *App) dumpYamlCalls() {
+	for name, service := range app.Services {
+		data := service.YamlCalls()
+		utils.DumpToYamlFile(data, app.Name, fmt.Sprintf("calls/%s", strings.ToLower(name)))
 	}
 }

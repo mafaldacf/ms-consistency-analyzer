@@ -128,7 +128,7 @@ func (vinfo *VariableInfo) AddReferenceWithID(target Variable, creator string) {
 		Creator:  creator,
 		Variable: target,
 	}
-	logger.Logger.Infof("\t\t\t[VARIABLE] added reference (%s) -> (%s) with id = %d (creator: %s)", vinfo.Name, target.GetVariableInfo().GetName(), vinfo.Id, creator)
+	logger.Logger.Debugf("\t\t\t[VARIABLE] added reference (%s) -> (%s) with id = %d (creator: %s)", vinfo.Name, target.GetVariableInfo().GetName(), vinfo.Id, creator)
 }
 
 func (vinfo *VariableInfo) AddOriginalReferenceWithID(ref *Reference) {

@@ -16,13 +16,13 @@ func (t *PointerType) IsSameType(other Type) bool {
 	return ok
 }
 func (t *PointerType) String() string {
-	return fmt.Sprintf("*%s", t.PointerTo.String())
+	return fmt.Sprintf("(*%s)", t.PointerTo.String())
 }
 func (t *PointerType) LongString() string {
-	return fmt.Sprintf("*%s", t.PointerTo.LongString())
+	return fmt.Sprintf("(*%s)", t.PointerTo.LongString())
 }
 func (t *PointerType) GetName() string {
-	return "*" + t.PointerTo.GetName()
+	return "(*" + t.PointerTo.GetName() + ")"
 }
 func (t *PointerType) GetLongName() string {
 	return "(*" + t.PointerTo.GetLongName() + ")"

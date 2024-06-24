@@ -67,7 +67,17 @@ func (block *Block) GetLastestVariable(name string) variables.Variable {
 			return v
 		}
 	}
-	logger.Logger.Warnf("[BLOCK] variable (%s) not found in block: %s)", name, block.VarsString())
+	logger.Logger.Fatalf("[BLOCK] variable (%s) not found in block: %s)", name, block.VarsString())
+	return nil
+}
+
+func (block *Block) GetLastestVariableIfExists(name string) variables.Variable {
+	for i := len(block.Vars) - 1; i >= 0; i-- {
+		v := block.Vars[i]
+		if name == v.GetVariableInfo().GetName() {
+			return v
+		}
+	}
 	return nil
 }
 

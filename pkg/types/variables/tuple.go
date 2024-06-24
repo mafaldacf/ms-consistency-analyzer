@@ -1,6 +1,7 @@
 package variables
 
 import (
+	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
 )
 
@@ -14,8 +15,20 @@ func (v *TupleVariable) GetVariableInfo() *VariableInfo {
 	return nil
 }
 
+func (v *TupleVariable) GetVariableAt(index int) Variable {
+	if index < len(v.Variables) {
+		return v.Variables[index]
+	}
+	logger.Logger.Fatalf("index (%d) out of bounds for tuple variable (%s) -- variables: %v", index, v.LongString(), v.Variables)
+	return nil
+}
+
 func (v *TupleVariable) GetId() int64 {
 	return v.VariableInfo.GetId()
+}
+
+func (v *TupleVariable) NumVariables() int {
+	return len(v.Variables)
 }
 
 func (v *TupleVariable) GetType() gotypes.Type {

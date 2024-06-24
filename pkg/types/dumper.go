@@ -5,19 +5,39 @@ import (
 	"slices"
 	"sort"
 
-	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
 )
+
+// --------------
+// PARSED METHODS
+// --------------
+
+func (f *ParsedMethod) Yaml() interface{} {
+	return f.ParsedCfg.Yaml()
+}
+
+func (f *ParsedMethod) YamlCalls() []string {
+	var lst []string
+	for _, c := range f.Calls {
+		lst = append(lst, c.GetMethod().LongString())
+	}
+	return lst
+}
 
 // ----
 // CFGS
 // ----
 
-func (cfg *CFG) Yaml() map[string]interface{} {
-	data := make(map[string]interface{})
+func (cfg *CFG) Yaml() map[string][]string {
+	data := make(map[string][]string)
+
+	data[cfg.ParsedBlocks[0].Block.String()] = cfg.ParsedBlocks[0].Yaml()
+
+	/* var blocks []string
 	for _, block := range cfg.ParsedBlocks {
-		data[block.Block.String()] = block.Yaml()
+		blocks = append(blocks, block.Block.String())
 	}
+	data["blocks"] = blocks */
 	return data
 }
 
@@ -43,9 +63,9 @@ func (block *Block) Yaml() []string {
 					str += ", "
 				}
 			}
-			data = append(data, fmt.Sprintf("%s (%s) ----> (TAINTED @ %s)", v.String(), variables.GetVariableTypeAndTypeString(v), str))
+			data = append(data, fmt.Sprintf("%s ----> (TAINTED @ %s)", v.String(), str))
 		} else {
-			data = append(data, fmt.Sprintf("%s (%s)", v.String(), variables.GetVariableTypeAndTypeString(v)))
+			data = append(data, v.String())
 		}
 	}
 	return data
@@ -55,17 +75,35 @@ func (block *Block) Yaml() []string {
 // PACKAGES
 // --------
 
-// for blueprint packages
-func (p *Package) DumpShortYaml() utils.OrderedProperties {
+// for external packages
+func (p *Package) DumpExternalYaml() utils.OrderedProperties {
 	propsData := utils.NewOrderedPropertyList()
 
 	// metadata
-	propsMetadata := utils.NewOrderedPropertyList()
-	propsMetadata.AddOrderedProperty("package", p.Name)
-	propsMetadata.AddOrderedProperty("package path", p.PackagePath)
-	propsMetadata.AddOrderedProperty("module", p.Module)
-	// save metadata
-	propsData.AddOrderedProperty("metadata", propsMetadata.Result())
+	propsData.AddOrderedProperty("package", p.Name)
+	propsData.AddOrderedProperty("package path", p.PackagePath)
+	propsData.AddOrderedProperty("module", p.Module)
+
+	// declared types
+	declaredTypes := []string{}
+	for _, e := range p.DeclaredTypes {
+		declaredTypes = append(declaredTypes, e.LongString())
+	}
+	sort.Strings(declaredTypes)
+	propsData.AddOrderedProperty("declared types", declaredTypes)
+
+	// save final data
+	return propsData.Result()
+}
+
+// for blueprint packages
+func (p *Package) DumpBlueprintYaml() utils.OrderedProperties {
+	propsData := utils.NewOrderedPropertyList()
+
+	// metadata
+	propsData.AddOrderedProperty("package", p.Name)
+	propsData.AddOrderedProperty("package path", p.PackagePath)
+	propsData.AddOrderedProperty("module", p.Module)
 
 	// declared types
 	declaredTypes := []string{}
@@ -91,26 +129,23 @@ func (p *Package) DumpYaml() utils.OrderedProperties {
 	propsData := utils.NewOrderedPropertyList()
 
 	// metadata
-	propsMetadata := utils.NewOrderedPropertyList()
-	propsMetadata.AddOrderedProperty("package", p.Name)
-	propsMetadata.AddOrderedProperty("package path", p.PackagePath)
-	propsMetadata.AddOrderedProperty("module", p.Module)
+	propsData.AddOrderedProperty("package", p.Name)
+	propsData.AddOrderedProperty("package path", p.PackagePath)
+	propsData.AddOrderedProperty("module", p.Module)
 	// metadata > files
 	files := []string{}
 	for _, f := range p.Files {
 		files = append(files, f.String())
 	}
 	sort.Strings(files)
-	propsMetadata.AddOrderedProperty("files", files)
+	propsData.AddOrderedProperty("files", files)
 	// metadata > imports
 	imports := []string{}
 	for key := range p.ImportedPackages {
 		imports = append(imports, key)
 	}
 	sort.Strings(imports)
-	propsMetadata.AddOrderedProperty("imports", imports)
-	// save metadata
-	propsData.AddOrderedProperty("metadata", propsMetadata.Result())
+	propsData.AddOrderedProperty("imports", imports)
 
 	// imported types
 	importedTypes := []string{}

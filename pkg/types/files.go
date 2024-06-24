@@ -2,6 +2,8 @@ package types
 
 import (
 	"go/ast"
+
+	"analyzer/pkg/logger"
 )
 
 type File struct {
@@ -12,9 +14,12 @@ type File struct {
 	Imports map[string]*Import // key is the alias of the import
 }
 
-func (f *File) GetImport(alias string) (*Import, bool) {
-	impt, ok := f.Imports[alias]
-	return impt, ok
+func (f *File) GetImport(alias string) *Import {
+	if impt, ok := f.Imports[alias]; ok {
+		return impt
+	}
+	logger.Logger.Fatalf("unknown import alias (%s) in file (%s)", alias, f.String())
+	return nil
 }
 
 func (f *File) String() string {

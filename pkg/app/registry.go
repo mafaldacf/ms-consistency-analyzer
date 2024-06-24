@@ -8,6 +8,7 @@ import (
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/frameworks"
 	"analyzer/pkg/logger"
+	"analyzer/pkg/lookup"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
 )
@@ -27,7 +28,7 @@ func (app *App) RegisterServiceNodes(servicesInfo []*frameworks.ServiceInfo) {
 }
 
 func (app *App) createServiceNodes(servicesInfo []*frameworks.ServiceInfo) {
-	logger.Logger.Debugf("[APP] loading #%d specs", len(servicesInfo))
+	logger.Logger.Tracef("[APP] loading #%d specs", len(servicesInfo))
 	// services also include blueprint backends
 	for _, info := range servicesInfo {
 		pkg := app.GetPackage(info.Package)
@@ -39,7 +40,7 @@ func (app *App) createServiceNodes(servicesInfo []*frameworks.ServiceInfo) {
 			Fields:              make(map[string]types.Field),
 			Services:            make(map[string]*service.Service),
 			Databases:           make(map[string]datastores.DatabaseInstance),
-			ExposedMethods:      make(map[string]*types.ParsedMethod),
+			ExportedMethods:     make(map[string]*types.ParsedMethod),
 			QueueHandlerMethods: make(map[string]*types.ParsedMethod),
 			InternalMethods:     make(map[string]*types.ParsedMethod),
 			ConstructorName:     info.ConstructorName,
@@ -47,7 +48,7 @@ func (app *App) createServiceNodes(servicesInfo []*frameworks.ServiceInfo) {
 
 		// add entries to be later parsed
 		for _, name := range info.Methods {
-			node.ExposedMethods[name] = nil
+			node.ExportedMethods[name] = nil
 		}
 		for _, name := range info.Edges {
 			node.Services[name] = nil
@@ -68,9 +69,9 @@ func (app *App) matchServiceEdges() {
 
 func (app *App) buildServiceInfo() {
 	for _, node := range app.Services {
-		node.ParseImports()
+		lookup.ParseImports(node.File)
 		node.RegisterConstructor()
-		node.RegisterStructure()
+		node.RegisterImplStructure()
 		node.ParseFields()
 	}
 }
@@ -83,17 +84,19 @@ func (app *App) BuildServiceNodes() {
 	// keep this order
 	// parse service methods body
 	for _, node := range app.Services {
-		fmt.Printf("\n ################################## %s ##################################\n", node.Name)
+		fmt.Printf("\n################################################### %s ###################################################\n", node.Name)
 
 		var parser = func(node *service.Service, methods map[string]*types.ParsedMethod, visibility string) {
 			for _, method := range methods {
-				fmt.Printf("\n[%s] ------------------- %s -------------------\n", strings.ToUpper(visibility), method)
-				controlflow.GenerateMethodCFG(method)
+				fmt.Println("----------------------------------------------------------------------------------------------------------------------------------")
+				logger.Logger.Infof("[%s] %s", strings.ToUpper(visibility), method)
+				fmt.Println("----------------------------------------------------------------------------------------------------------------------------------")
+				controlflow.GenerateMethodCFG(node, method)
 				controlflow.ParseServiceMethodCFG(node, method)
-				fmt.Printf("\n-------------------------------------------------------\n")
+				fmt.Println()
 			}
 		}
-		parser(node, node.ExposedMethods, "exposed")
+		parser(node, node.ExportedMethods, "exposed")
 		parser(node, node.QueueHandlerMethods, "worker")
 		// internal already contains workers
 		parser(node, node.InternalMethods, "internal")
@@ -109,7 +112,7 @@ func (app *App) loadFieldsFromConstructor(servicesInfo []*frameworks.ServiceInfo
 			paramsDBs[param] = dbInstance
 			node.Databases[dbInstance.GetName()] = dbInstance
 		}
-		node.ParseConstructorAndLoadFields(paramsDBs)
-		logger.Logger.Infof("[APP] registered service node %s with %d service(s) and %d database(s)", node.Name, len(node.Services), len(node.Databases))
+		node.ParseConstructorAndLoadImplFields(paramsDBs)
+		logger.Logger.Tracef("[APP] registered service node %s with %d service(s) and %d database(s)", node.Name, len(node.Services), len(node.Databases))
 	}
 }

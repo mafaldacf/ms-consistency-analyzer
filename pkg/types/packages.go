@@ -52,15 +52,42 @@ func (p *Package) IsAppPackage() bool {
 	return p.Type == APP
 }
 
+func (p *Package) IsExternalPackage() bool {
+	return p.Type == EXTERNAL
+}
+
+func (p *Package) IsBlueprintBackendPackage() bool {
+	return p.Type == BLUEPRINT
+}
+
 func (p *Package) GetName() string {
 	return p.Name
+}
+
+func (p *Package) GetPackagePath() string {
+	return p.PackagePath
+}
+
+func (p *Package) GetDeclaredVariable(typeNameIdent *ast.Ident) variables.Variable {
+	if v, ok := p.DeclaredVariables[typeNameIdent.Name]; ok {
+		return v
+	}
+	logger.Logger.Fatalf("unknown declared variable (%s) in package (%s) -- declared variables: %v", typeNameIdent.Name, p.Name, p.DeclaredVariables)
+	return nil
+}
+
+func (p *Package) GetDeclaredVariableIfExists(name string) variables.Variable {
+	if v, ok := p.DeclaredVariables[name]; ok {
+		return v
+	}
+	return nil
 }
 
 func (p *Package) AddParsedMethod(method *ParsedMethod) {
 	p.ParsedMethods = append(p.ParsedMethods, method)
 }
 
-func (p *Package) GetParsedMethodIfExists(methodName string, recvTypeName string) *ParsedMethod {
+func (p *Package) GetParsedMethod(methodName string, recvTypeName string) *ParsedMethod {
 	for _, m := range p.ParsedMethods {
 		if m.Name == methodName {
 			if m.Receiver.GetType() == nil || m.Receiver.GetType().GetName() == recvTypeName {
@@ -68,15 +95,20 @@ func (p *Package) GetParsedMethodIfExists(methodName string, recvTypeName string
 			}
 		}
 	}
+	logger.Logger.Fatalf("unknown method (%s) with receiver type name (%s) for package (%s)", methodName, recvTypeName, p.Name)
 	return nil
 }
 
-func (p *Package) IsBlueprintBackendPackage() bool {
-	return p.Type == BLUEPRINT
-}
-
-func (p *Package) IsExternalPackage() bool {
-	return p.Type == EXTERNAL
+func (p *Package) GetParsedMethodIfExists(methodName string, recvTypeName string) *ParsedMethod {
+	for _, m := range p.ParsedMethods {
+		if m.Name == methodName {
+			if m.Receiver == nil && recvTypeName == "" || m.Receiver.GetType().GetName() == recvTypeName {
+				return m
+			}
+		}
+	}
+	//logger.Logger.Warnf("unknown method (%s) with receiver type name (%s) in package (%s)", methodName, recvTypeName, p.Name)
+	return nil
 }
 
 func (p *Package) String() string {
@@ -91,10 +123,13 @@ func (p *Package) GetDeclaredType(name string) gotypes.Type {
 	return decl
 }
 
-func (p *Package) GetImportedPackage(name string) *Package {
-	imptPkg, ok := p.ImportedPackages[name]
+func (p *Package) GetImportedPackage(pkgPath string) *Package {
+	if pkgPath == p.PackagePath {
+		return p
+	}
+	imptPkg, ok := p.ImportedPackages[pkgPath]
 	if !ok {
-		logger.Logger.Fatalf("package %s not found in imports of package %s", name, p.Name)
+		logger.Logger.Fatalf("package (%s) not found in imports of package (%s)", pkgPath, p.PackagePath)
 	}
 	return imptPkg
 }
@@ -152,7 +187,7 @@ func (p *Package) AddDatastoreType(e gotypes.Type) {
 
 func (p *Package) LinkFile(file *File) {
 	if slices.Contains(p.Files, file) {
-		logger.Logger.Fatalf("package %s already constains file %s", p.Name, file.Name)
+		logger.Logger.Fatalf("package (%s) already constains file (%s)", p.Name, file.Name)
 	}
 	p.Files = append(p.Files, file)
 	file.Package = p
@@ -162,7 +197,7 @@ func (p *Package) GetImportedTypeFromPath(fullPath string) (gotypes.Type, bool) 
 	if e, ok := p.ImportedTypes[fullPath]; ok {
 		return e, true
 	}
-	logger.Logger.Fatalf("unknown imported package %s in package %s", fullPath, p.Name)
+	logger.Logger.Fatalf("unknown imported package (%s) in package (%s)", fullPath, p.Name)
 	return nil, false
 }
 
@@ -171,23 +206,33 @@ func (p *Package) GetImportedType(packagePath string, typeName string) (gotypes.
 	if e, ok := p.ImportedTypes[key]; ok {
 		return e, true
 	}
-	logger.Logger.Fatalf("[PACKAGE] unknown imported package %s in package %s", key, p.Name)
+	logger.Logger.Fatalf("[PACKAGE] unknown imported package (%s) in package (%s)", key, p.Name)
 	return nil, false
+}
+
+func (p *Package) GetDeclaredTypeIfExists(typeNameIdent *ast.Ident) gotypes.Type {
+	if p.Type == APP {
+		if e, ok := p.DeclaredTypes[typeNameIdent.Name]; ok {
+			return e
+		}
+	}
+	logger.Logger.Warnf("[PACKAGE] unknown declared type (%s) in package (%s)", typeNameIdent.Name, p.Name)
+	return nil
 }
 
 func (p *Package) GetNamedType(name string) (gotypes.Type, bool) {
 	if e, ok := p.ServiceTypes[name]; ok {
-		logger.Logger.Tracef("[PACKAGE] found service type for %s", name)
+		logger.Logger.Tracef("[PACKAGE] found service type for (%s)", name)
 		return e, true
 	}
 	if e, ok := p.DatastoreTypes[name]; ok {
-		logger.Logger.Tracef("[PACKAGE] found datastore type for %s", name)
+		logger.Logger.Tracef("[PACKAGE] found datastore type for (%s)", name)
 		return e, true
 	}
 	if e, ok := p.DeclaredTypes[name]; ok {
-		logger.Logger.Tracef("[PACKAGE] found declared type for %s", name)
+		logger.Logger.Tracef("[PACKAGE] found declared type for (%s)", name)
 		return e, true
 	}
-	logger.Logger.Fatalf("unknown named type %s in package %s", name, p.Name)
+	logger.Logger.Fatalf("unknown named type (%s) in package (%s)", name, p.Name)
 	return nil, false
 }

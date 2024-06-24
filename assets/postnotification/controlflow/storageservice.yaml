@@ -1,206 +1,34 @@
-StorageService.ReadPost(ctx context.Context, reqID int64, postID int64):
+(*StorageServiceImpl).ReadPost(ctx context.Context, reqID int64, postID int64):
   block 0 (Body):
-  - ctx context.Context (GenericVariable UserType)
-  - reqID int64 (BasicVariable BasicType)
-  - postID int64 (BasicVariable BasicType)
-  - post struct (StructVariable StructType)
-  - string (CompositeVariable BasicType)
-  - postIDStr string (CompositeVariable BasicType)
-  - _ err (BasicVariable BasicType)
-  - err interface{} (InterfaceVariable InterfaceType)
-  - _ err (BasicVariable BasicType)
-  - err interface{} (InterfaceVariable InterfaceType)
-  block 1 (IfThen):
-  - ctx context.Context (GenericVariable UserType)
-  - reqID int64 (BasicVariable BasicType)
-  - postID int64 (BasicVariable BasicType)
-  - post struct (StructVariable StructType)
-  - string (CompositeVariable BasicType)
-  - postIDStr string (CompositeVariable BasicType)
-  - _ err (BasicVariable BasicType)
-  - err interface{} (InterfaceVariable InterfaceType)
-  - _ err (BasicVariable BasicType)
-  - err interface{} (InterfaceVariable InterfaceType)
-  block 2 (IfDone):
-  - ctx context.Context (GenericVariable UserType)
-  - reqID int64 (BasicVariable BasicType)
-  - postID int64 (BasicVariable BasicType)
-  - post struct (StructVariable StructType)
-  - string (CompositeVariable BasicType)
-  - postIDStr string (CompositeVariable BasicType)
-  - _ err (BasicVariable BasicType)
-  - err interface{} (InterfaceVariable InterfaceType)
-  - _ err (BasicVariable BasicType)
-  - err interface{} (InterfaceVariable InterfaceType)
-  block 3 (Unreachable): []
-  block 4 (Unreachable): []
-StorageService.ReadPostNoSQL(ctx context.Context, reqID int64, postID int64):
+  - s (*postnotification.StorageServiceImpl struct { cache Cache, db NoSQLDatabase })
+  - ctx context.Context
+  - reqID int64
+  - postID int64
+  - post postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }
+  - postIDStr string
+  - _ bool
+  - err .error
+(*StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID int64):
   block 0 (Body):
-  - ctx context.Context (GenericVariable UserType)
-  - reqID int64 (BasicVariable BasicType)
-  - postID int64 (BasicVariable BasicType)
-  - post struct (StructVariable StructType)
-  - 'collection NoSQLCollection {database: "post", collection: "post"} (NoSQLCollectionVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - 'collection NoSQLCollection {database: "post", collection: "post"} (NoSQLCollectionVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  block 1 (IfThen):
-  - ctx context.Context (GenericVariable UserType)
-  - reqID int64 (BasicVariable BasicType)
-  - postID int64 (BasicVariable BasicType)
-  - post struct (StructVariable StructType)
-  - 'collection NoSQLCollection {database: "post", collection: "post"} (NoSQLCollectionVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - 'collection NoSQLCollection {database: "post", collection: "post"} (NoSQLCollectionVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  block 2 (IfDone):
-  - ctx context.Context (GenericVariable UserType)
-  - reqID int64 (BasicVariable BasicType)
-  - postID int64 (BasicVariable BasicType)
-  - post struct (StructVariable StructType)
-  - 'collection NoSQLCollection {database: "post", collection: "post"} (NoSQLCollectionVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - 'collection NoSQLCollection {database: "post", collection: "post"} (NoSQLCollectionVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - query primitive.D (GenericVariable UserType)
-  - 'result NoSQLCursor {database: "post", collection: "post"} (NoSQLCursorVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - 'result NoSQLCursor {database: "post", collection: "post"} (NoSQLCursorVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  block 3 (Unreachable): []
-  block 4 (IfThen):
-  - ctx context.Context (GenericVariable UserType)
-  - reqID int64 (BasicVariable BasicType)
-  - postID int64 (BasicVariable BasicType)
-  - post struct (StructVariable StructType)
-  - 'collection NoSQLCollection {database: "post", collection: "post"} (NoSQLCollectionVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - 'collection NoSQLCollection {database: "post", collection: "post"} (NoSQLCollectionVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - query primitive.D (GenericVariable UserType)
-  - 'result NoSQLCursor {database: "post", collection: "post"} (NoSQLCursorVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - 'result NoSQLCursor {database: "post", collection: "post"} (NoSQLCursorVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  block 5 (IfDone):
-  - ctx context.Context (GenericVariable UserType)
-  - reqID int64 (BasicVariable BasicType)
-  - postID int64 (BasicVariable BasicType)
-  - post struct (StructVariable StructType)
-  - 'collection NoSQLCollection {database: "post", collection: "post"} (NoSQLCollectionVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - 'collection NoSQLCollection {database: "post", collection: "post"} (NoSQLCollectionVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - query primitive.D (GenericVariable UserType)
-  - 'result NoSQLCursor {database: "post", collection: "post"} (NoSQLCursorVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - 'result NoSQLCursor {database: "post", collection: "post"} (NoSQLCursorVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - res bool (BasicVariable BasicType)
-  - err .error (GenericVariable UserType)
-  - res bool (BasicVariable BasicType)
-  - err .error (GenericVariable UserType)
-  block 6 (Unreachable): []
-  block 7 (IfThen):
-  - ctx context.Context (GenericVariable UserType)
-  - reqID int64 (BasicVariable BasicType)
-  - postID int64 (BasicVariable BasicType)
-  - post struct (StructVariable StructType)
-  - 'collection NoSQLCollection {database: "post", collection: "post"} (NoSQLCollectionVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - 'collection NoSQLCollection {database: "post", collection: "post"} (NoSQLCollectionVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - query primitive.D (GenericVariable UserType)
-  - 'result NoSQLCursor {database: "post", collection: "post"} (NoSQLCursorVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - 'result NoSQLCursor {database: "post", collection: "post"} (NoSQLCursorVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - res bool (BasicVariable BasicType)
-  - err .error (GenericVariable UserType)
-  - res bool (BasicVariable BasicType)
-  - err .error (GenericVariable UserType)
-  block 8 (IfDone):
-  - ctx context.Context (GenericVariable UserType)
-  - reqID int64 (BasicVariable BasicType)
-  - postID int64 (BasicVariable BasicType)
-  - post struct (StructVariable StructType)
-  - 'collection NoSQLCollection {database: "post", collection: "post"} (NoSQLCollectionVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - 'collection NoSQLCollection {database: "post", collection: "post"} (NoSQLCollectionVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - query primitive.D (GenericVariable UserType)
-  - 'result NoSQLCursor {database: "post", collection: "post"} (NoSQLCursorVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - 'result NoSQLCursor {database: "post", collection: "post"} (NoSQLCursorVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - res bool (BasicVariable BasicType)
-  - err .error (GenericVariable UserType)
-  - res bool (BasicVariable BasicType)
-  - err .error (GenericVariable UserType)
-  block 9 (Unreachable): []
-  block 10 (Unreachable): []
-StorageService.StorePost(ctx context.Context, reqID int64, post postnotification.Post struct):
-  block 0 (Body):
-  - ctx context.Context (GenericVariable UserType)
-  - reqID int64 (BasicVariable BasicType)
-  - post postnotification.Post struct (StructVariable UserType) ----> (TAINTED @ POST_CACHE.Post)
-  - string (CompositeVariable BasicType)
-  - postIDStr string (CompositeVariable BasicType)
-  block 1 (Unreachable): []
-StorageService.StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct):
-  block 0 (Body):
-  - ctx context.Context (GenericVariable UserType)
-  - reqID int64 (BasicVariable BasicType)
-  - post postnotification.Post struct (StructVariable UserType)
-  - 'collection NoSQLCollection {database: "post", collection: "post"} (NoSQLCollectionVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - 'collection NoSQLCollection {database: "post", collection: "post"} (NoSQLCollectionVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  block 1 (IfThen):
-  - ctx context.Context (GenericVariable UserType)
-  - reqID int64 (BasicVariable BasicType)
-  - post postnotification.Post struct (StructVariable UserType)
-  - 'collection NoSQLCollection {database: "post", collection: "post"} (NoSQLCollectionVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - 'collection NoSQLCollection {database: "post", collection: "post"} (NoSQLCollectionVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  block 2 (IfDone):
-  - ctx context.Context (GenericVariable UserType)
-  - reqID int64 (BasicVariable BasicType)
-  - post postnotification.Post struct (StructVariable UserType)
-  - 'collection NoSQLCollection {database: "post", collection: "post"} (NoSQLCollectionVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  - 'collection NoSQLCollection {database: "post", collection: "post"} (NoSQLCollectionVariable
-    BackendType)'
-  - err interface{} (InterfaceVariable InterfaceType)
-  block 3 (Unreachable): []
-  block 4 (Unreachable): []
+  - s (*postnotification.StorageServiceImpl struct { cache Cache, db NoSQLDatabase })
+  - ctx context.Context
+  - reqID int64
+  - postID int64
+  - post postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }
+  - collection NoSQLCollection { database = "post", collection = "post" }
+  - err .error
+(*StorageServiceImpl).StorePost(ctx context.Context, reqID int64, post postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }):
+ block 0 (Body):
+  - s (*postnotification.StorageServiceImpl struct { cache Cache, db NoSQLDatabase })
+  - ctx context.Context
+  - reqID int64
+  - post postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }
+  - postIDStr string
+(*StorageServiceImpl).StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }):
+ block 0 (Body):
+  - p (*postnotification.StorageServiceImpl struct { cache Cache, db NoSQLDatabase })
+  - ctx context.Context
+  - reqID int64
+  - post postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } } ----> (TAINTED @ POST_NOSQL.Post)
+  - collection NoSQLCollection { database = "post", collection = "post" }
+  - err .error

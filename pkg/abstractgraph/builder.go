@@ -59,7 +59,6 @@ func (graph *AbstractGraph) matchIdentifiers(node AbstractNode) {
 	node.SetVisited(true)
 	/* graph.referenceCallerServiceParamss(node) */
 	/* graph.matchQueuePublishersToReceiversParams(node) */
-	logger.Logger.Debug()
 	for _, child := range node.GetChildren() {
 		graph.matchIdentifiers(child)
 	}
@@ -142,17 +141,38 @@ func (graph *AbstractGraph) recurseBuild(app *app.App, abstractNode AbstractNode
 	switch node := abstractNode.(type) {
 	case *AbstractServiceCall:
 		targetMethod := graph.Services[node.Callee].GetExportedMethod(node.ParsedCall.Name)
-		logger.Logger.Tracef("[GRAPH] visiting abstract service call (%d calls): %s", len(targetMethod.Calls), node.String())
+		if targetMethod == nil {
+			logger.Logger.Fatalf("unexpected nil target method for call (%s) in node (%s)", node.ParsedCall.Name, node.Callee)
+		}
+		fmt.Println("------------------------------------------------------------------------------------------------------------------------------------------------")
+		logger.Logger.Infof("[ABSTRACT SERVICE CALL (%d) calls] %s", len(targetMethod.Calls), node.String())
+		for _, c := range targetMethod.Calls {
+			logger.Logger.Debugf("\t\t- call: %v", c.String())
+		}
+		fmt.Println("------------------------------------------------------------------------------------------------------------------------------------------------")
 		graph.appendAbstractEdges(node, node, targetMethod)
+		fmt.Println()
 	case *AbstractDatabaseCall:
 		if node.ParsedCall.Method.IsQueueWrite() {
-			logger.Logger.Tracef("[GRAPH] visiting abstract database call: %s", node.String())
+			fmt.Println("------------------------------------------------------------------------------------------------------------------------------------------------")
+			logger.Logger.Infof("[ABSTRACT DATABASE CALL] %s", node.String())
+			fmt.Println("------------------------------------------------------------------------------------------------------------------------------------------------")
 			graph.appendPublisherQueueHandlers(app, node)
 		}
+		fmt.Println()
 	case *AbstractQueueHandler:
 		targetMethod := graph.Services[node.Callee].GetQueueHandlerMethod(node.ParsedCall.Name)
-		logger.Logger.Tracef("[GRAPH] visiting abstract queue handler (%d calls): %s", len(targetMethod.Calls), node.String())
+		if targetMethod == nil {
+			logger.Logger.Fatalf("unexpected nil target method for call (%s) in node (%s)", node.ParsedCall.Name, node.Callee)
+		}
+		fmt.Println("------------------------------------------------------------------------------------------------------------------------------------------------")
+		logger.Logger.Infof("[ABSTRACT QUEUE HANDLER (%d calls)] %s", len(targetMethod.Calls), node.String())
+		for _, c := range targetMethod.Calls {
+			logger.Logger.Debugf("\t\t- call: %v", c.String())
+		}
+		fmt.Println("------------------------------------------------------------------------------------------------------------------------------------------------")
 		graph.appendAbstractEdges(node, node, targetMethod)
+		fmt.Println()
 	default:
 		logger.Logger.Fatalf("Error recursing build for %s\nUnknown node type: %s", node, utils.GetType(node))
 	}
@@ -176,7 +196,7 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				Subscriber: rootIsQueueHandler,
 			}
 			rootParent.AddChild(child)
-			logger.Logger.Debugf("[GRAPH] added node for abstract database call: %s", child.String())
+			logger.Logger.Infof("[GRAPH] added node for abstract database call: %s", child.String())
 
 			if rootIsQueueHandler && !rootQueueHandler.HasQueueReceiver() {
 				if !graph.referencePublisherParams(rootQueueHandler, child) {
@@ -195,7 +215,7 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				Method:     parsedCall.Method.String(),
 			}
 			rootParent.AddChild(child)
-			logger.Logger.Debugf("[GRAPH] added node for abstract service call: %s", child.String())
+			logger.Logger.Infof("[GRAPH] added node for abstract service call: %s", child.String())
 			graph.referenceServiceCallerParams(rootParent, directParent, child)
 		case *types.ParsedInternalCall:
 			tempChild := &AbstractTempInternalCall{
@@ -208,13 +228,16 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 			graph.referenceServiceCallerParams(rootParent, directParent, tempChild)
 			tempMethod := graph.Services[tempChild.Service].GetInternalMethod(tempChild.ParsedCall.Name)
 			graph.appendAbstractEdges(rootParent, tempChild, tempMethod)
-			logger.Logger.Debugf("[GRAPH] added temporary node for abstract service call: %s", tempChild.String())
+			logger.Logger.Infof("[GRAPH] added temporary node for abstract service call: %s", tempChild.String())
 		}
 	}
 }
 
 func (graph *AbstractGraph) appendPublisherQueueHandlers(app *app.App, publisher *AbstractDatabaseCall) {
 	instance := publisher.ParsedCall.GetTargetedDatabaseInstance()
+	if instance == nil {
+		logger.Logger.Fatalf("received unexpected nil database for queue publisher parsed call: %s", publisher.ParsedCall.String())
+	}
 	for _, node := range app.Services {
 		for _, handlerMethod := range node.GetQueueHandlersForDatabase(instance) {
 			logger.Logger.Debugf("[GRAPH - QUEUE] found worker %s on instance '%s'", handlerMethod.String(), instance.GetName())
@@ -286,7 +309,7 @@ func getDependencies(first bool, v variables.Variable) []variables.Variable {
 
 func (graph *AbstractGraph) referenceServiceCallerParams(parent AbstractNode, caller AbstractNode, child AbstractNode) {
 	fmt.Println()
-	logger.Logger.Infof("[REF] visiting %s (caller = %s, parent = %s)", child.String(), caller.GetName(), parent.GetName())
+	logger.Logger.Debugf("[REF] visiting %s (caller = %s, parent = %s)", child.String(), caller.GetName(), parent.GetName())
 
 	/* _, parentIsService := parent.(*AbstractServiceCall)
 	_, childIsDatastore := child.(*AbstractDatabaseCall)

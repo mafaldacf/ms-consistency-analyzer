@@ -9,6 +9,7 @@ import (
 
 type Method interface {
 	String() string
+	LongString() string
 	GetParams() []*MethodField
 	GetReturns() []*MethodField
 	IsQueueWrite() bool
@@ -20,7 +21,6 @@ type ParsedMethod struct {
 	Method
 	Ast         *ast.FuncDecl                 `json:"-"`
 	Name        string                        `json:"name"`
-	FullName    string                        `json:"-"`
 	Calls       []Call                        `json:"-"`
 	Service     string                        `json:"-"`
 	Package     *Package                      `json:"-"`
@@ -33,10 +33,6 @@ type ParsedMethod struct {
 	Params   []*MethodField
 	Returns  []*MethodField
 	Receiver *MethodField `json:"-"`
-}
-
-func (f *ParsedMethod) Yaml() interface{} {
-	return f.ParsedCfg.Yaml()
 }
 
 func (f *ParsedMethod) GetAst() *ast.FuncDecl {
@@ -56,7 +52,15 @@ func (*ParsedMethod) IsQueueRead() bool {
 }
 
 func (p *ParsedMethod) String() string {
-	repr := fmt.Sprintf("%s.%s(", p.Service, p.Name)
+	prefix := ""
+	if p.Service != "" {
+		prefix += p.Service
+	}
+	if p.Receiver != nil {
+		// this just resets everything
+		prefix = p.Receiver.GetTypeName()
+	}
+	repr := fmt.Sprintf("%s.%s(", prefix, p.Name)
 	for i, arg := range p.Params {
 		repr += arg.String()
 		if i < len(p.Params)-1 {
@@ -68,8 +72,15 @@ func (p *ParsedMethod) String() string {
 }
 
 func (p *ParsedMethod) LongString() string {
-	prefix := p.Package.Name
+	prefix := ""
+	if p.Package != nil {
+		prefix += p.Package.Name
+	}
+	if p.Service != "" {
+		prefix += p.Service
+	}
 	if p.Receiver != nil {
+		// this just resets everything
 		prefix = p.Receiver.GetTypeLongName()
 	}
 	repr := fmt.Sprintf("%s.%s(", prefix, p.Name)
@@ -80,6 +91,19 @@ func (p *ParsedMethod) LongString() string {
 		}
 	}
 	repr += ")"
+	if len(p.Returns) == 1 {
+		repr += " " + p.Returns[0].String()
+	}
+	if len(p.Returns) > 1 {
+		repr += " ("
+		for i, ret := range p.Returns {
+			repr += ret.String()
+			if i < len(p.Returns)-1 {
+				repr += ", "
+			}
+		}
+		repr += ")"
+	}
 	return repr
 }
 

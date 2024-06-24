@@ -17,8 +17,9 @@ type App struct {
 	Path               string
 	Services           map[string]*service.Service
 	Databases          map[string]datastores.DatabaseInstance
-	Packages           map[string]*types.Package
-	BlueprintPackages  map[string]*types.Package
+	Packages           map[string]*types.Package // key is package name (FIXME: should be path actually)
+	BlueprintPackages  map[string]*types.Package // key is package name (FIXME: should be path actually)
+	ExternalPackages   map[string]*types.Package // key is package name (FIXME: should be path actually)
 	PersistedVariables map[string][]variables.Variable
 }
 
@@ -38,6 +39,18 @@ func (app *App) MarshalJSON() ([]byte, error) {
 func (app *App) String() string {
 	str, _ := app.MarshalJSON()
 	return string(str)
+}
+
+func (app *App) AddAppPackage(name string, p *types.Package) {
+	app.Packages[name] = p
+}
+
+func (app *App) AddBlueprintPackage(name string, p *types.Package) {
+	app.BlueprintPackages[name] = p
+}
+
+func (app *App) AddExternalPackage(name string, p *types.Package) {
+	app.ExternalPackages[name] = p
 }
 
 func (app *App) GetPackage(pkgName string) *types.Package {
@@ -69,6 +82,7 @@ func Init(name string, path string) (*App, error) {
 		Databases:          make(map[string]datastores.DatabaseInstance),
 		Packages:           make(map[string]*types.Package),
 		BlueprintPackages:  make(map[string]*types.Package),
+		ExternalPackages:   make(map[string]*types.Package),
 		PersistedVariables: make(map[string][]variables.Variable),
 	}
 	logger.Logger.Infof("[APP] initialized app at %s", app.Path)

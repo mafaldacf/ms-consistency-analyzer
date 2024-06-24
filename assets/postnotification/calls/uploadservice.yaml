@@ -1,0 +1,3 @@
+(*UploadServiceImpl).UploadPost(ctx context.Context, username string, text string):
+- (*postnotification.StorageServiceImpl).StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }) error
+- Queue.Push(ctx context.Context, item interface{}) (err, interface{})

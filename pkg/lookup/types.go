@@ -24,10 +24,14 @@ func CreateVariableFromType(name string, t gotypes.Type) variables.Variable {
 	switch e := t.(type) {
 	case *gotypes.UserType:
 		if e.UserType != nil {
-			return CreateVariableFromType(name, e.UserType)
+			underlyingVariable := CreateVariableFromType(name, e.UserType)
+			e.UserType = underlyingVariable.GetType()
+			underlyingVariable.GetVariableInfo().Type = e
+			//logger.Logger.Warnf("[LOOKUP] returning user type variable (%s) with underlying type (%s)", underlyingVariable.String(), utils.GetType(underlyingVariable.GetType()))
+			return underlyingVariable
 		}
-		logger.Logger.Warnf("[LOOKUP] user type (%s) with nil underlying type", e.String())
 		// e.g. context.Context is nil
+		logger.Logger.Warnf("[LOOKUP] user type (%s) with nil underlying type", e.String())
 		return &variables.GenericVariable{VariableInfo: info}
 	case *gotypes.ChanType:
 		return &variables.ChanVariable{VariableInfo: info}
@@ -58,12 +62,13 @@ func CreateVariableFromType(name string, t gotypes.Type) variables.Variable {
 			Underlying:   CreateVariableFromType(name, e.SubType),
 		}
 	case *blueprint.BlueprintBackendType:
+		info.Type = e.DeepCopy()
 		if e.IsNoSQLCollection() {
-			e.NoSQLComponent = &blueprint.NoSQLComponent{Type: blueprint.NoSQLCollectionType}
+			// blueprint NoSQL type (blueprint.NoSQLCollectionType) is later assigned
 			return &blueprint.BlueprintBackendVariable{VariableInfo: info}
 		}
 		if e.IsNoSQLCursor() {
-			e.NoSQLComponent = &blueprint.NoSQLComponent{Type: blueprint.NoSQLCursorType}
+			// blueprint NoSQL type (blueprint.NoSQLCursorType) is later assigned
 			return &blueprint.BlueprintBackendVariable{VariableInfo: info}
 		}
 		return &blueprint.BlueprintBackendVariable{VariableInfo: info}
@@ -79,6 +84,8 @@ func ParseImports(file *types.File) {
 		path := imp.Path.Value
 		// remove quotes
 		path = path[1 : len(path)-1]
+		items := strings.Split(path, "/")
+		pkgName := items[len(items)-1]
 
 		// get alias
 		// e.g. blueprintbackend in "github.com/blueprint-uservices/blueprint/runtime/core/backend"
@@ -86,17 +93,16 @@ func ParseImports(file *types.File) {
 		if imp.Name != nil {
 			alias = imp.Name.Name
 		} else {
-			// if alias is not define then we extract it as the last "member"
-			items := strings.Split(path, "/")
+			// if alias is not defined then we extract it as the last "member"
 			alias = items[len(items)-1]
 		}
 
 		impt := &types.Import{
 			Alias:      alias,
 			ImportPath: path,
-			//FIXME
+			//FIXME: dev can use a dummy path and replace with the original in the go.mod file
 			PackagePath: path,
-			PackageName: "",
+			PackageName: pkgName,
 		}
 		file.Imports[alias] = impt
 	}

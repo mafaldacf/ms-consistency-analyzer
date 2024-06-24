@@ -59,9 +59,9 @@ func DumpToYamlFile(data interface{}, appname string, filename string) {
 // exception goes for when there is just "interface{}"", where we maintain the lack of space
 func fixYamlStrings(yamlStr string) string {
 	var sb strings.Builder
-	inBraces := false   // { }
-	inAngles := false   // < >
-	inQuotes := false   // " " or ' '
+	inBraces := false     // { }
+	inAngles := false     // < >
+	inQuotes := false     // " " or ' '
 	inParentheses := false // ( )
 
 	for i, r := range yamlStr {
@@ -132,6 +132,31 @@ func fixYamlStrings(yamlStr string) string {
 				sb.WriteRune(r)
 			}
 		} else {
+			if r == '\n' && i+1 < len(yamlStr) && yamlStr[i+1] == ':' {
+				// skip newline if next character is colon
+				continue
+			}
+			if r == ':' && yamlStr[i-1] == '\n' {
+				// add newline after colon
+				sb.WriteRune(r)
+				sb.WriteRune('\n')
+				continue
+			}
+			if r == '?' && yamlStr[i-1] == '\n' {
+				continue
+			}
+			if r == ' ' && yamlStr[i-1] == '?' && yamlStr[i-2] == '\n' {
+				continue
+			}
+			if r == ' ' && yamlStr[i-1] == ':' && yamlStr[i+1] == '-' {
+				sb.WriteRune('\t')
+				continue
+			}
+			/* if r == '-' && yamlStr[i-1] == '\n' {
+				sb.WriteRune('\t')
+				sb.WriteRune(r)
+				continue
+			} */
 			sb.WriteRune(r)
 		}
 	}

@@ -6,12 +6,14 @@ import (
 
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/types"
+	"analyzer/pkg/types/variables"
 )
 
 type Service struct {
 	Name            string
 	ImplName        string
 	ConstructorName string
+	Impl            variables.Variable
 
 	File   *types.File
 	Fields map[string]types.Field
@@ -23,31 +25,18 @@ type Service struct {
 	ExportedMethods     map[string]*types.ParsedMethod
 	QueueHandlerMethods map[string]*types.ParsedMethod
 	InternalMethods     map[string]*types.ParsedMethod
-	Constructor         *types.ParsedMethod
+	Constructor         *types.ParsedMethod //TODO!!!
 
 	ImplementsQueue bool
-}
-
-func (node *Service) Yaml() map[string]interface{} {
-	data := make(map[string]interface{})
-	// exposed methods
-	for _, method := range node.ExportedMethods {
-		data[method.String()] = method.Yaml()
-	}
-	// queue handler methods
-	for _, method := range node.QueueHandlerMethods {
-		data[method.String()] = method.Yaml()
-	}
-	// internal methods (already contain handlers)
-	for _, method := range node.InternalMethods {
-		data[method.String()] = method.Yaml()
-	}
-	return data
 }
 
 func (node *Service) GetPackage() *types.Package {
 	return node.File.Package
 }
+func (node *Service) GetFile() *types.File {
+	return node.File
+}
+
 func (node *Service) GetPackageName() string {
 	return node.File.Package.Name
 }

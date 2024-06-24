@@ -1,150 +1,19 @@
-NotifyService.Run(ctx context.Context):
+(*NotifyServiceImpl).Run(ctx context.Context):
   block 0 (Body):
-  - ctx context.Context (GenericVariable UserType)
-  - wg sync.WaitGroup (GenericVariable UserType)
-  - i 1 int (BasicVariable BasicType)
-  block 1 (ForBody):
-  - ctx context.Context (GenericVariable UserType)
-  - wg sync.WaitGroup (GenericVariable UserType)
-  - i 1 int (BasicVariable BasicType)
-  - err error (BasicVariable BasicType)
-  block 2 (ForDone):
-  - ctx context.Context (GenericVariable UserType)
-  - wg sync.WaitGroup (GenericVariable UserType)
-  - i 1 int (BasicVariable BasicType)
-  - err error (BasicVariable BasicType)
-  - ctx context.Context (GenericVariable UserType)
-  - wg sync.WaitGroup (GenericVariable UserType)
-  - i 1 int (BasicVariable BasicType)
-  block 3 (ForLoop):
-  - ctx context.Context (GenericVariable UserType)
-  - wg sync.WaitGroup (GenericVariable UserType)
-  - i 1 int (BasicVariable BasicType)
-  - err error (BasicVariable BasicType)
-  - ctx context.Context (GenericVariable UserType)
-  - wg sync.WaitGroup (GenericVariable UserType)
-  - i 1 int (BasicVariable BasicType)
-  block 4 (ForPost):
-  - ctx context.Context (GenericVariable UserType)
-  - wg sync.WaitGroup (GenericVariable UserType)
-  - i 1 int (BasicVariable BasicType)
-  - err error (BasicVariable BasicType)
-  block 5 (Unreachable): []
-NotifyService.handleMessage(ctx context.Context, message postnotification.Message struct):
+  - n (*postnotification.NotifyServiceImpl struct { storageService postnotification.StorageService, queue Queue, numWorkers int })
+  - ctx context.Context
+(*NotifyServiceImpl).handleMessage(ctx context.Context, message postnotification.Message struct { ReqID string, PostID string, Timestamp string }):
+ block 0 (Body):
+  - n (*postnotification.NotifyServiceImpl struct { storageService postnotification.StorageService, queue Queue, numWorkers int })
+  - ctx context.Context
+  - message postnotification.Message struct { ReqID string, PostID string, Timestamp string }
+  - reqID int64
+  - err .error
+(*NotifyServiceImpl).workerThread(ctx context.Context, workerID int):
   block 0 (Body):
-  - ctx context.Context (GenericVariable UserType)
-  - message postnotification.Message struct (StructVariable UserType)
-  - int64 (CompositeVariable BasicType)
-  - .error (CompositeVariable UserType)
-  - reqID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  - reqID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  block 1 (IfThen):
-  - ctx context.Context (GenericVariable UserType)
-  - message postnotification.Message struct (StructVariable UserType)
-  - int64 (CompositeVariable BasicType)
-  - .error (CompositeVariable UserType)
-  - reqID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  - reqID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  block 2 (IfDone):
-  - ctx context.Context (GenericVariable UserType)
-  - message postnotification.Message struct (StructVariable UserType)
-  - int64 (CompositeVariable BasicType)
-  - .error (CompositeVariable UserType)
-  - reqID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  - reqID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  - int64 (CompositeVariable BasicType)
-  - .error (CompositeVariable UserType)
-  - postID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  - postID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  block 3 (Unreachable): []
-  block 4 (IfThen):
-  - ctx context.Context (GenericVariable UserType)
-  - message postnotification.Message struct (StructVariable UserType)
-  - int64 (CompositeVariable BasicType)
-  - .error (CompositeVariable UserType)
-  - reqID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  - reqID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  - int64 (CompositeVariable BasicType)
-  - .error (CompositeVariable UserType)
-  - postID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  - postID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  block 5 (IfDone):
-  - ctx context.Context (GenericVariable UserType)
-  - message postnotification.Message struct (StructVariable UserType)
-  - int64 (CompositeVariable BasicType)
-  - .error (CompositeVariable UserType)
-  - reqID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  - reqID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  - int64 (CompositeVariable BasicType)
-  - .error (CompositeVariable UserType)
-  - postID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  - postID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  - _ struct (StructVariable StructType)
-  - err error (BasicVariable BasicType)
-  - _ struct (StructVariable StructType)
-  - err error (BasicVariable BasicType)
-  block 6 (Unreachable): []
-  block 7 (IfThen):
-  - ctx context.Context (GenericVariable UserType)
-  - message postnotification.Message struct (StructVariable UserType)
-  - int64 (CompositeVariable BasicType)
-  - .error (CompositeVariable UserType)
-  - reqID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  - reqID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  - int64 (CompositeVariable BasicType)
-  - .error (CompositeVariable UserType)
-  - postID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  - postID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  - _ struct (StructVariable StructType)
-  - err error (BasicVariable BasicType)
-  - _ struct (StructVariable StructType)
-  - err error (BasicVariable BasicType)
-  block 8 (IfDone):
-  - ctx context.Context (GenericVariable UserType)
-  - message postnotification.Message struct (StructVariable UserType)
-  - int64 (CompositeVariable BasicType)
-  - .error (CompositeVariable UserType)
-  - reqID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  - reqID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  - int64 (CompositeVariable BasicType)
-  - .error (CompositeVariable UserType)
-  - postID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  - postID int64 (CompositeVariable BasicType)
-  - err .error (CompositeVariable UserType)
-  - _ struct (StructVariable StructType)
-  - err error (BasicVariable BasicType)
-  - _ struct (StructVariable StructType)
-  - err error (BasicVariable BasicType)
-  block 9 (Unreachable): []
-  block 10 (Unreachable): []
-NotifyService.workerThread(ctx context.Context, workerID int):
-  block 0 (Body):
-  - ctx context.Context (GenericVariable UserType)
-  - workerID int (BasicVariable BasicType)
-  - forever chan struct (ChanVariable ChanType)
-  - message map[string]interface{} (MapVariable MapType)
-  - notification postnotification.Message struct (StructVariable UserType)
-  block 1 (Unreachable): []
+  - n (*postnotification.NotifyServiceImpl struct { storageService postnotification.StorageService, queue Queue, numWorkers int })
+  - ctx context.Context
+  - workerID int
+  - forever chan struct {}
+  - message map[string]interface{}
+  - notification postnotification.Message struct { ReqID string, PostID string, Timestamp string }

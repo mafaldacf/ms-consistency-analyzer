@@ -1,0 +1,9 @@
+(*StorageServiceImpl).ReadPost(ctx context.Context, reqID int64, postID int64):
+- Cache.Get(ctx context.Context, key string, value interface{}) (err, interface{})
+(*StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID int64):
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor { database = "post", collection = "post" }, interface{})
+(*StorageServiceImpl).StorePost(ctx context.Context, reqID int64, post postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }):
+	- Cache.Put(ctx context.Context, key string, value interface{}) interface{}
+(*StorageServiceImpl).StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }):
+	- NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
+  - NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}

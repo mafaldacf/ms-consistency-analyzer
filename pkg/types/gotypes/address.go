@@ -16,16 +16,16 @@ func (t *AddressType) IsSameType(other Type) bool {
 	return ok
 }
 func (t *AddressType) String() string {
-	return fmt.Sprintf("&%s", t.AddressOf.String())
+	return fmt.Sprintf("(&%s)", t.AddressOf.String())
 }
 func (t *AddressType) LongString() string {
-	return fmt.Sprintf("&%s", t.AddressOf.LongString())
+	return fmt.Sprintf("(&%s)", t.AddressOf.LongString())
 }
 func (t *AddressType) GetName() string {
-	return "&" + t.AddressOf.GetName()
+	return "(&" + t.AddressOf.GetName() + ")"
 }
 func (t *AddressType) GetLongName() string {
-	return "(*" + t.AddressOf.GetLongName() + ")"
+	return "(&" + t.AddressOf.GetLongName() + ")"
 }
 func (t *AddressType) GetBasicValue() string {
 	return t.AddressOf.GetBasicValue()

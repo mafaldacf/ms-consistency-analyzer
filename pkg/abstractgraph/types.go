@@ -22,6 +22,7 @@ type AbstractNode interface {
 	GetParams() []variables.Variable
 	GetParam(int) variables.Variable
 	String() string
+	LongString() string
 	GetName() string
 	GetChildren() []AbstractNode
 	AddChild(AbstractNode)
@@ -63,6 +64,10 @@ func (call *AbstractServiceCall) GetCallee() string {
 
 func (call *AbstractServiceCall) String() string {
 	return call.ParsedCall.SimpleString()
+}
+
+func (call *AbstractServiceCall) LongString() string {
+	return call.ParsedCall.String()
 }
 
 func (call *AbstractServiceCall) GetChildren() []AbstractNode {
@@ -107,6 +112,10 @@ func (call *AbstractTempInternalCall) GetChildren() []AbstractNode {
 
 func (call *AbstractTempInternalCall) String() string {
 	return call.ParsedCall.SimpleString()
+}
+
+func (call *AbstractTempInternalCall) LongString() string {
+	return call.ParsedCall.String()
 }
 
 func (call *AbstractTempInternalCall) GetParams() []variables.Variable {
@@ -201,17 +210,19 @@ func (call *AbstractDatabaseCall) GetParams() []variables.Variable {
 
 func (call *AbstractDatabaseCall) GetParam(index int) variables.Variable {
 	if index > 0 && index < len(call.Params) {
+		logger.Logger.Debugf("got param with index %d for call %s", index, call.LongString())
 		return call.Params[index]
 	}
-	logger.Logger.Fatalf("cannot get param with index %d for call %s", index, call.String())
+	logger.Logger.Fatalf("cannot get param with index %d for call %s", index, call.LongString())
 	return nil
 }
 
 func (call *AbstractDatabaseCall) GetReturn(index int) variables.Variable {
 	if index > 0 && index < len(call.Returns) {
+		logger.Logger.Debugf("got return with index %d for call %s", index, call.LongString())
 		return call.Returns[index]
 	}
-	logger.Logger.Fatalf("cannot get return with index %d for call %s", index, call.String())
+	logger.Logger.Fatalf("cannot get return with index %d for call %s", index, call.LongString())
 	return nil
 }
 
@@ -221,6 +232,10 @@ func (call *AbstractDatabaseCall) GetName() string {
 
 func (call *AbstractDatabaseCall) String() string {
 	return call.ParsedCall.SimpleString()
+}
+
+func (call *AbstractDatabaseCall) LongString() string {
+	return call.ParsedCall.String()
 }
 
 func (call *AbstractDatabaseCall) GetChildren() []AbstractNode {

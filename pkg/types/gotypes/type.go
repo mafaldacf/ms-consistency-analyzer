@@ -12,6 +12,9 @@ type Type interface {
 	AddValue(value string)
 	GetNestedFieldTypes(prefix string) ([]Type, []string)
 	GetLongFieldName() string
+	GetParentUserType() *UserType
+	SetParentUserType(userType *UserType)
+	IsSameType(t Type) bool
 }
 
 func packageAlias(pkg string) string {

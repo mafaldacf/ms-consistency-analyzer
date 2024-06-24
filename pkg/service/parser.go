@@ -3,7 +3,6 @@ package service
 import (
 	"go/ast"
 	"slices"
-	"strings"
 
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/frameworks/blueprint"
@@ -13,38 +12,6 @@ import (
 	"analyzer/pkg/types/gotypes"
 	"analyzer/pkg/utils"
 )
-
-func (service *Service) ParseImports() {
-	logger.Logger.Tracef("[SERVICE] inspecting imports for service %s\n", service.Name)
-
-	for _, imp := range service.File.Ast.Imports {
-		path := imp.Path.Value
-		// remove quotes
-		path = path[1 : len(path)-1]
-
-		// get alias
-		// e.g. blueprintbackend in "github.com/blueprint-uservices/blueprint/runtime/core/backend"
-		var alias string
-		if imp.Name != nil {
-			alias = imp.Name.Name
-		} else {
-			// if alias is not define then we extract it as the last "member"
-			items := strings.Split(path, "/")
-			alias = items[len(items)-1]
-		}
-
-		impt := &types.Import{
-			Alias:      alias,
-			ImportPath: path,
-			//FIXME
-			PackagePath: path,
-			PackageName: "",
-		}
-		service.File.Imports[alias] = impt
-		logger.Logger.Debugf("[SERVICE] > %s for %s\n", alias, path)
-	}
-	logger.Logger.Debugln()
-}
 
 // ParseMethods:
 //  1. inspects the service service
@@ -150,7 +117,7 @@ func (service *Service) computeFieldFromType(field *ast.Field, paramName string,
 			FieldInfo: types.FieldInfo{
 				Ast:  field,
 				Name: paramName,
-				Type: t,
+				Type: t.DeepCopy(),
 			},
 			IsQueue: t.IsQueue(),
 			Idx:     idx,
@@ -307,8 +274,9 @@ func (service *Service) addExportedMethod(funcDecl *ast.FuncDecl) {
 	logger.Logger.Tracef("[PARSER] added exposed method %s to service %s", parsedMethod.String(), service.Name)
 }
 
-func (service *Service) ParseConstructorAndLoadFields(paramDBs map[string]datastores.DatabaseInstance) {
+func (service *Service) ParseConstructorAndLoadImplFields(paramDBs map[string]datastores.DatabaseInstance) {
 	constructor := service.Constructor
+
 	ast.Inspect(constructor.GetBody(), func(n ast.Node) bool {
 		compositeLit, ok := n.(*ast.CompositeLit)
 		if !ok {
@@ -320,23 +288,24 @@ func (service *Service) ParseConstructorAndLoadFields(paramDBs map[string]datast
 				if kv, ok := elt.(*ast.KeyValueExpr); ok {
 					keyIdent := kv.Key.(*ast.Ident)
 					if keyIdent == nil {
-						logger.Logger.Fatalf("[PARSER] unexpected key type (%s)", utils.GetType(kv.Key))
+						logger.Logger.Fatalf("[PARSER] [%s] unexpected key type (%s)", service.Name, utils.GetType(kv.Key))
 					}
 					field := service.Fields[keyIdent.Name]
 					if field == nil {
-						logger.Logger.Fatalf("[PARSER] field (%s) unexpectedly not found", keyIdent.Name)
+						logger.Logger.Fatalf("[PARSER] [%s] field (%s) unexpectedly not found", service.Name, keyIdent.Name)
 					}
 					if dbField, ok := field.(*types.DatabaseField); ok {
 						valueIdent := kv.Value.(*ast.Ident)
 						if valueIdent == nil {
-							logger.Logger.Fatalf("[PARSER] unexpected ident type (%s)", utils.GetType(kv.Value))
+							logger.Logger.Fatalf("[PARSER] [%s] unexpected ident type (%s)", service.Name, utils.GetType(kv.Value))
 						}
 						dbInstance := paramDBs[valueIdent.Name]
 						if dbInstance == nil {
-							logger.Logger.Fatalf("[PARSER] could not find database instance for constructor parameter (%s) in (%s)", valueIdent.Name, service.Name)
+							logger.Logger.Fatalf("[PARSER] [%s] could not find database instance for constructor parameter (%s)", service.Name, valueIdent.Name)
 						}
 						dbField.DbInstance = dbInstance
-						logger.Logger.Infof("[PARSER] [%s] linked database field (%s) to instance (%s)", service.Name, dbField.GetName(), dbField.DbInstance.GetName())
+						dbField.GetType().(*blueprint.BlueprintBackendType).DbInstance = dbInstance
+						//logger.Logger.Debugf("[PARSER] [%s] linked datastore instance (%s) to service field (%s)", service.Name, dbField.DbInstance.GetName(), dbField.String())
 					} else if _, ok := field.(*types.ServiceField); ok {
 						// ignore service
 						continue
@@ -344,14 +313,26 @@ func (service *Service) ParseConstructorAndLoadFields(paramDBs map[string]datast
 						if basicLit, ok := kv.Value.(*ast.BasicLit); ok {
 							field.GetType().AddValue(basicLit.Value)
 						} else {
-							logger.Logger.Fatalf("[PARSER] ignoring value (%v)", kv.Value)
+							logger.Logger.Fatalf("[PARSER] [%s] ignoring value (%v)", service.Name, kv.Value)
 						}
 					} else {
-						logger.Logger.Fatalf("[PARSER] ignoring composite element (%s, %s)", keyIdent.Name, utils.GetType(kv.Value))
+						logger.Logger.Fatalf("[PARSER] [%s] ignoring composite element (%s, %s)", service.Name, keyIdent.Name, utils.GetType(kv.Value))
 					}
 				}
 			}
 		}
 		return true
 	})
+
+	impl := service.GetPackage().GetDeclaredType(service.ImplName).(*gotypes.UserType).UserType.(*gotypes.StructType)
+	for name, field := range service.Fields {
+		if implFieldType, ok := impl.GetFieldTypeByName(name).SubType.(*blueprint.BlueprintBackendType); ok {
+			if serviceFieldType, ok := field.GetType().(*blueprint.BlueprintBackendType); ok {
+				impl.UpdateFieldSubTypeByName(name, serviceFieldType)
+				logger.Logger.Infof("[PARSER] [%s] matched service field type (%s) to impl type (%s)", service.Name, serviceFieldType.StringWithInstace(), implFieldType.StringWithInstace())
+			} else {
+				logger.Logger.Fatalf("[PARSER] [%s] service field type (%s) does not match impl type (%s) for BlueprintBackendType", service.Name, serviceFieldType.StringWithInstace(), implFieldType.StringWithInstace())
+			}
+		}
+	}
 }
