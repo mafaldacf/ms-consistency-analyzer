@@ -91,6 +91,10 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			}
 		}
 
+		if ptrVariable, ok := variable.(*variables.PointerVariable); ok {
+			variable = ptrVariable.PointerTo
+		}
+
 		switch v := variable.(type) {
 		case *variables.GenericVariable:
 			logger.Logger.Fatalf("[CFG LOOKUP] ignoring generic variable (%s)", v.String())

@@ -2,6 +2,8 @@
   block 0 (Body):
   - n (*postnotification.NotifyServiceImpl struct { storageService postnotification.StorageService, queue Queue, numWorkers int })
   - ctx context.Context
+  - wg sync.WaitGroup
+  - i 1 int
 (*NotifyServiceImpl).handleMessage(ctx context.Context, message postnotification.Message struct { ReqID string, PostID string, Timestamp string }):
  block 0 (Body):
   - n (*postnotification.NotifyServiceImpl struct { storageService postnotification.StorageService, queue Queue, numWorkers int })
@@ -17,3 +19,7 @@
   - forever chan struct {}
   - message map[string]interface{}
   - notification postnotification.Message struct { ReqID string, PostID string, Timestamp string }
+  - reqID int64
+  - _ .error
+  - postID int64
+  - _ .error

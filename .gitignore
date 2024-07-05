@@ -3,6 +3,4 @@ backup.go
 TODOs.md
 info.md
 # temporary
-assets/postnotification/app.json
-assets/postnotification/metadata.yaml
-assets/postnotification/services.yaml
+assets/postnotification/datastores_old.yaml

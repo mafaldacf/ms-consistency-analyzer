@@ -14,6 +14,10 @@ func (v *FieldVariable) String() string {
 	return v.VariableInfo.String()
 }
 
+func (v *FieldVariable) LongString() string {
+	return v.VariableInfo.LongString()
+}
+
 func (v *FieldVariable) GetId() int64 {
 	return v.VariableInfo.GetId()
 }

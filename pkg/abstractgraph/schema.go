@@ -65,6 +65,8 @@ func GetNestedFields(variable variables.Variable) []variables.Variable {
 }
 
 func addDataflow(app *app.App, variable variables.Variable, call *AbstractDatabaseCall, datastore *datastores.Datastore) {
+	fmt.Printf("\n------------------------ ADD DATAFLOW @ %s ------------------------\n\n", datastore.Name)
+	fmt.Println()
 	rootField := datastore.Schema.GetField(variable.GetType().GetName())
 	variable.GetVariableInfo().SetDirectDataflow(datastore.Name, call.Service, variable, rootField)
 	if !slices.Contains(app.PersistedVariables[rootField.GetFullName()], variable) {
@@ -86,13 +88,13 @@ func addDataflow(app *app.App, variable variables.Variable, call *AbstractDataba
 		slices.Reverse(names)
 
 		for i, v := range variables {
-			logger.Logger.Infof("VISITING VARIABLE %s", v.String())
+			logger.Logger.Infof("[NESTED VAR] %s (type = %s)", v.LongString(), utils.GetType(v))
 			name := names[i]
 			field := datastore.Schema.GetField(name)
 			deps := getDependencies(false, v)
 			for _, d := range deps {
-				logger.Logger.Warnf("VISITING VARIABLE %s (FIELD %s) DEP %s", v.String(), field.GetName(), d.String())
 				if !slices.Contains(persistedVars, d) {
+					logger.Logger.Warnf("\t\t[NESTED VAR DEP] field %s ---> %s (type = %s)", field.GetName(), d.String(), utils.GetType(d))
 					v.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, d, variable, field)
 					persistedVars = append(persistedVars, d)
 					if !slices.Contains(app.PersistedVariables[field.GetFullName()], d) {
@@ -102,6 +104,7 @@ func addDataflow(app *app.App, variable variables.Variable, call *AbstractDataba
 			}
 		}
 	}
+	fmt.Println()
 }
 
 func addForeignFields(variable variables.Variable, datastore *datastores.Datastore) {
@@ -117,11 +120,11 @@ func addForeignFields(variable variables.Variable, datastore *datastores.Datasto
 			name := names[i]
 			field := datastore.Schema.GetField(name)
 			deps := getDependencies(false, v)
-			logger.Logger.Infof("VAR %s, deps %v", v.String(), deps)
+			logger.Logger.Infof("[NESTED VAR] %s (type = %s)", v.LongString(), utils.GetType(v))
 			for _, d := range deps {
 				if dfs := d.GetVariableInfo().GetAllDataflows(); dfs != nil {
 					for _, df := range dfs {
-						logger.Logger.Warnf("DEP %s, df %v", d.String(), df.String())
+						logger.Logger.Warnf("\t\t[NESTED VAR DEP] field %s ---> %s (type = %s)", field.GetName(), d.String(), utils.GetType(d))
 						if df.Datastore != datastore.Name {
 							datastore.Schema.AddForeignReferenceToField(field, df.Field)
 							logger.Logger.Infof("ADDED FOREIGN REFERENCE FOR FIELD %s: %s", field.GetFullName(), df.Field.GetFullName())
@@ -244,11 +247,14 @@ func BuildSchema(app *app.App, node AbstractNode) {
 			doc := params[1]
 			addNestedDatastoreEntry(doc, "document", datastore)
 			addDataflow(app, doc, dbCall, datastore)
+
 			searchForeignDataflow(doc, datastore, app)
 
 		case datastores.Queue:
 			msg := params[1]
 			addNestedDatastoreEntry(msg, "message", datastore)
+			addDataflow(app, msg, dbCall, datastore)
+
 			searchForeignDataflow(msg, datastore, app)
 			addForeignFields(msg, datastore)
 		}

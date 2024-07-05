@@ -49,7 +49,7 @@ func DumpToYamlFile(data interface{}, appname string, filename string) {
 	path := fmt.Sprintf("assets/%s/%s.yaml", appname, filename)
 	err = os.WriteFile(path, []byte(yamlStr), 0644)
 	if err != nil {
-		logger.Logger.Fatalf("error writing yaml data to %s", path)
+		logger.Logger.Fatalf("error writing yaml data to %s: %s", path, err.Error())
 	}
 }
 

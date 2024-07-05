@@ -16,6 +16,10 @@ func (v *GenericVariable) String() string {
 	return v.VariableInfo.String()
 }
 
+func (v *GenericVariable) LongString() string {
+	return v.VariableInfo.LongString()
+}
+
 func (v *GenericVariable) GetId() int64 {
 	return v.VariableInfo.GetId()
 }

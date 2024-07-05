@@ -138,7 +138,16 @@ func (app *App) dumpYamlServices() {
 func (app *App) dumpYamlControlflow() {
 	for name, service := range app.Services {
 		data := service.Yaml()
-		utils.DumpToYamlFile(data, app.Name, fmt.Sprintf("controlflow/%s", strings.ToLower(name)))
+		utils.DumpToYamlFile(data, app.Name, fmt.Sprintf("controlflow/services/%s", strings.ToLower(name)))
+	}
+
+	for _, p := range app.Packages {
+		pkgData := make(map[string]interface{})
+		for _, m := range p.ParsedMethods {
+			data := m.Yaml()
+			pkgData[m.LongString()] = data
+		}
+		utils.DumpToYamlFile(pkgData, app.Name, fmt.Sprintf("controlflow/packages/%s", strings.ToLower(p.Name)))
 	}
 }
 

@@ -6,4 +6,3 @@
 	- Cache.Put(ctx context.Context, key string, value interface{}) interface{}
 (*StorageServiceImpl).StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }):
 	- NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
-  - NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}

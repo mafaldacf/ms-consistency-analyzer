@@ -13,7 +13,10 @@ import (
 // --------------
 
 func (f *ParsedMethod) Yaml() interface{} {
-	return f.ParsedCfg.Yaml()
+	if f.ParsedCfg != nil {
+		return f.ParsedCfg.Yaml()
+	}
+	return nil
 }
 
 func (f *ParsedMethod) YamlCalls() []string {
@@ -30,8 +33,10 @@ func (f *ParsedMethod) YamlCalls() []string {
 
 func (cfg *CFG) Yaml() map[string][]string {
 	data := make(map[string][]string)
-
-	data[cfg.ParsedBlocks[0].Block.String()] = cfg.ParsedBlocks[0].Yaml()
+	
+	if len(cfg.ParsedBlocks) > 0 {
+		data[cfg.ParsedBlocks[0].Block.String()] = cfg.ParsedBlocks[0].Yaml()
+	}
 
 	/* var blocks []string
 	for _, block := range cfg.ParsedBlocks {

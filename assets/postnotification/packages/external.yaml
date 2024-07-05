@@ -18,3 +18,8 @@ strconv:
 - package path: strconv
 - module: ""
 - declared types: []
+sync:
+- package: sync
+- package path: sync
+- module: ""
+- declared types: []
