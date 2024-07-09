@@ -1,0 +1,26 @@
+{
+  "edges": [
+    {
+      "service": "UploadService",
+      "edges": [
+        {
+          "service": "StorageService",
+          "edges": null
+        }
+      ]
+    },
+    {
+      "service": "NotifyService",
+      "edges": [
+        {
+          "service": "StorageService",
+          "edges": null
+        }
+      ]
+    },
+    {
+      "service": "StorageService",
+      "edges": null
+    }
+  ]
+}

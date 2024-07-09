@@ -17,6 +17,9 @@ func GetAllSelectorIdents(expr ast.Expr) ([]*ast.Ident, string) {
 		r1, r2 := GetAllSelectorIdents(selectorExpr.X)
 		return append(r1, selectorExpr.Sel), r2 + "." + selectorExpr.Sel.Name
 	}
+	if arrayType, ok := expr.(*ast.ArrayType); ok {
+		expr = arrayType.Elt
+	}
 	if ident, ok := expr.(*ast.Ident); ok {
 		return []*ast.Ident{ident}, ident.Name
 	}

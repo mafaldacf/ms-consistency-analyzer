@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"os"
+	"path/filepath"
 	"strings"
 	"unicode"
 
@@ -47,6 +48,15 @@ func DumpToYamlFile(data interface{}, appname string, filename string) {
 
 	yamlStr := fixYamlStrings(string(yamlData))
 	path := fmt.Sprintf("assets/%s/%s.yaml", appname, filename)
+	
+	// ensure the directory exists
+	dir := filepath.Dir(path)
+	err = os.MkdirAll(dir, 0755)
+	if err != nil {
+		logger.Logger.Fatalf("error creating directory %s: %s", dir, err.Error())
+	}
+
+	// write the YAML data to the file
 	err = os.WriteFile(path, []byte(yamlStr), 0644)
 	if err != nil {
 		logger.Logger.Fatalf("error writing yaml data to %s: %s", path, err.Error())

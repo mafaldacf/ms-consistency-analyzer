@@ -197,7 +197,15 @@ func (p *Package) GetImportedTypeFromPath(fullPath string) (gotypes.Type, bool) 
 	if e, ok := p.ImportedTypes[fullPath]; ok {
 		return e, true
 	}
-	logger.Logger.Fatalf("unknown imported package (%s) in package (%s)", fullPath, p.Name)
+	importedTypesStr := ""
+	for k, t := range p.ImportedTypes {
+		importedTypesStr += "- " + k + ": " + t.String() + "\n"
+	}
+	importedPackagesStr := ""
+	for k, t := range p.ImportedPackages {
+		importedPackagesStr += "- " + k + ": " + t.String() + "\n"
+	}
+	logger.Logger.Fatalf("unknown imported type (%s) in package (%s) with import types list and packages:\n%v\n\n%v", fullPath, p.Name, importedTypesStr, importedPackagesStr)
 	return nil, false
 }
 

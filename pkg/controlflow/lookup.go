@@ -46,14 +46,19 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		}
 	case *ast.Ident:
 		variable = block.GetLastestVariableIfExists(e.Name)
+		if variable != nil {
+			return variable, variable.GetType()
+		}
 		// if its not a variable in the block then it can be either
 		// 1. a declared variable in the package
 		// 2. a ident from a import (which is dealt with in the switch case for the selectorExpr)
-		if variable == nil {
-			variable = service.GetPackage().GetDeclaredVariableIfExists(e.Name)
+		variable = service.GetPackage().GetDeclaredVariableIfExists(e.Name)
+		if variable != nil {
+			return variable, variable.GetType()
 		}
-		if variable == nil {
-			impt := service.GetFile().GetImport(e.Name)
+
+		logger.Logger.Warnf("GOING TO GET IMPORT FOR %s", e.Name)
+		if impt := service.GetFile().GetImportIfExists(e.Name); impt != nil {
 			t = &gotypes.PackageType{
 				Alias: e.Name,
 				Name: impt.PackageName,
@@ -61,7 +66,11 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			}
 			return nil, t
 		}
-		return variable, variable.GetType()
+
+		// an be golang type e.g. len(...)
+
+
+		return nil, nil
 	case *ast.SelectorExpr:
 		variable, t = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 		if variable == nil {
@@ -220,6 +229,43 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			}
 
 		} else {
+			logger.Logger.Fatalf("unknown token %v for unary expr %v", e.Op, e)
+			variable, t = lookupVariableFromAstExpr(service, method, block, e.X, assign)
+		}
+	case *ast.BinaryExpr:
+		if e.Op == token.ADD {
+			variable_x, t_x := lookupVariableFromAstExpr(service, method, block, e.X, assign)
+			addrType_x := &gotypes.AddressType{
+				AddressOf: variable_x.GetType(),
+			}
+			variable_x = &variables.AddressVariable{
+				AddressOf: variable_x,
+				VariableInfo: &variables.VariableInfo{
+					Type: addrType_x,
+					Id:   variables.VARIABLE_INLINE_ID,
+					Name: variable_x.GetVariableInfo().Name,
+				},
+			}
+			variable_y, t_y := lookupVariableFromAstExpr(service, method, block, e.X, assign)
+			addrType_y := &gotypes.AddressType{
+				AddressOf: variable_y.GetType(),
+			}
+			variable_y = &variables.AddressVariable{
+				AddressOf: variable_y,
+				VariableInfo: &variables.VariableInfo{
+					Type: addrType_y,
+					Id:   variables.VARIABLE_INLINE_ID,
+					Name: variable_x.GetVariableInfo().Name,
+				},
+			}
+			if !t_x.IsSameType(t_y) {
+				logger.Logger.Fatalf("x expr (%v) and y expr (%v) differ types (%v vs %v)", e.X, e.Y, t_x, t_y)
+			}
+			t = t_x
+			variable = variable_x
+			logger.Logger.Warnf("FIXME!")
+		} else {
+			logger.Logger.Fatalf("unknown token %v for binary expr %v", e.Op, e)
 			variable, t = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 		}
 	default:

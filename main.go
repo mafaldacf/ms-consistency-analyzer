@@ -16,7 +16,7 @@ func main() {
 	appName := flag.String("app", "", "The name of the application to be analyzed")
 	flag.Parse()
 	switch *appName {
-	case "postnotification", "foobar":
+	case "postnotification", "foobar", "sockshop", "trainticket":
 	default:
 		logger.Logger.Fatal(fmt.Sprintf("invalid app name (%s) must provide an application name ('postnotification' or 'foobar') using the -app flag", *appName))
 	}
@@ -28,7 +28,7 @@ func main() {
 		return
 	}
 	app.ParsePackages(servicesInfo)
-	app.Dump()
+	//app.Dump()
 	app.RegisterDatabaseInstances(databaseInstances)
 	app.RegisterServiceNodes(servicesInfo)
 	app.BuildServiceNodes()

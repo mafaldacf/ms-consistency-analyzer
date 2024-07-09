@@ -22,6 +22,13 @@ func (f *File) GetImport(alias string) *Import {
 	return nil
 }
 
+func (f *File) GetImportIfExists(alias string) *Import {
+	if impt, ok := f.Imports[alias]; ok {
+		return impt
+	}
+	return nil
+}
+
 func (f *File) String() string {
 	return f.AbsPath
 }

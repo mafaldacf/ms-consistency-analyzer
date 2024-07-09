@@ -23,8 +23,19 @@ type App struct {
 	PersistedVariables map[string][]variables.Variable
 }
 
-// MarshalJSON is used by app.Save()
 func (app *App) MarshalJSON() ([]byte, error) {
+	var services []*service.Service
+	for _, s := range app.Services {
+		services = append(services, s)
+	}
+	return json.Marshal(&struct {
+		Services []*service.Service `json:"edges"`
+	}{
+		Services: services,
+	})
+}
+
+func (app *App) MarshalJSON2() ([]byte, error) {
 	return json.Marshal(&struct {
 		Name      string                                 `json:"name"`
 		Services  map[string]*service.Service            `json:"services"`
@@ -37,7 +48,7 @@ func (app *App) MarshalJSON() ([]byte, error) {
 }
 
 func (app *App) String() string {
-	str, _ := app.MarshalJSON()
+	str, _ := app.MarshalJSON2()
 	return string(str)
 }
 

@@ -30,6 +30,44 @@ type Service struct {
 	ImplementsQueue bool
 }
 
+func (node *Service) MarshalJSON() ([]byte, error) {
+	var services []*Service
+	for _, s := range node.Services {
+		services = append(services, s)
+	}
+	return json.Marshal(&struct {
+		Service  string     `json:"service"`
+		Services []*Service `json:"edges"`
+	}{
+		Service:  node.Name,
+		Services: services,
+	})
+}
+
+func (node *Service) MarshalJSON2() ([]byte, error) {
+	var serviceKeys []string
+	for k := range node.Services {
+		serviceKeys = append(serviceKeys, k)
+	}
+	var databaseKeys []string
+	for k := range node.Databases {
+		databaseKeys = append(databaseKeys, k)
+	}
+	fieldTypes := make(map[string]string)
+	for name, field := range node.Fields {
+		fieldTypes[name] = field.GetTypeName()
+	}
+	return json.MarshalIndent(&struct {
+		Fields    map[string]string `json:"fields,omitempty"`
+		Services  []string          `json:"services,omitempty"`
+		Databases []string          `json:"databases,omitempty"`
+	}{
+		Fields:    fieldTypes,
+		Services:  serviceKeys,
+		Databases: databaseKeys,
+	}, "", " ")
+}
+
 func (node *Service) GetPackage() *types.Package {
 	return node.File.Package
 }
@@ -67,33 +105,8 @@ func (node *Service) GetQueueHandlerMethod(name string) *types.ParsedMethod {
 	return node.QueueHandlerMethods[name]
 }
 
-// MarshalJSON is used by app.Save()
-func (node *Service) MarshalJSON() ([]byte, error) {
-	var serviceKeys []string
-	for k := range node.Services {
-		serviceKeys = append(serviceKeys, k)
-	}
-	var databaseKeys []string
-	for k := range node.Databases {
-		databaseKeys = append(databaseKeys, k)
-	}
-	fieldTypes := make(map[string]string)
-	for name, field := range node.Fields {
-		fieldTypes[name] = field.GetTypeName()
-	}
-	return json.MarshalIndent(&struct {
-		Fields    map[string]string `json:"fields,omitempty"`
-		Services  []string          `json:"services,omitempty"`
-		Databases []string          `json:"databases,omitempty"`
-	}{
-		Fields:    fieldTypes,
-		Services:  serviceKeys,
-		Databases: databaseKeys,
-	}, "", " ")
-}
-
 func (node *Service) String() string {
-	str, _ := node.MarshalJSON()
+	str, _ := node.MarshalJSON2()
 	return string(str)
 }
 

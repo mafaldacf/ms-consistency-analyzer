@@ -268,24 +268,50 @@ func BuildBackendComponentMethods(name string) []*BackendMethod {
 
 func buildBackendNoSQLCollectionMethods() []*BackendMethod {
 	var methods []*BackendMethod
+	// FindOne(ctx context.Context, filter bson.D, projection ...bson.D) (NoSQLCursor, error)
+	methods = append(methods, &BackendMethod{Name: "FindOne", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Write: false,
+		Params:  []*types.MethodField{&ctxParam, &filterParam, &projectionParam},
+		Returns: []*types.MethodField{&NoSQLCursorReturn, &errorReturn},
+	})
+	// FindMany(ctx context.Context, filter bson.D, projection ...bson.D) (NoSQLCursor, error)
+	methods = append(methods, &BackendMethod{Name: "FindMany", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Write: false,
+		Params:  []*types.MethodField{&ctxParam, &filterParam, &projectionParam},
+		Returns: []*types.MethodField{&NoSQLCursorReturn, &errorReturn},
+	})
+	// Upsert(ctx context.Context, filter bson.D, document interface{}) (bool, error)
+	methods = append(methods, &BackendMethod{Name: "Upsert", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Write: false,
+		Params:  []*types.MethodField{&ctxParam, &filterParam, &docParam},
+		Returns: []*types.MethodField{&boolReturn, &errorReturn},
+	})
 	// InsertOne(ctx context.Context, document interface{}) error
 	methods = append(methods, &BackendMethod{Name: "InsertOne", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Write: true,
 		Params:  []*types.MethodField{&ctxParam, &docParam},
 		Returns: []*types.MethodField{&errorReturn},
 	})
-	// FindOne(ctx context.Context, filter bson.D, projection ...bson.D) (NoSQLCursor, error)
-	methods = append(methods, &BackendMethod{Name: "FindOne", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Write: false,
-		Params:  []*types.MethodField{&ctxParam, &filterParam, &projectionParam},
-		Returns: []*types.MethodField{&NoSQLCursorReturn, &errorReturn},
+	// DeleteOne(ctx context.Context, filter bson.D) error
+	methods = append(methods, &BackendMethod{Name: "DeleteOne", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Write: true,
+		Params:  []*types.MethodField{&ctxParam, &filterParam},
+		Returns: []*types.MethodField{&errorReturn},
+	})
+	// DeleteMany(ctx context.Context, filter bson.D) error
+	methods = append(methods, &BackendMethod{Name: "DeleteMany", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Write: true,
+		Params:  []*types.MethodField{&ctxParam, &filterParam},
+		Returns: []*types.MethodField{&errorReturn},
 	})
 	return methods
 }
 
 func buildBackendNoSQLCursorMethods() []*BackendMethod {
 	var methods []*BackendMethod
+	// One(ctx context.Context, obj interface{}) (bool, error)
 	methods = append(methods, &BackendMethod{Name: "One", Backend: "NoSQLDatabase", Component: "NoSQLCursor", Write: false,
 		Params:  []*types.MethodField{&ctxParam, &objParam},
 		Returns: []*types.MethodField{&boolReturn, &errorReturn},
+	})
+	// All(ctx context.Context, obj interface{}) error //similar logic to Decode, but for multiple documents
+	methods = append(methods, &BackendMethod{Name: "All", Backend: "NoSQLDatabase", Component: "NoSQLCursor", Write: false,
+		Params:  []*types.MethodField{&ctxParam, &objParam},
+		Returns: []*types.MethodField{&errorReturn},
 	})
 	return methods
 }

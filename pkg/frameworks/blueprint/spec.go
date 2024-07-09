@@ -6,9 +6,10 @@ import (
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/ir"
 	specs_foobar "github.com/blueprint-uservices/blueprint/examples/foobar/wiring/specs"
 	specs_postnotification "github.com/blueprint-uservices/blueprint/examples/postnotification/wiring/specs"
+	specs_sockshop "github.com/blueprint-uservices/blueprint/examples/sockshop/wiring/specs"
+	specs_trainticket "github.com/blueprint-uservices/blueprint/examples/train_ticket/wiring/specs"
 	"github.com/blueprint-uservices/blueprint/plugins/cmdbuilder"
 	"github.com/blueprint-uservices/blueprint/plugins/golang"
-	"github.com/blueprint-uservices/blueprint/plugins/golang/gocode"
 	"github.com/blueprint-uservices/blueprint/plugins/mongodb"
 	"github.com/blueprint-uservices/blueprint/plugins/rabbitmq"
 	"github.com/blueprint-uservices/blueprint/plugins/redis"
@@ -28,6 +29,10 @@ func BuildBlueprintAppInfo(appName string) ([]*frameworks.ServiceInfo, []datasto
 		spec = specs_postnotification.Docker
 	case "foobar":
 		spec = specs_foobar.Docker
+	case "sockshop":
+		spec = specs_sockshop.Docker
+	case "trainticket":
+		spec = specs_trainticket.Docker
 	default:
 		logger.Logger.Fatalf("unknown application %s", appName)
 	}
@@ -38,17 +43,6 @@ func BuildBlueprintAppInfo(appName string) ([]*frameworks.ServiceInfo, []datasto
 	return servicesInfo, databasesInfo, frontends
 }
 
-func findConstructorFromSpec(spec *workflowspec.Service) *gocode.Func {
-	for _, pkg := range spec.Iface.File.Package.Module.Packages {
-		for _, f := range pkg.Funcs {
-			if workflowspec.IsConstructorOfIface(f, spec.Iface) {
-				return &f.Func
-			}
-		}
-	}
-	logger.Logger.Fatalf("could not find constructor name from spec")
-	return nil
-}
 
 func getUniqueName(name string) string {
 	// remove .client suffix (e.g. notification_queue.client)
@@ -62,21 +56,19 @@ func getUniqueName(name string) string {
 func buildBlueprintServicesInfo(appSpecs map[*workflowspec.Service][]golang.Service) []*frameworks.ServiceInfo {
 	var services []*frameworks.ServiceInfo
 	for spec, serviceArgs := range appSpecs {
-		constructorMethod := findConstructorFromSpec(spec)
 		serviceInfo := &frameworks.ServiceInfo{
 			Name:            spec.Iface.Name,
 			Package:    	 spec.Iface.File.Package.ShortName,
 			PackagePath:     spec.Iface.File.Package.Name,
 			Filepath:        spec.Iface.File.Name,
-			ConstructorName: constructorMethod.GetName(),
+			ConstructorName: spec.Constructor.Name,
 			ConstructorDBs:  make(map[string]string),
 		}
 		for _, method := range spec.Iface.Ast.Methods.List {
 			serviceInfo.Methods = append(serviceInfo.Methods, method.Names[0].Name)
 		}
-		constructorArgs := constructorMethod.GetArguments()
+		constructorArgs := spec.Constructor.Func.GetArguments()
 		for idx, serviceArg := range serviceArgs {
-			constructorMethod.GetArguments()
 			if _, isServiceIR := serviceArg.(*workflow.WorkflowClient); !isServiceIR {
 				// service spec args does not count with context at index 0
 				constructorArg := constructorArgs[idx+1]

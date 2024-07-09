@@ -266,7 +266,7 @@ func computeFuncCallReturnedTupleWithDeps(service *service.Service, callExpr *as
 }
 
 // FIXME: this does not support nested calls!!!!
-func parseAndSaveCall(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr) *variables.TupleVariable {
+func parseAndSaveCall(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr) variables.Variable {
 	idents, identsStr := lookup.GetAllSelectorIdents(callExpr.Fun)
 	leftIdent := idents[0]
 	funcIdent := idents[len(idents)-1]
@@ -538,6 +538,13 @@ func parseAndSaveCall(service *service.Service, method *types.ParsedMethod, bloc
 		}
 	}
 
-	logger.Logger.Fatalf("[TODO] unexpected call: %v (call in package = %t, call pkg = %s)", callExpr.Fun, callInPackage, callPkg)
+	// can be a type declaration e.g. []byte()
+	v, t := lookupVariableFromAstExpr(service, method, block, callExpr.Fun, false)
+	if v != nil && t != nil {
+		logger.Logger.Warnf("FIXME: ADD CONTENT TO VAR!!!!")
+		return v
+	}
+
+	logger.Logger.Fatalf("[TODO] unexpected call: %v (call in package = %t, call pkg = %s) -- idents types = %v", callExpr.Fun, callInPackage, callPkg, idents)
 	return nil
 }

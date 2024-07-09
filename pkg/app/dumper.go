@@ -1,11 +1,14 @@
 package app
 
 import (
+	"encoding/json"
 	"fmt"
+	"os"
 	"sort"
 	"strings"
 
 	"analyzer/pkg/datastores"
+	"analyzer/pkg/logger"
 	"analyzer/pkg/utils"
 )
 
@@ -18,6 +21,7 @@ func (app *App) Dump() {
 	app.dumpYamlDatastores()
 	app.dumpYamlDataflow()
 	app.dumpYamlServices()
+	app.dumpJsonServices()
 	app.dumpYamlControlflow()
 	app.dumpYamlCalls()
 }
@@ -133,6 +137,25 @@ func (app *App) dumpYamlServices() {
 		data[service.Name] = props.Result()
 	}
 	utils.DumpToYamlFile(data, app.Name, "services")
+}
+
+func (app *App) dumpJsonServices() {
+	// print in JSON format
+	// https://omute.net/editor
+	path := fmt.Sprintf("assets/%s/app.json", app.Name)
+	file, err := os.Create(path)
+	if err != nil {
+		fmt.Println("Error creating file:", err)
+		return
+	}
+	defer file.Close()
+	data, err := json.MarshalIndent(app, "", "  ")
+	if err != nil {
+		logger.Logger.Error("error marshaling json:", err)
+		return
+	}
+	file.Write(data)
+	logger.Logger.Infof("[JSON] app saved at %s", path)
 }
 
 func (app *App) dumpYamlControlflow() {

@@ -29,7 +29,12 @@ func ComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type) gotypes.T
 		if importedType, ok := p.ImportedTypes[types.ImportedTypeKey(path, name)]; ok {
 			return importedType
 		}
-		logger.Logger.Fatalf("named type %s not declared in package %s", e.String(), p.String())
+
+		importedTypesStr := ""
+		for k, t := range p.ImportedTypes {
+			importedTypesStr += "- " + k + ": " + t.String() + "\n"
+		}
+		logger.Logger.Fatalf("named type (%s) not declared in package (%s) with imported types\n%s", e.String(), p.String(), importedTypesStr)
 	case *golangtypes.Struct:
 		structType := &gotypes.StructType{Methods: make(map[string]string)}
 		for i := 0; i < e.NumFields(); i++ {
@@ -69,6 +74,18 @@ func ComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type) gotypes.T
 			tupleType.Types = append(tupleType.Types, ComputeTypesForGoTypes(p, v.Type()))
 		}
 		return tupleType
+	case *golangtypes.Slice:
+		sliceType := &gotypes.SliceType{}
+		sliceType.UnderlyingType = ComputeTypesForGoTypes(p, e.Elem())
+		return sliceType
+	case *golangtypes.Pointer:
+		pointerType := &gotypes.PointerType{}
+		pointerType.PointerTo = ComputeTypesForGoTypes(p, e.Elem())
+		return pointerType
+	case *golangtypes.Chan:
+		chanType := &gotypes.ChanType{}
+		chanType.ChanType = ComputeTypesForGoTypes(p, e.Elem())
+		return chanType
 	default:
 		if goType != nil {
 			logger.Logger.Fatalf("unknown gotype %s for %v", utils.GetType(goType), goType)

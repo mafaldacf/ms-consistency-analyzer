@@ -35,7 +35,8 @@ postnotification:
 - imported types:
   - .error
   - Cache { instance = <nil> } interface{ Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{}) }
-  - NoSQLCollection { instance = <nil> } interface{ NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) }
+  - NoSQLCollection { instance = <nil> } interface{ NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D),
+    NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D) }
   - NoSQLCursor { instance = <nil> } interface{ NoSQLDatabase.One(ctx context.Context, obj interface{}) }
   - NoSQLDatabase { instance = <nil> } interface{ NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string) }
   - Queue { instance = <nil> } interface{ Queue.Push(ctx context.Context, item interface{}),
@@ -61,7 +62,8 @@ postnotification:
   - postnotification.UploadService
 - datastore types:
   - Cache { instance = <nil> } interface{ Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{}) }
-  - NoSQLCollection { instance = <nil> } interface{ NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) }
+  - NoSQLCollection { instance = <nil> } interface{ NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D),
+    NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D) }
   - NoSQLCursor { instance = <nil> } interface{ NoSQLDatabase.One(ctx context.Context, obj interface{}) }
   - NoSQLDatabase { instance = <nil> } interface{ NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string) }
   - Queue { instance = <nil> } interface{ Queue.Push(ctx context.Context, item interface{}),
