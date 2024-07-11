@@ -90,10 +90,10 @@ func (graph *AbstractGraph) initBuild(app *app.App, serviceNode *service.Service
 
 func (graph *AbstractGraph) createDummyAbstractServiceCall(node *service.Service, method *types.ParsedMethod, parent *AbstractDatabaseCall) AbstractServiceCall {
 	logger.Logger.Debugf("[GRAPH - DUMMY] create dummy abstract service call for node %s and method %s with params %v", node.Name, method.Name, method.GetParams())
-
+	
 	var callerStr = "Client"
 	if parent != nil {
-		callerStr = parent.ParsedCall.CallerTypeName.GetName()
+		callerStr = parent.DbInstance.String()
 	}
 
 	call := AbstractServiceCall{

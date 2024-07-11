@@ -1,6 +1,7 @@
 package utils
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -40,6 +41,27 @@ func (lst *OrderedPropertyList) AddOrderedProperty(name string, prop interface{}
 // Dumpers
 // -------
 
+func DumpToJSONFile(data interface{}, appname string, filename string) {
+	path := fmt.Sprintf("assets/%s/%s.json", appname, filename)
+	// ensure the directory exists
+	dir := filepath.Dir(path)
+	err := os.MkdirAll(dir, 0755)
+	if err != nil {
+		logger.Logger.Fatalf("error creating directory %s: %s", dir, err.Error())
+	}
+	// marshal json data
+	jsonData, err := json.MarshalIndent(data, "", "  ")
+	if err != nil {
+		logger.Logger.Fatalf("error marshaling json: %s", err.Error())
+	}
+	// write to file
+	err = os.WriteFile(path, jsonData, 0644)
+	if err != nil {
+		logger.Logger.Fatalf("error writing yaml data to %s: %s", path, err.Error())
+	}
+	logger.Logger.Infof("[JSON] saved file %s", path)
+}
+
 func DumpToYamlFile(data interface{}, appname string, filename string) {
 	yamlData, err := yaml.Marshal(data)
 	if err != nil {
@@ -61,6 +83,7 @@ func DumpToYamlFile(data interface{}, appname string, filename string) {
 	if err != nil {
 		logger.Logger.Fatalf("error writing yaml data to %s: %s", path, err.Error())
 	}
+	logger.Logger.Infof("[YAML] saved file %s", path)
 }
 
 // remove unwanted new lines within items with braces

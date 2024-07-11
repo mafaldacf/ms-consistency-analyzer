@@ -233,7 +233,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			variable, t = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 		}
 	case *ast.BinaryExpr:
-		if e.Op == token.ADD {
+		if e.Op == token.ADD || e.Op == token.MUL {
 			variable_x, t_x := lookupVariableFromAstExpr(service, method, block, e.X, assign)
 			addrType_x := &gotypes.AddressType{
 				AddressOf: variable_x.GetType(),
@@ -263,7 +263,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			}
 			t = t_x
 			variable = variable_x
-			logger.Logger.Warnf("FIXME!")
+			logger.Logger.Warnf("FIXMEEEEEEE!!!!!!!!")
 		} else {
 			logger.Logger.Fatalf("unknown token %v for binary expr %v", e.Op, e)
 			variable, t = lookupVariableFromAstExpr(service, method, block, e.X, assign)

@@ -21,6 +21,7 @@ type AbstractGraph struct {
 type AbstractNode interface {
 	GetParams() []variables.Variable
 	GetParam(int) variables.Variable
+	GetMethodStr() string
 	String() string
 	LongString() string
 	GetName() string
@@ -31,6 +32,7 @@ type AbstractNode interface {
 	GetCallerStr() string
 	GetCallee() string
 	GetParsedCall() types.ParsedCall
+	GetNodeType() string
 }
 
 type AbstractServiceCall struct {
@@ -60,6 +62,10 @@ func (call *AbstractServiceCall) GetName() string {
 
 func (call *AbstractServiceCall) GetCallee() string {
 	return call.Callee
+}
+
+func (call *AbstractServiceCall) GetMethodStr() string {
+	return call.Method
 }
 
 func (call *AbstractServiceCall) String() string {
@@ -95,6 +101,10 @@ func (call *AbstractServiceCall) GetParsedCall() types.ParsedCall {
 	return call.ParsedCall.ParsedCall
 }
 
+func (call *AbstractServiceCall) GetNodeType() string {
+	return "service"
+}
+
 type AbstractTempInternalCall struct {
 	AbstractNode `json:"-"`
 	Visited      bool                      `json:"-"`
@@ -108,6 +118,10 @@ type AbstractTempInternalCall struct {
 
 func (call *AbstractTempInternalCall) GetChildren() []AbstractNode {
 	return call.Children
+}
+
+func (call *AbstractTempInternalCall) GetMethodStr() string {
+	return call.Method
 }
 
 func (call *AbstractTempInternalCall) String() string {
@@ -144,6 +158,10 @@ func (call *AbstractTempInternalCall) GetCallerStr() string {
 
 func (call *AbstractTempInternalCall) GetParsedCall() types.ParsedCall {
 	return call.ParsedCall.ParsedCall
+}
+
+func (call *AbstractTempInternalCall) GetNodeType() string {
+	return "service"
 }
 
 type AbstractDatabaseCall struct {
@@ -230,6 +248,10 @@ func (call *AbstractDatabaseCall) GetName() string {
 	return call.ParsedCall.Name
 }
 
+func (call *AbstractDatabaseCall) GetMethodStr() string {
+	return call.Method
+}
+
 func (call *AbstractDatabaseCall) String() string {
 	return call.ParsedCall.SimpleString()
 }
@@ -261,4 +283,12 @@ func (call *AbstractDatabaseCall) GetCallerStr() string {
 
 func (call *AbstractDatabaseCall) GetParsedCall() types.ParsedCall {
 	return call.ParsedCall.ParsedCall
+}
+
+func (call *AbstractDatabaseCall) GetCallee() string {
+	return call.ParsedCall.DbInstance.String()
+}
+
+func (call *AbstractDatabaseCall) GetNodeType() string {
+	return "datastore"
 }

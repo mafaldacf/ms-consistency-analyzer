@@ -3,10 +3,12 @@ package service
 import (
 	"encoding/json"
 	"slices"
+	"strings"
 
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/types"
 	"analyzer/pkg/types/variables"
+	"analyzer/pkg/utils"
 )
 
 type Service struct {
@@ -31,20 +33,6 @@ type Service struct {
 }
 
 func (node *Service) MarshalJSON() ([]byte, error) {
-	var services []*Service
-	for _, s := range node.Services {
-		services = append(services, s)
-	}
-	return json.Marshal(&struct {
-		Service  string     `json:"service"`
-		Services []*Service `json:"edges"`
-	}{
-		Service:  node.Name,
-		Services: services,
-	})
-}
-
-func (node *Service) MarshalJSON2() ([]byte, error) {
 	var serviceKeys []string
 	for k := range node.Services {
 		serviceKeys = append(serviceKeys, k)
@@ -66,6 +54,26 @@ func (node *Service) MarshalJSON2() ([]byte, error) {
 		Services:  serviceKeys,
 		Databases: databaseKeys,
 	}, "", " ")
+}
+
+func (node *Service) GetName() string {
+	return node.Name
+}
+
+// Remove "Service" at the end and start with lower case
+// e.g. StorageService → storage
+func (node *Service) GetShortName() string {
+	if strings.HasSuffix(node.Name, "Service") {
+		shortName := strings.TrimSuffix(node.Name, "Service")
+		return strings.ToLower(shortName[:1]) + shortName[1:]
+	}
+	return strings.ToLower(node.Name)
+}
+
+// Add space before "Service"
+// e.g. StorageService → Storage Service
+func (node *Service) GetSpacedName() string {
+	return utils.GetSpacedName(node.Name)
 }
 
 func (node *Service) GetPackage() *types.Package {
@@ -106,7 +114,7 @@ func (node *Service) GetQueueHandlerMethod(name string) *types.ParsedMethod {
 }
 
 func (node *Service) String() string {
-	str, _ := node.MarshalJSON2()
+	str, _ := node.MarshalJSON()
 	return string(str)
 }
 

@@ -1,0 +1,100 @@
+{
+  "nodes": [
+    {
+      "id": "Client",
+      "type": "client"
+    },
+    {
+      "id": "UploadService",
+      "type": "service"
+    },
+    {
+      "id": "StorageService",
+      "type": "service"
+    },
+    {
+      "id": "notif_queue Queue",
+      "type": "datastore"
+    },
+    {
+      "id": "post_nosql Cache",
+      "type": "datastore"
+    },
+    {
+      "id": "NotifyService",
+      "type": "service"
+    },
+    {
+      "id": "notif_queue Queue",
+      "type": "datastore"
+    },
+    {
+      "id": "StorageService",
+      "type": "service"
+    },
+    {
+      "id": "StorageService",
+      "type": "service"
+    },
+    {
+      "id": "post_cache Cache",
+      "type": "datastore"
+    },
+    {
+      "id": "post_nosql Cache",
+      "type": "datastore"
+    }
+  ],
+  "edges": [
+    {
+      "caller": "Client",
+      "callee": "UploadService",
+      "call": "UploadPost"
+    },
+    {
+      "caller": "UploadService",
+      "callee": "StorageService",
+      "call": "StorePostNoSQL"
+    },
+    {
+      "caller": "UploadService",
+      "callee": "notif_queue Queue",
+      "call": "Push"
+    },
+    {
+      "caller": "StorageService",
+      "callee": "post_nosql Cache",
+      "call": "InsertOne"
+    },
+    {
+      "caller": "notif_queue Queue",
+      "callee": "NotifyService",
+      "call": "workerThread"
+    },
+    {
+      "caller": "NotifyService",
+      "callee": "notif_queue Queue",
+      "call": "Pop"
+    },
+    {
+      "caller": "NotifyService",
+      "callee": "StorageService",
+      "call": "ReadPost"
+    },
+    {
+      "caller": "NotifyService",
+      "callee": "StorageService",
+      "call": "ReadPostNoSQL"
+    },
+    {
+      "caller": "StorageService",
+      "callee": "post_cache Cache",
+      "call": "Get"
+    },
+    {
+      "caller": "StorageService",
+      "callee": "post_nosql Cache",
+      "call": "FindOne"
+    }
+  ]
+}

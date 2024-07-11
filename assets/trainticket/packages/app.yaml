@@ -357,9 +357,7 @@ station:
 - package: station
 - package path: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/station
 - module: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow
-- files:
-  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/station/data.go
-  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/station/stationService.go
+- files: []
 - imports:
   - context
   - errors
@@ -384,16 +382,7 @@ station:
   - NoSQLCursor { instance = <nil> } interface{ NoSQLDatabase.One(ctx context.Context, obj interface{}), NoSQLDatabase.All(ctx context.Context, obj interface{}) }
   - NoSQLDatabase { instance = <nil> } interface{ NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string) }
 - declared variables: []
-- parsed methods:
-  - (*station.StationServiceImpl).CreateStation(ctx context.Context, station station.Station struct { ID string, Name string, StayTime int64 }) error
-  - (*station.StationServiceImpl).DeleteStation(ctx context.Context, id string) error
-  - (*station.StationServiceImpl).Exists(ctx context.Context, name string) (bool, error)
-  - (*station.StationServiceImpl).FindByID(ctx context.Context, id string) (station.Station struct { ID string, Name string, StayTime int64 }, error)
-  - (*station.StationServiceImpl).FindByIDs(ctx context.Context, ids []string) ([]station.Station struct { ID string, Name string, StayTime int64 }, error)
-  - (*station.StationServiceImpl).FindID(ctx context.Context, name string) (string, error)
-  - (*station.StationServiceImpl).FindIDs(ctx context.Context, names []string) ([]string, error)
-  - (*station.StationServiceImpl).UpdateStation(ctx context.Context, station station.Station struct { ID string, Name string, StayTime int64 }) (bool, error)
-  - station.NewStationServiceImpl(ctx context.Context, db NoSQLDatabase) ((*station.StationServiceImpl struct { stationDB NoSQLDatabase }), error)
+- parsed methods: []
 stationfood:
 - package: stationfood
 - package path: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/stationfood
@@ -442,7 +431,9 @@ train:
 - package: train
 - package path: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/train
 - module: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow
-- files: []
+- files:
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/train/data.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/train/trainService.go
 - imports:
   - context
   - errors
@@ -466,7 +457,18 @@ train:
   - NoSQLCursor { instance = <nil> } interface{ NoSQLDatabase.One(ctx context.Context, obj interface{}), NoSQLDatabase.All(ctx context.Context, obj interface{}) }
   - NoSQLDatabase { instance = <nil> } interface{ NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string) }
 - declared variables: []
-- parsed methods: []
+- parsed methods:
+  - (*train.TrainServiceImpl).AllTrains(ctx context.Context) ([]train.TrainType struct { ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64 }, error)
+  - (*train.TrainServiceImpl).Create(ctx context.Context, tt train.TrainType struct { ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64 })
+    (bool, error)
+  - (*train.TrainServiceImpl).Delete(ctx context.Context, id string) (bool, error)
+  - (*train.TrainServiceImpl).Retrieve(ctx context.Context, id string) (train.TrainType struct { ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64 }, error)
+  - (*train.TrainServiceImpl).RetrieveByName(ctx context.Context, name string) (train.TrainType struct { ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64 }, error)
+  - (*train.TrainServiceImpl).RetrieveByNames(ctx context.Context, names []string)
+    ([]train.TrainType struct { ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64 }, error)
+  - (*train.TrainServiceImpl).Update(ctx context.Context, ttype train.TrainType struct { ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64 })
+    (bool, error)
+  - train.NewTrainServiceImpl(ctx context.Context, db NoSQLDatabase) ((*train.TrainServiceImpl struct { db NoSQLDatabase }), error)
 trainfood:
 - package: trainfood
 - package path: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/trainfood

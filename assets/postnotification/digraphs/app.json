@@ -1,0 +1,23 @@
+{
+  "nodes": [
+    {
+      "id": "UploadService"
+    },
+    {
+      "id": "NotifyService"
+    },
+    {
+      "id": "StorageService"
+    }
+  ],
+  "edges": [
+    {
+      "caller": "NotifyService",
+      "callee": "StorageService"
+    },
+    {
+      "caller": "UploadService",
+      "callee": "StorageService"
+    }
+  ]
+}

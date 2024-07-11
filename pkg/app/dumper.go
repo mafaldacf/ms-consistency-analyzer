@@ -1,14 +1,11 @@
 package app
 
 import (
-	"encoding/json"
 	"fmt"
-	"os"
 	"sort"
 	"strings"
 
 	"analyzer/pkg/datastores"
-	"analyzer/pkg/logger"
 	"analyzer/pkg/utils"
 )
 
@@ -17,13 +14,45 @@ import (
 // -------
 
 func (app *App) Dump() {
+	app.dumpDiGraph()
 	app.dumpYamlPackages()
 	app.dumpYamlDatastores()
 	app.dumpYamlDataflow()
 	app.dumpYamlServices()
-	app.dumpJsonServices()
 	app.dumpYamlControlflow()
 	app.dumpYamlCalls()
+}
+
+func (app *App) dumpDiGraph() {
+	type node struct {
+		Id string `json:"id"`
+	}
+	type edge struct {
+		Caller string `json:"caller"`
+		Callee string `json:"callee"`
+	}
+	type digraph struct {
+		Nodes []node `json:"nodes"`
+		Edges []edge `json:"edges"`
+	}
+
+	nodes := []node{}
+	edges := []edge{}
+	services := make(map[string]bool)
+	for _, s := range app.Services {
+		nodes = append(nodes, node{Id: s.GetName()})
+		services[s.GetName()] = true
+	}
+	for _, service := range app.Services {
+		for _, callee := range service.Services {
+			if _, exists := services[callee.GetName()]; exists {
+				edges = append(edges, edge{Caller: service.GetName(), Callee: callee.GetName()})
+			}
+		}
+	}
+
+	outputGraph := digraph{Nodes: nodes, Edges: edges}
+	utils.DumpToJSONFile(outputGraph, app.Name, "digraphs/app")
 }
 
 func (app *App) dumpYamlPackages() {
@@ -137,25 +166,6 @@ func (app *App) dumpYamlServices() {
 		data[service.Name] = props.Result()
 	}
 	utils.DumpToYamlFile(data, app.Name, "services")
-}
-
-func (app *App) dumpJsonServices() {
-	// print in JSON format
-	// https://omute.net/editor
-	path := fmt.Sprintf("assets/%s/app.json", app.Name)
-	file, err := os.Create(path)
-	if err != nil {
-		fmt.Println("Error creating file:", err)
-		return
-	}
-	defer file.Close()
-	data, err := json.MarshalIndent(app, "", "  ")
-	if err != nil {
-		logger.Logger.Error("error marshaling json:", err)
-		return
-	}
-	file.Write(data)
-	logger.Logger.Infof("[JSON] app saved at %s", path)
 }
 
 func (app *App) dumpYamlControlflow() {

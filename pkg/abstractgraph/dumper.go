@@ -1,30 +1,73 @@
 package abstractgraph
 
 import (
-	"encoding/json"
-	"fmt"
-	"os"
+	"container/list"
 
-	"analyzer/pkg/logger"
+	"analyzer/pkg/utils"
 )
 
 func (graph *AbstractGraph) Dump() {
-	// print in JSON format
-	// https://omute.net/editor
-	path := fmt.Sprintf("assets/%s/abstractgraph.json", graph.AppName)
-	file, err := os.Create(path)
-	if err != nil {
-		fmt.Println("Error creating file:", err)
-		return
+	graph.dumpAbstractGraph()
+	graph.dumpCallDiGraph()
+}
+
+func (graph *AbstractGraph) dumpAbstractGraph() {
+	utils.DumpToJSONFile(graph.Nodes[0], graph.AppName, "abstractgraph")
+}
+
+func (graph *AbstractGraph) dumpCallDiGraph() {
+	type node struct {
+		Id   string `json:"id"`
+		Type string `json:"type"`
 	}
-	defer file.Close()
-	for _, node := range graph.Nodes {
-		data, err := json.MarshalIndent(node, "", "  ")
-		if err != nil {
-			logger.Logger.Error("error marshaling json:", err)
-			return
+	type edge struct {
+		Caller string `json:"caller"`
+		Callee string `json:"callee"`
+		Call   string `json:"call"`
+	}
+	type digraph struct {
+		Nodes []node `json:"nodes"`
+		Edges []edge `json:"edges"`
+	}
+
+	nodes := []node{}
+	edges := []edge{}
+
+	var abstractNodesToVisit = list.New()
+	var visitedAbstractNodes = make(map[AbstractNode]bool)
+
+	for _, n := range graph.Nodes {
+		abstractNodesToVisit.PushBack(n)
+	}
+
+	nodes = append(nodes, node{Id: "Client", Type: "client"})
+
+	for abstractNodesToVisit.Len() > 0 {
+		elem := abstractNodesToVisit.Front()
+		n := elem.Value.(AbstractNode)
+		abstractNodesToVisit.Remove(elem)
+
+		if _, exists := visitedAbstractNodes[n]; !exists {
+			caller := n.GetCallerStr()
+			callee := n.GetCallee()
+			call := n.GetName()
+			nodes = append(nodes, node{Id: callee, Type: n.GetNodeType()})
+
+			// skip edges for "caller" (i.e., the one who pushes to the queue and triggers the handler) to queue handler
+			/* if _, isQueueHandler := n.(*AbstractQueueHandler); !isQueueHandler {
+				edges = append(edges, edge{Caller: caller, Callee: callee, Call: call})
+			} */
+			edges = append(edges, edge{Caller: caller, Callee: callee, Call: call})
+			visitedAbstractNodes[n] = true
+
+			for _, c := range n.GetChildren() {
+				if _, visited := visitedAbstractNodes[c]; !visited {
+					abstractNodesToVisit.PushBack(c)
+				}
+			}
 		}
-		file.Write(data)
 	}
-	logger.Logger.Infof("[JSON] graph saved at %s", path)
+
+	outputGraph := digraph{Nodes: nodes, Edges: edges}
+	utils.DumpToJSONFile(outputGraph, graph.AppName, "digraphs/callgraph")
 }
