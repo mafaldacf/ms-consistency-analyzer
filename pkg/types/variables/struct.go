@@ -87,7 +87,7 @@ func (v *StructVariable) GetFieldVariableIfExists(name string) Variable {
 	if f, ok := v.Fields[name]; ok {
 		return f
 	}
-	logger.Logger.Warnf("[VARS STRUCT] unknown field (%s) for struct variable (%s)", name, v.String())
+	//logger.Logger.Warnf("[VARS STRUCT] unknown field (%s) for struct variable (%s)", name, v.String())
 	return nil
 }
 

@@ -34,38 +34,45 @@ postnotification:
   - sync
 - imported types:
   - .error
-  - Cache { instance = <nil> } interface{ Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{}) }
-  - NoSQLCollection { instance = <nil> } interface{ NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D) }
-  - NoSQLCursor { instance = <nil> } interface{ NoSQLDatabase.One(ctx context.Context, obj interface{}), NoSQLDatabase.All(ctx context.Context, obj interface{}) }
-  - NoSQLDatabase { instance = <nil> } interface{ NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string) }
-  - Queue { instance = <nil> } interface{ Queue.Push(ctx context.Context, item interface{}),
-    Queue.Pop(ctx context.Context, item interface{}) }
+  - Cache interface{ Cache.Put(ctx context.Context, key string, value interface{}),
+    Cache.Get(ctx context.Context, key string, value interface{}) }
+  - NoSQLCollection interface{ NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
+    NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D) }
+  - NoSQLCursor interface{ NoSQLDatabase.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.All(ctx context.Context, obj interface{}) }
+  - NoSQLDatabase interface{ NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string) }
+  - Queue interface{ Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{}) }
+  - atomic.Uint64
+  - atomic.align64
+  - atomic.noCopy
   - context.Context
   - primitive.D
+  - primitive.E
   - sync.WaitGroup
+  - sync.noCopy
 - declared types:
   - postnotification.Creator struct { Username string }
   - postnotification.Message struct { ReqID string, PostID string, Timestamp string }
   - postnotification.NotifyService
-  - postnotification.NotifyServiceImpl struct { storageService postnotification.StorageService, queue Queue { instance = notif_queue } interface{ Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{}) }, numWorkers
-    int }
+  - postnotification.NotifyServiceImpl struct { storageService postnotification.StorageService, queue { instance = notif_queue } interface{ Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{}) }, numWorkers int }
   - postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }
   - postnotification.StorageService
-  - postnotification.StorageServiceImpl struct { cache Cache { instance = post_cache }
-    interface{ Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{}) }, db NoSQLDatabase { instance = post_nosql } interface{ NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string) } }
+  - postnotification.StorageServiceImpl struct { cache { instance = post_cache } interface{ Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{}) }, db  { instance = post_nosql } interface{ NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string) } }
   - postnotification.UploadService
-  - postnotification.UploadServiceImpl struct { storageService postnotification.StorageService, queue Queue { instance = notif_queue } interface{ Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{}) } }
+  - postnotification.UploadServiceImpl struct { storageService postnotification.StorageService, queue { instance = notif_queue } interface{ Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{}) } }
 - service types:
   - postnotification.NotifyService
   - postnotification.StorageService
   - postnotification.UploadService
 - datastore types:
-  - Cache { instance = <nil> } interface{ Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{}) }
-  - NoSQLCollection { instance = <nil> } interface{ NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D) }
-  - NoSQLCursor { instance = <nil> } interface{ NoSQLDatabase.One(ctx context.Context, obj interface{}), NoSQLDatabase.All(ctx context.Context, obj interface{}) }
-  - NoSQLDatabase { instance = <nil> } interface{ NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string) }
-  - Queue { instance = <nil> } interface{ Queue.Push(ctx context.Context, item interface{}),
-    Queue.Pop(ctx context.Context, item interface{}) }
+  - Cache interface{ Cache.Put(ctx context.Context, key string, value interface{}),
+    Cache.Get(ctx context.Context, key string, value interface{}) }
+  - NoSQLCollection interface{ NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
+    NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D) }
+  - NoSQLCursor interface{ NoSQLDatabase.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.All(ctx context.Context, obj interface{}) }
+  - NoSQLDatabase interface{ NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string) }
+  - Queue interface{ Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{}) }
 - declared variables: []
 - parsed methods:
   - (*postnotification.NotifyServiceImpl).Run(ctx context.Context) error

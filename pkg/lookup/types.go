@@ -12,6 +12,7 @@ import (
 )
 
 func CreateVariableFromType(name string, t gotypes.Type) variables.Variable {
+	logger.Logger.Debugf("CREATE VARIABLE NAMED (%s) FROM TYPE (%s): %v", name, utils.GetType(t), t)
 	info := &variables.VariableInfo{
 		Name: name,
 		Type: t,
@@ -25,6 +26,10 @@ func CreateVariableFromType(name string, t gotypes.Type) variables.Variable {
 	case *gotypes.UserType:
 		if e.UserType != nil {
 			underlyingVariable := CreateVariableFromType(name, e.UserType)
+			if underlyingVariable == nil {
+				logger.Logger.Fatalf("[LOOKUP] unexpected nil underlying variable named (%s) for user type (%s)", name, e.Name)
+			}
+			logger.Logger.Warnf("[LOOKUP] unexpected nil underlying variable named (%s) for user type (%s): %v", name, e.Name, underlyingVariable.GetVariableInfo())
 			e.UserType = underlyingVariable.GetType()
 			underlyingVariable.GetVariableInfo().Type = e
 			//logger.Logger.Warnf("[LOOKUP] returning user type variable (%s) with underlying type (%s)", underlyingVariable.String(), utils.GetType(underlyingVariable.GetType()))
@@ -53,6 +58,8 @@ func CreateVariableFromType(name string, t gotypes.Type) variables.Variable {
 		return v
 	case *gotypes.StructType:
 		return &variables.StructVariable{VariableInfo: info, Fields: make(map[string]variables.Variable)}
+	case *gotypes.SliceType:
+		return &variables.SliceVariable{VariableInfo: info}
 	case *gotypes.MapType:
 		return &variables.MapVariable{VariableInfo: info, KeyValues: make(map[variables.Variable]variables.Variable, 0)}
 	case *gotypes.FieldType:

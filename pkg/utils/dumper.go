@@ -69,6 +69,7 @@ func DumpToYamlFile(data interface{}, appname string, filename string) {
 	}
 
 	yamlStr := fixYamlStrings(string(yamlData))
+	//yamlStr := string(yamlData)
 	path := fmt.Sprintf("assets/%s/%s.yaml", appname, filename)
 	
 	// ensure the directory exists
@@ -169,21 +170,25 @@ func fixYamlStrings(yamlStr string) string {
 				// skip newline if next character is colon
 				continue
 			}
-			if r == ':' && yamlStr[i-1] == '\n' {
-				// add newline after colon
-				sb.WriteRune(r)
-				sb.WriteRune('\n')
-				continue
-			}
-			if r == '?' && yamlStr[i-1] == '\n' {
-				continue
-			}
-			if r == ' ' && yamlStr[i-1] == '?' && yamlStr[i-2] == '\n' {
-				continue
-			}
-			if r == ' ' && yamlStr[i-1] == ':' && yamlStr[i+1] == '-' {
-				sb.WriteRune('\t')
-				continue
+			if i > 0 && len(yamlStr) > i - 1 {
+				if r == ':' && yamlStr[i-1] == '\n' {
+					// add newline after colon
+					sb.WriteRune(r)
+					sb.WriteRune('\n')
+					continue
+				}
+				if r == '?' && yamlStr[i-1] == '\n' {
+					continue
+				}
+				if i > 1 && len(yamlStr) > i - 2 {
+					if r == ' ' && yamlStr[i-1] == '?' && yamlStr[i-2] == '\n' {
+						continue
+					}
+				}
+				if r == ' ' && yamlStr[i-1] == ':' && yamlStr[i+1] == '-' {
+					sb.WriteRune('\t')
+					continue		
+				}
 			}
 			/* if r == '-' && yamlStr[i-1] == '\n' {
 				sb.WriteRune('\t')

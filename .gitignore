@@ -5,3 +5,4 @@ info.md
 # temporary
 assets/postnotification/datastores_old.yaml
 .venv/
+.DS_Store

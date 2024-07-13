@@ -89,10 +89,8 @@ func (p *Package) AddParsedMethod(method *ParsedMethod) {
 
 func (p *Package) GetParsedMethod(methodName string, recvTypeName string) *ParsedMethod {
 	for _, m := range p.ParsedMethods {
-		if m.Name == methodName {
-			if m.Receiver.GetType() == nil || m.Receiver.GetType().GetName() == recvTypeName {
-				return m
-			}
+		if m.Name == methodName && (m.Receiver == nil || m.Receiver.GetType() == nil || m.Receiver.GetType().GetName() == recvTypeName) {
+			return m
 		}
 	}
 	logger.Logger.Fatalf("unknown method (%s) with receiver type name (%s) for package (%s)", methodName, recvTypeName, p.Name)
@@ -100,14 +98,14 @@ func (p *Package) GetParsedMethod(methodName string, recvTypeName string) *Parse
 }
 
 func (p *Package) GetParsedMethodIfExists(methodName string, recvTypeName string) *ParsedMethod {
+	// only internal methods are parsed
+	// if method is not found the it must be from an external package
 	for _, m := range p.ParsedMethods {
-		if m.Name == methodName {
-			if m.Receiver == nil && recvTypeName == "" || m.Receiver.GetType().GetName() == recvTypeName {
-				return m
-			}
+		if m.Name == methodName && (m.Receiver == nil || m.Receiver.GetType() == nil || m.Receiver.GetType().GetName() == recvTypeName) {
+			return m
 		}
 	}
-	//logger.Logger.Warnf("unknown method (%s) with receiver type name (%s) in package (%s)", methodName, recvTypeName, p.Name)
+	logger.Logger.Warnf("unknown method (%s) with receiver type name (%s) in package (%s)", methodName, recvTypeName, p.Name)
 	return nil
 }
 

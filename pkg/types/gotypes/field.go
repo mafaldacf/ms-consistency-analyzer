@@ -28,12 +28,21 @@ func (t *FieldType) IsSameType(other Type) bool {
 	return ok
 }
 func (t *FieldType) String() string {
+	if t.SubType == nil {
+		logger.Logger.Fatalf("[TYPES FIELD] unexpected nil underlying type for Field Type %s", t.FieldName)
+	}
 	return t.SubType.String()
 }
 func (t *FieldType) LongString() string {
+	if t.SubType == nil {
+		logger.Logger.Fatalf("[TYPES FIELD] unexpected nil underlying type for Field Type %s", t.FieldName)
+	}
 	return t.SubType.LongString()
 }
 func (t *FieldType) GetName() string {
+	if t.SubType == nil {
+		logger.Logger.Fatalf("[TYPES FIELD] unexpected nil underlying type for Field Type %s", t.FieldName)
+	}
 	if t.StructField {
 		return t.FieldName
 	}
@@ -51,6 +60,10 @@ func (t *FieldType) AddValue(value string) {
 	logger.Logger.Fatalf("unable to add value for field type %s", t.String())
 }
 func (t *FieldType) GetNestedFieldTypes(prefix string) ([]Type, []string) {
+	if t.SubType == nil {
+		logger.Logger.Fatalf("[TYPES FIELD] unexpected nil underlying type for Field Type %s", t.FieldName)
+	}
+
 	/* if tag := t.GetTagJSON(); tag != "" {
 		prefix = prefix + "." + tag
 	} else {
@@ -73,6 +86,9 @@ func (t *FieldType) GetOrigin() Type {
 	return t.Origin
 }
 func (t *FieldType) GetSubType() Type {
+	if t.SubType == nil {
+		logger.Logger.Fatalf("[TYPES FIELD] unexpected nil underlying type for Field Type %s", t.FieldName)
+	}
 	return t.SubType
 }
 func (t *FieldType) IsStructField() bool {

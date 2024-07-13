@@ -79,7 +79,7 @@ func (t *BlueprintBackendType) String() string {
 	return t.Name
 }
 
-func (t *BlueprintBackendType) StringWithInstace() string {
+func (t *BlueprintBackendType) StringWithInstance() string {
 	if t.NoSQLComponent != nil {
 		return t.NoSQLComponent.String()
 	}
@@ -94,11 +94,10 @@ func (t *BlueprintBackendType) LongString() string {
 	if t.NoSQLComponent != nil {
 		return t.NoSQLComponent.LongString()
 	}
-	instance := "<nil>"
+	s := t.Name
 	if t.DbInstance != nil {
-		instance = t.DbInstance.GetName()
+		s = fmt.Sprintf(" {instance = %s}", t.DbInstance.GetName())
 	}
-	s := fmt.Sprintf("%s {instance = %s}", t.Name, instance)
 	if len(t.Methods) == 0 {
 		return s + " interface{}"
 	}
@@ -108,6 +107,22 @@ func (t *BlueprintBackendType) LongString() string {
 		if i < len(t.Methods)-1 {
 			s += ", "
 		}
+	}
+	return s + "}"
+}
+
+func (t *BlueprintBackendType) StringWithMethodsList() string {
+	if t.NoSQLComponent != nil {
+		return t.NoSQLComponent.String()
+	}
+
+	s := t.Name
+	if len(t.Methods) == 0 {
+		return s + " interface{}"
+	}
+	s += "\n" + t.Name + " interface{\n"
+	for _, m := range t.Methods {
+		s += "\t" + m.String() + "\n"
 	}
 	return s + "}"
 }

@@ -27,10 +27,6 @@ const (
 	PACKAGE_PATH_BLUEPRINT         string = "github.com/blueprint-uservices/blueprint/runtime/core/backend"
 )
 
-func isBlueprintPackagePath(name string) bool {
-	return name == PACKAGE_PATH_BLUEPRINT
-}
-
 func createPackage(app *App, goPackage *packages.Package, basePackagePath string) *types.Package {
 	modulePath := ""
 	if goPackage.Module != nil {
@@ -52,15 +48,15 @@ func createPackage(app *App, goPackage *packages.Package, basePackagePath string
 
 	//TODO ADD FLAG FOR BLUEPRINT PACKAGE
 	if strings.HasPrefix(goPackage.PkgPath, basePackagePath) {
-		logger.Logger.Infof("[APP] found internal package %s", goPackage.String())
+		logger.Logger.Infof("[APP PACKAGE FINDER] found internal package %s", goPackage.String())
 		newPackage.Type = types.APP
 		app.AddAppPackage(newPackage.Name, newPackage)
 	} else if goPackage.PkgPath == PACKAGE_PATH_BLUEPRINT {
-		logger.Logger.Infof("[APP] found blueprint package %s", goPackage.String())
+		logger.Logger.Infof("[APP PACKAGE FINDER] found blueprint package %s", goPackage.String())
 		newPackage.Type = types.BLUEPRINT
 		app.AddBlueprintPackage(newPackage.Name, newPackage)
 	} else {
-		logger.Logger.Infof("[APP] found external package %s", goPackage.String())
+		logger.Logger.Infof("[APP PACKAGE FINDER] found external package %s", goPackage.String())
 		newPackage.Type = types.EXTERNAL
 		app.AddExternalPackage(newPackage.Name, newPackage)
 	}
@@ -72,11 +68,11 @@ func parseBlueprintPackage(bpPackage *types.Package) {
 	packagesPattern := bpPackage.PackagePath
 	pkgs, err := packages.Load(&packages.Config{Mode: packages.NeedName | packages.NeedModule | packages.NeedFiles | packages.NeedTypes | packages.NeedTypesInfo | packages.NeedSyntax | packages.NeedImports}, packagesPattern)
 	if err != nil {
-		logger.Logger.Fatalf("error loading packages from %s: %s", bpPackage.PackagePath, err.Error())
+		logger.Logger.Fatalf("[APP PACKAGE BLUEPRINT] error loading packages from %s: %s", bpPackage.PackagePath, err.Error())
 	}
 	// should be only one package
 	if len(pkgs) != 1 {
-		logger.Logger.Fatalf("unexpected number of packages (%d) in blueprint backend %s", len(pkgs), bpPackage.PackagePath)
+		logger.Logger.Fatalf("[APP PACKAGE BLUEPRINT] unexpected number of packages (%d) in blueprint backend %s", len(pkgs), bpPackage.PackagePath)
 	}
 	goPkg := pkgs[0]
 	visitedNamedTypes := make(map[string]bool)
@@ -105,10 +101,10 @@ func parseBlueprintPackage(bpPackage *types.Package) {
 					backendType.Methods = blueprint.BuildBackendComponentMethods(backendType.Name)
 					bpPackage.AddDeclaredType(backendType)
 					bpPackage.AddDatastoreType(backendType)
-					logger.Logger.Infof("[APP BLUEPRINT] added blueprint backend %s with methods %v", backendType.String(), backendType.Methods)
+					logger.Logger.Infof("[APP PACKAGE BLUEPRINT] added blueprint backend %s", backendType.String())
 
 				} else {
-					logger.Logger.Warnf("[APP BLUEPRINT] ignoring type %s (%s): %v", utils.GetType(def.Type()), utils.GetType(def.Type().Underlying()), def.Type().String())
+					logger.Logger.Tracef("[APP PACKAGE BLUEPRINT] ignoring type %s (%s): %v", utils.GetType(def.Type()), utils.GetType(def.Type().Underlying()), def.Type().String())
 				}
 			}
 		}
@@ -162,226 +158,85 @@ func (app *App) ParsePackages(servicesInfo []*frameworks.ServiceInfo) {
 	}
 
 	for _, pkg := range app.BlueprintPackages {
-		logger.Logger.Infof("[APP] parsing blueprint package %s", pkg.PackagePath)
 		parseBlueprintPackage(pkg)
-	}
-
-	for _, pkg := range app.Packages {
-		logger.Logger.Debugf("pkg: %s", pkg.Name)
-	}
-
-	for _, pkg := range app.Packages {
-		app.parsePackage(pkg, servicesPkgPath, allGoPackages)
 	}
 
 	for _, pkg := range app.ExternalPackages {
 		app.parsePackage(pkg, servicesPkgPath, allGoPackages)
 	}
+
+	for _, pkg := range app.Packages {
+		app.parsePackage(pkg, servicesPkgPath, allGoPackages)
+	}
+
+	app.dumpYamlPackages()
+}
+
+func parseGolangFuncTypes(pkg *types.Package, def golangtypes.Object, typeNameToFuncs map[string][]*golangtypes.Func) []*golangtypes.Func {
+	var funcs []*golangtypes.Func
+	if funcGoType, ok := def.(*golangtypes.Func); ok && funcGoType.Pkg().Path() == pkg.PackagePath {
+		//logger.Logger.Debugf("FUNC TYPE %v", funcGoType)
+		if signatureGoType, ok := funcGoType.Type().Underlying().(*golangtypes.Signature); ok {
+			//logger.Logger.Debugf("\t\t SIGNATURE TYPE %v", signatureGoType)
+			if signatureGoType.Recv() != nil {
+				recv := signatureGoType.Recv().Type()
+				if pointerGoType, ok := signatureGoType.Recv().Type().(*golangtypes.Pointer); ok {
+					recv = pointerGoType.Elem()
+				}
+				if namedGoType, ok := recv.(*golangtypes.Named); ok {
+					var recvTypeName string
+					_, isStruct := recv.Underlying().(*golangtypes.Struct)
+					_, isInterface := recv.Underlying().(*golangtypes.Interface)
+					if !isStruct && !isInterface {
+						logger.Logger.Fatalf("[APP] unexpected type (%s) for recv underlying (%s)", utils.GetType(recv.Underlying()), recv.Underlying())
+					}
+					recvTypeName = namedGoType.Obj().Name()
+					if !slices.Contains(typeNameToFuncs[recvTypeName], funcGoType) {
+						typeNameToFuncs[recvTypeName] = append(typeNameToFuncs[recvTypeName], funcGoType)
+					}
+				} else {
+					logger.Logger.Fatalf("[APP] unexpected type (%s) for recv (%s)", utils.GetType(namedGoType), recv.String())
+				}
+			} else {
+				if !slices.Contains(funcs, funcGoType) {
+					funcs = append(funcs, funcGoType)
+				}
+			}
+		}
+	}
+	return funcs
 }
 
 func (app *App) parsePackage(pkg *types.Package, servicesPkgPath map[string]string, allGoPackages map[*types.Package]*packages.Package) {
 	goPkg := allGoPackages[pkg]
 
 	if goPkg == nil {
-		logger.Logger.Fatalf("[APP] cannot find go package (%s) in list: %v", pkg.Name, allGoPackages)
-	}
-
-	if pkg.IsAppPackage() {
-		logger.Logger.Infof("[APP] parsing app package (%s)\n----------", goPkg)
-	} else {
-		logger.Logger.Infof("[APP] parsing external package (%s)\n----------", goPkg)
+		logger.Logger.Fatalf("[APP PACKAGE PARSER] cannot find go package (%s) in list: %v", pkg.Name, allGoPackages)
 	}
 
 	// we are currently not able to get the types info defs for any external packages
 	if goPkg.TypesInfo == nil {
-		logger.Logger.Warnf("[APP] ignoring package (%s)", goPkg)
+		logger.Logger.Warnf("[APP PACKAGE PARSER] skipping package (%s)", goPkg)
 		return
 	}
 
-	underlyingTypes := make(map[string]golangtypes.Type)
-	visitedNamedTypes := make(map[string]bool)
+	if pkg.IsAppPackage() {
+		logger.Logger.Infof("[APP PACKAGE PARSER] parsing app package (%s)", goPkg)
+	} else {
+		logger.Logger.Infof("[APP PACKAGE PARSER] parsing external package (%s)", goPkg)
+	}
+
+	visitedNamedTypes := make(map[*golangtypes.Named]bool)
 	typeNameToFuncs := make(map[string][]*golangtypes.Func)
-	funcs := []*golangtypes.Func{}
+	var funcs []*golangtypes.Func
 
 	for _, def := range goPkg.TypesInfo.Defs {
 		if def == nil {
 			continue
 		}
-		//logger.Logger.Warnf("[APP] [%s] visiting %s: %s", utils.GetType(def), def.Name(), def.String())
-
-		//logger.Logger.Infof("[%s] visiting %s\n", utils.GetType(def), def.Name())
-		if funcGoType, ok := def.(*golangtypes.Func); ok && funcGoType.Pkg().Path() == pkg.PackagePath {
-			if signatureGoType, ok := funcGoType.Type().Underlying().(*golangtypes.Signature); ok {
-				if signatureGoType.Recv() != nil {
-					recv := signatureGoType.Recv().Type()
-					if pointerGoType, ok := signatureGoType.Recv().Type().(*golangtypes.Pointer); ok {
-						recv = pointerGoType.Elem()
-					}
-					if namedGoType, ok := recv.(*golangtypes.Named); ok {
-						var recvTypeName string
-						_, isStruct := recv.Underlying().(*golangtypes.Struct)
-						_, isInterface := recv.Underlying().(*golangtypes.Interface)
-						if !isStruct && !isInterface {
-							logger.Logger.Fatalf("[APP] unexpected type (%s) for recv underlying (%s)", utils.GetType(recv.Underlying()), recv.Underlying())
-						}
-						recvTypeName = namedGoType.Obj().Name()
-						if !slices.Contains(typeNameToFuncs[recvTypeName], funcGoType) {
-							typeNameToFuncs[recvTypeName] = append(typeNameToFuncs[recvTypeName], funcGoType)
-						}
-					} else {
-						logger.Logger.Fatalf("[APP] unexpected type (%s) for recv (%s)", utils.GetType(namedGoType), recv.String())
-					}
-				} else {
-					if !slices.Contains(funcs, funcGoType) {
-						funcs = append(funcs, funcGoType)
-					}
-				}
-			}
-		}
-		/* if signatureGoType, ok := def.Type().(*golangtypes.Signature); ok {
-			if signatureGoType.Recv() != nil {
-				logger.Logger.Infof("[%s] visiting %s: %v\n", utils.GetType(signatureGoType), def.Name(), utils.GetType(signatureGoType.Recv().Type()))
-			}
-		}
-		if namedGoType, ok := def.Type().(*golangtypes.Named); ok {
-			if structGoType, ok := namedGoType.Underlying().(*golangtypes.Struct); ok {
-				logger.Logger.Warnf("[%s] visiting %s with %d fields: %s", utils.GetType(structGoType), def.Name(), structGoType.NumFields(), structGoType.String())
-				for i := 0; i < structGoType.NumFields(); i++ {
-					typeParam := structGoType.Field(i)
-					logger.Logger.Warnf("\t\t[%s] visiting struct field %s", utils.GetType(typeParam), typeParam.String())
-				}
-				logger.Logger.Warn()
-			}
-			if interfaceGoType, ok := namedGoType.Underlying().(*golangtypes.Interface); ok {
-				logger.Logger.Warnf("[%s] visiting %s: %s\n", utils.GetType(interfaceGoType), def.Name(), interfaceGoType.String())
-			}
-		} */
-
-		goType := def.Type()
-		namedGoType, ok := goType.(*golangtypes.Named)
-		stop := false
-		for !stop {
-			switch e := goType.(type) {
-			case *golangtypes.Slice:
-				goType = e.Elem()
-			case *golangtypes.Pointer:
-				goType = e.Elem()
-			case *golangtypes.Chan:
-				goType = e.Elem()
-			case *golangtypes.Named:
-				namedGoType = e
-				ok = true
-				stop = true
-			case *golangtypes.Signature, *golangtypes.Struct, *golangtypes.Basic, *golangtypes.Map:
-				// ignore
-				stop = true
-			default:
-				logger.Logger.Fatalf("unknown go type (%s) for (%v)", utils.GetType(goType), goType)
-			}
-		}
-
-		if ok {
-			logger.Logger.Tracef("[APP] [%s] visiting %s: %s", utils.GetType(namedGoType), def.Name(), namedGoType.String())
-			if visitedNamedTypes[namedGoType.String()] {
-				continue
-			}
-			visitedNamedTypes[namedGoType.String()] = true
-
-			typeName := namedGoType.Obj().Name()
-			objectPackage := namedGoType.Obj().Pkg()
-			objectPackagePath := ""
-			if objectPackage != nil { // e.g. 'error' is an interface type with no package path TODO: ignore it
-				objectPackagePath = objectPackage.Path()
-			}
-
-			if pkg.IsAppPackage() {
-				// different package implies imported object
-				if !pkg.HasPath(objectPackagePath) {
-					if isBlueprintPackagePath(objectPackagePath) {
-						bpPackage := pkg.GetImportedPackage(objectPackagePath)
-						declaredType := bpPackage.GetDeclaredType(typeName)
-						pkg.AddImportedType(declaredType)
-						pkg.AddDatastoreType(declaredType)
-						logger.Logger.Debugf("[APP] added imported blueprint type %s", declaredType.String())
-					} else if servicePkgPath, ok := servicesPkgPath[typeName]; ok && servicePkgPath == objectPackagePath {
-						serviceType := &gotypes.ServiceType{
-							Name:    typeName,
-							Package: objectPackagePath,
-						}
-						pkg.AddImportedType(serviceType)
-						pkg.AddServiceType(serviceType)
-						logger.Logger.Debugf("[APP] added imported service type %s", serviceType.String())
-					} else {
-						importedType := &gotypes.UserType{
-							Name:    typeName,
-							Package: objectPackagePath, // this is the real package name
-						}
-						pkg.AddImportedType(importedType)
-						logger.Logger.Debugf("[APP] added imported type %s", importedType.String())
-					}
-				} else if servicePkgPath, ok := servicesPkgPath[typeName]; ok && servicePkgPath == objectPackagePath {
-					serviceType := &gotypes.ServiceType{
-						Name:    typeName,
-						Package: objectPackagePath,
-					}
-					logger.Logger.Debugf("[APP] added declared service type %s", serviceType.String())
-					pkg.AddDeclaredType(serviceType)
-					pkg.AddServiceType(serviceType)
-				} else {
-					// new type defined in the current package
-					namedType := &gotypes.UserType{
-						Name:    typeName,
-						Package: pkg.Name,
-					}
-					// since we can have nested structures with definitions out of order
-					// there, here we only add an entry and latter we generate the subtypes
-					logger.Logger.Debugf("[APP] added declared named type %s", namedType.String())
-					pkg.AddDeclaredType(namedType)
-					underlyingTypes[typeName] = namedGoType.Underlying()
-				}
-			} else {
-				if pkg.HasPath(objectPackagePath) {
-					// new type defined in the current package
-					namedType := &gotypes.UserType{
-						Name:    typeName,
-						Package: pkg.Name,
-					}
-					// since we can have nested structures with definitions out of order
-					// there, here we only add an entry and latter we generate the subtypes
-					pkg.AddDeclaredType(namedType)
-					underlyingTypes[typeName] = namedGoType.Underlying()
-				}
-			}
-		} else {
-			logger.Logger.Warnf("skipping %v with type %s", goType, utils.GetType(goType))
-		}
+		funcs = append(funcs, parseGolangFuncTypes(pkg, def, typeNameToFuncs)...)
+		lookup.FindDefTypesAndAddToPackage(pkg, def.Type(), visitedNamedTypes, typeNameToFuncs, servicesPkgPath)
 	}
-
-	for n, importedType := range pkg.ImportedTypes {
-		if userType, ok := importedType.(*gotypes.UserType); ok {
-			userType.UserType = lookup.ComputeTypesForGoTypes(pkg, underlyingTypes[n])
-		}
-	}
-
-	for n, declaredType := range pkg.DeclaredTypes {
-		if userType, ok := declaredType.(*gotypes.UserType); ok {
-			userType.UserType = lookup.ComputeTypesForGoTypes(pkg, underlyingTypes[n])
-
-			if structType, ok := userType.UserType.(*gotypes.StructType); ok {
-				for _, funcGoType := range typeNameToFuncs[userType.Name] {
-					structType.AddMethod(funcGoType.Name(), pkg.GetPackagePath())
-					logger.Logger.Infof("[APP] saved struct (%s) function (%s) in package (%s)", userType.GetName(), funcGoType.Name(), pkg.GetName())
-				}
-			} else if interfaceType, ok := userType.UserType.(*gotypes.InterfaceType); ok {
-				for _, funcGoType := range typeNameToFuncs[userType.Name] {
-					interfaceType.AddMethod(funcGoType.Name(), pkg.GetPackagePath())
-					logger.Logger.Infof("[APP] saved interface (%s) function (%s) in package (%s)", userType.GetName(), funcGoType.Name(), pkg.GetName())
-				}
-			}
-		}
-	}
-
-	app.dumpYamlPackages()
 
 	if pkg.IsAppPackage() {
 		for i, fileAst := range goPkg.Syntax {
@@ -409,37 +264,38 @@ func (app *App) parsePackage(pkg *types.Package, servicesPkgPath map[string]stri
 						}
 					}
 
-					var funcGoTypes []*golangtypes.Func
 					if recvTypeIdent != nil {
 						if structTypeFuncs, ok := typeNameToFuncs[recvTypeIdent.Name]; ok {
-							funcGoTypes = structTypeFuncs
+							saveMethodForFuncDecl(pkg, file, funcDecl, structTypeFuncs)
 						} else {
-							logger.Logger.Fatalf("[APP] cannot find func for type name (%s)", recvTypeIdent.Name)
+							logger.Logger.Fatalf("[APP PACKAGE PARSER] cannot find func for type name (%s)", recvTypeIdent.Name)
 						}
 					} else {
-						funcGoTypes = funcs
-					}
-					for _, f := range funcGoTypes {
-						if f.Name() == funcDecl.Name.Name {
-							params, returns, receiver := lookup.ComputeFuncDeclFields(file, funcDecl)
-							parsedMethod := &types.ParsedMethod{
-								Ast:      funcDecl,
-								Name:     funcDecl.Name.Name,
-								Package:  pkg,
-								Exported: f.Exported(),
-								Params:   params,
-								Returns:  returns,
-								Receiver: receiver,
-							}
-							pkg.AddParsedMethod(parsedMethod)
-							logger.Logger.Infof("[APP] added parsed method (%s) to package (%s)", parsedMethod.Name, pkg.Name)
-						}
+						saveMethodForFuncDecl(pkg, file, funcDecl, funcs)
 					}
 				}
 				return true
 			})
 		}
 	}
+	logger.Logger.Tracef("[APP PACKAGE PARSER] added new package %s", pkg.Name)
+}
 
-	logger.Logger.Tracef("[APP] added new package %s", pkg.Name)
+func saveMethodForFuncDecl(pkg *types.Package, file *types.File, funcDecl *ast.FuncDecl, funcGoTypes []*golangtypes.Func) {
+	for _, f := range funcGoTypes {
+		if f.Name() == funcDecl.Name.Name {
+			params, returns, receiver := lookup.ComputeFuncDeclFields(file, funcDecl)
+			parsedMethod := &types.ParsedMethod{
+				Ast:      funcDecl,
+				Name:     funcDecl.Name.Name,
+				Package:  pkg,
+				Exported: f.Exported(),
+				Params:   params,
+				Returns:  returns,
+				Receiver: receiver,
+			}
+			pkg.AddParsedMethod(parsedMethod)
+			logger.Logger.Warnf("[APP] added parsed method (%s) to package (%s)", parsedMethod.Name, pkg.Name)
+		}
+	}
 }

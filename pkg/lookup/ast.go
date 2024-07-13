@@ -42,27 +42,25 @@ func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 
 		logger.Logger.Fatalf("[LOOKUP AST IDENT] cannot compute type for ident (%s)", e)
 	case *ast.SelectorExpr:
-		idents, _ := GetAllSelectorIdents(e.X)
-		leftIdent := idents[0]
-
-		//logger.Logger.Debugf("HERE WITH EXPR %v", e)
-		
-		// left ident is the package alias
-		imptPath := file.GetImport(leftIdent.Name).PackagePath
-		// import path does not always match the object impt path
-		// e.g. in "bson.D", the bson code actually defines "D" as "type D = primitive.D"
-		// so instead of the original imported path go.mongodb.org/mongo-driver/bson.D
-		// we have go.mongodb.org/mongo-driver/bson/primitive.D
-		// can be either e.Sel or just e
-		goType := file.Package.GetTypeInfo(e.Sel)
-		if goType.String() != imptPath {
-			logger.Logger.Warnf("[LOOKUP AST SELECTOR] replacing imported package path (%s) with go type path (%s)", imptPath, goType.String())
-			imptPath = goType.String()
-		}
-		if importedType, ok := file.Package.GetImportedTypeFromPath(imptPath); ok {
-			return importedType
-		} else {
-			logger.Logger.Fatalf("[LOOKUP AST SELECTOR] unexpected nil import type for path (%s)", imptPath)
+		if ident, ok := e.X.(*ast.Ident); ok {
+			// left ident is the package alias
+			imptPath := file.GetImport(ident.Name).GetPackagePath() + "." + e.Sel.Name
+			// import path does not always match the object impt path
+			// e.g. in "bson.D", the bson code actually defines "D" as "type D = primitive.D"
+			// so instead of the original imported path go.mongodb.org/mongo-driver/bson.D
+			// we have go.mongodb.org/mongo-driver/bson/primitive.D
+			// can be either e.Sel or just e
+			goType := file.Package.GetTypeInfo(e.Sel)
+			if goType.String() != imptPath {
+				logger.Logger.Warnf("[LOOKUP AST SELECTOR] replacing imported package path (%s) with go type path (%s)", imptPath, goType.String())
+				imptPath = goType.String()
+			}
+			
+			if importedType, ok := file.Package.GetImportedTypeFromPath(imptPath); ok {
+				return importedType
+			} else {
+				logger.Logger.Fatalf("[LOOKUP AST SELECTOR] unexpected nil import type for path (%s)", imptPath)
+			}
 		}
 		
 		logger.Logger.Fatalf("[LOOKUP AST SELECTOR] cannot parse selector expr (%v)", e)

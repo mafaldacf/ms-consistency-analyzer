@@ -77,7 +77,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			if packageType, ok := t.(*gotypes.PackageType); ok {
 				importedPkg := service.GetPackage().GetImportedPackage(packageType.Path)
 				if importedPkg.IsExternalPackage() {
-					t = lookup.ComputeTypesForGoTypes(service.GetPackage(), service.GetPackage().GetTypeInfo(e.Sel))
+					t = lookup.LookupTypesForGoTypes(service.GetPackage(), service.GetPackage().GetTypeInfo(e.Sel))
 					variable = lookup.CreateVariableFromType("", t)
 					return variable, variable.GetType()
 				}

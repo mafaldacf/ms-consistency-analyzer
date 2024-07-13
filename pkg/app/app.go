@@ -55,7 +55,11 @@ func (app *App) AddExternalPackage(name string, p *types.Package) {
 func (app *App) GetPackage(pkgName string) *types.Package {
 	pkg, ok := app.Packages[pkgName]
 	if !ok {
-		logger.Logger.Fatalf("could not find package %s in app packages list %v", pkgName, app.Packages)
+		packagesStr := ""
+		for k, t := range app.Packages {
+			packagesStr += "- " + k + ": " + t.String() + "\n"
+		}
+		logger.Logger.Fatalf("could not find package (%s) in app packages list\n%s", pkgName, packagesStr)
 	}
 	return pkg
 }
@@ -84,6 +88,6 @@ func Init(name string, path string) (*App, error) {
 		ExternalPackages:   make(map[string]*types.Package),
 		PersistedVariables: make(map[string][]variables.Variable),
 	}
-	logger.Logger.Infof("[APP] initialized app at %s", app.Path)
+	logger.Logger.Infof("[APP INIT] loading app %s", app.Path)
 	return app, nil
 }

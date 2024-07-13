@@ -16,9 +16,15 @@ func (t *ArrayType) IsSameType(other Type) bool {
 	return ok
 }
 func (t *ArrayType) String() string {
+	if t.ElementsType == nil {
+		logger.Logger.Fatal("[TYPES ARRAY] unexpected nil underlying type for Array Type")
+	}
 	return "[]" + t.ElementsType.String()
 }
 func (t *ArrayType) LongString() string {
+	if t.ElementsType == nil {
+		logger.Logger.Fatal("[TYPES ARRAY] unexpected nil underlying type for Array Type")
+	}
 	return "[]" + t.ElementsType.LongString()
 }
 func (t *ArrayType) GetName() string {

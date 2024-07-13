@@ -1,13 +1,13 @@
 {
   "nodes": [
     {
+      "id": "StorageService"
+    },
+    {
       "id": "UploadService"
     },
     {
       "id": "NotifyService"
-    },
-    {
-      "id": "StorageService"
     }
   ],
   "edges": [

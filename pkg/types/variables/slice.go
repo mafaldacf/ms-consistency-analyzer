@@ -12,7 +12,7 @@ type SliceVariable struct {
 }
 
 func (v *SliceVariable) GetVariableInfo() *VariableInfo {
-	return nil
+	return v.VariableInfo
 }
 
 func (v *SliceVariable) GetVariableAt(index int) Variable {

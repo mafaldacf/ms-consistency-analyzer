@@ -3,6 +3,8 @@ package utils
 import (
 	"reflect"
 	"slices"
+
+	"analyzer/pkg/logger"
 )
 
 var basicTypes = []string{
@@ -19,7 +21,7 @@ var basicTypes = []string{
 
 func GetType(node interface{}) string {
 	if node == nil {
-		return "INVALID TYPE FOR <nil>"
+		logger.Logger.Fatal("[UTILS TYPE] INVALID TYPE FOR <nil>")
 	}
 	return reflect.TypeOf(node).Elem().Name()
 }

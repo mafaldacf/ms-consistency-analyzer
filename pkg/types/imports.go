@@ -20,3 +20,6 @@ func (i *Import) IsBlueprintPackage() bool {
 func (i *Import) String() string {
 	return fmt.Sprintf("%s \"%s\" (package: %s)", i.Alias, i.ImportPath, i.PackagePath)
 }
+func (i *Import) GetPackagePath() string {
+	return i.PackagePath
+}

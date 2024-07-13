@@ -16,6 +16,9 @@ func (t *SliceType) IsSameType(other Type) bool {
 	return ok
 }
 func (t *SliceType) String() string {
+	if t.UnderlyingType == nil {
+		logger.Logger.Fatal("[TYPES SLICE] unexpected nil underlying type for Slice Type")
+	}
 	return "(" + t.UnderlyingType.String() + ")"
 }
 func (t *SliceType) LongString() string {
@@ -25,6 +28,9 @@ func (t *SliceType) GetName() string {
 	return ""
 }
 func (t *SliceType) GetUnderlyingType() Type {
+	if t.UnderlyingType == nil {
+		logger.Logger.Fatal("[TYPES SLICE] unexpected nil underlying type for Slice Type")
+	}
 	return t.UnderlyingType
 }
 func (t *SliceType) GetBasicValue() string {

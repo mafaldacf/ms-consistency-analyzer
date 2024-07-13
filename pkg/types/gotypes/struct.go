@@ -131,7 +131,7 @@ func (t *StructType) GetFieldTypeByNameIfExists(name string) *FieldType {
 			return f
 		}
 	}
-	logger.Logger.Warnf("[TYPES STRUCT] unknown field type (%s) for struct type (%s)", name, t.String())
+	//logger.Logger.Warnf("[TYPES STRUCT] unknown field type (%s) for struct type (%s)", name, t.String())
 	return nil
 }
 

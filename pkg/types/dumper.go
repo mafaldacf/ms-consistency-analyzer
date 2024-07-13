@@ -89,14 +89,6 @@ func (p *Package) DumpExternalYaml() utils.OrderedProperties {
 	propsData.AddOrderedProperty("package path", p.PackagePath)
 	propsData.AddOrderedProperty("module", p.Module)
 
-	// declared types
-	declaredTypes := []string{}
-	for _, e := range p.DeclaredTypes {
-		declaredTypes = append(declaredTypes, e.LongString())
-	}
-	sort.Strings(declaredTypes)
-	propsData.AddOrderedProperty("declared types", declaredTypes)
-
 	// save final data
 	return propsData.Result()
 }

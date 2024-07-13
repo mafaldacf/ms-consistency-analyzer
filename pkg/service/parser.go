@@ -106,7 +106,6 @@ func (service *Service) ParseFields() {
 		}
 		return true
 	})
-	logger.Logger.Debugln()
 }
 
 func (service *Service) computeFieldFromType(field *ast.Field, paramName string, idx int) types.Field {
@@ -329,9 +328,9 @@ func (service *Service) ParseConstructorAndLoadImplFields(paramDBs map[string]da
 		if implFieldType, ok := impl.GetFieldTypeByName(name).SubType.(*blueprint.BlueprintBackendType); ok {
 			if serviceFieldType, ok := field.GetType().(*blueprint.BlueprintBackendType); ok {
 				impl.UpdateFieldSubTypeByName(name, serviceFieldType)
-				logger.Logger.Infof("[PARSER] [%s] matched service field type (%s) to impl type (%s)", service.Name, serviceFieldType.StringWithInstace(), implFieldType.StringWithInstace())
+				logger.Logger.Infof("[PARSER] [%s] matched service field type (%s) to impl type (%s)", service.Name, serviceFieldType.StringWithInstance(), implFieldType.StringWithInstance())
 			} else {
-				logger.Logger.Fatalf("[PARSER] [%s] service field type (%s) does not match impl type (%s) for BlueprintBackendType", service.Name, serviceFieldType.StringWithInstace(), implFieldType.StringWithInstace())
+				logger.Logger.Fatalf("[PARSER] [%s] service field type (%s) does not match impl type (%s) for BlueprintBackendType", service.Name, serviceFieldType.StringWithInstance(), implFieldType.StringWithInstance())
 			}
 		}
 	}

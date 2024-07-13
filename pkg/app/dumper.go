@@ -63,19 +63,19 @@ func (app *App) dumpYamlPackages() {
 	}
 	utils.DumpToYamlFile(blueprintPackages, app.Name, "packages/blueprint")
 
-	// application
-	appPackages := make(map[string]interface{})
-	for _, p := range app.Packages {
-		appPackages[p.Name] = p.DumpYaml()
-	}
-	utils.DumpToYamlFile(appPackages, app.Name, "packages/app")
-
 	// external
 	externalPackages := make(map[string]interface{})
 	for _, p := range app.ExternalPackages {
 		externalPackages[p.Name] = p.DumpExternalYaml()
 	}
 	utils.DumpToYamlFile(externalPackages, app.Name, "packages/external")
+
+	// application
+	appPackages := make(map[string]interface{})
+	for _, p := range app.Packages {
+		appPackages[p.Name] = p.DumpYaml()
+	}
+	utils.DumpToYamlFile(appPackages, app.Name, "packages/app")
 }
 
 func (app *App) dumpYamlDataflow() {

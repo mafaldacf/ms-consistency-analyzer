@@ -7,7 +7,7 @@ import (
 	"analyzer/pkg/abstractgraph"
 	"analyzer/pkg/app"
 	"analyzer/pkg/detector"
-	bp "analyzer/pkg/frameworks/blueprint"
+	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 )
 
@@ -21,7 +21,7 @@ func main() {
 		logger.Logger.Fatal(fmt.Sprintf("invalid app name (%s) must provide an application name ('postnotification' or 'foobar') using the -app flag", *appName))
 	}
 
-	servicesInfo, databaseInstances, frontends := bp.BuildBlueprintAppInfo(*appName)
+	servicesInfo, databaseInstances, frontends := blueprint.BuildBlueprintAppInfo(*appName)
 
 	app, err := app.Init(*appName, fmt.Sprintf("examples/%s/workflow/%s", *appName, *appName))
 	if err != nil {
