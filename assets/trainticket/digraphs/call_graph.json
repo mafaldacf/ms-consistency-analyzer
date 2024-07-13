@@ -1,0 +1,78 @@
+{
+  "nodes": [
+    {
+      "id": "Client",
+      "type": "client"
+    },
+    {
+      "id": "UserService",
+      "type": "service"
+    },
+    {
+      "id": "user_db MongoDB",
+      "type": "datastore"
+    }
+  ],
+  "edges": [
+    {
+      "caller": "Client",
+      "callee": "UserService",
+      "call": "FindByUsername"
+    },
+    {
+      "caller": "Client",
+      "callee": "UserService",
+      "call": "FindByUserID"
+    },
+    {
+      "caller": "Client",
+      "callee": "UserService",
+      "call": "DeleteUser"
+    },
+    {
+      "caller": "Client",
+      "callee": "UserService",
+      "call": "GetAllUsers"
+    },
+    {
+      "caller": "Client",
+      "callee": "UserService",
+      "call": "SaveUser"
+    },
+    {
+      "caller": "Client",
+      "callee": "UserService",
+      "call": "UpdateUser"
+    },
+    {
+      "caller": "UserService",
+      "callee": "user_db MongoDB",
+      "call": "FindOne"
+    },
+    {
+      "caller": "UserService",
+      "callee": "user_db MongoDB",
+      "call": "FindOne"
+    },
+    {
+      "caller": "UserService",
+      "callee": "user_db MongoDB",
+      "call": "DeleteOne"
+    },
+    {
+      "caller": "UserService",
+      "callee": "user_db MongoDB",
+      "call": "FindMany"
+    },
+    {
+      "caller": "UserService",
+      "callee": "user_db MongoDB",
+      "call": "InsertOne"
+    },
+    {
+      "caller": "UserService",
+      "callee": "user_db MongoDB",
+      "call": "Upsert"
+    }
+  ]
+}

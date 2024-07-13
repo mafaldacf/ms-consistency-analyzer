@@ -4,6 +4,7 @@ import re
 import networkx as nx
 import matplotlib.pyplot as plt
 import argparse
+from collections import defaultdict
 
 def get_spaced_label(name):
     # case-insensitive match for 'Service'
@@ -18,81 +19,95 @@ def get_spaced_label(name):
         name = splits[0] + '\n' + splits[1]
     return name
 
-#splits = node['id'].split(' ')
-#graph.add_node(node['id'], label=splits[0] + '\n' + splits[1])
+def build_digraph(data, graph_type):
+    digraph = nx.DiGraph()
 
-parser = argparse.ArgumentParser(description="Visualize graphs based on the specified application and graph type")
-parser.add_argument('--app', '-a', required=True, choices=['postnotification', 'foobar', 'sockshop', 'trainticker'], help="The application for which to visualize the graph")
-parser.add_argument('--graph', '-g', required=True, choices=['app', 'callgraph'], help="The type of graph to visualize")
-args = parser.parse_args()
+    node_colors = {
+        'service': 'skyblue',
+        'datastore': 'lightgreen',
+        'client': 'lightgray',
+    }
 
-# load json file
-filename = f"assets/{args.app}/digraphs/{args.graph}.json"
-with open(filename) as f:
-    data = json.load(f)
-
-# create a directed graph and add nodes and edges
-graph = nx.DiGraph()
-node_colors = {
-    'service': 'skyblue',
-    'datastore': 'lightgreen',
-    'client': 'lightgray',
-}
-for node in data['nodes']:
-    node_label = get_spaced_label(node['id'])
-    node_type = node.get('type', 'unknown')
-    node_color = node_colors.get(node_type, 'white')
-    #print("ADDED NODE", node_label, "WITH COLOR", node_color)
-    graph.add_node(node['id'], label=node_label, type=node_type, color=node_color)
+    for node in data['nodes']:
+        node_label = get_spaced_label(node['id'])
+        node_type = node.get('type', 'unknown')
+        node_color = node_colors.get(node_type, 'white')
+        digraph.add_node(node['id'], label=node_label, type=node_type, color=node_color)
     
-for link in data['edges']:
-    node_call = link.get('call', '')
-    graph.add_edge(link['caller'], link['callee'], call=node_call)
+    for edge in data['edges']:
+        digraph.add_edge(edge['caller'],  edge['callee'], call=edge.get('call', ''))
 
-# draw the graph
-#pos = nx.spring_layout(graph, seed=42)
-#plt.figure(figsize=(15, 15))
-pos = nx.spring_layout(graph, seed=14, k=2.5, scale=2.0)
-plt.figure(figsize=(12, 12))
+    pos = nx.spring_layout(digraph, seed=14, k=2.5, scale=2.0)
+    plt.figure(figsize=(12, 12))
 
-# debug colors
-#print(list(graph.nodes(data="color", default="Not Available")))
+    node_colors = [digraph.nodes[n]['color'] for n in digraph.nodes()]
+    nx.draw(
+        digraph, pos,
+        with_labels=True,
+        labels=nx.get_node_attributes(digraph, 'label'),
+        node_size=7000,
+        node_color=node_colors,
+        font_size=11,
+        font_color="black",
+        font_weight="bold",
+        edge_color="gray",
+        arrows=True,
+        arrowsize=40,
+        connectionstyle='arc3,rad=0.3',
+    )
 
-node_colors = [graph.nodes[n]['color'] for n in graph.nodes()]
-edge_labels = nx.get_edge_attributes(graph, 'call')
+    if graph_type != "app":
+        edge_count = defaultdict(lambda: {'calls': [], 'count': 0})
 
-# draw nodes with colors and labels
-nx.draw(
-    graph, pos,
-    with_labels=True,
-    labels=nx.get_node_attributes(graph, 'label'),
-    node_size=7000,
-    #node_color="skyblue",
-    node_color=node_colors,
-    font_size=12,
-    font_color="black",
-    font_weight="bold",
-    edge_color="gray",
-    arrows=True,
-    arrowsize=40,
-    connectionstyle='arc3,rad=0.2',
-    #arrowstyle='->',
-)
+        for edge in data['edges']:
+            caller = edge['caller']
+            callee = edge['callee']
+            call_type = edge.get('call', '')
+            edge_count[(caller, callee)]['calls'].append(call_type)
+            edge_count[(caller, callee)]['count'] += 1
 
-# draw edge labels separately
-nx.draw_networkx_edge_labels(
-    graph, pos,
-    edge_labels=edge_labels,
-    font_color='black',
-    font_size=11,
-    label_pos=0.75,
-    connectionstyle='arc3,rad=0.2',
-)
+        combined_edge_labels = {
+            edge: f"{'\n'.join(data['calls'])}" if data['count'] > 1 else f"{data['calls'][0]}"
+            for edge, data in edge_count.items()
+        }
 
+        nx.draw_networkx_edge_labels(
+            digraph, pos,
+            edge_labels=combined_edge_labels,
+            font_color='black',
+            font_size=9,
+            label_pos=0.70,
+            connectionstyle='arc3,rad=0.3',
+        )
 
-plt.title(f"{args.graph.capitalize()} Graph Visualization")
-#plt.show()
+def load(app, graph):
+    filename = f"assets/{app}/digraphs/{graph}_graph.json"
+    with open(filename) as f:
+        data = json.load(f)
+    return data
 
-output_path = f"assets/{args.app}/digraphs/{args.graph}.png"
-plt.savefig(output_path, format='png')
-print(f"[INFO] graph saved to {output_path}")
+def save(app, graph, multi):
+    if multi:
+        plt.title(f"{graph.capitalize()} Multi DiGraph Visualization")
+    else:
+        plt.title(f"{graph.capitalize()} DiGraph Visualization")
+
+    #plt.show()
+
+    if multi:
+        output_path = f"assets/{app}/digraphs/{graph}_graph.png"
+    else:
+        output_path = f"assets/{app}/digraphs/{graph}_multi_graph.png"
+    plt.savefig(output_path, format='png')
+    print(f"[INFO] graph saved to {output_path}")
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Visualize graphs based on the specified application and graph type")
+    parser.add_argument('--app', '-a', required=True, choices=['postnotification', 'foobar', 'sockshop', 'trainticket'], help="The application for which to visualize the graph")
+    parser.add_argument('--graph', '-g', required=True, choices=['app', 'call'], help="The type of graph to visualize")
+    parser.add_argument('--multi', '-m', action='store_true', help="Construct multi digraph")
+    args = parser.parse_args()
+
+    data = load(args.app, args.graph)
+    build_digraph(data, args.graph)
+    save(args.app, args.graph, args.multi)

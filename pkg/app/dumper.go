@@ -25,7 +25,8 @@ func (app *App) Dump() {
 
 func (app *App) dumpDiGraph() {
 	type node struct {
-		Id string `json:"id"`
+		Id   string `json:"id"`
+		Type string `json:"type"`
 	}
 	type edge struct {
 		Caller string `json:"caller"`
@@ -40,7 +41,7 @@ func (app *App) dumpDiGraph() {
 	edges := []edge{}
 	services := make(map[string]bool)
 	for _, s := range app.Services {
-		nodes = append(nodes, node{Id: s.GetName()})
+		nodes = append(nodes, node{Id: s.GetName(), Type: "service"})
 		services[s.GetName()] = true
 	}
 	for _, service := range app.Services {
@@ -51,8 +52,20 @@ func (app *App) dumpDiGraph() {
 		}
 	}
 
+	// datastores
+	datastores := make(map[string]bool)
+	for _, service := range app.Services {
+		for _, ds := range service.Databases {
+			if _, exists := datastores[ds.GetName()]; !exists {
+				nodes = append(nodes, node{Id: ds.String(), Type: "datastore"})
+				datastores[ds.GetName()] = true
+			}
+			edges = append(edges, edge{Caller: service.GetName(), Callee: ds.String()})
+		}
+	}
+
 	outputGraph := digraph{Nodes: nodes, Edges: edges}
-	utils.DumpToJSONFile(outputGraph, app.Name, "digraphs/app")
+	utils.DumpToJSONFile(outputGraph, app.Name, "digraphs/app_graph")
 }
 
 func (app *App) dumpYamlPackages() {

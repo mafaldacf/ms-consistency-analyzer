@@ -25,7 +25,7 @@ func (q *QueueInstance) GetName() string {
 }
 
 func (q *QueueInstance) String() string {
-	return q.Name + " " + q.GetTypeName()
+	return q.Name + " " + q.Datastore.GetKindString()
 }
 
 func (q *QueueInstance) IsQueue() bool {
@@ -51,30 +51,30 @@ type CacheInstance struct {
 	BlueprintDatabaseInstance
 }
 
-func (c *CacheInstance) GetName() string {
-	return c.Name
+func (nosql *CacheInstance) GetName() string {
+	return nosql.Name
 }
 
-func (c *CacheInstance) String() string {
-	return c.Name + " " + c.GetTypeName()
+func (nosql *CacheInstance) String() string {
+	return nosql.Name + " " + nosql.Datastore.GetKindString()
 }
 
-func (c *CacheInstance) IsQueue() bool {
+func (nosql *CacheInstance) IsQueue() bool {
 	return false
 }
 
-func (c *CacheInstance) GetTypeName() string {
+func (nosql *CacheInstance) GetTypeName() string {
 	return "Cache"
 }
 
 // MarshalJSON is used by app.Save()
-func (c *CacheInstance) MarshalJSON() ([]byte, error) {
+func (nosql *CacheInstance) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Name      string                `json:"name"`
 		Datastore *datastores.Datastore `json:"datastore"`
 	}{
-		Name:      c.GetName(),
-		Datastore: c.GetDatastore(),
+		Name:      nosql.GetName(),
+		Datastore: nosql.GetDatastore(),
 	})
 }
 
@@ -82,29 +82,29 @@ type NoSQLInstance struct {
 	BlueprintDatabaseInstance
 }
 
-func (c *NoSQLInstance) GetName() string {
-	return c.Name
+func (nosql *NoSQLInstance) GetName() string {
+	return nosql.Name
 }
 
-func (c *NoSQLInstance) String() string {
-	return c.Name + " " + c.GetTypeName()
+func (nosql *NoSQLInstance) String() string {
+	return nosql.Name + " " + nosql.Datastore.GetKindString()
 }
 
-func (c *NoSQLInstance) IsQueue() bool {
+func (nosql *NoSQLInstance) IsQueue() bool {
 	return false
 }
 
-func (c *NoSQLInstance) GetTypeName() string {
-	return "Cache"
+func (nosql *NoSQLInstance) GetTypeName() string {
+	return "NoSQLDatabase"
 }
 
 // MarshalJSON is used by app.Save()
-func (c *NoSQLInstance) MarshalJSON() ([]byte, error) {
+func (nosql *NoSQLInstance) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Name      string                `json:"name"`
 		Datastore *datastores.Datastore `json:"datastore"`
 	}{
-		Name:      c.GetName(),
-		Datastore: c.GetDatastore(),
+		Name:      nosql.GetName(),
+		Datastore: nosql.GetDatastore(),
 	})
 }

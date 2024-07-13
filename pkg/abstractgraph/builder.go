@@ -289,19 +289,16 @@ func (graph *AbstractGraph) referencePublisherParams(queueHandler *AbstractQueue
 	return false
 }
 
-func getDependencies(first bool, v variables.Variable) []variables.Variable {
-	indirectDeps := []variables.Variable{}
-	if !first {
-		indirectDeps = append(indirectDeps, v)
-	}
+func getDependencies(v variables.Variable) []variables.Variable {
+	indirectDeps := []variables.Variable{v}
 
 	// indirect dependencySets from potential reference
 	if v.GetVariableInfo().HasReference() {
-		indirectDeps = append(indirectDeps, getDependencies(false, v.GetVariableInfo().GetReference())...)
+		indirectDeps = append(indirectDeps, getDependencies(v.GetVariableInfo().GetReference())...)
 	}
 	// direct dependencySets
 	for _, dep := range v.GetDependencies() {
-		indirectDeps = append(indirectDeps, getDependencies(false, dep)...)
+		indirectDeps = append(indirectDeps, getDependencies(dep)...)
 	}
 
 	return indirectDeps
@@ -312,7 +309,7 @@ func (graph *AbstractGraph) referenceServiceCallerParams(parent AbstractNode, ca
 	logger.Logger.Debugf("[REF] visiting %s (caller = %s, parent = %s)", child.String(), caller.GetName(), parent.GetName())
 
 	for _, childParam := range child.GetParams() {
-		deps := getDependencies(false, childParam)
+		deps := getDependencies(childParam)
 		logger.Logger.Tracef("\t\t[REF] %s: referencing %v (deps = %v)", child.GetName(), childParam, deps)
 
 		for _, dep := range deps {

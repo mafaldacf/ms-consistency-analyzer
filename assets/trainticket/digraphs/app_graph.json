@@ -1,0 +1,18 @@
+{
+  "nodes": [
+    {
+      "id": "UserService",
+      "type": "service"
+    },
+    {
+      "id": "user_db MongoDB",
+      "type": "datastore"
+    }
+  ],
+  "edges": [
+    {
+      "caller": "UserService",
+      "callee": "user_db MongoDB"
+    }
+  ]
+}

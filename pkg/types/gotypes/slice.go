@@ -40,6 +40,10 @@ func (t *SliceType) GetBasicValue() string {
 func (t *SliceType) AddValue(value string) {
 	logger.Logger.Fatalf("unable to add value for tuple type %s", t.String())
 }
+func (t *SliceType) GetNestedFieldTypes(prefix string) ([]Type, []string) {
+	logger.Logger.Warnf("GETTING NESTED FIELD TYPES FOR SLICE %v", t.String())
+	return nil, nil
+}
 
 // -------------
 // Tuple Methods

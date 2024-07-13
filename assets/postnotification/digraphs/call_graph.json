@@ -13,11 +13,11 @@
       "type": "service"
     },
     {
-      "id": "notif_queue Queue",
+      "id": "notif_queue RabbitMQ",
       "type": "datastore"
     },
     {
-      "id": "post_nosql Cache",
+      "id": "post_nosql MongoDB",
       "type": "datastore"
     },
     {
@@ -25,23 +25,7 @@
       "type": "service"
     },
     {
-      "id": "notif_queue Queue",
-      "type": "datastore"
-    },
-    {
-      "id": "StorageService",
-      "type": "service"
-    },
-    {
-      "id": "StorageService",
-      "type": "service"
-    },
-    {
-      "id": "post_cache Cache",
-      "type": "datastore"
-    },
-    {
-      "id": "post_nosql Cache",
+      "id": "post_cache Redis",
       "type": "datastore"
     }
   ],
@@ -58,22 +42,22 @@
     },
     {
       "caller": "UploadService",
-      "callee": "notif_queue Queue",
+      "callee": "notif_queue RabbitMQ",
       "call": "Push"
     },
     {
       "caller": "StorageService",
-      "callee": "post_nosql Cache",
+      "callee": "post_nosql MongoDB",
       "call": "InsertOne"
     },
     {
-      "caller": "notif_queue Queue",
+      "caller": "notif_queue RabbitMQ",
       "callee": "NotifyService",
       "call": "workerThread"
     },
     {
       "caller": "NotifyService",
-      "callee": "notif_queue Queue",
+      "callee": "notif_queue RabbitMQ",
       "call": "Pop"
     },
     {
@@ -88,12 +72,12 @@
     },
     {
       "caller": "StorageService",
-      "callee": "post_cache Cache",
+      "callee": "post_cache Redis",
       "call": "Get"
     },
     {
       "caller": "StorageService",
-      "callee": "post_nosql Cache",
+      "callee": "post_nosql MongoDB",
       "call": "FindOne"
     }
   ]

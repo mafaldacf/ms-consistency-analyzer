@@ -20,19 +20,24 @@ type DependencySet struct {
 func addNestedDatastoreEntry(variable variables.Variable, entryName string, datastore *datastores.Datastore) {
 	objType := variable.GetType()
 	datastore.Schema.AddField(entryName, objType.LongString(), variable.GetId(), datastore.Name)
+	logger.Logger.Infof("[SCHEMA] [%s] added entry (%s): %s", datastore.Name, entryName, objType.LongString())
+
 	datastore.Schema.AddUnfoldedFieldWithId(objType.GetName(), objType.LongString(), variable.GetId(), datastore.Name)
+	logger.Logger.Infof("[SCHEMA] [%s] added field (%s): %s", datastore.Name, objType.GetName(), objType.LongString())
 
 	// add nested unfolded types
 	types, names := objType.GetNestedFieldTypes(objType.GetName())
 	for i, t := range types {
 		name := names[i]
 		datastore.Schema.AddUnfoldedField(name, t.LongString(), datastore.Name)
+		logger.Logger.Infof("[SCHEMA] [%s] added nested field (%s): %s", datastore.Name, name, t.LongString())
 	}
 }
 
 func addDatastoreEntry(variable variables.Variable, entryName string, datastore *datastores.Datastore) {
 	objType := variable.GetType()
 	datastore.Schema.AddField(entryName, objType.GetName(), variable.GetId(), datastore.Name)
+	logger.Logger.Infof("[SCHEMA] [%s] added entry (%s): %s", datastore.Name, entryName, objType.LongString())
 }
 
 func computeDependencySets(parentSet *DependencySet, v variables.Variable) []*DependencySet {
@@ -65,7 +70,7 @@ func GetNestedFields(variable variables.Variable) []variables.Variable {
 }
 
 func addDataflow(app *app.App, variable variables.Variable, call *AbstractDatabaseCall, datastore *datastores.Datastore) {
-	fmt.Printf("\n------------------------ ADD DATAFLOW @ %s ------------------------\n\n", datastore.Name)
+	fmt.Printf("\n------------------------ ADD DATAFLOW FOR CALL %s @ %s ------------------------\n\n", call.GetName(), datastore.Name)
 	fmt.Println()
 	rootField := datastore.Schema.GetField(variable.GetType().GetName())
 	variable.GetVariableInfo().SetDirectDataflow(datastore.Name, call.Service, variable, rootField)
@@ -88,13 +93,13 @@ func addDataflow(app *app.App, variable variables.Variable, call *AbstractDataba
 		slices.Reverse(names)
 
 		for i, v := range variables {
-			logger.Logger.Infof("[NESTED VAR] %s (type = %s)", v.LongString(), utils.GetType(v))
+			logger.Logger.Infof("[TAINTED VAR] %s (type = %s)", v.LongString(), utils.GetType(v))
 			name := names[i]
 			field := datastore.Schema.GetField(name)
-			deps := getDependencies(false, v)
+			deps := getDependencies(v)
 			for _, d := range deps {
 				if !slices.Contains(persistedVars, d) {
-					logger.Logger.Warnf("\t\t[NESTED VAR DEP] field %s ---> %s (type = %s)", field.GetName(), d.String(), utils.GetType(d))
+					logger.Logger.Warnf("\t\t[TAINTED VAR DEP] field %s ---> %s (type = %s)", field.GetName(), d.String(), utils.GetType(d))
 					v.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, d, variable, field)
 					persistedVars = append(persistedVars, d)
 					if !slices.Contains(app.PersistedVariables[field.GetFullName()], d) {
@@ -119,7 +124,7 @@ func addForeignFields(variable variables.Variable, datastore *datastores.Datasto
 		for i, v := range variables {
 			name := names[i]
 			field := datastore.Schema.GetField(name)
-			deps := getDependencies(false, v)
+			deps := getDependencies(v)
 			logger.Logger.Infof("[NESTED VAR] %s (type = %s)", v.LongString(), utils.GetType(v))
 			for _, d := range deps {
 				if dfs := d.GetVariableInfo().GetAllDataflows(); dfs != nil {
@@ -142,7 +147,7 @@ func computeForeignDependencySets(parentSet *DependencySet, v variables.Variable
 		Variable: v,
 	}
 	sets = append(sets, set)
-	logger.Logger.Infof("visiting %s (%s)", v.String(), utils.GetType(v))
+	logger.Logger.Debugf("visiting %s (%s)", v.String(), utils.GetType(v))
 	appendDataflowDependencies := func(dep variables.Variable, isRef bool) {
 		logger.Logger.Infof("\t\tgetting data flow dependencies for %s (%s)", dep.String(), utils.GetType(dep))
 		for _, df := range dep.GetVariableInfo().Dataflows {
@@ -194,9 +199,8 @@ func computeForeignDependencySets(parentSet *DependencySet, v variables.Variable
 func searchForeignDataflow(variable variables.Variable, datastore *datastores.Datastore, app *app.App) {
 	fmt.Printf("\n------------------------ SEARCH FOREIGN DATAFLOW @ %s ------------------------\n\n", datastore.Name)
 	sets := computeForeignDependencySets(nil, variable)
-	fmt.Println()
 	for _, set := range sets {
-		logger.Logger.Infof("------ visiting set for %v ------", set.Variable.String())
+		logger.Logger.Debugf("------ visiting set for %v ------", set.Variable.String())
 		for _, v := range set.Dependencies {
 			var foreignVariables []variables.Variable
 			var foreignDatastores []datastores.DatabaseInstance
@@ -230,7 +234,7 @@ func BuildSchema(app *app.App, node AbstractNode) {
 	if dbCall, ok := node.(*AbstractDatabaseCall); ok && dbCall.ParsedCall.Method.IsWrite() {
 		datastore := dbCall.DbInstance.GetDatastore()
 		params := dbCall.Params
-		logger.Logger.Infof("[SCHEMA] building schema for abstract node %s with params = %v", dbCall.String(), params)
+		logger.Logger.Infof("[SCHEMA] [%s] building schema based on abstract node (%s)", datastore.Name, dbCall.GetName())
 		switch datastore.Type {
 		case datastores.Cache:
 			key := params[1]

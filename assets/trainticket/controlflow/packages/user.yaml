@@ -1,0 +1,12 @@
+(*user.UserServiceImpl).DeleteUser(ctx context.Context, userID string) error: null
+(*user.UserServiceImpl).FindByUserID(ctx context.Context, userID string) (user.User struct { UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string }, error):
+ null
+(*user.UserServiceImpl).FindByUsername(ctx context.Context, username string) (user.User struct { UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string }, error):
+ null
+(*user.UserServiceImpl).GetAllUsers(ctx context.Context) ([]user.User struct { UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string }, error):
+ null
+(*user.UserServiceImpl).SaveUser(ctx context.Context, user user.User struct { UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string }) error:
+ null
+(*user.UserServiceImpl).UpdateUser(ctx context.Context, user user.User struct { UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string }) (bool, error):
+ null
+user.NewUserServiceImpl(ctx context.Context, db NoSQLDatabase) ((*user.UserServiceImpl struct { userDB NoSQLDatabase }), error): null

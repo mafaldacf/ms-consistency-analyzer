@@ -6,7 +6,7 @@ import (
 
 	"analyzer/pkg/abstractgraph"
 	"analyzer/pkg/app"
-	"analyzer/pkg/detector"
+	//"analyzer/pkg/detector"
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 )
@@ -42,7 +42,7 @@ func main() {
 
 	abstractGraph := abstractgraph.Build(app, frontends)
 
-	fmt.Println()
+	/* fmt.Println()
 	fmt.Println(" -------------------------------------------------------------------------------------------------------------- ")
 	fmt.Println(" -------------------------------------------- CHECK XCY VIOLATIONS -------------------------------------------- ")
 	fmt.Println(" -------------------------------------------------------------------------------------------------------------- ")
@@ -53,7 +53,7 @@ func main() {
 		request := detector.InitRequest(entryNode)
 		request.TransverseRequestOperations()
 		requests = append(requests, request)
-	}
+	} */
 
 	fmt.Println()
 	fmt.Println(" ----------------------------------------------------------------------------------------------------------------- ")
@@ -65,11 +65,17 @@ func main() {
 		abstractgraph.BuildSchema(app, entryNode)
 	}
 
+	fmt.Println()
+	fmt.Println(" ----------------------------------------------------------------------------------------------------------------- ")
+	fmt.Println(" --------------------------------------------------- DUMPERS ----------------------------------------------------- ")
+	fmt.Println(" ----------------------------------------------------------------------------------------------------------------- ")
+	fmt.Println()
+
 	app.Dump()
 	abstractGraph.Dump()
-	for _, request := range requests {
+	/* for _, request := range requests {
 		request.SaveInconsistencies(app.Name)
-	}
+	} */
 
 	fmt.Println()
 }

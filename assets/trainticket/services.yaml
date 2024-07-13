@@ -1,0 +1,6 @@
+UserService:
+- fields:
+    userDB: NoSQLDatabase
+- services: {}
+- datastores:
+    user_db: NoSQLDatabase

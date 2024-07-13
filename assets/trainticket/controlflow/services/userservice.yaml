@@ -1,0 +1,41 @@
+(*UserServiceImpl).DeleteUser(ctx context.Context, userID string):
+  block 0 (Body):
+  - u (*user.UserServiceImpl struct { userDB NoSQLDatabase })
+  - ctx context.Context
+  - userID string
+  - coll NoSQLCollection { database = "user", collection = "user" }
+  - err .error
+(*UserServiceImpl).FindByUserID(ctx context.Context, userID string):
+  block 0 (Body):
+  - u (*user.UserServiceImpl struct { userDB NoSQLDatabase })
+  - ctx context.Context
+  - userID string
+  - coll NoSQLCollection { database = "user", collection = "user" }
+  - err .error
+(*UserServiceImpl).FindByUsername(ctx context.Context, username string):
+  block 0 (Body):
+  - u (*user.UserServiceImpl struct { userDB NoSQLDatabase })
+  - ctx context.Context
+  - username string
+  - coll NoSQLCollection { database = "user", collection = "user" }
+  - err .error
+(*UserServiceImpl).GetAllUsers(ctx context.Context):
+  block 0 (Body):
+  - u (*user.UserServiceImpl struct { userDB NoSQLDatabase })
+  - ctx context.Context
+  - coll NoSQLCollection { database = "user", collection = "user" }
+  - err .error
+(*UserServiceImpl).SaveUser(ctx context.Context, user user.User struct { UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string }):
+ block 0 (Body):
+  - u (*user.UserServiceImpl struct { userDB NoSQLDatabase })
+  - ctx context.Context
+  - user user.User struct { UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string } ----> (TAINTED @ USER_DB.User)
+  - coll NoSQLCollection { database = "user", collection = "user" }
+  - err .error
+(*UserServiceImpl).UpdateUser(ctx context.Context, user user.User struct { UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string }):
+ block 0 (Body):
+  - u (*user.UserServiceImpl struct { userDB NoSQLDatabase })
+  - ctx context.Context
+  - user user.User struct { UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string }
+  - coll NoSQLCollection { database = "user", collection = "user" }
+  - err .error

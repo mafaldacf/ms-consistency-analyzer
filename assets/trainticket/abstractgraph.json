@@ -1,0 +1,374 @@
+[
+  {
+    "method": "(*UserServiceImpl).FindByUsername(ctx context.Context, username string)",
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "caller": "UserService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context",
+              "id": 1,
+              "ref": {
+                "name": "ctx",
+                "creator": "UserService",
+                "id": 1
+              }
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D",
+              "id": -1
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = \"user\", collection = \"user\"}",
+              "id": -1
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error",
+              "id": -1
+            }
+          }
+        ],
+        "datastore": "user_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context",
+          "id": 1
+        }
+      },
+      {
+        "variable": {
+          "name": "username",
+          "type": "string",
+          "id": -1
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*UserServiceImpl).FindByUserID(ctx context.Context, userID string)",
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "caller": "UserService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context",
+              "id": 2,
+              "ref": {
+                "name": "ctx",
+                "creator": "UserService",
+                "id": 2
+              }
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D",
+              "id": -1
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = \"user\", collection = \"user\"}",
+              "id": -1
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error",
+              "id": -1
+            }
+          }
+        ],
+        "datastore": "user_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context",
+          "id": 2
+        }
+      },
+      {
+        "variable": {
+          "name": "userID",
+          "type": "string",
+          "id": -1
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*UserServiceImpl).DeleteUser(ctx context.Context, userID string)",
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D)",
+        "caller": "UserService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context",
+              "id": 3,
+              "ref": {
+                "name": "ctx",
+                "creator": "UserService",
+                "id": 3
+              }
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D",
+              "id": -1
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error",
+              "id": -1
+            }
+          }
+        ],
+        "datastore": "user_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context",
+          "id": 3
+        }
+      },
+      {
+        "variable": {
+          "name": "userID",
+          "type": "string",
+          "id": -1
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*UserServiceImpl).GetAllUsers(ctx context.Context)",
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D)",
+        "caller": "UserService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context",
+              "id": 4,
+              "ref": {
+                "name": "ctx",
+                "creator": "UserService",
+                "id": 4
+              }
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = \"user\", collection = \"user\"}",
+              "id": -1
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error",
+              "id": -1
+            }
+          }
+        ],
+        "datastore": "user_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context",
+          "id": 4
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*UserServiceImpl).SaveUser(ctx context.Context, user user.User struct {UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string})",
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+        "caller": "UserService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context",
+              "id": 5,
+              "ref": {
+                "name": "ctx",
+                "creator": "UserService",
+                "id": 5
+              }
+            }
+          },
+          {
+            "variable": {
+              "name": "user",
+              "type": "user.User struct {UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}",
+              "id": 6,
+              "ref": {
+                "name": "user",
+                "creator": "UserService",
+                "id": 6
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "user_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context",
+          "id": 5
+        }
+      },
+      {
+        "variable": {
+          "name": "user",
+          "type": "user.User struct {UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}",
+          "id": 6
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*UserServiceImpl).UpdateUser(ctx context.Context, user user.User struct {UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string})",
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{})",
+        "caller": "UserService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context",
+              "id": 7,
+              "ref": {
+                "name": "ctx",
+                "creator": "UserService",
+                "id": 7
+              }
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D",
+              "id": -1
+            }
+          },
+          {
+            "variable": {
+              "name": "user",
+              "type": "user.User struct {UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}",
+              "id": 8,
+              "ref": {
+                "name": "user",
+                "creator": "UserService",
+                "id": 8
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": "bool"
+            }
+          },
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "user_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context",
+          "id": 7
+        }
+      },
+      {
+        "variable": {
+          "name": "user",
+          "type": "user.User struct {UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}",
+          "id": 8
+        }
+      }
+    ]
+  }
+]

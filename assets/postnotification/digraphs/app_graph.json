@@ -1,0 +1,54 @@
+{
+  "nodes": [
+    {
+      "id": "UploadService",
+      "type": "service"
+    },
+    {
+      "id": "NotifyService",
+      "type": "service"
+    },
+    {
+      "id": "StorageService",
+      "type": "service"
+    },
+    {
+      "id": "notif_queue RabbitMQ",
+      "type": "datastore"
+    },
+    {
+      "id": "post_cache Redis",
+      "type": "datastore"
+    },
+    {
+      "id": "post_nosql MongoDB",
+      "type": "datastore"
+    }
+  ],
+  "edges": [
+    {
+      "caller": "UploadService",
+      "callee": "StorageService"
+    },
+    {
+      "caller": "NotifyService",
+      "callee": "StorageService"
+    },
+    {
+      "caller": "UploadService",
+      "callee": "notif_queue RabbitMQ"
+    },
+    {
+      "caller": "NotifyService",
+      "callee": "notif_queue RabbitMQ"
+    },
+    {
+      "caller": "StorageService",
+      "callee": "post_cache Redis"
+    },
+    {
+      "caller": "StorageService",
+      "callee": "post_nosql MongoDB"
+    }
+  ]
+}

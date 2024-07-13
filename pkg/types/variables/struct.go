@@ -139,7 +139,7 @@ func (t *StructVariable) GetNestedFieldVariables(prefix string) ([]Variable, []s
 	var nestedVariables []Variable
 	var nestedIDs []string
 
-	logger.Logger.Debugf("[VARS STRUCT] found (%d) fields for (%s)", len(t.Fields), t.String())
+	logger.Logger.Debugf("[VARS STRUCT] found (%d) field VARIABLES for (%s)", len(t.Fields), t.String())
 	for _, f := range t.Fields {
 		if fieldVariable, ok := f.(*FieldVariable); ok {
 			nestedFieldVariables, nestedFieldIDs := fieldVariable.GetNestedFieldVariables(prefix)

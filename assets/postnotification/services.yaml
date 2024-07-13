@@ -14,7 +14,7 @@ StorageService:
 - services: {}
 - datastores:
     post_cache: Cache
-    post_nosql: Cache
+    post_nosql: NoSQLDatabase
 UploadService:
 - fields:
     queue: Queue

@@ -8,14 +8,14 @@ import (
 
 func (graph *AbstractGraph) Dump() {
 	graph.dumpAbstractGraph()
-	graph.dumpCallDiGraph()
+	graph.dumpDiGraph()
 }
 
 func (graph *AbstractGraph) dumpAbstractGraph() {
-	utils.DumpToJSONFile(graph.Nodes[0], graph.AppName, "abstractgraph")
+	utils.DumpToJSONFile(graph.Nodes, graph.AppName, "abstractgraph")
 }
 
-func (graph *AbstractGraph) dumpCallDiGraph() {
+func (graph *AbstractGraph) dumpDiGraph() {
 	type node struct {
 		Id   string `json:"id"`
 		Type string `json:"type"`
@@ -32,6 +32,7 @@ func (graph *AbstractGraph) dumpCallDiGraph() {
 
 	nodes := []node{}
 	edges := []edge{}
+	appendedServiceNodes := make(map[string]bool)
 
 	var abstractNodesToVisit = list.New()
 	var visitedAbstractNodes = make(map[AbstractNode]bool)
@@ -51,12 +52,11 @@ func (graph *AbstractGraph) dumpCallDiGraph() {
 			caller := n.GetCallerStr()
 			callee := n.GetCallee()
 			call := n.GetName()
-			nodes = append(nodes, node{Id: callee, Type: n.GetNodeType()})
 
-			// skip edges for "caller" (i.e., the one who pushes to the queue and triggers the handler) to queue handler
-			/* if _, isQueueHandler := n.(*AbstractQueueHandler); !isQueueHandler {
-				edges = append(edges, edge{Caller: caller, Callee: callee, Call: call})
-			} */
+			if _, exists := appendedServiceNodes[callee]; !exists {
+				nodes = append(nodes, node{Id: callee, Type: n.GetNodeType()})
+				appendedServiceNodes[callee] = true
+			}
 			edges = append(edges, edge{Caller: caller, Callee: callee, Call: call})
 			visitedAbstractNodes[n] = true
 
@@ -69,5 +69,5 @@ func (graph *AbstractGraph) dumpCallDiGraph() {
 	}
 
 	outputGraph := digraph{Nodes: nodes, Edges: edges}
-	utils.DumpToJSONFile(outputGraph, graph.AppName, "digraphs/callgraph")
+	utils.DumpToJSONFile(outputGraph, graph.AppName, "digraphs/call_graph")
 }
