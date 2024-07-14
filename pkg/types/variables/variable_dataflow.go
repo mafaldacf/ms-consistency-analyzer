@@ -62,7 +62,7 @@ func (v *VariableInfo) SetDirectDataflow(datastore string, service string, varia
 		Field:       field,
 	}
 	v.Dataflows = append(v.Dataflows, df)
-	logger.Logger.Warnf("[DIRECT DATAFLOW ID=%d] %s", variable.GetId(), df.ShortString())
+	logger.Logger.Warnf("[DIRECT DATAFLOW %d] %s", df.Variable.GetId(), df.Variable.String())
 }
 
 func (v *VariableInfo) SetIndirectDataflow(datastore string, service string, current Variable, source Variable, field datastores.Field) {
@@ -74,7 +74,7 @@ func (v *VariableInfo) SetIndirectDataflow(datastore string, service string, cur
 		Field:          field,
 	}
 	current.GetVariableInfo().IndirectDataflows = append(current.GetVariableInfo().IndirectDataflows, df)
-	logger.Logger.Debugf("\t\t[INDIRECT DATAFLOW %d] %s", current.GetId(), df.ShortString())
+	logger.Logger.Tracef("\t\t[INDIRECT DATAFLOW %d] %s", df.Variable.GetId(), df.Variable.String())
 	v.Dataflows = append(v.Dataflows, df)
 }
 

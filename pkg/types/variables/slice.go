@@ -8,7 +8,7 @@ import (
 type SliceVariable struct {
 	Variable     `json:"-"`
 	VariableInfo *VariableInfo `json:"variable"`
-	Variables    []Variable    `json:"slice_variables,omitempty"`
+	Elements     []Variable    `json:"slice_variables,omitempty"`
 }
 
 func (v *SliceVariable) GetVariableInfo() *VariableInfo {
@@ -16,10 +16,10 @@ func (v *SliceVariable) GetVariableInfo() *VariableInfo {
 }
 
 func (v *SliceVariable) GetVariableAt(index int) Variable {
-	if index < len(v.Variables) {
-		return v.Variables[index]
+	if index < len(v.Elements) {
+		return v.Elements[index]
 	}
-	logger.Logger.Fatalf("index (%d) out of bounds for tuple variable (%s) -- variables: %v", index, v.LongString(), v.Variables)
+	logger.Logger.Fatalf("index (%d) out of bounds for tuple variable (%s) -- variables: %v", index, v.LongString(), v.Elements)
 	return nil
 }
 
@@ -28,7 +28,7 @@ func (v *SliceVariable) GetId() int64 {
 }
 
 func (v *SliceVariable) NumVariables() int {
-	return len(v.Variables)
+	return len(v.Elements)
 }
 
 func (v *SliceVariable) GetType() gotypes.Type {
@@ -41,9 +41,9 @@ func (v *SliceVariable) GetDependencies() []Variable {
 
 func (v *SliceVariable) String() string {
 	s := "("
-	for i, elem := range v.Variables {
+	for i, elem := range v.Elements {
 		s += elem.String()
-		if i < len(v.Variables)-1 {
+		if i < len(v.Elements)-1 {
 			s += ", "
 		}
 	}
@@ -52,9 +52,9 @@ func (v *SliceVariable) String() string {
 
 func (v *SliceVariable) LongString() string {
 	s := v.VariableInfo.String() + " = ("
-	for i, elem := range v.Variables {
+	for i, elem := range v.Elements {
 		s += elem.String()
-		if i < len(v.Variables)-1 {
+		if i < len(v.Elements)-1 {
 			s += ", "
 		}
 	}
@@ -62,9 +62,9 @@ func (v *SliceVariable) LongString() string {
 }
 
 func (v *SliceVariable) DeepCopy() Variable {
-	copy := &SliceVariable{}
-	for _, v := range v.Variables {
-		copy.Variables = append(copy.Variables, v.DeepCopy())
+	copy := &SliceVariable{VariableInfo: v.VariableInfo}
+	for _, v := range v.Elements {
+		copy.Elements = append(copy.Elements, v.DeepCopy())
 	}
 	return copy
 }
@@ -73,7 +73,7 @@ func (v *SliceVariable) GetUnassaignedVariables() []Variable {
 	var variables []Variable
 	if v.GetVariableInfo().IsUnassigned() {
 		variables = append(variables, v)
-		for _, v := range v.Variables {
+		for _, v := range v.Elements {
 			variables = append(variables, v.GetUnassaignedVariables()...)
 		}
 	}

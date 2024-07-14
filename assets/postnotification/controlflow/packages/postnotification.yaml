@@ -1,15 +1,16 @@
 (*postnotification.NotifyServiceImpl).Run(ctx context.Context) error: null
-(*postnotification.NotifyServiceImpl).handleMessage(ctx context.Context, message postnotification.Message struct { ReqID string, PostID string, Timestamp string })
+(*postnotification.NotifyServiceImpl).handleMessage(ctx context.Context, message postnotification.Message struct{ReqID string, PostID string, Timestamp string})
   error:
  null
 (*postnotification.NotifyServiceImpl).workerThread(ctx context.Context, workerID int) error: null
-(*postnotification.StorageServiceImpl).ReadPost(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }, error):
+(*postnotification.StorageServiceImpl).ReadPost(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}, error):
  null
-(*postnotification.StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }, error):
+(*postnotification.StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}, error):
  null
-(*postnotification.StorageServiceImpl).StorePost(ctx context.Context, reqID int64, post postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }) error:
+(*postnotification.StorageServiceImpl).StorePost(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}})
+  error:
  null
-(*postnotification.StorageServiceImpl).StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }) error:
+(*postnotification.StorageServiceImpl).StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}) error:
  null
 (*postnotification.UploadServiceImpl).UploadPost(ctx context.Context, username string, text string) (int64, error): null
 postnotification.NewNotifyServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue) (postnotification.NotifyService, error):

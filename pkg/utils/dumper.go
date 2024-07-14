@@ -105,16 +105,16 @@ func fixYamlStrings(yamlStr string) string {
 			case '{':
 				inBraces = true
 				sb.WriteRune(r)
-				if i+1 < len(yamlStr) && !unicode.IsSpace(rune(yamlStr[i+1])) && yamlStr[i+1] != '{' && yamlStr[i+1] != '}' {
+				/* if i+1 < len(yamlStr) && !unicode.IsSpace(rune(yamlStr[i+1])) && yamlStr[i+1] != '{' && yamlStr[i+1] != '}' {
 					sb.WriteRune(' ')
-				}
+				} */
 				continue
 			// outside quotes: close braces
 			case '}':
 				inBraces = false
-				if sb.Len() > 0 && sb.String()[sb.Len()-1] != ' ' && sb.String()[sb.Len()-1] != '{' {
+				/* if sb.Len() > 0 && sb.String()[sb.Len()-1] != ' ' && sb.String()[sb.Len()-1] != '{' {
 					sb.WriteRune(' ')
-				}
+				} */
 				sb.WriteRune(r)
 				continue
 			// outside quotes: open angles

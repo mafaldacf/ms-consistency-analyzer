@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
 )
 
@@ -128,7 +127,6 @@ func (vinfo *VariableInfo) AddReferenceWithID(target Variable, creator string) {
 		Creator:  creator,
 		Variable: target,
 	}
-	logger.Logger.Debugf("\t\t\t[VARIABLE] added reference (%s) -> (%s) with id = %d (creator: %s)", vinfo.Name, target.GetVariableInfo().GetName(), vinfo.Id, creator)
 }
 
 func (vinfo *VariableInfo) AddOriginalReferenceWithID(ref *Reference) {

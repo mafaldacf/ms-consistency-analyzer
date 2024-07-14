@@ -21,9 +21,9 @@ func (t *StructType) IsSameType(other Type) bool {
 }
 func (t *StructType) String() string {
 	if len(t.FieldTypes) == 0 {
-		return "struct {}"
+		return "struct{}"
 	}
-	s := "struct {"
+	s := "struct{"
 	i := 0
 	for _, f := range t.FieldTypes {
 		s += f.FieldName + " " + f.String()
@@ -49,9 +49,9 @@ func (t *StructType) MethodsString() string {
 }
 func (t *StructType) LongString() string {
 	if len(t.FieldTypes) == 0 {
-		return "struct {}"
+		return "struct{}"
 	}
-	s := "struct {"
+	s := "struct{"
 	i := 0
 	for _, f := range t.FieldTypes {
 		s += f.FieldName + " " + f.LongString()

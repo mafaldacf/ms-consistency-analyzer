@@ -109,7 +109,7 @@ func createOperation(key variables.Variable, object variables.Variable, call *ab
 		Object:   object,
 		Service:  call.Service,
 		Database: call.DbInstance,
-		Method:   call.Method,
+		Method:   call.GetMethodStr(),
 	}
 }
 

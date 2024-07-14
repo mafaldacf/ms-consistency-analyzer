@@ -36,16 +36,32 @@ type AbstractNode interface {
 }
 
 type AbstractServiceCall struct {
-	AbstractNode `json:"-"` // omit from json
-	Visited      bool       `json:"-"` // omit from json
-	Method       string     `json:"method"`
-	Caller       string     `json:"caller"`
-	Callee       string     `json:"-"`
+	AbstractNode `json:"-"`
+	Visited      bool
+	Caller       string 
+	Callee       string
+	Method       types.Method
 	// nodes representing database calls cannot contain children as well
-	Children   []AbstractNode           `json:"edges"`
-	Params     []variables.Variable     `json:"params"`
-	Returns    []variables.Variable     `json:"returns,omitempty"`
-	ParsedCall *types.ParsedServiceCall `json:"-"` // omit from json
+	Children   []AbstractNode
+	Params     []variables.Variable
+	Returns    []variables.Variable
+	ParsedCall *types.ParsedServiceCall
+}
+
+func (call *AbstractServiceCall) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Method   string               `json:"method"`
+		Caller   string               `json:"caller"`
+		Children []AbstractNode       `json:"edges"`
+		Params   []variables.Variable `json:"params"`
+		Returns  []variables.Variable `json:"returns,omitempty"`
+	}{
+		Caller:   call.Caller,
+		Method:   call.Method.String(),
+		Children: call.Children,
+		Params:   call.Params,
+		Returns:  call.Returns,
+	})
 }
 
 func (call *AbstractServiceCall) GetParams() []variables.Variable {
@@ -65,7 +81,7 @@ func (call *AbstractServiceCall) GetCallee() string {
 }
 
 func (call *AbstractServiceCall) GetMethodStr() string {
-	return call.Method
+	return call.Method.String()
 }
 
 func (call *AbstractServiceCall) String() string {
@@ -106,14 +122,30 @@ func (call *AbstractServiceCall) GetNodeType() string {
 }
 
 type AbstractTempInternalCall struct {
-	AbstractNode `json:"-"`
-	Visited      bool                      `json:"-"`
-	Method       string                    `json:"method"`
-	Service      string                    `json:"service"`
-	Params       []variables.Variable      `json:"params"`
-	Returns      []variables.Variable      `json:"returns,omitempty"`
-	ParsedCall   *types.ParsedInternalCall `json:"-"`
-	Children     []AbstractNode            `json:"edges"`
+	AbstractNode
+	Visited    bool
+	Method     types.Method
+	Service    string
+	Params     []variables.Variable
+	Returns    []variables.Variable
+	ParsedCall *types.ParsedInternalCall
+	Children   []AbstractNode
+}
+
+func (call *AbstractTempInternalCall) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Method   string               `json:"method"`
+		Service  string               `json:"service"`
+		Params   []variables.Variable `json:"params"`
+		Returns  []variables.Variable `json:"returns,omitempty"`
+		Children []AbstractNode       `json:"edges"`
+	}{
+		Method:   call.Method.String(),
+		Service:  call.Service,
+		Params:   call.Params,
+		Returns:  call.Returns,
+		Children: call.Children,
+	})
 }
 
 func (call *AbstractTempInternalCall) GetChildren() []AbstractNode {
@@ -121,7 +153,7 @@ func (call *AbstractTempInternalCall) GetChildren() []AbstractNode {
 }
 
 func (call *AbstractTempInternalCall) GetMethodStr() string {
-	return call.Method
+	return call.Method.String()
 }
 
 func (call *AbstractTempInternalCall) String() string {
@@ -164,10 +196,14 @@ func (call *AbstractTempInternalCall) GetNodeType() string {
 	return "service"
 }
 
+func (call *AbstractTempInternalCall) GetCallee() string {
+	return call.GetName()
+}
+
 type AbstractDatabaseCall struct {
 	AbstractNode
 	Visited    bool
-	Method     string
+	Method     types.Method
 	Service    string
 	Params     []variables.Variable
 	Returns    []variables.Variable
@@ -187,7 +223,7 @@ func (call *AbstractDatabaseCall) MarshalJSON() ([]byte, error) {
 		DbInstance string               `json:"datastore"`
 		Subscriber bool                 `json:"subscriber,omitempty"`
 	}{
-		Method:     call.Method,
+		Method:     call.Method.String(),
 		Service:    call.Service,
 		Params:     call.Params,
 		Returns:    call.Returns,
@@ -249,7 +285,7 @@ func (call *AbstractDatabaseCall) GetName() string {
 }
 
 func (call *AbstractDatabaseCall) GetMethodStr() string {
-	return call.Method
+	return call.Method.String()
 }
 
 func (call *AbstractDatabaseCall) String() string {

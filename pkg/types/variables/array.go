@@ -12,6 +12,17 @@ func (v *ArrayVariable) String() string {
 	return v.VariableInfo.String()
 }
 
+func (v *ArrayVariable) LongString() string {
+	s := v.VariableInfo.String() + " = ("
+	for i, elem := range v.Elements {
+		s += elem.String()
+		if i < len(v.Elements)-1 {
+			s += ", "
+		}
+	}
+	return s + ")"
+}
+
 func (v *ArrayVariable) GetId() int64 {
 	return v.VariableInfo.GetId()
 }

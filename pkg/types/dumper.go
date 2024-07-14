@@ -5,6 +5,7 @@ import (
 	"slices"
 	"sort"
 
+	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
 )
 
@@ -52,26 +53,46 @@ func (cfg *CFG) Yaml() map[string][]string {
 
 func (block *Block) Yaml() []string {
 	data := []string{}
+	visited := make(map[variables.Variable]bool)
 	for _, v := range block.Vars {
-		dfs := append(v.GetVariableInfo().Dataflows, v.GetVariableInfo().IndirectDataflows...)
-		if len(dfs) > 0 {
-			var dbs []string
-			str := ""
-			for _, df := range dfs {
-				if !slices.Contains(dbs, df.Field.GetFullName()) {
-					dbs = append(dbs, df.Field.GetFullName())
-				}
+		deps := variables.GetIndirectDependencies(v)
+		slices.Reverse(deps)
+		for i, v := range deps {
+			lastIndex := len(deps) - 1
+			if _, isVisited := visited[v]; isVisited{
+				continue
 			}
-			for i, db := range dbs {
-				str += db
-				if i < len(dbs)-1 {
-					str += ", "
-				}
+			visited[v] = true
+
+			variableString := v.String()
+			if i != lastIndex {
+				// last index corresponds to the original variabl from where we got the parameters
+				// note that it is the last since the deps slice was reversed
+				variableString = "[INLINE] " + variableString
 			}
-			data = append(data, fmt.Sprintf("%s ----> TAINTED by { %s }", v.String(), str))
-		} else {
-			data = append(data, v.String())
+
+			dfs := append(v.GetVariableInfo().Dataflows, v.GetVariableInfo().IndirectDataflows...)
+			if len(dfs) > 0 {
+				var taintedDBFields []string
+				str := ""
+				for _, df := range dfs {
+					if !slices.Contains(taintedDBFields, df.Field.GetFullName()) {
+						taintedDBFields = append(taintedDBFields, df.Field.GetFullName())
+					}
+				}
+				for i, db := range taintedDBFields {
+					str += db
+					if i < len(taintedDBFields)-1 {
+						str += ", "
+					}
+				}
+				data = append(data, fmt.Sprintf("(%02d) %s --> (TAINTED %dx) --> [%s]", v.GetId(), variableString, len(taintedDBFields), str))
+			} else {
+				data = append(data, fmt.Sprintf("(%02d) %s", v.GetId(), variableString))
+			}
 		}
+
+
 	}
 	return data
 }

@@ -1,15 +1,15 @@
 {
   "nodes": [
     {
+      "id": "UploadService",
+      "type": "service"
+    },
+    {
       "id": "NotifyService",
       "type": "service"
     },
     {
       "id": "StorageService",
-      "type": "service"
-    },
-    {
-      "id": "UploadService",
       "type": "service"
     },
     {

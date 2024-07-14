@@ -19,7 +19,7 @@ func (t *SliceType) String() string {
 	if t.UnderlyingType == nil {
 		logger.Logger.Fatal("[TYPES SLICE] unexpected nil underlying type for Slice Type")
 	}
-	return "(" + t.UnderlyingType.String() + ")"
+	return "[]" + t.UnderlyingType.String()
 }
 func (t *SliceType) LongString() string {
 	return t.String()

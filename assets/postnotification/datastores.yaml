@@ -3,9 +3,9 @@ NOTIF_QUEUE:
 - kind: RabbitMQ
 - schema:
   - fields:
-    - message: postnotification.Message struct { ReqID string, PostID string, Timestamp string }
+    - message: postnotification.Message struct{ReqID string, PostID string, Timestamp string}
   - unfolded_fields:
-    - Message: postnotification.Message struct { ReqID string, PostID string, Timestamp string }
+    - Message: postnotification.Message struct{ReqID string, PostID string, Timestamp string}
     - Message.ReqID: string
     - Message.PostID: string
     - Message.Timestamp: string
@@ -29,13 +29,14 @@ POST_NOSQL:
 - kind: MongoDB
 - schema:
   - fields:
-    - document: postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }
+    - document: postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}
   - unfolded_fields:
-    - Post: postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } }
+    - Post: postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}
     - Post.ReqID: int64
     - Post.PostID: int64
     - Post.Text: string
+    - Post.Mentions: '[]string'
     - Post.Timestamp: int64
-    - Post.Creator: postnotification.Creator struct { Username string }
+    - Post.Creator: postnotification.Creator struct{Username string}
     - Post.Creator.Username: string
   - foreign_fields: []

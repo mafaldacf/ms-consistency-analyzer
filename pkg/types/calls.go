@@ -9,6 +9,7 @@ import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
 	"analyzer/pkg/types/variables"
+	"analyzer/pkg/utils"
 )
 
 type Call interface {
@@ -92,7 +93,12 @@ func (svcCall *ParsedServiceCall) GetName() string {
 }
 
 func (svcCall *ParsedServiceCall) AddParam(param variables.Variable) {
-	svcCall.Params = append(svcCall.Params, param)
+	deepCopy := param.DeepCopy()
+	logger.Logger.Tracef("[------- DEEP COPY -------] [%s] %v", utils.GetType(deepCopy), deepCopy.String())
+	if deepCopy.GetVariableInfo() == nil {
+		logger.Logger.Fatalf("[------- DEEP COPY -------] [%s] %v: %v", utils.GetType(deepCopy), deepCopy.String(), deepCopy.GetVariableInfo())
+	}
+	svcCall.Params = append(svcCall.Params, deepCopy)
 }
 
 func (svcCall *ParsedServiceCall) AddReturn(ret variables.Variable) {
@@ -135,7 +141,12 @@ func (dbCall *ParsedDatabaseCall) GetName() string {
 }
 
 func (dbCall *ParsedDatabaseCall) AddParam(param variables.Variable) {
-	dbCall.Params = append(dbCall.Params, param)
+	deepCopy := param.DeepCopy()
+	logger.Logger.Tracef("[------- DEEP COPY -------] [%s] %v", utils.GetType(deepCopy), deepCopy.String())
+	if deepCopy.GetVariableInfo() == nil {
+		logger.Logger.Fatalf("[------- DEEP COPY -------] [%s] %v: %v", utils.GetType(deepCopy), deepCopy.String(), deepCopy.GetVariableInfo())
+	}
+	dbCall.Params = append(dbCall.Params, deepCopy)
 }
 
 func (dbCall *ParsedDatabaseCall) AddReturn(ret variables.Variable) {

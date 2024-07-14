@@ -40,35 +40,6 @@ func addDatastoreNestedEntries(variable variables.Variable, entryName string, da
 	}
 }
 
-func computeDependencySets(parentSet *DependencySet, v variables.Variable) []*DependencySet {
-	var sets []*DependencySet
-	set := &DependencySet{
-		Variable: v,
-	}
-	sets = append(sets, set)
-	logger.Logger.Infof("\t\tvisiting %s (%s)", v.String(), utils.GetType(v))
-
-	if parentSet != nil {
-		parentSet.Dependencies = append(parentSet.Dependencies, v)
-	}
-
-	// indirect dependencySets from potential reference
-	if v.GetVariableInfo().HasReference() {
-		sets = append(sets, computeDependencySets(set, v.GetVariableInfo().Reference.Variable)...)
-	}
-	// direct dependencySets
-	for _, dep := range v.GetDependencies() {
-		sets = append(sets, computeDependencySets(set, dep)...)
-	}
-
-	return sets
-}
-
-func GetNestedFields(variable variables.Variable) []variables.Variable {
-	var nestedFields []variables.Variable
-	return nestedFields
-}
-
 func addDataflow(app *app.App, variable variables.Variable, call *AbstractDatabaseCall, datastore *datastores.Datastore) {
 	fmt.Printf("\n------------------------ ADD DATAFLOW FOR CALL %s @ %s ------------------------\n\n", call.GetName(), datastore.Name)
 	fmt.Println()
@@ -77,7 +48,6 @@ func addDataflow(app *app.App, variable variables.Variable, call *AbstractDataba
 	if !slices.Contains(app.PersistedVariables[rootField.GetFullName()], variable) {
 		app.PersistedVariables[rootField.GetFullName()] = append(app.PersistedVariables[rootField.GetFullName()], variable)
 	}
-
 	var persistedVars []variables.Variable
 
 	// add nested unfolded types
@@ -93,13 +63,13 @@ func addDataflow(app *app.App, variable variables.Variable, call *AbstractDataba
 		slices.Reverse(names)
 
 		for i, v := range variables {
-			logger.Logger.Infof("[TAINTED VAR] %s (type = %s)", v.LongString(), utils.GetType(v))
+			logger.Logger.Infof("[TAINTED VAR] [%s] (%02d) %s", utils.GetType(v), v.GetId(), v.LongString())
 			name := names[i]
 			field := datastore.Schema.GetField(name)
 			deps := getDependencies(v)
 			for _, d := range deps {
 				if !slices.Contains(persistedVars, d) {
-					logger.Logger.Warnf("\t\t[TAINTED VAR DEP] field %s ---> %s (type = %s)", field.GetName(), d.String(), utils.GetType(d))
+					logger.Logger.Debugf("\t\t[TAINTED VAR DEP] %s ---> (%02d) %s [%s]", field.GetName(), d.GetId(), d.String(), utils.GetType(d))
 					v.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, d, variable, field)
 					persistedVars = append(persistedVars, d)
 					if !slices.Contains(app.PersistedVariables[field.GetFullName()], d) {

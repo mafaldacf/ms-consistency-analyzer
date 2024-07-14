@@ -90,7 +90,7 @@ func (graph *AbstractGraph) initBuild(app *app.App, serviceNode *service.Service
 
 func (graph *AbstractGraph) createDummyAbstractServiceCall(node *service.Service, method *types.ParsedMethod, parent *AbstractDatabaseCall) AbstractServiceCall {
 	logger.Logger.Debugf("[GRAPH - DUMMY] create dummy abstract service call for node %s and method %s with params %v", node.Name, method.Name, method.GetParams())
-	
+
 	var callerStr = "Client"
 	if parent != nil {
 		callerStr = parent.DbInstance.String()
@@ -106,7 +106,7 @@ func (graph *AbstractGraph) createDummyAbstractServiceCall(node *service.Service
 		},
 		Caller: callerStr,
 		Callee: node.Name,
-		Method: method.String(),
+		Method: method,
 	}
 	for _, p := range method.GetParams() {
 		v := lookup.CreateVariableFromType(p.GetName(), p.GetType())
@@ -191,7 +191,7 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				Params:     parsedCall.Params,
 				Returns:    parsedCall.Returns,
 				Service:    parsedCall.CallerTypeName.GetName(),
-				Method:     parsedCall.Method.String(),
+				Method:     parsedCall.Method,
 				DbInstance: parsedCall.DbInstance,
 				Subscriber: rootIsQueueHandler,
 			}
@@ -212,7 +212,7 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				Callee:     parsedCall.CalleeTypeName.GetName(),
 				Params:     parsedCall.Params,
 				Returns:    parsedCall.Returns,
-				Method:     parsedCall.Method.String(),
+				Method:     parsedCall.Method,
 			}
 			rootParent.AddChild(child)
 			logger.Logger.Infof("[GRAPH] added node for abstract service call: %s", child.String())
@@ -223,7 +223,7 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				Service:    parsedCall.ServiceTypeName.GetName(),
 				Params:     parsedCall.Params,
 				Returns:    parsedCall.Returns,
-				Method:     parsedCall.Method.String(),
+				Method:     parsedCall.Method,
 			}
 			graph.referenceServiceCallerParams(rootParent, directParent, tempChild)
 			tempMethod := graph.Services[tempChild.Service].GetInternalMethod(tempChild.ParsedCall.Name)
@@ -306,18 +306,23 @@ func getDependencies(v variables.Variable) []variables.Variable {
 
 func (graph *AbstractGraph) referenceServiceCallerParams(parent AbstractNode, caller AbstractNode, child AbstractNode) {
 	fmt.Println()
-	logger.Logger.Debugf("[REF] visiting %s (caller = %s, parent = %s)", child.String(), caller.GetName(), parent.GetName())
+	if caller == parent {
+		logger.Logger.Infof("[REF] reference caller (%s) to callee (%s.%s)", caller.GetName(), child.GetCallee(), child.GetName())
+	} else {
+		logger.Logger.Infof("[REF] reference caller (%s) from parent (%s) to callee (%s.%s)", caller.GetName(), parent.GetName(), child.GetCallee(), child.GetName())
+	}
 
 	for _, childParam := range child.GetParams() {
 		deps := getDependencies(childParam)
-		logger.Logger.Tracef("\t\t[REF] %s: referencing %v (deps = %v)", child.GetName(), childParam, deps)
+		logger.Logger.Infof("\t[REF CHILD PARAM] visit (%s)", childParam.String())
 
 		for _, dep := range deps {
-			logger.Logger.Infof("\t\t[REF] got dep %s (%v) caller params", dep.String(), caller.GetParams())
+			logger.Logger.Debugf("\t\t[REF CHILD PARAM DEP] visit dep (%s)", dep.String())
 			if dep.GetVariableInfo().HasReference() {
 				continue
 			}
 			for callerParamIdx, callerParam := range caller.GetParams() {
+				logger.Logger.Tracef("\t[REF CALLER PARAM] visit (%s)", callerParam.String())
 				if dep.GetVariableInfo().IsBlockParameter() && dep.GetVariableInfo().EqualBlockParamIndex(callerParamIdx) {
 					if dep.GetVariableInfo().IsUnassigned() {
 						if parent != caller && callerParam.GetVariableInfo().HasReference() {
@@ -329,10 +334,11 @@ func (graph *AbstractGraph) referenceServiceCallerParams(parent AbstractNode, ca
 								unassaignedVariables := callerParam.GetUnassaignedVariables()
 								for _, v := range unassaignedVariables {
 									v.GetVariableInfo().AssignID(graph.getAndIncGIndex())
-									logger.Logger.Warnf("\t\t\t[GID] assigned gid %s (%d)", v.String(), v.GetId())
+									logger.Logger.Warnf("\t\t\t[NEW GID] assigned new gid (%d) to (%s)", v.GetId(), v.String())
 								}
 							}
 							//dep = callerParam.DeepCopy()
+							logger.Logger.Warnf("\t\t\t[VARIABLE] added reference (%d) from creator (%s): (%s) -> (%s)", dep.GetId(), child.GetCallerStr(), dep.GetType().GetName(), callerParam.GetVariableInfo().GetName())
 							dep.AddReferenceWithID(callerParam, child.GetCallerStr())
 
 							// FIXME: THIS IS HARD CODED
@@ -340,7 +346,63 @@ func (graph *AbstractGraph) referenceServiceCallerParams(parent AbstractNode, ca
 								if structParentVariable, ok := callerParam.(*variables.StructVariable); ok {
 									structVariable.CopyFrom(structParentVariable)
 								} else {
-									logger.Logger.Fatalf("%s (%s) vs %s (%s)", childParam.String(), child.GetName(), callerParam.String(), parent.GetName())
+									logger.Logger.Warnf("FIXMEEEEEEEEE %s (%s) vs %s (%s)", childParam.String(), child.GetName(), callerParam.String(), parent.GetName())
+								}
+							}
+						}
+					}
+					if dep.GetVariableInfo().IsUnassigned() {
+						dep.GetVariableInfo().AssignID(graph.getAndIncGIndex())
+					}
+				}
+			}
+		}
+	}
+}
+
+func (graph *AbstractGraph) referenceServiceCallerParams2(parent AbstractNode, caller AbstractNode, child AbstractNode) {
+	fmt.Println()
+	if caller == parent {
+		logger.Logger.Infof("[REF] reference caller (%s) to callee (%s.%s)", caller.GetName(), child.GetCallee(), child.GetName())
+	} else {
+		logger.Logger.Infof("[REF] reference caller (%s) from parent (%s) to callee (%s.%s)", caller.GetName(), parent.GetName(), child.GetCallee(), child.GetName())
+	}
+
+	for _, childParam := range child.GetParams() {
+		deps := getDependencies(childParam)
+		logger.Logger.Infof("\t[REF CHILD PARAM] visit (%s)", childParam.String())
+
+		for _, dep := range deps {
+			logger.Logger.Debugf("\t\t[REF CHILD PARAM DEP] visit dep (%s)", dep.String())
+			if dep.GetVariableInfo().HasReference() {
+				continue
+			}
+			for callerParamIdx, callerParam := range caller.GetParams() {
+				logger.Logger.Tracef("\t[REF CALLER PARAM] visit (%s)", callerParam.String())
+				if dep.GetVariableInfo().IsBlockParameter() && dep.GetVariableInfo().EqualBlockParamIndex(callerParamIdx) {
+					if dep.GetVariableInfo().IsUnassigned() {
+						if parent != caller && callerParam.GetVariableInfo().HasReference() {
+							// this can happen with the context variable (e.g. handleMessage called by the workerThread in the NotifyService)
+							dep.GetVariableInfo().AddOriginalReferenceWithID(callerParam.GetVariableInfo().GetReference())
+							//dep = callerParam.DeepCopy()
+						} else {
+							if callerParam.GetVariableInfo().IsUnassigned() {
+								unassaignedVariables := callerParam.GetUnassaignedVariables()
+								for _, v := range unassaignedVariables {
+									v.GetVariableInfo().AssignID(graph.getAndIncGIndex())
+									logger.Logger.Warnf("\t\t\t[NEW GID] assigned new gid (%d) to (%s)", v.GetId(), v.String())
+								}
+							}
+							//dep = callerParam.DeepCopy()
+							logger.Logger.Warnf("\t\t\t[VARIABLE] added reference (%d) from creator (%s): (%s) -> (%s)", dep.GetId(), child.GetCallerStr(), dep.GetType().GetName(), callerParam.GetVariableInfo().GetName())
+							dep.AddReferenceWithID(callerParam, child.GetCallerStr())
+
+							// FIXME: THIS IS HARD CODED
+							if structVariable, ok := childParam.(*variables.StructVariable); ok {
+								if structParentVariable, ok := callerParam.(*variables.StructVariable); ok {
+									structVariable.CopyFrom(structParentVariable)
+								} else {
+									logger.Logger.Fatalf("FIXMEEEEEEEEE %s (%s) vs %s (%s)", childParam.String(), child.GetName(), callerParam.String(), parent.GetName())
 								}
 							}
 						}

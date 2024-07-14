@@ -41,7 +41,8 @@ func (v *FieldVariable) GetVariableInfo() *VariableInfo {
 }
 
 func (v *FieldVariable) GetDependencies() []Variable {
-	return v.Underlying.GetDependencies()
+	var deps = []Variable{v.Underlying}
+	return append(deps, v.Underlying.GetDependencies()...)
 }
 
 func (v *FieldVariable) AddReferenceWithID(target Variable, creator string) {
