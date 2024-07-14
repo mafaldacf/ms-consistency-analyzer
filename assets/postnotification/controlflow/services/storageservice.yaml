@@ -29,6 +29,7 @@
   - p (*postnotification.StorageServiceImpl struct { cache Cache, db NoSQLDatabase })
   - ctx context.Context
   - reqID int64
-  - post postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } } ----> (TAINTED @ POST_NOSQL.Post)
+  - post postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } } ----> TAINTED
+    by { POST_NOSQL.Post }
   - collection NoSQLCollection { database = "post", collection = "post" }
   - err .error

@@ -1,7 +1,9 @@
 package variables
 
 import (
+	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
+	"analyzer/pkg/utils"
 )
 
 type FieldVariable struct {
@@ -24,6 +26,14 @@ func (v *FieldVariable) GetId() int64 {
 
 func (v *FieldVariable) GetType() gotypes.Type {
 	return v.VariableInfo.GetType()
+}
+
+func (v *FieldVariable) AssignVariable(rvariable Variable) {
+	if !v.Underlying.GetType().IsSameType(rvariable.GetType()) {
+		logger.Logger.Fatalf("[VAR FIELD] lvariable (%s) with type (%s) does not match rvariable (%s) with type (%s)", v.Underlying.String(), utils.GetType(v.Underlying), rvariable.String(), utils.GetType(rvariable))
+	}
+	logger.Logger.Infof("[VAR FIELD] assigning lvariable (%s) with type (%s) with rvariable (%s) with type (%s)", v.Underlying.String(), utils.GetType(v.Underlying), rvariable.String(), utils.GetType(rvariable))
+	v.Underlying = rvariable
 }
 
 func (v *FieldVariable) GetVariableInfo() *VariableInfo {

@@ -28,8 +28,35 @@ func computeArrayIndex(expr ast.Expr) int {
 	return 0
 }
 
-func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMethod, block *types.Block, expr ast.Expr, assign bool) (variable variables.Variable, t gotypes.Type) {
-	logger.Logger.Tracef("[CFG LOOKUP] visiting expression (%v) with type (%s)", expr, utils.GetType(expr))
+func lookupVariableFromAstIdent(service *service.Service, block *types.Block, ident *ast.Ident) variables.Variable {
+	variable := block.GetLastestVariableIfExists(ident.Name)
+	if variable != nil {
+		return variable
+	}
+	// if its not a variable in the block then it can be either
+	// 1. a declared variable in the package
+	// 2. a ident from a import (which is dealt with in the switch case for the selectorExpr)
+	variable = service.GetPackage().GetDeclaredVariableIfExists(ident.Name)
+	if variable != nil {
+		return variable
+	}
+	return nil
+}
+
+func lookupImportedPackageFromAstIdent(service *service.Service, ident *ast.Ident) *gotypes.PackageType {
+	if impt := service.GetFile().GetImportIfExists(ident.Name); impt != nil {
+		t := &gotypes.PackageType{
+			Alias: ident.Name,
+			Name: impt.PackageName,
+			Path: impt.PackagePath,
+		}
+		return t
+	}
+	return nil
+}
+
+func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMethod, block *types.Block, expr ast.Expr, assign bool) (variable variables.Variable, packageType *gotypes.PackageType) {
+	logger.Logger.Tracef("[CFG LOOKUP EXPR] visiting expression (%v) with type (%s)", expr, utils.GetType(expr))
 	switch e := expr.(type) {
 	case *ast.CallExpr:
 		variable = parseAndSaveCall(service, method, block, e)
@@ -45,52 +72,33 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			},
 		}
 	case *ast.Ident:
-		variable = block.GetLastestVariableIfExists(e.Name)
+		variable = lookupVariableFromAstIdent(service, block, e)
 		if variable != nil {
-			return variable, variable.GetType()
+			return variable, nil
 		}
-		// if its not a variable in the block then it can be either
-		// 1. a declared variable in the package
-		// 2. a ident from a import (which is dealt with in the switch case for the selectorExpr)
-		variable = service.GetPackage().GetDeclaredVariableIfExists(e.Name)
-		if variable != nil {
-			return variable, variable.GetType()
+		packageType = lookupImportedPackageFromAstIdent(service, e)
+		if packageType != nil {
+			return nil, packageType
 		}
-
-		logger.Logger.Warnf("GOING TO GET IMPORT FOR %s", e.Name)
-		if impt := service.GetFile().GetImportIfExists(e.Name); impt != nil {
-			t = &gotypes.PackageType{
-				Alias: e.Name,
-				Name: impt.PackageName,
-				Path: impt.PackagePath,
-			}
-			return nil, t
-		}
-
-		// an be golang type e.g. len(...)
-
-
+		logger.Logger.Fatalf("[CFG LOOKUP] unexpected nil variable (or package) with type (%s) for expr (%v)", utils.GetType(expr), expr)
 		return nil, nil
 	case *ast.SelectorExpr:
-		variable, t = lookupVariableFromAstExpr(service, method, block, e.X, assign)
-		if variable == nil {
-			if packageType, ok := t.(*gotypes.PackageType); ok {
-				importedPkg := service.GetPackage().GetImportedPackage(packageType.Path)
-				if importedPkg.IsExternalPackage() {
-					t = lookup.LookupTypesForGoTypes(service.GetPackage(), service.GetPackage().GetTypeInfo(e.Sel))
-					variable = lookup.CreateVariableFromType("", t)
-					return variable, variable.GetType()
-				}
-				t = importedPkg.GetDeclaredTypeIfExists(e.Sel)
-				if t != nil {
-					variable = lookup.CreateVariableFromType("", t)
-					return variable, variable.GetType()
-				}
-
-				variable = importedPkg.GetDeclaredVariable(e.Sel)
-				return variable, variable.GetType()
-
+		variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, assign)
+		if packageType != nil {
+			importedPkg := service.GetPackage().GetImportedPackage(packageType.Path)
+			if importedPkg.IsExternalPackage() {
+				t := lookup.LookupTypesForGoTypes(service.GetPackage(), service.GetPackage().GetTypeInfo(e.Sel))
+				variable = lookup.CreateVariableFromType("", t)
+				return variable, nil
 			}
+			declaredType := importedPkg.GetDeclaredTypeIfExists(e.Sel)
+			if declaredType != nil {
+				variable = lookup.CreateVariableFromType("", declaredType)
+				return variable, nil
+			}
+
+			variable = importedPkg.GetDeclaredVariable(e.Sel)
+			return variable, nil
 		}
 		if tupleVariable, ok := variable.(*variables.TupleVariable); ok {
 			if tupleVariable.NumVariables() == 1 {
@@ -117,7 +125,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 				v.Fields[fieldName] = field
 				logger.Logger.Warnf("[REVIEW] added new variable (%s) for field (%s) in structure variable (%s) -- fields: %v", field.String(), fieldName, variable.String(), v.Fields)
 			}
-			return field, field.GetType()
+			return field, nil
 		default:
 			logger.Logger.Fatalf("[CFG LOOKUP] unknown variable (%s) with type (%s) for selector (%s)", variable.String(), utils.GetType(variable), e)
 		}
@@ -178,14 +186,14 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			}
 		} else if selectorExpr, ok := e.Type.(*ast.SelectorExpr); ok {
 			//logger.Logger.Warnf("[CFG LOOKUP] got selector %v (expr type = %s)", selectorExpr, utils.GetType(selectorExpr.X))
-			variable, t = lookupVariableFromAstExpr(service, method, block, selectorExpr, assign)
+			variable, packageType = lookupVariableFromAstExpr(service, method, block, selectorExpr, assign)
 		} else {
 			logger.Logger.Fatalf("[CFG LOOKUP] nil variable for composite lit (e.Type = %s): %v", utils.GetType(e.Type), e)
 		}
 	case *ast.TypeAssertExpr:
-		variable, t = lookupVariableFromAstExpr(service, method, block, e.X, assign)
+		variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 	case *ast.IndexExpr:
-		variable, t = lookupVariableFromAstExpr(service, method, block, e.X, assign)
+		variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 		if variable == nil {
 			logger.Logger.Fatalf("[CFG LOOKUP] nil variable for index expr: %v (e.X type = %s)", e, utils.GetType(e.X))
 		}
@@ -202,7 +210,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		}
 	case *ast.UnaryExpr:
 		if e.Op == token.AND { // e.g. &post
-			variable, t = lookupVariableFromAstExpr(service, method, block, e.X, assign)
+			variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 			addrType := &gotypes.AddressType{
 				AddressOf: variable.GetType(),
 			}
@@ -215,7 +223,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 				},
 			}
 		} else if e.Op == token.MUL { // e.g. *post
-			variable, t = lookupVariableFromAstExpr(service, method, block, e.X, assign)
+			variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 			addrType := &gotypes.AddressType{
 				AddressOf: variable.GetType(),
 			}
@@ -230,7 +238,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 
 		} else {
 			logger.Logger.Fatalf("unknown token %v for unary expr %v", e.Op, e)
-			variable, t = lookupVariableFromAstExpr(service, method, block, e.X, assign)
+			variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 		}
 	case *ast.BinaryExpr:
 		if e.Op == token.ADD || e.Op == token.MUL {
@@ -261,18 +269,18 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			if !t_x.IsSameType(t_y) {
 				logger.Logger.Fatalf("x expr (%v) and y expr (%v) differ types (%v vs %v)", e.X, e.Y, t_x, t_y)
 			}
-			t = t_x
+			packageType = t_x
 			variable = variable_x
 			logger.Logger.Warnf("FIXMEEEEEEE!!!!!!!!")
 		} else {
 			logger.Logger.Fatalf("unknown token %v for binary expr %v", e.Op, e)
-			variable, t = lookupVariableFromAstExpr(service, method, block, e.X, assign)
+			variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 		}
 	default:
 		logger.Logger.Fatalf("[CFG LOOKUP] cannot lookup unknown type (%s) for variable (%v)", utils.GetType(e), e)
 	}
-	if variable == nil {
-		logger.Logger.Fatalf("[CFG LOOKUP] unexpected nil variable with type (%s) for expr (%v)", utils.GetType(expr), expr)
+	if variable == nil && packageType == nil {
+		logger.Logger.Fatalf("[CFG LOOKUP] unexpected nil variable (or package) with type (%s) for expr (%v)", utils.GetType(expr), expr)
 	}
-	return variable, variable.GetType()
+	return variable, nil
 }

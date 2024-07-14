@@ -22,6 +22,7 @@ type Variable interface {
 	DeepCopy() Variable
 	GetId() int64
 	GetType() gotypes.Type
+	AssignVariable(variable Variable)
 }
 
 func GetVariableTypeAndTypeString(v Variable) string {

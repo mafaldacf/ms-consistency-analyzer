@@ -68,7 +68,7 @@ func (block *Block) Yaml() []string {
 					str += ", "
 				}
 			}
-			data = append(data, fmt.Sprintf("%s ----> (TAINTED @ %s)", v.String(), str))
+			data = append(data, fmt.Sprintf("%s ----> TAINTED by { %s }", v.String(), str))
 		} else {
 			data = append(data, v.String())
 		}

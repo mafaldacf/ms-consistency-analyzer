@@ -17,7 +17,13 @@ type DependencySet struct {
 	DependencyNames []string
 }
 
-func addNestedDatastoreEntry(variable variables.Variable, entryName string, datastore *datastores.Datastore) {
+func addDatastoreEntry(variable variables.Variable, entryName string, datastore *datastores.Datastore) {
+	objType := variable.GetType()
+	datastore.Schema.AddField(entryName, objType.GetName(), variable.GetId(), datastore.Name)
+	logger.Logger.Infof("[SCHEMA] [%s] added entry (%s): %s", datastore.Name, entryName, objType.LongString())
+}
+
+func addDatastoreNestedEntries(variable variables.Variable, entryName string, datastore *datastores.Datastore) {
 	objType := variable.GetType()
 	datastore.Schema.AddField(entryName, objType.LongString(), variable.GetId(), datastore.Name)
 	logger.Logger.Infof("[SCHEMA] [%s] added entry (%s): %s", datastore.Name, entryName, objType.LongString())
@@ -32,12 +38,6 @@ func addNestedDatastoreEntry(variable variables.Variable, entryName string, data
 		datastore.Schema.AddUnfoldedField(name, t.LongString(), datastore.Name)
 		logger.Logger.Infof("[SCHEMA] [%s] added nested field (%s): %s", datastore.Name, name, t.LongString())
 	}
-}
-
-func addDatastoreEntry(variable variables.Variable, entryName string, datastore *datastores.Datastore) {
-	objType := variable.GetType()
-	datastore.Schema.AddField(entryName, objType.GetName(), variable.GetId(), datastore.Name)
-	logger.Logger.Infof("[SCHEMA] [%s] added entry (%s): %s", datastore.Name, entryName, objType.LongString())
 }
 
 func computeDependencySets(parentSet *DependencySet, v variables.Variable) []*DependencySet {
@@ -240,23 +240,34 @@ func BuildSchema(app *app.App, node AbstractNode) {
 			key := params[1]
 			value := params[2]
 			addDatastoreEntry(key, "key", datastore)
-			addNestedDatastoreEntry(value, "value", datastore)
+			addDatastoreNestedEntries(value, "value", datastore)
 			//addDataflow(app, key, dbCall, datastore)
 			addDataflow(app, value, dbCall, datastore)
 			//logger.Logger.Fatal("exiting...")
 			searchForeignDataflow(key, datastore, app)
 			searchForeignDataflow(value, datastore, app)
+			addForeignFields(key, datastore)
+			addForeignFields(value, datastore)
 
 		case datastores.NoSQL:
 			doc := params[1]
-			addNestedDatastoreEntry(doc, "document", datastore)
+			addDatastoreNestedEntries(doc, "document", datastore)
 			addDataflow(app, doc, dbCall, datastore)
 
 			searchForeignDataflow(doc, datastore, app)
+			addForeignFields(doc, datastore)
+
+		case datastores.SQL:
+			doc := params[1]
+			addDatastoreNestedEntries(doc, "document", datastore)
+			addDataflow(app, doc, dbCall, datastore)
+
+			searchForeignDataflow(doc, datastore, app)
+			addForeignFields(doc, datastore)
 
 		case datastores.Queue:
 			msg := params[1]
-			addNestedDatastoreEntry(msg, "message", datastore)
+			addDatastoreNestedEntries(msg, "message", datastore)
 			addDataflow(app, msg, dbCall, datastore)
 
 			searchForeignDataflow(msg, datastore, app)

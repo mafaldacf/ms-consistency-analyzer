@@ -3,10 +3,11 @@
   - u (*postnotification.UploadServiceImpl struct { storageService postnotification.StorageService, queue Queue })
   - ctx context.Context
   - username string
-  - text string ----> (TAINTED @ POST_NOSQL.Post.Text)
-  - reqID int64 ----> (TAINTED @ POST_NOSQL.Post.ReqID)
-  - timestamp int64 ----> (TAINTED @ POST_NOSQL.Post.Timestamp)
-  - post postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } } ----> (TAINTED @ POST_NOSQL.Post)
-  - message postnotification.Message struct { ReqID string, PostID string, Timestamp string } ----> (TAINTED @ NOTIF_QUEUE.Message)
+  - text string ----> TAINTED by { POST_NOSQL.Post.Text }
+  - reqID int64 ----> TAINTED by { POST_NOSQL.Post.ReqID }
+  - timestamp int64 ----> TAINTED by { POST_NOSQL.Post.Timestamp }
+  - post postnotification.Post struct { ReqID int64, PostID int64, Text string, Timestamp int64, Creator postnotification.Creator struct { Username string } } ----> TAINTED
+    by { POST_NOSQL.Post }
+  - message postnotification.Message struct { ReqID string, PostID string, Timestamp string } ----> TAINTED by { NOTIF_QUEUE.Message }
   - _ bool
   - err .error

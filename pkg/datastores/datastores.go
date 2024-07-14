@@ -62,3 +62,16 @@ func (ds *Datastore) MarshalJSON() ([]byte, error) {
 		Schema: ds.Schema,
 	})
 }
+
+func (ds *Datastore) IsSQL() bool {
+	return ds.GetTypeString() == "SQL"
+}
+func (ds *Datastore) IsCache() bool {
+	return ds.GetTypeString() == "Cache"
+}
+func (ds *Datastore) IsNoSQLDatabase() bool {
+	return ds.GetTypeString() == "NoSQLDatabase"
+}
+func (ds *Datastore) IsQueue() bool {
+	return ds.GetTypeString() == "Queue"
+}

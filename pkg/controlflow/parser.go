@@ -2,6 +2,7 @@ package controlflow
 
 import (
 	"go/ast"
+	"go/token"
 	golangtypes "go/types"
 
 	"analyzer/pkg/frameworks/blueprint"
@@ -37,44 +38,43 @@ func visitBasicBlock(service *service.Service, method *types.ParsedMethod, block
 	}
 }
 
-func assignLeftValues(service *service.Service, method *types.ParsedMethod, block *types.Block, assignStmt *ast.AssignStmt) {
-	if len(assignStmt.Rhs) > 1 {
-		logger.Logger.Fatalf("[CFG EXPR] unexpected number (%d) of right values (%v) in assignment (%v)", len(assignStmt.Rhs), assignStmt.Rhs, assignStmt)
-	}
-	for i, rvalue := range assignStmt.Rhs {
+func getAssignmentRightVariables(service *service.Service, method *types.ParsedMethod, block *types.Block, assignStmt *ast.AssignStmt) []variables.Variable {
+	var rvariables []variables.Variable
+	for _, rvalue := range assignStmt.Rhs {
 		variable, _ := lookupVariableFromAstExpr(service, method, block, rvalue, true)
-
 		if tupleVariable, ok := variable.(*variables.TupleVariable); ok {
-			if len(assignStmt.Lhs) != len(tupleVariable.Variables) {
-				logger.Logger.Fatalf("[CFG EXPR] number (%d) of left values (%v) does not match number (%d) of tuple variables (%v) in assignment %v", len(assignStmt.Lhs), assignStmt.Lhs, len(tupleVariable.Variables), tupleVariable.Variables, assignStmt)
-			}
-
-			for j, lvalue := range assignStmt.Lhs {
-				variable = tupleVariable.Variables[j]
-				if leftIdent, ok := lvalue.(*ast.Ident); ok {
-					variable.GetVariableInfo().SetName(leftIdent.Name)
-					variable.GetVariableInfo().SetUnassigned()
-					block.AddVariable(variable)
-				} else {
-					logger.Logger.Fatalf("[CFG EXPR] unexpected type (%s) for left value (%v) in assignment (%v)", utils.GetType(lvalue), lvalue, assignStmt)
-				}
-			}
-			//logger.Logger.Debugf("[CFG EXPR] matched left values (%v) to tuple variable (%v)", assignStmt.Lhs, tupleVariable.LongString())
+			rvariables = append(rvariables, tupleVariable.Variables...)
 		} else {
-			lvalue := assignStmt.Lhs[i]
-			if lvalue != nil {
-				if leftIdent, ok := lvalue.(*ast.Ident); ok {
-					variable.GetVariableInfo().SetName(leftIdent.Name)
-					variable.GetVariableInfo().SetUnassigned()
-					block.AddVariable(variable)
-				} else {
-					logger.Logger.Fatalf("[CFG EXPR] unexpected type (%s) for left value (%v) in assignment (%v)", utils.GetType(lvalue), lvalue, assignStmt)
-				}
-			} else {
-				logger.Logger.Fatalf("[CFG EXPR] left value with index %d not found in assignment (%v)", i, assignStmt)
-			}
+			rvariables = append(rvariables, variable)
 		}
-		//FIXME: assign to fields within structures
+	}
+	return rvariables
+}
+
+func assignLeftValues(service *service.Service, method *types.ParsedMethod, block *types.Block, assignStmt *ast.AssignStmt) {
+	rvariables := getAssignmentRightVariables(service, method, block, assignStmt)
+	for i, rvariable := range rvariables {
+		lvalue := assignStmt.Lhs[i]
+		switch e := lvalue.(type) {
+		case *ast.Ident:
+			if assignStmt.Tok == token.DEFINE || assignStmt.Tok == token.ASSIGN { // := OR =
+				rvariable.GetVariableInfo().SetName(e.Name)
+				rvariable.GetVariableInfo().SetUnassigned()
+				block.AddVariable(rvariable)
+			} else {
+				logger.Logger.Fatalf("unexpected token (%v) for assignment: %v", assignStmt.Tok, assignStmt)
+			}
+		case *ast.SelectorExpr:
+			lvariable, _ := lookupVariableFromAstExpr(service, method, block, e, false)
+			switch ee := lvariable.(type) {
+			case *variables.FieldVariable:
+				lvariable.AssignVariable(rvariable)
+			default:
+				logger.Logger.Fatalf("[CFG EXPR] unsupported left variable type (%s): %v", utils.GetType(ee), lvariable.String())
+			}
+		default:
+			logger.Logger.Fatalf("[CFG EXPR] unexpected type (%s) for left value (%v) in assignment with token (%v): %v", utils.GetType(lvalue), lvalue, assignStmt.Tok, assignStmt)
+		}
 	}
 }
 

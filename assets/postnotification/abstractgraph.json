@@ -39,24 +39,24 @@
                     "variable": {
                       "name": "Creator",
                       "type": "postnotification.Creator struct {Username string}",
-                      "id": 9
+                      "id": 11
                     },
                     "underlying_field": {
                       "variable": {
                         "type": "postnotification.Creator struct {Username string}",
-                        "id": 10
+                        "id": 12
                       },
                       "struct_fields": {
                         "Username": {
                           "variable": {
                             "name": "Username",
                             "type": "string",
-                            "id": 11
+                            "id": 13
                           },
                           "underlying_field": {
                             "variable": {
                               "type": "\"some username\" string",
-                              "id": 12
+                              "id": 14
                             }
                           }
                         }
@@ -67,12 +67,12 @@
                     "variable": {
                       "name": "PostID",
                       "type": "int64",
-                      "id": 3
+                      "id": 5
                     },
                     "underlying_field": {
                       "variable": {
                         "type": "int64",
-                        "id": 4
+                        "id": 6
                       }
                     }
                   },
@@ -80,13 +80,13 @@
                     "variable": {
                       "name": "ReqID",
                       "type": "int64",
-                      "id": 13
+                      "id": 3
                     },
                     "underlying_field": {
                       "variable": {
                         "name": "reqID",
                         "type": "int64",
-                        "id": 14
+                        "id": 4
                       }
                     }
                   },
@@ -94,13 +94,13 @@
                     "variable": {
                       "name": "Text",
                       "type": "string",
-                      "id": 5
+                      "id": 7
                     },
                     "underlying_field": {
                       "variable": {
                         "name": "text",
                         "type": "string",
-                        "id": 6
+                        "id": 8
                       }
                     }
                   },
@@ -108,13 +108,13 @@
                     "variable": {
                       "name": "Timestamp",
                       "type": "int64",
-                      "id": 7
+                      "id": 9
                     },
                     "underlying_field": {
                       "variable": {
                         "name": "timestamp",
                         "type": "int64",
-                        "id": 8
+                        "id": 10
                       }
                     }
                   }
@@ -148,13 +148,13 @@
             "variable": {
               "name": "ReqID",
               "type": "int64",
-              "id": 13
+              "id": 3
             },
             "underlying_field": {
               "variable": {
                 "name": "reqID",
                 "type": "int64",
-                "id": 14
+                "id": 4
               }
             }
           },
@@ -169,24 +169,24 @@
                 "variable": {
                   "name": "Creator",
                   "type": "postnotification.Creator struct {Username string}",
-                  "id": 9
+                  "id": 11
                 },
                 "underlying_field": {
                   "variable": {
                     "type": "postnotification.Creator struct {Username string}",
-                    "id": 10
+                    "id": 12
                   },
                   "struct_fields": {
                     "Username": {
                       "variable": {
                         "name": "Username",
                         "type": "string",
-                        "id": 11
+                        "id": 13
                       },
                       "underlying_field": {
                         "variable": {
                           "type": "\"some username\" string",
-                          "id": 12
+                          "id": 14
                         }
                       }
                     }
@@ -197,12 +197,12 @@
                 "variable": {
                   "name": "PostID",
                   "type": "int64",
-                  "id": 3
+                  "id": 5
                 },
                 "underlying_field": {
                   "variable": {
                     "type": "int64",
-                    "id": 4
+                    "id": 6
                   }
                 }
               },
@@ -210,13 +210,13 @@
                 "variable": {
                   "name": "ReqID",
                   "type": "int64",
-                  "id": 13
+                  "id": 3
                 },
                 "underlying_field": {
                   "variable": {
                     "name": "reqID",
                     "type": "int64",
-                    "id": 14
+                    "id": 4
                   }
                 }
               },
@@ -224,13 +224,13 @@
                 "variable": {
                   "name": "Text",
                   "type": "string",
-                  "id": 5
+                  "id": 7
                 },
                 "underlying_field": {
                   "variable": {
                     "name": "text",
                     "type": "string",
-                    "id": 6
+                    "id": 8
                   }
                 }
               },
@@ -238,13 +238,13 @@
                 "variable": {
                   "name": "Timestamp",
                   "type": "int64",
-                  "id": 7
+                  "id": 9
                 },
                 "underlying_field": {
                   "variable": {
                     "name": "timestamp",
                     "type": "int64",
-                    "id": 8
+                    "id": 10
                   }
                 }
               }
@@ -297,12 +297,12 @@
                       "variable": {
                         "name": "PostID",
                         "type": "int64",
-                        "id": 3
+                        "id": 5
                       },
                       "underlying_field": {
                         "variable": {
                           "type": "int64",
-                          "id": 4
+                          "id": 6
                         }
                       }
                     }
@@ -324,13 +324,13 @@
                       "variable": {
                         "name": "ReqID",
                         "type": "int64",
-                        "id": 13
+                        "id": 3
                       },
                       "underlying_field": {
                         "variable": {
                           "name": "reqID",
                           "type": "int64",
-                          "id": 14
+                          "id": 4
                         }
                       }
                     }
