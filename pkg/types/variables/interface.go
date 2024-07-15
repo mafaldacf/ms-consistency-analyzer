@@ -11,6 +11,10 @@ func (v *InterfaceVariable) String() string {
 	return v.VariableInfo.String()
 }
 
+func (v *InterfaceVariable) LongString() string {
+	return v.VariableInfo.LongString()
+}
+
 func (v *InterfaceVariable) GetId() int64 {
 	return v.VariableInfo.GetId()
 }

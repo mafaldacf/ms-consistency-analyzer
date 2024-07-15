@@ -21,6 +21,7 @@ type AbstractGraph struct {
 type AbstractNode interface {
 	GetParams() []variables.Variable
 	GetParam(int) variables.Variable
+	GetReturns() []variables.Variable
 	GetMethodStr() string
 	String() string
 	LongString() string
@@ -80,6 +81,10 @@ func (call *AbstractServiceCall) GetNextDepth() int {
 
 func (call *AbstractServiceCall) GetParams() []variables.Variable {
 	return call.Params
+}
+
+func (call *AbstractServiceCall) GetReturns() []variables.Variable {
+	return call.Returns
 }
 
 func (call *AbstractServiceCall) GetParam(index int) variables.Variable {
@@ -191,6 +196,10 @@ func (call *AbstractTempInternalCall) LongString() string {
 
 func (call *AbstractTempInternalCall) GetParams() []variables.Variable {
 	return call.Params
+}
+
+func (call *AbstractTempInternalCall) GetReturns() []variables.Variable {
+	return call.Returns
 }
 
 func (call *AbstractTempInternalCall) GetParam(index int) variables.Variable {
@@ -306,6 +315,11 @@ func (call *AbstractDatabaseCall) GetParam(index int) variables.Variable {
 	logger.Logger.Fatalf("cannot get param with index %d for call %s", index, call.LongString())
 	return nil
 }
+
+func (call *AbstractDatabaseCall) GetReturns() []variables.Variable {
+	return call.Returns
+}
+
 
 func (call *AbstractDatabaseCall) GetReturn(index int) variables.Variable {
 	if index > 0 && index < len(call.Returns) {

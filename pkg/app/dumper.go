@@ -93,7 +93,7 @@ func (app *App) dumpYamlPackages() {
 
 func (app *App) dumpYamlDataflow() {
 	data := make(map[string][]string)
-	for k, lst := range app.PersistedVariables {
+	for k, lst := range app.TaintedVariables {
 		var dataflow []string
 		for _, v := range lst {
 			for _, df := range v.GetVariableInfo().Dataflows {

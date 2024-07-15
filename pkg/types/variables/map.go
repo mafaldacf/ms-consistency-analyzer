@@ -18,6 +18,10 @@ func (v *MapVariable) String() string {
 	return v.VariableInfo.String()
 }
 
+func (v *MapVariable) LongString() string {
+	return v.VariableInfo.LongString()
+}
+
 func (v *MapVariable) GetKeyValueIfExists(targetKey Variable) Variable {
 	if !v.GetMapType().IsSameType(targetKey.GetType()) {
 		logger.Logger.Fatalf("[VARS MAP] provided key (%s) with type (%s) does not match expected type (%s)", targetKey.String(), utils.GetType(targetKey), utils.GetType(v.GetMapType().GetKeyType()))

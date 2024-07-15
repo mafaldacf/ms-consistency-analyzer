@@ -34,7 +34,7 @@ func (f *ParsedMethod) YamlCalls() []string {
 
 func (cfg *CFG) Yaml() map[string][]string {
 	data := make(map[string][]string)
-	
+
 	if len(cfg.ParsedBlocks) > 0 {
 		data[cfg.ParsedBlocks[0].Block.String()] = cfg.ParsedBlocks[0].Yaml()
 	}
@@ -55,11 +55,11 @@ func (block *Block) Yaml() []string {
 	data := []string{}
 	visited := make(map[variables.Variable]bool)
 	for _, v := range block.Vars {
-		deps := variables.GetIndirectDependencies(v)
+		deps := variables.GetIndirectDependenciesWithCurrent(v)
 		slices.Reverse(deps)
 		for i, v := range deps {
 			lastIndex := len(deps) - 1
-			if _, isVisited := visited[v]; isVisited{
+			if _, isVisited := visited[v]; isVisited {
 				continue
 			}
 			visited[v] = true
@@ -91,7 +91,6 @@ func (block *Block) Yaml() []string {
 				data = append(data, fmt.Sprintf("(%02d) %s", v.GetId(), variableString))
 			}
 		}
-
 
 	}
 	return data

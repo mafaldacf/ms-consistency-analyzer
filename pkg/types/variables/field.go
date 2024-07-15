@@ -94,3 +94,14 @@ func (t *FieldVariable) GetNestedFieldVariables(prefix string) ([]Variable, []st
 	}
 	return nestedVariables, nestedNames
 }
+
+func (t *FieldVariable) GetNestedFieldVariablesWithReferences(prefix string) ([]Variable, []string) {
+	nestedVariables, nestedIDs := t.GetNestedFieldVariables(prefix)
+	if reference := t.GetVariableInfo().GetReference(); reference != nil {
+		logger.Logger.Debugf("HEREEEEE FOR REFERENCE %s", reference.String())
+		nestedVariablesRef, nestedIDsRef := reference.Variable.(*FieldVariable).GetNestedFieldVariablesWithReferences(prefix)
+		nestedVariables = append(nestedVariables, nestedVariablesRef...)
+		nestedIDs = append(nestedIDs, nestedIDsRef...)
+	}
+	return nestedVariables, nestedIDs
+}

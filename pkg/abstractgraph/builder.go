@@ -191,7 +191,7 @@ func (graph *AbstractGraph) referenceMethodBlockVars(parsedCall types.Call, chil
 		blockVar := entryBlock.GetVariableAt(i + 1)
 		blockVar.AddReferenceWithID(param, child.GetCallerStr())
 		logger.Logger.Infof("\t\t[REF BLOCK VAR] added reference (%d) from creator (%s): (%s) -> (%s)", blockVar.GetId(), child.GetCallerStr(), blockVar.GetType().GetName(), param.GetVariableInfo().GetName())
-		for _, dep := range variables.GetIndirectDependencies(param) {
+		for _, dep := range variables.GetIndirectDependenciesWithCurrent(param) {
 			if dep.GetVariableInfo().IsUnassigned() {
 				dep.GetVariableInfo().AssignID(graph.getAndIncGIndex())
 				logger.Logger.Debugf("\t\t\t[GID DEP] assigned new gid (%d) to (%s)", dep.GetId(), dep.String())
@@ -238,8 +238,9 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				Depth:      rootParent.GetNextDepth(),
 			}
 			rootParent.AddChild(child)
-			graph.referenceMethodBlockVars(parsedCall, child)
 			logger.Logger.Infof("[GRAPH] added node for abstract service call: %s", child.String())
+			
+			graph.referenceMethodBlockVars(parsedCall, child)
 		case *types.ParsedInternalCall:
 			tempChild := &AbstractTempInternalCall{
 				ParsedCall: parsedCall,

@@ -105,23 +105,25 @@ func (v *StructVariable) AddFieldVariableIfNotExists(name string, field Variable
 	return false
 }
 
-func (v *StructVariable) AddReferenceWithID(target Variable, creator string) {
-	logger.Logger.Warnf("[VARS STRUCT] referencing in struct variable (%s) for target (%s)", v.String(), target.String())
-	v.VariableInfo.AddReferenceWithID(target, creator)
-	if targetStruct, ok := target.(*StructVariable); ok {
-		for name, field := range v.Fields {
-			targetField, ok := targetStruct.Fields[name]
-			if !ok {
-				logger.Logger.Warnf("[VARS STRUCT] invalid target field (%s) in struct fields: %v", name, targetStruct.Fields)
+func (v *StructVariable) AddReferenceWithID(reference Variable, creator string) {
+	logger.Logger.Debugf("[VARS STRUCT] referencing in struct variable (%s) for target (%s)", v.String(), reference.String())
+	v.VariableInfo.AddReferenceWithID(reference, creator)
+	for _, dep := range GetIndirectDependencies(reference) {
+		logger.Logger.Debugf("\t\t[VARS STRUCT] reference dep %s", dep.String())
+	}
+	if referenceStruct, ok := reference.(*StructVariable); ok {
+		for name, field := range referenceStruct.Fields {
+			if _, ok := v.Fields[name]; ok {
+				v.Fields[name].AddReferenceWithID(field, creator)
 			} else {
-				field.AddReferenceWithID(targetField, creator)
+				logger.Logger.Warnf("[VARS STRUCT] skipping reference for unknown field (%s) in struct variable %s", name, v.String())
 			}
 		}
 	} else {
-		logger.Logger.Warnf("[VARS STRUCT] referenced variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
+		logger.Logger.Fatalf("[VARS STRUCT] referenced variables with different types (%s vs %s) (%s vs %s)", v.String(), reference.String(), utils.GetType(v), utils.GetType(reference))
 	}
 
-	logger.Logger.Debugf("[VARS STRUCT] added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
+	logger.Logger.Debugf("[VARS STRUCT] added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, reference.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
 }
 
 func (v *StructVariable) GetUnassaignedVariables() []Variable {
@@ -148,6 +150,17 @@ func (t *StructVariable) GetNestedFieldVariables(prefix string) ([]Variable, []s
 		} else {
 			logger.Logger.Fatalf("[VARS STRUCT] ignoring field variable (%s) for (%s)", f.String(), GetVariableTypeAndTypeString(f))
 		}
+	}
+	return nestedVariables, nestedIDs
+}
+
+func (t *StructVariable) GetNestedFieldVariablesWithReferences(prefix string) ([]Variable, []string) {
+	nestedVariables, nestedIDs := t.GetNestedFieldVariables(prefix)
+	if reference := t.GetVariableInfo().GetReference(); reference != nil {
+		logger.Logger.Debugf("HEREEEEE FOR REFERENCE %s", reference.String())
+		nestedVariablesRef, nestedIDsRef := reference.Variable.(*StructVariable).GetNestedFieldVariablesWithReferences(prefix)
+		nestedVariables = append(nestedVariables, nestedVariablesRef...)
+		nestedIDs = append(nestedIDs, nestedIDsRef...)
 	}
 	return nestedVariables, nestedIDs
 }

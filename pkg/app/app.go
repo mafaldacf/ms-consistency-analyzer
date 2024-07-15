@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"path/filepath"
+	"slices"
 
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/logger"
@@ -13,14 +14,14 @@ import (
 )
 
 type App struct {
-	Name               string
-	Path               string
-	Services           map[string]*service.Service
-	Databases          map[string]datastores.DatabaseInstance
-	Packages           map[string]*types.Package // key is package name (FIXME: should be path actually)
-	BlueprintPackages  map[string]*types.Package // key is package name (FIXME: should be path actually)
-	ExternalPackages   map[string]*types.Package // key is package name (FIXME: should be path actually)
-	PersistedVariables map[string][]variables.Variable
+	Name              string
+	Path              string
+	Services          map[string]*service.Service
+	Databases         map[string]datastores.DatabaseInstance
+	Packages          map[string]*types.Package // key is package name (FIXME: should be path actually)
+	BlueprintPackages map[string]*types.Package // key is package name (FIXME: should be path actually)
+	ExternalPackages  map[string]*types.Package // key is package name (FIXME: should be path actually)
+	TaintedVariables  map[string][]variables.Variable
 }
 
 func (app *App) MarshalJSON() ([]byte, error) {
@@ -38,6 +39,13 @@ func (app *App) MarshalJSON() ([]byte, error) {
 func (app *App) String() string {
 	str, _ := app.MarshalJSON()
 	return string(str)
+}
+
+// this is just an helper to later print tainted dataflow in yaml files
+func (app *App) AddTaintedVariableIfNotExists(fieldName string, variable variables.Variable) {
+	if !slices.Contains(app.TaintedVariables[fieldName], variable) {
+		app.TaintedVariables[fieldName] = append(app.TaintedVariables[fieldName], variable)
+	}
 }
 
 func (app *App) AddAppPackage(name string, p *types.Package) {
@@ -79,14 +87,14 @@ func Init(name string, path string) (*App, error) {
 		return nil, fmt.Errorf(msg)
 	}
 	app := &App{
-		Name:               name,
-		Path:               fullPath,
-		Services:           make(map[string]*service.Service),
-		Databases:          make(map[string]datastores.DatabaseInstance),
-		Packages:           make(map[string]*types.Package),
-		BlueprintPackages:  make(map[string]*types.Package),
-		ExternalPackages:   make(map[string]*types.Package),
-		PersistedVariables: make(map[string][]variables.Variable),
+		Name:              name,
+		Path:              fullPath,
+		Services:          make(map[string]*service.Service),
+		Databases:         make(map[string]datastores.DatabaseInstance),
+		Packages:          make(map[string]*types.Package),
+		BlueprintPackages: make(map[string]*types.Package),
+		ExternalPackages:  make(map[string]*types.Package),
+		TaintedVariables:  make(map[string][]variables.Variable),
 	}
 	logger.Logger.Infof("[APP INIT] loading app %s", app.Path)
 	return app, nil

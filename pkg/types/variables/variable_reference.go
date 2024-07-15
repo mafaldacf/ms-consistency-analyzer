@@ -23,7 +23,7 @@ func (ref *Reference) MarshalJSON() ([]byte, error) {
 		Creator: ref.Creator,
 		Id:      ref.Variable.GetId(),
 		//Variable: ref.Variable,
-		/* IndirectDeps: getDependenciesString(getIndirectDependencies(ref)...), */
+		/* IndirectDeps: getDependenciesString(GetIndirectDependenciesWithCurrent(ref)...), */
 		/* Params:  		ref.Variable.GetDependencies(), */
 	})
 }
