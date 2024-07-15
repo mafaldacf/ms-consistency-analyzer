@@ -4,10 +4,10 @@ USER_DB:
 - schema:
   - fields:
     - document: primitive.D
-    - document: user.User struct { UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string }
+    - document: user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}
   - unfolded_fields:
     - D: primitive.D
-    - User: user.User struct { UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string }
+    - User: user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}
     - User.UserID: string
     - User.Username: string
     - User.Password: string

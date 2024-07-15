@@ -20,7 +20,8 @@ func GenerateMethodCFG(service *service.Service, parsedMethod *types.ParsedMetho
 	entryBlock := parsedCfg.GetEntryParsedBlock()
 
 	receiver := lookup.CreateVariableFromType(parsedMethod.Receiver.GetName(), parsedMethod.Receiver.GetType())
-	entryBlock.Vars = append(entryBlock.Vars, receiver)
+	entryBlock.AddVariable(receiver)
+	
 	variable := receiver
 	if pointerVar, ok := variable.(*variables.PointerVariable); ok {
 		variable = pointerVar.PointerTo

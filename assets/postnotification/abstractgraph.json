@@ -1,24 +1,27 @@
 [
   {
     "method": "(*UploadServiceImpl).UploadPost(ctx context.Context, username string, text string)",
+    "depth": 0,
     "caller": "Client",
     "edges": [
       {
         "method": "(*StorageServiceImpl).StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}})",
+        "depth": 1,
         "caller": "UploadService",
         "edges": [
           {
             "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+            "depth": 2,
             "caller": "StorageService",
             "params": [
               {
                 "variable": {
                   "name": "ctx",
                   "type": "context.Context",
-                  "id": 1,
+                  "id": -1,
                   "ref": {
                     "name": "ctx",
-                    "creator": "StorageService",
+                    "creator": "UploadService",
                     "id": 1
                   }
                 }
@@ -27,130 +30,11 @@
                 "variable": {
                   "name": "post",
                   "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}",
-                  "id": 3,
+                  "id": -1,
                   "ref": {
                     "name": "post",
-                    "creator": "StorageService",
-                    "id": 3
-                  }
-                },
-                "struct_fields": {
-                  "Creator": {
-                    "variable": {
-                      "name": "Creator",
-                      "type": "postnotification.Creator struct{Username string}",
-                      "id": 4
-                    },
-                    "underlying_field": {
-                      "variable": {
-                        "type": "postnotification.Creator struct{Username string}",
-                        "id": 5
-                      },
-                      "struct_fields": {
-                        "Username": {
-                          "variable": {
-                            "name": "Username",
-                            "type": "string",
-                            "id": 6
-                          },
-                          "underlying_field": {
-                            "variable": {
-                              "type": "\"some username\" string",
-                              "id": 7
-                            }
-                          }
-                        }
-                      }
-                    }
-                  },
-                  "Mentions": {
-                    "variable": {
-                      "name": "Mentions",
-                      "type": "[]string",
-                      "id": 13
-                    },
-                    "underlying_field": {
-                      "variable": {
-                        "name": "mentions",
-                        "type": "[]string",
-                        "id": 14
-                      },
-                      "array_elems": [
-                        {
-                          "variable": {
-                            "type": "\"alice\" string",
-                            "id": 15
-                          }
-                        },
-                        {
-                          "variable": {
-                            "type": "\"bob\" string",
-                            "id": 16
-                          }
-                        }
-                      ]
-                    }
-                  },
-                  "PostID": {
-                    "variable": {
-                      "name": "PostID",
-                      "type": "int64",
-                      "id": 10
-                    },
-                    "underlying_field": {
-                      "variable": {
-                        "name": "postID",
-                        "type": "int64",
-                        "id": 11
-                      }
-                    }
-                  },
-                  "ReqID": {
-                    "variable": {
-                      "name": "ReqID",
-                      "type": "int64",
-                      "id": 8
-                    },
-                    "underlying_field": {
-                      "variable": {
-                        "name": "reqID",
-                        "type": "int64",
-                        "id": 9
-                      }
-                    }
-                  },
-                  "Text": {
-                    "variable": {
-                      "name": "Text",
-                      "type": "string",
-                      "id": 12
-                    },
-                    "underlying_field": {
-                      "variable": {
-                        "name": "text",
-                        "type": "string",
-                        "id": 2,
-                        "ref": {
-                          "name": "text",
-                          "creator": "UploadService",
-                          "id": 2
-                        }
-                      }
-                    }
-                  },
-                  "Timestamp": {
-                    "variable": {
-                      "name": "Timestamp",
-                      "type": "int64",
-                      "id": 17
-                    },
-                    "underlying_field": {
-                      "variable": {
-                        "name": "timestamp",
-                        "type": "int64",
-                        "id": 18
-                      }
-                    }
+                    "creator": "UploadService",
+                    "id": 4
                   }
                 }
               }
@@ -170,25 +54,20 @@
             "variable": {
               "name": "ctx",
               "type": "context.Context",
-              "id": 1,
-              "ref": {
-                "name": "ctx",
-                "creator": "UploadService",
-                "id": 1
-              }
+              "id": 1
             }
           },
           {
             "variable": {
               "name": "ReqID",
               "type": "int64",
-              "id": 8
+              "id": 2
             },
             "underlying_field": {
               "variable": {
                 "name": "reqID",
                 "type": "int64",
-                "id": 9
+                "id": 3
               }
             }
           },
@@ -196,31 +75,31 @@
             "variable": {
               "name": "post",
               "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}",
-              "id": 3
+              "id": 4
             },
             "struct_fields": {
               "Creator": {
                 "variable": {
                   "name": "Creator",
                   "type": "postnotification.Creator struct{Username string}",
-                  "id": 4
+                  "id": 15
                 },
                 "underlying_field": {
                   "variable": {
                     "type": "postnotification.Creator struct{Username string}",
-                    "id": 5
+                    "id": 16
                   },
                   "struct_fields": {
                     "Username": {
                       "variable": {
                         "name": "Username",
                         "type": "string",
-                        "id": 6
+                        "id": 17
                       },
                       "underlying_field": {
                         "variable": {
                           "type": "\"some username\" string",
-                          "id": 7
+                          "id": 18
                         }
                       }
                     }
@@ -231,25 +110,25 @@
                 "variable": {
                   "name": "Mentions",
                   "type": "[]string",
-                  "id": 13
+                  "id": 9
                 },
                 "underlying_field": {
                   "variable": {
                     "name": "mentions",
                     "type": "[]string",
-                    "id": 14
+                    "id": 10
                   },
                   "array_elems": [
                     {
                       "variable": {
                         "type": "\"alice\" string",
-                        "id": 15
+                        "id": 11
                       }
                     },
                     {
                       "variable": {
                         "type": "\"bob\" string",
-                        "id": 16
+                        "id": 12
                       }
                     }
                   ]
@@ -259,13 +138,13 @@
                 "variable": {
                   "name": "PostID",
                   "type": "int64",
-                  "id": 10
+                  "id": 5
                 },
                 "underlying_field": {
                   "variable": {
                     "name": "postID",
                     "type": "int64",
-                    "id": 11
+                    "id": 6
                   }
                 }
               },
@@ -273,13 +152,13 @@
                 "variable": {
                   "name": "ReqID",
                   "type": "int64",
-                  "id": 8
+                  "id": 2
                 },
                 "underlying_field": {
                   "variable": {
                     "name": "reqID",
                     "type": "int64",
-                    "id": 9
+                    "id": 3
                   }
                 }
               },
@@ -287,18 +166,13 @@
                 "variable": {
                   "name": "Text",
                   "type": "string",
-                  "id": 12
+                  "id": 7
                 },
                 "underlying_field": {
                   "variable": {
                     "name": "text",
                     "type": "string",
-                    "id": 2,
-                    "ref": {
-                      "name": "text",
-                      "creator": "UploadService",
-                      "id": 2
-                    }
+                    "id": 8
                   }
                 }
               },
@@ -306,13 +180,13 @@
                 "variable": {
                   "name": "Timestamp",
                   "type": "int64",
-                  "id": 17
+                  "id": 13
                 },
                 "underlying_field": {
                   "variable": {
                     "name": "timestamp",
                     "type": "int64",
-                    "id": 18
+                    "id": 14
                   }
                 }
               }
@@ -329,18 +203,14 @@
       },
       {
         "method": "Queue.Push(ctx context.Context, item interface{})",
+        "depth": 1,
         "caller": "UploadService",
         "params": [
           {
             "variable": {
               "name": "ctx",
               "type": "context.Context",
-              "id": 1,
-              "ref": {
-                "name": "ctx",
-                "creator": "UploadService",
-                "id": 1
-              }
+              "id": 1
             }
           },
           {
@@ -365,13 +235,13 @@
                       "variable": {
                         "name": "PostID",
                         "type": "int64",
-                        "id": 10
+                        "id": 5
                       },
                       "underlying_field": {
                         "variable": {
                           "name": "postID",
                           "type": "int64",
-                          "id": 11
+                          "id": 6
                         }
                       }
                     }
@@ -393,13 +263,13 @@
                       "variable": {
                         "name": "ReqID",
                         "type": "int64",
-                        "id": 8
+                        "id": 2
                       },
                       "underlying_field": {
                         "variable": {
                           "name": "reqID",
                           "type": "int64",
-                          "id": 9
+                          "id": 3
                         }
                       }
                     }
@@ -428,22 +298,19 @@
         "queue_handlers": [
           {
             "method": "(*NotifyServiceImpl).workerThread(ctx context.Context, workerID int)",
+            "depth": 2,
             "caller": "notif_queue RabbitMQ",
             "edges": [
               {
                 "method": "Queue.Pop(ctx context.Context, item interface{})",
+                "depth": 3,
                 "caller": "NotifyService",
                 "params": [
                   {
                     "variable": {
                       "name": "ctx",
                       "type": "context.Context",
-                      "id": 19,
-                      "ref": {
-                        "name": "ctx",
-                        "creator": "NotifyService",
-                        "id": 19
-                      }
+                      "id": -1
                     }
                   },
                   {
@@ -455,12 +322,7 @@
                       "variable": {
                         "name": "message",
                         "type": "map[string]interface{}",
-                        "id": 22,
-                        "ref": {
-                          "name": "message",
-                          "creator": "UploadService",
-                          "id": -1
-                        }
+                        "id": -1
                       },
                       "key_values": null
                     }
@@ -482,184 +344,23 @@
                 "subscriber": true
               },
               {
-                "method": "(*StorageServiceImpl).ReadPost(ctx context.Context, reqID int64, postID int64)",
-                "caller": "NotifyService",
-                "edges": [
-                  {
-                    "method": "Cache.Get(ctx context.Context, key string, value interface{})",
-                    "caller": "StorageService",
-                    "params": [
-                      {
-                        "variable": {
-                          "name": "ctx",
-                          "type": "context.Context",
-                          "id": 19,
-                          "ref": {
-                            "name": "ctx",
-                            "creator": "StorageService",
-                            "id": 19
-                          }
-                        }
-                      },
-                      {
-                        "variable": {
-                          "name": "postIDStr",
-                          "type": "string",
-                          "id": -1
-                        },
-                        "func_composition": [
-                          {
-                            "variable": {
-                              "name": "postID",
-                              "type": "int64",
-                              "id": 20,
-                              "ref": {
-                                "name": "postID",
-                                "creator": "StorageService",
-                                "id": 20
-                              }
-                            }
-                          },
-                          {
-                            "variable": {
-                              "type": "10 int"
-                            }
-                          }
-                        ]
-                      },
-                      {
-                        "variable": {
-                          "name": "post",
-                          "type": "(\u0026postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}})"
-                        },
-                        "addr_of": {
-                          "variable": {
-                            "name": "post",
-                            "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}",
-                            "id": -1
-                          }
-                        }
-                      }
-                    ],
-                    "returns": [
-                      {
-                        "variable": {
-                          "name": "_",
-                          "type": "bool",
-                          "id": -1
-                        }
-                      },
-                      {
-                        "variable": {
-                          "name": "err",
-                          "type": ".error",
-                          "id": -1
-                        }
-                      }
-                    ],
-                    "datastore": "post_cache"
-                  }
-                ],
-                "params": [
-                  {
-                    "variable": {
-                      "name": "ctx",
-                      "type": "context.Context",
-                      "id": 19,
-                      "ref": {
-                        "name": "ctx",
-                        "creator": "NotifyService",
-                        "id": 19
-                      }
-                    }
-                  },
-                  {
-                    "variable": {
-                      "name": "reqID",
-                      "type": "int64",
-                      "id": -1
-                    },
-                    "func_composition": [
-                      {
-                        "variable": {
-                          "name": "ReqID",
-                          "type": "string"
-                        },
-                        "underlying_field": {
-                          "variable": {
-                            "name": "message",
-                            "type": "map[string]interface{}",
-                            "id": 22,
-                            "ref": {
-                              "name": "message",
-                              "creator": "UploadService",
-                              "id": -1
-                            }
-                          },
-                          "key_values": null
-                        }
-                      }
-                    ]
-                  },
-                  {
-                    "variable": {
-                      "name": "postID",
-                      "type": "int64",
-                      "id": 20
-                    },
-                    "func_composition": [
-                      {
-                        "variable": {
-                          "name": "PostID",
-                          "type": "string",
-                          "id": 21
-                        },
-                        "underlying_field": {
-                          "variable": {
-                            "name": "message",
-                            "type": "map[string]interface{}",
-                            "id": 22,
-                            "ref": {
-                              "name": "message",
-                              "creator": "UploadService",
-                              "id": -1
-                            }
-                          },
-                          "key_values": null
-                        }
-                      }
-                    ]
-                  }
-                ],
-                "returns": [
-                  {
-                    "variable": {
-                      "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}"
-                    }
-                  },
-                  {
-                    "variable": {
-                      "type": ".error"
-                    }
-                  }
-                ]
-              },
-              {
                 "method": "(*StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID int64)",
+                "depth": 3,
                 "caller": "NotifyService",
                 "edges": [
                   {
                     "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+                    "depth": 4,
                     "caller": "StorageService",
                     "params": [
                       {
                         "variable": {
                           "name": "ctx",
                           "type": "context.Context",
-                          "id": 19,
+                          "id": -1,
                           "ref": {
                             "name": "ctx",
-                            "creator": "StorageService",
+                            "creator": "NotifyService",
                             "id": 19
                           }
                         }
@@ -696,32 +397,27 @@
                     "variable": {
                       "name": "ctx",
                       "type": "context.Context",
-                      "id": 19,
-                      "ref": {
-                        "name": "ctx",
-                        "creator": "NotifyService",
-                        "id": 19
-                      }
+                      "id": 19
                     }
                   },
                   {
                     "variable": {
                       "name": "reqID",
                       "type": "int64",
-                      "id": -1
+                      "id": 20
                     },
                     "func_composition": [
                       {
                         "variable": {
                           "name": "ReqID",
                           "type": "string",
-                          "id": -1
+                          "id": 21
                         },
                         "underlying_field": {
                           "variable": {
                             "name": "ReqID",
                             "type": "string",
-                            "id": -1
+                            "id": 22
                           }
                         }
                       }
@@ -731,20 +427,20 @@
                     "variable": {
                       "name": "postID",
                       "type": "int64",
-                      "id": -1
+                      "id": 23
                     },
                     "func_composition": [
                       {
                         "variable": {
                           "name": "PostID",
                           "type": "string",
-                          "id": -1
+                          "id": 24
                         },
                         "underlying_field": {
                           "variable": {
                             "name": "PostID",
                             "type": "string",
-                            "id": -1
+                            "id": 25
                           }
                         }
                       }
@@ -774,7 +470,7 @@
                 "variable": {
                   "name": "ctx",
                   "type": "context.Context",
-                  "id": 19
+                  "id": -1
                 }
               },
               {
@@ -795,7 +491,7 @@
         "variable": {
           "name": "ctx",
           "type": "context.Context",
-          "id": 1
+          "id": -1
         }
       },
       {
@@ -809,7 +505,7 @@
         "variable": {
           "name": "text",
           "type": "string",
-          "id": 2
+          "id": -1
         }
       }
     ]

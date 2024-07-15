@@ -12,32 +12,32 @@ user:
   - go.mongodb.org/mongo-driver/bson
 - imported types:
   - .error
-  - NoSQLCollection interface{ NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
-    NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D) }
-  - NoSQLCursor interface{ NoSQLDatabase.One(ctx context.Context, obj interface{}),
-    NoSQLDatabase.All(ctx context.Context, obj interface{}) }
-  - NoSQLDatabase interface{ NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string) }
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
+    NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.All(ctx context.Context, obj interface{})}
+  - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
   - context.Context
   - primitive.D
   - primitive.E
 - declared types:
-  - user.User struct { UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string }
+  - user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}
   - user.UserService
-  - user.UserServiceImpl struct { userDB { instance = user_db } interface{ NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string) } }
+  - user.UserServiceImpl struct{userDB {instance = user_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
 - service types:
   - user.UserService
 - datastore types:
-  - NoSQLCollection interface{ NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
-    NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D) }
-  - NoSQLCursor interface{ NoSQLDatabase.One(ctx context.Context, obj interface{}),
-    NoSQLDatabase.All(ctx context.Context, obj interface{}) }
-  - NoSQLDatabase interface{ NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string) }
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
+    NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.All(ctx context.Context, obj interface{})}
+  - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
 - declared variables: []
 - parsed methods:
   - (*user.UserServiceImpl).DeleteUser(ctx context.Context, userID string) error
-  - (*user.UserServiceImpl).FindByUserID(ctx context.Context, userID string) (user.User struct { UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string }, error)
-  - (*user.UserServiceImpl).FindByUsername(ctx context.Context, username string) (user.User struct { UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string }, error)
-  - (*user.UserServiceImpl).GetAllUsers(ctx context.Context) ([]user.User struct { UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string }, error)
-  - (*user.UserServiceImpl).SaveUser(ctx context.Context, user user.User struct { UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string }) error
-  - (*user.UserServiceImpl).UpdateUser(ctx context.Context, user user.User struct { UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string }) (bool, error)
-  - user.NewUserServiceImpl(ctx context.Context, db NoSQLDatabase) ((*user.UserServiceImpl struct { userDB NoSQLDatabase }), error)
+  - (*user.UserServiceImpl).FindByUserID(ctx context.Context, userID string) (user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}, error)
+  - (*user.UserServiceImpl).FindByUsername(ctx context.Context, username string) (user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}, error)
+  - (*user.UserServiceImpl).GetAllUsers(ctx context.Context) ([]user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}, error)
+  - (*user.UserServiceImpl).SaveUser(ctx context.Context, user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}) error
+  - (*user.UserServiceImpl).UpdateUser(ctx context.Context, user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}) (bool, error)
+  - user.NewUserServiceImpl(ctx context.Context, db NoSQLDatabase) ((*user.UserServiceImpl struct{userDB NoSQLDatabase}), error)

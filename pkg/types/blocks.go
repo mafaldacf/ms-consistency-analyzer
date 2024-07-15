@@ -31,6 +31,13 @@ func (block *Block) VarsString() string {
 	return s + "]"
 }
 
+func (block *Block) GetVariableAt(index int) variables.Variable {
+	if index >= len(block.Vars) {
+		logger.Logger.Fatalf("[BLOCK] received index (%d) but block vars (%s) is length (%d)", index, block.String(), len(block.Vars))
+	}
+	return block.Vars[index]
+}
+
 func (block *Block) LongString() string {
 	str := fmt.Sprintf("Block %d", block.Block.Index)
 	for i, v := range block.Block.Nodes {
@@ -87,7 +94,7 @@ func (block *Block) AddVariables(variables []variables.Variable) {
 }
 
 func (block *Block) AddVariable(variable variables.Variable) {
-	if block.Vars[len(block.Vars)-1] != variable {
+	if len(block.Vars) == 0 || block.Vars[len(block.Vars)-1] != variable {
 		logger.Logger.Tracef("[BLOCK] added %s (%s) to block", variable.String(), utils.GetType(variable))
 		block.Vars = append(block.Vars, variable)
 	} else {

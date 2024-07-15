@@ -24,6 +24,7 @@ func (graph *AbstractGraph) dumpDiGraph() {
 		Caller string `json:"caller"`
 		Callee string `json:"callee"`
 		Call   string `json:"call"`
+		Depth  int    `json:"depth"`
 	}
 	type digraph struct {
 		Nodes []node `json:"nodes"`
@@ -57,7 +58,7 @@ func (graph *AbstractGraph) dumpDiGraph() {
 				nodes = append(nodes, node{Id: callee, Type: n.GetNodeType()})
 				appendedServiceNodes[callee] = true
 			}
-			edges = append(edges, edge{Caller: caller, Callee: callee, Call: call})
+			edges = append(edges, edge{Caller: caller, Callee: callee, Call: call, Depth: n.GetDepth()})
 			visitedAbstractNodes[n] = true
 
 			for _, c := range n.GetChildren() {

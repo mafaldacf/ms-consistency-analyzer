@@ -17,62 +17,74 @@
     {
       "caller": "Client",
       "callee": "UserService",
-      "call": "FindByUsername"
+      "call": "DeleteUser",
+      "depth": 0
     },
     {
       "caller": "Client",
       "callee": "UserService",
-      "call": "FindByUserID"
+      "call": "GetAllUsers",
+      "depth": 0
     },
     {
       "caller": "Client",
       "callee": "UserService",
-      "call": "DeleteUser"
+      "call": "SaveUser",
+      "depth": 0
     },
     {
       "caller": "Client",
       "callee": "UserService",
-      "call": "GetAllUsers"
+      "call": "UpdateUser",
+      "depth": 0
     },
     {
       "caller": "Client",
       "callee": "UserService",
-      "call": "SaveUser"
+      "call": "FindByUsername",
+      "depth": 0
     },
     {
       "caller": "Client",
       "callee": "UserService",
-      "call": "UpdateUser"
+      "call": "FindByUserID",
+      "depth": 0
     },
     {
       "caller": "UserService",
       "callee": "user_db MongoDB",
-      "call": "FindOne"
+      "call": "DeleteOne",
+      "depth": 1
     },
     {
       "caller": "UserService",
       "callee": "user_db MongoDB",
-      "call": "FindOne"
+      "call": "FindMany",
+      "depth": 1
     },
     {
       "caller": "UserService",
       "callee": "user_db MongoDB",
-      "call": "DeleteOne"
+      "call": "InsertOne",
+      "depth": 1
     },
     {
       "caller": "UserService",
       "callee": "user_db MongoDB",
-      "call": "FindMany"
+      "call": "Upsert",
+      "depth": 1
     },
     {
       "caller": "UserService",
       "callee": "user_db MongoDB",
-      "call": "InsertOne"
+      "call": "FindOne",
+      "depth": 1
     },
     {
       "caller": "UserService",
       "callee": "user_db MongoDB",
-      "call": "Upsert"
+      "call": "FindOne",
+      "depth": 1
     }
   ]
 }

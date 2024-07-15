@@ -9,24 +9,23 @@
   - (-1) i 1 int
 (*NotifyServiceImpl).handleMessage(ctx context.Context, message postnotification.Message struct{ReqID string, PostID string, Timestamp string}):
  block 0 (Body):
-  - (-1) [INLINE] queue Queue
   - (-1) [INLINE] storageService postnotification.StorageService
   - (-1) [INLINE] numWorkers 4 int
+  - (-1) [INLINE] queue Queue
   - (-1) n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int})
-  - (19) [INLINE] ref <ctx context.Context> @ NotifyService
   - (19) ctx context.Context
-  - (-1) [INLINE] PostID string
-  - (-1) [INLINE] PostID string
-  - (-1) [INLINE] ReqID string
-  - (-1) [INLINE] ReqID string
+  - (25) [INLINE] PostID string
+  - (24) [INLINE] PostID string
+  - (22) [INLINE] ReqID string
+  - (21) [INLINE] ReqID string
   - (-1) message postnotification.Message struct{ReqID string, PostID string, Timestamp string}
-  - (-1) reqID int64
+  - (20) reqID int64
   - (-1) err .error
 (*NotifyServiceImpl).workerThread(ctx context.Context, workerID int):
   block 0 (Body):
-  - (-1) [INLINE] storageService postnotification.StorageService
   - (-1) [INLINE] numWorkers 4 int
   - (-1) [INLINE] queue Queue
+  - (-1) [INLINE] storageService postnotification.StorageService
   - (-1) n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int})
   - (-1) ctx context.Context
   - (-1) workerID int
@@ -36,7 +35,3 @@
   - (00) [INLINE] PostID string
   - (00) [INLINE] ReqID string
   - (-1) notification postnotification.Message struct{ReqID string, PostID string, Timestamp string}
-  - (-1) reqID int64
-  - (-1) _ .error
-  - (-1) postID int64
-  - (-1) _ .error

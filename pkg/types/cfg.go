@@ -4,6 +4,8 @@ import (
 	"fmt"
 
 	"golang.org/x/tools/go/cfg"
+
+	"analyzer/pkg/logger"
 )
 
 type CFG struct {
@@ -48,6 +50,7 @@ func (cfg *CFG) GetEntryParsedBlock() *Block {
 	if len(cfg.ParsedBlocks) > 0 {
 		return cfg.ParsedBlocks[0]
 	}
+	logger.Logger.Fatalf("[CFG] unexpected empty CFG %s", cfg.String())
 	return nil
 }
 

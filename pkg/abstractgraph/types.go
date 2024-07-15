@@ -33,12 +33,15 @@ type AbstractNode interface {
 	GetCallee() string
 	GetParsedCall() types.ParsedCall
 	GetNodeType() string
+	GetDepth() int
+	GetNextDepth() int
+	SetDepth(int)
 }
 
 type AbstractServiceCall struct {
 	AbstractNode `json:"-"`
 	Visited      bool
-	Caller       string 
+	Caller       string
 	Callee       string
 	Method       types.Method
 	// nodes representing database calls cannot contain children as well
@@ -46,22 +49,33 @@ type AbstractServiceCall struct {
 	Params     []variables.Variable
 	Returns    []variables.Variable
 	ParsedCall *types.ParsedServiceCall
+	Depth      int
 }
 
 func (call *AbstractServiceCall) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Method   string               `json:"method"`
+		Depth    int                  `json:"depth"`
 		Caller   string               `json:"caller"`
 		Children []AbstractNode       `json:"edges"`
 		Params   []variables.Variable `json:"params"`
 		Returns  []variables.Variable `json:"returns,omitempty"`
 	}{
 		Caller:   call.Caller,
+		Depth:    call.Depth,
 		Method:   call.Method.String(),
 		Children: call.Children,
 		Params:   call.Params,
 		Returns:  call.Returns,
 	})
+}
+
+func (call *AbstractServiceCall) GetDepth() int {
+	return call.Depth
+}
+
+func (call *AbstractServiceCall) GetNextDepth() int {
+	return call.Depth + 1
 }
 
 func (call *AbstractServiceCall) GetParams() []variables.Variable {
@@ -130,22 +144,33 @@ type AbstractTempInternalCall struct {
 	Returns    []variables.Variable
 	ParsedCall *types.ParsedInternalCall
 	Children   []AbstractNode
+	Depth      int
 }
 
 func (call *AbstractTempInternalCall) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Method   string               `json:"method"`
+		Depth    int                  `json:"depth"`
 		Service  string               `json:"service"`
 		Params   []variables.Variable `json:"params"`
 		Returns  []variables.Variable `json:"returns,omitempty"`
 		Children []AbstractNode       `json:"edges"`
 	}{
 		Method:   call.Method.String(),
+		Depth:    call.Depth,
 		Service:  call.Service,
 		Params:   call.Params,
 		Returns:  call.Returns,
 		Children: call.Children,
 	})
+}
+
+func (call *AbstractTempInternalCall) GetDepth() int {
+	return call.Depth
+}
+
+func (call *AbstractTempInternalCall) GetNextDepth() int {
+	return call.Depth + 1
 }
 
 func (call *AbstractTempInternalCall) GetChildren() []AbstractNode {
@@ -200,39 +225,6 @@ func (call *AbstractTempInternalCall) GetCallee() string {
 	return call.GetName()
 }
 
-type AbstractDatabaseCall struct {
-	AbstractNode
-	Visited    bool
-	Method     types.Method
-	Service    string
-	Params     []variables.Variable
-	Returns    []variables.Variable
-	ParsedCall *types.ParsedDatabaseCall
-	Children   []AbstractNode
-	DbInstance datastores.DatabaseInstance
-	Subscriber bool
-}
-
-func (call *AbstractDatabaseCall) MarshalJSON() ([]byte, error) {
-	return json.Marshal(&struct {
-		Method     string               `json:"method"`
-		Service    string               `json:"caller"`
-		Params     []variables.Variable `json:"params"`
-		Returns    []variables.Variable `json:"returns,omitempty"`
-		Children   []AbstractNode       `json:"queue_handlers,omitempty"`
-		DbInstance string               `json:"datastore"`
-		Subscriber bool                 `json:"subscriber,omitempty"`
-	}{
-		Method:     call.Method.String(),
-		Service:    call.Service,
-		Params:     call.Params,
-		Returns:    call.Returns,
-		Children:   call.Children,
-		DbInstance: call.DbInstance.GetName(),
-		Subscriber: call.Subscriber,
-	})
-}
-
 type AbstractQueueHandler struct {
 	AbstractServiceCall `json:"handler"`
 	DbInstance          datastores.DatabaseInstance `json:"datastore"`
@@ -256,6 +248,50 @@ func (call *AbstractQueueHandler) HasQueueReceiver() bool {
 
 func (call *AbstractQueueHandler) EnableQueueReceiver() {
 	call.Receiver = true
+}
+
+type AbstractDatabaseCall struct {
+	AbstractNode
+	Visited    bool
+	Method     types.Method
+	Service    string
+	Params     []variables.Variable
+	Returns    []variables.Variable
+	ParsedCall *types.ParsedDatabaseCall
+	Children   []AbstractNode
+	DbInstance datastores.DatabaseInstance
+	Subscriber bool
+	Depth      int
+}
+
+func (call *AbstractDatabaseCall) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Method     string               `json:"method"`
+		Depth      int                  `json:"depth"`
+		Service    string               `json:"caller"`
+		Params     []variables.Variable `json:"params"`
+		Returns    []variables.Variable `json:"returns,omitempty"`
+		Children   []AbstractNode       `json:"queue_handlers,omitempty"`
+		DbInstance string               `json:"datastore"`
+		Subscriber bool                 `json:"subscriber,omitempty"`
+	}{
+		Method:     call.Method.String(),
+		Depth:      call.Depth,
+		Service:    call.Service,
+		Params:     call.Params,
+		Returns:    call.Returns,
+		Children:   call.Children,
+		DbInstance: call.DbInstance.GetName(),
+		Subscriber: call.Subscriber,
+	})
+}
+
+func (call *AbstractDatabaseCall) GetDepth() int {
+	return call.Depth
+}
+
+func (call *AbstractDatabaseCall) GetNextDepth() int {
+	return call.Depth + 1
 }
 
 func (call *AbstractDatabaseCall) GetParams() []variables.Variable {

@@ -5,6 +5,7 @@ import (
 	"go/ast"
 
 	"analyzer/pkg/datastores"
+	"analyzer/pkg/logger"
 )
 
 type Method interface {
@@ -43,6 +44,12 @@ func (f *ParsedMethod) GetBody() *ast.BlockStmt {
 }
 func (f *ParsedMethod) SetParsedCFG(parsedCfg *CFG) {
 	f.ParsedCfg = parsedCfg
+}
+func (f *ParsedMethod) GetParsedCfg() *CFG {
+	if f.ParsedCfg == nil {
+		logger.Logger.Fatalf("[METHOD] unexpected nil parsed cfg for method (%s)", f.String())
+	}
+	return f.ParsedCfg
 }
 func (*ParsedMethod) IsQueueWrite() bool {
 	return false

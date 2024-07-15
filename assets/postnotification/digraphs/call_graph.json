@@ -23,62 +23,56 @@
     {
       "id": "NotifyService",
       "type": "service"
-    },
-    {
-      "id": "post_cache Redis",
-      "type": "datastore"
     }
   ],
   "edges": [
     {
       "caller": "Client",
       "callee": "UploadService",
-      "call": "UploadPost"
+      "call": "UploadPost",
+      "depth": 0
     },
     {
       "caller": "UploadService",
       "callee": "StorageService",
-      "call": "StorePostNoSQL"
+      "call": "StorePostNoSQL",
+      "depth": 1
     },
     {
       "caller": "UploadService",
       "callee": "notif_queue RabbitMQ",
-      "call": "Push"
+      "call": "Push",
+      "depth": 1
     },
     {
       "caller": "StorageService",
       "callee": "post_nosql MongoDB",
-      "call": "InsertOne"
+      "call": "InsertOne",
+      "depth": 2
     },
     {
       "caller": "notif_queue RabbitMQ",
       "callee": "NotifyService",
-      "call": "workerThread"
+      "call": "workerThread",
+      "depth": 2
     },
     {
       "caller": "NotifyService",
       "callee": "notif_queue RabbitMQ",
-      "call": "Pop"
+      "call": "Pop",
+      "depth": 3
     },
     {
       "caller": "NotifyService",
       "callee": "StorageService",
-      "call": "ReadPost"
-    },
-    {
-      "caller": "NotifyService",
-      "callee": "StorageService",
-      "call": "ReadPostNoSQL"
-    },
-    {
-      "caller": "StorageService",
-      "callee": "post_cache Redis",
-      "call": "Get"
+      "call": "ReadPostNoSQL",
+      "depth": 3
     },
     {
       "caller": "StorageService",
       "callee": "post_nosql MongoDB",
-      "call": "FindOne"
+      "call": "FindOne",
+      "depth": 4
     }
   ]
 }

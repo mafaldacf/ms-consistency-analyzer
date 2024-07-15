@@ -62,7 +62,10 @@ def build_digraph(data, graph_type):
         for edge in data['edges']:
             caller = edge['caller']
             callee = edge['callee']
+            call_depth = edge.get('depth', -1)
             call_type = edge.get('call', '')
+            if call_depth != -1:
+                call_type = "[" + str(call_depth) + "] " + call_type
             edge_count[(caller, callee)]['calls'].append(call_type)
             edge_count[(caller, callee)]['count'] += 1
 
@@ -76,7 +79,7 @@ def build_digraph(data, graph_type):
             edge_labels=combined_edge_labels,
             font_color='black',
             font_size=9,
-            label_pos=0.70,
+            label_pos=0.65,
             connectionstyle='arc3,rad=0.3',
         )
 
@@ -95,9 +98,9 @@ def save(app, graph, multi):
     #plt.show()
 
     if multi:
-        output_path = f"assets/{app}/digraphs/{graph}_graph.png"
-    else:
         output_path = f"assets/{app}/digraphs/{graph}_multi_graph.png"
+    else:
+        output_path = f"assets/{app}/digraphs/{graph}_graph.png"
     plt.savefig(output_path, format='png')
     print(f"[INFO] graph saved to {output_path}")
 

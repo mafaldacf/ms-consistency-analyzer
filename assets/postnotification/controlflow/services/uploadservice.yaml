@@ -1,30 +1,28 @@
 (*UploadServiceImpl).UploadPost(ctx context.Context, username string, text string):
   block 0 (Body):
-  - (-1) [INLINE] queue Queue
   - (-1) [INLINE] storageService postnotification.StorageService
+  - (-1) [INLINE] queue Queue
   - (-1) u (*postnotification.UploadServiceImpl struct{storageService postnotification.StorageService, queue Queue})
-  - (01) [INLINE] ref <ctx context.Context> @ UploadService
   - (01) ctx context.Context
   - (-1) username string
-  - (02) [INLINE] ref <text string> @ UploadService --> (TAINTED 1x) --> [POST_NOSQL.Post.Text]
-  - (02) text string --> (TAINTED 1x) --> [POST_NOSQL.Post.Text]
-  - (09) reqID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.ReqID, NOTIF_QUEUE.Message.ReqID]
-  - (11) postID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.PostID, NOTIF_QUEUE.Message.PostID]
-  - (18) timestamp int64 --> (TAINTED 1x) --> [POST_NOSQL.Post.Timestamp]
-  - (16) [INLINE] "bob" string --> (TAINTED 1x) --> [POST_NOSQL.Post.Mentions]
-  - (15) [INLINE] "alice" string --> (TAINTED 1x) --> [POST_NOSQL.Post.Mentions]
-  - (14) mentions []string --> (TAINTED 1x) --> [POST_NOSQL.Post.Mentions]
-  - (13) [INLINE] Mentions []string --> (TAINTED 1x) --> [POST_NOSQL.Post.Mentions]
-  - (12) [INLINE] Text string --> (TAINTED 1x) --> [POST_NOSQL.Post.Text]
-  - (10) [INLINE] PostID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.PostID, NOTIF_QUEUE.Message.PostID]
-  - (08) [INLINE] ReqID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.ReqID, NOTIF_QUEUE.Message.ReqID]
-  - (07) [INLINE] "some username" string --> (TAINTED 1x) --> [POST_NOSQL.Post.Creator.Username]
-  - (06) [INLINE] Username string --> (TAINTED 1x) --> [POST_NOSQL.Post.Creator.Username]
-  - (05) [INLINE] postnotification.Creator struct{Username string} --> (TAINTED 1x)
-    --> [POST_NOSQL.Post.Creator]
-  - (04) [INLINE] Creator postnotification.Creator struct{Username string} --> (TAINTED 1x) --> [POST_NOSQL.Post.Creator]
-  - (17) [INLINE] Timestamp int64 --> (TAINTED 1x) --> [POST_NOSQL.Post.Timestamp]
-  - (03) post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} --> (TAINTED 1x) --> [POST_NOSQL.Post]
+  - (08) text string --> (TAINTED 1x) --> [POST_NOSQL.Post]
+  - (03) reqID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post, NOTIF_QUEUE.Message.ReqID]
+  - (06) postID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post, NOTIF_QUEUE.Message.PostID]
+  - (14) timestamp int64 --> (TAINTED 1x) --> [POST_NOSQL.Post]
+  - (12) [INLINE] "bob" string --> (TAINTED 1x) --> [POST_NOSQL.Post]
+  - (11) [INLINE] "alice" string --> (TAINTED 1x) --> [POST_NOSQL.Post]
+  - (10) mentions []string --> (TAINTED 1x) --> [POST_NOSQL.Post]
+  - (18) [INLINE] "some username" string --> (TAINTED 1x) --> [POST_NOSQL.Post]
+  - (17) [INLINE] Username string --> (TAINTED 1x) --> [POST_NOSQL.Post]
+  - (16) [INLINE] postnotification.Creator struct{Username string} --> (TAINTED 1x)
+    --> [POST_NOSQL.Post]
+  - (15) [INLINE] Creator postnotification.Creator struct{Username string} --> (TAINTED 1x) --> [POST_NOSQL.Post]
+  - (13) [INLINE] Timestamp int64 --> (TAINTED 1x) --> [POST_NOSQL.Post]
+  - (09) [INLINE] Mentions []string --> (TAINTED 1x) --> [POST_NOSQL.Post]
+  - (07) [INLINE] Text string --> (TAINTED 1x) --> [POST_NOSQL.Post]
+  - (05) [INLINE] PostID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post, NOTIF_QUEUE.Message.PostID]
+  - (02) [INLINE] ReqID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post, NOTIF_QUEUE.Message.ReqID]
+  - (04) post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} --> (TAINTED 1x) --> [POST_NOSQL.Post]
   - (-1) [INLINE] string --> (TAINTED 1x) --> [NOTIF_QUEUE.Message.PostID]
   - (00) [INLINE] PostID string --> (TAINTED 1x) --> [NOTIF_QUEUE.Message.PostID]
   - (-1) [INLINE] string --> (TAINTED 1x) --> [NOTIF_QUEUE.Message.ReqID]
