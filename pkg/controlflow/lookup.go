@@ -28,7 +28,7 @@ func computeArrayIndex(expr ast.Expr) int {
 	return 0
 }
 
-func lookupVariableFromAstIdent(service *service.Service, block *types.Block, ident *ast.Ident) variables.Variable {
+func lookupVariableFromIdentIfExists(service *service.Service, block *types.Block, ident *ast.Ident) variables.Variable {
 	variable := block.GetLastestVariableIfExists(ident.Name)
 	if variable != nil {
 		return variable
@@ -43,8 +43,8 @@ func lookupVariableFromAstIdent(service *service.Service, block *types.Block, id
 	return nil
 }
 
-func lookupImportedPackageFromAstIdent(service *service.Service, ident *ast.Ident) *gotypes.PackageType {
-	if impt := service.GetFile().GetImportIfExists(ident.Name); impt != nil {
+func lookupImportedPackageFromIdent(service *service.Service, ident *ast.Ident) *gotypes.PackageType {
+	if impt := service.GetFile().GetImport(ident.Name); impt != nil {
 		t := &gotypes.PackageType{
 			Alias: ident.Name,
 			Name: impt.PackageName,
@@ -72,11 +72,11 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			},
 		}
 	case *ast.Ident:
-		variable = lookupVariableFromAstIdent(service, block, e)
+		variable = lookupVariableFromIdentIfExists(service, block, e)
 		if variable != nil {
 			return variable, nil
 		}
-		packageType = lookupImportedPackageFromAstIdent(service, e)
+		packageType = lookupImportedPackageFromIdent(service, e)
 		if packageType != nil {
 			return nil, packageType
 		}

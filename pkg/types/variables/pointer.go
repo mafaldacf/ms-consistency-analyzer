@@ -37,6 +37,9 @@ func (v *PointerVariable) GetDependencies() []Variable {
 }
 
 func (v *PointerVariable) GetPointerTo() Variable {
+	if v.PointerTo == nil {
+		logger.Logger.Fatalf("[VARS POINTER] unexpected nil pointer to variable in pointer variable (%s)", v.String())
+	}
 	return v.PointerTo
 }
 

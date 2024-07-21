@@ -41,6 +41,14 @@ func (app *App) String() string {
 	return string(str)
 }
 
+func (app *App) GetAllAppPackages() []*types.Package {
+	var allPkgs []*types.Package
+	for _, pkg := range app.Packages {
+		allPkgs = append(allPkgs, pkg)
+	}
+	return allPkgs
+}
+
 // this is just an helper to later print tainted dataflow in yaml files
 func (app *App) AddTaintedVariableIfNotExists(fieldName string, variable variables.Variable) {
 	if !slices.Contains(app.TaintedVariables[fieldName], variable) {

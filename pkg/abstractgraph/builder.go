@@ -182,6 +182,46 @@ func (graph *AbstractGraph) recurseBuild(app *app.App, abstractNode AbstractNode
 	}
 }
 
+func getPushMethodIfPublisherChild(rootParent AbstractNode, child *AbstractDatabaseCall) *blueprint.BackendMethod {
+	if queueHandler, ok := rootParent.(*AbstractQueueHandler); ok && !queueHandler.IsEnabled() {
+		if child.ParsedCall.Method.IsQueueRead() && queueHandler.Publisher.DbInstance == child.ParsedCall.DbInstance {
+			pushMethod, ok := queueHandler.Publisher.ParsedCall.Method.(*blueprint.BackendMethod)
+			if !ok {
+				return nil
+			}
+			return pushMethod
+		}
+	}
+	return nil
+}
+
+func (graph *AbstractGraph) referencePublisherParams(queueHandler *AbstractQueueHandler, child *AbstractDatabaseCall) bool {
+	pushMethod := getPushMethodIfPublisherChild(queueHandler, child)
+	if pushMethod == nil {
+		return false
+	}
+	queueHandler.Enable()
+	for pushParamIdx, popParamIdx := range pushMethod.MatchQueueIdentifiers() {
+		pushParam := queueHandler.Publisher.GetParam(pushParamIdx)
+		popParam := child.GetParam(popParamIdx)
+		popParam = getVariableIfPointer(popParam)
+
+		if addressVar, ok := popParam.(*variables.AddressVariable); ok {
+			popParam = addressVar.GetAddressOf()
+		} else if ptrVar, ok := popParam.(*variables.PointerVariable); ok {
+			popParam = ptrVar.GetPointerTo()
+		}
+
+		popParam.GetVariableInfo().AddReferenceWithID(pushParam, "unknown creator")
+		if pushParam.GetVariableInfo().HasReference() {
+			popParam.GetVariableInfo().GetReference().Creator = pushParam.GetVariableInfo().GetReference().Creator
+		} else {
+			popParam.GetVariableInfo().GetReference().Creator = queueHandler.Publisher.ParsedCall.CallerTypeName.GetName()
+		}
+	}
+	return true
+}
+
 // FIXME: we should actually create a new deep copy for the CFG
 // to avoid changing it if we have another abstract node that will use the same parsed method
 func (graph *AbstractGraph) referenceMethodBlockVars(parsedCall types.Call, child AbstractNode) {
@@ -195,6 +235,35 @@ func (graph *AbstractGraph) referenceMethodBlockVars(parsedCall types.Call, chil
 			if dep.GetVariableInfo().IsUnassigned() {
 				dep.GetVariableInfo().AssignID(graph.getAndIncGIndex())
 				logger.Logger.Debugf("\t\t\t[GID DEP] assigned new gid (%d) to (%s)", dep.GetId(), dep.String())
+			}
+		}
+	}
+}
+
+func (graph *AbstractGraph) referenceQueuePopMethodBlockVars(queueHandler *AbstractQueueHandler, queuePopCall *AbstractDatabaseCall) {
+	queuePushMethod := getPushMethodIfPublisherChild(queueHandler, queuePopCall)
+	if queuePushMethod == nil {
+		logger.Logger.Warnf("[GRAPH] nil queue push method for queue handler (%s) and queue pop call (%s)", queueHandler.GetName(), queuePopCall.GetName())
+		return
+	}
+
+	for pushParamIdx, popParamIdx := range queuePushMethod.MatchQueueIdentifiers() {
+		pushParam := queueHandler.Publisher.GetParam(pushParamIdx)
+		popParam := queuePopCall.GetParam(popParamIdx)
+		popParam = getVariableIfPointer(popParam)
+
+		if addressVar, ok := popParam.(*variables.AddressVariable); ok {
+			popParam = addressVar.GetAddressOf()
+		} else if ptrVar, ok := popParam.(*variables.PointerVariable); ok {
+			popParam = ptrVar.GetPointerTo()
+		}
+
+		popParam.AddReferenceWithID(pushParam, queuePopCall.GetCallerStr())
+		logger.Logger.Infof("\t\t[QUEUE POP - REF BLOCK VAR] added reference (%d) from creator (%s): (%s) -> (%s)", popParam.GetId(), queuePopCall.GetCallerStr(), popParam.GetType().GetName(), popParam.GetVariableInfo().GetName())
+		for _, dep := range variables.GetIndirectDependenciesWithCurrent(pushParam) {
+			if dep.GetVariableInfo().IsUnassigned() {
+				dep.GetVariableInfo().AssignID(graph.getAndIncGIndex())
+				logger.Logger.Debugf("\t\t\t[QUEUE POP - GID DEP] assigned new gid (%d) to (%s)", dep.GetId(), dep.String())
 			}
 		}
 	}
@@ -216,17 +285,24 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				Depth:      rootParent.GetNextDepth(),
 			}
 			rootParent.AddChild(child)
-			logger.Logger.Infof("[GRAPH] added node for abstract database call: %s", child.String())
+			logger.Logger.Infof("[GRAPH] added node for abstract database call with parent (%s): %s", child.GetCallerStr(), child.String())
+
+			// if root parent is a queue handler (e.g. workerThread) and child is queue pop call
+			if queueHandler, ok := rootParent.(*AbstractQueueHandler); ok && !queueHandler.IsEnabled() {
+				graph.referenceQueuePopMethodBlockVars(queueHandler, child)
+				queueHandler.Enable()
+			}
 
 			//graph.referenceMethodBlockVars(parsedCall, child)
 
-			/* if rootIsQueueHandler && !rootQueueHandler.HasQueueReceiver() {
+			/* if rootIsQueueHandler && !rootQueueHandler.IsEnabled() {
 				if !graph.referencePublisherParams(rootQueueHandler, child) {
 					graph.referenceServiceCallerParams(rootParent, directParent, child)
 				}
 			} else {
 				graph.referenceServiceCallerParams(rootParent, directParent, child)
 			} */
+
 		case *types.ParsedServiceCall:
 			child := &AbstractServiceCall{
 				ParsedCall: parsedCall,
@@ -239,8 +315,8 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 			}
 			rootParent.AddChild(child)
 			logger.Logger.Infof("[GRAPH] added node for abstract service call: %s", child.String())
-			
 			graph.referenceMethodBlockVars(parsedCall, child)
+
 		case *types.ParsedInternalCall:
 			tempChild := &AbstractTempInternalCall{
 				ParsedCall: parsedCall,
@@ -250,12 +326,13 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				Method:     parsedCall.Method,
 				Depth:      rootParent.GetNextDepth(),
 			}
-			//graph.referenceMethodBlockVars(parsedCall, tempChild)
-
+			
 			//graph.referenceServiceCallerParams(rootParent, directParent, tempChild)
-			tempMethod := graph.Services[tempChild.Service].GetInternalMethod(tempChild.ParsedCall.Name)
+			tempMethod := graph.Services[tempChild.Service].GetInternalOrPackageMethod(tempChild.ParsedCall.Name)
 			graph.appendAbstractEdges(rootParent, tempChild, tempMethod)
+
 			logger.Logger.Infof("[GRAPH] added temporary node for abstract service call: %s", tempChild.String())
+			graph.referenceMethodBlockVars(parsedCall, tempChild)
 		}
 	}
 }
@@ -284,36 +361,6 @@ func (graph *AbstractGraph) appendPublisherQueueHandlers(app *app.App, publisher
 			publisher.Children = append(publisher.Children, abstractHandler)
 		}
 	}
-}
-
-func (graph *AbstractGraph) referencePublisherParams(queueHandler *AbstractQueueHandler, child *AbstractDatabaseCall) bool {
-	if child.ParsedCall.Method.IsQueueRead() && queueHandler.Publisher.DbInstance == child.ParsedCall.DbInstance {
-		pushMethod, ok := queueHandler.Publisher.ParsedCall.Method.(*blueprint.BackendMethod)
-		if !ok {
-			return false
-		}
-		queueHandler.EnableQueueReceiver()
-		for pushParamIdx, popParamIdx := range pushMethod.MatchQueueIdentifiers() {
-			pushParam := queueHandler.Publisher.GetParam(pushParamIdx)
-			popParam := child.GetParam(popParamIdx)
-			popParam = getVariableIfPointer(popParam)
-
-			if addressVar, ok := popParam.(*variables.AddressVariable); ok {
-				popParam = addressVar.GetAddressOf()
-			} else if ptrVar, ok := popParam.(*variables.PointerVariable); ok {
-				popParam = ptrVar.GetPointerTo()
-			}
-
-			popParam.GetVariableInfo().AddReferenceWithID(pushParam, "unknown creator")
-			if pushParam.GetVariableInfo().HasReference() {
-				popParam.GetVariableInfo().GetReference().Creator = pushParam.GetVariableInfo().GetReference().Creator
-			} else {
-				popParam.GetVariableInfo().GetReference().Creator = queueHandler.Publisher.ParsedCall.CallerTypeName.GetName()
-			}
-		}
-		return true
-	}
-	return false
 }
 
 func getDependencies(v variables.Variable) []variables.Variable {

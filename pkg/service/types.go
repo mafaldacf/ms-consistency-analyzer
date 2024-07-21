@@ -6,8 +6,9 @@ import (
 	"strings"
 
 	"analyzer/pkg/datastores"
+	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
-	"analyzer/pkg/types/variables"
+	"analyzer/pkg/types/gotypes"
 	"analyzer/pkg/utils"
 )
 
@@ -15,10 +16,13 @@ type Service struct {
 	Name            string
 	ImplName        string
 	ConstructorName string
-	Impl            variables.Variable
+	File            *types.File
 
-	File   *types.File
+	//TODO maybe use variable instead of Type + Fields
+	//Impl   variables.Variable
+	Type   *gotypes.ServiceType
 	Fields map[string]types.Field
+
 	// the map key is the service type (e.g. StorageService in 'storageService StorageService')
 	Services  map[string]*Service
 	Databases map[string]datastores.DatabaseInstance
@@ -27,7 +31,8 @@ type Service struct {
 	ExportedMethods     map[string]*types.ParsedMethod
 	QueueHandlerMethods map[string]*types.ParsedMethod
 	InternalMethods     map[string]*types.ParsedMethod
-	Constructor         *types.ParsedMethod //TODO!!!
+	PackageMethods      map[string]*types.ParsedMethod
+	Constructor         *types.ParsedMethod
 
 	ImplementsQueue bool
 }
@@ -102,11 +107,38 @@ func (node *Service) GetQueueHandlersForDatabase(database datastores.DatabaseIns
 }
 
 func (node *Service) GetExportedMethod(name string) *types.ParsedMethod {
-	return node.ExportedMethods[name]
+	if m, ok := node.ExportedMethods[name]; ok {
+		return m
+	}
+	logger.Logger.Fatalf("[SERVICE] unknown exported method (%s) for service (%s)", name, node.GetName())
+	return nil
 }
 
 func (node *Service) GetInternalMethod(name string) *types.ParsedMethod {
-	return node.InternalMethods[name]
+	if m, ok := node.InternalMethods[name]; ok {
+		return m
+	}
+	logger.Logger.Fatalf("[SERVICE] unknown internal method (%s) for service (%s)", name, node.GetName())
+	return nil
+}
+
+func (node *Service) GetPackageMethod(name string) *types.ParsedMethod {
+	if m, ok := node.PackageMethods[name]; ok {
+		return m
+	}
+	logger.Logger.Fatalf("[SERVICE] unknown package method (%s) for service (%s)", name, node.GetName())
+	return nil
+}
+
+func (node *Service) GetInternalOrPackageMethod(name string) *types.ParsedMethod {
+	if internalMethod, ok := node.InternalMethods[name]; ok {
+		return internalMethod
+	}
+	if packageMethod, ok := node.PackageMethods[name]; ok {
+		return packageMethod
+	}
+	logger.Logger.Fatalf("[SERVICE] unknown internal or package method (%s) for service (%s)", name, node.GetName())
+	return nil
 }
 
 func (node *Service) GetQueueHandlerMethod(name string) *types.ParsedMethod {

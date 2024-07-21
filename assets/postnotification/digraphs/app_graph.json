@@ -17,11 +17,11 @@
       "type": "datastore"
     },
     {
-      "id": "post_cache Redis",
+      "id": "post_nosql MongoDB",
       "type": "datastore"
     },
     {
-      "id": "post_nosql MongoDB",
+      "id": "post_cache Redis",
       "type": "datastore"
     }
   ],
@@ -44,11 +44,11 @@
     },
     {
       "caller": "StorageService",
-      "callee": "post_cache Redis"
+      "callee": "post_nosql MongoDB"
     },
     {
       "caller": "StorageService",
-      "callee": "post_nosql MongoDB"
+      "callee": "post_cache Redis"
     }
   ]
 }

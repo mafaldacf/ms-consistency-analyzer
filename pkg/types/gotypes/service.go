@@ -7,10 +7,11 @@ import (
 )
 
 type ServiceType struct {
-	Type       `json:"-"`
-	Package    string
-	Name       string
-	Methods    []string
+	Type     `json:"-"`
+	Package  string
+	Name     string
+	ImplName string
+	Methods  []string
 }
 
 // ------------
@@ -21,6 +22,22 @@ func (t *ServiceType) IsSameType(other Type) bool {
 	_, ok := other.(*ServiceType)
 	return ok
 }
+func (t *ServiceType) IsCurrentServiceType(other Type) bool {
+	ptrType, ok := other.(*PointerType)
+	if ok {
+		other = ptrType.PointerTo
+	}
+	otherUserType, ok := other.(*UserType)
+	if !ok {
+		return false
+	}
+	_, ok = otherUserType.UserType.(*StructType)
+	if !ok {
+		return false
+	}
+	return t.Package == otherUserType.Package && (otherUserType.Name == t.Name || otherUserType.Name == t.ImplName)
+}
+
 func (t *ServiceType) String() string {
 	return fmt.Sprintf("%s.%s", packageAlias(t.Package), t.Name)
 }

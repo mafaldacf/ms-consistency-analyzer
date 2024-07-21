@@ -28,17 +28,16 @@ func main() {
 		return
 	}
 	app.ParsePackages(servicesInfo)
-	//app.Dump()
 	app.RegisterDatabaseInstances(databaseInstances)
 	app.RegisterServiceNodes(servicesInfo)
 	app.BuildServiceNodes()
+	app.PreDump()
 
 	fmt.Println()
 	fmt.Println(" -------------------------------------------------------------------------------------------------------------- ")
 	fmt.Println(" -------------------------------------------- BUILD ABSTRACT GRAPH -------------------------------------------- ")
 	fmt.Println(" -------------------------------------------------------------------------------------------------------------- ")
 	fmt.Println()
-	app.Dump()
 
 	abstractGraph := abstractgraph.Build(app, frontends)
 

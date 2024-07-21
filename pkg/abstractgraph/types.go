@@ -238,7 +238,7 @@ type AbstractQueueHandler struct {
 	AbstractServiceCall `json:"handler"`
 	DbInstance          datastores.DatabaseInstance `json:"datastore"`
 	Publisher           *AbstractDatabaseCall       `json:"-"`
-	Receiver            bool                        `json:"-"`
+	Enabled             bool                        `json:"-"`
 }
 
 func (call *AbstractQueueHandler) MarshalJSON() ([]byte, error) {
@@ -251,12 +251,12 @@ func (call *AbstractQueueHandler) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func (call *AbstractQueueHandler) HasQueueReceiver() bool {
-	return call.Receiver
+func (call *AbstractQueueHandler) IsEnabled() bool {
+	return call.Enabled
 }
 
-func (call *AbstractQueueHandler) EnableQueueReceiver() {
-	call.Receiver = true
+func (call *AbstractQueueHandler) Enable() {
+	call.Enabled = true
 }
 
 type AbstractDatabaseCall struct {
@@ -319,7 +319,6 @@ func (call *AbstractDatabaseCall) GetParam(index int) variables.Variable {
 func (call *AbstractDatabaseCall) GetReturns() []variables.Variable {
 	return call.Returns
 }
-
 
 func (call *AbstractDatabaseCall) GetReturn(index int) variables.Variable {
 	if index > 0 && index < len(call.Returns) {

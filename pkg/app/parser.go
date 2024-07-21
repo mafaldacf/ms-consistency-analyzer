@@ -9,6 +9,7 @@ import (
 
 	"golang.org/x/tools/go/packages"
 
+	"analyzer/pkg/controlflow"
 	"analyzer/pkg/frameworks"
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
@@ -169,6 +170,12 @@ func (app *App) ParsePackages(servicesInfo []*frameworks.ServiceInfo) {
 		app.parsePackage(pkg, servicesPkgPath, allGoPackages)
 	}
 
+	for _, pkg := range app.Packages {
+		for _, m := range pkg.GetAllParsedMethods() {
+			controlflow.GenerateMethodCFG(m)
+		}
+	}
+
 	app.dumpYamlPackages()
 }
 
@@ -266,12 +273,12 @@ func (app *App) parsePackage(pkg *types.Package, servicesPkgPath map[string]stri
 
 					if recvTypeIdent != nil {
 						if structTypeFuncs, ok := typeNameToFuncs[recvTypeIdent.Name]; ok {
-							saveMethodForFuncDecl(pkg, file, funcDecl, structTypeFuncs)
+							createAndSaveMethodForFuncDecl(pkg, file, funcDecl, structTypeFuncs)
 						} else {
 							logger.Logger.Fatalf("[APP PACKAGE PARSER] cannot find func for type name (%s)", recvTypeIdent.Name)
 						}
 					} else {
-						saveMethodForFuncDecl(pkg, file, funcDecl, funcs)
+						createAndSaveMethodForFuncDecl(pkg, file, funcDecl, funcs)
 					}
 				}
 				return true
@@ -281,7 +288,7 @@ func (app *App) parsePackage(pkg *types.Package, servicesPkgPath map[string]stri
 	logger.Logger.Tracef("[APP PACKAGE PARSER] added new package %s", pkg.Name)
 }
 
-func saveMethodForFuncDecl(pkg *types.Package, file *types.File, funcDecl *ast.FuncDecl, funcGoTypes []*golangtypes.Func) {
+func createAndSaveMethodForFuncDecl(pkg *types.Package, file *types.File, funcDecl *ast.FuncDecl, funcGoTypes []*golangtypes.Func) {
 	for _, f := range funcGoTypes {
 		if f.Name() == funcDecl.Name.Name {
 			params, returns, receiver := lookup.ComputeFuncDeclFields(file, funcDecl)
@@ -294,8 +301,8 @@ func saveMethodForFuncDecl(pkg *types.Package, file *types.File, funcDecl *ast.F
 				Returns:  returns,
 				Receiver: receiver,
 			}
-			pkg.AddParsedMethod(parsedMethod)
-			logger.Logger.Warnf("[APP] added parsed method (%s) to package (%s)", parsedMethod.Name, pkg.Name)
+			pkg.RegisterMethodToParse(parsedMethod)
+			logger.Logger.Warnf("[APP] registered method (%s) to be parsed in package (%s)", parsedMethod.Name, pkg.Name)
 		}
 	}
 }

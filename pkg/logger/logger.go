@@ -83,7 +83,7 @@ func (f *CustomFormatter) Format(entry *logrus.Entry) ([]byte, error) {
 
 	// calculate padding to align the level text
 	fileLine := fmt.Sprintf("%s:%d", file, line)
-	padding := 40 - len(fileLine)
+	padding := 35 - len(fileLine)
 	if padding < 1 {
 		padding = 1
 	}

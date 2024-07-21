@@ -11,6 +11,7 @@ import (
 	"analyzer/pkg/lookup"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
+	"analyzer/pkg/types/gotypes"
 )
 
 func (app *App) RegisterDatabaseInstances(instances []datastores.DatabaseInstance) {
@@ -24,7 +25,7 @@ func (app *App) RegisterServiceNodes(servicesInfo []*frameworks.ServiceInfo) {
 	app.createServiceNodes(servicesInfo)
 	app.matchServiceEdges()
 	app.buildServiceInfo()
-	app.loadFieldsFromConstructor(servicesInfo)
+	app.loadFieldsFromServicesConstructor(servicesInfo)
 }
 
 func (app *App) createServiceNodes(servicesInfo []*frameworks.ServiceInfo) {
@@ -43,7 +44,12 @@ func (app *App) createServiceNodes(servicesInfo []*frameworks.ServiceInfo) {
 			ExportedMethods:     make(map[string]*types.ParsedMethod),
 			QueueHandlerMethods: make(map[string]*types.ParsedMethod),
 			InternalMethods:     make(map[string]*types.ParsedMethod),
+			PackageMethods:      make(map[string]*types.ParsedMethod),
 			ConstructorName:     info.ConstructorName,
+			Type: &gotypes.ServiceType{
+				Package: pkg.GetName(),
+				Name:    info.Name,
+			},
 		}
 
 		// add entries to be later parsed
@@ -77,42 +83,44 @@ func (app *App) buildServiceInfo() {
 }
 
 func (app *App) BuildServiceNodes() {
-	// parse service methods
+	// 1. attach all methods to corresponding services
 	for _, node := range app.Services {
-		node.ParseMethods()
-	}
-	// keep this order
-	// parse service methods body
-	for _, node := range app.Services {
-		fmt.Printf("\n################################################### %s ###################################################\n", node.Name)
-
-		var parser = func(node *service.Service, methods map[string]*types.ParsedMethod, visibility string) {
-			for _, method := range methods {
-				fmt.Println("----------------------------------------------------------------------------------------------------------------------------------")
-				logger.Logger.Infof("[%s] %s", strings.ToUpper(visibility), method)
-				fmt.Println("----------------------------------------------------------------------------------------------------------------------------------")
-				controlflow.GenerateMethodCFG(node, method)
-				controlflow.ParseServiceMethodCFG(node, method)
-				fmt.Println()
-			}
+		serviceImplementedMethods := node.AttachParsedMethods()
+		for _, method := range serviceImplementedMethods {
+			controlflow.InitServiceReceiverFieldsForParsedCFG(node, method)
 		}
+	}
+
+	var parser = func(node *service.Service, methods map[string]*types.ParsedMethod, visibility string) {
+		for _, method := range methods {
+			fmt.Println("----------------------------------------------------------------------------------------------------------------------------------")
+			fmt.Println("----------------------------------------------------------------------------------------------------------------------------------")
+			logger.Logger.Infof("[PARSER - %s] [%s] %s", strings.ToUpper(visibility), node.GetName(), method)
+			fmt.Println("----------------------------------------------------------------------------------------------------------------------------------")
+			controlflow.ParseServiceMethodCFG(node, method)
+			fmt.Println()
+		}
+	}
+
+	// 2. parse all attached methods for each service
+	for _, node := range app.Services {
 		parser(node, node.ExportedMethods, "exposed")
-		parser(node, node.QueueHandlerMethods, "worker")
-		// internal already contains workers
-		parser(node, node.InternalMethods, "internal")
+		parser(node, node.InternalMethods, "internal") // internal already contains workers
+		parser(node, node.PackageMethods, "package")
 	}
 }
 
-func (app *App) loadFieldsFromConstructor(servicesInfo []*frameworks.ServiceInfo) {
+func (app *App) loadFieldsFromServicesConstructor(servicesInfo []*frameworks.ServiceInfo) {
+	logger.Logger.Infof("[APP] loading fields for services constructors")
 	for _, info := range servicesInfo {
-		node := app.Services[info.Name]
+		service := app.Services[info.Name]
 		paramsDBs := make(map[string]datastores.DatabaseInstance, 0)
 		for param, instanceName := range info.ConstructorDBs {
 			dbInstance := app.Databases[instanceName]
 			paramsDBs[param] = dbInstance
-			node.Databases[dbInstance.GetName()] = dbInstance
+			service.Databases[dbInstance.GetName()] = dbInstance
 		}
-		node.ParseConstructorAndLoadImplFields(paramsDBs)
-		logger.Logger.Tracef("[APP] registered service node %s with %d service(s) and %d database(s)", node.Name, len(node.Services), len(node.Databases))
+		service.AttachDatastoreInstances(paramsDBs)
+		logger.Logger.Tracef("[APP] registered service node %s with %d service(s) and %d database(s)", service.Name, len(service.Services), len(service.Databases))
 	}
 }

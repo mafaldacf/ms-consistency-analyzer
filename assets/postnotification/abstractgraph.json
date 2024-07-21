@@ -82,24 +82,24 @@
                 "variable": {
                   "name": "Creator",
                   "type": "postnotification.Creator struct{Username string}",
-                  "id": 5
+                  "id": 15
                 },
                 "underlying_field": {
                   "variable": {
                     "type": "postnotification.Creator struct{Username string}",
-                    "id": 6
+                    "id": 16
                   },
                   "struct_fields": {
                     "Username": {
                       "variable": {
                         "name": "Username",
                         "type": "string",
-                        "id": 7
+                        "id": 17
                       },
                       "underlying_field": {
                         "variable": {
                           "type": "\"some username\" string",
-                          "id": 8
+                          "id": 18
                         }
                       }
                     }
@@ -110,25 +110,25 @@
                 "variable": {
                   "name": "Mentions",
                   "type": "[]string",
-                  "id": 13
+                  "id": 9
                 },
                 "underlying_field": {
                   "variable": {
                     "name": "mentions",
                     "type": "[]string",
-                    "id": 14
+                    "id": 10
                   },
                   "array_elems": [
                     {
                       "variable": {
                         "type": "\"alice\" string",
-                        "id": 15
+                        "id": 11
                       }
                     },
                     {
                       "variable": {
                         "type": "\"bob\" string",
-                        "id": 16
+                        "id": 12
                       }
                     }
                   ]
@@ -138,13 +138,13 @@
                 "variable": {
                   "name": "PostID",
                   "type": "int64",
-                  "id": 9
+                  "id": 5
                 },
                 "underlying_field": {
                   "variable": {
                     "name": "postID",
                     "type": "int64",
-                    "id": 10
+                    "id": 6
                   }
                 }
               },
@@ -166,13 +166,13 @@
                 "variable": {
                   "name": "Text",
                   "type": "string",
-                  "id": 11
+                  "id": 7
                 },
                 "underlying_field": {
                   "variable": {
                     "name": "text",
                     "type": "string",
-                    "id": 12
+                    "id": 8
                   }
                 }
               },
@@ -180,13 +180,13 @@
                 "variable": {
                   "name": "Timestamp",
                   "type": "int64",
-                  "id": 17
+                  "id": 13
                 },
                 "underlying_field": {
                   "variable": {
                     "name": "timestamp",
                     "type": "int64",
-                    "id": 18
+                    "id": 14
                   }
                 }
               }
@@ -217,31 +217,32 @@
             "variable": {
               "name": "message",
               "type": "postnotification.Message struct{ReqID string, PostID string, Timestamp string}",
-              "id": -1
+              "id": 19
             },
             "struct_fields": {
               "PostID": {
                 "variable": {
                   "name": "PostID",
-                  "type": "string"
+                  "type": "string",
+                  "id": 22
                 },
                 "underlying_field": {
                   "variable": {
                     "type": "string",
-                    "id": -1
+                    "id": 23
                   },
                   "func_composition": [
                     {
                       "variable": {
                         "name": "PostID",
                         "type": "int64",
-                        "id": 9
+                        "id": 5
                       },
                       "underlying_field": {
                         "variable": {
                           "name": "postID",
                           "type": "int64",
-                          "id": 10
+                          "id": 6
                         }
                       }
                     }
@@ -251,12 +252,13 @@
               "ReqID": {
                 "variable": {
                   "name": "ReqID",
-                  "type": "string"
+                  "type": "string",
+                  "id": 20
                 },
                 "underlying_field": {
                   "variable": {
                     "type": "string",
-                    "id": -1
+                    "id": 21
                   },
                   "func_composition": [
                     {
@@ -310,7 +312,7 @@
                     "variable": {
                       "name": "ctx",
                       "type": "context.Context",
-                      "id": -1
+                      "id": 31
                     }
                   },
                   {
@@ -322,7 +324,12 @@
                       "variable": {
                         "name": "message",
                         "type": "map[string]interface{}",
-                        "id": -1
+                        "id": 34,
+                        "ref": {
+                          "name": "message",
+                          "creator": "NotifyService",
+                          "id": 19
+                        }
                       },
                       "key_values": null
                     }
@@ -361,7 +368,7 @@
                           "ref": {
                             "name": "ctx",
                             "creator": "NotifyService",
-                            "id": 19
+                            "id": -1
                           }
                         }
                       },
@@ -397,27 +404,40 @@
                     "variable": {
                       "name": "ctx",
                       "type": "context.Context",
-                      "id": 19
+                      "id": -1,
+                      "ref": {
+                        "name": "ctx",
+                        "creator": "NotifyService",
+                        "id": 31
+                      }
                     }
                   },
                   {
                     "variable": {
                       "name": "reqID",
                       "type": "int64",
-                      "id": 20
+                      "id": 25
                     },
                     "func_composition": [
                       {
                         "variable": {
                           "name": "ReqID",
                           "type": "string",
-                          "id": 21
+                          "ref": {
+                            "name": "ReqID",
+                            "creator": "NotifyService",
+                            "id": 33
+                          }
                         },
                         "underlying_field": {
                           "variable": {
                             "name": "ReqID",
                             "type": "string",
-                            "id": 22
+                            "ref": {
+                              "name": "ReqID",
+                              "creator": "NotifyService",
+                              "id": 33
+                            }
                           }
                         }
                       }
@@ -427,20 +447,28 @@
                     "variable": {
                       "name": "postID",
                       "type": "int64",
-                      "id": 23
+                      "id": 28
                     },
                     "func_composition": [
                       {
                         "variable": {
                           "name": "PostID",
                           "type": "string",
-                          "id": 24
+                          "ref": {
+                            "name": "PostID",
+                            "creator": "NotifyService",
+                            "id": 35
+                          }
                         },
                         "underlying_field": {
                           "variable": {
                             "name": "PostID",
                             "type": "string",
-                            "id": 25
+                            "ref": {
+                              "name": "PostID",
+                              "creator": "NotifyService",
+                              "id": 35
+                            }
                           }
                         }
                       }

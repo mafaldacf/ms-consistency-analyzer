@@ -6,6 +6,7 @@ import (
 	"golang.org/x/tools/go/cfg"
 
 	"analyzer/pkg/logger"
+	"analyzer/pkg/types/gotypes"
 )
 
 type CFG struct {
@@ -14,6 +15,8 @@ type CFG struct {
 	Package      string
 	FileHash     string
 	FullMethod   string
+	HasReceiver  bool
+	ReceiverType gotypes.Type
 }
 
 func InitParsedCFG(cfg *cfg.CFG, fullMethod string) *CFG {

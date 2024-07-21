@@ -23,6 +23,13 @@ func (app *App) Dump() {
 	app.dumpYamlCalls()
 }
 
+func (app *App) PreDump() {
+	app.dumpYamlPackages()
+	app.dumpYamlServices()
+	app.dumpYamlControlflow()
+	app.dumpYamlCalls()
+}
+
 func (app *App) dumpDiGraph() {
 	type node struct {
 		Id   string `json:"id"`
@@ -186,7 +193,7 @@ func (app *App) dumpYamlControlflow() {
 		data := service.Yaml()
 		utils.DumpToYamlFile(data, app.Name, fmt.Sprintf("controlflow/services/%s", strings.ToLower(name)))
 	}
-
+	
 	for _, p := range app.Packages {
 		pkgData := make(map[string]interface{})
 		for _, m := range p.ParsedMethods {

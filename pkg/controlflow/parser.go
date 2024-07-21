@@ -298,7 +298,7 @@ func parseAndSaveCall(service *service.Service, method *types.ParsedMethod, bloc
 			ident := idents[i]
 			if pointerVar, ok := variable.(*variables.PointerVariable); ok {
 				//logger.Logger.Debugf("[CFG CALLS] (1) got pointer var (to %s): %s", utils.GetType(pointerVar.PointerTo.GetType()), pointerVar.String())
-				variable = pointerVar.PointerTo
+				variable = pointerVar.GetPointerTo()
 			}
 			
 			if _, ok := variable.GetType().(*gotypes.UserType); ok {
@@ -318,6 +318,7 @@ func parseAndSaveCall(service *service.Service, method *types.ParsedMethod, bloc
 							parsedMethod := pkg.GetParsedMethodIfExists(methodName, leftVariableTypeName)
 							
 							if parsedMethod != nil {
+								logger.Logger.Warnf("[CFG CALLS] [%s] !!!!!!!!!!!! GOT PARSED METHOD (%s): %v", service.GetName(), methodName, parsedMethod.GetParsedCfg())
 								//logger.Logger.Debugf("[CFG CALLS] got parsed method %s", parsedMethod.String())
 								parsedCall = &types.ParsedInternalCall{
 									ParsedCall: types.ParsedCall{
@@ -330,7 +331,7 @@ func parseAndSaveCall(service *service.Service, method *types.ParsedMethod, bloc
 								saveParsedFuncCallParams(service, method, block, parsedCall, callExpr.Args)
 								method.Calls = append(method.Calls, parsedCall)
 								variable = computeInternalFuncCallReturns(service, callExpr, parsedCall)
-								logger.Logger.Infof("[CFG CALLS] found internal call (%s) in package (%s) -- returned tuple: %s", parsedCall.GetName(), pkg.GetName(), variable.String())
+								logger.Logger.Infof("[CFG CALLS] [%s] found internal call (%s) in package (%s) -- returned tuple: %s", service.GetName(), parsedCall.GetName(), pkg.GetName(), variable.String())
 							} else {
 								deps := getFuncCallDeps(service, method, block, callExpr)
 								tupleVar := computeExternalFuncCallReturns(service, callExpr, deps)
@@ -382,7 +383,7 @@ func parseAndSaveCall(service *service.Service, method *types.ParsedMethod, bloc
 			// 2. get the target service service for the type
 			// 3. add the targeted method of the other service for the current call expression
 			targetService := service.Services[serviceVar.GetServiceName()]
-			targetMethod := targetService.ExportedMethods[funcIdent.Name]
+			targetMethod := targetService.GetExportedMethod(funcIdent.Name)
 			parsedCall := &types.ParsedServiceCall{
 				ParsedCall: types.ParsedCall{
 					Ast:     callExpr,
@@ -397,7 +398,7 @@ func parseAndSaveCall(service *service.Service, method *types.ParsedMethod, bloc
 			saveParsedFuncCallParams(service, method, block, parsedCall, callExpr.Args)
 			tupleVar := computeInternalFuncCallReturns(service, callExpr, parsedCall)
 			method.Calls = append(method.Calls, parsedCall)
-			logger.Logger.Infof("[CFG CALLS] found service call (%s) -- returned tuple: %s", parsedCall.Name, tupleVar.String())
+			logger.Logger.Infof("[CFG CALLS] [%s] found service call (%s) -- returned tuple: %s", service.GetName(), parsedCall.Name, tupleVar.String())
 			return tupleVar
 		}
 		if blueprintBackendVar, ok := variable.(*blueprint.BlueprintBackendVariable); ok {

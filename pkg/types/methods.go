@@ -39,6 +39,15 @@ type ParsedMethod struct {
 func (f *ParsedMethod) GetAst() *ast.FuncDecl {
 	return f.Ast
 }
+func (f *ParsedMethod) AttachService(service string) {
+	f.Service = service
+}
+func (f *ParsedMethod) HasAttachedService() bool {
+	return f.Service != ""
+}
+func (f *ParsedMethod) GetReceiverIfExists() *MethodField {
+	return f.Receiver
+}
 func (f *ParsedMethod) GetBody() *ast.BlockStmt {
 	return f.Ast.Body
 }

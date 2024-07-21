@@ -5,6 +5,7 @@ import (
 	"slices"
 	"sort"
 
+	"analyzer/pkg/logger"
 	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
 )
@@ -14,6 +15,7 @@ import (
 // --------------
 
 func (f *ParsedMethod) Yaml() interface{} {
+	logger.Logger.Debugf("[YAML] dumping yaml data for method (%s)", f.Name)
 	if f.ParsedCfg != nil {
 		return f.ParsedCfg.Yaml()
 	}
@@ -21,8 +23,10 @@ func (f *ParsedMethod) Yaml() interface{} {
 }
 
 func (f *ParsedMethod) YamlCalls() []string {
+	logger.Logger.Debugf("[YAML CALLS] dumping yaml calls for method (%s)", f.Name)
 	var lst []string
 	for _, c := range f.Calls {
+		logger.Logger.Debugf("\t\t\t - call: %s, method: %v", c.GetName(), c.GetMethod())
 		lst = append(lst, c.GetMethod().LongString())
 	}
 	return lst

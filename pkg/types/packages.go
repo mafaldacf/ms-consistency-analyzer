@@ -1,6 +1,7 @@
 package types
 
 import (
+	"fmt"
 	"go/ast"
 	golangtypes "go/types"
 	"slices"
@@ -83,13 +84,20 @@ func (p *Package) GetDeclaredVariableIfExists(name string) variables.Variable {
 	return nil
 }
 
-func (p *Package) AddParsedMethod(method *ParsedMethod) {
+func (p *Package) RegisterMethodToParse(method *ParsedMethod) {
 	p.ParsedMethods = append(p.ParsedMethods, method)
+}
+
+func (p *Package) GetAllParsedMethods() []*ParsedMethod{
+	return p.ParsedMethods
 }
 
 func (p *Package) GetParsedMethod(methodName string, recvTypeName string) *ParsedMethod {
 	for _, m := range p.ParsedMethods {
 		if m.Name == methodName && (m.Receiver == nil || m.Receiver.GetType() == nil || m.Receiver.GetType().GetName() == recvTypeName) {
+			if m.ParsedCfg == nil {
+				logger.Logger.Warnf("[TYPES PACKAGES] encountered nil cfg - method (%s) is not yet parsed", methodName)
+			}
 			return m
 		}
 	}
@@ -102,6 +110,12 @@ func (p *Package) GetParsedMethodIfExists(methodName string, recvTypeName string
 	// if method is not found the it must be from an external package
 	for _, m := range p.ParsedMethods {
 		if m.Name == methodName && (m.Receiver == nil || m.Receiver.GetType() == nil || m.Receiver.GetType().GetName() == recvTypeName) {
+			lst := ""
+			for _, m := range p.ParsedMethods {
+				lst += fmt.Sprintf("\t\t\t - %s", m)
+			}
+
+			logger.Logger.Debugf("[TYPES PACKAGE] found parsed method for name (%s) - parsed methods list in package:\n%s", methodName, lst)
 			return m
 		}
 	}

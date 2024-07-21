@@ -1,6 +1,7 @@
 package types
 
 import (
+	"fmt"
 	"go/ast"
 
 	"analyzer/pkg/logger"
@@ -18,7 +19,11 @@ func (f *File) GetImport(alias string) *Import {
 	if impt, ok := f.Imports[alias]; ok {
 		return impt
 	}
-	logger.Logger.Fatalf("unknown import alias (%s) in file (%s)", alias, f.String())
+	lst := ""
+	for k, impt := range f.Imports {
+		lst += fmt.Sprintf("\t\t\t\t - %s: %s\n", k, impt.ImportPath)
+	}
+	logger.Logger.Fatalf("[FILES] unknown import alias (%s) in file (%s) with import list:\n%s", alias, f.String(), lst)
 	return nil
 }
 

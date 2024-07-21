@@ -12,7 +12,7 @@ import (
 )
 
 func CreateVariableFromType(name string, t gotypes.Type) variables.Variable {
-	logger.Logger.Debugf("CREATE VARIABLE NAMED (%s) FROM TYPE (%s): %v", name, utils.GetType(t), t)
+	logger.Logger.Debugf("[LOOKUP] created variable named (%s) from type (%s): %v", name, utils.GetType(t), t)
 	info := &variables.VariableInfo{
 		Name: name,
 		Type: t,

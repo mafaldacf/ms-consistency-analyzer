@@ -60,6 +60,13 @@ func (block *Block) GetVariables() []variables.Variable {
 	return block.Vars
 }
 
+func (block *Block) GetFirstVariable() variables.Variable {
+	if len(block.Vars) == 0 {
+		logger.Logger.Fatalf("[BLOCKS] unexpected empty CFG block (%v)", block)
+	}
+	return block.Vars[0]
+}
+
 func (block *Block) IsReceiverVariable(v variables.Variable) bool {
 	if len(block.Vars) > 0 {
 		return block.Vars[0] == v
