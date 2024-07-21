@@ -62,7 +62,7 @@ func (v *SliceVariable) LongString() string {
 }
 
 func (v *SliceVariable) DeepCopy() Variable {
-	copy := &SliceVariable{VariableInfo: v.VariableInfo}
+	copy := &SliceVariable{VariableInfo: v.VariableInfo.DeepCopy()}
 	for _, v := range v.Elements {
 		copy.Elements = append(copy.Elements, v.DeepCopy())
 	}

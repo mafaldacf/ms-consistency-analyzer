@@ -45,7 +45,7 @@ func (v *CompositeVariable) GetDependencies() []Variable {
 
 func (v *CompositeVariable) DeepCopy() Variable {
 	copy := &CompositeVariable{
-		VariableInfo: v.VariableInfo,
+		VariableInfo: v.VariableInfo.DeepCopy(),
 	}
 	for _, p := range v.Params {
 		copy.Params = append(copy.Params, p.DeepCopy())

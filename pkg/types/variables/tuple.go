@@ -62,7 +62,7 @@ func (v *TupleVariable) LongString() string {
 }
 
 func (v *TupleVariable) DeepCopy() Variable {
-	copy := &TupleVariable{}
+	copy := &TupleVariable{VariableInfo: v.VariableInfo.DeepCopy()}
 	for _, v := range v.Variables {
 		copy.Variables = append(copy.Variables, v.DeepCopy())
 	}

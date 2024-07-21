@@ -74,7 +74,7 @@ func (v *StructVariable) GetDependencies() []Variable {
 
 func (v *StructVariable) DeepCopy() Variable {
 	copy := &StructVariable{
-		VariableInfo: v.VariableInfo,
+		VariableInfo: v.VariableInfo.DeepCopy(),
 		Fields:       make(map[string]Variable),
 	}
 	for n, p := range v.Fields {

@@ -32,7 +32,7 @@ func (v *ChanVariable) AddReferenceWithID(target Variable, creator string) {
 }
 func (v *ChanVariable) DeepCopy() Variable {
 	copy := &ChanVariable{
-		VariableInfo: v.VariableInfo,
+		VariableInfo: v.VariableInfo.DeepCopy(),
 	}
 	return copy
 }

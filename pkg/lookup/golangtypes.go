@@ -66,7 +66,7 @@ func FindDefTypesAndAddToPackage(pkg *types.Package, goType golangtypes.Type, vi
 	objectPackage := namedGoType.Obj().Pkg()
 	objectPackagePath := ""
 
-	// built-in (e.g. error, println) golang types have no package
+	// built-in (e.g. error, make, println) golang types have no package
 	if objectPackage != nil { 
 		objectPackagePath = objectPackage.Path()
 	}

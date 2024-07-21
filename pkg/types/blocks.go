@@ -101,12 +101,24 @@ func (block *Block) AddVariables(variables []variables.Variable) {
 }
 
 func (block *Block) AddVariable(variable variables.Variable) {
-	if len(block.Vars) == 0 || block.Vars[len(block.Vars)-1] != variable {
+	if variable.GetVariableInfo().Id == variables.VARIABLE_INLINE_ID {
+		logger.Logger.Warnf("[BLOCK] skipping addition of new inline variable (%s) to block", variable.String())
+		return
+	}
+
+	/* if len(block.Vars) == 0 || block.Vars[len(block.Vars)-1] != variable {
 		logger.Logger.Tracef("[BLOCK] added %s (%s) to block", variable.String(), utils.GetType(variable))
 		block.Vars = append(block.Vars, variable)
 	} else {
-		logger.Logger.Fatalf("[BLOCK] %s (%s) already exists in block", variable.String(), utils.GetType(variable))
-	}
+		lst := ""
+		for _, v := range block.Vars {
+			lst += fmt.Sprintf("\t\t\t - %s\n", v.String())
+		}
+		logger.Logger.Fatalf("[BLOCK] %s (%s) already exists in block with vars list:\n%s", variable.String(), utils.GetType(variable), lst)
+	} */
+
+	logger.Logger.Debugf("[BLOCK] added %s (%s) to block", variable.String(), utils.GetType(variable))
+	block.Vars = append(block.Vars, variable)
 }
 
 func (block *Block) GetPosition() token.Pos {

@@ -1,6 +1,9 @@
 package variables
 
-import "analyzer/pkg/types/gotypes"
+import (
+	"analyzer/pkg/logger"
+	"analyzer/pkg/types/gotypes"
+)
 
 type ArrayVariable struct {
 	Variable     `json:"-"`
@@ -31,6 +34,10 @@ func (v *ArrayVariable) GetType() gotypes.Type {
 	return v.VariableInfo.GetType()
 }
 
+func (v *ArrayVariable) GetArrayType() *gotypes.ArrayType {
+	return v.VariableInfo.GetType().(*gotypes.ArrayType)
+}
+
 func (v *ArrayVariable) GetVariableInfo() *VariableInfo {
 	return v.VariableInfo
 }
@@ -43,13 +50,28 @@ func (v *ArrayVariable) AddElements(element []Variable) {
 	v.Elements = append(v.Elements, element...)
 }
 
+func (v *ArrayVariable) GetElementAt(index int) Variable {
+	if index > len(v.Elements) - 1 {
+		logger.Logger.Fatalf("[VARS ARRAY] element at index (%d) does not exist in array variable with len (%d): %s", index, len(v.Elements), v.String())
+	}
+	return v.Elements[index]
+}
+
+func (v *ArrayVariable) GetElementAtIfExists(index int) Variable {
+	if index > len(v.Elements) - 1 {
+		logger.Logger.Warnf("[VARS ARRAY] element at index (%d) does not exist in array variable with len (%d): %s", index, len(v.Elements), v.String())
+		return nil
+	}
+	return v.Elements[index]
+}
+
 func (v *ArrayVariable) GetDependencies() []Variable {
 	return v.Elements
 }
 
 func (v *ArrayVariable) DeepCopy() Variable {
 	copy := &ArrayVariable{
-		VariableInfo: v.VariableInfo,
+		VariableInfo: v.VariableInfo.DeepCopy(),
 	}
 	for _, v := range v.Elements {
 		copy.Elements = append(copy.Elements, v.DeepCopy())

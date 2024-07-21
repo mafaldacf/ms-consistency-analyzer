@@ -1,0 +1,82 @@
+? (*price.PriceServiceImpl).CreateNewPriceConfig(ctx context.Context, pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}) error:
+ block 0 (Body):
+  - (-1) [INLINE] priceDB NoSQLDatabase
+  - (-1) p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase})
+  - (01) ctx context.Context
+  - (03) [INLINE] ID string
+  - (02) [INLINE] ID string
+  - (-1) pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
+  - (-1) coll NoSQLCollection {database = "priceConfig", collection = "priceConfig"}
+  - (-1) err .error
+(*price.PriceServiceImpl).DeletePriceConfig(ctx context.Context, id string) error:
+  block 0 (Body):
+  - (-1) [INLINE] priceDB NoSQLDatabase
+  - (-1) p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) id string
+  - (-1) coll NoSQLCollection {database = "priceConfig", collection = "priceConfig"}
+  - (-1) err .error
+(*price.PriceServiceImpl).FindByID(ctx context.Context, id string) (price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}, error):
+ block 0 (Body):
+  - (-1) [INLINE] priceDB NoSQLDatabase
+  - (-1) p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase})
+  - (01) [INLINE] ref <ctx context.Context> @ PriceService
+  - (-1) ctx context.Context
+  - (03) [INLINE] ID string
+  - (02) [INLINE] ref <ID string> @ PriceService
+  - (-1) id string
+  - (-1) coll NoSQLCollection {database = "priceConfig", collection = "priceConfig"}
+  - (-1) err .error
+(*price.PriceServiceImpl).FindByRouteIDAndTrainType(ctx context.Context, routeID string, trainType string) (price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}, error):
+ block 0 (Body):
+  - (-1) [INLINE] priceDB NoSQLDatabase
+  - (-1) p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase})
+  - (04) [INLINE] ref <ctx context.Context> @ PriceService
+  - (-1) ctx context.Context
+  - (07) [INLINE] ":" string
+  - (06) [INLINE] rt string
+  - (05) [INLINE] ref <routeid []string> @ PriceService
+  - (-1) routeID string
+  - (10) [INLINE] ":" string
+  - (09) [INLINE] rt string
+  - (08) [INLINE] ref <trainType []string> @ PriceService
+  - (-1) trainType string
+  - (-1) coll NoSQLCollection {database = "priceConfig", collection = "priceConfig"}
+  - (-1) err .error
+(*price.PriceServiceImpl).FindByRouteIDsAndTrainTypes(ctx context.Context, rtsAndTypes []string) (map[string]price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}, error):
+ block 0 (Body):
+  - (-1) [INLINE] priceDB NoSQLDatabase
+  - (-1) p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase})
+  - (04) ctx context.Context
+  - (-1) rtsAndTypes []string
+  - (-1) res map[string]price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
+  - (-1) rt string
+  - (00) [INLINE] ":" string
+  - (-1) pieces []string
+  - (07) [INLINE] ":" string
+  - (06) [INLINE] rt string
+  - (05) routeid []string
+  - (10) [INLINE] ":" string
+  - (09) [INLINE] rt string
+  - (08) trainType []string
+  - (-1) pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
+  - (-1) _ .error
+(*price.PriceServiceImpl).GetAllPriceConfig(ctx context.Context) ([]price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}, error):
+ block 0 (Body):
+  - (-1) [INLINE] priceDB NoSQLDatabase
+  - (-1) p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) coll NoSQLCollection {database = "priceConfig", collection = "priceConfig"}
+  - (-1) err .error
+(*price.PriceServiceImpl).UpdatePriceConfig(ctx context.Context, pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}) (bool, error):
+ block 0 (Body):
+  - (-1) [INLINE] priceDB NoSQLDatabase
+  - (-1) p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
+  - (-1) coll NoSQLCollection {database = "priceConfig", collection = "priceConfig"}
+  - (-1) err .error
+price.NewPriceServiceImpl(ctx context.Context, db NoSQLDatabase) ((*price.PriceServiceImpl struct{priceDB NoSQLDatabase}), error):
+ block 0 (Body):
+  - (-1) ctx context.Context
+  - (-1) db NoSQLDatabase

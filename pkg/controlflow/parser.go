@@ -58,9 +58,19 @@ func assignLeftValues(service *service.Service, method *types.ParsedMethod, bloc
 		switch e := lvalue.(type) {
 		case *ast.Ident:
 			if assignStmt.Tok == token.DEFINE || assignStmt.Tok == token.ASSIGN { // := OR =
-				rvariable.GetVariableInfo().SetName(e.Name)
-				rvariable.GetVariableInfo().SetUnassigned()
-				block.AddVariable(rvariable)
+				if rvariable.GetVariableInfo().GetName() == "" && rvariable.GetVariableInfo().IsUnassigned() {
+					rvariable.GetVariableInfo().SetName(e.Name)
+					rvariable.GetVariableInfo().SetUnassigned()
+					block.AddVariable(rvariable)
+				} else {
+					lvariable := rvariable.DeepCopy()
+					lvariable.GetVariableInfo().SetName(e.Name)
+					lvariable.GetVariableInfo().SetUnassigned()
+					block.AddVariable(lvariable)
+				}
+				if e.Name == "pieces" {
+					logger.Logger.Warnf("FOUND PIECES: %s: %v", rvariable.String(), block.VarsString())
+				}
 			} else {
 				logger.Logger.Fatalf("unexpected token (%v) for assignment: %v", assignStmt.Tok, assignStmt)
 			}
@@ -72,13 +82,23 @@ func assignLeftValues(service *service.Service, method *types.ParsedMethod, bloc
 			default:
 				logger.Logger.Fatalf("[CFG EXPR] unsupported left variable type (%s): %v", utils.GetType(ee), lvariable.String())
 			}
+		case *ast.IndexExpr: // e.g. res[rt] = pc
+			lvariable, _ := lookupVariableFromAstExpr(service, method, block, e.X, false)
+			switch ee := lvariable.(type) {
+			case *variables.MapVariable:
+				idxVariable, _ := lookupVariableFromAstExpr(service, method, block, e.Index, false)
+				ee.AddKeyValue(idxVariable, rvariable)
+			default:
+				logger.Logger.Fatalf("[CFG EXPR] unsupported left variable type (%s): %v", utils.GetType(ee), lvariable.String())
+			}
 		default:
-			logger.Logger.Fatalf("[CFG EXPR] unexpected type (%s) for left value (%v) in assignment with token (%v): %v", utils.GetType(lvalue), lvalue, assignStmt.Tok, assignStmt)
+			logger.Logger.Fatalf("[CFG EXPR] [%s] unexpected type (%s) for left value (%v) in assignment with token (%v): %v", method.Name, utils.GetType(lvalue), lvalue, assignStmt.Tok, assignStmt)
 		}
 	}
 }
 
 func parseExpressions(service *service.Service, method *types.ParsedMethod, block *types.Block, node ast.Node) {
+	logger.Logger.Warnf("PARSE EXPR (%s): %v", utils.GetType(node), node)
 	switch e := node.(type) {
 	// ------------
 	// Go Routines
@@ -260,6 +280,7 @@ func computeExternalFuncCallReturns(service *service.Service, callExpr *ast.Call
 					},
 					Params: deps,
 				}
+				logger.Logger.Warnf("CREATED COMPOSITE VAR %s", compositeVar.String())
 				tupleVar.Variables = append(tupleVar.Variables, compositeVar)
 			}
 		}
@@ -271,6 +292,7 @@ func computeExternalFuncCallReturns(service *service.Service, callExpr *ast.Call
 
 // FIXME: this does not support nested calls!!!!
 func parseAndSaveCall(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr) variables.Variable {
+	logger.Logger.Infof("[CFG CALLS] parsing call: %v", callExpr.Args)
 	idents, identsStr := lookup.GetAllSelectorIdents(callExpr.Fun)
 	leftIdent := idents[0]
 	funcIdent := idents[len(idents)-1]
@@ -300,7 +322,7 @@ func parseAndSaveCall(service *service.Service, method *types.ParsedMethod, bloc
 				//logger.Logger.Debugf("[CFG CALLS] (1) got pointer var (to %s): %s", utils.GetType(pointerVar.PointerTo.GetType()), pointerVar.String())
 				variable = pointerVar.GetPointerTo()
 			}
-			
+
 			if _, ok := variable.GetType().(*gotypes.UserType); ok {
 				if structVar, ok := variable.(*variables.StructVariable); ok {
 					fieldName := ident.Name
@@ -316,7 +338,7 @@ func parseAndSaveCall(service *service.Service, method *types.ParsedMethod, bloc
 							pkgPath := structVar.GetStructType().GetMethodPackagePath(methodName)
 							pkg := service.GetPackage().GetImportedPackage(pkgPath)
 							parsedMethod := pkg.GetParsedMethodIfExists(methodName, leftVariableTypeName)
-							
+
 							if parsedMethod != nil {
 								logger.Logger.Warnf("[CFG CALLS] [%s] !!!!!!!!!!!! GOT PARSED METHOD (%s): %v", service.GetName(), methodName, parsedMethod.GetParsedCfg())
 								//logger.Logger.Debugf("[CFG CALLS] got parsed method %s", parsedMethod.String())
@@ -469,6 +491,25 @@ func parseAndSaveCall(service *service.Service, method *types.ParsedMethod, bloc
 		}
 		logger.Logger.Fatalf("[CFG CALLS] unable to parse call to variable (%s) with type (%s) in call expr fun: %v\nBLOCK VARS: %v", variable.String(), utils.GetType(variable), callExpr.Fun, block.Vars)
 		return nil
+	}
+
+
+	// e.g. make, println
+	if len(idents) == 1 && utils.IsBuiltInType(funcIdent.Name) && utils.IsBuiltInFunc(funcIdent.Name) {
+		deps := getFuncCallDeps(service, method, block, callExpr)
+		if len(deps) == 1 {
+			return &variables.TupleVariable{
+				Variables: []variables.Variable{deps[0]},
+				VariableInfo: &variables.VariableInfo{
+					Type: &gotypes.TupleType{
+						Types: []gotypes.Type{deps[0].GetType()},
+					},
+					Id: variables.VARIABLE_UNASSIGNED_ID,
+				},
+			}
+		} else {
+			logger.Logger.Fatalf("TODOOOOOOOOOOO: (%s) (%s)", leftIdent.Name, funcIdent.Name)
+		}
 	}
 
 	var callInPackage bool

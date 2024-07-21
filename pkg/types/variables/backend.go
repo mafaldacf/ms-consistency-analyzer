@@ -31,7 +31,7 @@ func (v *BackendVariable) GetDependencies() []Variable {
 
 func (v *BackendVariable) DeepCopy() Variable {
 	return &BackendVariable{
-		VariableInfo: v.VariableInfo,
+		VariableInfo: v.VariableInfo.DeepCopy(),
 	}
 }
 

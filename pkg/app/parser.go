@@ -292,6 +292,9 @@ func createAndSaveMethodForFuncDecl(pkg *types.Package, file *types.File, funcDe
 	for _, f := range funcGoTypes {
 		if f.Name() == funcDecl.Name.Name {
 			params, returns, receiver := lookup.ComputeFuncDeclFields(file, funcDecl)
+			if receiver != nil {
+				logger.Logger.Warnf("COMPUTED RECEIVER (%s)", receiver.GetName())
+			}
 			parsedMethod := &types.ParsedMethod{
 				Ast:      funcDecl,
 				Name:     funcDecl.Name.Name,

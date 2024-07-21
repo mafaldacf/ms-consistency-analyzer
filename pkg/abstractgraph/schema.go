@@ -186,12 +186,14 @@ func BuildSchema(app *app.App, node AbstractNode) {
 		datastore := dbCall.DbInstance.GetDatastore()
 		params := dbCall.Params
 		logger.Logger.Infof("[SCHEMA] [%s] building schema based on abstract node (%s)", datastore.Name, dbCall.GetName())
+		
 		switch datastore.Type {
 		case datastores.Cache:
 			key := params[1]
 			value := params[2]
 			addEntryToDatastore(key, "key", datastore)
 			addUnfoldedEntriesToDatastore(value, "value", datastore)
+
 			//taintDataflow(app, key, dbCall, datastore)
 			taintDataflow(app, value, dbCall, datastore)
 			//logger.Logger.Fatal("exiting...")

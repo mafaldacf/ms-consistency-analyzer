@@ -137,6 +137,10 @@ func (node *Service) GetInternalOrPackageMethod(name string) *types.ParsedMethod
 	if packageMethod, ok := node.PackageMethods[name]; ok {
 		return packageMethod
 	}
+	// exported methods can also call themselves
+	if packageMethod, ok := node.ExportedMethods[name]; ok {
+		return packageMethod
+	}
 	logger.Logger.Fatalf("[SERVICE] unknown internal or package method (%s) for service (%s)", name, node.GetName())
 	return nil
 }

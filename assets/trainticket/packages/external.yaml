@@ -10,3 +10,7 @@ errors:
 - package: errors
 - package path: errors
 - module: ""
+strings:
+- package: strings
+- package path: strings
+- module: ""

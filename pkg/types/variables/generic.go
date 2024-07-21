@@ -54,7 +54,7 @@ func (v *GenericVariable) AddReferenceWithID(target Variable, creator string) {
 
 func (v *GenericVariable) DeepCopy() Variable {
 	copy := &GenericVariable{
-		VariableInfo: v.VariableInfo,
+		VariableInfo: v.VariableInfo.DeepCopy(),
 	}
 	for _, p := range v.Params {
 		copy.Params = append(copy.Params, p.DeepCopy())

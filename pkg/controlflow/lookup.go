@@ -56,7 +56,7 @@ func lookupImportedPackageFromIdent(service *service.Service, ident *ast.Ident) 
 }
 
 func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMethod, block *types.Block, expr ast.Expr, assign bool) (variable variables.Variable, packageType *gotypes.PackageType) {
-	logger.Logger.Tracef("[CFG LOOKUP EXPR] visiting expression (%v) with type (%s)", expr, utils.GetType(expr))
+	logger.Logger.Debugf("[CFG LOOKUP EXPR] visiting expression (%v) with type (%s)", expr, utils.GetType(expr))
 	switch e := expr.(type) {
 	case *ast.CallExpr:
 		variable = parseAndSaveCall(service, method, block, e)
@@ -73,9 +73,16 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		}
 	case *ast.Ident:
 		variable = lookupVariableFromIdentIfExists(service, block, e)
+		logger.Logger.Warnf("HEREEE: %v", block.VarsString())
 		if variable != nil {
 			return variable, nil
 		}
+		if utils.IsBuiltInType(e.Name) {
+			if utils.IsBuiltInFunc(e.Name) {
+				return nil, nil
+			}
+		}
+
 		packageType = lookupImportedPackageFromIdent(service, e)
 		if packageType != nil {
 			return nil, packageType
@@ -198,7 +205,11 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			logger.Logger.Fatalf("[CFG LOOKUP] nil variable for index expr: %v (e.X type = %s)", e, utils.GetType(e.X))
 		}
 		if arrayVar, ok := variable.(*variables.ArrayVariable); ok {
-			variable = arrayVar.Elements[computeArrayIndex(e.Index)]
+			variable = arrayVar.GetElementAtIfExists(computeArrayIndex(e.Index))
+			if variable == nil {
+				variable = lookup.CreateVariableFromType("", arrayVar.GetArrayType().ElementsType)
+				logger.Logger.Warnf("CREATED VARIABLE FROM NIL ARRAY ELEMENT %s | %s", variable.String(), arrayVar.String())
+			}
 		}
 		if mapVar, ok := variable.(*variables.MapVariable); ok {
 			key, _ := lookupVariableFromAstExpr(service, method, block, e.Index, false)
@@ -275,6 +286,19 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		} else {
 			logger.Logger.Fatalf("unknown token %v for binary expr %v", e.Op, e)
 			variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, assign)
+		}
+	case *ast.MapType: //e.g. make(map[string]PriceConfig)
+		keyType := lookup.ComputeTypeForAstExpr(service.File, e.Key)
+		valueType := lookup.ComputeTypeForAstExpr(service.File, e.Value)
+		variable = &variables.MapVariable{
+			KeyValues: make(map[variables.Variable]variables.Variable, 0),
+			VariableInfo: &variables.VariableInfo{
+				Type: &gotypes.MapType{
+					KeyType: keyType,
+					ValueType: valueType,
+				},
+				Id:   variables.VARIABLE_UNASSIGNED_ID,
+			},
 		}
 	default:
 		logger.Logger.Fatalf("[CFG LOOKUP] cannot lookup unknown type (%s) for variable (%v)", utils.GetType(e), e)

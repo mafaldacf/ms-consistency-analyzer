@@ -36,7 +36,7 @@ func (v *InlineVariable) AddReferenceWithID(target Variable, creator string) {
 
 func (v *InlineVariable) DeepCopy() Variable {
 	copy := &InlineVariable{
-		VariableInfo: v.VariableInfo,
+		VariableInfo: v.VariableInfo.DeepCopy(),
 	}
 	return copy
 }

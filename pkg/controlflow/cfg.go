@@ -19,7 +19,8 @@ func GenerateMethodCFG(parsedMethod *types.ParsedMethod) {
 	parsedMethod.SetParsedCFG(parsedCfg)
 	entryBlock := parsedCfg.GetEntryParsedBlock()
 
-	if receiver := parsedMethod.GetReceiverIfExists(); receiver != nil {
+	receiver := parsedMethod.GetReceiverIfExists()
+	if receiver != nil {
 		receiver := lookup.CreateVariableFromType(parsedMethod.Receiver.GetName(), parsedMethod.Receiver.GetType())
 		entryBlock.AddVariable(receiver)
 		parsedCfg.HasReceiver = true
@@ -35,18 +36,19 @@ func GenerateMethodCFG(parsedMethod *types.ParsedMethod) {
 	}
 
 	// note that parameters also include receiver
-	logger.Logger.Infof("[CFG] parsed CFG with (%d) initial variables for method (%s)", len(entryBlock.Vars), parsedMethod.String())
+	logger.Logger.Infof("[CFG] parsed CFG with receiver (%v) and (%d) initial variables for method (%s)", receiver, len(entryBlock.Vars), parsedMethod.String())
 }
 
 func InitServiceReceiverFieldsForParsedCFG(service *service.Service, parsedMethod *types.ParsedMethod) {
 	parsedCfg := parsedMethod.GetParsedCfg()
 	receiver := parsedCfg.GetEntryParsedBlock().GetFirstVariable()
+	logger.Logger.Debugf("[CFG] [%s] init service receiver (%v) fields for parsed cfg of method (%s)", service.GetName(), receiver, parsedMethod.String())
 
 	variable := receiver
 	if pointerVar, ok := variable.(*variables.PointerVariable); ok {
 		variable = pointerVar.PointerTo
 	} else {
-		logger.Logger.Fatalf("[CFG] unsupported receiver type (%s) for service (%s)", utils.GetType(variable), service.GetName())
+		logger.Logger.Fatalf("[CFG] unsupported receiver (%s) type (%s) for service (%s)", receiver.String(), utils.GetType(variable), service.GetName())
 	}
 	if structVar, ok := variable.(*variables.StructVariable); ok {
 		for name, f := range service.Fields {

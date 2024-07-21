@@ -9,6 +9,16 @@ import (
 	"analyzer/pkg/types/gotypes"
 )
 
+type OperationType int
+
+const (
+	OP_WRITE OperationType = iota
+	OP_READ
+	OP_DELETE
+	OP_UPDATE
+	OP_NOSQL_COLLECTION
+)
+
 type BackendMethod struct {
 	types.Method
 	Name      string
@@ -16,7 +26,7 @@ type BackendMethod struct {
 	Component string
 	Params    []*types.MethodField
 	Returns   []*types.MethodField
-	Write     bool
+	Operation OperationType
 }
 
 func (b *BackendMethod) DeepCopy() *BackendMethod {
@@ -26,7 +36,7 @@ func (b *BackendMethod) DeepCopy() *BackendMethod {
 		Component: b.Component,
 		Params:    b.Params,
 		Returns:   b.Returns,
-		Write:     b.Write,
+		Operation: b.Operation,
 	}
 }
 
@@ -140,15 +150,24 @@ func (b *BackendMethod) ReturnsNoSQLCursor() (bool, int) {
 }
 
 func (b *BackendMethod) IsWrite() bool {
-	return b.Write
+	return b.Operation == OP_WRITE
+}
+func (b *BackendMethod) IsRead() bool {
+	return b.Operation == OP_READ
+}
+func (b *BackendMethod) IsDelete() bool {
+	return b.Operation == OP_DELETE
+}
+func (b *BackendMethod) IsUpdate() bool {
+	return b.Operation == OP_UPDATE
 }
 
 func (b *BackendMethod) IsQueueRead() bool {
-	return !b.Write && b.FullName() == "Queue.Pop"
+	return b.IsRead() && b.FullName() == "Queue.Pop"
 }
 
 func (b *BackendMethod) IsQueueWrite() bool {
-	return b.Write && b.FullName() == "Queue.Push"
+	return b.IsWrite() && b.FullName() == "Queue.Push"
 }
 
 func (b *BackendMethod) MatchQueueIdentifiers() map[int]int {
@@ -227,29 +246,29 @@ func BuildBackendComponentMethods(name string) []*BackendMethod {
 	// --------
 	case "Cache":
 		// Put(ctx context.Context, key string, value interface{}) error
-		methods = append(methods, &BackendMethod{Name: "Put", Backend: "Cache", Write: true,
+		methods = append(methods, &BackendMethod{Name: "Put", Backend: "Cache", Operation: OP_WRITE,
 			Params:  []*types.MethodField{&ctxParam, &keyParam, &valueParam},
 			Returns: []*types.MethodField{&errorReturn},
 		})
 		// Get(ctx context.Context, key string, val interface{}) (bool, error)
-		methods = append(methods, &BackendMethod{Name: "Get", Backend: "Cache", Write: false,
+		methods = append(methods, &BackendMethod{Name: "Get", Backend: "Cache", Operation: OP_READ,
 			Params:  []*types.MethodField{&ctxParam, &keyParam, &valueParam},
 			Returns: []*types.MethodField{&boolReturn, &errorReturn},
 		})
 	case "Queue":
 		// Push(ctx context.Context, item interface{}) (bool, error)
-		methods = append(methods, &BackendMethod{Name: "Push", Backend: "Queue", Write: true,
+		methods = append(methods, &BackendMethod{Name: "Push", Backend: "Queue", Operation: OP_WRITE,
 			Params:  []*types.MethodField{&ctxParam, &itemParam},
 			Returns: []*types.MethodField{&boolReturn, &errorReturn},
 		})
 		// // Pop(ctx context.Context, dst interface{}) (bool, error)
-		methods = append(methods, &BackendMethod{Name: "Pop", Backend: "Queue", Write: false,
+		methods = append(methods, &BackendMethod{Name: "Pop", Backend: "Queue", Operation: OP_READ,
 			Params:  []*types.MethodField{&ctxParam, &itemParam},
 			Returns: []*types.MethodField{&boolReturn, &errorReturn},
 		})
 	case "NoSQLDatabase":
 		// GetCollection(ctx context.Context, db_name string, collection_name string) (NoSQLCollection, error)
-		methods = append(methods, &BackendMethod{Name: "GetCollection", Backend: "NoSQLDatabase", Write: false,
+		methods = append(methods, &BackendMethod{Name: "GetCollection", Backend: "NoSQLDatabase", Operation: OP_NOSQL_COLLECTION,
 			Params:  []*types.MethodField{&ctxParam, &dbNameParam, &collectionNameParam},
 			Returns: []*types.MethodField{&NoSQLCollectionReturn, &errorReturn},
 		})
@@ -269,32 +288,32 @@ func BuildBackendComponentMethods(name string) []*BackendMethod {
 func buildBackendNoSQLCollectionMethods() []*BackendMethod {
 	var methods []*BackendMethod
 	// FindOne(ctx context.Context, filter bson.D, projection ...bson.D) (NoSQLCursor, error)
-	methods = append(methods, &BackendMethod{Name: "FindOne", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Write: false,
+	methods = append(methods, &BackendMethod{Name: "FindOne", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Operation: OP_READ,
 		Params:  []*types.MethodField{&ctxParam, &filterParam, &projectionParam},
 		Returns: []*types.MethodField{&NoSQLCursorReturn, &errorReturn},
 	})
 	// FindMany(ctx context.Context, filter bson.D, projection ...bson.D) (NoSQLCursor, error)
-	methods = append(methods, &BackendMethod{Name: "FindMany", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Write: false,
+	methods = append(methods, &BackendMethod{Name: "FindMany", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Operation: OP_READ,
 		Params:  []*types.MethodField{&ctxParam, &filterParam, &projectionParam},
 		Returns: []*types.MethodField{&NoSQLCursorReturn, &errorReturn},
 	})
 	// Upsert(ctx context.Context, filter bson.D, document interface{}) (bool, error)
-	methods = append(methods, &BackendMethod{Name: "Upsert", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Write: false,
+	methods = append(methods, &BackendMethod{Name: "Upsert", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Operation: OP_UPDATE,
 		Params:  []*types.MethodField{&ctxParam, &filterParam, &docParam},
 		Returns: []*types.MethodField{&boolReturn, &errorReturn},
 	})
 	// InsertOne(ctx context.Context, document interface{}) error
-	methods = append(methods, &BackendMethod{Name: "InsertOne", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Write: true,
+	methods = append(methods, &BackendMethod{Name: "InsertOne", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Operation: OP_WRITE,
 		Params:  []*types.MethodField{&ctxParam, &docParam},
 		Returns: []*types.MethodField{&errorReturn},
 	})
 	// DeleteOne(ctx context.Context, filter bson.D) error
-	methods = append(methods, &BackendMethod{Name: "DeleteOne", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Write: true,
+	methods = append(methods, &BackendMethod{Name: "DeleteOne", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Operation: OP_DELETE,
 		Params:  []*types.MethodField{&ctxParam, &filterParam},
 		Returns: []*types.MethodField{&errorReturn},
 	})
 	// DeleteMany(ctx context.Context, filter bson.D) error
-	methods = append(methods, &BackendMethod{Name: "DeleteMany", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Write: true,
+	methods = append(methods, &BackendMethod{Name: "DeleteMany", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Operation: OP_DELETE,
 		Params:  []*types.MethodField{&ctxParam, &filterParam},
 		Returns: []*types.MethodField{&errorReturn},
 	})
@@ -304,12 +323,12 @@ func buildBackendNoSQLCollectionMethods() []*BackendMethod {
 func buildBackendNoSQLCursorMethods() []*BackendMethod {
 	var methods []*BackendMethod
 	// One(ctx context.Context, obj interface{}) (bool, error)
-	methods = append(methods, &BackendMethod{Name: "One", Backend: "NoSQLDatabase", Component: "NoSQLCursor", Write: false,
+	methods = append(methods, &BackendMethod{Name: "One", Backend: "NoSQLDatabase", Component: "NoSQLCursor", Operation: OP_READ,
 		Params:  []*types.MethodField{&ctxParam, &objParam},
 		Returns: []*types.MethodField{&boolReturn, &errorReturn},
 	})
 	// All(ctx context.Context, obj interface{}) error //similar logic to Decode, but for multiple documents
-	methods = append(methods, &BackendMethod{Name: "All", Backend: "NoSQLDatabase", Component: "NoSQLCursor", Write: false,
+	methods = append(methods, &BackendMethod{Name: "All", Backend: "NoSQLDatabase", Component: "NoSQLCursor", Operation: OP_WRITE,
 		Params:  []*types.MethodField{&ctxParam, &objParam},
 		Returns: []*types.MethodField{&errorReturn},
 	})

@@ -16,6 +16,10 @@ type Method interface {
 	IsQueueWrite() bool
 	IsQueueRead() bool
 	IsWrite() bool
+	IsDelete() bool
+	IsUpdate() bool
+	IsRead() bool
+	IsFetchNoSQLCollection() bool
 }
 
 type ParsedMethod struct {

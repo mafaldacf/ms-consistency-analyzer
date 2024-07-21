@@ -9,11 +9,39 @@
       "type": "service"
     },
     {
+      "id": "ContactsService",
+      "type": "service"
+    },
+    {
+      "id": "PriceService",
+      "type": "service"
+    },
+    {
       "id": "user_db MongoDB",
+      "type": "datastore"
+    },
+    {
+      "id": "contacts_db MongoDB",
+      "type": "datastore"
+    },
+    {
+      "id": "price_db MongoDB",
       "type": "datastore"
     }
   ],
   "edges": [
+    {
+      "caller": "Client",
+      "callee": "UserService",
+      "call": "FindByUsername",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "UserService",
+      "call": "FindByUserID",
+      "depth": 0
+    },
     {
       "caller": "Client",
       "callee": "UserService",
@@ -40,15 +68,93 @@
     },
     {
       "caller": "Client",
-      "callee": "UserService",
-      "call": "FindByUsername",
+      "callee": "ContactsService",
+      "call": "CreateContacts",
       "depth": 0
     },
     {
       "caller": "Client",
-      "callee": "UserService",
-      "call": "FindByUserID",
+      "callee": "ContactsService",
+      "call": "Delete",
       "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "ContactsService",
+      "call": "GetAllContacts",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "ContactsService",
+      "call": "Modify",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "ContactsService",
+      "call": "FindContactsById",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "ContactsService",
+      "call": "FindContactsByAccountId",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "PriceService",
+      "call": "FindByID",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "PriceService",
+      "call": "CreateNewPriceConfig",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "PriceService",
+      "call": "FindByRouteIDAndTrainType",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "PriceService",
+      "call": "FindByRouteIDsAndTrainTypes",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "PriceService",
+      "call": "GetAllPriceConfig",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "PriceService",
+      "call": "DeletePriceConfig",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "PriceService",
+      "call": "UpdatePriceConfig",
+      "depth": 0
+    },
+    {
+      "caller": "UserService",
+      "callee": "user_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "UserService",
+      "callee": "user_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
     },
     {
       "caller": "UserService",
@@ -75,15 +181,99 @@
       "depth": 1
     },
     {
-      "caller": "UserService",
-      "callee": "user_db MongoDB",
+      "caller": "ContactsService",
+      "callee": "contacts_db MongoDB",
       "call": "FindOne",
       "depth": 1
     },
     {
-      "caller": "UserService",
-      "callee": "user_db MongoDB",
+      "caller": "ContactsService",
+      "callee": "contacts_db MongoDB",
+      "call": "InsertOne",
+      "depth": 1
+    },
+    {
+      "caller": "ContactsService",
+      "callee": "contacts_db MongoDB",
+      "call": "DeleteOne",
+      "depth": 1
+    },
+    {
+      "caller": "ContactsService",
+      "callee": "contacts_db MongoDB",
+      "call": "FindMany",
+      "depth": 1
+    },
+    {
+      "caller": "ContactsService",
+      "callee": "contacts_db MongoDB",
+      "call": "Upsert",
+      "depth": 1
+    },
+    {
+      "caller": "ContactsService",
+      "callee": "contacts_db MongoDB",
       "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "ContactsService",
+      "callee": "contacts_db MongoDB",
+      "call": "FindMany",
+      "depth": 1
+    },
+    {
+      "caller": "PriceService",
+      "callee": "price_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "PriceService",
+      "callee": "price_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "PriceService",
+      "callee": "price_db MongoDB",
+      "call": "InsertOne",
+      "depth": 1
+    },
+    {
+      "caller": "PriceService",
+      "callee": "price_db MongoDB",
+      "call": "Upsert",
+      "depth": 1
+    },
+    {
+      "caller": "PriceService",
+      "callee": "price_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "PriceService",
+      "callee": "price_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "PriceService",
+      "callee": "price_db MongoDB",
+      "call": "FindMany",
+      "depth": 1
+    },
+    {
+      "caller": "PriceService",
+      "callee": "price_db MongoDB",
+      "call": "DeleteOne",
+      "depth": 1
+    },
+    {
+      "caller": "PriceService",
+      "callee": "price_db MongoDB",
+      "call": "Upsert",
       "depth": 1
     }
   ]

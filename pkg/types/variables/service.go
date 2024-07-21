@@ -39,7 +39,7 @@ func (v *ServiceVariable) GetDependencies() []Variable {
 
 func (v *ServiceVariable) DeepCopy() Variable {
 	return &ServiceVariable{
-		VariableInfo: v.VariableInfo,
+		VariableInfo: v.VariableInfo.DeepCopy(),
 	}
 }
 

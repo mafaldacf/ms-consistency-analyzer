@@ -53,7 +53,7 @@ func (v *PointerVariable) AddReferenceWithID(target Variable, creator string) {
 
 func (v *PointerVariable) DeepCopy() Variable {
 	copy := &PointerVariable{
-		VariableInfo: v.VariableInfo,
+		VariableInfo: v.VariableInfo.DeepCopy(),
 		PointerTo:    v.PointerTo.DeepCopy(),
 	}
 	return copy

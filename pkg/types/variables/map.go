@@ -23,8 +23,8 @@ func (v *MapVariable) LongString() string {
 }
 
 func (v *MapVariable) GetKeyValueIfExists(targetKey Variable) Variable {
-	if !v.GetMapType().IsSameType(targetKey.GetType()) {
-		logger.Logger.Fatalf("[VARS MAP] provided key (%s) with type (%s) does not match expected type (%s)", targetKey.String(), utils.GetType(targetKey), utils.GetType(v.GetMapType().GetKeyType()))
+	if !v.GetMapType().GetKeyType().IsSameType(targetKey.GetType()) {
+		logger.Logger.Fatalf("[VARS MAP] provided key (%s) with type (%s) does not match expected type (%s)", targetKey.String(), utils.GetType(targetKey.GetType()), utils.GetType(v.GetMapType().GetKeyType()))
 	}
 	switch t := targetKey.GetType().(type) {
 	case *gotypes.BasicType:
@@ -36,8 +36,8 @@ func (v *MapVariable) GetKeyValueIfExists(targetKey Variable) Variable {
 	default:
 		logger.Logger.Fatalf("unknown gotype (%s) for target key (%s)", utils.GetType(targetKey.GetType()), targetKey.String())
 	}
-	logger.Logger.Warnf("could not get or create key value pairs for target key (%s) in map (%v)", targetKey.String(), v.String())
-	return nil
+	logger.Logger.Warnf("??????? could not get or create key value pairs for target key (%s) in map (%v)", targetKey.String(), v.String())
+	return v.KeyValues[targetKey]
 }
 
 func (v *MapVariable) AddKeyValue(key Variable, value Variable) {
@@ -74,7 +74,8 @@ func (v *MapVariable) GetDependencies() []Variable {
 
 func (v *MapVariable) DeepCopy() Variable {
 	copy := &MapVariable{
-		VariableInfo: v.VariableInfo,
+		KeyValues: make(map[Variable]Variable, 0),
+		VariableInfo: v.VariableInfo.DeepCopy(),
 	}
 	for k, v := range v.KeyValues {
 		copy.KeyValues[k] = v.DeepCopy()

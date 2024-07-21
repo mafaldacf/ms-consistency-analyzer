@@ -1,0 +1,48 @@
+? (*assurance.AssuranceServiceImpl).Create(ctx context.Context, typeindex int64, orderid string) (assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}, error):
+ block 0 (Body):
+  - (-1) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) typeindex int64
+  - (-1) orderid string
+(*assurance.AssuranceServiceImpl).DeleteById(ctx context.Context, id string) error:
+  block 0 (Body):
+  - (-1) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) id string
+(*assurance.AssuranceServiceImpl).DeleteByOrderId(ctx context.Context, order_id string) error:
+  block 0 (Body):
+  - (-1) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) order_id string
+(*assurance.AssuranceServiceImpl).FindAssuranceById(ctx context.Context, id string)
+  (assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}, error):
+ block 0 (Body):
+  - (-1) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) id string
+(*assurance.AssuranceServiceImpl).FindAssuranceByOrderId(ctx context.Context, order_id string) (assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}, error):
+ block 0 (Body):
+  - (-1) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) order_id string
+(*assurance.AssuranceServiceImpl).GetAllAssuranceTypes(ctx context.Context) ([]assurance.AssuranceType struct{Index int64, Name string, Price float64}, error):
+ block 0 (Body):
+  - (-1) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+(*assurance.AssuranceServiceImpl).GetAllAssurances(ctx context.Context) ([]assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}, error):
+ block 0 (Body):
+  - (-1) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+(*assurance.AssuranceServiceImpl).Modify(ctx context.Context, assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}) (assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}, error):
+ block 0 (Body):
+  - (-1) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
+assurance.NewAssuranceServiceImpl(ctx context.Context, db NoSQLDatabase) ((*assurance.AssuranceServiceImpl struct{db NoSQLDatabase}), error):
+ block 0 (Body):
+  - (-1) ctx context.Context
+  - (-1) db NoSQLDatabase
+assurance.getAssuranceType(ctx context.Context, index int64) (assurance.AssuranceType struct{Index int64, Name string, Price float64}, error):
+ block 0 (Body):
+  - (-1) ctx context.Context
+  - (-1) index int64

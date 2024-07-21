@@ -1,12 +1,39 @@
+CONTACTS_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- schema:
+  - fields:
+    - document: contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
+  - unfolded_fields:
+    - Contact: contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
+    - Contact.ID: string
+    - Contact.AccountID: string
+    - Contact.Name: string
+    - Contact.DocumentType: int
+    - Contact.DocumentNumber: string
+    - Contact.PhoneNumber: string
+  - foreign_fields: []
+PRICE_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- schema:
+  - fields:
+    - document: price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
+  - unfolded_fields:
+    - PriceConfig: price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
+    - PriceConfig.ID: string
+    - PriceConfig.TrainType: string
+    - PriceConfig.RouteID: string
+    - PriceConfig.BasicPriceRate: float64
+    - PriceConfig.FirstClassPriceRate: float64
+  - foreign_fields: []
 USER_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
 - schema:
   - fields:
-    - document: primitive.D
     - document: user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}
   - unfolded_fields:
-    - D: primitive.D
     - User: user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}
     - User.UserID: string
     - User.Username: string

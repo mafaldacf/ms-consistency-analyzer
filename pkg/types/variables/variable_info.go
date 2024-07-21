@@ -41,11 +41,15 @@ func (vinfo *VariableInfo) DeepCopy() *VariableInfo {
 	for _, df := range vinfo.IndirectDataflows {
 		indirectDataflows = append(indirectDataflows, df.DeepCopy())
 	}
+	var refCopy *Reference
+	if vinfo.Reference != nil {
+		refCopy = vinfo.Reference.DeepCopy().(*Reference)
+	}
 	return &VariableInfo{
 		Name:              vinfo.Name,
 		Type:              vinfo.Type,
 		Id:                vinfo.Id,
-		Reference:         vinfo.Reference.DeepCopy().(*Reference),
+		Reference:         refCopy,
 		IsBlockParam:      vinfo.IsBlockParam,
 		BlockParamIdx:     vinfo.BlockParamIdx,
 		Dataflows:         dataflows,

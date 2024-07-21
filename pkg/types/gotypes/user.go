@@ -16,7 +16,7 @@ type UserType struct {
 
 func (t *UserType) skipUnderlyingTypeString() bool {
 	var packagesToSkip = []string{
-		"", // built-in
+		"", // built-in (e.g. error, make, println)
 		"context", 
 		"sync", 
 		"sync/atomic", 
