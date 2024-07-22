@@ -8,6 +8,10 @@ PRICE_DB.PriceConfig:
 PRICE_DB.PriceConfig.ID:
 - write <ID string (BasicVariable)> from <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructVariable)>
 - write <ID string (FieldVariable)> from <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructVariable)>
+STATION_DB.Station:
+- write <station station.Station struct{ID string, Name string, StayTime int64} (StructVariable)>
+- write <station station.Station struct{ID string, Name string, StayTime int64} (StructVariable)>
+  from <station station.Station struct{ID string, Name string, StayTime int64} (StructVariable)>
 USER_DB.User:
 - write <user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string} (StructVariable)>
 - write <user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string} (StructVariable)> from

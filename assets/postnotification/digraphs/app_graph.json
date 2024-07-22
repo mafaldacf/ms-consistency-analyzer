@@ -31,10 +31,6 @@
       "callee": "StorageService"
     },
     {
-      "caller": "UploadService",
-      "callee": "StorageService"
-    },
-    {
       "caller": "NotifyService",
       "callee": "notif_queue RabbitMQ"
     },
@@ -45,6 +41,10 @@
     {
       "caller": "StorageService",
       "callee": "post_nosql MongoDB"
+    },
+    {
+      "caller": "UploadService",
+      "callee": "StorageService"
     },
     {
       "caller": "UploadService",

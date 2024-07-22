@@ -57,6 +57,9 @@ func (graph *AbstractGraph) dumpDiGraph() {
 			if edges[i].Callee != edges[j].Callee {
 				return edges[i].Callee < edges[j].Callee
 			}
+			if edges[i].Depth != edges[j].Depth {
+				return edges[i].Depth < edges[j].Depth
+			}
 			return edges[i].Call < edges[j].Call
 		})
 	}

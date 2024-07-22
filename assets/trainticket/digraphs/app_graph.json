@@ -5,7 +5,15 @@
       "type": "service"
     },
     {
+      "id": "NewsService",
+      "type": "service"
+    },
+    {
       "id": "PriceService",
+      "type": "service"
+    },
+    {
+      "id": "StationService",
       "type": "service"
     },
     {
@@ -21,6 +29,10 @@
       "type": "datastore"
     },
     {
+      "id": "station_db MongoDB",
+      "type": "datastore"
+    },
+    {
       "id": "user_db MongoDB",
       "type": "datastore"
     }
@@ -33,6 +45,10 @@
     {
       "caller": "PriceService",
       "callee": "price_db MongoDB"
+    },
+    {
+      "caller": "StationService",
+      "callee": "station_db MongoDB"
     },
     {
       "caller": "UserService",

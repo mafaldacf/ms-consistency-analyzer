@@ -1,29 +1,29 @@
 (*NotifyServiceImpl).Run(ctx context.Context):
   block 0 (Body):
+  - (-1) [INLINE] numWorkers 4 int
   - (-1) [INLINE] queue Queue
   - (-1) [INLINE] storageService postnotification.StorageService
-  - (-1) [INLINE] numWorkers 4 int
   - (-1) n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int})
   - (-1) ctx context.Context
   - (-1) wg sync.WaitGroup
   - (-1) i 1 int
 (*NotifyServiceImpl).handleMessage(ctx context.Context, message postnotification.Message struct{ReqID string, PostID string, Timestamp string}):
  block 0 (Body):
+  - (-1) [INLINE] storageService postnotification.StorageService
   - (-1) [INLINE] numWorkers 4 int
   - (-1) [INLINE] queue Queue
-  - (-1) [INLINE] storageService postnotification.StorageService
   - (-1) n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int})
   - (37) [INLINE] ref <ctx context.Context> @ NotifyService
   - (-1) ctx context.Context
   - (40) [INLINE] message map[string]interface{}
-  - (41) [INLINE] ref <PostID string> @ NotifyService
-  - (00) [INLINE] PostID string
-  - (41) [INLINE] ref <PostID string> @ NotifyService
-  - (00) [INLINE] PostID string
   - (39) [INLINE] ref <ReqID string> @ NotifyService
   - (00) [INLINE] ReqID string
   - (39) [INLINE] ref <ReqID string> @ NotifyService
   - (00) [INLINE] ReqID string
+  - (41) [INLINE] ref <PostID string> @ NotifyService
+  - (00) [INLINE] PostID string
+  - (41) [INLINE] ref <PostID string> @ NotifyService
+  - (00) [INLINE] PostID string
   - (42) [INLINE] Timestamp string
   - (41) [INLINE] PostID string
   - (39) [INLINE] ReqID string
@@ -33,9 +33,9 @@
   - (-1) err .error
 (*NotifyServiceImpl).workerThread(ctx context.Context, workerID int):
   block 0 (Body):
+  - (-1) [INLINE] storageService postnotification.StorageService
   - (-1) [INLINE] numWorkers 4 int
   - (-1) [INLINE] queue Queue
-  - (-1) [INLINE] storageService postnotification.StorageService
   - (-1) n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int})
   - (37) ctx context.Context
   - (-1) workerID int

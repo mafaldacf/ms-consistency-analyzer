@@ -35,12 +35,16 @@ func IsType[T any](obj interface{}) bool {
 	return ok
 }
 
-func IsBuiltInType(name string) bool {
-	var builtinTypes = []string{"error", "make", "println", "append"}
-	return slices.Contains(builtinTypes, name)
+func IsBuiltInGoTypeOrFunc(name string) bool {
+	return IsBuiltInGoFunc(name) || IsBuiltInGoType(name)
 }
 
-func IsBuiltInFunc(name string) bool {
+func IsBuiltInGoFunc(name string) bool {
 	var builtinFunc = []string{"make", "println", "append"}
+	return slices.Contains(builtinFunc, name)
+}
+
+func IsBuiltInGoType(name string) bool {
+	var builtinFunc = []string{"error", "byte", "string"}
 	return slices.Contains(builtinFunc, name)
 }

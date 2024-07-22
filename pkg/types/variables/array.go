@@ -3,6 +3,7 @@ package variables
 import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
+	"analyzer/pkg/utils"
 )
 
 type ArrayVariable struct {
@@ -24,6 +25,22 @@ func (v *ArrayVariable) LongString() string {
 		}
 	}
 	return s + ")"
+}
+
+func (v *ArrayVariable) GetElements() []Variable {
+	return v.Elements
+}
+
+func (v *ArrayVariable) AppendElements(varElements Variable) {
+	if varElementsSlice, ok := varElements.(*ArrayVariable); ok {
+		v.Elements = append(v.Elements, varElementsSlice.GetElements()...)
+	} else {
+		if v.GetArrayType().ElementsType.IsSameType(varElements.GetType()) {
+			v.Elements = append(v.Elements, varElements)
+		} else {
+			logger.Logger.Fatalf("[VARS SLICE] slice variable underlying type (%s) does not match elements type (%s)", utils.GetType(v.GetArrayType().ElementsType), utils.GetType(varElements.GetType()))
+		}
+	}
 }
 
 func (v *ArrayVariable) GetId() int64 {

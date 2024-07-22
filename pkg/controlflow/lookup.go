@@ -29,6 +29,7 @@ func computeArrayIndex(expr ast.Expr) int {
 }
 
 func lookupVariableFromIdentIfExists(service *service.Service, block *types.Block, ident *ast.Ident) variables.Variable {
+	logger.Logger.Debugf("[CFG LOOKUP IDENT] (%s) looking up variable for ident (%s)", service.GetName(), ident.Name)
 	variable := block.GetLastestVariableIfExists(ident.Name)
 	if variable != nil {
 		return variable
@@ -47,8 +48,8 @@ func lookupImportedPackageFromIdent(service *service.Service, ident *ast.Ident) 
 	if impt := service.GetFile().GetImport(ident.Name); impt != nil {
 		t := &gotypes.PackageType{
 			Alias: ident.Name,
-			Name: impt.PackageName,
-			Path: impt.PackagePath,
+			Name:  impt.PackageName,
+			Path:  impt.PackagePath,
 		}
 		return t
 	}
@@ -56,7 +57,7 @@ func lookupImportedPackageFromIdent(service *service.Service, ident *ast.Ident) 
 }
 
 func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMethod, block *types.Block, expr ast.Expr, assign bool) (variable variables.Variable, packageType *gotypes.PackageType) {
-	logger.Logger.Debugf("[CFG LOOKUP EXPR] visiting expression (%v) with type (%s)", expr, utils.GetType(expr))
+	logger.Logger.Debugf("[CFG LOOKUP EXPR] (%s) visiting expression (%v)", utils.GetType(expr), expr)
 	switch e := expr.(type) {
 	case *ast.CallExpr:
 		variable = parseAndSaveCall(service, method, block, e)
@@ -73,12 +74,11 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		}
 	case *ast.Ident:
 		variable = lookupVariableFromIdentIfExists(service, block, e)
-		logger.Logger.Warnf("HEREEE: %v", block.VarsString())
 		if variable != nil {
 			return variable, nil
 		}
-		if utils.IsBuiltInType(e.Name) {
-			if utils.IsBuiltInFunc(e.Name) {
+		if utils.IsBuiltInGoTypeOrFunc(e.Name) {
+			if utils.IsBuiltInGoFunc(e.Name) {
 				logger.Logger.Warnf("FIXME: IDENTIFIED BUILT IN FUNC FOR (%s)", e.Name)
 				return nil, nil
 			}
@@ -295,10 +295,10 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			KeyValues: make(map[variables.Variable]variables.Variable, 0),
 			VariableInfo: &variables.VariableInfo{
 				Type: &gotypes.MapType{
-					KeyType: keyType,
+					KeyType:   keyType,
 					ValueType: valueType,
 				},
-				Id:   variables.VARIABLE_UNASSIGNED_ID,
+				Id: variables.VARIABLE_UNASSIGNED_ID,
 			},
 		}
 	default:

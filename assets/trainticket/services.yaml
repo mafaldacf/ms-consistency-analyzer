@@ -4,12 +4,22 @@ ContactsService:
 - services: {}
 - datastores:
     contacts_db: NoSQLDatabase
+NewsService:
+- fields: {}
+- services: {}
+- datastores: {}
 PriceService:
 - fields:
     priceDB: NoSQLDatabase
 - services: {}
 - datastores:
     price_db: NoSQLDatabase
+StationService:
+- fields:
+    stationDB: NoSQLDatabase
+- services: {}
+- datastores:
+    station_db: NoSQLDatabase
 UserService:
 - fields:
     userDB: NoSQLDatabase

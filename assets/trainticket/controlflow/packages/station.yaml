@@ -1,0 +1,78 @@
+? (*station.StationServiceImpl).CreateStation(ctx context.Context, station station.Station struct{ID string, Name string, StayTime int64}) error:
+ block 0 (Body):
+  - (-1) [INLINE] stationDB NoSQLDatabase
+  - (-1) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) station station.Station struct{ID string, Name string, StayTime int64}
+  - (-1) coll NoSQLCollection {database = "station", collection = "station"}
+  - (-1) err .error
+(*station.StationServiceImpl).DeleteStation(ctx context.Context, id string) error:
+  block 0 (Body):
+  - (-1) [INLINE] stationDB NoSQLDatabase
+  - (-1) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) id string
+  - (-1) coll NoSQLCollection {database = "station", collection = "station"}
+  - (-1) err .error
+(*station.StationServiceImpl).Exists(ctx context.Context, name string) (bool, error):
+  block 0 (Body):
+  - (-1) [INLINE] stationDB NoSQLDatabase
+  - (-1) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) name string
+  - (-1) coll NoSQLCollection {database = "station", collection = "station"}
+  - (-1) err .error
+(*station.StationServiceImpl).FindByID(ctx context.Context, id string) (station.Station struct{ID string, Name string, StayTime int64}, error):
+ block 0 (Body):
+  - (-1) [INLINE] stationDB NoSQLDatabase
+  - (-1) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
+  - (11) [INLINE] ref <ctx context.Context> @ StationService
+  - (-1) ctx context.Context
+  - (12) [INLINE] ref <string> @ StationService
+  - (00) id string
+  - (-1) coll NoSQLCollection {database = "station", collection = "station"}
+  - (-1) err .error
+(*station.StationServiceImpl).FindByIDs(ctx context.Context, ids []string) ([]station.Station struct{ID string, Name string, StayTime int64}, error):
+ block 0 (Body):
+  - (-1) [INLINE] stationDB NoSQLDatabase
+  - (-1) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
+  - (11) ctx context.Context
+  - (-1) ids []string
+  - (-1) [INLINE] st station.Station struct{ID string, Name string, StayTime int64}
+  - (-1) stations []station.Station struct{ID string, Name string, StayTime int64}
+  - (-1) _ .error
+  - (-1) [INLINE] st station.Station struct{ID string, Name string, StayTime int64}
+  - (-1) stations []station.Station struct{ID string, Name string, StayTime int64}
+(*station.StationServiceImpl).FindID(ctx context.Context, name string) (string, error):
+  block 0 (Body):
+  - (-1) [INLINE] stationDB NoSQLDatabase
+  - (-1) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
+  - (13) [INLINE] ref <ctx context.Context> @ StationService
+  - (-1) ctx context.Context
+  - (14) [INLINE] ref <string> @ StationService
+  - (00) name string
+  - (-1) coll NoSQLCollection {database = "station", collection = "station"}
+  - (-1) err .error
+(*station.StationServiceImpl).FindIDs(ctx context.Context, names []string) ([]string, error):
+  block 0 (Body):
+  - (-1) [INLINE] stationDB NoSQLDatabase
+  - (-1) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
+  - (13) ctx context.Context
+  - (-1) names []string
+  - (-1) [INLINE] id string
+  - (-1) ids []string
+  - (-1) _ .error
+  - (-1) [INLINE] id string
+  - (-1) ids []string
+(*station.StationServiceImpl).UpdateStation(ctx context.Context, station station.Station struct{ID string, Name string, StayTime int64}) (bool, error):
+ block 0 (Body):
+  - (-1) [INLINE] stationDB NoSQLDatabase
+  - (-1) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) station station.Station struct{ID string, Name string, StayTime int64}
+  - (-1) coll NoSQLCollection {database = "station", collection = "station"}
+  - (-1) err .error
+station.NewStationServiceImpl(ctx context.Context, db NoSQLDatabase) ((*station.StationServiceImpl struct{stationDB NoSQLDatabase}), error):
+ block 0 (Body):
+  - (-1) ctx context.Context
+  - (-1) db NoSQLDatabase

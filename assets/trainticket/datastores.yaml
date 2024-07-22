@@ -27,6 +27,18 @@ PRICE_DB:
     - PriceConfig.BasicPriceRate: float64
     - PriceConfig.FirstClassPriceRate: float64
   - foreign_fields: []
+STATION_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- schema:
+  - fields:
+    - document: station.Station struct{ID string, Name string, StayTime int64}
+  - unfolded_fields:
+    - Station: station.Station struct{ID string, Name string, StayTime int64}
+    - Station.ID: string
+    - Station.Name: string
+    - Station.StayTime: int64
+  - foreign_fields: []
 USER_DB:
 - type: NoSQLDatabase
 - kind: MongoDB

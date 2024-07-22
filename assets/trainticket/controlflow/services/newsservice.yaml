@@ -1,0 +1,10 @@
+(*NewsServiceImpl).Hello(ctx context.Context, val string):
+  block 0 (Body):
+  - (-1) n (*news.NewsServiceImpl struct{})
+  - (-1) ctx context.Context
+  - (-1) val string
+  - |-
+    (-1) str `[
+                           {"Title": "News Service Complete", "Content": "Congratulations:Your News Service Complete"},
+                           {"Title": "Total Ticket System Complete", "Content": "Just a total test"}
+                        ]` byte

@@ -51,22 +51,22 @@
   - (03) [INLINE] reqID int64
   - (02) [INLINE] ref <ReqID int64> @ UploadService
   - (00) reqID int64
-  - (12) [INLINE] postID int64
-  - (11) [INLINE] PostID int64
-  - (10) [INLINE] reqID int64
-  - (09) [INLINE] ReqID int64
-  - (08) [INLINE] "some username" string
-  - (07) [INLINE] Username string
-  - (06) [INLINE] postnotification.Creator struct{Username string}
-  - (05) [INLINE] Creator postnotification.Creator struct{Username string}
-  - (20) [INLINE] timestamp int64
-  - (19) [INLINE] Timestamp int64
-  - (18) [INLINE] "bob" string
-  - (17) [INLINE] "alice" string
-  - (16) [INLINE] mentions []string
-  - (15) [INLINE] Mentions []string
-  - (14) [INLINE] text string
-  - (13) [INLINE] Text string
+  - (16) [INLINE] reqID int64
+  - (15) [INLINE] ReqID int64
+  - (14) [INLINE] "some username" string
+  - (13) [INLINE] Username string
+  - (12) [INLINE] postnotification.Creator struct{Username string}
+  - (11) [INLINE] Creator postnotification.Creator struct{Username string}
+  - (10) [INLINE] timestamp int64
+  - (09) [INLINE] Timestamp int64
+  - (08) [INLINE] "bob" string
+  - (07) [INLINE] "alice" string
+  - (06) [INLINE] mentions []string
+  - (05) [INLINE] Mentions []string
+  - (20) [INLINE] text string
+  - (19) [INLINE] Text string
+  - (18) [INLINE] postID int64
+  - (17) [INLINE] PostID int64
   - (04) [INLINE] ref <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}> @ UploadService
   - (-1) post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}
   - (-1) collection NoSQLCollection {database = "post", collection = "post"}

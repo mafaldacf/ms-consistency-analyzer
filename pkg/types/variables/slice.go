@@ -3,6 +3,7 @@ package variables
 import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
+	"analyzer/pkg/utils"
 )
 
 type SliceVariable struct {
@@ -13,6 +14,22 @@ type SliceVariable struct {
 
 func (v *SliceVariable) GetVariableInfo() *VariableInfo {
 	return v.VariableInfo
+}
+
+func (v *SliceVariable) GetElements() []Variable {
+	return v.Elements
+}
+
+func (v *SliceVariable) AppendElements(varElements Variable) {
+	if varElementsSlice, ok := varElements.(*SliceVariable); ok {
+		v.Elements = append(v.Elements, varElementsSlice.GetElements()...)
+	} else {
+		if v.GetSliceType().UnderlyingType.IsSameType(varElements.GetType()) {
+			v.Elements = append(v.Elements, varElements)
+		} else {
+			logger.Logger.Fatalf("[VARS SLICE] slice variable underlying type (%s) does not match elements type (%s)", utils.GetType(v.GetSliceType().UnderlyingType), utils.GetType(varElements.GetType()))
+		}
+	}
 }
 
 func (v *SliceVariable) GetVariableAt(index int) Variable {
@@ -33,6 +50,10 @@ func (v *SliceVariable) NumVariables() int {
 
 func (v *SliceVariable) GetType() gotypes.Type {
 	return v.VariableInfo.GetType()
+}
+
+func (v *SliceVariable) GetSliceType() *gotypes.SliceType {
+	return v.VariableInfo.GetType().(*gotypes.SliceType)
 }
 
 func (v *SliceVariable) GetDependencies() []Variable {

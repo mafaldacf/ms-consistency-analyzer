@@ -1,0 +1,1 @@
+(*NewsServiceImpl).Hello(ctx context.Context, val string): []

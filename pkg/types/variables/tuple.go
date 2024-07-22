@@ -15,6 +15,20 @@ func (v *TupleVariable) GetVariableInfo() *VariableInfo {
 	return nil
 }
 
+func (v *TupleVariable) AddVariable(variable Variable) {
+	logger.Logger.Warnf("[VARS TUPLE] adding variable (%s) to tuple variable (%s)", variable.String(), v.String())
+	v.Variables = append(v.Variables, variable)
+}
+
+func (v *TupleVariable) GetVariables() []Variable {
+	return v.Variables
+}
+
+func (v *TupleVariable) MergeTupleVariable(tupleVariable *TupleVariable) {
+	logger.Logger.Warnf("[VARS TUPLE] merging tuple variable (%s) to (%s)", tupleVariable.String(), v.String())
+	v.Variables = append(v.Variables, tupleVariable.GetVariables()...)
+}
+
 func (v *TupleVariable) GetVariableAt(index int) Variable {
 	if index < len(v.Variables) {
 		return v.Variables[index]

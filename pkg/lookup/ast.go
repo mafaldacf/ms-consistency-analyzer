@@ -28,6 +28,7 @@ func GetAllSelectorIdents(expr ast.Expr) ([]*ast.Ident, string) {
 }
 
 func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
+	logger.Logger.Debugf("[LOOKUP AST TYPE] (%s) visiting type expr (%v)", utils.GetType(typeExpr), typeExpr)
 	switch e := typeExpr.(type) {
 	case *ast.Ident:
 		if utils.IsBasicType(e.Name) {
