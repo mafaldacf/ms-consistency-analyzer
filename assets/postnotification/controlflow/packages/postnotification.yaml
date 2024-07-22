@@ -14,60 +14,42 @@
   - (-1) [INLINE] queue Queue
   - (-1) [INLINE] storageService postnotification.StorageService
   - (-1) n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int})
-  - (31) [INLINE] ref <ctx context.Context> @ NotifyService
+  - (37) [INLINE] ref <ctx context.Context> @ NotifyService
   - (-1) ctx context.Context
-  - (06) [INLINE] postID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.PostID, NOTIF_QUEUE.Message.PostID]
-  - (05) [INLINE] PostID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.PostID, NOTIF_QUEUE.Message.PostID]
-  - (23) [INLINE] string --> (TAINTED 1x) --> [NOTIF_QUEUE.Message.PostID]
-  - (22) [INLINE] PostID string --> (TAINTED 1x) --> [NOTIF_QUEUE.Message.PostID]
-  - (03) [INLINE] reqID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.ReqID, NOTIF_QUEUE.Message.ReqID]
-  - (02) [INLINE] ReqID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.ReqID, NOTIF_QUEUE.Message.ReqID]
-  - (21) [INLINE] string --> (TAINTED 1x) --> [NOTIF_QUEUE.Message.ReqID]
-  - (20) [INLINE] ReqID string --> (TAINTED 1x) --> [NOTIF_QUEUE.Message.ReqID]
-  - (19) [INLINE] ref <message postnotification.Message struct{ReqID string, PostID string, Timestamp string}> @ NotifyService --> (TAINTED 1x) --> [NOTIF_QUEUE.Message]
-  - (34) [INLINE] message map[string]interface{}
-  - (33) [INLINE] ref <ReqID string> @ NotifyService
+  - (40) [INLINE] message map[string]interface{}
+  - (39) [INLINE] ref <ReqID string> @ NotifyService
   - (00) [INLINE] ReqID string
-  - (33) [INLINE] ref <ReqID string> @ NotifyService
+  - (39) [INLINE] ref <ReqID string> @ NotifyService
   - (00) [INLINE] ReqID string
-  - (35) [INLINE] ref <PostID string> @ NotifyService
+  - (41) [INLINE] ref <PostID string> @ NotifyService
   - (00) [INLINE] PostID string
-  - (35) [INLINE] ref <PostID string> @ NotifyService
+  - (41) [INLINE] ref <PostID string> @ NotifyService
   - (00) [INLINE] PostID string
-  - (36) [INLINE] Timestamp string
-  - (35) [INLINE] PostID string
-  - (33) [INLINE] ReqID string
-  - (32) [INLINE] ref <notification postnotification.Message struct{ReqID string, PostID string, Timestamp string}> @ NotifyService
+  - (42) [INLINE] Timestamp string
+  - (41) [INLINE] PostID string
+  - (39) [INLINE] ReqID string
+  - (38) [INLINE] ref <notification postnotification.Message struct{ReqID string, PostID string, Timestamp string}> @ NotifyService
   - (-1) message postnotification.Message struct{ReqID string, PostID string, Timestamp string}
-  - (25) reqID int64
+  - (-1) reqID int64
   - (-1) err .error
 (*postnotification.NotifyServiceImpl).workerThread(ctx context.Context, workerID int) error:
   block 0 (Body):
-  - (-1) [INLINE] numWorkers 4 int
   - (-1) [INLINE] queue Queue
   - (-1) [INLINE] storageService postnotification.StorageService
+  - (-1) [INLINE] numWorkers 4 int
   - (-1) n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int})
-  - (31) ctx context.Context
+  - (37) ctx context.Context
   - (-1) workerID int
   - (-1) forever chan struct{}
-  - (03) [INLINE] reqID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.ReqID, NOTIF_QUEUE.Message.ReqID]
-  - (02) [INLINE] ReqID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.ReqID, NOTIF_QUEUE.Message.ReqID]
-  - (21) [INLINE] string --> (TAINTED 1x) --> [NOTIF_QUEUE.Message.ReqID]
-  - (20) [INLINE] ReqID string --> (TAINTED 1x) --> [NOTIF_QUEUE.Message.ReqID]
-  - (06) [INLINE] postID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.PostID, NOTIF_QUEUE.Message.PostID]
-  - (05) [INLINE] PostID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.PostID, NOTIF_QUEUE.Message.PostID]
-  - (23) [INLINE] string --> (TAINTED 1x) --> [NOTIF_QUEUE.Message.PostID]
-  - (22) [INLINE] PostID string --> (TAINTED 1x) --> [NOTIF_QUEUE.Message.PostID]
-  - (19) [INLINE] ref <message postnotification.Message struct{ReqID string, PostID string, Timestamp string}> @ NotifyService --> (TAINTED 1x) --> [NOTIF_QUEUE.Message]
-  - (34) message map[string]interface{}
-  - (36) [INLINE] Timestamp string
-  - (35) [INLINE] PostID string
-  - (33) [INLINE] ReqID string
-  - (32) notification postnotification.Message struct{ReqID string, PostID string, Timestamp string}
+  - (40) message map[string]interface{}
+  - (42) [INLINE] Timestamp string
+  - (41) [INLINE] PostID string
+  - (39) [INLINE] ReqID string
+  - (38) notification postnotification.Message struct{ReqID string, PostID string, Timestamp string}
 (*postnotification.StorageServiceImpl).ReadPost(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}, error):
  block 0 (Body):
-  - (-1) [INLINE] cache Cache
   - (-1) [INLINE] db NoSQLDatabase
+  - (-1) [INLINE] cache Cache
   - (-1) s (*postnotification.StorageServiceImpl struct{cache Cache, db NoSQLDatabase})
   - (-1) ctx context.Context
   - (-1) reqID int64
@@ -82,30 +64,15 @@
   - (-1) [INLINE] db NoSQLDatabase
   - (-1) [INLINE] cache Cache
   - (-1) s (*postnotification.StorageServiceImpl struct{cache Cache, db NoSQLDatabase})
-  - (31) [INLINE] ref <ctx context.Context> @ NotifyService
-  - (-1) [INLINE] ref <ctx context.Context> @ NotifyService
+  - (30) [INLINE] ref <ctx context.Context> @ NotifyService
   - (-1) ctx context.Context
-  - (06) [INLINE] postID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.PostID, NOTIF_QUEUE.Message.PostID]
-  - (05) [INLINE] PostID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.PostID, NOTIF_QUEUE.Message.PostID]
-  - (23) [INLINE] string --> (TAINTED 1x) --> [NOTIF_QUEUE.Message.PostID]
-  - (22) [INLINE] PostID string --> (TAINTED 1x) --> [NOTIF_QUEUE.Message.PostID]
-  - (03) [INLINE] reqID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.ReqID, NOTIF_QUEUE.Message.ReqID]
-  - (02) [INLINE] ReqID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.ReqID, NOTIF_QUEUE.Message.ReqID]
-  - (21) [INLINE] string --> (TAINTED 1x) --> [NOTIF_QUEUE.Message.ReqID]
-  - (20) [INLINE] ReqID string --> (TAINTED 1x) --> [NOTIF_QUEUE.Message.ReqID]
-  - (19) [INLINE] ref <message postnotification.Message struct{ReqID string, PostID string, Timestamp string}> @ NotifyService --> (TAINTED 1x) --> [NOTIF_QUEUE.Message]
-  - (34) [INLINE] message map[string]interface{}
-  - (33) [INLINE] ref <ReqID string> @ NotifyService
-  - (00) [INLINE] ReqID string
-  - (33) [INLINE] ref <ReqID string> @ NotifyService
-  - (00) [INLINE] ReqID string
-  - (25) [INLINE] ref <reqID int64> @ NotifyService
+  - (33) [INLINE] ReqID string
+  - (32) [INLINE] ReqID string
+  - (31) [INLINE] ref <reqID int64> @ NotifyService
   - (-1) reqID int64
-  - (35) [INLINE] ref <PostID string> @ NotifyService
-  - (00) [INLINE] PostID string
-  - (35) [INLINE] ref <PostID string> @ NotifyService
-  - (00) [INLINE] PostID string
-  - (28) [INLINE] ref <postID int64> @ NotifyService
+  - (36) [INLINE] PostID string
+  - (35) [INLINE] PostID string
+  - (34) [INLINE] ref <postID int64> @ NotifyService
   - (-1) postID int64
   - (-1) post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}
   - (-1) collection NoSQLCollection {database = "post", collection = "post"}
@@ -130,29 +97,27 @@
   - (-1) p (*postnotification.StorageServiceImpl struct{cache Cache, db NoSQLDatabase})
   - (01) [INLINE] ref <ctx context.Context> @ UploadService
   - (-1) ctx context.Context
-  - (03) [INLINE] reqID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.ReqID, NOTIF_QUEUE.Message.ReqID]
-  - (02) [INLINE] ref <ReqID int64> @ UploadService --> (TAINTED 2x) --> [POST_NOSQL.Post.ReqID,
-    NOTIF_QUEUE.Message.ReqID]
+  - (03) [INLINE] reqID int64
+  - (02) [INLINE] ref <ReqID int64> @ UploadService
   - (00) reqID int64
-  - (14) [INLINE] timestamp int64 --> (TAINTED 1x) --> [POST_NOSQL.Post.Timestamp]
-  - (13) [INLINE] Timestamp int64 --> (TAINTED 1x) --> [POST_NOSQL.Post.Timestamp]
-  - (12) [INLINE] "bob" string --> (TAINTED 1x) --> [POST_NOSQL.Post.Mentions]
-  - (11) [INLINE] "alice" string --> (TAINTED 1x) --> [POST_NOSQL.Post.Mentions]
-  - (10) [INLINE] mentions []string --> (TAINTED 1x) --> [POST_NOSQL.Post.Mentions]
-  - (09) [INLINE] Mentions []string --> (TAINTED 1x) --> [POST_NOSQL.Post.Mentions]
-  - (08) [INLINE] text string --> (TAINTED 1x) --> [POST_NOSQL.Post.Text]
-  - (07) [INLINE] Text string --> (TAINTED 1x) --> [POST_NOSQL.Post.Text]
-  - (06) [INLINE] postID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.PostID, NOTIF_QUEUE.Message.PostID]
-  - (05) [INLINE] PostID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.PostID, NOTIF_QUEUE.Message.PostID]
-  - (03) [INLINE] reqID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.ReqID, NOTIF_QUEUE.Message.ReqID]
-  - (02) [INLINE] ReqID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.ReqID, NOTIF_QUEUE.Message.ReqID]
-  - (18) [INLINE] "some username" string --> (TAINTED 1x) --> [POST_NOSQL.Post.Creator.Username]
-  - (17) [INLINE] Username string --> (TAINTED 1x) --> [POST_NOSQL.Post.Creator.Username]
-  - (16) [INLINE] postnotification.Creator struct{Username string} --> (TAINTED 1x)
-    --> [POST_NOSQL.Post.Creator]
-  - (15) [INLINE] Creator postnotification.Creator struct{Username string} --> (TAINTED 1x) --> [POST_NOSQL.Post.Creator]
-  - (04) [INLINE] ref <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}> @ UploadService --> (TAINTED 1x) --> [POST_NOSQL.Post]
-  - (-1) post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} --> (TAINTED 1x) --> [POST_NOSQL.Post]
+  - (08) [INLINE] "some username" string
+  - (07) [INLINE] Username string
+  - (06) [INLINE] postnotification.Creator struct{Username string}
+  - (05) [INLINE] Creator postnotification.Creator struct{Username string}
+  - (20) [INLINE] timestamp int64
+  - (19) [INLINE] Timestamp int64
+  - (18) [INLINE] "bob" string
+  - (17) [INLINE] "alice" string
+  - (16) [INLINE] mentions []string
+  - (15) [INLINE] Mentions []string
+  - (14) [INLINE] text string
+  - (13) [INLINE] Text string
+  - (12) [INLINE] postID int64
+  - (11) [INLINE] PostID int64
+  - (10) [INLINE] reqID int64
+  - (09) [INLINE] ReqID int64
+  - (04) [INLINE] ref <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}> @ UploadService
+  - (-1) post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}
   - (-1) collection NoSQLCollection {database = "post", collection = "post"}
   - (-1) err .error
 (*postnotification.UploadServiceImpl).UploadPost(ctx context.Context, username string, text string) (int64, error):
@@ -160,31 +125,30 @@
   - (-1) [INLINE] queue Queue
   - (-1) [INLINE] storageService postnotification.StorageService
   - (-1) u (*postnotification.UploadServiceImpl struct{storageService postnotification.StorageService, queue Queue})
-  - (01) ctx context.Context
+  - (-1) ctx context.Context
   - (-1) username string
-  - (08) text string --> (TAINTED 1x) --> [POST_NOSQL.Post.Text]
-  - (03) reqID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.ReqID, NOTIF_QUEUE.Message.ReqID]
-  - (06) postID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.PostID, NOTIF_QUEUE.Message.PostID]
-  - (14) timestamp int64 --> (TAINTED 1x) --> [POST_NOSQL.Post.Timestamp]
-  - (12) [INLINE] "bob" string --> (TAINTED 1x) --> [POST_NOSQL.Post.Mentions]
-  - (11) [INLINE] "alice" string --> (TAINTED 1x) --> [POST_NOSQL.Post.Mentions]
-  - (10) mentions []string --> (TAINTED 1x) --> [POST_NOSQL.Post.Mentions]
-  - (07) [INLINE] Text string --> (TAINTED 1x) --> [POST_NOSQL.Post.Text]
-  - (05) [INLINE] PostID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.PostID, NOTIF_QUEUE.Message.PostID]
-  - (02) [INLINE] ReqID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.ReqID, NOTIF_QUEUE.Message.ReqID]
-  - (18) [INLINE] "some username" string --> (TAINTED 1x) --> [POST_NOSQL.Post.Creator.Username]
-  - (17) [INLINE] Username string --> (TAINTED 1x) --> [POST_NOSQL.Post.Creator.Username]
-  - (16) [INLINE] postnotification.Creator struct{Username string} --> (TAINTED 1x)
-    --> [POST_NOSQL.Post.Creator]
-  - (15) [INLINE] Creator postnotification.Creator struct{Username string} --> (TAINTED 1x) --> [POST_NOSQL.Post.Creator]
-  - (13) [INLINE] Timestamp int64 --> (TAINTED 1x) --> [POST_NOSQL.Post.Timestamp]
-  - (09) [INLINE] Mentions []string --> (TAINTED 1x) --> [POST_NOSQL.Post.Mentions]
-  - (04) post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} --> (TAINTED 1x) --> [POST_NOSQL.Post]
-  - (23) [INLINE] string --> (TAINTED 1x) --> [NOTIF_QUEUE.Message.PostID]
-  - (22) [INLINE] PostID string --> (TAINTED 1x) --> [NOTIF_QUEUE.Message.PostID]
-  - (21) [INLINE] string --> (TAINTED 1x) --> [NOTIF_QUEUE.Message.ReqID]
-  - (20) [INLINE] ReqID string --> (TAINTED 1x) --> [NOTIF_QUEUE.Message.ReqID]
-  - (19) message postnotification.Message struct{ReqID string, PostID string, Timestamp string} --> (TAINTED 1x) --> [NOTIF_QUEUE.Message]
+  - (-1) text string
+  - (-1) reqID int64
+  - (-1) postID int64
+  - (-1) timestamp int64
+  - (00) [INLINE] "bob" string
+  - (00) [INLINE] "alice" string
+  - (-1) mentions []string
+  - (00) [INLINE] Text string
+  - (00) [INLINE] PostID int64
+  - (00) [INLINE] ReqID int64
+  - (00) [INLINE] "some username" string
+  - (00) [INLINE] Username string
+  - (00) [INLINE] postnotification.Creator struct{Username string}
+  - (00) [INLINE] Creator postnotification.Creator struct{Username string}
+  - (00) [INLINE] Timestamp int64
+  - (00) [INLINE] Mentions []string
+  - (-1) post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}
+  - (-1) [INLINE] string
+  - (00) [INLINE] PostID string
+  - (-1) [INLINE] string
+  - (00) [INLINE] ReqID string
+  - (-1) message postnotification.Message struct{ReqID string, PostID string, Timestamp string}
   - (-1) _ bool
   - (-1) err .error
 postnotification.NewNotifyServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue) (postnotification.NotifyService, error):

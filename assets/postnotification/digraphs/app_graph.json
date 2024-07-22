@@ -17,38 +17,38 @@
       "type": "datastore"
     },
     {
-      "id": "post_nosql MongoDB",
+      "id": "post_cache Redis",
       "type": "datastore"
     },
     {
-      "id": "post_cache Redis",
+      "id": "post_nosql MongoDB",
       "type": "datastore"
     }
   ],
   "edges": [
     {
-      "caller": "UploadService",
-      "callee": "StorageService"
-    },
-    {
       "caller": "NotifyService",
       "callee": "StorageService"
     },
     {
       "caller": "UploadService",
-      "callee": "notif_queue RabbitMQ"
+      "callee": "StorageService"
     },
     {
       "caller": "NotifyService",
       "callee": "notif_queue RabbitMQ"
+    },
+    {
+      "caller": "StorageService",
+      "callee": "post_cache Redis"
     },
     {
       "caller": "StorageService",
       "callee": "post_nosql MongoDB"
     },
     {
-      "caller": "StorageService",
-      "callee": "post_cache Redis"
+      "caller": "UploadService",
+      "callee": "notif_queue RabbitMQ"
     }
   ]
 }

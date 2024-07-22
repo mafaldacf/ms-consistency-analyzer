@@ -79,6 +79,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		}
 		if utils.IsBuiltInType(e.Name) {
 			if utils.IsBuiltInFunc(e.Name) {
+				logger.Logger.Warnf("FIXME: IDENTIFIED BUILT IN FUNC FOR (%s)", e.Name)
 				return nil, nil
 			}
 		}

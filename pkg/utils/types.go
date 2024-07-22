@@ -36,11 +36,11 @@ func IsType[T any](obj interface{}) bool {
 }
 
 func IsBuiltInType(name string) bool {
-	var builtinTypes = []string{"error", "make", "println"}
+	var builtinTypes = []string{"error", "make", "println", "append"}
 	return slices.Contains(builtinTypes, name)
 }
 
 func IsBuiltInFunc(name string) bool {
-	var builtinFunc = []string{"make", "println"}
+	var builtinFunc = []string{"make", "println", "append"}
 	return slices.Contains(builtinFunc, name)
 }

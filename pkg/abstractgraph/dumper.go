@@ -2,6 +2,7 @@ package abstractgraph
 
 import (
 	"container/list"
+	"sort"
 	//"fmt"
 	/* "strings"
 
@@ -33,6 +34,31 @@ func (graph *AbstractGraph) dumpDiGraph() {
 	type digraph struct {
 		Nodes []node `json:"nodes"`
 		Edges []edge `json:"edges"`
+	}
+
+	var nodeTypeOrder = map[string]int{
+		"client":    1,
+		"service":   2,
+		"datastore": 3,
+	}
+	var sortNodes = func(nodes []node) {
+		sort.Slice(nodes, func(i, j int) bool {
+			if nodes[i].Type != nodes[j].Type {
+				return nodeTypeOrder[nodes[i].Type] < nodeTypeOrder[nodes[j].Type]
+			}
+			return nodes[i].Id < nodes[j].Id
+		})
+	}
+	var sortEdges = func(edges []edge) {
+		sort.Slice(edges, func(i, j int) bool {
+			if edges[i].Caller != edges[j].Caller {
+				return edges[i].Caller < edges[j].Caller
+			}
+			if edges[i].Callee != edges[j].Callee {
+				return edges[i].Callee < edges[j].Callee
+			}
+			return edges[i].Call < edges[j].Call
+		})
 	}
 	
 	nodes := []node{}
@@ -84,6 +110,8 @@ func (graph *AbstractGraph) dumpDiGraph() {
 		}
 	}
 
+	sortEdges(edges)
+	sortNodes(nodes)
 	outputGraph := digraph{Nodes: nodes, Edges: edges}
 	utils.DumpToJSONFile(outputGraph, graph.AppName, "digraphs/call_graph")
 }

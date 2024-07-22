@@ -44,16 +44,42 @@ func (app *App) dumpDiGraph() {
 		Edges []edge `json:"edges"`
 	}
 
+	var nodeTypeOrder = map[string]int{
+		"client":    1,
+		"service":   2,
+		"datastore": 3,
+	}
+	var sortNodes = func(nodes []node) {
+		sort.Slice(nodes, func(i, j int) bool {
+			if nodes[i].Type != nodes[j].Type {
+				return nodeTypeOrder[nodes[i].Type] < nodeTypeOrder[nodes[j].Type]
+			}
+			return nodes[i].Id < nodes[j].Id
+		})
+	}
+	var sortEdges = func(edges []edge) {
+		sort.Slice(edges, func(i, j int) bool {
+			if edges[i].Caller != edges[j].Caller {
+				return edges[i].Caller < edges[j].Caller
+			}
+			return edges[i].Callee < edges[j].Callee
+		})
+	}
+
 	nodes := []node{}
 	edges := []edge{}
-	services := make(map[string]bool)
+	servicesVisited := make(map[string]bool)
+
+	// get services list
 	for _, s := range app.Services {
+		servicesVisited[s.GetName()] = true
 		nodes = append(nodes, node{Id: s.GetName(), Type: "service"})
-		services[s.GetName()] = true
 	}
+
+	// get and add edges
 	for _, service := range app.Services {
 		for _, callee := range service.Services {
-			if _, exists := services[callee.GetName()]; exists {
+			if _, exists := servicesVisited[callee.GetName()]; exists {
 				edges = append(edges, edge{Caller: service.GetName(), Callee: callee.GetName()})
 			}
 		}
@@ -63,14 +89,16 @@ func (app *App) dumpDiGraph() {
 	datastores := make(map[string]bool)
 	for _, service := range app.Services {
 		for _, ds := range service.Databases {
-			if _, exists := datastores[ds.GetName()]; !exists {
+			if _, exists := datastores[ds.String()]; !exists {
 				nodes = append(nodes, node{Id: ds.String(), Type: "datastore"})
-				datastores[ds.GetName()] = true
+				datastores[ds.String()] = true
 			}
 			edges = append(edges, edge{Caller: service.GetName(), Callee: ds.String()})
 		}
 	}
 
+	sortNodes(nodes)
+	sortEdges(edges)
 	outputGraph := digraph{Nodes: nodes, Edges: edges}
 	utils.DumpToJSONFile(outputGraph, app.Name, "digraphs/app_graph")
 }
@@ -193,7 +221,7 @@ func (app *App) dumpYamlControlflow() {
 		data := service.Yaml()
 		utils.DumpToYamlFile(data, app.Name, fmt.Sprintf("controlflow/services/%s", strings.ToLower(name)))
 	}
-	
+
 	for _, p := range app.Packages {
 		pkgData := make(map[string]interface{})
 		for _, m := range p.ParsedMethods {
