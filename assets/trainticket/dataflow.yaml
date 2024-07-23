@@ -34,6 +34,12 @@ STATION_DB.Station:
 - write <station station.Station struct{ID string, Name string, StayTime int64} (StructVariable)>
 - write <station station.Station struct{ID string, Name string, StayTime int64} (StructVariable)>
   from <station station.Station struct{ID string, Name string, StayTime int64} (StructVariable)>
+TRAIN_DB.TrainType:
+- write <tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} (StructVariable)>
+- write <tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} (StructVariable)> from <tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} (StructVariable)>
+TRAINFOOD_DB.TrainFood:
+- write <tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}} (StructVariable)>
+- write <tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}} (StructVariable)> from <tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}} (StructVariable)>
 USER_DB.User:
 - write <user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string} (StructVariable)>
 - write <user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string} (StructVariable)> from

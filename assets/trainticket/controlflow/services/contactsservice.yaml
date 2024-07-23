@@ -47,3 +47,7 @@
   - (-1) contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
   - (-1) coll NoSQLCollection {database = "contacts", collection = "contacts"}
   - (-1) err .error
+.NewContactsServiceImpl(ctx context.Context, db NoSQLDatabase):
+  block 0 (Body):
+  - (-1) ctx context.Context
+  - (-1) db NoSQLDatabase

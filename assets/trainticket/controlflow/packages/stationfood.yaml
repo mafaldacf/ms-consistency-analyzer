@@ -1,0 +1,33 @@
+(*stationfood.StationFoodServiceImpl).Cleanup(ctx context.Context) error:
+  block 0 (Body):
+  - (-1) s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+(*stationfood.StationFoodServiceImpl).CreateFoodStore(ctx context.Context, store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}) error:
+ block 0 (Body):
+  - (-1) s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
+(*stationfood.StationFoodServiceImpl).GetFoodStoreByID(ctx context.Context, id string)
+  (stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}, error):
+ block 0 (Body):
+  - (-1) s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) id string
+(*stationfood.StationFoodServiceImpl).GetFoodStoresByStationNames(ctx context.Context, stations []string) ([]stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}, error):
+ block 0 (Body):
+  - (-1) s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) stations []string
+(*stationfood.StationFoodServiceImpl).ListFoodStores(ctx context.Context) ([]stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}, error):
+ block 0 (Body):
+  - (-1) s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+(*stationfood.StationFoodServiceImpl).ListFoodStoresByStationName(ctx context.Context, station string) ([]stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}, error):
+ block 0 (Body):
+  - (-1) s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) station string
+stationfood.NewStationFoodServiceImpl(ctx context.Context, db NoSQLDatabase) ((*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase}), error):
+ block 0 (Body):
+  - (-1) ctx context.Context
+  - (-1) db NoSQLDatabase

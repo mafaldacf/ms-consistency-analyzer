@@ -64,6 +64,10 @@
   - (-1) assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
   - (-1) _ assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
   - (-1) err .error
+.NewAssuranceServiceImpl(ctx context.Context, db NoSQLDatabase):
+  block 0 (Body):
+  - (-1) ctx context.Context
+  - (-1) db NoSQLDatabase
 .getAssuranceType(ctx context.Context, index int64):
   block 0 (Body):
   - (15) [INLINE] ref <ctx context.Context> @ AssuranceService

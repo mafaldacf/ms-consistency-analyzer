@@ -176,6 +176,55 @@ contacts:
   - (*contacts.ContactsServiceImpl).GetAllContacts(ctx context.Context) ([]contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}, error)
   - (*contacts.ContactsServiceImpl).Modify(ctx context.Context, contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}) (bool, error)
   - contacts.NewContactsServiceImpl(ctx context.Context, db NoSQLDatabase) ((*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase}), error)
+delivery:
+- package: delivery
+- package path: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/delivery
+- module: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow
+- files:
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/delivery/data.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/delivery/deliveryService.go
+- imports:
+  - context
+  - fmt
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - golang.org/x/exp/slog
+- imported types:
+  - .error
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
+    NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
+  - Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}
+  - context.Context
+- declared types:
+  - delivery.Delivery struct{ID string, OrderID string, FoodName string, StoreName string, StationName string}
+  - delivery.DeliveryService interface{}
+  - delivery.DeliveryServiceImpl struct{db NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, delQ Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}}
+- service types: []
+- datastore types:
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
+    NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
+  - Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}
+- declared variables: []
+- parsed methods:
+  - (*delivery.DeliveryServiceImpl).Run(ctx context.Context) error
+  - delivery.NewDeliveryServiceImpl(ctx context.Context, queue Queue, db NoSQLDatabase)
+    ((*delivery.DeliveryServiceImpl struct{db NoSQLDatabase, delQ Queue}), error)
+food:
+- package: food
+- package path: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/food
+- module: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow
+- files:
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/food/data.go
+- imports: []
+- imported types: []
+- declared types:
+  - food.Food struct{Name string, Price float64}
+  - food.FoodOrder struct{ID string, OrderID string, FoodType int64, StationName string, StoreName string, FoodName string, Price float64}
+- service types: []
+- datastore types: []
+- declared variables: []
+- parsed methods: []
 news:
 - package: news
 - package path: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/news
@@ -199,6 +248,48 @@ news:
   - (*news.NewsServiceImpl).Hello(ctx context.Context, val string) (string, error)
   - news.NewNewsServiceImpl(ctx context.Context) ((*news.NewsServiceImpl struct{}),
     error)
+payment:
+- package: payment
+- package path: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/payment
+- module: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow
+- files:
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/payment/data.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/payment/paymentService.go
+- imports:
+  - context
+  - errors
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - github.com/google/uuid
+  - go.mongodb.org/mongo-driver/bson
+- imported types:
+  - .error
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
+    NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.All(ctx context.Context, obj interface{})}
+  - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
+  - context.Context
+- declared types:
+  - payment.Money struct{ID string, UserID string, Price string}
+  - payment.Payment struct{ID string, OrderID string, UserID string, Price string}
+  - payment.PaymentService interface{}
+  - payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, moneyDB NoSQLDatabase
+    interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+- service types: []
+- datastore types:
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
+    NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.All(ctx context.Context, obj interface{})}
+  - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
+- declared variables: []
+- parsed methods:
+  - (*payment.PaymentServiceImpl).AddMoney(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}) error
+  - (*payment.PaymentServiceImpl).Cleanup(ctx context.Context) error
+  - (*payment.PaymentServiceImpl).InitPayment(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}) error
+  - (*payment.PaymentServiceImpl).Pay(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}) error
+  - (*payment.PaymentServiceImpl).Query(ctx context.Context) ([]payment.Payment struct{ID string, OrderID string, UserID string, Price string}, error)
+  - payment.NewPaymentServiceImpl(ctx context.Context, payDB NoSQLDatabase, moneyDB NoSQLDatabase) ((*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase}), error)
 price:
 - package: price
 - package path: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/price
@@ -244,6 +335,52 @@ price:
   - (*price.PriceServiceImpl).GetAllPriceConfig(ctx context.Context) ([]price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}, error)
   - (*price.PriceServiceImpl).UpdatePriceConfig(ctx context.Context, pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}) (bool, error)
   - price.NewPriceServiceImpl(ctx context.Context, db NoSQLDatabase) ((*price.PriceServiceImpl struct{priceDB NoSQLDatabase}), error)
+route:
+- package: route
+- package path: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/route
+- module: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow
+- files:
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/route/data.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/route/routeService.go
+- imports:
+  - context
+  - errors
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - github.com/google/uuid
+  - go.mongodb.org/mongo-driver/bson
+  - strconv
+  - strings
+- imported types:
+  - .error
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
+    NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.All(ctx context.Context, obj interface{})}
+  - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
+  - context.Context
+  - primitive.D
+  - primitive.E
+- declared types:
+  - route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
+  - route.RouteInfo struct{ID string, StartStation string, EndStation string, StationList string, DistanceList string}
+  - route.RouteService interface{}
+  - route.RouteServiceImpl struct{db NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+- service types: []
+- datastore types:
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
+    NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.All(ctx context.Context, obj interface{})}
+  - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
+- declared variables: []
+- parsed methods:
+  - (*route.RouteServiceImpl).CreateAndModify(ctx context.Context, info route.RouteInfo struct{ID string, StartStation string, EndStation string, StationList string, DistanceList string}) (route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}, error)
+  - (*route.RouteServiceImpl).DeleteRoute(ctx context.Context, id string) error
+  - (*route.RouteServiceImpl).GetAllRoutes(ctx context.Context) ([]route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}, error)
+  - (*route.RouteServiceImpl).GetRouteById(ctx context.Context, id string) (route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}, error)
+  - (*route.RouteServiceImpl).GetRouteByIds(ctx context.Context, ids []string) ([]route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}, error)
+  - (*route.RouteServiceImpl).GetRouteByStartAndEnd(ctx context.Context, start string, end string) (route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}, error)
+  - route.NewRouteServiceImpl(ctx context.Context, db NoSQLDatabase) ((*route.RouteServiceImpl struct{db NoSQLDatabase}), error)
 station:
 - package: station
 - package path: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/station
@@ -289,6 +426,142 @@ station:
   - (*station.StationServiceImpl).FindIDs(ctx context.Context, names []string) ([]string, error)
   - (*station.StationServiceImpl).UpdateStation(ctx context.Context, station station.Station struct{ID string, Name string, StayTime int64}) (bool, error)
   - station.NewStationServiceImpl(ctx context.Context, db NoSQLDatabase) ((*station.StationServiceImpl struct{stationDB NoSQLDatabase}), error)
+stationfood:
+- package: stationfood
+- package path: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/stationfood
+- module: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow
+- files:
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/stationfood/data.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/stationfood/stationFoodService.go
+- imports:
+  - context
+  - errors
+  - github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/food
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+- imported types:
+  - .error
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
+    NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.All(ctx context.Context, obj interface{})}
+  - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
+  - context.Context
+  - food.Food struct{Name string, Price float64}
+  - primitive.A
+  - primitive.D
+  - primitive.E
+- declared types:
+  - stationfood.StationFoodService interface{}
+  - stationfood.StationFoodServiceImpl struct{db NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
+- service types: []
+- datastore types:
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
+    NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.All(ctx context.Context, obj interface{})}
+  - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
+- declared variables: []
+- parsed methods:
+  - (*stationfood.StationFoodServiceImpl).Cleanup(ctx context.Context) error
+  - (*stationfood.StationFoodServiceImpl).CreateFoodStore(ctx context.Context, store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}) error
+  - (*stationfood.StationFoodServiceImpl).GetFoodStoreByID(ctx context.Context, id string) (stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}, error)
+  - (*stationfood.StationFoodServiceImpl).GetFoodStoresByStationNames(ctx context.Context, stations []string) ([]stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}, error)
+  - (*stationfood.StationFoodServiceImpl).ListFoodStores(ctx context.Context) ([]stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}, error)
+  - (*stationfood.StationFoodServiceImpl).ListFoodStoresByStationName(ctx context.Context, station string) ([]stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}, error)
+  - stationfood.NewStationFoodServiceImpl(ctx context.Context, db NoSQLDatabase) ((*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase}), error)
+train:
+- package: train
+- package path: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/train
+- module: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow
+- files:
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/train/data.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/train/trainService.go
+- imports:
+  - context
+  - errors
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+- imported types:
+  - .error
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
+    NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.All(ctx context.Context, obj interface{})}
+  - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
+  - context.Context
+  - primitive.D
+  - primitive.E
+- declared types:
+  - train.TrainService
+  - train.TrainServiceImpl struct{db {instance = train_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}
+- service types:
+  - train.TrainService
+- datastore types:
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
+    NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.All(ctx context.Context, obj interface{})}
+  - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
+- declared variables: []
+- parsed methods:
+  - (*train.TrainServiceImpl).AllTrains(ctx context.Context) ([]train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}, error)
+  - (*train.TrainServiceImpl).Create(ctx context.Context, tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64})
+    (bool, error)
+  - (*train.TrainServiceImpl).Delete(ctx context.Context, id string) (bool, error)
+  - (*train.TrainServiceImpl).Retrieve(ctx context.Context, id string) (train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}, error)
+  - (*train.TrainServiceImpl).RetrieveByName(ctx context.Context, name string) (train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}, error)
+  - (*train.TrainServiceImpl).RetrieveByNames(ctx context.Context, names []string)
+    ([]train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}, error)
+  - (*train.TrainServiceImpl).Update(ctx context.Context, ttype train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64})
+    (bool, error)
+  - train.NewTrainServiceImpl(ctx context.Context, db NoSQLDatabase) ((*train.TrainServiceImpl struct{db NoSQLDatabase}), error)
+trainfood:
+- package: trainfood
+- package path: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/trainfood
+- module: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow
+- files:
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/trainfood/data.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/trainfood/trainFoodService.go
+- imports:
+  - context
+  - errors
+  - github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/food
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+- imported types:
+  - .error
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
+    NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.All(ctx context.Context, obj interface{})}
+  - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
+  - context.Context
+  - food.Food struct{Name string, Price float64}
+  - primitive.D
+  - primitive.E
+- declared types:
+  - trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}}
+  - trainfood.TrainFoodService
+  - trainfood.TrainFoodServiceImpl struct{db {instance = trainfood_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+- service types:
+  - trainfood.TrainFoodService
+- datastore types:
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
+    NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.All(ctx context.Context, obj interface{})}
+  - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
+- declared variables: []
+- parsed methods:
+  - (*trainfood.TrainFoodServiceImpl).Cleanup(ctx context.Context) error
+  - (*trainfood.TrainFoodServiceImpl).CreateTrainFood(ctx context.Context, tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}})
+    (trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}}, error)
+  - (*trainfood.TrainFoodServiceImpl).ListTrainFood(ctx context.Context) ([]trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}}, error)
+  - (*trainfood.TrainFoodServiceImpl).ListTrainFoodByTripID(ctx context.Context, tripid string) ([]food.Food struct{Name string, Price float64}, error)
+  - trainfood.NewTrainFoodServiceImpl(ctx context.Context, db NoSQLDatabase) ((*trainfood.TrainFoodServiceImpl struct{db NoSQLDatabase}), error)
 user:
 - package: user
 - package path: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/user

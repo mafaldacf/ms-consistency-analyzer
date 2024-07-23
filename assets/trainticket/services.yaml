@@ -38,6 +38,18 @@ StationService:
 - services: {}
 - datastores:
     station_db: NoSQLDatabase
+TrainFoodService:
+- fields:
+    db: NoSQLDatabase
+- services: {}
+- datastores:
+    trainfood_db: NoSQLDatabase
+TrainService:
+- fields:
+    db: NoSQLDatabase
+- services: {}
+- datastores:
+    train_db: NoSQLDatabase
 UserService:
 - fields:
     userDB: NoSQLDatabase

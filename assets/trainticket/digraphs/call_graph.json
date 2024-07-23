@@ -33,6 +33,14 @@
       "type": "service"
     },
     {
+      "id": "TrainFoodService",
+      "type": "service"
+    },
+    {
+      "id": "TrainService",
+      "type": "service"
+    },
+    {
       "id": "UserService",
       "type": "service"
     },
@@ -58,6 +66,14 @@
     },
     {
       "id": "station_db MongoDB",
+      "type": "datastore"
+    },
+    {
+      "id": "train_db MongoDB",
+      "type": "datastore"
+    },
+    {
+      "id": "trainfood_db MongoDB",
       "type": "datastore"
     },
     {
@@ -350,6 +366,72 @@
     },
     {
       "caller": "Client",
+      "callee": "TrainFoodService",
+      "call": "Cleanup",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "TrainFoodService",
+      "call": "CreateTrainFood",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "TrainFoodService",
+      "call": "ListTrainFood",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "TrainFoodService",
+      "call": "ListTrainFoodByTripID",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "TrainService",
+      "call": "AllTrains",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "TrainService",
+      "call": "Create",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "TrainService",
+      "call": "Delete",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "TrainService",
+      "call": "Retrieve",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "TrainService",
+      "call": "RetrieveByName",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "TrainService",
+      "call": "RetrieveByNames",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "TrainService",
+      "call": "Update",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
       "callee": "UserService",
       "call": "DeleteUser",
       "depth": 0
@@ -603,6 +685,84 @@
     {
       "caller": "StationService",
       "callee": "station_db MongoDB",
+      "call": "Upsert",
+      "depth": 1
+    },
+    {
+      "caller": "TrainFoodService",
+      "callee": "trainfood_db MongoDB",
+      "call": "DeleteMany",
+      "depth": 1
+    },
+    {
+      "caller": "TrainFoodService",
+      "callee": "trainfood_db MongoDB",
+      "call": "FindMany",
+      "depth": 1
+    },
+    {
+      "caller": "TrainFoodService",
+      "callee": "trainfood_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "TrainFoodService",
+      "callee": "trainfood_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "TrainFoodService",
+      "callee": "trainfood_db MongoDB",
+      "call": "InsertOne",
+      "depth": 1
+    },
+    {
+      "caller": "TrainFoodService",
+      "callee": "trainfood_db MongoDB",
+      "call": "Upsert",
+      "depth": 1
+    },
+    {
+      "caller": "TrainService",
+      "callee": "train_db MongoDB",
+      "call": "DeleteOne",
+      "depth": 1
+    },
+    {
+      "caller": "TrainService",
+      "callee": "train_db MongoDB",
+      "call": "FindMany",
+      "depth": 1
+    },
+    {
+      "caller": "TrainService",
+      "callee": "train_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "TrainService",
+      "callee": "train_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "TrainService",
+      "callee": "train_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "TrainService",
+      "callee": "train_db MongoDB",
+      "call": "InsertOne",
+      "depth": 1
+    },
+    {
+      "caller": "TrainService",
+      "callee": "train_db MongoDB",
       "call": "Upsert",
       "depth": 1
     },

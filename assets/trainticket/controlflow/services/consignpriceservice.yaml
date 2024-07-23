@@ -34,3 +34,7 @@
   - (-1) ctx context.Context
   - (-1) coll NoSQLCollection {database = "consign", collection = "consign"}
   - (-1) err .error
+.NewConsignPriceServiceImpl(ctx context.Context, db NoSQLDatabase):
+  block 0 (Body):
+  - (-1) ctx context.Context
+  - (-1) db NoSQLDatabase

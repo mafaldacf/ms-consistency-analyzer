@@ -81,6 +81,32 @@ STATION_DB:
     - Station.Name: string
     - Station.StayTime: int64
   - foreign_fields: []
+TRAIN_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- schema:
+  - fields:
+    - document: train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}
+  - unfolded_fields:
+    - TrainType: train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}
+    - TrainType.ID: string
+    - TrainType.Name: string
+    - TrainType.EconomyClass: int64
+    - TrainType.ComfortClass: int64
+    - TrainType.AvgSpeed: int64
+  - foreign_fields: []
+TRAINFOOD_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- schema:
+  - fields:
+    - document: trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}}
+  - unfolded_fields:
+    - TrainFood: trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}}
+    - TrainFood.ID: string
+    - TrainFood.TripID: string
+    - TrainFood.Foods: '[]food.Food struct{Name string, Price float64}'
+  - foreign_fields: []
 USER_DB:
 - type: NoSQLDatabase
 - kind: MongoDB

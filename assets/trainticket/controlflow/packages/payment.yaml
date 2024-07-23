@@ -1,0 +1,28 @@
+? (*payment.PaymentServiceImpl).AddMoney(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}) error:
+ block 0 (Body):
+  - (-1) p (*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}
+(*payment.PaymentServiceImpl).Cleanup(ctx context.Context) error:
+  block 0 (Body):
+  - (-1) p (*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase})
+  - (-1) ctx context.Context
+(*payment.PaymentServiceImpl).InitPayment(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}) error:
+ block 0 (Body):
+  - (-1) p (*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}
+(*payment.PaymentServiceImpl).Pay(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}) error:
+ block 0 (Body):
+  - (-1) p (*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}
+(*payment.PaymentServiceImpl).Query(ctx context.Context) ([]payment.Payment struct{ID string, OrderID string, UserID string, Price string}, error):
+ block 0 (Body):
+  - (-1) p (*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase})
+  - (-1) ctx context.Context
+payment.NewPaymentServiceImpl(ctx context.Context, payDB NoSQLDatabase, moneyDB NoSQLDatabase) ((*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase}), error):
+ block 0 (Body):
+  - (-1) ctx context.Context
+  - (-1) payDB NoSQLDatabase
+  - (-1) moneyDB NoSQLDatabase

@@ -45,3 +45,7 @@
   - (-1) user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}
   - (-1) coll NoSQLCollection {database = "user", collection = "user"}
   - (-1) err .error
+.NewUserServiceImpl(ctx context.Context, db NoSQLDatabase):
+  block 0 (Body):
+  - (-1) ctx context.Context
+  - (-1) db NoSQLDatabase

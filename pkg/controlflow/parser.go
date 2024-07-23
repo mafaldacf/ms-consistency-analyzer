@@ -647,6 +647,17 @@ func parseBuiltInGoFuncCall(service *service.Service, method *types.ParsedMethod
 	switch funcIdent.Name {
 	case "make":
 		return wrapInTupleVariable(deps[0])
+	case "len":
+		return &variables.BasicVariable{
+				VariableInfo: &variables.VariableInfo{
+					Type: &gotypes.BasicType{
+						Name:  "int",
+						Value: fmt.Sprintf("len(%s)", deps[0].String()),
+					},
+					Id: variables.VARIABLE_UNASSIGNED_ID,
+				},
+				UnderlyingVariables: deps,
+			}
 	case "append":
 		slice := deps[0]
 		elems := deps[1]
@@ -659,9 +670,8 @@ func parseBuiltInGoFuncCall(service *service.Service, method *types.ParsedMethod
 			logger.Logger.Fatalf("[CFG] [%s] unexpected slice type (%s) in \"append\" call (%v)", service.GetName(), utils.GetType(slice), callExpr)
 		}
 		return wrapInTupleVariable(slice)
-
 	case "println":
-		logger.Logger.Fatalf("[CFG] [%s] TODO: built-in go func (%s) for function call (%v)", service.GetName(), funcIdent.Name, callExpr)
+		return nil
 	default:
 		logger.Logger.Fatalf("[CFG] [%s] unexpected built-in go func (%s) for function call (%v)", service.GetName(), funcIdent.Name, callExpr)
 	}
@@ -709,10 +719,7 @@ func parseAndSaveCall(service *service.Service, method *types.ParsedMethod, bloc
 
 	// call to golang built-in type (e.g. make, println, append)
 	if len(idents) == 1 && utils.IsBuiltInGoTypeOrFunc(funcIdent.Name) {
-		tupleVar := parseBuiltInGoFuncOrTypeCall(service, method, block, callExpr, funcIdent)
-		if tupleVar != nil {
-			return tupleVar
-		}
+		return parseBuiltInGoFuncOrTypeCall(service, method, block, callExpr, funcIdent)
 	}
 
 	var callInPackage bool

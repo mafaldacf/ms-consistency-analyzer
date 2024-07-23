@@ -40,7 +40,7 @@ func IsBuiltInGoTypeOrFunc(name string) bool {
 }
 
 func IsBuiltInGoFunc(name string) bool {
-	var builtinFunc = []string{"make", "println", "append"}
+	var builtinFunc = []string{"make", "println", "append", "len"}
 	return slices.Contains(builtinFunc, name)
 }
 

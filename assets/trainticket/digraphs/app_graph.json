@@ -29,6 +29,14 @@
       "type": "service"
     },
     {
+      "id": "TrainFoodService",
+      "type": "service"
+    },
+    {
+      "id": "TrainService",
+      "type": "service"
+    },
+    {
       "id": "UserService",
       "type": "service"
     },
@@ -54,6 +62,14 @@
     },
     {
       "id": "station_db MongoDB",
+      "type": "datastore"
+    },
+    {
+      "id": "train_db MongoDB",
+      "type": "datastore"
+    },
+    {
+      "id": "trainfood_db MongoDB",
       "type": "datastore"
     },
     {
@@ -85,6 +101,14 @@
     {
       "caller": "StationService",
       "callee": "station_db MongoDB"
+    },
+    {
+      "caller": "TrainFoodService",
+      "callee": "trainfood_db MongoDB"
+    },
+    {
+      "caller": "TrainService",
+      "callee": "train_db MongoDB"
     },
     {
       "caller": "UserService",

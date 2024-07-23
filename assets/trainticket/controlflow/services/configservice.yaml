@@ -37,3 +37,7 @@
   - (-1) conf config.Config struct{Name string, Value string, Description string}
   - (-1) coll NoSQLCollection {database = "config", collection = "config"}
   - (-1) err .error
+.NewConfigServiceImpl(ctx context.Context, db NoSQLDatabase):
+  block 0 (Body):
+  - (-1) ctx context.Context
+  - (-1) db NoSQLDatabase

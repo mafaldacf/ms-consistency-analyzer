@@ -8,3 +8,6 @@
                            {"Title": "News Service Complete", "Content": "Congratulations:Your News Service Complete"},
                            {"Title": "Total Ticket System Complete", "Content": "Just a total test"}
                         ]` byte
+.NewNewsServiceImpl(ctx context.Context):
+  block 0 (Body):
+  - (-1) ctx context.Context
