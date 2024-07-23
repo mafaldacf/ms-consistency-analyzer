@@ -32,13 +32,13 @@ func (v *FieldVariable) AssignVariable(rvariable Variable) {
 	// e.g. post.Text = post2.Text2
 	if v.GetType().IsSameType(rvariable.GetType()) {
 		logger.Logger.Infof("[VAR FIELD] (a) assigning variables with types (%s --> %s) for lvariable (%s) and rvariable (%s)", utils.GetType(v.Underlying), utils.GetType(rvariable), v.Underlying.String(), rvariable.String())
-		v.Underlying = rvariable.(*FieldVariable).Underlying.DeepCopy()
+		v.Underlying = rvariable.(*FieldVariable).Underlying.DeepCopy(false)
 		return
-	} 
+	}
 	// e.g. post.Text = text
 	if v.Underlying.GetType().IsSameType(rvariable.GetType()) {
 		logger.Logger.Infof("[VAR FIELD] (b) assigning variables with types (%s --> %s) for lvariable (%s) and rvariable (%s)", utils.GetType(v.Underlying), utils.GetType(rvariable), v.Underlying.String(), rvariable.String())
-		v.Underlying = rvariable.DeepCopy()
+		v.Underlying = rvariable.DeepCopy(false)
 		return
 	}
 
@@ -47,7 +47,7 @@ func (v *FieldVariable) AssignVariable(rvariable Variable) {
 	_, rightArrayOk := rvariable.GetType().(*gotypes.ArrayType)
 	if leftSliceOk && rightArrayOk {
 		// maintain left slice and add copy right array
-		v.Underlying = rvariable.DeepCopy()
+		v.Underlying = rvariable.DeepCopy(false)
 		v.Underlying.(*ArrayVariable).UpgradeToSlice()
 		return
 	}
@@ -73,10 +73,10 @@ func (v *FieldVariable) AddReferenceWithID(target Variable, creator string) {
 	v.Underlying.AddReferenceWithID(target, creator)
 }
 
-func (v *FieldVariable) DeepCopy() Variable {
+func (v *FieldVariable) DeepCopy(force bool) Variable {
 	copy := &FieldVariable{
-		VariableInfo: v.VariableInfo.DeepCopy(),
-		Underlying:   v.Underlying.DeepCopy(),
+		VariableInfo: v.VariableInfo.DeepCopy(force),
+		Underlying:   v.Underlying.DeepCopy(force),
 	}
 	return copy
 }

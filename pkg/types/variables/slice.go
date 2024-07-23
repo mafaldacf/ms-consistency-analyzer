@@ -85,10 +85,10 @@ func (v *SliceVariable) LongString() string {
 	return s + ")"
 }
 
-func (v *SliceVariable) DeepCopy() Variable {
-	copy := &SliceVariable{VariableInfo: v.VariableInfo.DeepCopy()}
+func (v *SliceVariable) DeepCopy(force bool) Variable {
+	copy := &SliceVariable{VariableInfo: v.VariableInfo.DeepCopy(force)}
 	for _, v := range v.Elements {
-		copy.Elements = append(copy.Elements, v.DeepCopy())
+		copy.Elements = append(copy.Elements, v.DeepCopy(force))
 	}
 	return copy
 }

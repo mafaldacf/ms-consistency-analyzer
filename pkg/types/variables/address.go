@@ -48,10 +48,10 @@ func (v *AddressVariable) AddReferenceWithID(target Variable, creator string) {
 	}
 }
 
-func (v *AddressVariable) DeepCopy() Variable {
+func (v *AddressVariable) DeepCopy(force bool) Variable {
 	copy := &AddressVariable{
-		VariableInfo: v.VariableInfo.DeepCopy(),
-		AddressOf:    v.AddressOf.DeepCopy(),
+		VariableInfo: v.VariableInfo.DeepCopy(force),
+		AddressOf:    v.AddressOf.DeepCopy(force),
 	}
 	return copy
 }

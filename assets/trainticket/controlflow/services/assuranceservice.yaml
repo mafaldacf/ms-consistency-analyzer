@@ -4,8 +4,9 @@
   - a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
   - typeindex int64
-  - orderid string
-  - at assurance.AssuranceType struct{Index int64, Name string, Price float64}
+  - orderid string --> (TAINTED 1x) --> [ASSURANCE_DB.Assurance.OrderID]
+  - at assurance.AssuranceType struct{Index int64, Name string, Price float64} -->
+    (TAINTED 1x) --> [ASSURANCE_DB.Assurance.AT]
   - err .error
 (*AssuranceServiceImpl).DeleteById(ctx context.Context, id string):
   block 0 (Body):

@@ -34,7 +34,8 @@
   - '[INLINE] userDB NoSQLDatabase'
   - u (*user.UserServiceImpl struct{userDB NoSQLDatabase})
   - ctx context.Context
-  - user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}
+  - user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string} --> (TAINTED 1x)
+    --> [USER_DB.User]
   - coll NoSQLCollection {database = "user", collection = "user"}
   - err .error
 (*user.UserServiceImpl).UpdateUser(ctx context.Context, user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}) (bool, error):

@@ -54,7 +54,7 @@ func (v *BlueprintBackendVariable) AddReferenceWithID(target variables.Variable,
 	v.VariableInfo.AddReferenceWithID(target, creator)
 }
 
-func (v *BlueprintBackendVariable) DeepCopy() variables.Variable {
+func (v *BlueprintBackendVariable) DeepCopy(force bool) variables.Variable {
 	copy := &BlueprintBackendVariable{
 		VariableInfo: v.VariableInfo,
 	}

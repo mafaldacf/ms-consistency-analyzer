@@ -42,9 +42,9 @@ func (v *InterfaceVariable) AddReferenceWithID(target Variable, creator string) 
 	v.VariableInfo.AddReferenceWithID(target, creator)
 }
 
-func (v *InterfaceVariable) DeepCopy() Variable {
+func (v *InterfaceVariable) DeepCopy(force bool) Variable {
 	copy := &InterfaceVariable{
-		VariableInfo: v.VariableInfo.DeepCopy(),
+		VariableInfo: v.VariableInfo.DeepCopy(force),
 	}
 	return copy
 }

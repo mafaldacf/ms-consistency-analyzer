@@ -11,7 +11,7 @@
   - '[INLINE] db NoSQLDatabase'
   - t (*trainfood.TrainFoodServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
-  - tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}}
+  - tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}} --> (TAINTED 1x) --> [TRAINFOOD_DB.TrainFood]
   - coll NoSQLCollection {database = "trainfood", collection = "trainfood"}
   - err .error
 (*trainfood.TrainFoodServiceImpl).ListTrainFood(ctx context.Context) ([]trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}}, error):

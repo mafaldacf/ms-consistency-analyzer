@@ -121,7 +121,7 @@ func (request *Request) saveWriteOperation(call *abstractgraph.AbstractDatabaseC
 
 	write := createOperation(key, object, call)
 	request.Writes = append(request.Writes, write)
-	logger.Logger.Infof("[XCY] created write %s", write.String())
+	logger.Logger.Infof("[XCY] saved write %s", write.String())
 	return write
 }
 
@@ -157,7 +157,11 @@ func (request *Request) addInconsistency(write *Operation, read *Operation) {
 }
 
 func (request *Request) TransverseRequestOperations() {
+	logger.Logger.Infof("[XCY] init tranversal for entry node: %s", request.EntryNode.GetName())
 	for _, edge := range request.EntryNode.GetChildren() {
+		fmt.Println("\n------------------------------------------------------------------------------------------------------------------------------------------------")
+		logger.Logger.Infof("[XCY] transversing child node: %s", edge.GetName())
+		fmt.Println("------------------------------------------------------------------------------------------------------------------------------------------------")
 		request.transverseOperations(edge)
 	}
 }

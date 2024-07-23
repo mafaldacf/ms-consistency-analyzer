@@ -32,18 +32,23 @@ func (vinfo *VariableInfo) GetAllDataflows() []*Dataflow {
 	return append(vinfo.Dataflows, vinfo.IndirectDataflows...)
 }
 
-func (vinfo *VariableInfo) DeepCopy() *VariableInfo {
+func (vinfo *VariableInfo) DeepCopy(force bool) *VariableInfo {
+	// skip deep copy, especially since we can have references and dataflows
+	if !force {
+		return vinfo
+	}
+
 	var dataflows []*Dataflow
 	for _, df := range vinfo.Dataflows {
-		dataflows = append(dataflows, df.DeepCopy())
+		dataflows = append(dataflows, df.DeepCopy(force))
 	}
 	var indirectDataflows []*Dataflow
 	for _, df := range vinfo.IndirectDataflows {
-		indirectDataflows = append(indirectDataflows, df.DeepCopy())
+		indirectDataflows = append(indirectDataflows, df.DeepCopy(force))
 	}
 	var refCopy *Reference
 	if vinfo.Reference != nil {
-		refCopy = vinfo.Reference.DeepCopy().(*Reference)
+		refCopy = vinfo.Reference.DeepCopy(force).(*Reference)
 	}
 	return &VariableInfo{
 		Name:              vinfo.Name,

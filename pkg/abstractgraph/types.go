@@ -309,7 +309,7 @@ func (call *AbstractDatabaseCall) GetParams() []variables.Variable {
 
 func (call *AbstractDatabaseCall) GetParam(index int) variables.Variable {
 	if index > 0 && index < len(call.Params) {
-		logger.Logger.Debugf("got param with index %d for call %s", index, call.LongString())
+		logger.Logger.Tracef("got param with index %d for call %s", index, call.LongString())
 		return call.Params[index]
 	}
 	logger.Logger.Fatalf("cannot get param with index %d for call %s", index, call.LongString())
@@ -322,7 +322,7 @@ func (call *AbstractDatabaseCall) GetReturns() []variables.Variable {
 
 func (call *AbstractDatabaseCall) GetReturn(index int) variables.Variable {
 	if index > 0 && index < len(call.Returns) {
-		logger.Logger.Debugf("got return with index %d for call %s", index, call.LongString())
+		logger.Logger.Tracef("got return with index %d for call %s", index, call.LongString())
 		return call.Returns[index]
 	}
 	logger.Logger.Fatalf("cannot get return with index %d for call %s", index, call.LongString())

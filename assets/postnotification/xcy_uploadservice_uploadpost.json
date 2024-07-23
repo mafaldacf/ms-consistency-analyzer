@@ -4,15 +4,15 @@
     {
       "service": "StorageService",
       "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
-      "key": "post (#2)",
-      "object": "post (#2)",
+      "key": "post (#-1)",
+      "object": "post (#-1)",
       "database": "post_nosql"
     },
     {
       "service": "UploadService",
       "method": "Queue.Push(ctx context.Context, item interface{})",
-      "key": "message (#-1)",
-      "object": "message (#-1)",
+      "key": "message (#19)",
+      "object": "message (#19)",
       "database": "notif_queue"
     }
   ],
@@ -23,13 +23,6 @@
       "key": "message (#0)",
       "object": "message (#0)",
       "database": "notif_queue"
-    },
-    {
-      "service": "StorageService",
-      "method": "Cache.Get(ctx context.Context, key string, value interface{})",
-      "key": "postIDStr (#-1)",
-      "object": "post (#0)",
-      "database": "post_cache"
     },
     {
       "service": "StorageService",

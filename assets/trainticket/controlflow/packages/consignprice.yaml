@@ -3,9 +3,9 @@
   - '[INLINE] db NoSQLDatabase'
   - c (*consignprice.ConsignPriceServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
-  - '[INLINE] 0 int'
-  - '[INLINE] Index int64'
-  - priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64}
+  - '[INLINE] 0 int --> (TAINTED 1x) --> [CONSIGNPRICE_DB.ConsignPrice.Index]'
+  - '[INLINE] Index int64 --> (TAINTED 1x) --> [CONSIGNPRICE_DB.ConsignPrice.Index]'
+  - priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64} --> (TAINTED 1x) --> [CONSIGNPRICE_DB.ConsignPrice]
   - coll NoSQLCollection {database = "consign", collection = "consign"}
   - err .error
 (*consignprice.ConsignPriceServiceImpl).GetPriceByWeightAndRegion(ctx context.Context, weight float64, isWithinRegion bool) (float64, error):

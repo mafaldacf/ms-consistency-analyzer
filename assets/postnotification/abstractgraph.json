@@ -17,13 +17,21 @@
               {
                 "variable": {
                   "name": "ctx",
-                  "type": "context.Context"
+                  "type": "context.Context",
+                  "ref": {
+                    "name": "ctx",
+                    "creator": "UploadService"
+                  }
                 }
               },
               {
                 "variable": {
                   "name": "post",
-                  "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}"
+                  "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}",
+                  "ref": {
+                    "name": "post",
+                    "creator": "UploadService"
+                  }
                 }
               }
             ],
@@ -316,7 +324,11 @@
                       {
                         "variable": {
                           "name": "ctx",
-                          "type": "context.Context"
+                          "type": "context.Context",
+                          "ref": {
+                            "name": "ctx",
+                            "creator": "NotifyService"
+                          }
                         }
                       },
                       {
@@ -347,7 +359,11 @@
                   {
                     "variable": {
                       "name": "ctx",
-                      "type": "context.Context"
+                      "type": "context.Context",
+                      "ref": {
+                        "name": "ctx",
+                        "creator": "NotifyService"
+                      }
                     }
                   },
                   {
@@ -359,12 +375,20 @@
                       {
                         "variable": {
                           "name": "ReqID",
-                          "type": "string"
+                          "type": "string",
+                          "ref": {
+                            "name": "ReqID",
+                            "creator": "NotifyService"
+                          }
                         },
                         "underlying_field": {
                           "variable": {
                             "name": "ReqID",
-                            "type": "string"
+                            "type": "string",
+                            "ref": {
+                              "name": "ReqID",
+                              "creator": "NotifyService"
+                            }
                           }
                         }
                       }
@@ -379,12 +403,20 @@
                       {
                         "variable": {
                           "name": "PostID",
-                          "type": "string"
+                          "type": "string",
+                          "ref": {
+                            "name": "PostID",
+                            "creator": "NotifyService"
+                          }
                         },
                         "underlying_field": {
                           "variable": {
                             "name": "PostID",
-                            "type": "string"
+                            "type": "string",
+                            "ref": {
+                              "name": "PostID",
+                              "creator": "NotifyService"
+                            }
                           }
                         }
                       }

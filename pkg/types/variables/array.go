@@ -99,12 +99,12 @@ func (v *ArrayVariable) GetDependencies() []Variable {
 	return v.Elements
 }
 
-func (v *ArrayVariable) DeepCopy() Variable {
+func (v *ArrayVariable) DeepCopy(force bool) Variable {
 	copy := &ArrayVariable{
-		VariableInfo: v.VariableInfo.DeepCopy(),
+		VariableInfo: v.VariableInfo.DeepCopy(force),
 	}
 	for _, v := range v.Elements {
-		copy.Elements = append(copy.Elements, v.DeepCopy())
+		copy.Elements = append(copy.Elements, v.DeepCopy(force))
 	}
 	return copy
 }

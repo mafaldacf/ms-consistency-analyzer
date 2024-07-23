@@ -47,6 +47,7 @@ func taintDataflow(app *app.App, variable variables.Variable, call *AbstractData
 	// taint direct dataflow
 	rootField := datastore.Schema.GetField(variable.GetType().GetName())
 	variable.GetVariableInfo().SetDirectDataflow(datastore.Name, call.Service, variable, rootField)
+	logger.Logger.Debugf("[TAINT DIRECT] %s ---> (%02d) %s [%s]", rootField.GetFullName(), variable.GetId(), variable.String(), utils.GetType(variable))
 	if !slices.Contains(app.TaintedVariables[rootField.GetFullName()], variable) {
 		app.TaintedVariables[rootField.GetFullName()] = append(app.TaintedVariables[rootField.GetFullName()], variable)
 	}
@@ -58,11 +59,11 @@ func taintDataflow(app *app.App, variable variables.Variable, call *AbstractData
 	for i, v := range vars {
 		dbField := datastore.Schema.GetField(names[i])
 		deps := variables.GetIndirectDependenciesWithCurrent(v)
-		logger.Logger.Infof("[TENTATIVE TAINT VAR] [%s] (%02d) %s", utils.GetType(v), v.GetId(), v.LongString())
+		logger.Logger.Infof("[TENTATIVE TAINT VAR] [%s] (%02d) (NUM DEPS = %d) %s", utils.GetType(v), v.GetId(), len(deps), v.LongString())
 		for _, dep := range deps {
 			if !slices.Contains(taintedVariables, dep) {
 				v.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, dep, variable, dbField)
-				logger.Logger.Debugf("\t\t[TAINT DEP] %s ---> (%02d) %s [%s]", dbField.GetFullName(), dep.GetId(), dep.String(), utils.GetType(dep))
+				logger.Logger.Debugf("\t\t[TAINT INDIRECT] %s ---> (%02d) %s [%s]", dbField.GetFullName(), dep.GetId(), dep.String(), utils.GetType(dep))
 
 				taintedVariables = append(taintedVariables, dep)
 				app.AddTaintedVariableIfNotExists(dbField.GetFullName(), dep)
@@ -205,6 +206,12 @@ func BuildSchema(app *app.App, node AbstractNode) {
 		case datastores.NoSQL:
 			doc := params[1]
 			addUnfoldedEntriesToDatastore(doc, "document", datastore)
+			for i, param := range params  {
+				logger.Logger.Debugf("BUILD SCHEMA!!! (%d) (%s)", i, utils.GetType(param))
+				if _, ok := param.(*variables.StructVariable); ok {
+					variables.GetReversedNestedFieldsAndNames(param, true)
+				}
+			}
 			taintDataflow(app, doc, dbCall, datastore)
 
 			//searchForeignDataflow(doc, datastore, app)

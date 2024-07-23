@@ -5,7 +5,7 @@ import "analyzer/pkg/types/gotypes"
 type BasicVariable struct {
 	Variable            `json:"-"`
 	VariableInfo        *VariableInfo `json:"variable"`
-	UnderlyingVariables []Variable `json:"-"` // variables that influence the value of basic variables - e.g. "some_variable" in len(some_variable)
+	UnderlyingVariables []Variable    `json:"-"` // variables that influence the value of basic variables - e.g. "some_variable" in len(some_variable)
 }
 
 func (v *BasicVariable) String() string {
@@ -46,13 +46,13 @@ func (v *BasicVariable) AddReferenceWithID(target Variable, creator string) {
 	}
 }
 
-func (v *BasicVariable) DeepCopy() Variable {
+func (v *BasicVariable) DeepCopy(force bool) Variable {
 	var underlyingVariablesCopy []Variable
 	for _, v := range v.UnderlyingVariables {
-		underlyingVariablesCopy = append(underlyingVariablesCopy, v.DeepCopy())
+		underlyingVariablesCopy = append(underlyingVariablesCopy, v.DeepCopy(force))
 	}
 	copy := &BasicVariable{
-		VariableInfo:        v.VariableInfo.DeepCopy(),
+		VariableInfo:        v.VariableInfo.DeepCopy(force),
 		UnderlyingVariables: underlyingVariablesCopy,
 	}
 	return copy

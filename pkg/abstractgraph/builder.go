@@ -229,11 +229,15 @@ func (graph *AbstractGraph) referenceMethodBlockVars(parsedCall types.Call, chil
 	for i, param := range parsedCall.GetParams() {
 		// variable at block index 0 is the receiver so we need to skip that one
 		if parsedCall.GetMethod().(*types.ParsedMethod).HasReceiver() {
-			i = i +1
+			i = i + 1
 		}
-		blockVar := entryBlock.GetVariableAt(i )
+		blockVar := entryBlock.GetVariableAt(i)
 		blockVar.AddReferenceWithID(param, child.GetCallerStr())
 		logger.Logger.Infof("\t\t[REF BLOCK VAR] added reference (%d) from creator (%s): (%s) -> (%s)", blockVar.GetId(), child.GetCallerStr(), blockVar.GetType().GetName(), param.GetVariableInfo().GetName())
+		if _, ok := blockVar.(*variables.StructVariable); ok {
+			logger.Logger.Debugf("WTFFFFFFF!!!!")
+			variables.GetReversedNestedFieldsAndNames(blockVar, true)
+		}
 		for _, dep := range variables.GetIndirectDependenciesWithCurrent(param) {
 			if dep.GetVariableInfo().IsUnassigned() {
 				dep.GetVariableInfo().AssignID(graph.getAndIncGIndex())
@@ -287,16 +291,23 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				Subscriber: rootIsQueueHandler,
 				Depth:      rootParent.GetNextDepth(),
 			}
+			for i, param := range parsedCall.Params  {
+				logger.Logger.Debugf("APPPPPPPEEEEENNNDDDD DATABASE CALL (%d) (%s)", i, utils.GetType(param))
+				if _, ok := param.(*variables.StructVariable); ok {
+					variables.GetReversedNestedFieldsAndNames(param, true)
+				}
+			}
 			rootParent.AddChild(child)
-			logger.Logger.Infof("[GRAPH] added node for abstract database call with parent (%s): %s", child.GetCallerStr(), child.String())
+			logger.Logger.Infof("[GRAPH] addding node for abstract database call with parent (%s): %s", child.GetCallerStr(), child.String())
 
 			// if root parent is a queue handler (e.g. workerThread) and child is queue pop call
 			if queueHandler, ok := rootParent.(*AbstractQueueHandler); ok && !queueHandler.IsEnabled() {
 				graph.referenceQueuePopMethodBlockVars(queueHandler, child)
 				queueHandler.Enable()
-			}
-
-			//graph.referenceMethodBlockVars(parsedCall, child)
+			}/*  else {
+				graph.referenceMethodBlockVars(parsedCall, child)
+			} */
+			logger.Logger.Infof("[GRAPH] added node for abstract database call with parent (%s): %s", child.GetCallerStr(), child.String())
 
 			/* if rootIsQueueHandler && !rootQueueHandler.IsEnabled() {
 				if !graph.referencePublisherParams(rootQueueHandler, child) {
@@ -317,8 +328,9 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				Depth:      rootParent.GetNextDepth(),
 			}
 			rootParent.AddChild(child)
-			logger.Logger.Infof("[GRAPH] added node for abstract service call: %s", child.String())
+			logger.Logger.Infof("[GRAPH] adding node for abstract service call: %s", child.String())
 			graph.referenceMethodBlockVars(parsedCall, child)
+			logger.Logger.Infof("[GRAPH] added node for abstract service call: %s", child.String())
 
 		case *types.ParsedInternalCall:
 			tempChild := &AbstractTempInternalCall{
@@ -334,8 +346,9 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 			tempMethod := graph.Services[tempChild.Service].GetInternalOrPackageMethod(tempChild.ParsedCall.Name)
 			graph.appendAbstractEdges(rootParent, tempChild, tempMethod)
 
-			logger.Logger.Infof("[GRAPH] added temporary node for abstract service call: %s", tempChild.String())
+			logger.Logger.Infof("[GRAPH] adding temporary node for abstract service call: %s", tempChild.String())
 			graph.referenceMethodBlockVars(parsedCall, tempChild)
+			logger.Logger.Infof("[GRAPH] added temporary node for abstract service call: %s", tempChild.String())
 		}
 	}
 }
@@ -405,7 +418,7 @@ func (graph *AbstractGraph) referenceServiceCallerParams(parent AbstractNode, ca
 						if parent != caller && callerParam.GetVariableInfo().HasReference() {
 							// this can happen with the context variable (e.g. handleMessage called by the workerThread in the NotifyService)
 							dep.GetVariableInfo().AddOriginalReferenceWithID(callerParam.GetVariableInfo().GetReference())
-							//dep = callerParam.DeepCopy()
+							//dep = callerParam.DeepCopy(true)
 						} else {
 							if callerParam.GetVariableInfo().IsUnassigned() {
 								unassaignedVariables := callerParam.GetUnassaignedVariables()
@@ -414,7 +427,7 @@ func (graph *AbstractGraph) referenceServiceCallerParams(parent AbstractNode, ca
 									logger.Logger.Warnf("\t\t\t[NEW GID] assigned new gid (%d) to (%s)", v.GetId(), v.String())
 								}
 							}
-							//dep = callerParam.DeepCopy()
+							//dep = callerParam.DeepCopy(true)
 							logger.Logger.Warnf("\t\t\t[VARIABLE] added reference (%d) from creator (%s): (%s) -> (%s)", dep.GetId(), child.GetCallerStr(), dep.GetType().GetName(), callerParam.GetVariableInfo().GetName())
 							dep.AddReferenceWithID(callerParam, child.GetCallerStr())
 

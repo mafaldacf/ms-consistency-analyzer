@@ -3,7 +3,7 @@
   - '[INLINE] contactsDB NoSQLDatabase'
   - c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
   - ctx context.Context
-  - contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
+  - contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} --> (TAINTED 1x) --> [CONTACTS_DB.Contact]
   - coll NoSQLCollection {database = "contacts", collection = "contacts"}
   - err .error
 (*contacts.ContactsServiceImpl).Delete(ctx context.Context, contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}) error:

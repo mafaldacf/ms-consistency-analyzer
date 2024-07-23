@@ -201,7 +201,7 @@ func (t *BlueprintBackendType) SetNoSQLDatabaseCursor(databaseName string, colle
 	t.DbInstance = dbInstance
 }
 
-func (t *BlueprintBackendType) DeepCopy() *BlueprintBackendType {
+func (t *BlueprintBackendType) DeepCopy(force bool) *BlueprintBackendType {
 	var methods []*BackendMethod
 	for _, m := range t.Methods {
 		methods = append(methods, m.DeepCopy())

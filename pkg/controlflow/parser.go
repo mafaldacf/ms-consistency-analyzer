@@ -70,7 +70,7 @@ func assignLeftValues(service *service.Service, method *types.ParsedMethod, bloc
 					block.AddVariable(rvariable)
 				} else {
 					logger.Logger.Warnf("[CFG] FIX ME!!!! WE SHOULD SEARCH FOR THE LEFT VARIABLE THAT ALREADY EXISTS IN THE BLOCK")
-					lvariable := rvariable.DeepCopy()
+					lvariable := rvariable.DeepCopy(true)
 					lvariable.GetVariableInfo().SetName(e.Name)
 					lvariable.GetVariableInfo().SetUnassigned()
 					block.AddVariable(lvariable)
@@ -250,6 +250,9 @@ func saveCalls(service *service.Service, method *types.ParsedMethod, block *type
 }
 
 func saveParsedFuncCallParams(service *service.Service, method *types.ParsedMethod, block *types.Block, parsedCall types.Call, args []ast.Expr) {
+	/* if parsedCall.GetName() == "StorePostNoSQL" {
+		logger.Logger.Debugf("(1) FOUND CALL TO SERVICE VAR %s", parsedCall.GetName())
+	} */
 	for i, arg := range args {
 		logger.Logger.Tracef("[CFG] inside save func call params")
 		param, _ := lookupVariableFromAstExpr(service, method, block, arg, false)
@@ -260,8 +263,15 @@ func saveParsedFuncCallParams(service *service.Service, method *types.ParsedMeth
 			logger.Logger.Warnf("[CFG] upgrading variable %s with new type %s", param.GetVariableInfo().Name, param.GetType().String())
 		}
 		parsedCall.AddParam(param)
+		/* logger.Logger.Debugf("added param with type (%s): %s", utils.GetType(param), param.String())
+		for _, d := range variables.GetIndirectDependencies(param) {
+			logger.Logger.Debugf("\t\t\t - %s", d.String())
+		} */
 	}
 	//logger.Logger.Debugf("[CFG] added params to func call %s", parsedCall.String())
+	/* if parsedCall.GetName() == "InsertOne" {
+		logger.Logger.Fatalf("(2) FOUND CALL TO SERVICE VAR %s: BLOCK VARS:\n%v", parsedCall.GetName(), block.Vars)
+	} */
 }
 
 func getFuncCallDeps(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr) []variables.Variable {
@@ -603,7 +613,7 @@ func parseCallToMethodInImportedOrCurrentPackage(service *service.Service, metho
 			logger.Logger.Infof("[CFG CALLS] [%s.%s] found call (%s) to method in current package (%s) -- returned tuple: %s", service.GetName(), method.Name, parsedCall.CallStr, callPkg.Name, tupleVar.String())
 			method.Calls = append(method.Calls, parsedCall)
 			return tupleVar
-		} 
+		}
 
 		logger.Logger.Infof("[CFG CALLS] [%s.%s] found call (%s) to method in imported app package (%s) -- returned tuple: %s", service.GetName(), method.Name, parsedCall.CallStr, callPkg.Name, tupleVar.String())
 		if deps := getFuncCallDeps(service, method, block, callExpr); deps != nil {
@@ -675,15 +685,15 @@ func parseBuiltInGoFuncCall(service *service.Service, method *types.ParsedMethod
 		return wrapInTupleVariable(deps[0])
 	case "len":
 		return &variables.BasicVariable{
-				VariableInfo: &variables.VariableInfo{
-					Type: &gotypes.BasicType{
-						Name:  "int",
-						Value: fmt.Sprintf("len(%s)", deps[0].String()),
-					},
-					Id: variables.VARIABLE_UNASSIGNED_ID,
+			VariableInfo: &variables.VariableInfo{
+				Type: &gotypes.BasicType{
+					Name:  "int",
+					Value: fmt.Sprintf("len(%s)", deps[0].String()),
 				},
-				UnderlyingVariables: deps,
-			}
+				Id: variables.VARIABLE_UNASSIGNED_ID,
+			},
+			UnderlyingVariables: deps,
+		}
 	case "append":
 		slice := deps[0]
 		elems := deps[1]

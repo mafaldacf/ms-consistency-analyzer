@@ -11,7 +11,7 @@
   - '[INLINE] db NoSQLDatabase'
   - ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
-  - tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}
+  - tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} --> (TAINTED 1x) --> [TRAIN_DB.TrainType]
   - coll NoSQLCollection {database = "train", collection = "train"}
   - err .error
 (*TrainServiceImpl).Delete(ctx context.Context, id string):

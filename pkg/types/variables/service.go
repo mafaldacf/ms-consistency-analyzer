@@ -37,9 +37,9 @@ func (v *ServiceVariable) GetDependencies() []Variable {
 	return nil
 }
 
-func (v *ServiceVariable) DeepCopy() Variable {
+func (v *ServiceVariable) DeepCopy(force bool) Variable {
 	return &ServiceVariable{
-		VariableInfo: v.VariableInfo.DeepCopy(),
+		VariableInfo: v.VariableInfo.DeepCopy(force),
 	}
 }
 

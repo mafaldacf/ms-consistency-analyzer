@@ -93,7 +93,7 @@ func (svcCall *ParsedServiceCall) GetName() string {
 }
 
 func (svcCall *ParsedServiceCall) AddParam(param variables.Variable) {
-	deepCopy := param.DeepCopy()
+	deepCopy := param.DeepCopy(false)
 	logger.Logger.Tracef("[------- DEEP COPY -------] [%s] %v", utils.GetType(deepCopy), deepCopy.String())
 	if deepCopy.GetVariableInfo() == nil {
 		logger.Logger.Fatalf("[------- DEEP COPY -------] [%s] %v: %v", utils.GetType(deepCopy), deepCopy.String(), deepCopy.GetVariableInfo())
@@ -141,7 +141,7 @@ func (dbCall *ParsedDatabaseCall) GetName() string {
 }
 
 func (dbCall *ParsedDatabaseCall) AddParam(param variables.Variable) {
-	deepCopy := param.DeepCopy()
+	deepCopy := param.DeepCopy(false)
 	logger.Logger.Tracef("[------- DEEP COPY -------] [%s] %v", utils.GetType(deepCopy), deepCopy.String())
 	if deepCopy.GetVariableInfo() == nil {
 		logger.Logger.Fatalf("[------- DEEP COPY -------] [%s] %v: %v", utils.GetType(deepCopy), deepCopy.String(), deepCopy.GetVariableInfo())

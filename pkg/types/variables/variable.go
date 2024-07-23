@@ -19,7 +19,7 @@ type Variable interface {
 	GetDependencies() []Variable
 	AddReferenceWithID(reference Variable, creator string)
 	GetUnassaignedVariables() []Variable
-	DeepCopy() Variable
+	DeepCopy(force bool) Variable
 	GetId() int64
 	GetType() gotypes.Type
 	AssignVariable(variable Variable)
@@ -39,7 +39,7 @@ func GetReversedNestedFieldsAndNames(variable Variable, includeReferences bool) 
 		} else {
 			nestedVariables, nestedNames = structVariable.GetNestedFieldVariables(variable.GetType().GetName())
 		}
-		
+
 		variables = append(variables, nestedVariables...)
 		names = append(names, nestedNames...)
 		slices.Reverse(variables)

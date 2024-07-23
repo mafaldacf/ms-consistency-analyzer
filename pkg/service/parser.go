@@ -137,7 +137,7 @@ func (service *Service) computeFieldFromType(field *ast.Field, paramName string,
 			FieldInfo: types.FieldInfo{
 				Ast:  field,
 				Name: paramName,
-				Type: t.DeepCopy(),
+				Type: t.DeepCopy(true),
 			},
 			IsQueue: t.IsQueue(),
 			Idx:     idx,
@@ -173,6 +173,7 @@ func (service *Service) RegisterConstructor() {
 				Name:            funcDecl.Name.Name,
 				AttachedService: service.Name,
 			}
+			service.Constructor.SetConstructor()
 			logger.Logger.Infof("[PARSER] registered constructor %s for service %s", service.ConstructorName, service.Name)
 		}
 		return true

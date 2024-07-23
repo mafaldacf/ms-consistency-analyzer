@@ -6,7 +6,7 @@ import (
 
 	"analyzer/pkg/abstractgraph"
 	"analyzer/pkg/app"
-	//"analyzer/pkg/detector"
+	"analyzer/pkg/detector"
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 )
@@ -41,19 +41,6 @@ func main() {
 
 	abstractGraph := abstractgraph.Build(app, frontends)
 
-	/* fmt.Println()
-	fmt.Println(" -------------------------------------------------------------------------------------------------------------- ")
-	fmt.Println(" -------------------------------------------- CHECK XCY VIOLATIONS -------------------------------------------- ")
-	fmt.Println(" -------------------------------------------------------------------------------------------------------------- ")
-	fmt.Println()
-
-	var requests []*detector.Request
-	for _, entryNode := range abstractGraph.Nodes {
-		request := detector.InitRequest(entryNode)
-		request.TransverseRequestOperations()
-		requests = append(requests, request)
-	} */
-
 	fmt.Println()
 	fmt.Println(" ----------------------------------------------------------------------------------------------------------------- ")
 	fmt.Println(" -------------------------------------------- BUILD DATASTORES SCHEMA -------------------------------------------- ")
@@ -65,6 +52,22 @@ func main() {
 	}
 
 	fmt.Println()
+	fmt.Println(" -------------------------------------------------------------------------------------------------------------- ")
+	fmt.Println(" -------------------------------------------- CHECK XCY VIOLATIONS -------------------------------------------- ")
+	fmt.Println(" -------------------------------------------------------------------------------------------------------------- ")
+	fmt.Println()
+
+	var requests []*detector.Request
+	for _, entryNode := range abstractGraph.Nodes {
+		request := detector.InitRequest(entryNode)
+		request.TransverseRequestOperations()
+		requests = append(requests, request)
+	}
+	for _, request := range requests {
+		request.SaveInconsistencies(app.Name)
+	}
+
+	fmt.Println()
 	fmt.Println(" ----------------------------------------------------------------------------------------------------------------- ")
 	fmt.Println(" --------------------------------------------------- DUMPERS ----------------------------------------------------- ")
 	fmt.Println(" ----------------------------------------------------------------------------------------------------------------- ")
@@ -72,9 +75,6 @@ func main() {
 
 	app.Dump()
 	abstractGraph.Dump()
-	/* for _, request := range requests {
-		request.SaveInconsistencies(app.Name)
-	} */
 
 	fmt.Println()
 }

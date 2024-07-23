@@ -69,7 +69,7 @@ func CreateVariableFromType(name string, t gotypes.Type) variables.Variable {
 			Underlying:   CreateVariableFromType(name, e.SubType),
 		}
 	case *blueprint.BlueprintBackendType:
-		info.Type = e.DeepCopy()
+		info.Type = e.DeepCopy(true)
 		if e.IsNoSQLCollection() {
 			// blueprint NoSQL type (blueprint.NoSQLCollectionType) is later assigned
 			return &blueprint.BlueprintBackendVariable{VariableInfo: info}

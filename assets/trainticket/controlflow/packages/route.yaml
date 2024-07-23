@@ -3,14 +3,14 @@
   - '[INLINE] db NoSQLDatabase'
   - r (*route.RouteServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
+  - '[INLINE] EndStation string --> (TAINTED 1x) --> [ROUTE_DB.Route.EndStation]'
   - '[INLINE] EndStation string'
-  - '[INLINE] EndStation string'
-  - '[INLINE] StartStation string'
+  - '[INLINE] StartStation string --> (TAINTED 1x) --> [ROUTE_DB.Route.StartStation]'
   - '[INLINE] StartStation string'
   - '[INLINE] ID string'
   - '[INLINE] ID string'
-  - '[INLINE] StationList string'
-  - '[INLINE] StationList string'
+  - '[INLINE] StationList string --> (TAINTED 1x) --> [ROUTE_DB.Route.Stations]'
+  - '[INLINE] StationList string --> (TAINTED 1x) --> [ROUTE_DB.Route.Stations]'
   - info route.RouteInfo struct{ID string, StartStation string, EndStation string, StationList string, DistanceList string}
   - coll NoSQLCollection {database = "route", collection = "route"}
   - err .error

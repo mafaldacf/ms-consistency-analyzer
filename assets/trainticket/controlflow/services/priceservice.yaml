@@ -3,9 +3,9 @@
   - '[INLINE] priceDB NoSQLDatabase'
   - p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase})
   - ctx context.Context
-  - '[INLINE] ID string'
-  - '[INLINE] ID string'
-  - pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
+  - '[INLINE] ID string --> (TAINTED 1x) --> [PRICE_DB.PriceConfig.ID]'
+  - '[INLINE] ID string --> (TAINTED 1x) --> [PRICE_DB.PriceConfig.ID]'
+  - pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} --> (TAINTED 1x) --> [PRICE_DB.PriceConfig]
   - coll NoSQLCollection {database = "priceConfig", collection = "priceConfig"}
   - err .error
 (*PriceServiceImpl).DeletePriceConfig(ctx context.Context, id string):
@@ -22,8 +22,8 @@
   - p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase})
   - '[INLINE] ref <ctx context.Context> @ PriceService'
   - ctx context.Context
-  - '[INLINE] ID string'
-  - '[INLINE] ref <ID string> @ PriceService'
+  - '[INLINE] ID string --> (TAINTED 1x) --> [PRICE_DB.PriceConfig.ID]'
+  - '[INLINE] ref <ID string> @ PriceService --> (TAINTED 1x) --> [PRICE_DB.PriceConfig.ID]'
   - id string
   - coll NoSQLCollection {database = "priceConfig", collection = "priceConfig"}
   - err .error

@@ -49,9 +49,9 @@ func (v *SelectorVariable) AddReferenceWithID(target Variable, creator string) {
 	logger.Logger.Warnf("IGNORING REFERENCES FOR SELECTOR VARIABLE!!")
 }
 
-func (v *SelectorVariable) DeepCopy() Variable {
+func (v *SelectorVariable) DeepCopy(force bool) Variable {
 	copy := &SelectorVariable{
-		Parent: v.Parent.DeepCopy(),
+		Parent: v.Parent.DeepCopy(force),
 		Field:  v.Field,
 	}
 	return copy

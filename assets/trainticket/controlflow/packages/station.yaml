@@ -3,7 +3,7 @@
   - '[INLINE] stationDB NoSQLDatabase'
   - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
   - ctx context.Context
-  - station station.Station struct{ID string, Name string, StayTime int64}
+  - station station.Station struct{ID string, Name string, StayTime int64} --> (TAINTED 1x) --> [STATION_DB.Station]
   - coll NoSQLCollection {database = "station", collection = "station"}
   - err .error
 (*station.StationServiceImpl).DeleteStation(ctx context.Context, id string) error:

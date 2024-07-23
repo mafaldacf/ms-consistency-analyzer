@@ -5,12 +5,41 @@ NOTIF_QUEUE.Message.PostID:
 - write <string (CompositeVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
 - write <PostID int64 (FieldVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
 - write <postID int64 (BasicVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
+- write <PostID int64 (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <postID int64 (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
 - write <PostID string (FieldVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
 NOTIF_QUEUE.Message.ReqID:
 - write <string (CompositeVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
 - write <ReqID int64 (FieldVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
 - write <reqID int64 (BasicVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
+- write <ReqID int64 (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <reqID int64 (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
 - write <ReqID string (FieldVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
 POST_NOSQL.Post:
 - write <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
 - write <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <ref <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}> @ UploadService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+POST_NOSQL.Post.Creator:
+- write <Creator postnotification.Creator struct{Username string} (FieldVariable)>
+  from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <postnotification.Creator struct{Username string} (StructVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+POST_NOSQL.Post.Creator.Username:
+- write <"some username" string (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <Username string (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+POST_NOSQL.Post.Mentions:
+- write <mentions []string (ArrayVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <"alice" string (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <"bob" string (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <Mentions []string (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+POST_NOSQL.Post.PostID:
+- write <postID int64 (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <PostID int64 (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+POST_NOSQL.Post.ReqID:
+- write <reqID int64 (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <ReqID int64 (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+POST_NOSQL.Post.Text:
+- write <text string (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <Text string (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+POST_NOSQL.Post.Timestamp:
+- write <timestamp int64 (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <Timestamp int64 (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>

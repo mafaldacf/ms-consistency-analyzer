@@ -75,10 +75,10 @@ func (v *TupleVariable) LongString() string {
 	return s + ")"
 }
 
-func (v *TupleVariable) DeepCopy() Variable {
-	copy := &TupleVariable{VariableInfo: v.VariableInfo.DeepCopy()}
+func (v *TupleVariable) DeepCopy(force bool) Variable {
+	copy := &TupleVariable{VariableInfo: v.VariableInfo.DeepCopy(force)}
 	for _, v := range v.Variables {
-		copy.Variables = append(copy.Variables, v.DeepCopy())
+		copy.Variables = append(copy.Variables, v.DeepCopy(force))
 	}
 	return copy
 }

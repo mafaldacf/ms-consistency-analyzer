@@ -52,12 +52,12 @@ func (v *GenericVariable) AddReferenceWithID(target Variable, creator string) {
 	logger.Logger.Tracef("[VARS GENERIC] added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
 }
 
-func (v *GenericVariable) DeepCopy() Variable {
+func (v *GenericVariable) DeepCopy(force bool) Variable {
 	copy := &GenericVariable{
-		VariableInfo: v.VariableInfo.DeepCopy(),
+		VariableInfo: v.VariableInfo.DeepCopy(force),
 	}
 	for _, p := range v.Params {
-		copy.Params = append(copy.Params, p.DeepCopy())
+		copy.Params = append(copy.Params, p.DeepCopy(force))
 	}
 	return copy
 }

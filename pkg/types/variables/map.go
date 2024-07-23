@@ -29,7 +29,7 @@ func (v *MapVariable) GetKeyValueIfExists(targetKey Variable) Variable {
 	switch t := targetKey.GetType().(type) {
 	case *gotypes.BasicType:
 		for key, value := range v.KeyValues {
-			if key.GetType().(*gotypes.BasicType).Value  == t.Value {
+			if key.GetType().(*gotypes.BasicType).Value == t.Value {
 				return value
 			}
 		}
@@ -75,13 +75,13 @@ func (v *MapVariable) GetDependencies() []Variable {
 	return dependencies
 }
 
-func (v *MapVariable) DeepCopy() Variable {
+func (v *MapVariable) DeepCopy(force bool) Variable {
 	copy := &MapVariable{
-		KeyValues: make(map[Variable]Variable, 0),
-		VariableInfo: v.VariableInfo.DeepCopy(),
+		KeyValues:    make(map[Variable]Variable, 0),
+		VariableInfo: v.VariableInfo.DeepCopy(force),
 	}
 	for k, v := range v.KeyValues {
-		copy.KeyValues[k] = v.DeepCopy()
+		copy.KeyValues[k] = v.DeepCopy(force)
 	}
 	return copy
 }

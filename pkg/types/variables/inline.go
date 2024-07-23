@@ -34,9 +34,9 @@ func (v *InlineVariable) AddReferenceWithID(target Variable, creator string) {
 	logger.Logger.Warnf("IGNORING REFERENCES FOR INLINE VARIABLE!!")
 }
 
-func (v *InlineVariable) DeepCopy() Variable {
+func (v *InlineVariable) DeepCopy(force bool) Variable {
 	copy := &InlineVariable{
-		VariableInfo: v.VariableInfo.DeepCopy(),
+		VariableInfo: v.VariableInfo.DeepCopy(force),
 	}
 	return copy
 }

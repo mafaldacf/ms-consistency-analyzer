@@ -30,9 +30,9 @@ func (v *ChanVariable) GetDependencies() []Variable {
 func (v *ChanVariable) AddReferenceWithID(target Variable, creator string) {
 	v.VariableInfo.AddReferenceWithID(target, creator)
 }
-func (v *ChanVariable) DeepCopy() Variable {
+func (v *ChanVariable) DeepCopy(force bool) Variable {
 	copy := &ChanVariable{
-		VariableInfo: v.VariableInfo.DeepCopy(),
+		VariableInfo: v.VariableInfo.DeepCopy(force),
 	}
 	return copy
 }

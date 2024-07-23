@@ -36,6 +36,7 @@ type ParsedMethod struct {
 	// note that ParsedCfg can be != nil before being parsed
 	Parsed          bool   `json:"-"`
 	AttachedService string `json:"-"`
+	Constructor     bool   `json:"-"`
 
 	// used to fetch the params when generating the basic cfg
 	// to store in the variables array of the function
@@ -52,6 +53,12 @@ func (f *ParsedMethod) SetParsed() {
 }
 func (f *ParsedMethod) IsParsed() bool {
 	return f.Parsed
+}
+func (f *ParsedMethod) SetConstructor() {
+	f.Constructor = true
+}
+func (f *ParsedMethod) IsConstructor() bool {
+	return f.Constructor
 }
 func (f *ParsedMethod) AttachService(service string) {
 	f.AttachedService = service
