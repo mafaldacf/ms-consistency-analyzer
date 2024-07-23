@@ -13,8 +13,8 @@
   - err .error
 (*StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID int64):
   block 0 (Body):
-  - '[INLINE] cache Cache'
   - '[INLINE] db NoSQLDatabase'
+  - '[INLINE] cache Cache'
   - s (*postnotification.StorageServiceImpl struct{cache Cache, db NoSQLDatabase})
   - '[INLINE] ref <ctx context.Context> @ NotifyService'
   - ctx context.Context
@@ -31,8 +31,8 @@
   - err .error
 (*StorageServiceImpl).StorePost(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}):
  block 0 (Body):
-  - '[INLINE] db NoSQLDatabase'
   - '[INLINE] cache Cache'
+  - '[INLINE] db NoSQLDatabase'
   - s (*postnotification.StorageServiceImpl struct{cache Cache, db NoSQLDatabase})
   - ctx context.Context
   - reqID int64
@@ -51,8 +51,6 @@
   - '[INLINE] reqID int64'
   - '[INLINE] ref <ReqID int64> @ UploadService'
   - reqID int64
-  - '[INLINE] postID int64'
-  - '[INLINE] PostID int64'
   - '[INLINE] reqID int64'
   - '[INLINE] ReqID int64'
   - '[INLINE] "some username" string'
@@ -67,6 +65,8 @@
   - '[INLINE] Mentions []string'
   - '[INLINE] text string'
   - '[INLINE] Text string'
+  - '[INLINE] postID int64'
+  - '[INLINE] PostID int64'
   - '[INLINE] ref <post postnotification.Post struct{ReqID int64, PostID int64, Text
     string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username
     string}}> @ UploadService'
@@ -78,18 +78,18 @@
   - ctx context.Context
   - storageService postnotification.StorageService
   - queue Queue
-  - '[INLINE] storageService postnotification.StorageService'
   - '[INLINE] 4 int'
   - '[INLINE] numWorkers int'
   - '[INLINE] queue Queue'
+  - '[INLINE] storageService postnotification.StorageService'
   - n (&postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int})
 .NewStorageServiceImpl(ctx context.Context, cache Cache, db NoSQLDatabase):
   block 0 (Body):
   - ctx context.Context
   - cache Cache
   - db NoSQLDatabase
-  - '[INLINE] cache Cache'
   - '[INLINE] db NoSQLDatabase'
+  - '[INLINE] cache Cache'
   - s (&postnotification.StorageServiceImpl struct{cache Cache, db NoSQLDatabase})
 .NewUploadServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue):
   block 0 (Body):

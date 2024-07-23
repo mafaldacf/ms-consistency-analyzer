@@ -19,7 +19,7 @@ def get_spaced_label(name):
         name = splits[0] + '\n' + splits[1]
     return name
 
-def build_digraph(data, graph_type):
+def build_digraph(data, graph_type, labeled):
     digraph = nx.DiGraph()
 
     node_colors = {
@@ -56,7 +56,7 @@ def build_digraph(data, graph_type):
         connectionstyle='arc3,rad=0.3',
     )
 
-    if graph_type != "app":
+    if graph_type != "app" and labeled:
         edge_count = defaultdict(lambda: {'calls': [], 'count': 0})
 
         for edge in data['edges']:
@@ -89,16 +89,16 @@ def load(app, graph):
         data = json.load(f)
     return data
 
-def save(app, graph, multi):
-    if multi:
+def save(app, graph, labeled):
+    if labeled:
         plt.title(f"{graph.capitalize()} Multi DiGraph Visualization")
     else:
         plt.title(f"{graph.capitalize()} DiGraph Visualization")
 
     #plt.show()
 
-    if multi:
-        output_path = f"assets/{app}/digraphs/{graph}_multi_graph.png"
+    if labeled:
+        output_path = f"assets/{app}/digraphs/{graph}_labeled_graph.png"
     else:
         output_path = f"assets/{app}/digraphs/{graph}_graph.png"
     plt.savefig(output_path, format='png')
@@ -108,9 +108,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Visualize graphs based on the specified application and graph type")
     parser.add_argument('--app', '-a', required=True, choices=['postnotification', 'foobar', 'sockshop', 'trainticket'], help="The application for which to visualize the graph")
     parser.add_argument('--graph', '-g', required=True, choices=['app', 'call'], help="The type of graph to visualize")
-    parser.add_argument('--multi', '-m', action='store_true', help="Construct multi digraph")
+    parser.add_argument('--labeled', '-l', action='store_true', help="Construct labeled digraph")
     args = parser.parse_args()
 
     data = load(args.app, args.graph)
-    build_digraph(data, args.graph)
-    save(args.app, args.graph, args.multi)
+    build_digraph(data, args.graph, args.labeled)
+    save(args.app, args.graph, args.labeled)
