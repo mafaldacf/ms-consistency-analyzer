@@ -14,3 +14,7 @@ strings:
 - package: strings
 - package path: strings
 - module: ""
+uuid:
+- package: uuid
+- package path: github.com/google/uuid
+- module: github.com/google/uuid

@@ -1,3 +1,15 @@
+AssuranceService:
+- fields:
+    db: NoSQLDatabase
+- services: {}
+- datastores:
+    assurance_db: NoSQLDatabase
+ConfigService:
+- fields:
+    db: NoSQLDatabase
+- services: {}
+- datastores:
+    config_db: NoSQLDatabase
 ContactsService:
 - fields:
     contactsDB: NoSQLDatabase

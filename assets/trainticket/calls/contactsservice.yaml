@@ -1,14 +1,14 @@
 ? (*ContactsServiceImpl).CreateContacts(ctx context.Context, contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}):
-	- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "station", collection = "station"}, interface{})
+	- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "priceConfig", collection = "priceConfig"}, interface{})
   - NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
 (*ContactsServiceImpl).Delete(ctx context.Context, contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}):
 	- NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D) interface{}
 (*ContactsServiceImpl).FindContactsByAccountId(ctx context.Context, id string):
-- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "station", collection = "station"}, interface{})
+- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "priceConfig", collection = "priceConfig"}, interface{})
 (*ContactsServiceImpl).FindContactsById(ctx context.Context, id string):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "station", collection = "station"}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "priceConfig", collection = "priceConfig"}, interface{})
 (*ContactsServiceImpl).GetAllContacts(ctx context.Context):
-- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "station", collection = "station"}, interface{})
+- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "priceConfig", collection = "priceConfig"}, interface{})
 (*ContactsServiceImpl).Modify(ctx context.Context, contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}):
 	- NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{})
     (err, interface{})

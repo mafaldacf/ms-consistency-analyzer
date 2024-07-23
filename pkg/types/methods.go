@@ -52,6 +52,9 @@ func (f *ParsedMethod) HasAttachedService() bool {
 func (f *ParsedMethod) GetReceiverIfExists() *MethodField {
 	return f.Receiver
 }
+func (f *ParsedMethod) HasReceiver() bool {
+	return f.Receiver != nil
+}
 func (f *ParsedMethod) GetBody() *ast.BlockStmt {
 	return f.Ast.Body
 }

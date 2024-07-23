@@ -1,3 +1,18 @@
+ASSURANCE_DB.Assurance:
+- write <assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}} (StructVariable)>
+- write <assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}} (StructVariable)> from <assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}} (StructVariable)>
+ASSURANCE_DB.Assurance.AT:
+- write <AT assurance.AssuranceType struct{Index int64, Name string, Price float64} (FieldVariable)> from <assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}} (StructVariable)>
+- write <at assurance.AssuranceType struct{Index int64, Name string, Price float64} (StructVariable)> from <assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}} (StructVariable)>
+ASSURANCE_DB.Assurance.ID:
+- write <id string (BasicVariable)> from <assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}} (StructVariable)>
+- write <ID string (FieldVariable)> from <assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}} (StructVariable)>
+ASSURANCE_DB.Assurance.OrderID:
+- write <orderid string (BasicVariable)> from <assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}} (StructVariable)>
+- write <OrderID string (FieldVariable)> from <assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}} (StructVariable)>
+CONFIG_DB.Config:
+- write <conf config.Config struct{Name string, Value string, Description string} (StructVariable)>
+- write <conf config.Config struct{Name string, Value string, Description string} (StructVariable)> from <conf config.Config struct{Name string, Value string, Description string} (StructVariable)>
 CONTACTS_DB.Contact:
 - write <contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} (StructVariable)>
 - write <contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} (StructVariable)> from

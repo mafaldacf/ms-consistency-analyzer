@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"fmt"
 	"slices"
 	"strings"
 
@@ -28,7 +29,7 @@ type Service struct {
 	Databases map[string]datastores.DatabaseInstance
 	// safe because methods are unique since Golang does not allow overloading
 	// also this captures all exposed methods because they must be defined within the service struct file
-	ExportedMethods     map[string]*types.ParsedMethod
+	ExposedMethods      map[string]*types.ParsedMethod
 	QueueHandlerMethods map[string]*types.ParsedMethod
 	InternalMethods     map[string]*types.ParsedMethod
 	PackageMethods      map[string]*types.ParsedMethod
@@ -107,10 +108,10 @@ func (node *Service) GetQueueHandlersForDatabase(database datastores.DatabaseIns
 }
 
 func (node *Service) GetExportedMethod(name string) *types.ParsedMethod {
-	if m, ok := node.ExportedMethods[name]; ok {
+	if m, ok := node.ExposedMethods[name]; ok {
 		return m
 	}
-	logger.Logger.Fatalf("[SERVICE] unknown exported method (%s) for service (%s)", name, node.GetName())
+	logger.Logger.Fatalf("[SERVICE] unknown exposed method (%s) for service (%s)", name, node.GetName())
 	return nil
 }
 
@@ -137,11 +138,23 @@ func (node *Service) GetInternalOrPackageMethod(name string) *types.ParsedMethod
 	if packageMethod, ok := node.PackageMethods[name]; ok {
 		return packageMethod
 	}
-	// exported methods can also call themselves
-	if packageMethod, ok := node.ExportedMethods[name]; ok {
-		return packageMethod
+	// exposed methods can also call themselves
+	if exposedMethod, ok := node.ExposedMethods[name]; ok {
+		return exposedMethod
 	}
-	logger.Logger.Fatalf("[SERVICE] unknown internal or package method (%s) for service (%s)", name, node.GetName())
+	internalMethodsStr := "\t\t\t\t\t\t\t Internal Methods:\n"
+	for _, m := range node.InternalMethods {
+		internalMethodsStr += fmt.Sprintf("\t\t\t\t\t\t\t - %s\n", m.String())
+	}
+	packageMethodStr := "\t\t\t\t\t\t\t Package Methods:\n"
+	for _, m := range node.PackageMethods {
+		packageMethodStr += fmt.Sprintf("\t\t\t\t\t\t\t - %s\n", m.String())
+	}
+	exposedMethodsStr := "\t\t\t\t\t\t\t Exposed Methods:\n"
+	for _, m := range node.ExposedMethods {
+		exposedMethodsStr += fmt.Sprintf("\t\t\t\t\t\t\t - %s\n", m.String())
+	}
+	logger.Logger.Fatalf("[SERVICE] unknown internal/package/exposed method (%s) for service (%s):\n%s%s%s", name, node.GetName(), internalMethodsStr, packageMethodStr, exposedMethodsStr)
 	return nil
 }
 

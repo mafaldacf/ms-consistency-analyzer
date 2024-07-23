@@ -5,6 +5,14 @@
       "type": "client"
     },
     {
+      "id": "AssuranceService",
+      "type": "service"
+    },
+    {
+      "id": "ConfigService",
+      "type": "service"
+    },
+    {
       "id": "ContactsService",
       "type": "service"
     },
@@ -25,6 +33,14 @@
       "type": "service"
     },
     {
+      "id": "assurance_db MongoDB",
+      "type": "datastore"
+    },
+    {
+      "id": "config_db MongoDB",
+      "type": "datastore"
+    },
+    {
       "id": "contacts_db MongoDB",
       "type": "datastore"
     },
@@ -42,6 +58,132 @@
     }
   ],
   "edges": [
+    {
+      "caller": "AssuranceService",
+      "callee": "assurance_db MongoDB",
+      "call": "DeleteOne",
+      "depth": 1
+    },
+    {
+      "caller": "AssuranceService",
+      "callee": "assurance_db MongoDB",
+      "call": "DeleteOne",
+      "depth": 1
+    },
+    {
+      "caller": "AssuranceService",
+      "callee": "assurance_db MongoDB",
+      "call": "FindMany",
+      "depth": 1
+    },
+    {
+      "caller": "AssuranceService",
+      "callee": "assurance_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "AssuranceService",
+      "callee": "assurance_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "AssuranceService",
+      "callee": "assurance_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "AssuranceService",
+      "callee": "assurance_db MongoDB",
+      "call": "InsertOne",
+      "depth": 1
+    },
+    {
+      "caller": "AssuranceService",
+      "callee": "assurance_db MongoDB",
+      "call": "Upsert",
+      "depth": 1
+    },
+    {
+      "caller": "Client",
+      "callee": "AssuranceService",
+      "call": "Create",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "AssuranceService",
+      "call": "DeleteById",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "AssuranceService",
+      "call": "DeleteByOrderId",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "AssuranceService",
+      "call": "FindAssuranceById",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "AssuranceService",
+      "call": "FindAssuranceByOrderId",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "AssuranceService",
+      "call": "GetAllAssuranceTypes",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "AssuranceService",
+      "call": "GetAllAssurances",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "AssuranceService",
+      "call": "Modify",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "ConfigService",
+      "call": "Create",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "ConfigService",
+      "call": "Delete",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "ConfigService",
+      "call": "Find",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "ConfigService",
+      "call": "FindAll",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "ConfigService",
+      "call": "Update",
+      "depth": 0
+    },
     {
       "caller": "Client",
       "callee": "ContactsService",
@@ -209,6 +351,42 @@
       "callee": "UserService",
       "call": "UpdateUser",
       "depth": 0
+    },
+    {
+      "caller": "ConfigService",
+      "callee": "config_db MongoDB",
+      "call": "DeleteOne",
+      "depth": 1
+    },
+    {
+      "caller": "ConfigService",
+      "callee": "config_db MongoDB",
+      "call": "FindMany",
+      "depth": 1
+    },
+    {
+      "caller": "ConfigService",
+      "callee": "config_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "ConfigService",
+      "callee": "config_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "ConfigService",
+      "callee": "config_db MongoDB",
+      "call": "InsertOne",
+      "depth": 1
+    },
+    {
+      "caller": "ConfigService",
+      "callee": "config_db MongoDB",
+      "call": "Upsert",
+      "depth": 1
     },
     {
       "caller": "ContactsService",

@@ -45,7 +45,7 @@ func (service *Service) methodHasReceiver(n ast.Node) (ok bool, funcDecl *ast.Fu
 func (service *Service) isMethodExposedByService(methodName string) bool {
 	// check if the function declaration being implemented by the Service structure
 	// is actually an exposed method to other services
-	_, ok := service.ExportedMethods[methodName]
+	_, ok := service.ExposedMethods[methodName]
 	return ok
 }
 
@@ -89,7 +89,7 @@ func (service *Service) AttachParsedMethods() []*types.ParsedMethod {
 			service.attachConstructor(parsedMethod)
 		} else {
 			logger.Logger.Warnf("!!!!!!!! FIXMEEEEE!!!! (%s) (%s)", service.GetName(), parsedMethod.Name)
-			//service.attachPackageMethod(parsedMethod)
+			service.attachPackageMethod(parsedMethod)
 		}
 	}
 	return serviceImplementedMethods
@@ -196,7 +196,7 @@ func (service *Service) RegisterConstructor() {
 
 func (service *Service) RegisterImplStructure() {
 	var ExportedMethodsNames []string
-	for name := range service.ExportedMethods {
+	for name := range service.ExposedMethods {
 		ExportedMethodsNames = append(ExportedMethodsNames, name)
 	}
 	// get impl name
@@ -348,15 +348,15 @@ func (service *Service) buildAndAddExportedMethod(funcDecl *ast.FuncDecl) {
 		Returns:  returns,
 		Service:  service.Name,
 	}
-	service.ExportedMethods[parsedMethod.Name] = parsedMethod
+	service.ExposedMethods[parsedMethod.Name] = parsedMethod
 	logger.Logger.Tracef("[PARSER] added exposed method %s to service %s", parsedMethod.String(), service.Name)
 }
 
 func (service *Service) attachExportedMethod(parsedMethod *types.ParsedMethod) {
-	service.ExportedMethods[parsedMethod.Name] = parsedMethod
+	service.ExposedMethods[parsedMethod.Name] = parsedMethod
 	parsedMethod.AttachService(service.GetName())
-	logger.Logger.Infof("[PARSER] [%s] attached exported method: %s", service.Name, parsedMethod.String())
-	//logger.Logger.Warnf("[PARSER] [%s] exported methods list: %v", service.Name, service.ExportedMethods)
+	logger.Logger.Infof("[PARSER] [%s] attached exposed method: %s", service.Name, parsedMethod.String())
+	//logger.Logger.Warnf("[PARSER] [%s] exposed methods list: %v", service.Name, service.ExposedMethods)
 }
 
 func (service *Service) AttachDatastoreInstances(paramDBs map[string]datastores.DatabaseInstance) {

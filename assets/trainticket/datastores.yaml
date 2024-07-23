@@ -1,3 +1,30 @@
+ASSURANCE_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- schema:
+  - fields:
+    - document: assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
+  - unfolded_fields:
+    - Assurance: assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
+    - Assurance.ID: string
+    - Assurance.OrderID: string
+    - Assurance.AT: assurance.AssuranceType struct{Index int64, Name string, Price float64}
+    - Assurance.AT.Index: int64
+    - Assurance.AT.Name: string
+    - Assurance.AT.Price: float64
+  - foreign_fields: []
+CONFIG_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- schema:
+  - fields:
+    - document: config.Config struct{Name string, Value string, Description string}
+  - unfolded_fields:
+    - Config: config.Config struct{Name string, Value string, Description string}
+    - Config.Name: string
+    - Config.Value: string
+    - Config.Description: string
+  - foreign_fields: []
 CONTACTS_DB:
 - type: NoSQLDatabase
 - kind: MongoDB

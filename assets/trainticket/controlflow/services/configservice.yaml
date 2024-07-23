@@ -1,0 +1,39 @@
+(*ConfigServiceImpl).Create(ctx context.Context, conf config.Config struct{Name string, Value string, Description string}):
+  block 0 (Body):
+  - (-1) [INLINE] db NoSQLDatabase
+  - (-1) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) conf config.Config struct{Name string, Value string, Description string}
+  - (-1) coll NoSQLCollection {database = "config", collection = "config"}
+  - (-1) err .error
+(*ConfigServiceImpl).Delete(ctx context.Context, name string):
+  block 0 (Body):
+  - (-1) [INLINE] db NoSQLDatabase
+  - (-1) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) name string
+  - (-1) coll NoSQLCollection {database = "config", collection = "config"}
+  - (-1) err .error
+(*ConfigServiceImpl).Find(ctx context.Context, name string):
+  block 0 (Body):
+  - (-1) [INLINE] db NoSQLDatabase
+  - (-1) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) name string
+  - (-1) coll NoSQLCollection {database = "config", collection = "config"}
+  - (-1) err .error
+(*ConfigServiceImpl).FindAll(ctx context.Context):
+  block 0 (Body):
+  - (-1) [INLINE] db NoSQLDatabase
+  - (-1) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) coll NoSQLCollection {database = "config", collection = "config"}
+  - (-1) err .error
+(*ConfigServiceImpl).Update(ctx context.Context, conf config.Config struct{Name string, Value string, Description string}):
+  block 0 (Body):
+  - (-1) [INLINE] db NoSQLDatabase
+  - (-1) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) conf config.Config struct{Name string, Value string, Description string}
+  - (-1) coll NoSQLCollection {database = "config", collection = "config"}
+  - (-1) err .error

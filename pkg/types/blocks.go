@@ -32,10 +32,11 @@ func (block *Block) VarsString() string {
 }
 
 func (block *Block) GetVariableAt(index int) variables.Variable {
-	if index >= len(block.Vars) {
-		logger.Logger.Fatalf("[BLOCK] received index (%d) but block vars (%s) is length (%d)", index, block.String(), len(block.Vars))
+	if index < len(block.Vars) {
+		return block.Vars[index]
 	}
-	return block.Vars[index]
+	logger.Logger.Fatalf("[BLOCK] received index (%d) but block vars (%s) is length (%d)", index, block.String(), len(block.Vars))
+	return nil
 }
 
 func (block *Block) LongString() string {

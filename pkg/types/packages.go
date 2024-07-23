@@ -112,7 +112,7 @@ func (p *Package) GetParsedMethodIfExists(methodName string, recvTypeName string
 		if m.Name == methodName && (m.Receiver == nil || m.Receiver.GetType() == nil || m.Receiver.GetType().GetName() == recvTypeName) {
 			lst := ""
 			for _, m := range p.ParsedMethods {
-				lst += fmt.Sprintf("\t\t\t - %s", m)
+				lst += fmt.Sprintf("\t\t\t\t\t\t - %s\n", m)
 			}
 
 			logger.Logger.Debugf("[TYPES PACKAGE] found parsed method for name (%s) - parsed methods list in package:\n%s", methodName, lst)

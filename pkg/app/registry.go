@@ -41,7 +41,7 @@ func (app *App) createServiceNodes(servicesInfo []*frameworks.ServiceInfo) {
 			Fields:              make(map[string]types.Field),
 			Services:            make(map[string]*service.Service),
 			Databases:           make(map[string]datastores.DatabaseInstance),
-			ExportedMethods:     make(map[string]*types.ParsedMethod),
+			ExposedMethods:      make(map[string]*types.ParsedMethod),
 			QueueHandlerMethods: make(map[string]*types.ParsedMethod),
 			InternalMethods:     make(map[string]*types.ParsedMethod),
 			PackageMethods:      make(map[string]*types.ParsedMethod),
@@ -54,7 +54,7 @@ func (app *App) createServiceNodes(servicesInfo []*frameworks.ServiceInfo) {
 
 		// add entries to be later parsed
 		for _, name := range info.Methods {
-			node.ExportedMethods[name] = nil
+			node.ExposedMethods[name] = nil
 		}
 		for _, name := range info.Edges {
 			node.Services[name] = nil
@@ -104,7 +104,7 @@ func (app *App) BuildServiceNodes() {
 
 	// 2. parse all attached methods for each service
 	for _, node := range app.Services {
-		parser(node, node.ExportedMethods, "exposed")
+		parser(node, node.ExposedMethods, "exposed")
 		parser(node, node.InternalMethods, "internal") // internal already contains workers
 		parser(node, node.PackageMethods, "package")
 	}

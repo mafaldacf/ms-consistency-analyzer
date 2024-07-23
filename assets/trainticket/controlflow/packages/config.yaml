@@ -1,0 +1,43 @@
+? (*config.ConfigServiceImpl).Create(ctx context.Context, conf config.Config struct{Name string, Value string, Description string}) error:
+ block 0 (Body):
+  - (-1) [INLINE] db NoSQLDatabase
+  - (-1) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) conf config.Config struct{Name string, Value string, Description string}
+  - (-1) coll NoSQLCollection {database = "config", collection = "config"}
+  - (-1) err .error
+(*config.ConfigServiceImpl).Delete(ctx context.Context, name string) error:
+  block 0 (Body):
+  - (-1) [INLINE] db NoSQLDatabase
+  - (-1) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) name string
+  - (-1) coll NoSQLCollection {database = "config", collection = "config"}
+  - (-1) err .error
+(*config.ConfigServiceImpl).Find(ctx context.Context, name string) (config.Config struct{Name string, Value string, Description string}, error):
+ block 0 (Body):
+  - (-1) [INLINE] db NoSQLDatabase
+  - (-1) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) name string
+  - (-1) coll NoSQLCollection {database = "config", collection = "config"}
+  - (-1) err .error
+(*config.ConfigServiceImpl).FindAll(ctx context.Context) ([]config.Config struct{Name string, Value string, Description string}, error):
+ block 0 (Body):
+  - (-1) [INLINE] db NoSQLDatabase
+  - (-1) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) coll NoSQLCollection {database = "config", collection = "config"}
+  - (-1) err .error
+(*config.ConfigServiceImpl).Update(ctx context.Context, conf config.Config struct{Name string, Value string, Description string}) (bool, error):
+ block 0 (Body):
+  - (-1) [INLINE] db NoSQLDatabase
+  - (-1) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) conf config.Config struct{Name string, Value string, Description string}
+  - (-1) coll NoSQLCollection {database = "config", collection = "config"}
+  - (-1) err .error
+config.NewConfigServiceImpl(ctx context.Context, db NoSQLDatabase) ((*config.ConfigServiceImpl struct{db NoSQLDatabase}), error):
+  block 0 (Body):
+  - (-1) ctx context.Context
+  - (-1) db NoSQLDatabase

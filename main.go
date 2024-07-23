@@ -31,7 +31,7 @@ func main() {
 	app.RegisterDatabaseInstances(databaseInstances)
 	app.RegisterServiceNodes(servicesInfo)
 	app.BuildServiceNodes()
-	app.PreDump()
+	//app.PreDump()
 
 	fmt.Println()
 	fmt.Println(" -------------------------------------------------------------------------------------------------------------- ")

@@ -29,7 +29,7 @@ func Build(app *app.App, frontends []string) *AbstractGraph {
 	}
 	for _, frontend := range frontends {
 		service := app.Services[frontend]
-		for _, method := range service.ExportedMethods {
+		for _, method := range service.ExposedMethods {
 			graph.initBuild(app, app.Services[frontend], method)
 		}
 	}
@@ -228,7 +228,10 @@ func (graph *AbstractGraph) referenceMethodBlockVars(parsedCall types.Call, chil
 	entryBlock := parsedCall.GetMethod().(*types.ParsedMethod).GetParsedCfg().GetEntryParsedBlock()
 	for i, param := range parsedCall.GetParams() {
 		// variable at block index 0 is the receiver so we need to skip that one
-		blockVar := entryBlock.GetVariableAt(i + 1)
+		if parsedCall.GetMethod().(*types.ParsedMethod).HasReceiver() {
+			i = i +1
+		}
+		blockVar := entryBlock.GetVariableAt(i )
 		blockVar.AddReferenceWithID(param, child.GetCallerStr())
 		logger.Logger.Infof("\t\t[REF BLOCK VAR] added reference (%d) from creator (%s): (%s) -> (%s)", blockVar.GetId(), child.GetCallerStr(), blockVar.GetType().GetName(), param.GetVariableInfo().GetName())
 		for _, dep := range variables.GetIndirectDependenciesWithCurrent(param) {
@@ -326,7 +329,7 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				Method:     parsedCall.Method,
 				Depth:      rootParent.GetNextDepth(),
 			}
-			
+
 			//graph.referenceServiceCallerParams(rootParent, directParent, tempChild)
 			tempMethod := graph.Services[tempChild.Service].GetInternalOrPackageMethod(tempChild.ParsedCall.Name)
 			graph.appendAbstractEdges(rootParent, tempChild, tempMethod)

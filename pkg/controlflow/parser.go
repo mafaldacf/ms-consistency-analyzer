@@ -514,9 +514,9 @@ func parseCallToVariableInBlock(service *service.Service, method *types.ParsedMe
 	return nil
 }
 
-func parseCallToMethodInImportedPackage(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr, impt *types.Import, idents []*ast.Ident, identsStr string) (*variables.TupleVariable, *types.Package, bool) {
+func searchCallToMethodInImportedPackage(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr, impt *types.Import, idents []*ast.Ident, identsStr string) (*variables.TupleVariable, *types.Package, bool) {
 	funcIdent := idents[len(idents)-1]
-	logger.Logger.Infof("[CFG CALLS] [%s.%s] parsing call to method (%s) in imported package (%s)", service.GetName(), method.Name, funcIdent, impt.Alias)
+	logger.Logger.Infof("[CFG CALLS] [%s.%s] searching call to method (%s) in imported package (%s)", service.GetName(), method.Name, funcIdent, impt.Alias)
 
 	if pkg := service.GetPackage().GetImportedPackage(impt.PackagePath); pkg != nil {
 		switch pkg.Type {
@@ -568,25 +568,25 @@ func parseCallToMethodInImportedOrCurrentPackage(service *service.Service, metho
 		saveParsedFuncCallParams(service, method, block, parsedCall, callExpr.Args)
 		tupleVar := computeInternalFuncCallReturns(service, callExpr, parsedCall)
 		if callPkg == service.GetPackage() {
-			method.Calls = append(method.Calls, parsedCall)
 			logger.Logger.Infof("[CFG CALLS] [%s.%s] found call (%s) to method in current package (%s) -- returned tuple: %s", service.GetName(), method.Name, parsedCall.CallStr, callPkg.Name, tupleVar.String())
-		} else {
-			logger.Logger.Infof("[CFG CALLS] [%s.%s] found call (%s) to method in imported app package (%s) -- returned tuple: %s", service.GetName(), method.Name, parsedCall.CallStr, callPkg.Name, tupleVar.String())
-			if deps := getFuncCallDeps(service, method, block, callExpr); deps != nil {
-				tupleVar := computeExternalFuncCallReturns(service, callExpr, deps)
-				return tupleVar
-			}
-			parsedCall := &types.ParsedInternalCall{
-				ParsedCall: types.ParsedCall{
-					Ast:     callExpr,
-					CallStr: identsStr,
-					Name:    funcIdent.Name,
-					Pos:     callExpr.Pos(),
-				},
-			}
-			tupleVar := computeInternalFuncCallReturns(service, callExpr, parsedCall)
+			method.Calls = append(method.Calls, parsedCall)
+			return tupleVar
+		} 
+
+		logger.Logger.Infof("[CFG CALLS] [%s.%s] found call (%s) to method in imported app package (%s) -- returned tuple: %s", service.GetName(), method.Name, parsedCall.CallStr, callPkg.Name, tupleVar.String())
+		if deps := getFuncCallDeps(service, method, block, callExpr); deps != nil {
+			tupleVar := computeExternalFuncCallReturns(service, callExpr, deps)
 			return tupleVar
 		}
+		parsedCall = &types.ParsedInternalCall{
+			ParsedCall: types.ParsedCall{
+				Ast:     callExpr,
+				CallStr: identsStr,
+				Name:    funcIdent.Name,
+				Pos:     callExpr.Pos(),
+			},
+		}
+		tupleVar = computeInternalFuncCallReturns(service, callExpr, parsedCall)
 		return tupleVar
 	}
 	return nil
@@ -714,9 +714,10 @@ func parseAndSaveCall(service *service.Service, method *types.ParsedMethod, bloc
 	var tupleVar *variables.TupleVariable
 
 	// call to method in imported package
+	logger.Logger.Debugf("[CFG CALLS] IS CALL TO IMPORTED PACKAGE ???? (IDENT = %s): IMPORTS = %v", leftIdent.Name, service.File.Imports)
 	if impt, ok := service.File.Imports[leftIdent.Name]; ok {
 		var isBlueprintCall bool
-		tupleVar, callPkg, isBlueprintCall = parseCallToMethodInImportedPackage(service, method, block, callExpr, impt, idents, identsStr)
+		tupleVar, callPkg, isBlueprintCall = searchCallToMethodInImportedPackage(service, method, block, callExpr, impt, idents, identsStr)
 		if isBlueprintCall { // skip all blueprint calls that are not on backend components - e.g. backend.GetLogger().Info(...)
 			return nil
 		}

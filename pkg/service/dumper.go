@@ -5,9 +5,9 @@ import "analyzer/pkg/logger"
 func (node *Service) Yaml() map[string]interface{} {
 	data := make(map[string]interface{})
 	// exposed methods
-	for k, method := range node.ExportedMethods {
+	for k, method := range node.ExposedMethods {
 		if method == nil {
-			logger.Logger.Fatalf("[YAML] [%s] unexpected nil exported method for name (%s) in list:\n%v", node.Name, k, node.ExportedMethods)
+			logger.Logger.Fatalf("[YAML] [%s] unexpected nil exposed method for name (%s) in list:\n%v", node.Name, k, node.ExposedMethods)
 		}
 		data[method.String()] = method.Yaml()
 	}
@@ -37,9 +37,9 @@ func (node *Service) Yaml() map[string]interface{} {
 func (node *Service) YamlCalls() map[string][]string {
 	data := make(map[string][]string)
 	// exposed methods
-	for k, method := range node.ExportedMethods {
+	for k, method := range node.ExposedMethods {
 		if method == nil {
-			logger.Logger.Fatalf("[YAML] [%s] unexpected nil exported method for name (%s) in list:\n%v", node.Name, k, node.ExportedMethods)
+			logger.Logger.Fatalf("[YAML] [%s] unexpected nil exposed method for name (%s) in list:\n%v", node.Name, k, node.ExposedMethods)
 		}
 		data[method.String()] = method.YamlCalls()
 	}
