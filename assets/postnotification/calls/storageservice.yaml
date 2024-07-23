@@ -6,3 +6,6 @@
 	- Cache.Put(ctx context.Context, key string, value interface{}) interface{}
 (*StorageServiceImpl).StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}):
 	- NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
+.NewNotifyServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue): []
+.NewStorageServiceImpl(ctx context.Context, cache Cache, db NoSQLDatabase): []
+.NewUploadServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue): []

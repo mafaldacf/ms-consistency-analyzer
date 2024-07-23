@@ -13,6 +13,10 @@
       "type": "service"
     },
     {
+      "id": "ConsignPriceService",
+      "type": "service"
+    },
+    {
       "id": "ContactsService",
       "type": "service"
     },
@@ -38,6 +42,10 @@
     },
     {
       "id": "config_db MongoDB",
+      "type": "datastore"
+    },
+    {
+      "id": "consignprice_db MongoDB",
       "type": "datastore"
     },
     {
@@ -182,6 +190,30 @@
       "caller": "Client",
       "callee": "ConfigService",
       "call": "Update",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "ConsignPriceService",
+      "call": "CreateAndModifyPriceConfig",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "ConsignPriceService",
+      "call": "GetPriceByWeightAndRegion",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "ConsignPriceService",
+      "call": "GetPriceConfig",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "ConsignPriceService",
+      "call": "GetPriceInfo",
       "depth": 0
     },
     {
@@ -385,6 +417,42 @@
     {
       "caller": "ConfigService",
       "callee": "config_db MongoDB",
+      "call": "Upsert",
+      "depth": 1
+    },
+    {
+      "caller": "ConsignPriceService",
+      "callee": "consignprice_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "ConsignPriceService",
+      "callee": "consignprice_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "ConsignPriceService",
+      "callee": "consignprice_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "ConsignPriceService",
+      "callee": "consignprice_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "ConsignPriceService",
+      "callee": "consignprice_db MongoDB",
+      "call": "InsertOne",
+      "depth": 1
+    },
+    {
+      "caller": "ConsignPriceService",
+      "callee": "consignprice_db MongoDB",
       "call": "Upsert",
       "depth": 1
     },

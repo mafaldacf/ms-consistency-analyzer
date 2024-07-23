@@ -9,9 +9,9 @@
   - (-1) i 1 int
 (*NotifyServiceImpl).handleMessage(ctx context.Context, message postnotification.Message struct{ReqID string, PostID string, Timestamp string}):
  block 0 (Body):
+  - (-1) [INLINE] queue Queue
   - (-1) [INLINE] storageService postnotification.StorageService
   - (-1) [INLINE] numWorkers 4 int
-  - (-1) [INLINE] queue Queue
   - (-1) n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int})
   - (37) [INLINE] ref <ctx context.Context> @ NotifyService
   - (-1) ctx context.Context
@@ -24,18 +24,18 @@
   - (00) [INLINE] PostID string
   - (41) [INLINE] ref <PostID string> @ NotifyService
   - (00) [INLINE] PostID string
+  - (39) [INLINE] ReqID string
   - (42) [INLINE] Timestamp string
   - (41) [INLINE] PostID string
-  - (39) [INLINE] ReqID string
   - (38) [INLINE] ref <notification postnotification.Message struct{ReqID string, PostID string, Timestamp string}> @ NotifyService
   - (-1) message postnotification.Message struct{ReqID string, PostID string, Timestamp string}
   - (-1) reqID int64
   - (-1) err .error
 (*NotifyServiceImpl).workerThread(ctx context.Context, workerID int):
   block 0 (Body):
-  - (-1) [INLINE] storageService postnotification.StorageService
   - (-1) [INLINE] numWorkers 4 int
   - (-1) [INLINE] queue Queue
+  - (-1) [INLINE] storageService postnotification.StorageService
   - (-1) n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int})
   - (37) ctx context.Context
   - (-1) workerID int
@@ -45,3 +45,26 @@
   - (41) [INLINE] PostID string
   - (39) [INLINE] ReqID string
   - (38) notification postnotification.Message struct{ReqID string, PostID string, Timestamp string}
+.NewNotifyServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue):
+  block 0 (Body):
+  - (-1) ctx context.Context
+  - (-1) storageService postnotification.StorageService
+  - (-1) queue Queue
+  - (00) [INLINE] 4 int
+  - (00) [INLINE] numWorkers int
+  - (00) [INLINE] queue Queue
+  - (00) [INLINE] storageService postnotification.StorageService
+  - (-1) n (&postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int})
+.NewStorageServiceImpl(ctx context.Context, cache Cache, db NoSQLDatabase):
+  block 0 (Body):
+  - (-1) ctx context.Context
+  - (-1) cache Cache
+  - (-1) db NoSQLDatabase
+  - (00) [INLINE] db NoSQLDatabase
+  - (00) [INLINE] cache Cache
+  - (-1) s (&postnotification.StorageServiceImpl struct{cache Cache, db NoSQLDatabase})
+.NewUploadServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue):
+  block 0 (Body):
+  - (-1) ctx context.Context
+  - (-1) storageService postnotification.StorageService
+  - (-1) queue Queue

@@ -6,3 +6,6 @@
 - Queue.Pop(ctx context.Context, item interface{}) (err, interface{})
 - (*postnotification.NotifyServiceImpl).handleMessage(ctx context.Context, message postnotification.Message struct{ReqID string, PostID string, Timestamp string})
   error
+.NewNotifyServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue): []
+.NewStorageServiceImpl(ctx context.Context, cache Cache, db NoSQLDatabase): []
+.NewUploadServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue): []

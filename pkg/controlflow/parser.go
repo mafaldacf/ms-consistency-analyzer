@@ -17,6 +17,11 @@ import (
 )
 
 func ParseServiceMethodCFG(service *service.Service, method *types.ParsedMethod) {
+	if method.IsParsed() {
+		logger.Logger.Warnf("[CFG] [%s] ignoring parsing for already parsed method (%s)", service.GetName(), method.String())
+		return
+	}
+	method.SetParsed()
 	var visited = make(map[int32]bool)
 	for _, block := range method.ParsedCfg.GetParsedBlocks() {
 		visitBasicBlock(service, method, block, visited)
@@ -64,16 +69,17 @@ func assignLeftValues(service *service.Service, method *types.ParsedMethod, bloc
 					rvariable.GetVariableInfo().SetUnassigned()
 					block.AddVariable(rvariable)
 				} else {
+					logger.Logger.Warnf("[CFG] FIX ME!!!! WE SHOULD SEARCH FOR THE LEFT VARIABLE THAT ALREADY EXISTS IN THE BLOCK")
 					lvariable := rvariable.DeepCopy()
 					lvariable.GetVariableInfo().SetName(e.Name)
 					lvariable.GetVariableInfo().SetUnassigned()
 					block.AddVariable(lvariable)
 				}
-				if e.Name == "pieces" {
-					logger.Logger.Warnf("FOUND PIECES: %s: %v", rvariable.String(), block.VarsString())
-				}
+			} else if assignStmt.Tok == token.ADD_ASSIGN {
+				lvariable := block.GetLastestVariable(e.Name)
+				lvariable.GetType().AddValue(rvariable.GetType().GetBasicValue())
 			} else {
-				logger.Logger.Fatalf("unexpected token (%v) for assignment: %v", assignStmt.Tok, assignStmt)
+				logger.Logger.Fatalf("[CFG ASSIGN LEFT] [%s] unexpected token (%v) for assignment: %v", service.GetName(), assignStmt.Tok, assignStmt)
 			}
 		case *ast.SelectorExpr:
 			lvariable, _ := lookupVariableFromAstExpr(service, method, block, e, false)
@@ -81,7 +87,7 @@ func assignLeftValues(service *service.Service, method *types.ParsedMethod, bloc
 			case *variables.FieldVariable:
 				lvariable.AssignVariable(rvariable)
 			default:
-				logger.Logger.Fatalf("[CFG EXPR] unsupported left variable type (%s): %v", utils.GetType(ee), lvariable.String())
+				logger.Logger.Fatalf("[CFG ASSIGN LEFT] [%s] unsupported left variable type (%s): %v", service.GetName(), utils.GetType(ee), lvariable.String())
 			}
 		case *ast.IndexExpr: // e.g. res[rt] = pc
 			lvariable, _ := lookupVariableFromAstExpr(service, method, block, e.X, false)
@@ -90,10 +96,10 @@ func assignLeftValues(service *service.Service, method *types.ParsedMethod, bloc
 				idxVariable, _ := lookupVariableFromAstExpr(service, method, block, e.Index, false)
 				ee.AddKeyValue(idxVariable, rvariable)
 			default:
-				logger.Logger.Fatalf("[CFG EXPR] unsupported left variable type (%s): %v", utils.GetType(ee), lvariable.String())
+				logger.Logger.Fatalf("[CFG ASSIGN LEFT] [%s] unsupported left variable type (%s): %v", service.GetName(), utils.GetType(ee), lvariable.String())
 			}
 		default:
-			logger.Logger.Fatalf("[CFG EXPR] [%s] unexpected type (%s) for left value (%v) in assignment with token (%v): %v", method.Name, utils.GetType(lvalue), lvalue, assignStmt.Tok, assignStmt)
+			logger.Logger.Fatalf("[CFG ASSIGN LEFT] [%s] unexpected type (%s) for left value (%v) in assignment with token (%v): %v", method.Name, utils.GetType(lvalue), lvalue, assignStmt.Tok, assignStmt)
 		}
 	}
 }

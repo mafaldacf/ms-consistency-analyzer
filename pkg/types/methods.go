@@ -27,11 +27,15 @@ type ParsedMethod struct {
 	Ast         *ast.FuncDecl                 `json:"-"`
 	Name        string                        `json:"name"`
 	Calls       []Call                        `json:"-"`
-	Service     string                        `json:"-"`
 	Package     *Package                      `json:"-"`
 	ParsedCfg   *CFG                          `json:"-"`
 	DbInstances []datastores.DatabaseInstance `json:"-"`
 	Exported    bool                          `json:"-"`
+
+	// true if all blocks of the cfg are parsed
+	// note that ParsedCfg can be != nil before being parsed
+	Parsed          bool   `json:"-"`
+	AttachedService string `json:"-"`
 
 	// used to fetch the params when generating the basic cfg
 	// to store in the variables array of the function
@@ -43,11 +47,17 @@ type ParsedMethod struct {
 func (f *ParsedMethod) GetAst() *ast.FuncDecl {
 	return f.Ast
 }
+func (f *ParsedMethod) SetParsed() {
+	f.Parsed = true
+}
+func (f *ParsedMethod) IsParsed() bool {
+	return f.Parsed
+}
 func (f *ParsedMethod) AttachService(service string) {
-	f.Service = service
+	f.AttachedService = service
 }
 func (f *ParsedMethod) HasAttachedService() bool {
-	return f.Service != ""
+	return f.AttachedService != ""
 }
 func (f *ParsedMethod) GetReceiverIfExists() *MethodField {
 	return f.Receiver
@@ -76,8 +86,8 @@ func (*ParsedMethod) IsQueueRead() bool {
 
 func (p *ParsedMethod) String() string {
 	prefix := ""
-	if p.Service != "" {
-		prefix += p.Service
+	if p.AttachedService != "" {
+		prefix += p.AttachedService
 	}
 	if p.Receiver != nil {
 		// this just resets everything
@@ -99,8 +109,8 @@ func (p *ParsedMethod) LongString() string {
 	if p.Package != nil {
 		prefix += p.Package.Name
 	}
-	if p.Service != "" {
-		prefix += p.Service
+	if p.AttachedService != "" {
+		prefix += p.AttachedService
 	}
 	if p.Receiver != nil {
 		// this just resets everything

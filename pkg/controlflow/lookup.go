@@ -253,7 +253,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 		}
 	case *ast.BinaryExpr:
-		if e.Op == token.ADD || e.Op == token.MUL {
+		if e.Op == token.ADD || e.Op == token.MUL || e.Op == token.SUB {
 			variable_x, t_x := lookupVariableFromAstExpr(service, method, block, e.X, assign)
 			addrType_x := &gotypes.AddressType{
 				AddressOf: variable_x.GetType(),
@@ -301,6 +301,10 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 				Id: variables.VARIABLE_UNASSIGNED_ID,
 			},
 		}
+	case *ast.ParenExpr: // e.g. "(weight - cp.InitialWeight)" in: price += (weight - cp.InitialWeight) * cp.WithinPrice
+		variable, _ := lookupVariableFromAstExpr(service, method, block, e.X, false)
+		variable.GetVariableInfo().Id = variables.VARIABLE_INLINE_ID
+		return variable, nil
 	default:
 		logger.Logger.Fatalf("[CFG LOOKUP] cannot lookup unknown type (%s) for variable (%v)", utils.GetType(e), e)
 	}

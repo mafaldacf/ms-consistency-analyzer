@@ -90,6 +90,10 @@ func (app *App) BuildServiceNodes() {
 			controlflow.InitServiceReceiverFieldsForParsedCFG(node, method)
 		}
 	}
+	// 2. attach all package methods that have no service assigned
+	for _, node := range app.Services {
+		node.AttachAllPackageMethods()
+	}
 
 	var parser = func(node *service.Service, methods map[string]*types.ParsedMethod, visibility string) {
 		for _, method := range methods {
@@ -102,7 +106,7 @@ func (app *App) BuildServiceNodes() {
 		}
 	}
 
-	// 2. parse all attached methods for each service
+	// 3. parse all attached methods for each service
 	for _, node := range app.Services {
 		parser(node, node.ExposedMethods, "exposed")
 		parser(node, node.InternalMethods, "internal") // internal already contains workers

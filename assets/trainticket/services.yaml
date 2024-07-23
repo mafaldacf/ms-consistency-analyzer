@@ -10,6 +10,12 @@ ConfigService:
 - services: {}
 - datastores:
     config_db: NoSQLDatabase
+ConsignPriceService:
+- fields:
+    db: NoSQLDatabase
+- services: {}
+- datastores:
+    consignprice_db: NoSQLDatabase
 ContactsService:
 - fields:
     contactsDB: NoSQLDatabase

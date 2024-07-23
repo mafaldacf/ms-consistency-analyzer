@@ -1,0 +1,40 @@
+? (*consignprice.ConsignPriceServiceImpl).CreateAndModifyPriceConfig(ctx context.Context, priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64}) (consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64}, error):
+ block 0 (Body):
+  - (-1) [INLINE] db NoSQLDatabase
+  - (-1) c (*consignprice.ConsignPriceServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (00) [INLINE] 0 int
+  - (-1) [INLINE] Index int64
+  - (-1) priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64}
+  - (-1) coll NoSQLCollection {database = "consign", collection = "consign"}
+  - (-1) err .error
+(*consignprice.ConsignPriceServiceImpl).GetPriceByWeightAndRegion(ctx context.Context, weight float64, isWithinRegion bool) (float64, error):
+ block 0 (Body):
+  - (-1) [INLINE] db NoSQLDatabase
+  - (-1) c (*consignprice.ConsignPriceServiceImpl struct{db NoSQLDatabase})
+  - (20) ctx context.Context
+  - (-1) weight float64
+  - (-1) isWithinRegion bool
+  - (-1) [INLINE] InitialPrice float64
+  - (-1) [INLINE] InitialPrice float64
+  - (-1) cp consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64}
+  - (-1) err .error
+(*consignprice.ConsignPriceServiceImpl).GetPriceConfig(ctx context.Context) (consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64}, error):
+ block 0 (Body):
+  - (-1) [INLINE] db NoSQLDatabase
+  - (-1) c (*consignprice.ConsignPriceServiceImpl struct{db NoSQLDatabase})
+  - (20) [INLINE] ref <ctx context.Context> @ ConsignPriceService
+  - (-1) ctx context.Context
+  - (-1) coll NoSQLCollection {database = "consign", collection = "consign"}
+  - (-1) err .error
+(*consignprice.ConsignPriceServiceImpl).GetPriceInfo(ctx context.Context) (string, error):
+  block 0 (Body):
+  - (-1) [INLINE] db NoSQLDatabase
+  - (-1) c (*consignprice.ConsignPriceServiceImpl struct{db NoSQLDatabase})
+  - (-1) ctx context.Context
+  - (-1) coll NoSQLCollection {database = "consign", collection = "consign"}
+  - (-1) err .error
+consignprice.NewConsignPriceServiceImpl(ctx context.Context, db NoSQLDatabase) ((*consignprice.ConsignPriceServiceImpl struct{db NoSQLDatabase}), error):
+ block 0 (Body):
+  - (-1) ctx context.Context
+  - (-1) db NoSQLDatabase

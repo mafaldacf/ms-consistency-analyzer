@@ -53,11 +53,10 @@ func (t *FieldType) GetPackage() string {
 	return ""
 }
 func (t *FieldType) GetBasicValue() string {
-	logger.Logger.Fatalf("unable to get value for field type %s", t.String())
-	return ""
+	return t.SubType.GetBasicValue()
 }
 func (t *FieldType) AddValue(value string) {
-	logger.Logger.Fatalf("unable to add value for field type %s", t.String())
+	t.SubType.AddValue(value)
 }
 func (t *FieldType) GetNestedFieldTypes(prefix string) ([]Type, []string) {
 	if t.SubType == nil {

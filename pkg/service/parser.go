@@ -88,35 +88,20 @@ func (service *Service) AttachParsedMethods() []*types.ParsedMethod {
 		} else if service.methodIsServiceConstructor(parsedMethod) {
 			service.attachConstructor(parsedMethod)
 		} else {
-			logger.Logger.Warnf("!!!!!!!! FIXMEEEEE!!!! (%s) (%s)", service.GetName(), parsedMethod.Name)
-			service.attachPackageMethod(parsedMethod)
+			logger.Logger.Warnf("[SERVICE] [%s] ignoring attachment parsed method (%s)", service.GetName(), parsedMethod.String())
 		}
 	}
 	return serviceImplementedMethods
+}
 
-	/* ast.Inspect(service.File.Ast, func(n ast.Node) bool {
-		implementsService, funcDecl := service.methodImplementsService(n)
-
-		if implementsService {
-			if service.isMethodExposedByService(funcDecl) {
-				service.buildAndAddExportedMethod(funcDecl)
-				return true
-			} else if service.ImplementsQueue {
-				if funcImplementsQueue, dbInstance := service.funcImplementsQueue(funcDecl); funcImplementsQueue {
-					service.buildAndAddQueueHandlerMethod(funcDecl, dbInstance)
-					service.buildAndAddInternalMethod(funcDecl)
-					return true
-				}
-			}
-			service.buildAndAddInternalMethod(funcDecl)
-		} else if funcDecl != nil && funcDecl.Name.Name != service.Constructor.Name {
-			// be aware that there can be internal methods with the same name of the instructor
-			// we distinguish them since the constructor usually does not implement the service
-			// so we need to make sure that the name of this function (that does not implement the service) is not equal to the constructor
-			service.buildAndAddInternalMethod(funcDecl)
+func (service *Service) AttachAllPackageMethods() {
+	for _, parsedMethod := range service.GetPackage().GetAllParsedMethods() {
+		if !parsedMethod.HasAttachedService() {
+			service.PackageMethods[parsedMethod.Name] = parsedMethod
+			logger.Logger.Warnf("[PARSER] [%s] attached package method: %s", service.Name, parsedMethod.String())
+			//logger.Logger.Warnf("[PARSER] [%s] package methods list: %v", service.Name, service.PackageMethods)
 		}
-		return true
-	}) */
+	}
 }
 
 func (service *Service) ParseFields() {
@@ -184,9 +169,9 @@ func (service *Service) RegisterConstructor() {
 		hasReceiver, funcDecl := service.methodHasReceiver(n)
 		if !hasReceiver && funcDecl != nil && funcDecl.Name.Name == service.ConstructorName {
 			service.Constructor = &types.ParsedMethod{
-				Ast:     funcDecl,
-				Name:    funcDecl.Name.Name,
-				Service: service.Name,
+				Ast:             funcDecl,
+				Name:            funcDecl.Name.Name,
+				AttachedService: service.Name,
 			}
 			logger.Logger.Infof("[PARSER] registered constructor %s for service %s", service.ConstructorName, service.Name)
 		}
@@ -292,12 +277,12 @@ func getFuncCallIfSelectedServiceField(service ast.Node, expectedRecvIdent *ast.
 func (service *Service) buildAndAddQueueHandlerMethod(funcDecl *ast.FuncDecl, dbInstance datastores.DatabaseInstance) {
 	params, returns, receiver := lookup.ComputeFuncDeclFields(service.File, funcDecl)
 	parsedMethod := &types.ParsedMethod{
-		Ast:      funcDecl,
-		Name:     funcDecl.Name.Name,
-		Receiver: receiver,
-		Params:   params,
-		Returns:  returns,
-		Service:  service.Name,
+		Ast:             funcDecl,
+		Name:            funcDecl.Name.Name,
+		Receiver:        receiver,
+		Params:          params,
+		Returns:         returns,
+		AttachedService: service.Name,
 	}
 	parsedMethod.DbInstances = append(parsedMethod.DbInstances, dbInstance)
 	service.QueueHandlerMethods[parsedMethod.Name] = parsedMethod
@@ -314,12 +299,12 @@ func (service *Service) attachQueueHandlerMethod(parsedMethod *types.ParsedMetho
 func (service *Service) buildAndAddInternalMethod(funcDecl *ast.FuncDecl) {
 	params, returns, receiver := lookup.ComputeFuncDeclFields(service.File, funcDecl)
 	parsedMethod := &types.ParsedMethod{
-		Ast:      funcDecl,
-		Name:     funcDecl.Name.Name,
-		Params:   params,
-		Returns:  returns,
-		Receiver: receiver,
-		Service:  service.Name,
+		Ast:             funcDecl,
+		Name:            funcDecl.Name.Name,
+		Params:          params,
+		Returns:         returns,
+		Receiver:        receiver,
+		AttachedService: service.Name,
 	}
 	service.InternalMethods[parsedMethod.Name] = parsedMethod
 	logger.Logger.Infof("[PARSER] added internal method %s to service %s", parsedMethod.String(), service.Name)
@@ -332,21 +317,15 @@ func (service *Service) attachInternalMethod(parsedMethod *types.ParsedMethod) {
 	//logger.Logger.Warnf("[PARSER] [%s] internal methods list: %v", service.Name, service.InternalMethods)
 }
 
-func (service *Service) attachPackageMethod(parsedMethod *types.ParsedMethod) {
-	service.PackageMethods[parsedMethod.Name] = parsedMethod
-	logger.Logger.Warnf("[PARSER] [%s] attached package method: %s", service.Name, parsedMethod.String())
-	//logger.Logger.Warnf("[PARSER] [%s] package methods list: %v", service.Name, service.PackageMethods)
-}
-
 func (service *Service) buildAndAddExportedMethod(funcDecl *ast.FuncDecl) {
 	params, returns, receiver := lookup.ComputeFuncDeclFields(service.File, funcDecl)
 	parsedMethod := &types.ParsedMethod{
-		Ast:      funcDecl,
-		Name:     funcDecl.Name.Name,
-		Receiver: receiver,
-		Params:   params,
-		Returns:  returns,
-		Service:  service.Name,
+		Ast:             funcDecl,
+		Name:            funcDecl.Name.Name,
+		Receiver:        receiver,
+		Params:          params,
+		Returns:         returns,
+		AttachedService: service.Name,
 	}
 	service.ExposedMethods[parsedMethod.Name] = parsedMethod
 	logger.Logger.Tracef("[PARSER] added exposed method %s to service %s", parsedMethod.String(), service.Name)

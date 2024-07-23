@@ -26,9 +26,9 @@
  block 0 (Body):
   - (-1) [INLINE] stationDB NoSQLDatabase
   - (-1) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - (11) [INLINE] ref <ctx context.Context> @ StationService
+  - (13) [INLINE] ref <ctx context.Context> @ StationService
   - (-1) ctx context.Context
-  - (12) [INLINE] ref <string> @ StationService
+  - (14) [INLINE] ref <string> @ StationService
   - (00) id string
   - (-1) coll NoSQLCollection {database = "station", collection = "station"}
   - (-1) err .error
@@ -36,7 +36,7 @@
  block 0 (Body):
   - (-1) [INLINE] stationDB NoSQLDatabase
   - (-1) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - (11) ctx context.Context
+  - (13) ctx context.Context
   - (-1) ids []string
   - (-1) [INLINE] st station.Station struct{ID string, Name string, StayTime int64}
   - (-1) stations []station.Station struct{ID string, Name string, StayTime int64}
@@ -47,9 +47,9 @@
   block 0 (Body):
   - (-1) [INLINE] stationDB NoSQLDatabase
   - (-1) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - (13) [INLINE] ref <ctx context.Context> @ StationService
+  - (11) [INLINE] ref <ctx context.Context> @ StationService
   - (-1) ctx context.Context
-  - (14) [INLINE] ref <string> @ StationService
+  - (12) [INLINE] ref <string> @ StationService
   - (00) name string
   - (-1) coll NoSQLCollection {database = "station", collection = "station"}
   - (-1) err .error
@@ -57,7 +57,7 @@
   block 0 (Body):
   - (-1) [INLINE] stationDB NoSQLDatabase
   - (-1) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - (13) ctx context.Context
+  - (11) ctx context.Context
   - (-1) names []string
   - (-1) [INLINE] id string
   - (-1) ids []string

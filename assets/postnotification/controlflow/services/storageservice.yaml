@@ -51,23 +51,46 @@
   - (03) [INLINE] reqID int64
   - (02) [INLINE] ref <ReqID int64> @ UploadService
   - (00) reqID int64
-  - (16) [INLINE] reqID int64
-  - (15) [INLINE] ReqID int64
-  - (14) [INLINE] "some username" string
-  - (13) [INLINE] Username string
-  - (12) [INLINE] postnotification.Creator struct{Username string}
-  - (11) [INLINE] Creator postnotification.Creator struct{Username string}
-  - (10) [INLINE] timestamp int64
-  - (09) [INLINE] Timestamp int64
-  - (08) [INLINE] "bob" string
-  - (07) [INLINE] "alice" string
-  - (06) [INLINE] mentions []string
-  - (05) [INLINE] Mentions []string
-  - (20) [INLINE] text string
-  - (19) [INLINE] Text string
-  - (18) [INLINE] postID int64
-  - (17) [INLINE] PostID int64
+  - (12) [INLINE] reqID int64
+  - (11) [INLINE] ReqID int64
+  - (10) [INLINE] "some username" string
+  - (09) [INLINE] Username string
+  - (08) [INLINE] postnotification.Creator struct{Username string}
+  - (07) [INLINE] Creator postnotification.Creator struct{Username string}
+  - (06) [INLINE] timestamp int64
+  - (05) [INLINE] Timestamp int64
+  - (20) [INLINE] "bob" string
+  - (19) [INLINE] "alice" string
+  - (18) [INLINE] mentions []string
+  - (17) [INLINE] Mentions []string
+  - (16) [INLINE] text string
+  - (15) [INLINE] Text string
+  - (14) [INLINE] postID int64
+  - (13) [INLINE] PostID int64
   - (04) [INLINE] ref <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}> @ UploadService
   - (-1) post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}
   - (-1) collection NoSQLCollection {database = "post", collection = "post"}
   - (-1) err .error
+.NewNotifyServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue):
+  block 0 (Body):
+  - (-1) ctx context.Context
+  - (-1) storageService postnotification.StorageService
+  - (-1) queue Queue
+  - (00) [INLINE] 4 int
+  - (00) [INLINE] numWorkers int
+  - (00) [INLINE] queue Queue
+  - (00) [INLINE] storageService postnotification.StorageService
+  - (-1) n (&postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int})
+.NewStorageServiceImpl(ctx context.Context, cache Cache, db NoSQLDatabase):
+  block 0 (Body):
+  - (-1) ctx context.Context
+  - (-1) cache Cache
+  - (-1) db NoSQLDatabase
+  - (00) [INLINE] db NoSQLDatabase
+  - (00) [INLINE] cache Cache
+  - (-1) s (&postnotification.StorageServiceImpl struct{cache Cache, db NoSQLDatabase})
+.NewUploadServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue):
+  block 0 (Body):
+  - (-1) ctx context.Context
+  - (-1) storageService postnotification.StorageService
+  - (-1) queue Queue

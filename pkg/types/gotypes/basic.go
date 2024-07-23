@@ -32,7 +32,7 @@ func (t *BasicType) GetBasicValue() string {
 	return t.Value
 }
 func (t *BasicType) AddValue(value string) {
-	t.Value = value
+	t.Value += value
 }
 func (t *BasicType) GetNestedFieldTypes(prefix string) ([]Type, []string) {
 	return nil, nil

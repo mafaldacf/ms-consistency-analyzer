@@ -2,8 +2,8 @@
  block 0 (Body):
   - (-1) [INLINE] db NoSQLDatabase
   - (-1) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
-  - (18) ctx context.Context
-  - (19) typeindex int64
+  - (15) ctx context.Context
+  - (16) typeindex int64
   - (-1) orderid string
   - (-1) at assurance.AssuranceType struct{Index int64, Name string, Price float64}
   - (-1) err .error
@@ -28,10 +28,10 @@
  block 0 (Body):
   - (-1) [INLINE] db NoSQLDatabase
   - (-1) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
-  - (15) [INLINE] ref <ctx context.Context> @ AssuranceService
+  - (17) [INLINE] ref <ctx context.Context> @ AssuranceService
   - (-1) ctx context.Context
-  - (17) [INLINE] ID string
-  - (16) [INLINE] ref <ID string> @ AssuranceService
+  - (19) [INLINE] ID string
+  - (18) [INLINE] ref <ID string> @ AssuranceService
   - (-1) id string
   - (-1) coll NoSQLCollection {database = "assurance", collection = "assurance"}
   - (-1) err .error
@@ -59,9 +59,9 @@
  block 0 (Body):
   - (-1) [INLINE] db NoSQLDatabase
   - (-1) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
-  - (15) ctx context.Context
-  - (17) [INLINE] ID string
-  - (16) [INLINE] ID string
+  - (17) ctx context.Context
+  - (19) [INLINE] ID string
+  - (18) [INLINE] ID string
   - (-1) assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
   - (-1) _ assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
   - (-1) err .error
@@ -71,7 +71,7 @@ assurance.NewAssuranceServiceImpl(ctx context.Context, db NoSQLDatabase) ((*assu
   - (-1) db NoSQLDatabase
 assurance.getAssuranceType(ctx context.Context, index int64) (assurance.AssuranceType struct{Index int64, Name string, Price float64}, error):
  block 0 (Body):
-  - (18) [INLINE] ref <ctx context.Context> @ AssuranceService
+  - (15) [INLINE] ref <ctx context.Context> @ AssuranceService
   - (-1) ctx context.Context
-  - (19) [INLINE] ref <typeindex int64> @ AssuranceService
+  - (16) [INLINE] ref <typeindex int64> @ AssuranceService
   - (-1) index int64

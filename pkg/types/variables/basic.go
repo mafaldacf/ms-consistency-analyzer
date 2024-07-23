@@ -23,6 +23,10 @@ func (v *BasicVariable) GetType() gotypes.Type {
 	return v.VariableInfo.GetType()
 }
 
+func (v *BasicVariable) GetBasicType() *gotypes.BasicType {
+	return v.VariableInfo.GetType().(*gotypes.BasicType)
+}
+
 func (v *BasicVariable) GetVariableInfo() *VariableInfo {
 	return v.VariableInfo
 }

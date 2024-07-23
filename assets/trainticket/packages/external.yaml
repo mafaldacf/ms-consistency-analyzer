@@ -10,6 +10,10 @@ errors:
 - package: errors
 - package path: errors
 - module: ""
+fmt:
+- package: fmt
+- package path: fmt
+- module: ""
 strings:
 - package: strings
 - package path: strings

@@ -25,6 +25,21 @@ CONFIG_DB:
     - Config.Value: string
     - Config.Description: string
   - foreign_fields: []
+CONSIGNPRICE_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- schema:
+  - fields:
+    - document: consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64}
+  - unfolded_fields:
+    - ConsignPrice: consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64}
+    - ConsignPrice.ID: string
+    - ConsignPrice.Index: int64
+    - ConsignPrice.InitialWeight: float64
+    - ConsignPrice.InitialPrice: float64
+    - ConsignPrice.WithinPrice: float64
+    - ConsignPrice.BeyondPrice: float64
+  - foreign_fields: []
 CONTACTS_DB:
 - type: NoSQLDatabase
 - kind: MongoDB

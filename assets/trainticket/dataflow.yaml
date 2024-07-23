@@ -13,6 +13,13 @@ ASSURANCE_DB.Assurance.OrderID:
 CONFIG_DB.Config:
 - write <conf config.Config struct{Name string, Value string, Description string} (StructVariable)>
 - write <conf config.Config struct{Name string, Value string, Description string} (StructVariable)> from <conf config.Config struct{Name string, Value string, Description string} (StructVariable)>
+CONSIGNPRICE_DB.ConsignPrice:
+- write <priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64} (StructVariable)>
+- write <priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64} (StructVariable)>
+  from <priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64} (StructVariable)>
+CONSIGNPRICE_DB.ConsignPrice.Index:
+- write <0 int (BasicVariable)> from <priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64} (StructVariable)>
+- write <Index int64 (FieldVariable)> from <priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64} (StructVariable)>
 CONTACTS_DB.Contact:
 - write <contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} (StructVariable)>
 - write <contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} (StructVariable)> from
