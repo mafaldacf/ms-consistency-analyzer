@@ -164,8 +164,16 @@ func LookupTypesForGoTypes(p *types.Package, goType golangtypes.Type) gotypes.Ty
 	return ComputeTypesForGoTypes(p, goType, false, nil, nil, nil)
 }
 
+func LookupAndComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type) gotypes.Type {
+	// note that variable can be either inline and thus we need to compute if type not found
+	// in case of declarations with assignments, we don't reach this function
+	// e.g. inline "bson.D{{"id", payment.ID}}" in coll.FindOne(ctx, bson.D{{"id", payment.ID}})
+	return ComputeTypesForGoTypes(p, goType, true, nil, nil, nil)
+}
+
+// + Compute
 func ComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type, computeIfNotFound bool, visitedNamedTypes map[*golangtypes.Named]bool, typeNameToFuncs map[string][]*golangtypes.Func, servicesPkgPath map[string]string) gotypes.Type {
-	logger.Logger.Tracef("[LOOKUP GOTYPES] [%s] %v", utils.GetType(goType),  goType)
+	logger.Logger.Tracef("[LOOKUP GOTYPES] [%s] %v", utils.GetType(goType), goType)
 	switch e := goType.(type) {
 	case *golangtypes.Named:
 		name := e.Obj().Name()
@@ -187,7 +195,6 @@ func ComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type, computeIf
 		}
 
 		if computeIfNotFound {
-			logger.Logger.Tracef("[LOOKUP GOTYPES] NOT FOUND!")
 			return FindDefTypesAndAddToPackage(p, e, visitedNamedTypes, typeNameToFuncs, servicesPkgPath)
 		}
 	case *golangtypes.Struct:
@@ -246,6 +253,6 @@ func ComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type, computeIf
 			logger.Logger.Fatalf("unknown gotype %s for %v", utils.GetType(goType), goType)
 		}
 	}
-	logger.Logger.Fatalf("unknown gotype %s for %v", utils.GetType(goType), goType)
+	logger.Logger.Fatalf("unknown gotype (%s) for %v", utils.GetType(goType), goType)
 	return nil
 }

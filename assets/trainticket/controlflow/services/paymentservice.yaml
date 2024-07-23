@@ -1,13 +1,13 @@
-? (*payment.PaymentServiceImpl).AddMoney(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}) error:
+? (*PaymentServiceImpl).AddMoney(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}):
  block 0 (Body):
   - '[INLINE] moneyDB NoSQLDatabase'
   - '[INLINE] paymentDB NoSQLDatabase'
   - p (*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase})
   - ctx context.Context
-  - '[INLINE] UserID string'
-  - '[INLINE] UserID string'
   - '[INLINE] Price string'
   - '[INLINE] Price string'
+  - '[INLINE] UserID string'
+  - '[INLINE] UserID string'
   - payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}
   - '[INLINE] string'
   - '[INLINE] ID string'
@@ -18,7 +18,7 @@
   - m payment.Money struct{ID string, UserID string, Price string}
   - coll NoSQLCollection {database = "payment", collection = "money"}
   - err .error
-(*payment.PaymentServiceImpl).Cleanup(ctx context.Context) error:
+(*PaymentServiceImpl).Cleanup(ctx context.Context):
   block 0 (Body):
   - '[INLINE] moneyDB NoSQLDatabase'
   - '[INLINE] paymentDB NoSQLDatabase'
@@ -26,7 +26,7 @@
   - ctx context.Context
   - pay_coll NoSQLCollection {database = "payment", collection = "payment"}
   - err .error
-(*payment.PaymentServiceImpl).InitPayment(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}) error:
+(*PaymentServiceImpl).InitPayment(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}):
  block 0 (Body):
   - '[INLINE] moneyDB NoSQLDatabase'
   - '[INLINE] paymentDB NoSQLDatabase'
@@ -35,7 +35,7 @@
   - payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}
   - coll NoSQLCollection {database = "payment", collection = "payment"}
   - err .error
-(*payment.PaymentServiceImpl).Pay(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}) error:
+(*PaymentServiceImpl).Pay(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}):
  block 0 (Body):
   - '[INLINE] moneyDB NoSQLDatabase'
   - '[INLINE] paymentDB NoSQLDatabase'
@@ -44,8 +44,8 @@
   - payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}
   - coll NoSQLCollection {database = "payment", collection = "payment"}
   - err .error
-(*payment.PaymentServiceImpl).Query(ctx context.Context) ([]payment.Payment struct{ID string, OrderID string, UserID string, Price string}, error):
- block 0 (Body):
+(*PaymentServiceImpl).Query(ctx context.Context):
+  block 0 (Body):
   - '[INLINE] moneyDB NoSQLDatabase'
   - '[INLINE] paymentDB NoSQLDatabase'
   - p (*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase})
@@ -53,8 +53,8 @@
   - payments []payment.Payment struct{ID string, OrderID string, UserID string, Price string}
   - coll NoSQLCollection {database = "payment", collection = "payment"}
   - err .error
-payment.NewPaymentServiceImpl(ctx context.Context, payDB NoSQLDatabase, moneyDB NoSQLDatabase) ((*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase}), error):
- block 0 (Body):
+.NewPaymentServiceImpl(ctx context.Context, payDB NoSQLDatabase, moneyDB NoSQLDatabase):
+  block 0 (Body):
   - ctx context.Context
   - payDB NoSQLDatabase
   - moneyDB NoSQLDatabase

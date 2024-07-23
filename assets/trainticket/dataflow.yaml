@@ -24,6 +24,22 @@ CONTACTS_DB.Contact:
 - write <contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} (StructVariable)>
 - write <contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} (StructVariable)> from
   <contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} (StructVariable)>
+MONEY_DB.Money:
+- write <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>
+- write <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>
+  from <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>
+MONEY_DB.Money.ID:
+- write <string (BasicVariable)> from <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>
+- write <ID string (FieldVariable)> from <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>
+MONEY_DB.Money.Price:
+- write <Price string (BasicVariable)> from <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>
+- write <Price string (FieldVariable)> from <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>
+MONEY_DB.Money.UserID:
+- write <UserID string (BasicVariable)> from <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>
+- write <UserID string (FieldVariable)> from <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>
+PAYMENTS_DB.Payment:
+- write <payment payment.Payment struct{ID string, OrderID string, UserID string, Price string} (StructVariable)>
+- write <payment payment.Payment struct{ID string, OrderID string, UserID string, Price string} (StructVariable)> from <payment payment.Payment struct{ID string, OrderID string, UserID string, Price string} (StructVariable)>
 PRICE_DB.PriceConfig:
 - write <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructVariable)>
 - write <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructVariable)> from <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructVariable)>

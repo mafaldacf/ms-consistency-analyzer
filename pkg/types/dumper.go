@@ -90,9 +90,9 @@ func (block *Block) Yaml() []string {
 						str += ", "
 					}
 				}
-				data = append(data, fmt.Sprintf("(%02d) %s --> (TAINTED %dx) --> [%s]", v.GetId(), variableString, len(taintedDBFields), str))
+				data = append(data, fmt.Sprintf("%s --> (TAINTED %dx) --> [%s]", variableString, len(taintedDBFields), str))
 			} else {
-				data = append(data, fmt.Sprintf("(%02d) %s", v.GetId(), variableString))
+				data = append(data, fmt.Sprintf("%s", variableString))
 			}
 		}
 

@@ -17,15 +17,13 @@
               {
                 "variable": {
                   "name": "ctx",
-                  "type": "context.Context",
-                  "id": -1
+                  "type": "context.Context"
                 }
               },
               {
                 "variable": {
                   "name": "post",
-                  "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}",
-                  "id": -1
+                  "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}"
                 }
               }
             ],
@@ -43,53 +41,45 @@
           {
             "variable": {
               "name": "ctx",
-              "type": "context.Context",
-              "id": 1
+              "type": "context.Context"
             }
           },
           {
             "variable": {
               "name": "ReqID",
-              "type": "int64",
-              "id": 2
+              "type": "int64"
             },
             "underlying_field": {
               "variable": {
                 "name": "reqID",
-                "type": "int64",
-                "id": 3
+                "type": "int64"
               }
             }
           },
           {
             "variable": {
               "name": "post",
-              "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}",
-              "id": 4
+              "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}"
             },
             "struct_fields": {
               "Creator": {
                 "variable": {
                   "name": "Creator",
-                  "type": "postnotification.Creator struct{Username string}",
-                  "id": 11
+                  "type": "postnotification.Creator struct{Username string}"
                 },
                 "underlying_field": {
                   "variable": {
-                    "type": "postnotification.Creator struct{Username string}",
-                    "id": 12
+                    "type": "postnotification.Creator struct{Username string}"
                   },
                   "struct_fields": {
                     "Username": {
                       "variable": {
                         "name": "Username",
-                        "type": "string",
-                        "id": 13
+                        "type": "string"
                       },
                       "underlying_field": {
                         "variable": {
-                          "type": "\"some username\" string",
-                          "id": 14
+                          "type": "\"some username\" string"
                         }
                       }
                     }
@@ -99,26 +89,22 @@
               "Mentions": {
                 "variable": {
                   "name": "Mentions",
-                  "type": "[]string",
-                  "id": 5
+                  "type": "[]string"
                 },
                 "underlying_field": {
                   "variable": {
                     "name": "mentions",
-                    "type": "[]string",
-                    "id": 6
+                    "type": "[]string"
                   },
                   "array_elems": [
                     {
                       "variable": {
-                        "type": "\"alice\" string",
-                        "id": 7
+                        "type": "\"alice\" string"
                       }
                     },
                     {
                       "variable": {
-                        "type": "\"bob\" string",
-                        "id": 8
+                        "type": "\"bob\" string"
                       }
                     }
                   ]
@@ -127,56 +113,48 @@
               "PostID": {
                 "variable": {
                   "name": "PostID",
-                  "type": "int64",
-                  "id": 17
+                  "type": "int64"
                 },
                 "underlying_field": {
                   "variable": {
                     "name": "postID",
-                    "type": "int64",
-                    "id": 18
+                    "type": "int64"
                   }
                 }
               },
               "ReqID": {
                 "variable": {
                   "name": "ReqID",
-                  "type": "int64",
-                  "id": 15
+                  "type": "int64"
                 },
                 "underlying_field": {
                   "variable": {
                     "name": "reqID",
-                    "type": "int64",
-                    "id": 16
+                    "type": "int64"
                   }
                 }
               },
               "Text": {
                 "variable": {
                   "name": "Text",
-                  "type": "string",
-                  "id": 19
+                  "type": "string"
                 },
                 "underlying_field": {
                   "variable": {
                     "name": "text",
-                    "type": "string",
-                    "id": 20
+                    "type": "string"
                   }
                 }
               },
               "Timestamp": {
                 "variable": {
                   "name": "Timestamp",
-                  "type": "int64",
-                  "id": 9
+                  "type": "int64"
                 },
                 "underlying_field": {
                   "variable": {
                     "name": "timestamp",
-                    "type": "int64",
-                    "id": 10
+                    "type": "int64"
                   }
                 }
               }
@@ -199,40 +177,34 @@
           {
             "variable": {
               "name": "ctx",
-              "type": "context.Context",
-              "id": -1
+              "type": "context.Context"
             }
           },
           {
             "variable": {
               "name": "message",
-              "type": "postnotification.Message struct{ReqID string, PostID string, Timestamp string}",
-              "id": 21
+              "type": "postnotification.Message struct{ReqID string, PostID string, Timestamp string}"
             },
             "struct_fields": {
               "PostID": {
                 "variable": {
                   "name": "PostID",
-                  "type": "string",
-                  "id": 26
+                  "type": "string"
                 },
                 "underlying_field": {
                   "variable": {
-                    "type": "string",
-                    "id": 27
+                    "type": "string"
                   },
                   "func_composition": [
                     {
                       "variable": {
                         "name": "PostID",
-                        "type": "int64",
-                        "id": 28
+                        "type": "int64"
                       },
                       "underlying_field": {
                         "variable": {
                           "name": "postID",
-                          "type": "int64",
-                          "id": 29
+                          "type": "int64"
                         }
                       }
                     }
@@ -242,26 +214,22 @@
               "ReqID": {
                 "variable": {
                   "name": "ReqID",
-                  "type": "string",
-                  "id": 22
+                  "type": "string"
                 },
                 "underlying_field": {
                   "variable": {
-                    "type": "string",
-                    "id": 23
+                    "type": "string"
                   },
                   "func_composition": [
                     {
                       "variable": {
                         "name": "ReqID",
-                        "type": "int64",
-                        "id": 24
+                        "type": "int64"
                       },
                       "underlying_field": {
                         "variable": {
                           "name": "reqID",
-                          "type": "int64",
-                          "id": 25
+                          "type": "int64"
                         }
                       }
                     }
@@ -275,15 +243,13 @@
           {
             "variable": {
               "name": "_",
-              "type": "bool",
-              "id": -1
+              "type": "bool"
             }
           },
           {
             "variable": {
               "name": "err",
-              "type": ".error",
-              "id": -1
+              "type": ".error"
             }
           }
         ],
@@ -301,8 +267,7 @@
                   {
                     "variable": {
                       "name": "ctx",
-                      "type": "context.Context",
-                      "id": -1
+                      "type": "context.Context"
                     }
                   },
                   {
@@ -314,11 +279,9 @@
                       "variable": {
                         "name": "message",
                         "type": "map[string]interface{}",
-                        "id": -1,
                         "ref": {
                           "name": "message",
-                          "creator": "NotifyService",
-                          "id": 21
+                          "creator": "NotifyService"
                         }
                       },
                       "key_values": null
@@ -353,15 +316,13 @@
                       {
                         "variable": {
                           "name": "ctx",
-                          "type": "context.Context",
-                          "id": -1
+                          "type": "context.Context"
                         }
                       },
                       {
                         "variable": {
                           "name": "query",
-                          "type": "primitive.D",
-                          "id": -1
+                          "type": "primitive.D"
                         }
                       }
                     ],
@@ -369,15 +330,13 @@
                       {
                         "variable": {
                           "name": "result",
-                          "type": "NoSQLCursor {database = \"post\", collection = \"post\"}",
-                          "id": -1
+                          "type": "NoSQLCursor {database = \"post\", collection = \"post\"}"
                         }
                       },
                       {
                         "variable": {
                           "name": "err",
-                          "type": ".error",
-                          "id": -1
+                          "type": ".error"
                         }
                       }
                     ],
@@ -388,28 +347,24 @@
                   {
                     "variable": {
                       "name": "ctx",
-                      "type": "context.Context",
-                      "id": 30
+                      "type": "context.Context"
                     }
                   },
                   {
                     "variable": {
                       "name": "reqID",
-                      "type": "int64",
-                      "id": 31
+                      "type": "int64"
                     },
                     "func_composition": [
                       {
                         "variable": {
                           "name": "ReqID",
-                          "type": "string",
-                          "id": 32
+                          "type": "string"
                         },
                         "underlying_field": {
                           "variable": {
                             "name": "ReqID",
-                            "type": "string",
-                            "id": 33
+                            "type": "string"
                           }
                         }
                       }
@@ -418,21 +373,18 @@
                   {
                     "variable": {
                       "name": "postID",
-                      "type": "int64",
-                      "id": 34
+                      "type": "int64"
                     },
                     "func_composition": [
                       {
                         "variable": {
                           "name": "PostID",
-                          "type": "string",
-                          "id": 35
+                          "type": "string"
                         },
                         "underlying_field": {
                           "variable": {
                             "name": "PostID",
-                            "type": "string",
-                            "id": 36
+                            "type": "string"
                           }
                         }
                       }
@@ -443,15 +395,13 @@
                   {
                     "variable": {
                       "name": "_",
-                      "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}",
-                      "id": -1
+                      "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}"
                     }
                   },
                   {
                     "variable": {
                       "name": "err",
-                      "type": ".error",
-                      "id": -1
+                      "type": ".error"
                     }
                   }
                 ]
@@ -461,15 +411,13 @@
               {
                 "variable": {
                   "name": "ctx",
-                  "type": "context.Context",
-                  "id": -1
+                  "type": "context.Context"
                 }
               },
               {
                 "variable": {
                   "name": "workerID",
-                  "type": "int",
-                  "id": -1
+                  "type": "int"
                 }
               }
             ]
@@ -482,22 +430,19 @@
       {
         "variable": {
           "name": "ctx",
-          "type": "context.Context",
-          "id": -1
+          "type": "context.Context"
         }
       },
       {
         "variable": {
           "name": "username",
-          "type": "string",
-          "id": -1
+          "type": "string"
         }
       },
       {
         "variable": {
           "name": "text",
-          "type": "string",
-          "id": -1
+          "type": "string"
         }
       }
     ]

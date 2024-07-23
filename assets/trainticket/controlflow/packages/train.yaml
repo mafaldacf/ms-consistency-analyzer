@@ -1,59 +1,59 @@
 ? (*train.TrainServiceImpl).AllTrains(ctx context.Context) ([]train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}, error):
  block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
-  - (-1) ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) trains []train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}
-  - (-1) coll NoSQLCollection {database = "train", collection = "train"}
-  - (-1) err .error
+  - '[INLINE] db NoSQLDatabase'
+  - ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
+  - ctx context.Context
+  - trains []train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}
+  - coll NoSQLCollection {database = "train", collection = "train"}
+  - err .error
 (*train.TrainServiceImpl).Create(ctx context.Context, tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}) (bool, error):
  block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
-  - (-1) ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}
-  - (-1) coll NoSQLCollection {database = "train", collection = "train"}
-  - (-1) err .error
+  - '[INLINE] db NoSQLDatabase'
+  - ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
+  - ctx context.Context
+  - tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}
+  - coll NoSQLCollection {database = "train", collection = "train"}
+  - err .error
 (*train.TrainServiceImpl).Delete(ctx context.Context, id string) (bool, error):
   block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
-  - (-1) ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) id string
-  - (-1) coll NoSQLCollection {database = "train", collection = "train"}
-  - (-1) err .error
+  - '[INLINE] db NoSQLDatabase'
+  - ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
+  - ctx context.Context
+  - id string
+  - coll NoSQLCollection {database = "train", collection = "train"}
+  - err .error
 (*train.TrainServiceImpl).Retrieve(ctx context.Context, id string) (train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}, error):
  block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
-  - (-1) ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) id string
-  - (-1) coll NoSQLCollection {database = "train", collection = "train"}
-  - (-1) err .error
+  - '[INLINE] db NoSQLDatabase'
+  - ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
+  - ctx context.Context
+  - id string
+  - coll NoSQLCollection {database = "train", collection = "train"}
+  - err .error
 (*train.TrainServiceImpl).RetrieveByName(ctx context.Context, name string) (train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}, error):
  block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
-  - (-1) ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) name string
-  - (-1) coll NoSQLCollection {database = "train", collection = "train"}
-  - (-1) err .error
+  - '[INLINE] db NoSQLDatabase'
+  - ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
+  - ctx context.Context
+  - name string
+  - coll NoSQLCollection {database = "train", collection = "train"}
+  - err .error
 (*train.TrainServiceImpl).RetrieveByNames(ctx context.Context, names []string) ([]train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}, error):
  block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
-  - (-1) ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) names []string
-  - (-1) trainTypes []train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}
+  - '[INLINE] db NoSQLDatabase'
+  - ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
+  - ctx context.Context
+  - names []string
+  - trainTypes []train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}
 (*train.TrainServiceImpl).Update(ctx context.Context, ttype train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}) (bool, error):
  block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
-  - (-1) ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) ttype train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}
-  - (-1) coll NoSQLCollection {database = "train", collection = "train"}
-  - (-1) err .error
+  - '[INLINE] db NoSQLDatabase'
+  - ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
+  - ctx context.Context
+  - ttype train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}
+  - coll NoSQLCollection {database = "train", collection = "train"}
+  - err .error
 train.NewTrainServiceImpl(ctx context.Context, db NoSQLDatabase) ((*train.TrainServiceImpl struct{db NoSQLDatabase}), error):
   block 0 (Body):
-  - (-1) ctx context.Context
-  - (-1) db NoSQLDatabase
+  - ctx context.Context
+  - db NoSQLDatabase

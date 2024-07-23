@@ -269,13 +269,15 @@ payment:
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
   - context.Context
+  - primitive.D
+  - primitive.E
 - declared types:
   - payment.Money struct{ID string, UserID string, Price string}
   - payment.Payment struct{ID string, OrderID string, UserID string, Price string}
-  - payment.PaymentService interface{}
-  - payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, moneyDB NoSQLDatabase
-    interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
-- service types: []
+  - payment.PaymentService
+  - payment.PaymentServiceImpl struct{paymentDB {instance = payments_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, moneyDB  {instance = money_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+- service types:
+  - payment.PaymentService
 - datastore types:
   - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
     NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}

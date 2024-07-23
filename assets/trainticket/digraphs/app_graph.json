@@ -21,6 +21,10 @@
       "type": "service"
     },
     {
+      "id": "PaymentService",
+      "type": "service"
+    },
+    {
       "id": "PriceService",
       "type": "service"
     },
@@ -62,6 +66,14 @@
     },
     {
       "id": "contacts_db MongoDB",
+      "type": "datastore"
+    },
+    {
+      "id": "money_db MongoDB",
+      "type": "datastore"
+    },
+    {
+      "id": "payments_db MongoDB",
       "type": "datastore"
     },
     {
@@ -109,6 +121,14 @@
     {
       "caller": "ContactsService",
       "callee": "contacts_db MongoDB"
+    },
+    {
+      "caller": "PaymentService",
+      "callee": "money_db MongoDB"
+    },
+    {
+      "caller": "PaymentService",
+      "callee": "payments_db MongoDB"
     },
     {
       "caller": "PriceService",

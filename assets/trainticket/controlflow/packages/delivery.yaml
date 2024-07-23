@@ -1,10 +1,10 @@
 (*delivery.DeliveryServiceImpl).Run(ctx context.Context) error:
   block 0 (Body):
-  - (-1) d (*delivery.DeliveryServiceImpl struct{db NoSQLDatabase, delQ Queue})
-  - (-1) ctx context.Context
+  - d (*delivery.DeliveryServiceImpl struct{db NoSQLDatabase, delQ Queue})
+  - ctx context.Context
 delivery.NewDeliveryServiceImpl(ctx context.Context, queue Queue, db NoSQLDatabase)
   ((*delivery.DeliveryServiceImpl struct{db NoSQLDatabase, delQ Queue}), error):
  block 0 (Body):
-  - (-1) ctx context.Context
-  - (-1) queue Queue
-  - (-1) db NoSQLDatabase
+  - ctx context.Context
+  - queue Queue
+  - db NoSQLDatabase

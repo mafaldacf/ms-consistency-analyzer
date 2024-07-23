@@ -14,14 +14,14 @@ func (ref *Reference) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Name    string `json:"name"`
 		Creator string `json:"creator"`
-		Id      int64  `json:"id"`
+		//Id      int64  `json:"id"`
 		//Variable Variable `json:"variable"`
 		/* IndirectDeps string `json:"indirect_deps"` */
 		/* Params 			[]Variable 		`json:"ref_params"` */
 	}{
 		Name:    ref.Variable.GetVariableInfo().GetName(),
 		Creator: ref.Creator,
-		Id:      ref.Variable.GetId(),
+		//Id:      ref.Variable.GetId(),
 		//Variable: ref.Variable,
 		/* IndirectDeps: getDependenciesString(GetIndirectDependenciesWithCurrent(ref)...), */
 		/* Params:  		ref.Variable.GetDependencies(), */

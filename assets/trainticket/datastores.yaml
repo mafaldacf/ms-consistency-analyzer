@@ -55,6 +55,31 @@ CONTACTS_DB:
     - Contact.DocumentNumber: string
     - Contact.PhoneNumber: string
   - foreign_fields: []
+MONEY_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- schema:
+  - fields:
+    - document: payment.Money struct{ID string, UserID string, Price string}
+  - unfolded_fields:
+    - Money: payment.Money struct{ID string, UserID string, Price string}
+    - Money.ID: string
+    - Money.UserID: string
+    - Money.Price: string
+  - foreign_fields: []
+PAYMENTS_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- schema:
+  - fields:
+    - document: payment.Payment struct{ID string, OrderID string, UserID string, Price string}
+  - unfolded_fields:
+    - Payment: payment.Payment struct{ID string, OrderID string, UserID string, Price string}
+    - Payment.ID: string
+    - Payment.OrderID: string
+    - Payment.UserID: string
+    - Payment.Price: string
+  - foreign_fields: []
 PRICE_DB:
 - type: NoSQLDatabase
 - kind: MongoDB

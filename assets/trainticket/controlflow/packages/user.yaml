@@ -1,51 +1,51 @@
 (*user.UserServiceImpl).DeleteUser(ctx context.Context, userID string) error:
   block 0 (Body):
-  - (-1) [INLINE] userDB NoSQLDatabase
-  - (-1) u (*user.UserServiceImpl struct{userDB NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) userID string
-  - (-1) coll NoSQLCollection {database = "user", collection = "user"}
-  - (-1) err .error
+  - '[INLINE] userDB NoSQLDatabase'
+  - u (*user.UserServiceImpl struct{userDB NoSQLDatabase})
+  - ctx context.Context
+  - userID string
+  - coll NoSQLCollection {database = "user", collection = "user"}
+  - err .error
 (*user.UserServiceImpl).FindByUserID(ctx context.Context, userID string) (user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}, error):
  block 0 (Body):
-  - (-1) [INLINE] userDB NoSQLDatabase
-  - (-1) u (*user.UserServiceImpl struct{userDB NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) userID string
-  - (-1) coll NoSQLCollection {database = "user", collection = "user"}
-  - (-1) err .error
+  - '[INLINE] userDB NoSQLDatabase'
+  - u (*user.UserServiceImpl struct{userDB NoSQLDatabase})
+  - ctx context.Context
+  - userID string
+  - coll NoSQLCollection {database = "user", collection = "user"}
+  - err .error
 (*user.UserServiceImpl).FindByUsername(ctx context.Context, username string) (user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}, error):
  block 0 (Body):
-  - (-1) [INLINE] userDB NoSQLDatabase
-  - (-1) u (*user.UserServiceImpl struct{userDB NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) username string
-  - (-1) coll NoSQLCollection {database = "user", collection = "user"}
-  - (-1) err .error
+  - '[INLINE] userDB NoSQLDatabase'
+  - u (*user.UserServiceImpl struct{userDB NoSQLDatabase})
+  - ctx context.Context
+  - username string
+  - coll NoSQLCollection {database = "user", collection = "user"}
+  - err .error
 (*user.UserServiceImpl).GetAllUsers(ctx context.Context) ([]user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}, error):
  block 0 (Body):
-  - (-1) [INLINE] userDB NoSQLDatabase
-  - (-1) u (*user.UserServiceImpl struct{userDB NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) coll NoSQLCollection {database = "user", collection = "user"}
-  - (-1) err .error
+  - '[INLINE] userDB NoSQLDatabase'
+  - u (*user.UserServiceImpl struct{userDB NoSQLDatabase})
+  - ctx context.Context
+  - coll NoSQLCollection {database = "user", collection = "user"}
+  - err .error
 (*user.UserServiceImpl).SaveUser(ctx context.Context, user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}) error:
  block 0 (Body):
-  - (-1) [INLINE] userDB NoSQLDatabase
-  - (-1) u (*user.UserServiceImpl struct{userDB NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}
-  - (-1) coll NoSQLCollection {database = "user", collection = "user"}
-  - (-1) err .error
+  - '[INLINE] userDB NoSQLDatabase'
+  - u (*user.UserServiceImpl struct{userDB NoSQLDatabase})
+  - ctx context.Context
+  - user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}
+  - coll NoSQLCollection {database = "user", collection = "user"}
+  - err .error
 (*user.UserServiceImpl).UpdateUser(ctx context.Context, user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}) (bool, error):
  block 0 (Body):
-  - (-1) [INLINE] userDB NoSQLDatabase
-  - (-1) u (*user.UserServiceImpl struct{userDB NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}
-  - (-1) coll NoSQLCollection {database = "user", collection = "user"}
-  - (-1) err .error
+  - '[INLINE] userDB NoSQLDatabase'
+  - u (*user.UserServiceImpl struct{userDB NoSQLDatabase})
+  - ctx context.Context
+  - user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}
+  - coll NoSQLCollection {database = "user", collection = "user"}
+  - err .error
 user.NewUserServiceImpl(ctx context.Context, db NoSQLDatabase) ((*user.UserServiceImpl struct{userDB NoSQLDatabase}), error):
   block 0 (Body):
-  - (-1) ctx context.Context
-  - (-1) db NoSQLDatabase
+  - ctx context.Context
+  - db NoSQLDatabase

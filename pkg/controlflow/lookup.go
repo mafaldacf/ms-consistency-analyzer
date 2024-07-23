@@ -109,7 +109,10 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		if packageType != nil {
 			importedPkg := service.GetPackage().GetImportedPackage(packageType.Path)
 			if importedPkg.IsExternalPackage() {
-				t := lookup.LookupTypesForGoTypes(service.GetPackage(), service.GetPackage().GetTypeInfo(e.Sel))
+				// note that variable can be either inline and thus we need to compute if type not found
+				// in case of declarations with assignments, we don't reach this function
+				// e.g. inline "bson.D{{"id", payment.ID}}" in coll.FindOne(ctx, bson.D{{"id", payment.ID}})
+				t := lookup.LookupAndComputeTypesForGoTypes(service.GetPackage(), service.GetPackage().GetTypeInfo(e.Sel))
 				variable = lookup.CreateVariableFromType("", t)
 				return variable, nil
 			}

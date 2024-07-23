@@ -1,54 +1,54 @@
 (*UploadServiceImpl).UploadPost(ctx context.Context, username string, text string):
   block 0 (Body):
-  - (-1) [INLINE] queue Queue
-  - (-1) [INLINE] storageService postnotification.StorageService
-  - (-1) u (*postnotification.UploadServiceImpl struct{storageService postnotification.StorageService, queue Queue})
-  - (-1) ctx context.Context
-  - (-1) username string
-  - (-1) text string
-  - (-1) reqID int64
-  - (-1) postID int64
-  - (-1) timestamp int64
-  - (00) [INLINE] "bob" string
-  - (00) [INLINE] "alice" string
-  - (-1) mentions []string
-  - (00) [INLINE] "some username" string
-  - (00) [INLINE] Username string
-  - (00) [INLINE] postnotification.Creator struct{Username string}
-  - (00) [INLINE] Creator postnotification.Creator struct{Username string}
-  - (00) [INLINE] Timestamp int64
-  - (00) [INLINE] Mentions []string
-  - (00) [INLINE] Text string
-  - (00) [INLINE] PostID int64
-  - (00) [INLINE] ReqID int64
-  - (-1) post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}
-  - (-1) [INLINE] string
-  - (00) [INLINE] PostID string
-  - (-1) [INLINE] string
-  - (00) [INLINE] ReqID string
-  - (-1) message postnotification.Message struct{ReqID string, PostID string, Timestamp string}
-  - (-1) _ bool
-  - (-1) err .error
+  - '[INLINE] queue Queue'
+  - '[INLINE] storageService postnotification.StorageService'
+  - u (*postnotification.UploadServiceImpl struct{storageService postnotification.StorageService, queue Queue})
+  - ctx context.Context
+  - username string
+  - text string
+  - reqID int64
+  - postID int64
+  - timestamp int64
+  - '[INLINE] "bob" string'
+  - '[INLINE] "alice" string'
+  - mentions []string
+  - '[INLINE] "some username" string'
+  - '[INLINE] Username string'
+  - '[INLINE] postnotification.Creator struct{Username string}'
+  - '[INLINE] Creator postnotification.Creator struct{Username string}'
+  - '[INLINE] Timestamp int64'
+  - '[INLINE] Mentions []string'
+  - '[INLINE] Text string'
+  - '[INLINE] PostID int64'
+  - '[INLINE] ReqID int64'
+  - post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}
+  - '[INLINE] string'
+  - '[INLINE] PostID string'
+  - '[INLINE] string'
+  - '[INLINE] ReqID string'
+  - message postnotification.Message struct{ReqID string, PostID string, Timestamp string}
+  - _ bool
+  - err .error
 .NewNotifyServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue):
   block 0 (Body):
-  - (-1) ctx context.Context
-  - (-1) storageService postnotification.StorageService
-  - (-1) queue Queue
-  - (00) [INLINE] 4 int
-  - (00) [INLINE] numWorkers int
-  - (00) [INLINE] queue Queue
-  - (00) [INLINE] storageService postnotification.StorageService
-  - (-1) n (&postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int})
+  - ctx context.Context
+  - storageService postnotification.StorageService
+  - queue Queue
+  - '[INLINE] 4 int'
+  - '[INLINE] numWorkers int'
+  - '[INLINE] queue Queue'
+  - '[INLINE] storageService postnotification.StorageService'
+  - n (&postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int})
 .NewStorageServiceImpl(ctx context.Context, cache Cache, db NoSQLDatabase):
   block 0 (Body):
-  - (-1) ctx context.Context
-  - (-1) cache Cache
-  - (-1) db NoSQLDatabase
-  - (00) [INLINE] db NoSQLDatabase
-  - (00) [INLINE] cache Cache
-  - (-1) s (&postnotification.StorageServiceImpl struct{cache Cache, db NoSQLDatabase})
+  - ctx context.Context
+  - cache Cache
+  - db NoSQLDatabase
+  - '[INLINE] cache Cache'
+  - '[INLINE] db NoSQLDatabase'
+  - s (&postnotification.StorageServiceImpl struct{cache Cache, db NoSQLDatabase})
 .NewUploadServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue):
   block 0 (Body):
-  - (-1) ctx context.Context
-  - (-1) storageService postnotification.StorageService
-  - (-1) queue Queue
+  - ctx context.Context
+  - storageService postnotification.StorageService
+  - queue Queue

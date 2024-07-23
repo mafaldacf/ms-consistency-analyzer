@@ -65,13 +65,13 @@ func (vinfo *VariableInfo) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Name string `json:"name,omitempty"`
 		Type string `json:"type,omitempty"`
-		Id   int64  `json:"id,omitempty"`
+		//Id   int64  `json:"id,omitempty"`
 		//Reference bool   `json:"ref,omitempty"`
 		Reference *Reference `json:"ref,omitempty"`
 	}{
 		Name: vinfo.Name,
 		Type: vinfo.Type.String(),
-		Id:   vinfo.Id,
+		//Id:   vinfo.Id,
 		//Reference: v.Reference != nil,
 		Reference: vinfo.Reference,
 	})

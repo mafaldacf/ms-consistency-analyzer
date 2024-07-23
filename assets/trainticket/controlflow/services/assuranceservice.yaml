@@ -1,76 +1,76 @@
 (*AssuranceServiceImpl).Create(ctx context.Context, typeindex int64, orderid string):
   block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
-  - (-1) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
-  - (18) ctx context.Context
-  - (19) typeindex int64
-  - (-1) orderid string
-  - (-1) at assurance.AssuranceType struct{Index int64, Name string, Price float64}
-  - (-1) err .error
+  - '[INLINE] db NoSQLDatabase'
+  - a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
+  - ctx context.Context
+  - typeindex int64
+  - orderid string
+  - at assurance.AssuranceType struct{Index int64, Name string, Price float64}
+  - err .error
 (*AssuranceServiceImpl).DeleteById(ctx context.Context, id string):
   block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
-  - (-1) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) id string
-  - (-1) coll NoSQLCollection {database = "assurance", collection = "assurance"}
-  - (-1) err .error
+  - '[INLINE] db NoSQLDatabase'
+  - a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
+  - ctx context.Context
+  - id string
+  - coll NoSQLCollection {database = "assurance", collection = "assurance"}
+  - err .error
 (*AssuranceServiceImpl).DeleteByOrderId(ctx context.Context, order_id string):
   block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
-  - (-1) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) order_id string
-  - (-1) coll NoSQLCollection {database = "assurance", collection = "assurance"}
-  - (-1) err .error
+  - '[INLINE] db NoSQLDatabase'
+  - a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
+  - ctx context.Context
+  - order_id string
+  - coll NoSQLCollection {database = "assurance", collection = "assurance"}
+  - err .error
 (*AssuranceServiceImpl).FindAssuranceById(ctx context.Context, id string):
   block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
-  - (-1) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
-  - (15) [INLINE] ref <ctx context.Context> @ AssuranceService
-  - (-1) ctx context.Context
-  - (17) [INLINE] ID string
-  - (16) [INLINE] ref <ID string> @ AssuranceService
-  - (-1) id string
-  - (-1) coll NoSQLCollection {database = "assurance", collection = "assurance"}
-  - (-1) err .error
+  - '[INLINE] db NoSQLDatabase'
+  - a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
+  - '[INLINE] ref <ctx context.Context> @ AssuranceService'
+  - ctx context.Context
+  - '[INLINE] ID string'
+  - '[INLINE] ref <ID string> @ AssuranceService'
+  - id string
+  - coll NoSQLCollection {database = "assurance", collection = "assurance"}
+  - err .error
 (*AssuranceServiceImpl).FindAssuranceByOrderId(ctx context.Context, order_id string):
   block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
-  - (-1) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) order_id string
-  - (-1) coll NoSQLCollection {database = "assurance", collection = "assurance"}
-  - (-1) err .error
+  - '[INLINE] db NoSQLDatabase'
+  - a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
+  - ctx context.Context
+  - order_id string
+  - coll NoSQLCollection {database = "assurance", collection = "assurance"}
+  - err .error
 (*AssuranceServiceImpl).GetAllAssuranceTypes(ctx context.Context):
   block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
-  - (-1) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
-  - (-1) ctx context.Context
+  - '[INLINE] db NoSQLDatabase'
+  - a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
+  - ctx context.Context
 (*AssuranceServiceImpl).GetAllAssurances(ctx context.Context):
   block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
-  - (-1) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) coll NoSQLCollection {database = "assurance", collection = "assurance"}
-  - (-1) err .error
+  - '[INLINE] db NoSQLDatabase'
+  - a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
+  - ctx context.Context
+  - coll NoSQLCollection {database = "assurance", collection = "assurance"}
+  - err .error
 (*AssuranceServiceImpl).Modify(ctx context.Context, assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}):
  block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
-  - (-1) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
-  - (15) ctx context.Context
-  - (17) [INLINE] ID string
-  - (16) [INLINE] ID string
-  - (-1) assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
-  - (-1) _ assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
-  - (-1) err .error
+  - '[INLINE] db NoSQLDatabase'
+  - a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
+  - ctx context.Context
+  - '[INLINE] ID string'
+  - '[INLINE] ID string'
+  - assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
+  - _ assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
+  - err .error
 .NewAssuranceServiceImpl(ctx context.Context, db NoSQLDatabase):
   block 0 (Body):
-  - (-1) ctx context.Context
-  - (-1) db NoSQLDatabase
+  - ctx context.Context
+  - db NoSQLDatabase
 .getAssuranceType(ctx context.Context, index int64):
   block 0 (Body):
-  - (18) [INLINE] ref <ctx context.Context> @ AssuranceService
-  - (-1) ctx context.Context
-  - (19) [INLINE] ref <typeindex int64> @ AssuranceService
-  - (-1) index int64
+  - '[INLINE] ref <ctx context.Context> @ AssuranceService'
+  - ctx context.Context
+  - '[INLINE] ref <typeindex int64> @ AssuranceService'
+  - index int64

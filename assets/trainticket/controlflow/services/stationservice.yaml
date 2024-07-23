@@ -1,78 +1,78 @@
 (*StationServiceImpl).CreateStation(ctx context.Context, station station.Station struct{ID string, Name string, StayTime int64}):
   block 0 (Body):
-  - (-1) [INLINE] stationDB NoSQLDatabase
-  - (-1) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) station station.Station struct{ID string, Name string, StayTime int64}
-  - (-1) coll NoSQLCollection {database = "station", collection = "station"}
-  - (-1) err .error
+  - '[INLINE] stationDB NoSQLDatabase'
+  - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
+  - ctx context.Context
+  - station station.Station struct{ID string, Name string, StayTime int64}
+  - coll NoSQLCollection {database = "station", collection = "station"}
+  - err .error
 (*StationServiceImpl).DeleteStation(ctx context.Context, id string):
   block 0 (Body):
-  - (-1) [INLINE] stationDB NoSQLDatabase
-  - (-1) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) id string
-  - (-1) coll NoSQLCollection {database = "station", collection = "station"}
-  - (-1) err .error
+  - '[INLINE] stationDB NoSQLDatabase'
+  - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
+  - ctx context.Context
+  - id string
+  - coll NoSQLCollection {database = "station", collection = "station"}
+  - err .error
 (*StationServiceImpl).Exists(ctx context.Context, name string):
   block 0 (Body):
-  - (-1) [INLINE] stationDB NoSQLDatabase
-  - (-1) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) name string
-  - (-1) coll NoSQLCollection {database = "station", collection = "station"}
-  - (-1) err .error
+  - '[INLINE] stationDB NoSQLDatabase'
+  - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
+  - ctx context.Context
+  - name string
+  - coll NoSQLCollection {database = "station", collection = "station"}
+  - err .error
 (*StationServiceImpl).FindByID(ctx context.Context, id string):
   block 0 (Body):
-  - (-1) [INLINE] stationDB NoSQLDatabase
-  - (-1) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - (13) [INLINE] ref <ctx context.Context> @ StationService
-  - (-1) ctx context.Context
-  - (14) [INLINE] ref <string> @ StationService
-  - (00) id string
-  - (-1) coll NoSQLCollection {database = "station", collection = "station"}
-  - (-1) err .error
+  - '[INLINE] stationDB NoSQLDatabase'
+  - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
+  - '[INLINE] ref <ctx context.Context> @ StationService'
+  - ctx context.Context
+  - '[INLINE] ref <string> @ StationService'
+  - id string
+  - coll NoSQLCollection {database = "station", collection = "station"}
+  - err .error
 (*StationServiceImpl).FindByIDs(ctx context.Context, ids []string):
   block 0 (Body):
-  - (-1) [INLINE] stationDB NoSQLDatabase
-  - (-1) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - (13) ctx context.Context
-  - (-1) ids []string
-  - (-1) [INLINE] st station.Station struct{ID string, Name string, StayTime int64}
-  - (-1) stations []station.Station struct{ID string, Name string, StayTime int64}
-  - (-1) _ .error
-  - (-1) [INLINE] st station.Station struct{ID string, Name string, StayTime int64}
-  - (-1) stations []station.Station struct{ID string, Name string, StayTime int64}
+  - '[INLINE] stationDB NoSQLDatabase'
+  - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
+  - ctx context.Context
+  - ids []string
+  - '[INLINE] st station.Station struct{ID string, Name string, StayTime int64}'
+  - stations []station.Station struct{ID string, Name string, StayTime int64}
+  - _ .error
+  - '[INLINE] st station.Station struct{ID string, Name string, StayTime int64}'
+  - stations []station.Station struct{ID string, Name string, StayTime int64}
 (*StationServiceImpl).FindID(ctx context.Context, name string):
   block 0 (Body):
-  - (-1) [INLINE] stationDB NoSQLDatabase
-  - (-1) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - (11) [INLINE] ref <ctx context.Context> @ StationService
-  - (-1) ctx context.Context
-  - (12) [INLINE] ref <string> @ StationService
-  - (00) name string
-  - (-1) coll NoSQLCollection {database = "station", collection = "station"}
-  - (-1) err .error
+  - '[INLINE] stationDB NoSQLDatabase'
+  - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
+  - '[INLINE] ref <ctx context.Context> @ StationService'
+  - ctx context.Context
+  - '[INLINE] ref <string> @ StationService'
+  - name string
+  - coll NoSQLCollection {database = "station", collection = "station"}
+  - err .error
 (*StationServiceImpl).FindIDs(ctx context.Context, names []string):
   block 0 (Body):
-  - (-1) [INLINE] stationDB NoSQLDatabase
-  - (-1) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - (11) ctx context.Context
-  - (-1) names []string
-  - (-1) [INLINE] id string
-  - (-1) ids []string
-  - (-1) _ .error
-  - (-1) [INLINE] id string
-  - (-1) ids []string
+  - '[INLINE] stationDB NoSQLDatabase'
+  - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
+  - ctx context.Context
+  - names []string
+  - '[INLINE] id string'
+  - ids []string
+  - _ .error
+  - '[INLINE] id string'
+  - ids []string
 (*StationServiceImpl).UpdateStation(ctx context.Context, station station.Station struct{ID string, Name string, StayTime int64}):
   block 0 (Body):
-  - (-1) [INLINE] stationDB NoSQLDatabase
-  - (-1) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) station station.Station struct{ID string, Name string, StayTime int64}
-  - (-1) coll NoSQLCollection {database = "station", collection = "station"}
-  - (-1) err .error
+  - '[INLINE] stationDB NoSQLDatabase'
+  - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
+  - ctx context.Context
+  - station station.Station struct{ID string, Name string, StayTime int64}
+  - coll NoSQLCollection {database = "station", collection = "station"}
+  - err .error
 .NewStationServiceImpl(ctx context.Context, db NoSQLDatabase):
   block 0 (Body):
-  - (-1) ctx context.Context
-  - (-1) db NoSQLDatabase
+  - ctx context.Context
+  - db NoSQLDatabase

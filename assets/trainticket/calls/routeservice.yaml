@@ -2,15 +2,15 @@
 	- NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{})
     (err, interface{})
   - NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
-  - NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "contacts", collection = "contacts"}, interface{})
+  - NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "priceConfig", collection = "priceConfig"}, interface{})
 (*RouteServiceImpl).DeleteRoute(ctx context.Context, id string):
 - NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D) interface{}
 (*RouteServiceImpl).GetAllRoutes(ctx context.Context):
-- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "contacts", collection = "contacts"}, interface{})
+- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "priceConfig", collection = "priceConfig"}, interface{})
 (*RouteServiceImpl).GetRouteById(ctx context.Context, id string):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "contacts", collection = "contacts"}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "priceConfig", collection = "priceConfig"}, interface{})
 (*RouteServiceImpl).GetRouteByIds(ctx context.Context, ids []string):
 - (*route.RouteServiceImpl).GetRouteById(ctx context.Context, id string) (route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}, error)
 (*RouteServiceImpl).GetRouteByStartAndEnd(ctx context.Context, start string, end string):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "contacts", collection = "contacts"}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "priceConfig", collection = "priceConfig"}, interface{})
 .NewRouteServiceImpl(ctx context.Context, db NoSQLDatabase): []

@@ -26,6 +26,14 @@ NewsService:
 - fields: {}
 - services: {}
 - datastores: {}
+PaymentService:
+- fields:
+    moneyDB: NoSQLDatabase
+    paymentDB: NoSQLDatabase
+- services: {}
+- datastores:
+    money_db: NoSQLDatabase
+    payments_db: NoSQLDatabase
 PriceService:
 - fields:
     priceDB: NoSQLDatabase

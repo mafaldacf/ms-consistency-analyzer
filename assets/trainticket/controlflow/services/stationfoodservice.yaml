@@ -1,50 +1,50 @@
 (*StationFoodServiceImpl).Cleanup(ctx context.Context):
   block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
-  - (-1) s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
-  - (-1) err .error
+  - '[INLINE] db NoSQLDatabase'
+  - s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
+  - ctx context.Context
+  - coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
+  - err .error
 (*StationFoodServiceImpl).CreateFoodStore(ctx context.Context, store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}):
  block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
-  - (-1) s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
-  - (-1) coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
-  - (-1) err .error
+  - '[INLINE] db NoSQLDatabase'
+  - s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
+  - ctx context.Context
+  - store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
+  - coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
+  - err .error
 (*StationFoodServiceImpl).GetFoodStoreByID(ctx context.Context, id string):
   block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
-  - (-1) s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) id string
-  - (-1) coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
-  - (-1) err .error
+  - '[INLINE] db NoSQLDatabase'
+  - s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
+  - ctx context.Context
+  - id string
+  - coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
+  - err .error
 (*StationFoodServiceImpl).GetFoodStoresByStationNames(ctx context.Context, stations []string):
   block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
-  - (-1) s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) stations []string
-  - (-1) coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
-  - (-1) err .error
+  - '[INLINE] db NoSQLDatabase'
+  - s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
+  - ctx context.Context
+  - stations []string
+  - coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
+  - err .error
 (*StationFoodServiceImpl).ListFoodStores(ctx context.Context):
   block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
-  - (-1) s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
-  - (-1) err .error
+  - '[INLINE] db NoSQLDatabase'
+  - s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
+  - ctx context.Context
+  - coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
+  - err .error
 (*StationFoodServiceImpl).ListFoodStoresByStationName(ctx context.Context, station string):
   block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
-  - (-1) s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) station string
-  - (-1) coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
-  - (-1) err .error
+  - '[INLINE] db NoSQLDatabase'
+  - s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
+  - ctx context.Context
+  - station string
+  - coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
+  - err .error
 .NewStationFoodServiceImpl(ctx context.Context, db NoSQLDatabase):
   block 0 (Body):
-  - (-1) ctx context.Context
-  - (-1) db NoSQLDatabase
+  - ctx context.Context
+  - db NoSQLDatabase

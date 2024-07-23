@@ -1,12 +1,12 @@
 ? (*ConsignPriceServiceImpl).CreateAndModifyPriceConfig(ctx context.Context, priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64}):
-	- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "contacts", collection = "contacts"}, interface{})
+	- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "priceConfig", collection = "priceConfig"}, interface{})
   - NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{})
     (err, interface{})
   - NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
 (*ConsignPriceServiceImpl).GetPriceByWeightAndRegion(ctx context.Context, weight float64, isWithinRegion bool):
 - (*consignprice.ConsignPriceServiceImpl).GetPriceConfig(ctx context.Context) (consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64}, error)
 (*ConsignPriceServiceImpl).GetPriceConfig(ctx context.Context):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "contacts", collection = "contacts"}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "priceConfig", collection = "priceConfig"}, interface{})
 (*ConsignPriceServiceImpl).GetPriceInfo(ctx context.Context):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "contacts", collection = "contacts"}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = "priceConfig", collection = "priceConfig"}, interface{})
 .NewConsignPriceServiceImpl(ctx context.Context, db NoSQLDatabase): []

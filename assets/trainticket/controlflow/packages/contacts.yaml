@@ -1,54 +1,54 @@
 ? (*contacts.ContactsServiceImpl).CreateContacts(ctx context.Context, contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}) error:
  block 0 (Body):
-  - (-1) [INLINE] contactsDB NoSQLDatabase
-  - (-1) c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
-  - (-1) coll NoSQLCollection {database = "contacts", collection = "contacts"}
-  - (-1) err .error
+  - '[INLINE] contactsDB NoSQLDatabase'
+  - c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
+  - ctx context.Context
+  - contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
+  - coll NoSQLCollection {database = "contacts", collection = "contacts"}
+  - err .error
 (*contacts.ContactsServiceImpl).Delete(ctx context.Context, contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}) error:
  block 0 (Body):
-  - (-1) [INLINE] contactsDB NoSQLDatabase
-  - (-1) c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
-  - (-1) coll NoSQLCollection {database = "contacts", collection = "contacts"}
-  - (-1) err .error
+  - '[INLINE] contactsDB NoSQLDatabase'
+  - c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
+  - ctx context.Context
+  - contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
+  - coll NoSQLCollection {database = "contacts", collection = "contacts"}
+  - err .error
 (*contacts.ContactsServiceImpl).FindContactsByAccountId(ctx context.Context, id string) ([]contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}, error):
  block 0 (Body):
-  - (-1) [INLINE] contactsDB NoSQLDatabase
-  - (-1) c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) id string
-  - (-1) account_contacts []contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
-  - (-1) coll NoSQLCollection {database = "contacts", collection = "contacts"}
-  - (-1) err .error
+  - '[INLINE] contactsDB NoSQLDatabase'
+  - c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
+  - ctx context.Context
+  - id string
+  - account_contacts []contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
+  - coll NoSQLCollection {database = "contacts", collection = "contacts"}
+  - err .error
 (*contacts.ContactsServiceImpl).FindContactsById(ctx context.Context, id string)
   (contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}, error):
  block 0 (Body):
-  - (-1) [INLINE] contactsDB NoSQLDatabase
-  - (-1) c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) id string
-  - (-1) coll NoSQLCollection {database = "contacts", collection = "contacts"}
-  - (-1) err .error
+  - '[INLINE] contactsDB NoSQLDatabase'
+  - c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
+  - ctx context.Context
+  - id string
+  - coll NoSQLCollection {database = "contacts", collection = "contacts"}
+  - err .error
 (*contacts.ContactsServiceImpl).GetAllContacts(ctx context.Context) ([]contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}, error):
  block 0 (Body):
-  - (-1) [INLINE] contactsDB NoSQLDatabase
-  - (-1) c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) all_contacts []contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
-  - (-1) coll NoSQLCollection {database = "contacts", collection = "contacts"}
-  - (-1) err .error
+  - '[INLINE] contactsDB NoSQLDatabase'
+  - c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
+  - ctx context.Context
+  - all_contacts []contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
+  - coll NoSQLCollection {database = "contacts", collection = "contacts"}
+  - err .error
 (*contacts.ContactsServiceImpl).Modify(ctx context.Context, contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}) (bool, error):
  block 0 (Body):
-  - (-1) [INLINE] contactsDB NoSQLDatabase
-  - (-1) c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
-  - (-1) ctx context.Context
-  - (-1) contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
-  - (-1) coll NoSQLCollection {database = "contacts", collection = "contacts"}
-  - (-1) err .error
+  - '[INLINE] contactsDB NoSQLDatabase'
+  - c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
+  - ctx context.Context
+  - contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
+  - coll NoSQLCollection {database = "contacts", collection = "contacts"}
+  - err .error
 contacts.NewContactsServiceImpl(ctx context.Context, db NoSQLDatabase) ((*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase}), error):
  block 0 (Body):
-  - (-1) ctx context.Context
-  - (-1) db NoSQLDatabase
+  - ctx context.Context
+  - db NoSQLDatabase
