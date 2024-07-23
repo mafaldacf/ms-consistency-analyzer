@@ -46,8 +46,8 @@
   - err .error
 (*payment.PaymentServiceImpl).Query(ctx context.Context) ([]payment.Payment struct{ID string, OrderID string, UserID string, Price string}, error):
  block 0 (Body):
-  - '[INLINE] moneyDB NoSQLDatabase'
   - '[INLINE] paymentDB NoSQLDatabase'
+  - '[INLINE] moneyDB NoSQLDatabase'
   - p (*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase})
   - ctx context.Context
   - payments []payment.Payment struct{ID string, OrderID string, UserID string, Price string}

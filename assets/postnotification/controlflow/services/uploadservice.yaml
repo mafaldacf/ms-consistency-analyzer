@@ -44,8 +44,8 @@
   - ctx context.Context
   - cache Cache
   - db NoSQLDatabase
-  - '[INLINE] cache Cache'
   - '[INLINE] db NoSQLDatabase'
+  - '[INLINE] cache Cache'
   - s (&postnotification.StorageServiceImpl struct{cache Cache, db NoSQLDatabase})
 .NewUploadServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue):
   block 0 (Body):

@@ -53,6 +53,9 @@ func (v *MapVariable) GetType() gotypes.Type {
 }
 
 func (v *MapVariable) GetMapType() *gotypes.MapType {
+	if userType, ok := v.VariableInfo.GetType().(*gotypes.UserType); ok {
+		return userType.UserType.(*gotypes.MapType)
+	}
 	return v.VariableInfo.GetType().(*gotypes.MapType)
 }
 

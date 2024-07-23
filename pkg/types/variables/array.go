@@ -62,6 +62,9 @@ func (v *ArrayVariable) GetType() gotypes.Type {
 }
 
 func (v *ArrayVariable) GetArrayType() *gotypes.ArrayType {
+	if userType, ok := v.VariableInfo.GetType().(*gotypes.UserType); ok {
+		return userType.UserType.(*gotypes.ArrayType)
+	}
 	return v.VariableInfo.GetType().(*gotypes.ArrayType)
 }
 

@@ -48,16 +48,10 @@ func (v *StructVariable) GetType() gotypes.Type {
 }
 
 func (v *StructVariable) GetStructType() *gotypes.StructType {
-	if structType, ok := v.GetType().(*gotypes.StructType); ok {
-		return structType
-	}
 	if userType, ok := v.GetType().(*gotypes.UserType); ok {
-		if structType, ok := userType.UserType.(*gotypes.StructType); ok {
-			return structType
-		}
+		return userType.UserType.(*gotypes.StructType)
 	}
-	logger.Logger.Fatalf("[VARS STRUCT] unexpected type (%s) for struct variable (%s)", utils.GetType(v.GetType()), v.String())
-	return v.VariableInfo.GetType().(*gotypes.StructType)
+	return v.GetType().(*gotypes.StructType)
 }
 
 func (v *StructVariable) GetVariableInfo() *VariableInfo {

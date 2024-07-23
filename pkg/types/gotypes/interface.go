@@ -66,6 +66,7 @@ func (t *InterfaceType) AddMethod(name string, pkgPath string) {
 
 func (v *InterfaceType) GetMethodPackagePath(method string) string {
 	if pkgPath, ok := v.Methods[method]; ok {
+		logger.Logger.Debugf("getting method (%s) for pkg path (%s)", method, pkgPath)
 		return pkgPath
 	}
 	logger.Logger.Fatalf("unknown method (%s) for struct type (%s)", method, v.LongString())

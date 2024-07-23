@@ -1,5 +1,7 @@
 (*delivery.DeliveryServiceImpl).Run(ctx context.Context) error:
   block 0 (Body):
+  - '[INLINE] delQ Queue'
+  - '[INLINE] db NoSQLDatabase'
   - d (*delivery.DeliveryServiceImpl struct{db NoSQLDatabase, delQ Queue})
   - ctx context.Context
 delivery.NewDeliveryServiceImpl(ctx context.Context, queue Queue, db NoSQLDatabase)

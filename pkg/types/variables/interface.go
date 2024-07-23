@@ -23,6 +23,13 @@ func (v *InterfaceVariable) GetType() gotypes.Type {
 	return v.VariableInfo.GetType()
 }
 
+func (v *InterfaceVariable) GetInterfaceType() *gotypes.InterfaceType {
+	if userType, ok := v.VariableInfo.GetType().(*gotypes.UserType); ok {
+		return userType.UserType.(*gotypes.InterfaceType)
+	}
+	return v.VariableInfo.GetType().(*gotypes.InterfaceType)
+}
+
 func (v *InterfaceVariable) GetVariableInfo() *VariableInfo {
 	return v.VariableInfo
 }

@@ -67,7 +67,7 @@ func FindDefTypesAndAddToPackage(pkg *types.Package, goType golangtypes.Type, vi
 	objectPackagePath := ""
 
 	// built-in (e.g. error, make, println) golang types have no package
-	if objectPackage != nil { 
+	if objectPackage != nil {
 		objectPackagePath = objectPackage.Path()
 	}
 
@@ -146,16 +146,32 @@ func FindDefTypesAndAddToPackage(pkg *types.Package, goType golangtypes.Type, vi
 	return nil
 }
 
-func addMethodsIfStructOrInterface(userType *gotypes.UserType, namedGoType *golangtypes.Named) {
-	for i := 0; i < namedGoType.NumMethods(); i++{
-		funcType := namedGoType.Method(i)
+func getPkgPathForGolangFuncType(funcType *golangtypes.Func) string {
+	path := ""
+	if funcType.Pkg() != nil { // e.g. "error" never has an object
+		path = funcType.Pkg().Path()
+	}
+	return path
+}
 
-		if structType, ok := userType.UserType.(*gotypes.StructType); ok {
-			structType.AddMethod(funcType.Name(), funcType.Pkg().Path())
-			logger.Logger.Debugf("[COMPUTE GOTYPES STRUCT] saved struct function %s.%s(...) in package (%s)", userType.GetName(), funcType.Name(), funcType.Pkg().Path())
-		} else if interfaceType, ok := userType.UserType.(*gotypes.InterfaceType); ok {
-			interfaceType.AddMethod(funcType.Name(), funcType.Pkg().Path())
-			logger.Logger.Debugf("[COMPUTE GOTYPES STRUCT] saved interface function %s.%s(...) in package (%s)", userType.GetName(), funcType.Name(), funcType.Pkg().Path())
+func addMethodsIfStructOrInterface(userType *gotypes.UserType, namedGoType *golangtypes.Named) {
+
+	switch e := userType.UserType.(type) {
+	case *gotypes.StructType:
+		// in struct types, methods are directly defined for the named type
+		for i := 0; i < namedGoType.NumMethods(); i++ {
+			funcType := namedGoType.Method(i)
+			funcTypePkgPath := getPkgPathForGolangFuncType(funcType)
+			e.AddMethod(funcType.Name(), funcTypePkgPath)
+			logger.Logger.Debugf("[COMPUTE GOTYPES STRUCT] saved struct function %s.%s(...) in package (%s)", userType.GetName(), funcType.Name(), funcTypePkgPath)
+		}
+	case *gotypes.InterfaceType:
+		// in interface types, methods are defined for the underlying type of the named type
+		for i := 0; i < namedGoType.Underlying().(*golangtypes.Interface).NumMethods(); i++ {
+			funcType := namedGoType.Underlying().(*golangtypes.Interface).Method(i)
+			funcTypePkgPath := getPkgPathForGolangFuncType(funcType)
+			e.AddMethod(funcType.Name(), funcTypePkgPath)
+			logger.Logger.Debugf("[COMPUTE GOTYPES STRUCT] saved interface function %s.%s(...) in package (%s)", userType.GetName(), funcType.Name(), funcTypePkgPath)
 		}
 	}
 }

@@ -60,7 +60,7 @@ func inspectIR(builder *cmdbuilder.CmdBuilder) (map[*workflowspec.Service][]gola
 	services := make(map[*workflowspec.Service][]golang.Service)
 	databases := make(map[string]ir.IRNode)
 	var frontends []string
-	logger.Logger.Tracef("[IR] inspecting ir %v", builder.IR)
+	logger.Logger.Infof("[IR] inspecting ir %v", builder.IR)
 	logger.Logger.Trace()
 	for _, node := range builder.IR.Children {
 		if n, ok := node.(*address.Address[*http.GolangHttpServer]); ok {
@@ -81,15 +81,19 @@ func inspectIR(builder *cmdbuilder.CmdBuilder) (map[*workflowspec.Service][]gola
 						if nnnn, ok := child.(*goproc.Process); ok {
 							for _, child := range nnnn.Edges {
 								t := reflect.TypeOf(child).Elem().Name()
-								logger.Logger.Tracef("[EDGE] got edge %s with type %s", child.Name(), t)
+								logger.Logger.Tracef("[IR EDGE] got edge %s with type %s", child.Name(), t)
 							}
 							for _, child := range nnnn.Nodes {
 								if redisClient, ok := child.(*redis.RedisGoClient); ok {
-									logger.Logger.Tracef("[NODE] [redis.RedisGoClient] got node %s", redisClient.Name())
+									logger.Logger.Tracef("[IR NODE] [redis.RedisGoClient] got node %s", redisClient.Name())
 								} else if rabbitClient, ok := child.(*rabbitmq.RabbitmqGoClient); ok {
-									logger.Logger.Tracef("[NODE] [rabbitmq.RabbitmqGoClient] got node %s", rabbitClient.Name())
+									logger.Logger.Tracef("[IR NODE] [rabbitmq.RabbitmqGoClient] got node %s", rabbitClient.Name())
 								} else if workflowHandler, ok := child.(*workflow.WorkflowHandler); ok {
-									logger.Logger.Tracef("[NODE] [workflow.WorkflowHandler] got node %s (service_type = %v)", workflowHandler.Name(), workflowHandler.ServiceType)
+									logger.Logger.Tracef("[IR NODE] [workflow.WorkflowHandler] got node %s (service_type = %v)", workflowHandler.Name(), workflowHandler.ServiceType)
+
+									if workflowHandler.ServiceType == "Runnable" {
+										logger.Logger.Fatalf("[IR NODE] found Runnable service type for service (%s) -- cannot analyze application", workflowHandler.Name())
+									}
 
 									// make sure that services that do not have any other dependencies are also included
 									services[workflowHandler.ServiceInfo] = nil
@@ -97,58 +101,58 @@ func inspectIR(builder *cmdbuilder.CmdBuilder) (map[*workflowspec.Service][]gola
 										if redisClient, ok := arg.(*redis.RedisGoClient); ok {
 											services[workflowHandler.ServiceInfo] = append(services[workflowHandler.ServiceInfo], redisClient)
 											databases[redisClient.Name()] = redisClient
-											logger.Logger.Tracef("[HANDLER ARG] [redis.RedisGoClient] got node %s", redisClient.Name())
+											logger.Logger.Tracef("[IR HANDLER ARG] [redis.RedisGoClient] got node %s", redisClient.Name())
 										} else if rabbitClient, ok := arg.(*rabbitmq.RabbitmqGoClient); ok {
 											services[workflowHandler.ServiceInfo] = append(services[workflowHandler.ServiceInfo], rabbitClient)
 											databases[rabbitClient.Name()] = rabbitClient
-											logger.Logger.Tracef("[HANDLER ARG] [rabbitmq.RabbitmqGoClient] got node %s", rabbitClient.Name())
+											logger.Logger.Tracef("[IR HANDLER ARG] [rabbitmq.RabbitmqGoClient] got node %s", rabbitClient.Name())
 										} else if mongoDbClient, ok := arg.(*mongodb.MongoDBGoClient); ok {
 											services[workflowHandler.ServiceInfo] = append(services[workflowHandler.ServiceInfo], mongoDbClient)
 											databases[mongoDbClient.Name()] = mongoDbClient
-											logger.Logger.Tracef("[HANDLER ARG] [mongodb.MongoDBGoClient] got node %s", mongoDbClient.Name())
+											logger.Logger.Tracef("[IR HANDLER ARG] [mongodb.MongoDBGoClient] got node %s", mongoDbClient.Name())
 										} else if workflowClient, ok := arg.(*workflow.WorkflowClient); ok {
 											services[workflowHandler.ServiceInfo] = append(services[workflowHandler.ServiceInfo], workflowClient)
-											logger.Logger.Tracef("[HANDLER ARG] [workflow.WorkflowClient] got node %s (service_type = %v)", workflowClient.Name(), workflowClient.ServiceType)
+											logger.Logger.Tracef("[IR HANDLER ARG] [workflow.WorkflowClient] got node %s (service_type = %v)", workflowClient.Name(), workflowClient.ServiceType)
 										}
 									}
 								}
 							}
 						} else {
-							logger.Logger.Warnf("unknown node type: %s", utils.GetType(child))
+							logger.Logger.Tracef("unknown node type: %s", utils.GetType(child))
 						}
 					}
 					logger.Logger.Trace()
 				}
 			}
 		} else if redisContainer, ok := node.(*redis.RedisContainer); ok {
-			logger.Logger.Tracef("[IR] ignoring redis.RedisContainer for node %s, interface %s", redisContainer.Name(), redisContainer.Iface)
+			logger.Logger.Tracef("[IR INFO] ignoring redis.RedisContainer for node %s, interface %s", redisContainer.Name(), redisContainer.Iface)
 		} else if rabbitContainer, ok := node.(*rabbitmq.RabbitmqContainer); ok {
-			logger.Logger.Tracef("[IR] ignoring rabbitmq.RabbitmqContainer for node %s, interface %s", rabbitContainer.Name(), rabbitContainer.Iface)
+			logger.Logger.Tracef("[IR INFO] ignoring rabbitmq.RabbitmqContainer for node %s, interface %s", rabbitContainer.Name(), rabbitContainer.Iface)
 		} else if mongoDbContainer, ok := node.(*mongodb.MongoDBContainer); ok {
-			logger.Logger.Tracef("[IR] ignoring mongodb.MongoDBContainer for node %s, interface %s", mongoDbContainer.Name(), mongoDbContainer.Iface)
+			logger.Logger.Tracef("[IR INFO] ignoring mongodb.MongoDBContainer for node %s, interface %s", mongoDbContainer.Name(), mongoDbContainer.Iface)
 		}
 	}
 
 	logger.Logger.Trace()
 	for key, value := range services {
-		logger.Logger.Tracef("[IR] inspecting service %s", key.Iface.Name)
+		logger.Logger.Tracef("[IR SERVICE] inspecting service %s", key.Iface.Name)
 		for _, arg := range value {
 			if workflowClient, ok := arg.(*workflow.WorkflowClient); ok {
-				logger.Logger.Tracef("[IR] \t\t[workflow] %s", workflowClient.ServiceType)
+				logger.Logger.Tracef("[IR SERVICE] \t\t[workflow] %s", workflowClient.ServiceType)
 			} else if rabbitClient, ok := arg.(*rabbitmq.RabbitmqGoClient); ok {
-				logger.Logger.Tracef("[IR] \t\t[rabbitmq] %s", rabbitClient.Name())
+				logger.Logger.Tracef("[IR SERVICE] \t\t[rabbitmq] %s", rabbitClient.Name())
 			} else if redisClient, ok := arg.(*redis.RedisGoClient); ok {
-				logger.Logger.Tracef("[IR] \t\t[redis] %s", redisClient.Name())
+				logger.Logger.Tracef("[IR SERVICE] \t\t[redis] %s", redisClient.Name())
 			}
 		}
 	}
 	logger.Logger.Trace()
-	logger.Logger.Tracef("[IR] inspecting databases")
+	logger.Logger.Tracef("[IR DATASTORE] inspecting databases")
 	for _, value := range databases {
 		if rabbitClient, ok := value.(*rabbitmq.RabbitmqGoClient); ok {
-			logger.Logger.Tracef("[IR] \t\t[rabbitmq] %s", rabbitClient.Name())
+			logger.Logger.Tracef("[IR DATASTORE] \t\t[rabbitmq] %s", rabbitClient.Name())
 		} else if redisClient, ok := value.(*redis.RedisGoClient); ok {
-			logger.Logger.Tracef("[IR] \t\t[redis] %s", redisClient.Name())
+			logger.Logger.Tracef("[IR DATASTORE] \t\t[redis] %s", redisClient.Name())
 		}
 	}
 	return services, databases, frontends

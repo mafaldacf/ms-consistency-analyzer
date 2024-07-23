@@ -197,9 +197,11 @@ delivery:
   - context.Context
 - declared types:
   - delivery.Delivery struct{ID string, OrderID string, FoodName string, StoreName string, StationName string}
-  - delivery.DeliveryService interface{}
-  - delivery.DeliveryServiceImpl struct{db NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, delQ Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}}
-- service types: []
+  - delivery.DeliveryService
+  - delivery.DeliveryServiceImpl struct{db {instance = delivery_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, delQ  {instance = delivery_q}
+    interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}}
+- service types:
+  - delivery.DeliveryService
 - datastore types:
   - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
     NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}

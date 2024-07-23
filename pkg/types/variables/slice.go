@@ -53,6 +53,9 @@ func (v *SliceVariable) GetType() gotypes.Type {
 }
 
 func (v *SliceVariable) GetSliceType() *gotypes.SliceType {
+	if userType, ok := v.VariableInfo.GetType().(*gotypes.UserType); ok {
+		return userType.UserType.(*gotypes.SliceType)
+	}
 	return v.VariableInfo.GetType().(*gotypes.SliceType)
 }
 

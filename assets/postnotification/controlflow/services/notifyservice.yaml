@@ -1,17 +1,17 @@
 (*NotifyServiceImpl).Run(ctx context.Context):
   block 0 (Body):
+  - '[INLINE] storageService postnotification.StorageService'
   - '[INLINE] numWorkers 4 int'
   - '[INLINE] queue Queue'
-  - '[INLINE] storageService postnotification.StorageService'
   - n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int})
   - ctx context.Context
   - wg sync.WaitGroup
   - i 1 int
 (*NotifyServiceImpl).handleMessage(ctx context.Context, message postnotification.Message struct{ReqID string, PostID string, Timestamp string}):
  block 0 (Body):
-  - '[INLINE] numWorkers 4 int'
   - '[INLINE] queue Queue'
   - '[INLINE] storageService postnotification.StorageService'
+  - '[INLINE] numWorkers 4 int'
   - n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int})
   - '[INLINE] ref <ctx context.Context> @ NotifyService'
   - ctx context.Context
@@ -24,9 +24,9 @@
   - '[INLINE] ReqID string'
   - '[INLINE] ref <ReqID string> @ NotifyService'
   - '[INLINE] ReqID string'
-  - '[INLINE] Timestamp string'
   - '[INLINE] PostID string'
   - '[INLINE] ReqID string'
+  - '[INLINE] Timestamp string'
   - '[INLINE] ref <notification postnotification.Message struct{ReqID string, PostID
     string, Timestamp string}> @ NotifyService'
   - message postnotification.Message struct{ReqID string, PostID string, Timestamp string}
@@ -34,9 +34,9 @@
   - err .error
 (*NotifyServiceImpl).workerThread(ctx context.Context, workerID int):
   block 0 (Body):
+  - '[INLINE] numWorkers 4 int'
   - '[INLINE] queue Queue'
   - '[INLINE] storageService postnotification.StorageService'
-  - '[INLINE] numWorkers 4 int'
   - n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int})
   - ctx context.Context
   - workerID int
@@ -61,8 +61,8 @@
   - ctx context.Context
   - cache Cache
   - db NoSQLDatabase
-  - '[INLINE] cache Cache'
   - '[INLINE] db NoSQLDatabase'
+  - '[INLINE] cache Cache'
   - s (&postnotification.StorageServiceImpl struct{cache Cache, db NoSQLDatabase})
 .NewUploadServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue):
   block 0 (Body):

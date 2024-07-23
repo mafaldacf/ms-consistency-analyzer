@@ -22,6 +22,14 @@ ContactsService:
 - services: {}
 - datastores:
     contacts_db: NoSQLDatabase
+DeliveryService:
+- fields:
+    db: NoSQLDatabase
+    delQ: Queue
+- services: {}
+- datastores:
+    delivery_db: NoSQLDatabase
+    delivery_q: Queue
 NewsService:
 - fields: {}
 - services: {}

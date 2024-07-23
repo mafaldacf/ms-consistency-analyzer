@@ -25,6 +25,9 @@ func (v *BasicVariable) GetType() gotypes.Type {
 }
 
 func (v *BasicVariable) GetBasicType() *gotypes.BasicType {
+	if userType, ok := v.VariableInfo.GetType().(*gotypes.UserType); ok {
+		return userType.UserType.(*gotypes.BasicType)
+	}
 	return v.VariableInfo.GetType().(*gotypes.BasicType)
 }
 

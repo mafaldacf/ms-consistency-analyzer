@@ -55,6 +55,20 @@ CONTACTS_DB:
     - Contact.DocumentNumber: string
     - Contact.PhoneNumber: string
   - foreign_fields: []
+DELIVERY_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- schema:
+  - fields: []
+  - unfolded_fields: []
+  - foreign_fields: []
+DELIVERY_Q:
+- type: Queue
+- kind: RabbitMQ
+- schema:
+  - fields: []
+  - unfolded_fields: []
+  - foreign_fields: []
 MONEY_DB:
 - type: NoSQLDatabase
 - kind: MongoDB

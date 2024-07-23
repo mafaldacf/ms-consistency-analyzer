@@ -312,18 +312,26 @@ func computeExternalFuncCallReturns(service *service.Service, callExpr *ast.Call
 	if signatureGoType, ok := service.GetPackage().GetTypeInfo(callExpr.Fun).(*golangtypes.Signature); ok {
 		if signatureGoType.Results() != nil {
 			signatureResults := lookup.LookupTypesForGoTypes(service.GetPackage(), signatureGoType.Results())
-			for _, t := range signatureResults.(*gotypes.TupleType).Types {
-				newVar := lookup.CreateVariableFromType("", t)
-				compositeVar := &variables.CompositeVariable{
-					VariableInfo: &variables.VariableInfo{
-						Type: newVar.GetType(),
-						Id:   variables.VARIABLE_UNASSIGNED_ID,
-					},
-					Params: deps,
+
+			if len(signatureResults.(*gotypes.TupleType).Types) == 1 && len(deps) == 0 {
+				newVar := lookup.CreateVariableFromType("", signatureResults.(*gotypes.TupleType).Types[0])
+				logger.Logger.Warnf("[FIXMEEEEEEE!!!!!!] (IS THIS EVEN CORRECT???) CREATED VAR FOR RETURNED TUPLE IN EXTERNAL FUNC CALL: %s", newVar.String())
+				tupleVar.Variables = append(tupleVar.Variables, newVar)
+			} else {
+				for _, t := range signatureResults.(*gotypes.TupleType).Types {
+					newVar := lookup.CreateVariableFromType("", t)
+					compositeVar := &variables.CompositeVariable{
+						VariableInfo: &variables.VariableInfo{
+							Type: newVar.GetType(),
+							Id:   variables.VARIABLE_UNASSIGNED_ID,
+						},
+						Params: deps,
+					}
+					logger.Logger.Warnf("CREATED COMPOSITE VAR FOR (%d) DEPS: %s", len(deps), compositeVar.String())
+					tupleVar.Variables = append(tupleVar.Variables, compositeVar)
 				}
-				logger.Logger.Warnf("CREATED COMPOSITE VAR %s", compositeVar.String())
-				tupleVar.Variables = append(tupleVar.Variables, compositeVar)
 			}
+
 		}
 	} else {
 		logger.Logger.Fatalf("[CFG CALLS] unexpected type for imported method call %v", callExpr.Fun)
@@ -331,12 +339,37 @@ func computeExternalFuncCallReturns(service *service.Service, callExpr *ast.Call
 	return tupleVar
 }
 
+func saveCallToStructOrInterface(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr, leftVariableTypeName string, methodName string, pkgPath string) (*types.ParsedInternalCall, *variables.TupleVariable, *variables.TupleVariable) {
+	pkg := service.GetPackage().GetImportedPackage(pkgPath)
+	parsedMethod := pkg.GetParsedMethodIfExists(methodName, leftVariableTypeName)
+
+	if parsedMethod != nil {
+		logger.Logger.Warnf("[CFG CALLS] [%s] !!!!!!!!!!!! GOT PARSED METHOD (%s): %v", service.GetName(), methodName, parsedMethod.GetParsedCfg())
+		//logger.Logger.Debugf("[CFG CALLS] got parsed method %s", parsedMethod.String())
+		parsedCall := &types.ParsedInternalCall{
+			ParsedCall: types.ParsedCall{
+				Ast:    callExpr,
+				Name:   parsedMethod.Name,
+				Method: parsedMethod,
+			},
+			ServiceTypeName: &gotypes.ServiceType{Name: service.Name, Package: service.GetPackageName()},
+		}
+		saveParsedFuncCallParams(service, method, block, parsedCall, callExpr.Args)
+		method.Calls = append(method.Calls, parsedCall)
+		variable := computeInternalFuncCallReturns(service, callExpr, parsedCall)
+		logger.Logger.Infof("[CFG CALLS] [%s] found internal call (%s) in package (%s) -- returned tuple: %s", service.GetName(), parsedCall.GetName(), pkg.GetName(), variable.String())
+		return parsedCall, variable, nil
+	}
+	deps := getFuncCallDeps(service, method, block, callExpr)
+	tupleVar := computeExternalFuncCallReturns(service, callExpr, deps)
+	return nil, nil, tupleVar
+}
+
 // (b1) call to variable (including receiver) in block
 func parseCallToVariableInBlock(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr, variable variables.Variable, idents []*ast.Ident, identsStr string) *variables.TupleVariable {
 	funcIdent := idents[len(idents)-1]
 	logger.Logger.Infof("[CFG] [%s.%s] parsing call to variable (%s) in block for method (%s): %v", service.GetName(), method.Name, variable.String(), funcIdent, callExpr)
 
-	var parsedCall types.Call
 	logger.Logger.Tracef("[CFG CALLS] (1) call to variable: %s", variable.LongString())
 	leftVariableTypeName := variable.GetType().GetName()
 	if pointerVar, ok := variable.(*variables.PointerVariable); ok {
@@ -363,34 +396,14 @@ func parseCallToVariableInBlock(service *service.Service, method *types.ParsedMe
 					} else {
 						methodName := ident.Name
 						pkgPath := structVar.GetStructType().GetMethodPackagePath(methodName)
-						pkg := service.GetPackage().GetImportedPackage(pkgPath)
-						parsedMethod := pkg.GetParsedMethodIfExists(methodName, leftVariableTypeName)
 
-						if parsedMethod != nil {
-							logger.Logger.Warnf("[CFG CALLS] [%s] !!!!!!!!!!!! GOT PARSED METHOD (%s): %v", service.GetName(), methodName, parsedMethod.GetParsedCfg())
-							//logger.Logger.Debugf("[CFG CALLS] got parsed method %s", parsedMethod.String())
-							parsedCall = &types.ParsedInternalCall{
-								ParsedCall: types.ParsedCall{
-									Ast:    callExpr,
-									Name:   parsedMethod.Name,
-									Method: parsedMethod,
-								},
-								ServiceTypeName: &gotypes.ServiceType{Name: service.Name, Package: service.GetPackageName()},
-							}
-							saveParsedFuncCallParams(service, method, block, parsedCall, callExpr.Args)
-							method.Calls = append(method.Calls, parsedCall)
-							variable = computeInternalFuncCallReturns(service, callExpr, parsedCall)
-							logger.Logger.Infof("[CFG CALLS] [%s] found internal call (%s) in package (%s) -- returned tuple: %s", service.GetName(), parsedCall.GetName(), pkg.GetName(), variable.String())
-						} else {
-							deps := getFuncCallDeps(service, method, block, callExpr)
-							tupleVar := computeExternalFuncCallReturns(service, callExpr, deps)
-							return tupleVar
+						var externalCallTupleVar *variables.TupleVariable
+						_, variable, externalCallTupleVar = saveCallToStructOrInterface(service, method, block, callExpr, leftVariableTypeName, methodName, pkgPath)
+						if externalCallTupleVar != nil {
+							return externalCallTupleVar
 						}
 					}
 				}
-			} else if interfaceVar, ok := variable.(*variables.StructVariable); ok {
-				userType := variable.GetType().GetParentUserType()
-				logger.Logger.Fatalf("[CFG CALLS] %s -- %s ", interfaceVar.String(), userType.String())
 			} else if genericVar, ok := variable.(*variables.GenericVariable); ok {
 				logger.Logger.Warnf("[CFG CALLS] ignoring generic var %s", genericVar.LongString())
 				if deps := getFuncCallDeps(service, method, block, callExpr); deps != nil {
@@ -407,6 +420,19 @@ func parseCallToVariableInBlock(service *service.Service, method *types.ParsedMe
 				}
 				tupleVar := computeInternalFuncCallReturns(service, callExpr, parsedCall)
 				return tupleVar
+			} else if interfaceVar, ok := variable.(*variables.InterfaceVariable); ok {
+				methodName := ident.Name
+				pkgPath := interfaceVar.GetInterfaceType().GetMethodPackagePath(methodName)
+
+				var externalCallTupleVar *variables.TupleVariable
+				_, variable, externalCallTupleVar = saveCallToStructOrInterface(service, method, block, callExpr, leftVariableTypeName, methodName, pkgPath)
+				if externalCallTupleVar != nil {
+					logger.Logger.Warnf("[CFG CALLS] EXTERNAL TUPLE VAR: %s (%s)", externalCallTupleVar.String(), utils.GetType(externalCallTupleVar.Variables[0]))
+					return externalCallTupleVar
+				}
+
+				logger.Logger.Fatalf("[CFG CALLS] call to interface variable (%s) for method (%s) in package path (%s)", interfaceVar.LongString(), methodName, pkgPath)
+				return nil
 			} else {
 				logger.Logger.Fatalf("[CFG CALLS] (5) call to variable (type = %s): %s", utils.GetType(variable), variable.LongString())
 				return nil
