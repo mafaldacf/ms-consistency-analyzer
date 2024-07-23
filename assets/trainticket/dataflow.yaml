@@ -30,10 +30,34 @@ PRICE_DB.PriceConfig:
 PRICE_DB.PriceConfig.ID:
 - write <ID string (BasicVariable)> from <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructVariable)>
 - write <ID string (FieldVariable)> from <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructVariable)>
+ROUTE_DB.Route:
+- write <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+- write <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+ROUTE_DB.Route.Distances:
+- write <distances []int64 (ArrayVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+- write <Distances []int64 (FieldVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+ROUTE_DB.Route.EndStation:
+- write <EndStation string (BasicVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+- write <EndStation string (FieldVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+ROUTE_DB.Route.ID:
+- write <string (BasicVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+- write <ID string (FieldVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+ROUTE_DB.Route.StartStation:
+- write <StartStation string (BasicVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+- write <StartStation string (FieldVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+ROUTE_DB.Route.Stations:
+- write <stations []string (CompositeVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+- write <StationList string (FieldVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+- write <StationList string (BasicVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+- write <"," string (BasicVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+- write <Stations []string (FieldVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
 STATION_DB.Station:
 - write <station station.Station struct{ID string, Name string, StayTime int64} (StructVariable)>
 - write <station station.Station struct{ID string, Name string, StayTime int64} (StructVariable)>
   from <station station.Station struct{ID string, Name string, StayTime int64} (StructVariable)>
+STATIONFOOD_DB.StationFoodStore:
+- write <store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}} (StructVariable)>
+- write <store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}} (StructVariable)> from <store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}} (StructVariable)>
 TRAIN_DB.TrainType:
 - write <tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} (StructVariable)>
 - write <tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} (StructVariable)> from <tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} (StructVariable)>

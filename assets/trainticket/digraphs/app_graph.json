@@ -25,6 +25,14 @@
       "type": "service"
     },
     {
+      "id": "RouteService",
+      "type": "service"
+    },
+    {
+      "id": "StationFoodService",
+      "type": "service"
+    },
+    {
       "id": "StationService",
       "type": "service"
     },
@@ -61,7 +69,15 @@
       "type": "datastore"
     },
     {
+      "id": "route_db MongoDB",
+      "type": "datastore"
+    },
+    {
       "id": "station_db MongoDB",
+      "type": "datastore"
+    },
+    {
+      "id": "stationfood_db MongoDB",
       "type": "datastore"
     },
     {
@@ -97,6 +113,14 @@
     {
       "caller": "PriceService",
       "callee": "price_db MongoDB"
+    },
+    {
+      "caller": "RouteService",
+      "callee": "route_db MongoDB"
+    },
+    {
+      "caller": "StationFoodService",
+      "callee": "stationfood_db MongoDB"
     },
     {
       "caller": "StationService",

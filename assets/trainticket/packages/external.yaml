@@ -18,10 +18,6 @@ slog:
 - package: slog
 - package path: golang.org/x/exp/slog
 - module: golang.org/x/exp
-strconv:
-- package: strconv
-- package path: strconv
-- module: ""
 strings:
 - package: strings
 - package path: strings

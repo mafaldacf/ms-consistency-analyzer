@@ -9,24 +9,24 @@
   - (-1) i 1 int
 (*NotifyServiceImpl).handleMessage(ctx context.Context, message postnotification.Message struct{ReqID string, PostID string, Timestamp string}):
  block 0 (Body):
+  - (-1) [INLINE] numWorkers 4 int
   - (-1) [INLINE] queue Queue
   - (-1) [INLINE] storageService postnotification.StorageService
-  - (-1) [INLINE] numWorkers 4 int
   - (-1) n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int})
   - (37) [INLINE] ref <ctx context.Context> @ NotifyService
   - (-1) ctx context.Context
   - (40) [INLINE] message map[string]interface{}
-  - (39) [INLINE] ref <ReqID string> @ NotifyService
-  - (00) [INLINE] ReqID string
-  - (39) [INLINE] ref <ReqID string> @ NotifyService
-  - (00) [INLINE] ReqID string
-  - (41) [INLINE] ref <PostID string> @ NotifyService
+  - (42) [INLINE] ref <PostID string> @ NotifyService
   - (00) [INLINE] PostID string
-  - (41) [INLINE] ref <PostID string> @ NotifyService
+  - (42) [INLINE] ref <PostID string> @ NotifyService
   - (00) [INLINE] PostID string
-  - (39) [INLINE] ReqID string
-  - (42) [INLINE] Timestamp string
-  - (41) [INLINE] PostID string
+  - (41) [INLINE] ref <ReqID string> @ NotifyService
+  - (00) [INLINE] ReqID string
+  - (41) [INLINE] ref <ReqID string> @ NotifyService
+  - (00) [INLINE] ReqID string
+  - (39) [INLINE] Timestamp string
+  - (42) [INLINE] PostID string
+  - (41) [INLINE] ReqID string
   - (38) [INLINE] ref <notification postnotification.Message struct{ReqID string, PostID string, Timestamp string}> @ NotifyService
   - (-1) message postnotification.Message struct{ReqID string, PostID string, Timestamp string}
   - (-1) reqID int64
@@ -41,9 +41,9 @@
   - (-1) workerID int
   - (-1) forever chan struct{}
   - (40) message map[string]interface{}
-  - (42) [INLINE] Timestamp string
-  - (41) [INLINE] PostID string
-  - (39) [INLINE] ReqID string
+  - (39) [INLINE] Timestamp string
+  - (42) [INLINE] PostID string
+  - (41) [INLINE] ReqID string
   - (38) notification postnotification.Message struct{ReqID string, PostID string, Timestamp string}
 .NewNotifyServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue):
   block 0 (Body):

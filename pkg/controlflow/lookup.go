@@ -83,6 +83,20 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 				return nil, nil
 			}
 		}
+		if utils.IsBuiltInConstValue(e.Name) {
+			typeName := utils.GetBuiltInConstTypeName(e.Name)
+			basicType := &gotypes.BasicType{
+				Name: typeName,
+				Value: e.Name,
+			}
+			variable = &variables.BasicVariable{
+				VariableInfo: &variables.VariableInfo{
+					Type: basicType,
+					Id:   variables.VARIABLE_INLINE_ID,
+				},
+			}
+			return variable, nil
+		}
 
 		packageType = lookupImportedPackageFromIdent(service, e)
 		if packageType != nil {

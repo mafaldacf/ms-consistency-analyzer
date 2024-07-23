@@ -17,34 +17,34 @@
   - (37) [INLINE] ref <ctx context.Context> @ NotifyService
   - (-1) ctx context.Context
   - (40) [INLINE] message map[string]interface{}
-  - (41) [INLINE] ref <PostID string> @ NotifyService
+  - (42) [INLINE] ref <PostID string> @ NotifyService
   - (00) [INLINE] PostID string
-  - (41) [INLINE] ref <PostID string> @ NotifyService
+  - (42) [INLINE] ref <PostID string> @ NotifyService
   - (00) [INLINE] PostID string
-  - (39) [INLINE] ref <ReqID string> @ NotifyService
+  - (41) [INLINE] ref <ReqID string> @ NotifyService
   - (00) [INLINE] ReqID string
-  - (39) [INLINE] ref <ReqID string> @ NotifyService
+  - (41) [INLINE] ref <ReqID string> @ NotifyService
   - (00) [INLINE] ReqID string
-  - (42) [INLINE] Timestamp string
-  - (41) [INLINE] PostID string
-  - (39) [INLINE] ReqID string
+  - (39) [INLINE] Timestamp string
+  - (42) [INLINE] PostID string
+  - (41) [INLINE] ReqID string
   - (38) [INLINE] ref <notification postnotification.Message struct{ReqID string, PostID string, Timestamp string}> @ NotifyService
   - (-1) message postnotification.Message struct{ReqID string, PostID string, Timestamp string}
   - (-1) reqID int64
   - (-1) err .error
 (*postnotification.NotifyServiceImpl).workerThread(ctx context.Context, workerID int) error:
   block 0 (Body):
+  - (-1) [INLINE] numWorkers 4 int
   - (-1) [INLINE] queue Queue
   - (-1) [INLINE] storageService postnotification.StorageService
-  - (-1) [INLINE] numWorkers 4 int
   - (-1) n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int})
   - (37) ctx context.Context
   - (-1) workerID int
   - (-1) forever chan struct{}
   - (40) message map[string]interface{}
-  - (42) [INLINE] Timestamp string
-  - (41) [INLINE] PostID string
-  - (39) [INLINE] ReqID string
+  - (39) [INLINE] Timestamp string
+  - (42) [INLINE] PostID string
+  - (41) [INLINE] ReqID string
   - (38) notification postnotification.Message struct{ReqID string, PostID string, Timestamp string}
 (*postnotification.StorageServiceImpl).ReadPost(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}, error):
  block 0 (Body):
@@ -92,30 +92,30 @@
   - (-1) postIDStr string
 (*postnotification.StorageServiceImpl).StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}) error:
  block 0 (Body):
-  - (-1) [INLINE] db NoSQLDatabase
   - (-1) [INLINE] cache Cache
+  - (-1) [INLINE] db NoSQLDatabase
   - (-1) p (*postnotification.StorageServiceImpl struct{cache Cache, db NoSQLDatabase})
   - (01) [INLINE] ref <ctx context.Context> @ UploadService
   - (-1) ctx context.Context
   - (03) [INLINE] reqID int64
   - (02) [INLINE] ref <ReqID int64> @ UploadService
   - (00) reqID int64
-  - (16) [INLINE] text string
-  - (15) [INLINE] Text string
-  - (14) [INLINE] postID int64
-  - (13) [INLINE] PostID int64
-  - (12) [INLINE] reqID int64
-  - (11) [INLINE] ReqID int64
-  - (10) [INLINE] "some username" string
-  - (09) [INLINE] Username string
-  - (08) [INLINE] postnotification.Creator struct{Username string}
-  - (07) [INLINE] Creator postnotification.Creator struct{Username string}
-  - (06) [INLINE] timestamp int64
-  - (05) [INLINE] Timestamp int64
-  - (20) [INLINE] "bob" string
-  - (19) [INLINE] "alice" string
-  - (18) [INLINE] mentions []string
-  - (17) [INLINE] Mentions []string
+  - (10) [INLINE] timestamp int64
+  - (09) [INLINE] Timestamp int64
+  - (08) [INLINE] "bob" string
+  - (07) [INLINE] "alice" string
+  - (06) [INLINE] mentions []string
+  - (05) [INLINE] Mentions []string
+  - (20) [INLINE] text string
+  - (19) [INLINE] Text string
+  - (18) [INLINE] postID int64
+  - (17) [INLINE] PostID int64
+  - (16) [INLINE] reqID int64
+  - (15) [INLINE] ReqID int64
+  - (14) [INLINE] "some username" string
+  - (13) [INLINE] Username string
+  - (12) [INLINE] postnotification.Creator struct{Username string}
+  - (11) [INLINE] Creator postnotification.Creator struct{Username string}
   - (04) [INLINE] ref <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}> @ UploadService
   - (-1) post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}
   - (-1) collection NoSQLCollection {database = "post", collection = "post"}
@@ -134,20 +134,20 @@
   - (00) [INLINE] "bob" string
   - (00) [INLINE] "alice" string
   - (-1) mentions []string
+  - (00) [INLINE] Text string
+  - (00) [INLINE] PostID int64
+  - (00) [INLINE] ReqID int64
   - (00) [INLINE] "some username" string
   - (00) [INLINE] Username string
   - (00) [INLINE] postnotification.Creator struct{Username string}
   - (00) [INLINE] Creator postnotification.Creator struct{Username string}
   - (00) [INLINE] Timestamp int64
   - (00) [INLINE] Mentions []string
-  - (00) [INLINE] Text string
-  - (00) [INLINE] PostID int64
-  - (00) [INLINE] ReqID int64
   - (-1) post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}
   - (-1) [INLINE] string
-  - (00) [INLINE] PostID string
-  - (-1) [INLINE] string
   - (00) [INLINE] ReqID string
+  - (-1) [INLINE] string
+  - (00) [INLINE] PostID string
   - (-1) message postnotification.Message struct{ReqID string, PostID string, Timestamp string}
   - (-1) _ bool
   - (-1) err .error

@@ -32,6 +32,18 @@ PriceService:
 - services: {}
 - datastores:
     price_db: NoSQLDatabase
+RouteService:
+- fields:
+    db: NoSQLDatabase
+- services: {}
+- datastores:
+    route_db: NoSQLDatabase
+StationFoodService:
+- fields:
+    db: NoSQLDatabase
+- services: {}
+- datastores:
+    stationfood_db: NoSQLDatabase
 StationService:
 - fields:
     stationDB: NoSQLDatabase

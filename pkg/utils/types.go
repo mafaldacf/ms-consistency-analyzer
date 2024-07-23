@@ -7,7 +7,7 @@ import (
 	"analyzer/pkg/logger"
 )
 
-var basicTypes = []string{
+var builtInTypes = []string{
 	"bool",
 	"string",
 	"int", "int8", "int16", "int32", "int64",
@@ -19,15 +19,14 @@ var basicTypes = []string{
 	"error",
 }
 
+var builtInConsts = []string{"true", "false"}
+var builtInFuncs = []string{"make", "println", "append", "len"}
+
 func GetType(node interface{}) string {
 	if node == nil {
 		logger.Logger.Fatal("[UTILS TYPE] INVALID TYPE FOR <nil>")
 	}
 	return reflect.TypeOf(node).Elem().Name()
-}
-
-func IsBasicType(t string) bool {
-	return slices.Contains(basicTypes, t)
 }
 
 func IsType[T any](obj interface{}) bool {
@@ -40,11 +39,25 @@ func IsBuiltInGoTypeOrFunc(name string) bool {
 }
 
 func IsBuiltInGoFunc(name string) bool {
-	var builtinFunc = []string{"make", "println", "append", "len"}
-	return slices.Contains(builtinFunc, name)
+	return slices.Contains(builtInFuncs, name)
 }
 
 func IsBuiltInGoType(name string) bool {
-	var builtinFunc = []string{"error", "byte", "string"}
-	return slices.Contains(builtinFunc, name)
+	return slices.Contains(builtInTypes, name)
+}
+
+func IsBuiltInConstValue(name string) bool {
+	return slices.Contains(builtInConsts, name)
+}
+
+func GetBuiltInConstTypeName(name string) string {
+	switch name {
+	case "true":
+		return "bool"
+	case "false":
+		return "bool"
+	default:
+		logger.Logger.Fatalf("[UTILS] unknown built in const type/value for name (%s)", name)
+	}
+	return ""
 }

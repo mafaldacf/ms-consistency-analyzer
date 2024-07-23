@@ -38,7 +38,7 @@ def build_digraph(data, graph_type):
         digraph.add_edge(edge['caller'],  edge['callee'], call=edge.get('call', ''))
 
     pos = nx.spring_layout(digraph, seed=14, k=2.5, scale=2.0)
-    plt.figure(figsize=(12, 12))
+    plt.figure(figsize=(16, 16))
 
     node_colors = [digraph.nodes[n]['color'] for n in digraph.nodes()]
     nx.draw(

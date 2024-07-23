@@ -1,20 +1,20 @@
-? (*route.RouteServiceImpl).CreateAndModify(ctx context.Context, info route.RouteInfo struct{ID string, StartStation string, EndStation string, StationList string, DistanceList string}) (route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}, error):
+? (*RouteServiceImpl).CreateAndModify(ctx context.Context, info route.RouteInfo struct{ID string, StartStation string, EndStation string, StationList string, DistanceList string}):
  block 0 (Body):
   - (-1) [INLINE] db NoSQLDatabase
   - (-1) r (*route.RouteServiceImpl struct{db NoSQLDatabase})
   - (-1) ctx context.Context
-  - (-1) [INLINE] StationList string
-  - (-1) [INLINE] StationList string
-  - (-1) [INLINE] EndStation string
-  - (-1) [INLINE] EndStation string
   - (-1) [INLINE] StartStation string
   - (-1) [INLINE] StartStation string
   - (-1) [INLINE] ID string
   - (-1) [INLINE] ID string
+  - (-1) [INLINE] StationList string
+  - (-1) [INLINE] StationList string
+  - (-1) [INLINE] EndStation string
+  - (-1) [INLINE] EndStation string
   - (-1) info route.RouteInfo struct{ID string, StartStation string, EndStation string, StationList string, DistanceList string}
   - (-1) coll NoSQLCollection {database = "route", collection = "route"}
   - (-1) err .error
-(*route.RouteServiceImpl).DeleteRoute(ctx context.Context, id string) error:
+(*RouteServiceImpl).DeleteRoute(ctx context.Context, id string):
   block 0 (Body):
   - (-1) [INLINE] db NoSQLDatabase
   - (-1) r (*route.RouteServiceImpl struct{db NoSQLDatabase})
@@ -22,8 +22,8 @@
   - (-1) id string
   - (-1) coll NoSQLCollection {database = "route", collection = "route"}
   - (-1) err .error
-(*route.RouteServiceImpl).GetAllRoutes(ctx context.Context) ([]route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}, error):
- block 0 (Body):
+(*RouteServiceImpl).GetAllRoutes(ctx context.Context):
+  block 0 (Body):
   - (-1) [INLINE] db NoSQLDatabase
   - (-1) r (*route.RouteServiceImpl struct{db NoSQLDatabase})
   - (-1) ctx context.Context
@@ -31,8 +31,8 @@
   - (-1) err error
   - (-1) coll NoSQLCollection {database = "route", collection = "route"}
   - (-1) err .error
-(*route.RouteServiceImpl).GetRouteById(ctx context.Context, id string) (route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}, error):
- block 0 (Body):
+(*RouteServiceImpl).GetRouteById(ctx context.Context, id string):
+  block 0 (Body):
   - (-1) [INLINE] db NoSQLDatabase
   - (-1) r (*route.RouteServiceImpl struct{db NoSQLDatabase})
   - (21) [INLINE] ref <ctx context.Context> @ RouteService
@@ -41,8 +41,8 @@
   - (00) id string
   - (-1) coll NoSQLCollection {database = "route", collection = "route"}
   - (-1) err .error
-(*route.RouteServiceImpl).GetRouteByIds(ctx context.Context, ids []string) ([]route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}, error):
- block 0 (Body):
+(*RouteServiceImpl).GetRouteByIds(ctx context.Context, ids []string):
+  block 0 (Body):
   - (-1) [INLINE] db NoSQLDatabase
   - (-1) r (*route.RouteServiceImpl struct{db NoSQLDatabase})
   - (21) ctx context.Context
@@ -52,8 +52,8 @@
   - (-1) _ .error
   - (-1) [INLINE] route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
   - (-1) routes []route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
-(*route.RouteServiceImpl).GetRouteByStartAndEnd(ctx context.Context, start string, end string) (route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}, error):
- block 0 (Body):
+(*RouteServiceImpl).GetRouteByStartAndEnd(ctx context.Context, start string, end string):
+  block 0 (Body):
   - (-1) [INLINE] db NoSQLDatabase
   - (-1) r (*route.RouteServiceImpl struct{db NoSQLDatabase})
   - (-1) ctx context.Context
@@ -61,7 +61,7 @@
   - (-1) end string
   - (-1) coll NoSQLCollection {database = "route", collection = "route"}
   - (-1) err .error
-route.NewRouteServiceImpl(ctx context.Context, db NoSQLDatabase) ((*route.RouteServiceImpl struct{db NoSQLDatabase}), error):
+.NewRouteServiceImpl(ctx context.Context, db NoSQLDatabase):
   block 0 (Body):
   - (-1) ctx context.Context
   - (-1) db NoSQLDatabase

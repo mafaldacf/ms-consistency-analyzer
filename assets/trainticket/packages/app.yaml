@@ -348,7 +348,6 @@ route:
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
   - github.com/google/uuid
   - go.mongodb.org/mongo-driver/bson
-  - strconv
   - strings
 - imported types:
   - .error
@@ -363,9 +362,10 @@ route:
 - declared types:
   - route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
   - route.RouteInfo struct{ID string, StartStation string, EndStation string, StationList string, DistanceList string}
-  - route.RouteService interface{}
-  - route.RouteServiceImpl struct{db NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
-- service types: []
+  - route.RouteService
+  - route.RouteServiceImpl struct{db {instance = route_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+- service types:
+  - route.RouteService
 - datastore types:
   - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
     NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
@@ -452,10 +452,11 @@ stationfood:
   - primitive.D
   - primitive.E
 - declared types:
-  - stationfood.StationFoodService interface{}
-  - stationfood.StationFoodServiceImpl struct{db NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - stationfood.StationFoodService
+  - stationfood.StationFoodServiceImpl struct{db {instance = stationfood_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
   - stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
-- service types: []
+- service types:
+  - stationfood.StationFoodService
 - datastore types:
   - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
     NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}

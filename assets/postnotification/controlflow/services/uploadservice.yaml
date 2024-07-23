@@ -12,7 +12,6 @@
   - (00) [INLINE] "bob" string
   - (00) [INLINE] "alice" string
   - (-1) mentions []string
-  - (00) [INLINE] ReqID int64
   - (00) [INLINE] "some username" string
   - (00) [INLINE] Username string
   - (00) [INLINE] postnotification.Creator struct{Username string}
@@ -21,6 +20,7 @@
   - (00) [INLINE] Mentions []string
   - (00) [INLINE] Text string
   - (00) [INLINE] PostID int64
+  - (00) [INLINE] ReqID int64
   - (-1) post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}
   - (-1) [INLINE] string
   - (00) [INLINE] PostID string

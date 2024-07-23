@@ -69,6 +69,20 @@ PRICE_DB:
     - PriceConfig.BasicPriceRate: float64
     - PriceConfig.FirstClassPriceRate: float64
   - foreign_fields: []
+ROUTE_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- schema:
+  - fields:
+    - document: route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
+  - unfolded_fields:
+    - Route: route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
+    - Route.ID: string
+    - Route.Stations: '[]string'
+    - Route.Distances: '[]int64'
+    - Route.StartStation: string
+    - Route.EndStation: string
+  - foreign_fields: []
 STATION_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
@@ -80,6 +94,22 @@ STATION_DB:
     - Station.ID: string
     - Station.Name: string
     - Station.StayTime: int64
+  - foreign_fields: []
+STATIONFOOD_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- schema:
+  - fields:
+    - document: stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
+  - unfolded_fields:
+    - StationFoodStore: stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
+    - StationFoodStore.ID: string
+    - StationFoodStore.StationName: string
+    - StationFoodStore.StoreName: string
+    - StationFoodStore.Telephone: string
+    - StationFoodStore.BusinessTime: string
+    - StationFoodStore.DeliveryFee: float64
+    - StationFoodStore.Foods: '[]food.Food struct{Name string, Price float64}'
   - foreign_fields: []
 TRAIN_DB:
 - type: NoSQLDatabase

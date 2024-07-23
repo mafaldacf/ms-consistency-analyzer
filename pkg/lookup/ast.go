@@ -31,7 +31,7 @@ func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 	logger.Logger.Debugf("[LOOKUP AST TYPE] (%s) visiting type expr (%v)", utils.GetType(typeExpr), typeExpr)
 	switch e := typeExpr.(type) {
 	case *ast.Ident:
-		if utils.IsBasicType(e.Name) {
+		if utils.IsBuiltInGoType(e.Name) {
 			return &gotypes.BasicType{
 				Name: e.Name,
 			}
@@ -56,14 +56,14 @@ func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 				logger.Logger.Warnf("[LOOKUP AST SELECTOR] replacing imported package path (%s) with go type path (%s)", imptPath, goType.String())
 				imptPath = goType.String()
 			}
-			
+
 			if importedType, ok := file.Package.GetImportedTypeFromPath(imptPath); ok {
 				return importedType
 			} else {
 				logger.Logger.Fatalf("[LOOKUP AST SELECTOR] unexpected nil import type for path (%s)", imptPath)
 			}
 		}
-		
+
 		logger.Logger.Fatalf("[LOOKUP AST SELECTOR] cannot parse selector expr (%v)", e)
 		return nil
 	case *ast.ChanType:

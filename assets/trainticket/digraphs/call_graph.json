@@ -29,6 +29,14 @@
       "type": "service"
     },
     {
+      "id": "RouteService",
+      "type": "service"
+    },
+    {
+      "id": "StationFoodService",
+      "type": "service"
+    },
+    {
       "id": "StationService",
       "type": "service"
     },
@@ -65,7 +73,15 @@
       "type": "datastore"
     },
     {
+      "id": "route_db MongoDB",
+      "type": "datastore"
+    },
+    {
       "id": "station_db MongoDB",
+      "type": "datastore"
+    },
+    {
+      "id": "stationfood_db MongoDB",
       "type": "datastore"
     },
     {
@@ -314,6 +330,78 @@
       "caller": "Client",
       "callee": "PriceService",
       "call": "UpdatePriceConfig",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "RouteService",
+      "call": "CreateAndModify",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "RouteService",
+      "call": "DeleteRoute",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "RouteService",
+      "call": "GetAllRoutes",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "RouteService",
+      "call": "GetRouteById",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "RouteService",
+      "call": "GetRouteByIds",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "RouteService",
+      "call": "GetRouteByStartAndEnd",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "StationFoodService",
+      "call": "Cleanup",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "StationFoodService",
+      "call": "CreateFoodStore",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "StationFoodService",
+      "call": "GetFoodStoreByID",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "StationFoodService",
+      "call": "GetFoodStoresByStationNames",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "StationFoodService",
+      "call": "ListFoodStores",
+      "depth": 0
+    },
+    {
+      "caller": "Client",
+      "callee": "StationFoodService",
+      "call": "ListFoodStoresByStationName",
       "depth": 0
     },
     {
@@ -632,6 +720,96 @@
       "caller": "PriceService",
       "callee": "price_db MongoDB",
       "call": "Upsert",
+      "depth": 1
+    },
+    {
+      "caller": "RouteService",
+      "callee": "route_db MongoDB",
+      "call": "DeleteOne",
+      "depth": 1
+    },
+    {
+      "caller": "RouteService",
+      "callee": "route_db MongoDB",
+      "call": "FindMany",
+      "depth": 1
+    },
+    {
+      "caller": "RouteService",
+      "callee": "route_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "RouteService",
+      "callee": "route_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "RouteService",
+      "callee": "route_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "RouteService",
+      "callee": "route_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "RouteService",
+      "callee": "route_db MongoDB",
+      "call": "InsertOne",
+      "depth": 1
+    },
+    {
+      "caller": "RouteService",
+      "callee": "route_db MongoDB",
+      "call": "Upsert",
+      "depth": 1
+    },
+    {
+      "caller": "StationFoodService",
+      "callee": "stationfood_db MongoDB",
+      "call": "DeleteMany",
+      "depth": 1
+    },
+    {
+      "caller": "StationFoodService",
+      "callee": "stationfood_db MongoDB",
+      "call": "FindMany",
+      "depth": 1
+    },
+    {
+      "caller": "StationFoodService",
+      "callee": "stationfood_db MongoDB",
+      "call": "FindMany",
+      "depth": 1
+    },
+    {
+      "caller": "StationFoodService",
+      "callee": "stationfood_db MongoDB",
+      "call": "FindMany",
+      "depth": 1
+    },
+    {
+      "caller": "StationFoodService",
+      "callee": "stationfood_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "StationFoodService",
+      "callee": "stationfood_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "StationFoodService",
+      "callee": "stationfood_db MongoDB",
+      "call": "InsertOne",
       "depth": 1
     },
     {

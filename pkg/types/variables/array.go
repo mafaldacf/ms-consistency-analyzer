@@ -16,6 +16,16 @@ func (v *ArrayVariable) String() string {
 	return v.VariableInfo.String()
 }
 
+func (v *ArrayVariable) UpgradeToSlice() *SliceVariable {
+	v.VariableInfo.Type = &gotypes.SliceType{
+		UnderlyingType: v.GetArrayType().ElementsType,
+	}
+	return &SliceVariable{
+		VariableInfo: v.VariableInfo,
+		Elements:     v.Elements,
+	}
+}
+
 func (v *ArrayVariable) LongString() string {
 	s := v.VariableInfo.String() + " = ("
 	for i, elem := range v.Elements {
@@ -68,14 +78,14 @@ func (v *ArrayVariable) AddElements(element []Variable) {
 }
 
 func (v *ArrayVariable) GetElementAt(index int) Variable {
-	if index > len(v.Elements) - 1 {
+	if index > len(v.Elements)-1 {
 		logger.Logger.Fatalf("[VARS ARRAY] element at index (%d) does not exist in array variable with len (%d): %s", index, len(v.Elements), v.String())
 	}
 	return v.Elements[index]
 }
 
 func (v *ArrayVariable) GetElementAtIfExists(index int) Variable {
-	if index > len(v.Elements) - 1 {
+	if index > len(v.Elements)-1 {
 		logger.Logger.Warnf("[VARS ARRAY] element at index (%d) does not exist in array variable with len (%d): %s", index, len(v.Elements), v.String())
 		return nil
 	}

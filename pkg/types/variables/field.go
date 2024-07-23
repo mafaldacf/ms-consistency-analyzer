@@ -29,11 +29,30 @@ func (v *FieldVariable) GetType() gotypes.Type {
 }
 
 func (v *FieldVariable) AssignVariable(rvariable Variable) {
-	if !v.Underlying.GetType().IsSameType(rvariable.GetType()) {
-		logger.Logger.Fatalf("[VAR FIELD] lvariable (%s) with type (%s) does not match rvariable (%s) with type (%s)", v.Underlying.String(), utils.GetType(v.Underlying), rvariable.String(), utils.GetType(rvariable))
+	// e.g. post.Text = post2.Text2
+	if v.GetType().IsSameType(rvariable.GetType()) {
+		logger.Logger.Infof("[VAR FIELD] (a) assigning variables with types (%s --> %s) for lvariable (%s) and rvariable (%s)", utils.GetType(v.Underlying), utils.GetType(rvariable), v.Underlying.String(), rvariable.String())
+		v.Underlying = rvariable.(*FieldVariable).Underlying.DeepCopy()
+		return
+	} 
+	// e.g. post.Text = text
+	if v.Underlying.GetType().IsSameType(rvariable.GetType()) {
+		logger.Logger.Infof("[VAR FIELD] (b) assigning variables with types (%s --> %s) for lvariable (%s) and rvariable (%s)", utils.GetType(v.Underlying), utils.GetType(rvariable), v.Underlying.String(), rvariable.String())
+		v.Underlying = rvariable.DeepCopy()
+		return
 	}
-	logger.Logger.Infof("[VAR FIELD] assigning lvariable (%s) with type (%s) with rvariable (%s) with type (%s)", v.Underlying.String(), utils.GetType(v.Underlying), rvariable.String(), utils.GetType(rvariable))
-	v.Underlying = rvariable
+
+	// e.g. some_slice = some_array
+	_, leftSliceOk := v.Underlying.GetType().(*gotypes.SliceType)
+	_, rightArrayOk := rvariable.GetType().(*gotypes.ArrayType)
+	if leftSliceOk && rightArrayOk {
+		// maintain left slice and add copy right array
+		v.Underlying = rvariable.DeepCopy()
+		v.Underlying.(*ArrayVariable).UpgradeToSlice()
+		return
+	}
+
+	logger.Logger.Fatalf("[VAR FIELD] cannot assign variable with unmatched types (%s --> %s) for lvariable (%s) and rvariable (%s)", utils.GetType(v.Underlying), utils.GetType(rvariable), v.Underlying.String(), rvariable.String())
 }
 
 func (v *FieldVariable) GetVariableInfo() *VariableInfo {
