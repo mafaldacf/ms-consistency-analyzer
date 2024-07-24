@@ -56,11 +56,49 @@ func lookupImportedPackageFromIdent(service *service.Service, ident *ast.Ident) 
 	return nil
 }
 
+func wrapToFieldVariable(variable variables.Variable) *variables.FieldVariable {
+	if fieldVariable, ok := variable.(*variables.FieldVariable); ok { // already field variable
+		return fieldVariable
+	}
+	return &variables.FieldVariable{
+		VariableInfo: &variables.VariableInfo{
+			Type: &gotypes.FieldType{
+				WrappedType: variable.GetType(),
+			},
+			Id: variables.VARIABLE_INLINE_ID,
+		},
+		WrappedVariable: variable,
+	}
+}
+
+func unwrapTupleIfSingleElement(variable variables.Variable) variables.Variable {
+	if tupleVar, ok := variable.(*variables.TupleVariable); ok && len(tupleVar.Variables) == 1 {
+		return tupleVar.Variables[0]
+	}
+	return variable
+}
+
+// unwrapIfUserType returns the most inner unwrapped type along with the most inner user type
+// if no user type is found, then it returns the current type twice
+func unwrapIfUserType(t gotypes.Type) (gotypes.Type, gotypes.Type) {
+	if userType, ok := t.(*gotypes.UserType); ok {
+		unwrappedType, t := unwrapIfUserType(userType.UserType)
+		// always return the inned user type
+		// if we found a wrapped value, we return the current user type (which is the most inner one)
+		if _, ok := t.(*gotypes.UserType); !ok {
+			t = userType
+		}
+		return unwrappedType, t
+	}
+	return t, t
+}
+
 func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMethod, block *types.Block, expr ast.Expr, assign bool) (variable variables.Variable, packageType *gotypes.PackageType) {
 	logger.Logger.Debugf("[CFG LOOKUP EXPR] (%s) visiting expression (%v)", utils.GetType(expr), expr)
 	switch e := expr.(type) {
 	case *ast.CallExpr:
 		variable = parseAndSaveCall(service, method, block, e)
+		variable = unwrapTupleIfSingleElement(variable)
 	case *ast.BasicLit:
 		basicType := &gotypes.BasicType{
 			Name:  strings.ToLower(e.Kind.String()),
@@ -86,7 +124,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		if utils.IsBuiltInConstValue(e.Name) {
 			typeName := utils.GetBuiltInConstTypeName(e.Name)
 			basicType := &gotypes.BasicType{
-				Name: typeName,
+				Name:  typeName,
 				Value: e.Name,
 			}
 			variable = &variables.BasicVariable{
@@ -154,69 +192,131 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		default:
 			logger.Logger.Fatalf("[CFG LOOKUP] unknown variable (%s) with type (%s) for selector (%s)", variable.String(), utils.GetType(variable), e)
 		}
-	case *ast.CompositeLit:
-		//FIX THIS!!!
-		if ident, ok := e.Type.(*ast.Ident); ok {
-			if namedType, found := service.GetPackage().GetNamedType(ident.Name); found {
-				//logger.Logger.Debugf("[CFG LOOKUP] GOT NAMED TYPE INCOMPOSITE %s", namedType.String())
-				if userType, ok := namedType.(*gotypes.UserType); ok {
-					//FIXME: if its an embedded struct then we never enter here!!
-					if structType, ok := userType.UserType.(*gotypes.StructType); ok {
-						structVariable := &variables.StructVariable{
-							VariableInfo: &variables.VariableInfo{
-								Type: userType,
-								Id:   variables.VARIABLE_INLINE_ID,
-							},
-							Fields: make(map[string]variables.Variable),
-						}
-						for _, elt := range e.Elts {
-							keyvalue := elt.(*ast.KeyValueExpr)
-							key := keyvalue.Key.(*ast.Ident)
-							eltVar, _ := lookupVariableFromAstExpr(service, method, block, keyvalue.Value, false)
 
-							if tupleVar, ok := eltVar.(*variables.TupleVariable); ok && len(tupleVar.Variables) == 1 {
-								eltVar = tupleVar.Variables[0]
-							}
-							//logger.Logger.Debugf("[CFG LOOKUP] GOT ELT VAR %s (%s)", eltVar.String(), utils.GetType(eltVar))
-
-							fieldType := structType.GetFieldTypeByName(key.Name)
-
-							fieldVar := &variables.FieldVariable{
-								VariableInfo: &variables.VariableInfo{
-									Name: key.Name,
-									Type: fieldType,
-									Id:   variables.VARIABLE_INLINE_ID,
-								},
-								Underlying: eltVar,
-							}
-							structVariable.AddFieldVariableIfNotExists(key.Name, fieldVar)
-						}
-						variable = structVariable
-					}
-				}
-			}
-		} else if arrayTypeAst, ok := e.Type.(*ast.ArrayType); ok {
-			arrayType := &gotypes.ArrayType{
-				ElementsType: lookup.ComputeTypeForAstExpr(service.File, arrayTypeAst.Elt),
-			}
-			variable = &variables.ArrayVariable{
+	case *ast.KeyValueExpr:
+		if key, ok := e.Key.(*ast.Ident); ok {
+			variable, _ = lookupVariableFromAstExpr(service, method, block, e.Value, false)
+			variable = &variables.FieldVariable{
 				VariableInfo: &variables.VariableInfo{
-					Type: arrayType,
+					Name: key.Name,
+					Type: &gotypes.FieldType{
+						WrappedType: variable.GetType(),
+						FieldName:   key.Name,
+					},
+					Id: variables.VARIABLE_INLINE_ID,
+				},
+				WrappedVariable: variable,
+			}
+			logger.Logger.Debugf("KEY VALUE EXPR - RETURNING VARIABLE WITH TYPE (%s): %s", utils.GetType(variable), variable.String())
+			return variable, nil
+		}
+		logger.Logger.Fatalf("[CFG LOOKUP] unsupported key type (%s) for expr: %v", utils.GetType(e.Key), e.Key)
+
+	// examples:
+	// (1) 	- expression:
+	// 			query := bson.D{{Key: "postid", Value: postID}}
+	// 		- composite lit 1 (e.Type is well defined):
+	// 			 bson.D{{Key: "postid", Value: postID}}
+	// 		- composite lit 2 (e.Type is nil):
+	// 			{Key: "postid", Value: postID}
+	// (2) 	- expression:
+	// 			query := bson.D{{"index", 0}}
+	// 		- composite lit 1 (e.Type is well defined):
+	// 			 bson.D{{"index", 0}}
+	// 		- composite lit 2 (e.Type is nil and e.Elts are unkeyed):
+	// 			{"index", 0}
+	// (3)  - expression:
+	// 			mentions := []string{"alice", "bob"}
+	// 		- composite lit:
+	// 			[]string{"alice", "bob"}
+	case *ast.CompositeLit:
+		if e.Type == nil {
+			structVariable := &variables.StructVariable{
+				VariableInfo: &variables.VariableInfo{
+					Type: &gotypes.StructType{},
+					Id:   variables.VARIABLE_INLINE_ID,
+				},
+				Fields: make(map[string]variables.Variable),
+			}
+			for _, elt := range e.Elts {
+				eltVar, _ := lookupVariableFromAstExpr(service, method, block, elt, false)
+				logger.Logger.Debugf("[%s.%s] FOUND ELT VAR (%s) FOR COMPOSITE LIT (%v)", service.GetName(), method.GetName(), eltVar.String(), e)
+				fieldVariable := wrapToFieldVariable(eltVar)
+				structVariable.AddFieldVariableAndType(fieldVariable)
+			}
+			return structVariable, nil
+		}
+
+		eType := lookup.ComputeTypeForAstExpr(service.GetFile(), e.Type)
+		eType, eTypeOrUserType := unwrapIfUserType(eType)
+
+		switch eType.(type) {
+		case *gotypes.StructType:
+			structVariable := &variables.StructVariable{
+				VariableInfo: &variables.VariableInfo{
+					Type: eTypeOrUserType,
+					Id:   variables.VARIABLE_INLINE_ID,
+				},
+				Fields: make(map[string]variables.Variable),
+			}
+			for _, elt := range e.Elts {
+				eltVar, _ := lookupVariableFromAstExpr(service, method, block, elt, false)
+				fieldVariable := wrapToFieldVariable(eltVar)
+				structVariable.AddFieldVariable(fieldVariable)
+			}
+			return structVariable, nil
+		case *gotypes.ArrayType:
+			arrayVariable := &variables.ArrayVariable{
+				VariableInfo: &variables.VariableInfo{
+					Type: eTypeOrUserType,
 					Id:   variables.VARIABLE_INLINE_ID,
 				},
 			}
 			for _, elt := range e.Elts {
 				eltVar, _ := lookupVariableFromAstExpr(service, method, block, elt, false)
-				variable.(*variables.ArrayVariable).AddElement(eltVar)
+				arrayVariable.AddElement(eltVar)
 			}
-		} else if selectorExpr, ok := e.Type.(*ast.SelectorExpr); ok {
-			//logger.Logger.Warnf("[CFG LOOKUP] got selector %v (expr type = %s)", selectorExpr, utils.GetType(selectorExpr.X))
+			return arrayVariable, nil
+		case *gotypes.SliceType:
+			sliceVariable := &variables.SliceVariable{
+				VariableInfo: &variables.VariableInfo{
+					Type: eTypeOrUserType,
+					Id:   variables.VARIABLE_INLINE_ID,
+				},
+			}
+			for _, elt := range e.Elts {
+				eltVar, _ := lookupVariableFromAstExpr(service, method, block, elt, false)
+				sliceVariable.AddElement(eltVar)
+			}
+			return sliceVariable, nil
+		default:
+			logger.Logger.Warnf("[CFG LOOKUP] [%s.%s] unsupported type for eType (%s): %s", service.GetName(), method.GetName(), utils.GetType(eType), eType.String())
+		}
+		if selectorExpr, ok := e.Type.(*ast.SelectorExpr); ok {
+			logger.Logger.Debugf("[CFG LOOKUP] [%s.%s] lookup up selector (%v.%v)", service.GetName(), method.GetName(), selectorExpr.X, selectorExpr.Sel)
+			logger.Logger.Fatalf("[CFG LOOKUP] [%s.%s] lookup up selector (%v.%v)", service.GetName(), method.GetName(), selectorExpr.X, selectorExpr.Sel)
 			variable, packageType = lookupVariableFromAstExpr(service, method, block, selectorExpr, assign)
+			if variable == nil {
+				logger.Logger.Fatalf("[CFG LOOKUP] unexpected nil variable for expr (%s): %v", utils.GetType(e.Type), e.Type)
+			}
+			for _, elt := range e.Elts {
+				eltVar, _ := lookupVariableFromAstExpr(service, method, block, elt, false)
+				if sliceVariable, ok := variable.(*variables.SliceVariable); ok {
+					sliceVariable.AddElement(eltVar)
+				} else if arrayVariable, ok := variable.(*variables.ArrayVariable); ok {
+					arrayVariable.AddElement(eltVar)
+				} else {
+					logger.Logger.Fatalf("[CFG LOOKUP] unknown type for composite lit (%s)", utils.GetType(variable))
+				}
+			}
+			logger.Logger.Debugf("[CFG LOOKUP] LOOKUP HERE!!! got selector (%s): %s", utils.GetType(variable), variable.String())
 		} else {
 			logger.Logger.Fatalf("[CFG LOOKUP] nil variable for composite lit (e.Type = %s): %v", utils.GetType(e.Type), e)
 		}
 	case *ast.TypeAssertExpr:
 		variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, assign)
+		assertedType := lookup.ComputeTypeForAstExpr(service.File, e.Type)
+		variable.(*variables.InterfaceVariable).UpgradeToAssertedType(assertedType)
 	case *ast.IndexExpr:
 		variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 		if variable == nil {
@@ -233,8 +333,10 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			key, _ := lookupVariableFromAstExpr(service, method, block, e.Index, false)
 			variable, ok = mapVar.KeyValues[key]
 			if !ok {
-				logger.Logger.Warnf("[CFG LOOKUP] got map %v with unassigned value for key %s", mapVar.String(), key.String())
-				variable = mapVar
+				t := mapVar.GetMapType().GetValueType()
+				variable = lookup.CreateVariableFromType(key.GetType().GetBasicValue(), t)
+				mapVar.AddKeyValuePair(key, variable)
+				logger.Logger.Warnf("[CFG LOOKUP] got map %v with unassigned value for key %s \n\t\t\t\t\t\t\t => created new variable for key named (%s): %s", mapVar.String(), key.String(), key.GetType().GetBasicValue(), variable.String())
 			}
 		}
 	case *ast.UnaryExpr:

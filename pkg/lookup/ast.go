@@ -45,7 +45,8 @@ func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 	case *ast.SelectorExpr:
 		if ident, ok := e.X.(*ast.Ident); ok {
 			// left ident is the package alias
-			imptPath := file.GetImport(ident.Name).GetPackagePath() + "." + e.Sel.Name
+			impt := file.GetImport(ident.Name)
+			imptPath := impt.GetPackagePath() + "." + e.Sel.Name
 			// import path does not always match the object impt path
 			// e.g. in "bson.D", the bson code actually defines "D" as "type D = primitive.D"
 			// so instead of the original imported path go.mongodb.org/mongo-driver/bson.D
@@ -57,11 +58,15 @@ func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 				imptPath = goType.String()
 			}
 
-			if importedType, ok := file.Package.GetImportedTypeFromPath(imptPath); ok {
+			importedType := file.Package.GetImportedTypeIfExists(imptPath)
+			if importedType != nil {
 				return importedType
-			} else {
-				logger.Logger.Fatalf("[LOOKUP AST SELECTOR] unexpected nil import type for path (%s)", imptPath)
 			}
+			
+			logger.Logger.Warnf("[LOOKUP AST SELECTOR] ------------ !!! DID NOT FIND IMPORTED TYPE NAMED (%s) FROM PACKAGE (%s)", e.Sel.Name, impt.Alias)
+			t := FindDefTypesAndAddToPackage(file.Package, goType, nil, nil, nil)
+			logger.Logger.Warnf("[LOOKUP AST SELECTOR] ------------  !!! FOUND AND ADDED NEW TYPE (%s) TO IMPORTS OF PACKAGE (%s)", t.String(), file.Package.Name)
+			return t
 		}
 
 		logger.Logger.Fatalf("[LOOKUP AST SELECTOR] cannot parse selector expr (%v)", e)
@@ -90,12 +95,12 @@ func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 			name := f.Names[0].Name
 			fieldType := &gotypes.FieldType{
 				Origin:      structType,
-				SubType:     ComputeTypeForAstExpr(file, f.Type),
+				WrappedType: ComputeTypeForAstExpr(file, f.Type),
 				StructField: true,
 				FieldName:   name,
 				FieldTag:    f.Tag.Value,
 			}
-			if _, ok := fieldType.SubType.(*gotypes.StructType); ok {
+			if _, ok := fieldType.WrappedType.(*gotypes.StructType); ok {
 				fieldType.SetEmbedded()
 			}
 			structType.AddFieldType(fieldType)

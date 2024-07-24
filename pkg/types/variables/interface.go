@@ -56,3 +56,7 @@ func (v *InterfaceVariable) GetUnassaignedVariables() []Variable {
 	}
 	return variables
 }
+
+func (v *InterfaceVariable) UpgradeToAssertedType(newType gotypes.Type) {
+	v.GetVariableInfo().Type = newType
+}

@@ -220,7 +220,7 @@ func ComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type, computeIf
 			name := f.Name()
 			fieldType := &gotypes.FieldType{
 				Origin:      structType,
-				SubType:     ComputeTypesForGoTypes(p, f.Type(), computeIfNotFound, visitedNamedTypes, typeNameToFuncs, servicesPkgPath),
+				WrappedType: ComputeTypesForGoTypes(p, f.Type(), computeIfNotFound, visitedNamedTypes, typeNameToFuncs, servicesPkgPath),
 				StructField: true,
 				Embedded:    f.Embedded(),
 				FieldName:   name,

@@ -12,6 +12,7 @@ type StructVariable struct {
 	Variable     `json:"-"`
 	VariableInfo *VariableInfo       `json:"variable"`
 	Fields       map[string]Variable `json:"struct_fields,omitempty"`
+	FieldsLst    []Variable          `json:"omitempty"`
 }
 
 func (v *StructVariable) String() string {
@@ -37,6 +38,32 @@ func (v *StructVariable) GetFieldVariables() map[string]*FieldVariable {
 		fields[n] = f.(*FieldVariable)
 	}
 	return fields
+}
+
+func (v *StructVariable) attachFieldVariable(fieldVariable *FieldVariable) {
+	fieldType := fieldVariable.GetFieldType()
+	fieldType.SetOrigin(v.GetType())
+	fieldType.EnableStructField()
+	if fieldVariable.FieldTypeIsDirectStructType() {
+		fieldType.EnableEmbedded()
+	}
+}
+
+func (v *StructVariable) AddFieldVariable(fieldVariable *FieldVariable) {
+	logger.Logger.Warnf("[VARS STRUCT] adding field named (%s) for variable (%s) to struct variable (%s)", fieldVariable.GetFieldType().GetFieldName(), fieldVariable.String(), v.String())
+	if fieldVariable.GetFieldType().GetFieldName() != "" {
+		v.Fields[fieldVariable.GetFieldType().GetFieldName()] = fieldVariable
+	} else {
+		logger.Logger.Warnf("[VARS STRUCT] FIXME! SOMETIMES WE CAN HAVE UNKEYED FIELDS ")
+	}
+	v.Fields[fieldVariable.GetFieldType().GetFieldName()] = fieldVariable
+	v.FieldsLst = append(v.FieldsLst, fieldVariable)
+	v.attachFieldVariable(fieldVariable)
+}
+
+func (v *StructVariable) AddFieldVariableAndType(fieldVariable *FieldVariable) {
+	v.AddFieldVariable(fieldVariable)
+	v.GetStructType().AddFieldType(fieldVariable.GetFieldType())
 }
 
 func (v *StructVariable) GetId() int64 {
@@ -85,11 +112,11 @@ func (v *StructVariable) GetFieldVariableIfExists(name string) Variable {
 	return nil
 }
 
-func (v *StructVariable) AddFieldVariable(name string, field Variable) {
+func (v *StructVariable) AddFieldKeyVariable(name string, field Variable) {
 	v.Fields[name] = field
 }
 
-func (v *StructVariable) AddFieldVariableIfNotExists(name string, field Variable) bool {
+func (v *StructVariable) AddFieldKeyVariableIfNotExists(name string, field Variable) bool {
 	if _, exists := v.Fields[name]; !exists {
 		v.Fields[name] = field
 		return true

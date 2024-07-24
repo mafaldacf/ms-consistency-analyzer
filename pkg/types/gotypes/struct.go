@@ -15,6 +15,10 @@ type StructType struct {
 // Type Methods
 // ------------
 
+func (t *StructType) AddNewFieldType(newType *FieldType) {
+	t.FieldTypes = append(t.FieldTypes, newType)
+}
+
 func (t *StructType) IsSameType(other Type) bool {
 	_, ok := other.(*StructType)
 	return ok
@@ -118,7 +122,7 @@ func (t *StructType) GetFieldTypeByName(name string) *FieldType {
 func (t *StructType) UpdateFieldSubTypeByName(name string, newType Type) {
 	for i, f := range t.FieldTypes {
 		if f.FieldName == name {
-			t.FieldTypes[i].SubType = newType
+			t.FieldTypes[i].WrappedType = newType
 			return
 		}
 	}

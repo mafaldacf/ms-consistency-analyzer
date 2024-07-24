@@ -20,6 +20,10 @@ type VariableInfo struct {
 	IndirectDataflows []*Dataflow
 }
 
+func (vinfo *VariableInfo) SetType(t gotypes.Type) {
+	vinfo.Type = t
+}
+
 func (vinfo *VariableInfo) GetDataflows() []*Dataflow {
 	return vinfo.Dataflows
 }

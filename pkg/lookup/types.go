@@ -29,9 +29,9 @@ func CreateVariableFromType(name string, t gotypes.Type) variables.Variable {
 			if underlyingVariable == nil {
 				logger.Logger.Fatalf("[LOOKUP] unexpected nil underlying variable named (%s) for user type (%s)", name, e.Name)
 			}
-			logger.Logger.Warnf("[LOOKUP] unexpected nil underlying variable named (%s) for user type (%s): %v", name, e.Name, underlyingVariable.GetVariableInfo())
 			e.UserType = underlyingVariable.GetType()
 			underlyingVariable.GetVariableInfo().Type = e
+			logger.Logger.Warnf("[LOOKUP] got underlying variable (%s) for user type named (%s): %s", underlyingVariable.String(), name, e.String())
 			//logger.Logger.Warnf("[LOOKUP] returning user type variable (%s) with underlying type (%s)", underlyingVariable.String(), utils.GetType(underlyingVariable.GetType()))
 			return underlyingVariable
 		}
@@ -65,8 +65,8 @@ func CreateVariableFromType(name string, t gotypes.Type) variables.Variable {
 	case *gotypes.FieldType:
 		info.Name = e.FieldName
 		return &variables.FieldVariable{
-			VariableInfo: info,
-			Underlying:   CreateVariableFromType(name, e.SubType),
+			VariableInfo:    info,
+			WrappedVariable: CreateVariableFromType(name, e.WrappedType),
 		}
 	case *blueprint.BlueprintBackendType:
 		info.Type = e.DeepCopy(true)

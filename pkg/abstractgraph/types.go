@@ -321,7 +321,7 @@ func (call *AbstractDatabaseCall) GetReturns() []variables.Variable {
 }
 
 func (call *AbstractDatabaseCall) GetReturn(index int) variables.Variable {
-	if index > 0 && index < len(call.Returns) {
+	if index >= 0 && index < len(call.Returns) {
 		logger.Logger.Tracef("got return with index %d for call %s", index, call.LongString())
 		return call.Returns[index]
 	}

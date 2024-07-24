@@ -73,6 +73,8 @@
   - '[INLINE] priceDB NoSQLDatabase'
   - p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase})
   - ctx context.Context
+  - '[INLINE] ID string'
+  - '[INLINE] ID string'
   - pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
   - coll NoSQLCollection {database = "priceConfig", collection = "priceConfig"}
   - err .error

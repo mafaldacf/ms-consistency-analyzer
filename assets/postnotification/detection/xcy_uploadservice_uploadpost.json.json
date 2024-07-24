@@ -28,7 +28,7 @@
       "service": "StorageService",
       "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
       "key": "query (#-1)",
-      "object": "err (#-1)",
+      "object": "result (#-1)",
       "database": "post_nosql"
     }
   ]

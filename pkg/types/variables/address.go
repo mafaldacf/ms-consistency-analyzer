@@ -44,14 +44,14 @@ func (v *AddressVariable) AddReferenceWithID(target Variable, creator string) {
 	if targetAddressOf, ok := target.(*AddressVariable); ok {
 		v.AddressOf.AddReferenceWithID(targetAddressOf.AddressOf, creator)
 	} else {
-		logger.Logger.Warnf("referenced variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
+		logger.Logger.Fatalf("referenced variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
 	}
 }
 
 func (v *AddressVariable) DeepCopy(force bool) Variable {
 	copy := &AddressVariable{
 		VariableInfo: v.VariableInfo.DeepCopy(force),
-		AddressOf:    v.AddressOf.DeepCopy(force),
+		AddressOf:    v.AddressOf, // underlying values of addresses are never deep copied
 	}
 	return copy
 }

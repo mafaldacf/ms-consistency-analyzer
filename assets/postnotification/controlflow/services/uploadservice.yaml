@@ -12,17 +12,17 @@
   - '[INLINE] "bob" string --> (TAINTED 1x) --> [POST_NOSQL.Post.Mentions]'
   - '[INLINE] "alice" string --> (TAINTED 1x) --> [POST_NOSQL.Post.Mentions]'
   - mentions []string --> (TAINTED 1x) --> [POST_NOSQL.Post.Mentions]
+  - '[INLINE] Text string --> (TAINTED 1x) --> [POST_NOSQL.Post.Text]'
+  - '[INLINE] PostID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.PostID, NOTIF_QUEUE.Message.PostID]'
+  - '[INLINE] ReqID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.ReqID, NOTIF_QUEUE.Message.ReqID]'
   - '[INLINE] "some username" string --> (TAINTED 1x) --> [POST_NOSQL.Post.Creator.Username]'
-  - '[INLINE] Username string --> (TAINTED 1x) --> [POST_NOSQL.Post.Creator.Username]'
+  - '[INLINE] Username "some username" string --> (TAINTED 1x) --> [POST_NOSQL.Post.Creator.Username]'
   - '[INLINE] postnotification.Creator struct{Username string} --> (TAINTED 1x) -->
     [POST_NOSQL.Post.Creator]'
   - '[INLINE] Creator postnotification.Creator struct{Username string} --> (TAINTED
     1x) --> [POST_NOSQL.Post.Creator]'
   - '[INLINE] Timestamp int64 --> (TAINTED 1x) --> [POST_NOSQL.Post.Timestamp]'
   - '[INLINE] Mentions []string --> (TAINTED 1x) --> [POST_NOSQL.Post.Mentions]'
-  - '[INLINE] Text string --> (TAINTED 1x) --> [POST_NOSQL.Post.Text]'
-  - '[INLINE] PostID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.PostID, NOTIF_QUEUE.Message.PostID]'
-  - '[INLINE] ReqID int64 --> (TAINTED 2x) --> [POST_NOSQL.Post.ReqID, NOTIF_QUEUE.Message.ReqID]'
   - post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}
     --> (TAINTED 1x) --> [POST_NOSQL.Post]
   - '[INLINE] string --> (TAINTED 1x) --> [NOTIF_QUEUE.Message.PostID]'
@@ -38,7 +38,7 @@
   - storageService postnotification.StorageService
   - queue Queue
   - '[INLINE] 4 int'
-  - '[INLINE] numWorkers int'
+  - '[INLINE] numWorkers 4 int'
   - '[INLINE] queue Queue'
   - '[INLINE] storageService postnotification.StorageService'
   - n (&postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int})

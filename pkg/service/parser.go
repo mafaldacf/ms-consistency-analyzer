@@ -392,7 +392,7 @@ func (service *Service) AttachDatastoreInstances(paramDBs map[string]datastores.
 	logger.Logger.Infof("[PARSER] [%s] updating datastore instances in declared service impl user type...", service.Name)
 	impl := service.GetPackage().GetDeclaredType(service.ImplName).(*gotypes.UserType).UserType.(*gotypes.StructType)
 	for name, field := range service.Fields {
-		if implFieldType, ok := impl.GetFieldTypeByName(name).SubType.(*blueprint.BlueprintBackendType); ok {
+		if implFieldType, ok := impl.GetFieldTypeByName(name).WrappedType.(*blueprint.BlueprintBackendType); ok {
 			if serviceFieldType, ok := field.GetType().(*blueprint.BlueprintBackendType); ok {
 				impl.UpdateFieldSubTypeByName(name, serviceFieldType)
 				logger.Logger.Debugf("[PARSER] [%s] loaded impl type (%s)", service.Name, serviceFieldType.StringWithInstance())

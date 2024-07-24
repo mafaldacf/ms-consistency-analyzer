@@ -205,29 +205,28 @@ func (p *Package) LinkFile(file *File) {
 	file.Package = p
 }
 
-func (p *Package) GetImportedTypeFromPath(fullPath string) (gotypes.Type, bool) {
-	if e, ok := p.ImportedTypes[fullPath]; ok {
-		return e, true
-	}
+func (p *Package) getImportedTypesLstStr() string {
 	importedTypesStr := ""
 	for k, t := range p.ImportedTypes {
 		importedTypesStr += "- " + k + ": " + t.String() + "\n"
 	}
+	return importedTypesStr
+}
+
+func (p *Package) getImportedPackagesLstStr() string {
 	importedPackagesStr := ""
 	for k, t := range p.ImportedPackages {
 		importedPackagesStr += "- " + k + ": " + t.String() + "\n"
 	}
-	logger.Logger.Fatalf("unknown imported type (%s) in package (%s) with import types list and packages:\n%v\n\n%v", fullPath, p.Name, importedTypesStr, importedPackagesStr)
-	return nil, false
+	return importedPackagesStr
 }
 
-func (p *Package) GetImportedType(packagePath string, typeName string) (gotypes.Type, bool) {
-	key := ImportedTypeKey(packagePath, typeName)
-	if e, ok := p.ImportedTypes[key]; ok {
-		return e, true
+func (p *Package) GetImportedTypeIfExists(importPath string) gotypes.Type {
+	if e, ok := p.ImportedTypes[importPath]; ok {
+		return e
 	}
-	logger.Logger.Fatalf("[PACKAGE] unknown imported package (%s) in package (%s)", key, p.Name)
-	return nil, false
+	logger.Logger.Warnf("[PACKAGE] unknown imported type (%s) in package (%s) with import types list and packages:\n%v\n\n%v", importPath, p.Name, p.getImportedTypesLstStr(), p.getImportedPackagesLstStr())
+	return nil
 }
 
 func (p *Package) GetDeclaredTypeIfExists(typeNameIdent *ast.Ident) gotypes.Type {

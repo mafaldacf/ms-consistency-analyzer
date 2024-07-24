@@ -3,6 +3,8 @@
   - '[INLINE] stationDB NoSQLDatabase'
   - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
   - ctx context.Context
+  - '[INLINE] ID string --> (TAINTED 1x) --> [STATION_DB.Station.ID]'
+  - '[INLINE] ID string --> (TAINTED 1x) --> [STATION_DB.Station.ID]'
   - station station.Station struct{ID string, Name string, StayTime int64} --> (TAINTED 1x) --> [STATION_DB.Station]
   - coll NoSQLCollection {database = "station", collection = "station"}
   - err .error
@@ -69,6 +71,8 @@
   - '[INLINE] stationDB NoSQLDatabase'
   - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
   - ctx context.Context
+  - '[INLINE] ID string'
+  - '[INLINE] ID string'
   - station station.Station struct{ID string, Name string, StayTime int64}
   - coll NoSQLCollection {database = "station", collection = "station"}
   - err .error

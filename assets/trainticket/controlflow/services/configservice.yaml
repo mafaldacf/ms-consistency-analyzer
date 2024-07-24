@@ -3,6 +3,8 @@
   - '[INLINE] db NoSQLDatabase'
   - c (*config.ConfigServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
+  - '[INLINE] Name string --> (TAINTED 1x) --> [CONFIG_DB.Config.Name]'
+  - '[INLINE] Name string --> (TAINTED 1x) --> [CONFIG_DB.Config.Name]'
   - conf config.Config struct{Name string, Value string, Description string} --> (TAINTED 1x) --> [CONFIG_DB.Config]
   - coll NoSQLCollection {database = "config", collection = "config"}
   - err .error
@@ -34,6 +36,8 @@
   - '[INLINE] db NoSQLDatabase'
   - c (*config.ConfigServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
+  - '[INLINE] Name string'
+  - '[INLINE] Name string'
   - conf config.Config struct{Name string, Value string, Description string}
   - coll NoSQLCollection {database = "config", collection = "config"}
   - err .error

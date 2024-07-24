@@ -10,6 +10,8 @@
   - '[INLINE] db NoSQLDatabase'
   - s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
+  - '[INLINE] ID string --> (TAINTED 1x) --> [STATIONFOOD_DB.StationFoodStore.ID]'
+  - '[INLINE] ID string --> (TAINTED 1x) --> [STATIONFOOD_DB.StationFoodStore.ID]'
   - store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}} --> (TAINTED 1x) --> [STATIONFOOD_DB.StationFoodStore]
   - coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
   - err .error

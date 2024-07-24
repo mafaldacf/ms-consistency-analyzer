@@ -33,7 +33,7 @@ func visitBasicBlock(service *service.Service, method *types.ParsedMethod, block
 		return
 	}
 	visited[block.GetIndex()] = true
-	for _, blockNode := range block.GetNodes() {
+	for _, blockNode := range block.GetNodes() { //FIXME????
 		parseExpressions(service, method, block, blockNode)
 	}
 
@@ -58,16 +58,21 @@ func getAssignmentRightVariables(service *service.Service, method *types.ParsedM
 }
 
 func assignLeftValues(service *service.Service, method *types.ParsedMethod, block *types.Block, assignStmt *ast.AssignStmt) {
+	logger.Logger.Debugf("[CFG ASSIGN LEFT] [%s] visiting stmt (%s): %v", service.GetName(), utils.GetType(assignStmt), assignStmt)
 	rvariables := getAssignmentRightVariables(service, method, block, assignStmt)
 	for i, rvariable := range rvariables {
 		lvalue := assignStmt.Lhs[i]
+		logger.Logger.Debugf("[CFG ASSIGN LEFT] [%s] got rvariable type (%s) for lvalue type (%s): %v", service.GetName(), utils.GetType(rvariable), utils.GetType(lvalue), rvariable.String())
 		switch e := lvalue.(type) {
 		case *ast.Ident:
 			if assignStmt.Tok == token.DEFINE || assignStmt.Tok == token.ASSIGN { // := OR =
-				if rvariable.GetVariableInfo().GetName() == "" && rvariable.GetVariableInfo().IsUnassigned() {
-					rvariable.GetVariableInfo().SetName(e.Name)
+				if rvariable.GetVariableInfo().GetName() == "" {
 					rvariable.GetVariableInfo().SetUnassigned()
+					rvariable.GetVariableInfo().SetName(e.Name)
 					block.AddVariable(rvariable)
+					if rvariable.GetVariableInfo().GetName() == "query" {
+						logger.Logger.Debugf("GOT DEPENDENCIES FOR QUERY: %v", variables.GetIndirectDependenciesWithCurrent(rvariable))
+					}
 				} else {
 					logger.Logger.Warnf("[CFG] FIX ME!!!! WE SHOULD SEARCH FOR THE LEFT VARIABLE THAT ALREADY EXISTS IN THE BLOCK")
 					lvariable := rvariable.DeepCopy(true)
@@ -105,7 +110,7 @@ func assignLeftValues(service *service.Service, method *types.ParsedMethod, bloc
 }
 
 func parseExpressions(service *service.Service, method *types.ParsedMethod, block *types.Block, node ast.Node) {
-	logger.Logger.Debugf("[CFG PARSER EXPR] visiting node (%v)", node)
+	logger.Logger.Debugf("[CFG PARSER EXPR] (%s) visiting node (%v)", utils.GetType(node), node)
 	switch e := node.(type) {
 	// ------------
 	// Go Routines
@@ -402,7 +407,7 @@ func parseCallToVariableInBlock(service *service.Service, method *types.ParsedMe
 					fieldType := structVar.GetStructType().GetFieldTypeByNameIfExists(fieldName)
 					if fieldType != nil {
 						fieldVar := lookup.CreateVariableFromType(fieldName, fieldType)
-						structVar.AddFieldVariable(fieldName, fieldVar)
+						structVar.AddFieldKeyVariable(fieldName, fieldVar)
 					} else {
 						methodName := ident.Name
 						pkgPath := structVar.GetStructType().GetMethodPackagePath(methodName)

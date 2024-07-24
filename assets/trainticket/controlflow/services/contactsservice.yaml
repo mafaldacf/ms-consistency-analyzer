@@ -3,6 +3,12 @@
   - '[INLINE] contactsDB NoSQLDatabase'
   - c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
   - ctx context.Context
+  - '[INLINE] AccountID string --> (TAINTED 1x) --> [CONTACTS_DB.Contact.AccountID]'
+  - '[INLINE] AccountID string --> (TAINTED 1x) --> [CONTACTS_DB.Contact.AccountID]'
+  - '[INLINE] DocumentType int --> (TAINTED 1x) --> [CONTACTS_DB.Contact.DocumentType]'
+  - '[INLINE] DocumentType int --> (TAINTED 1x) --> [CONTACTS_DB.Contact.DocumentType]'
+  - '[INLINE] DocumentNumber string --> (TAINTED 1x) --> [CONTACTS_DB.Contact.DocumentNumber]'
+  - '[INLINE] DocumentNumber string --> (TAINTED 1x) --> [CONTACTS_DB.Contact.DocumentNumber]'
   - contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} --> (TAINTED 1x) --> [CONTACTS_DB.Contact]
   - coll NoSQLCollection {database = "contacts", collection = "contacts"}
   - err .error
@@ -11,6 +17,8 @@
   - '[INLINE] contactsDB NoSQLDatabase'
   - c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
   - ctx context.Context
+  - '[INLINE] ID string'
+  - '[INLINE] ID string'
   - contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
   - coll NoSQLCollection {database = "contacts", collection = "contacts"}
   - err .error
@@ -44,6 +52,8 @@
   - '[INLINE] contactsDB NoSQLDatabase'
   - c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
   - ctx context.Context
+  - '[INLINE] ID string'
+  - '[INLINE] ID string'
   - contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
   - coll NoSQLCollection {database = "contacts", collection = "contacts"}
   - err .error

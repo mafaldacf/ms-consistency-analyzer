@@ -11,6 +11,10 @@ func (v *ChanVariable) String() string {
 	return v.VariableInfo.String()
 }
 
+func (v *ChanVariable) LongString() string {
+	return v.VariableInfo.LongString()
+}
+
 func (v *ChanVariable) GetId() int64 {
 	return v.VariableInfo.GetId()
 }

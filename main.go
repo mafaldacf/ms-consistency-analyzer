@@ -32,6 +32,7 @@ func main() {
 	app.RegisterServiceNodes(servicesInfo)
 	app.BuildServiceNodes()
 	//app.PreDump()
+	//logger.Logger.Fatal("EXIT!")
 
 	fmt.Println()
 	fmt.Println(" -------------------------------------------------------------------------------------------------------------- ")

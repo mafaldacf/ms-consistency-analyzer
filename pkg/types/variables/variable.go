@@ -70,25 +70,31 @@ func GetIndirectDependencies(v Variable) []Variable {
 	return indirectDeps
 }
 
-func getDependenciesString(deps ...Variable) string {
+func GetDependenciesStringLst(deps ...Variable) string {
 	out := ""
-	for i, d := range deps {
-		out += fmt.Sprintf("%s (%d)", d.GetVariableInfo().GetName(), d.GetId())
-		if i < len(deps)-1 {
-			out += ", "
-		}
+	for _, d := range deps {
+		out += fmt.Sprintf("\t\t\t\t\t - %s: %s\n", d.GetVariableInfo().GetName(), d.GetVariableInfo().String())
 	}
 	return out
 }
 
-func ContainsMatchingDependencies(current Variable, target Variable) bool {
-	currentDeps := GetIndirectDependenciesWithCurrent(current)
-	logger.Logger.Debugf("[VAR] %s: got current dependencies: %v", getDependenciesString(current), getDependenciesString(currentDeps...))
-	targetDeps := GetIndirectDependenciesWithCurrent(target)
-	logger.Logger.Debugf("[VAR] %s: got target dependencies: %v", getDependenciesString(target), getDependenciesString(targetDeps...))
+func ContainsMatchingDependencies2(readKeyDeps []Variable, writeValueDeps []Variable) bool {
+	for _, d := range readKeyDeps {
+		if slices.Contains(writeValueDeps, d) {
+			return true
+		}
+	}
+	return false
+}
 
-	for _, d := range currentDeps {
-		if slices.Contains(targetDeps, d) {
+func ContainsMatchingDependencies(readKey Variable, writeValue Variable) bool {
+	readKeyDeps := GetIndirectDependenciesWithCurrent(readKey)
+	logger.Logger.Debugf("[READ KEY] dependencies for %s: \n%v", readKey.String(), GetDependenciesStringLst(readKeyDeps...))
+	writeValueDeps := GetIndirectDependenciesWithCurrent(writeValue)
+	logger.Logger.Debugf("[WRITE VALUE] dependencies for %s: \n%v", writeValue.String(), GetDependenciesStringLst(writeValueDeps...))
+
+	for _, d := range readKeyDeps {
+		if slices.Contains(writeValueDeps, d) {
 			return true
 		}
 	}

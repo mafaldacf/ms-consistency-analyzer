@@ -183,6 +183,16 @@ func searchForeignDataflow(variable variables.Variable, datastore *datastores.Da
 	}
 }
 func BuildSchema(app *app.App, node AbstractNode) {
+	/* if dbCall, ok := node.(*AbstractDatabaseCall); ok && dbCall.ParsedCall.Method.IsRead() {
+		datastore := dbCall.DbInstance.GetDatastore()
+		params := dbCall.Params
+		switch datastore.Type {
+		case datastores.Queue:
+			msg := params[1]
+			attachSinkToDataflow(app, msg, dbCall, datastore)
+		}
+
+	} */
 	if dbCall, ok := node.(*AbstractDatabaseCall); ok && dbCall.ParsedCall.Method.IsWrite() {
 		datastore := dbCall.DbInstance.GetDatastore()
 		params := dbCall.Params

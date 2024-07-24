@@ -226,7 +226,9 @@ func (graph *AbstractGraph) referencePublisherParams(queueHandler *AbstractQueue
 // to avoid changing it if we have another abstract node that will use the same parsed method
 func (graph *AbstractGraph) referenceMethodBlockVars(parsedCall types.Call, child AbstractNode) {
 	entryBlock := parsedCall.GetMethod().(*types.ParsedMethod).GetParsedCfg().GetEntryParsedBlock()
+	logger.Logger.Debugf("PARAMS: %v", parsedCall.GetParams())
 	for i, param := range parsedCall.GetParams() {
+		logger.Logger.Debugf("PARAM (%d): %s", i, param.String())
 		// variable at block index 0 is the receiver so we need to skip that one
 		if parsedCall.GetMethod().(*types.ParsedMethod).HasReceiver() {
 			i = i + 1
@@ -248,6 +250,7 @@ func (graph *AbstractGraph) referenceMethodBlockVars(parsedCall types.Call, chil
 }
 
 func (graph *AbstractGraph) referenceQueuePopMethodBlockVars(queueHandler *AbstractQueueHandler, queuePopCall *AbstractDatabaseCall) {
+	logger.Logger.Infof("[GRAPH REF POP] referencing published vars to pop method call: %s", queuePopCall.GetName())
 	queuePushMethod := getPushMethodIfPublisherChild(queueHandler, queuePopCall)
 	if queuePushMethod == nil {
 		logger.Logger.Warnf("[GRAPH] nil queue push method for queue handler (%s) and queue pop call (%s)", queueHandler.GetName(), queuePopCall.GetName())
@@ -265,6 +268,7 @@ func (graph *AbstractGraph) referenceQueuePopMethodBlockVars(queueHandler *Abstr
 			popParam = ptrVar.GetPointerTo()
 		}
 
+		logger.Logger.Warnf("FIXMEEEEEEEEEE! IDK IF IT IS WORKING IN NOTIFY BECAUSE OF ASSIGNMENTS AND ASSERTS AFTERWARDS")
 		popParam.AddReferenceWithID(pushParam, queuePopCall.GetCallerStr())
 		logger.Logger.Infof("\t\t[QUEUE POP - REF BLOCK VAR] added reference (%d) from creator (%s): (%s) -> (%s)", popParam.GetId(), queuePopCall.GetCallerStr(), popParam.GetType().GetName(), popParam.GetVariableInfo().GetName())
 		for _, dep := range variables.GetIndirectDependenciesWithCurrent(pushParam) {
@@ -274,6 +278,7 @@ func (graph *AbstractGraph) referenceQueuePopMethodBlockVars(queueHandler *Abstr
 			}
 		}
 	}
+	//logger.Logger.Fatal("EXIT!")
 }
 
 func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directParent AbstractNode, targetMethod *types.ParsedMethod) {
@@ -291,12 +296,6 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				Subscriber: rootIsQueueHandler,
 				Depth:      rootParent.GetNextDepth(),
 			}
-			for i, param := range parsedCall.Params  {
-				logger.Logger.Debugf("APPPPPPPEEEEENNNDDDD DATABASE CALL (%d) (%s)", i, utils.GetType(param))
-				if _, ok := param.(*variables.StructVariable); ok {
-					variables.GetReversedNestedFieldsAndNames(param, true)
-				}
-			}
 			rootParent.AddChild(child)
 			logger.Logger.Infof("[GRAPH] addding node for abstract database call with parent (%s): %s", child.GetCallerStr(), child.String())
 
@@ -304,7 +303,7 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 			if queueHandler, ok := rootParent.(*AbstractQueueHandler); ok && !queueHandler.IsEnabled() {
 				graph.referenceQueuePopMethodBlockVars(queueHandler, child)
 				queueHandler.Enable()
-			}/*  else {
+			} /*  else {
 				graph.referenceMethodBlockVars(parsedCall, child)
 			} */
 			logger.Logger.Infof("[GRAPH] added node for abstract database call with parent (%s): %s", child.GetCallerStr(), child.String())
@@ -349,6 +348,7 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 			logger.Logger.Infof("[GRAPH] adding temporary node for abstract service call: %s", tempChild.String())
 			graph.referenceMethodBlockVars(parsedCall, tempChild)
 			logger.Logger.Infof("[GRAPH] added temporary node for abstract service call: %s", tempChild.String())
+			//logger.Logger.Fatal("EXIT!")
 		}
 	}
 }

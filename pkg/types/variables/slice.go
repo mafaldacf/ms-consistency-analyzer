@@ -32,6 +32,14 @@ func (v *SliceVariable) AppendElements(varElements Variable) {
 	}
 }
 
+func (v *SliceVariable) AddElement(element Variable) {
+	v.Elements = append(v.Elements, element)
+}
+
+func (v *SliceVariable) AddElements(element []Variable) {
+	v.Elements = append(v.Elements, element...)
+}
+
 func (v *SliceVariable) GetVariableAt(index int) Variable {
 	if index < len(v.Elements) {
 		return v.Elements[index]
@@ -63,19 +71,27 @@ func (v *SliceVariable) GetDependencies() []Variable {
 	return nil
 }
 
-func (v *SliceVariable) String() string {
-	s := "("
-	for i, elem := range v.Elements {
-		s += elem.String()
-		if i < len(v.Elements)-1 {
-			s += ", "
-		}
+func (v *SliceVariable) GetElementAt(index int) Variable {
+	if index > len(v.Elements)-1 {
+		logger.Logger.Fatalf("[VARS SLICE] element at index (%d) does not exist in array variable with len (%d): %s", index, len(v.Elements), v.String())
 	}
-	return s + ")"
+	return v.Elements[index]
+}
+
+func (v *SliceVariable) GetElementAtIfExists(index int) Variable {
+	if index > len(v.Elements)-1 {
+		logger.Logger.Warnf("[VARS SLICE] element at index (%d) does not exist in array variable with len (%d): %s", index, len(v.Elements), v.String())
+		return nil
+	}
+	return v.Elements[index]
+}
+
+func (v *SliceVariable) String() string {
+	return v.VariableInfo.String()
 }
 
 func (v *SliceVariable) LongString() string {
-	s := v.VariableInfo.String() + " = ("
+	s := v.VariableInfo.LongString() + " = ("
 	for i, elem := range v.Elements {
 		s += elem.String()
 		if i < len(v.Elements)-1 {

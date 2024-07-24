@@ -32,7 +32,8 @@
                     "name": "post",
                     "creator": "UploadService"
                   }
-                }
+                },
+                "omitempty": null
               }
             ],
             "returns": [
@@ -57,7 +58,7 @@
               "name": "ReqID",
               "type": "int64"
             },
-            "underlying_field": {
+            "wrapped_variable": {
               "variable": {
                 "name": "reqID",
                 "type": "int64"
@@ -75,7 +76,7 @@
                   "name": "Creator",
                   "type": "postnotification.Creator struct{Username string}"
                 },
-                "underlying_field": {
+                "wrapped_variable": {
                   "variable": {
                     "type": "postnotification.Creator struct{Username string}"
                   },
@@ -83,15 +84,16 @@
                     "Username": {
                       "variable": {
                         "name": "Username",
-                        "type": "string"
+                        "type": "\"some username\" string"
                       },
-                      "underlying_field": {
+                      "wrapped_variable": {
                         "variable": {
                           "type": "\"some username\" string"
                         }
                       }
                     }
-                  }
+                  },
+                  "omitempty": null
                 }
               },
               "Mentions": {
@@ -99,7 +101,7 @@
                   "name": "Mentions",
                   "type": "[]string"
                 },
-                "underlying_field": {
+                "wrapped_variable": {
                   "variable": {
                     "name": "mentions",
                     "type": "[]string"
@@ -123,7 +125,7 @@
                   "name": "PostID",
                   "type": "int64"
                 },
-                "underlying_field": {
+                "wrapped_variable": {
                   "variable": {
                     "name": "postID",
                     "type": "int64"
@@ -135,7 +137,7 @@
                   "name": "ReqID",
                   "type": "int64"
                 },
-                "underlying_field": {
+                "wrapped_variable": {
                   "variable": {
                     "name": "reqID",
                     "type": "int64"
@@ -147,7 +149,7 @@
                   "name": "Text",
                   "type": "string"
                 },
-                "underlying_field": {
+                "wrapped_variable": {
                   "variable": {
                     "name": "text",
                     "type": "string"
@@ -159,14 +161,15 @@
                   "name": "Timestamp",
                   "type": "int64"
                 },
-                "underlying_field": {
+                "wrapped_variable": {
                   "variable": {
                     "name": "timestamp",
                     "type": "int64"
                   }
                 }
               }
-            }
+            },
+            "omitempty": null
           }
         ],
         "returns": [
@@ -199,7 +202,7 @@
                   "name": "PostID",
                   "type": "string"
                 },
-                "underlying_field": {
+                "wrapped_variable": {
                   "variable": {
                     "type": "string"
                   },
@@ -209,7 +212,7 @@
                         "name": "PostID",
                         "type": "int64"
                       },
-                      "underlying_field": {
+                      "wrapped_variable": {
                         "variable": {
                           "name": "postID",
                           "type": "int64"
@@ -224,7 +227,7 @@
                   "name": "ReqID",
                   "type": "string"
                 },
-                "underlying_field": {
+                "wrapped_variable": {
                   "variable": {
                     "type": "string"
                   },
@@ -234,7 +237,7 @@
                         "name": "ReqID",
                         "type": "int64"
                       },
-                      "underlying_field": {
+                      "wrapped_variable": {
                         "variable": {
                           "name": "reqID",
                           "type": "int64"
@@ -244,7 +247,8 @@
                   ]
                 }
               }
-            }
+            },
+            "omitempty": null
           }
         ],
         "returns": [
@@ -292,7 +296,47 @@
                           "creator": "NotifyService"
                         }
                       },
-                      "key_values": null
+                      "key_values": [
+                        {
+                          "Key": {
+                            "variable": {
+                              "type": "\"ReqID\" string"
+                            }
+                          },
+                          "Value": {
+                            "variable": {
+                              "name": "\"ReqID\"",
+                              "type": "string"
+                            }
+                          }
+                        },
+                        {
+                          "Key": {
+                            "variable": {
+                              "type": "\"PostID\" string"
+                            }
+                          },
+                          "Value": {
+                            "variable": {
+                              "name": "\"PostID\"",
+                              "type": "string"
+                            }
+                          }
+                        },
+                        {
+                          "Key": {
+                            "variable": {
+                              "type": "\"Timestamp\" string"
+                            }
+                          },
+                          "Value": {
+                            "variable": {
+                              "name": "\"Timestamp\"",
+                              "type": "string"
+                            }
+                          }
+                        }
+                      ]
                     }
                   }
                 ],
@@ -335,7 +379,44 @@
                         "variable": {
                           "name": "query",
                           "type": "primitive.D"
-                        }
+                        },
+                        "slice_variables": [
+                          {
+                            "variable": {
+                              "type": "struct{Key \"postid\" string, Value int64}"
+                            },
+                            "struct_fields": {
+                              "Key": {
+                                "variable": {
+                                  "name": "Key",
+                                  "type": "\"postid\" string"
+                                },
+                                "wrapped_variable": {
+                                  "variable": {
+                                    "type": "\"postid\" string"
+                                  }
+                                }
+                              },
+                              "Value": {
+                                "variable": {
+                                  "name": "Value",
+                                  "type": "int64"
+                                },
+                                "wrapped_variable": {
+                                  "variable": {
+                                    "name": "postID",
+                                    "type": "int64",
+                                    "ref": {
+                                      "name": "postID",
+                                      "creator": "NotifyService"
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "omitempty": null
+                          }
+                        ]
                       }
                     ],
                     "returns": [
@@ -381,7 +462,7 @@
                             "creator": "NotifyService"
                           }
                         },
-                        "underlying_field": {
+                        "wrapped_variable": {
                           "variable": {
                             "name": "ReqID",
                             "type": "string",
@@ -409,7 +490,7 @@
                             "creator": "NotifyService"
                           }
                         },
-                        "underlying_field": {
+                        "wrapped_variable": {
                           "variable": {
                             "name": "PostID",
                             "type": "string",
@@ -428,7 +509,8 @@
                     "variable": {
                       "name": "_",
                       "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}"
-                    }
+                    },
+                    "omitempty": null
                   },
                   {
                     "variable": {

@@ -120,11 +120,29 @@ func (v *MapVariable) AddReferenceWithID(target Variable, creator string) {
 				targetValue.AddReferenceWithID(value, creator)
 			}
 		}
-	} else {
-		logger.Logger.Warnf("[VARS MAP] referenced variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
+		logger.Logger.Debugf("[VARS MAP] added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
+		return
 	}
+	// exception: map[string]interface{} --> struct
+	if _, keyIsMapType := v.GetMapType().KeyType.(*gotypes.BasicType); keyIsMapType {
+		if _, valueIsInterfaceType := v.GetMapType().ValueType.(*gotypes.InterfaceType); valueIsInterfaceType {
+			if targetStructVariable, ok := target.(*StructVariable); ok {
+				for key, value := range v.KeyValues {
+					targetValue, ok := targetStructVariable.Fields[key.GetType().GetBasicValue()]
+					if !ok {
+						logger.Logger.Debugf("invalid target key %s in struct: %v", key, targetStructVariable)
+					} else {
+						logger.Logger.Debugf("[VARS MAP] target (%s) got referenced to value (%s)", targetValue.String(), value.String())
+						targetValue.AddReferenceWithID(value, creator)
+					}
+				}
+				logger.Logger.Debugf("[VARS MAP] added reference (%s) (%s) -> (%s) (%s) with id = %d (creator: %s)", v.VariableInfo.Name, utils.GetType(v), target.GetVariableInfo().GetName(), utils.GetType(target), v.VariableInfo.Id, creator)
+				return
+			}
+		}
+	}
+	logger.Logger.Fatalf("[VARS MAP] attempted to reference variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
 
-	logger.Logger.Debugf("[VARS MAP] added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
 }
 
 func (v *MapVariable) GetUnassaignedVariables() []Variable {

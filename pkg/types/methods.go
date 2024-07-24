@@ -48,6 +48,9 @@ type ParsedMethod struct {
 func (f *ParsedMethod) GetAst() *ast.FuncDecl {
 	return f.Ast
 }
+func (f *ParsedMethod) GetName() string {
+	return f.Name
+}
 func (f *ParsedMethod) SetParsed() {
 	f.Parsed = true
 }

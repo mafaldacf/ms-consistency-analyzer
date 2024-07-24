@@ -43,6 +43,8 @@
   - '[INLINE] userDB NoSQLDatabase'
   - u (*user.UserServiceImpl struct{userDB NoSQLDatabase})
   - ctx context.Context
+  - '[INLINE] UserID string'
+  - '[INLINE] UserID string'
   - user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}
   - coll NoSQLCollection {database = "user", collection = "user"}
   - err .error

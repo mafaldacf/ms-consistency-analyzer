@@ -3,7 +3,6 @@ package detector
 import (
 	"encoding/json"
 	"fmt"
-	"os"
 	"strings"
 
 	"analyzer/pkg/abstractgraph"
@@ -11,6 +10,7 @@ import (
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/variables"
+	"analyzer/pkg/utils"
 )
 
 type Parameters interface {
@@ -46,6 +46,7 @@ type Operation struct {
 	Key      variables.Variable
 	Object   variables.Variable
 	Database datastores.DatabaseInstance
+	Write    bool
 }
 
 func (op *Operation) MarshalJSON() ([]byte, error) {
@@ -71,13 +72,16 @@ func (op *Operation) String() string {
 	if op.Object == nil {
 		logger.Logger.Fatalf("nil object in %s", op.Method)
 	}
-	return fmt.Sprintf("{ %s \t > datastore: %s, key: %s (#%d), value: %s (#%d) }",
+	opType := "write"
+	if !op.Write {
+		opType = "read"
+	}
+	return fmt.Sprintf("{ %s(%s, %s, %s, %s) }",
+		opType,
 		op.Service,
 		op.Database.GetName(),
 		op.Key.GetVariableInfo().GetName(),
-		op.Key.GetId(),
 		op.Object.GetVariableInfo().GetName(),
-		op.Object.GetId(),
 	)
 }
 
@@ -103,13 +107,14 @@ func InitRequest(entryNode abstractgraph.AbstractNode) *Request {
 	}
 }
 
-func createOperation(key variables.Variable, object variables.Variable, call *abstractgraph.AbstractDatabaseCall) *Operation {
+func createOperation(key variables.Variable, object variables.Variable, call *abstractgraph.AbstractDatabaseCall, write bool) *Operation {
 	return &Operation{
 		Key:      key,
 		Object:   object,
 		Service:  call.Service,
 		Database: call.DbInstance,
 		Method:   call.GetMethodStr(),
+		Write:    write,
 	}
 }
 
@@ -119,9 +124,8 @@ func (request *Request) saveWriteOperation(call *abstractgraph.AbstractDatabaseC
 	key := call.GetParam(keyIndex)
 	object := call.GetParam(objIndex)
 
-	write := createOperation(key, object, call)
+	write := createOperation(key, object, call, true)
 	request.Writes = append(request.Writes, write)
-	logger.Logger.Infof("[XCY] saved write %s", write.String())
 	return write
 }
 
@@ -141,9 +145,8 @@ func (request *Request) saveReadOperation(call *abstractgraph.AbstractDatabaseCa
 		object = call.GetReturn(objIndex)
 	}
 
-	read := createOperation(key, object, call)
+	read := createOperation(key, object, call, false)
 	request.Reads = append(request.Reads, read)
-	logger.Logger.Infof("[XCY] created read %s", read.String())
 	return read
 }
 
@@ -167,34 +170,47 @@ func (request *Request) TransverseRequestOperations() {
 }
 
 func (request *Request) captureInconsistency(read *Operation, readCall *abstractgraph.AbstractDatabaseCall) {
-	if readCall.Subscriber {
+	/* if readCall.Subscriber {
 		return
-	}
+	} */
 	// iterate in reverse
 	for i := len(request.Writes) - 1; i >= 0; i-- {
 		write := request.Writes[i]
-		logger.Logger.Tracef("[XCY] evaluating XCY violation for read (%s @ %s) and write (%s @ %s)",
+		logger.Logger.Warnf("[XCY] evaluating XCY violation for read (%s @ %s) and write (%s @ %s)",
 			read.Key.GetVariableInfo().Name,
 			readCall.DbInstance.GetName(),
 			write.Key.GetVariableInfo().Name,
 			write.Database.GetName(),
 		)
+		readKeyDeps := variables.GetIndirectDependenciesWithCurrent(read.Key)
+		logger.Logger.Debugf("[READ KEY] has ref? %t", read.Key.GetVariableInfo().HasReference())
+		logger.Logger.Debugf("[READ KEY] dependencies for (%s) %s: \n%v", utils.GetType(read.Key), read.Key.String(), variables.GetDependenciesStringLst(readKeyDeps...))
+		writeValueDeps := variables.GetIndirectDependenciesWithCurrent(write.Object)
+		logger.Logger.Debugf("[WRITE VALUE] dependencies for (%s) %s: \n%v", utils.GetType(write.Object), write.Object.String(), variables.GetDependenciesStringLst(writeValueDeps...))
+		
 		if readCall.DbInstance == write.Database {
-			if variables.ContainsMatchingDependencies(read.Key, write.Object) {
+			if variables.ContainsMatchingDependencies2(readKeyDeps, writeValueDeps) {
 				request.addInconsistency(write, read)
 			}
 		}
-	}
+	}/* 
+	if readCall.Subscriber {
+		logger.Logger.Fatal("EXIT!")
+	} */
 }
 
 func (request *Request) transverseOperations(node abstractgraph.AbstractNode) {
 	if dbCall, ok := node.(*abstractgraph.AbstractDatabaseCall); ok {
 		if backend, ok := dbCall.ParsedCall.Method.(*blueprint.BackendMethod); ok {
 			if backend.IsWrite() {
-				request.saveWriteOperation(dbCall, backend)
-			} else {
+				write := request.saveWriteOperation(dbCall, backend)
+				logger.Logger.Infof("[XCY] saved write %s", write.String())
+			} else if backend.IsRead() {
 				read := request.saveReadOperation(dbCall, backend)
+				logger.Logger.Infof("[XCY] saved read %s", read.String())
 				request.captureInconsistency(read, dbCall)
+			} else {
+				logger.Logger.Warnf("[XCY] ignoring operation: %s", dbCall.String())
 			}
 		}
 	}
@@ -204,19 +220,6 @@ func (request *Request) transverseOperations(node abstractgraph.AbstractNode) {
 }
 
 func (request *Request) SaveInconsistencies(app string) {
-	filename := fmt.Sprintf("xcy_%s_%s.json", strings.ToLower(request.EntryNode.GetCallee()), strings.ToLower(request.EntryNode.GetName()))
-	path := fmt.Sprintf("assets/%s/%s", app, filename)
-	file, err := os.Create(path)
-	if err != nil {
-		fmt.Println("Error creating file:", err)
-		return
-	}
-	defer file.Close()
-	data, err := json.MarshalIndent(request, "", "  ")
-	if err != nil {
-		logger.Logger.Error("error marshaling json:", err)
-		return
-	}
-	logger.Logger.Infof("[JSON] xcy saved at %s", path)
-	file.Write(data)
+	filename := fmt.Sprintf("detection/xcy_%s_%s.json", strings.ToLower(request.EntryNode.GetCallee()), strings.ToLower(request.EntryNode.GetName()))
+	utils.DumpToJSONFile(request, app, filename)
 }

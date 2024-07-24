@@ -199,8 +199,8 @@ func (b *BackendMethod) GetReadObjectIndex() int {
 	switch b.FullName() {
 	case "Cache.Get":
 		return 2
-	case "NoSQLDatabase.NoSQLCollection.FindOne":
-		return -2
+	case "NoSQLDatabase.NoSQLCollection.FindOne", "NoSQLDatabase.NoSQLCollection.FindMany":
+		return -1
 	case "Queue.Pop":
 		return 1
 	default:
@@ -228,7 +228,7 @@ func (b *BackendMethod) GetReadKeyIndex() int {
 	switch b.FullName() {
 	case "Cache.Get":
 		return 1
-	case "NoSQLDatabase.NoSQLCollection.FindOne":
+	case "NoSQLDatabase.NoSQLCollection.FindOne", "NoSQLDatabase.NoSQLCollection.FindMany":
 		return 1
 	case "Queue.Pop":
 		return 1

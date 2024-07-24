@@ -315,6 +315,7 @@ price:
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
   - context.Context
+  - primitive.A
   - primitive.D
   - primitive.E
 - declared types:
@@ -361,6 +362,7 @@ route:
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
   - context.Context
+  - primitive.A
   - primitive.D
   - primitive.E
 - declared types:

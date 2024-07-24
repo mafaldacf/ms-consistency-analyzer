@@ -11,9 +11,9 @@ import (
 type FieldType struct {
 	Type          `json:"-"`
 	Origin        Type
-	SubType       Type
+	WrappedType   Type
 	StructField   bool
-	Embedded      bool   // if set, the SubType is an embedded struct field
+	Embedded      bool   // if set, the WrappedType is an embedded struct field
 	FieldName     string // set if is struct field
 	FieldLongName string
 	FieldTag      string // set if is struct field
@@ -27,39 +27,48 @@ func (t *FieldType) IsSameType(other Type) bool {
 	_, ok := other.(*FieldType)
 	return ok
 }
+func (t *FieldType) SetOrigin(origin Type) {
+	t.Origin = origin
+}
+func (t *FieldType) EnableStructField() {
+	t.StructField = true
+}
+func (t *FieldType) EnableEmbedded() {
+	t.Embedded = true
+}
 func (t *FieldType) String() string {
-	if t.SubType == nil {
+	if t.WrappedType == nil {
 		logger.Logger.Fatalf("[TYPES FIELD] unexpected nil underlying type for Field Type %s", t.FieldName)
 	}
-	return t.SubType.String()
+	return t.WrappedType.String()
 }
 func (t *FieldType) LongString() string {
-	if t.SubType == nil {
+	if t.WrappedType == nil {
 		logger.Logger.Fatalf("[TYPES FIELD] unexpected nil underlying type for Field Type %s", t.FieldName)
 	}
-	return t.SubType.LongString()
+	return t.WrappedType.LongString()
 }
 func (t *FieldType) GetName() string {
-	if t.SubType == nil {
+	if t.WrappedType == nil {
 		logger.Logger.Fatalf("[TYPES FIELD] unexpected nil underlying type for Field Type %s", t.FieldName)
 	}
 	if t.StructField {
 		return t.FieldName
 	}
-	return t.SubType.GetName()
+	return t.WrappedType.GetName()
 }
 func (t *FieldType) GetPackage() string {
 	logger.Logger.Fatalf("unable to get package for field type %s", t.String())
 	return ""
 }
 func (t *FieldType) GetBasicValue() string {
-	return t.SubType.GetBasicValue()
+	return t.WrappedType.GetBasicValue()
 }
 func (t *FieldType) AddValue(value string) {
-	t.SubType.AddValue(value)
+	t.WrappedType.AddValue(value)
 }
 func (t *FieldType) GetNestedFieldTypes(prefix string) ([]Type, []string) {
-	if t.SubType == nil {
+	if t.WrappedType == nil {
 		logger.Logger.Fatalf("[TYPES FIELD] unexpected nil underlying type for Field Type %s", t.FieldName)
 	}
 
@@ -71,7 +80,7 @@ func (t *FieldType) GetNestedFieldTypes(prefix string) ([]Type, []string) {
 	prefix = prefix + "." + t.FieldName
 	nestedTypes := []Type{t}
 	nestedNames := []string{prefix}
-	nestedFieldTypes, nestedFieldNames := t.SubType.GetNestedFieldTypes(prefix)
+	nestedFieldTypes, nestedFieldNames := t.WrappedType.GetNestedFieldTypes(prefix)
 	nestedTypes = append(nestedTypes, nestedFieldTypes...)
 	nestedNames = append(nestedNames, nestedFieldNames...)
 	return nestedTypes, nestedNames
@@ -84,11 +93,11 @@ func (t *FieldType) GetNestedFieldTypes(prefix string) ([]Type, []string) {
 func (t *FieldType) GetOrigin() Type {
 	return t.Origin
 }
-func (t *FieldType) GetSubType() Type {
-	if t.SubType == nil {
+func (t *FieldType) GetWrappedType() Type {
+	if t.WrappedType == nil {
 		logger.Logger.Fatalf("[TYPES FIELD] unexpected nil underlying type for Field Type %s", t.FieldName)
 	}
-	return t.SubType
+	return t.WrappedType
 }
 func (t *FieldType) IsStructField() bool {
 	return t.StructField

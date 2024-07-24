@@ -18,6 +18,7 @@ func (v *TupleVariable) GetVariableInfo() *VariableInfo {
 func (v *TupleVariable) AddVariable(variable Variable) {
 	logger.Logger.Warnf("[VARS TUPLE] adding variable (%s) to tuple variable (%s)", variable.String(), v.String())
 	v.Variables = append(v.Variables, variable)
+	v.GetTupleType().AddType(variable.GetType())
 }
 
 func (v *TupleVariable) GetVariables() []Variable {
@@ -47,6 +48,10 @@ func (v *TupleVariable) NumVariables() int {
 
 func (v *TupleVariable) GetType() gotypes.Type {
 	return v.VariableInfo.GetType()
+}
+
+func (v *TupleVariable) GetTupleType() *gotypes.TupleType {
+	return v.VariableInfo.GetType().(*gotypes.TupleType)
 }
 
 func (v *TupleVariable) GetDependencies() []Variable {
