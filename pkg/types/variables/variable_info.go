@@ -36,6 +36,36 @@ func (vinfo *VariableInfo) GetAllDataflows() []*Dataflow {
 	return append(vinfo.Dataflows, vinfo.IndirectDataflows...)
 }
 
+func (vinfo *VariableInfo) GetAllWriteDataflows() []*Dataflow {
+	var dataflows []*Dataflow
+	for _, df := range vinfo.Dataflows {
+		if df.IsWriteOp() {
+			dataflows = append(dataflows, df)
+		}
+	}
+	for _, df := range vinfo.IndirectDataflows {
+		if df.IsWriteOp() {
+			dataflows = append(dataflows, df)
+		}
+	}
+	return dataflows
+}
+
+func (vinfo *VariableInfo) GetAllReadDataflows() []*Dataflow {
+	var dataflows []*Dataflow
+	for _, df := range vinfo.Dataflows {
+		if !df.IsWriteOp() {
+			dataflows = append(dataflows, df)
+		}
+	}
+	for _, df := range vinfo.IndirectDataflows {
+		if !df.IsWriteOp() {
+			dataflows = append(dataflows, df)
+		}
+	}
+	return dataflows
+}
+
 func (vinfo *VariableInfo) DeepCopy(force bool) *VariableInfo {
 	// skip deep copy, especially since we can have references and dataflows
 	if !force {

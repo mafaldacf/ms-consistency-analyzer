@@ -145,6 +145,43 @@ func (v *MapVariable) AddReferenceWithID(target Variable, creator string) {
 
 }
 
+func (v *MapVariable) GetNestedFieldVariables(prefix string) ([]Variable, []string) {
+	var nestedVariables []Variable
+	var nestedIDs []string
+
+	logger.Logger.Debugf("[VARS MAP] found (%d) field VARIABLES for (%s): %v", len(v.KeyValues), v.String(), v.KeyValues)
+	for _, value := range v.KeyValues {
+		if fieldVariable, ok := value.(*FieldVariable); ok {
+			nestedFieldVariables, nestedFieldIDs := fieldVariable.GetNestedFieldVariables(prefix)
+			nestedVariables = append(nestedVariables, nestedFieldVariables...)
+			nestedIDs = append(nestedIDs, nestedFieldIDs...)
+		} else {
+			logger.Logger.Warnf("[VARS MAP] ignoring field key typed (%s) for value variable (%s) in map variable (%s): (%s)", utils.GetType(value), value.String(), GetVariableTypeAndTypeString(v), v.String())
+		}
+	}
+	return nestedVariables, nestedIDs
+}
+
+func (v *MapVariable) GetNestedFieldVariablesWithReferences(prefix string) ([]Variable, []string) {
+	logger.Logger.Debugf("[VARS MAP] HAS REFERENCE????? %v", v.GetVariableInfo().GetReference())
+	nestedVariables, nestedIDs := v.GetNestedFieldVariables(prefix)
+	if reference := v.GetVariableInfo().GetReference(); reference != nil {
+		logger.Logger.Debugf("[VARS MAP] HEREEEEE FOR REFERENCE %s", reference.String())
+		if referenceMapVar, ok := reference.Variable.(*MapVariable); ok {
+			nestedVariablesRef, nestedIDsRef := referenceMapVar.GetNestedFieldVariablesWithReferences(prefix)
+			nestedVariables = append(nestedVariables, nestedVariablesRef...)
+			nestedIDs = append(nestedIDs, nestedIDsRef...)
+		} else if referenceStructVar, ok := reference.Variable.(*StructVariable); ok {
+			nestedVariablesRef, nestedIDsRef := referenceStructVar.GetNestedFieldVariablesWithReferences(prefix)
+			nestedVariables = append(nestedVariables, nestedVariablesRef...)
+			nestedIDs = append(nestedIDs, nestedIDsRef...)
+		} else {
+			logger.Logger.Warnf("[VARS MAP] ignoring reference typed (%s) for reference variable (%s) in map variable (%s): (%s)", utils.GetType(reference.Variable), reference.Variable.String(), GetVariableTypeAndTypeString(v), v.String())
+		}
+	}
+	return nestedVariables, nestedIDs
+}
+
 func (v *MapVariable) GetUnassaignedVariables() []Variable {
 	var variables []Variable
 	if v.GetVariableInfo().IsUnassigned() {

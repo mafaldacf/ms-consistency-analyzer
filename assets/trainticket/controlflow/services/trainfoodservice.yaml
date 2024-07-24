@@ -1,34 +1,62 @@
 (*TrainFoodServiceImpl).Cleanup(ctx context.Context):
-  block 0 (Body):
-  - '[INLINE] db NoSQLDatabase'
+  block 2 (IfDone):
+  - (inline) db NoSQLDatabase
   - t (*trainfood.TrainFoodServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
   - coll NoSQLCollection {database = "trainfood", collection = "trainfood"}
   - err .error
 (*TrainFoodServiceImpl).CreateTrainFood(ctx context.Context, tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}}):
- block 0 (Body):
-  - '[INLINE] db NoSQLDatabase'
+ block 17 (IfDone):
+  - (inline) db NoSQLDatabase
   - t (*trainfood.TrainFoodServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
-  - '[INLINE] TripID string --> (TAINTED 1x) --> [TRAINFOOD_DB.TrainFood.TripID]'
-  - '[INLINE] TripID string --> (TAINTED 1x) --> [TRAINFOOD_DB.TrainFood.TripID]'
-  - tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}} --> (TAINTED 1x) --> [TRAINFOOD_DB.TrainFood]
+  - |-
+    (inline) TripID string -->
+       W-TAINTED 1x = (TRAINFOOD_DB.TrainFood.TripID)
+  - |-
+    (inline) TripID string -->
+       W-TAINTED 1x = (TRAINFOOD_DB.TrainFood.TripID)
+  - |-
+    tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}} -->
+       W-TAINTED 1x = (TRAINFOOD_DB.TrainFood)
   - coll NoSQLCollection {database = "trainfood", collection = "trainfood"}
+  - err .error
+  - (inline) "tripid" string
+  - (inline) "tripid" string
+  - (inline) struct{ "tripid" string, TripID string}
+  - query primitive.D
+  - res NoSQLCursor {database = "trainfood", collection = "trainfood"}
+  - err .error
+  - stored_tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}}
+  - exists bool
+  - err .error
+  - ok bool
   - err .error
 (*TrainFoodServiceImpl).ListTrainFood(ctx context.Context):
-  block 0 (Body):
-  - '[INLINE] db NoSQLDatabase'
+  block 8 (IfDone):
+  - (inline) db NoSQLDatabase
   - t (*trainfood.TrainFoodServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
   - coll NoSQLCollection {database = "trainfood", collection = "trainfood"}
   - err .error
+  - |-
+    res NoSQLCursor {database = "trainfood", collection = "trainfood"} -->
+       R-TAINTED 2x = (TRAINFOOD_DB.document, TRAINFOOD_DB.NoSQLCursor)
+  - err .error
+  - all_foods []trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}}
+  - err .error
 (*TrainFoodServiceImpl).ListTrainFoodByTripID(ctx context.Context, tripid string):
-  block 0 (Body):
-  - '[INLINE] db NoSQLDatabase'
+  block 11 (IfDone):
+  - (inline) db NoSQLDatabase
   - t (*trainfood.TrainFoodServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
   - tripid string
   - coll NoSQLCollection {database = "trainfood", collection = "trainfood"}
+  - err .error
+  - res NoSQLCursor {database = "trainfood", collection = "trainfood"}
+  - err .error
+  - tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}}
+  - exists bool
   - err .error
 .NewTrainFoodServiceImpl(ctx context.Context, db NoSQLDatabase):
   block 0 (Body):

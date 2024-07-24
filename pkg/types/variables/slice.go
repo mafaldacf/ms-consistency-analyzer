@@ -68,7 +68,7 @@ func (v *SliceVariable) GetSliceType() *gotypes.SliceType {
 }
 
 func (v *SliceVariable) GetDependencies() []Variable {
-	return nil
+	return v.Elements
 }
 
 func (v *SliceVariable) GetElementAt(index int) Variable {

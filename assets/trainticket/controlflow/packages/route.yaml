@@ -1,67 +1,156 @@
 ? (*route.RouteServiceImpl).CreateAndModify(ctx context.Context, info route.RouteInfo struct{ID string, StartStation string, EndStation string, StationList string, DistanceList string}) (route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}, error):
- block 0 (Body):
-  - '[INLINE] db NoSQLDatabase'
+ block 25 (IfDone):
+  - (inline) db NoSQLDatabase
   - r (*route.RouteServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
-  - '[INLINE] StartStation string --> (TAINTED 1x) --> [ROUTE_DB.Route.StartStation]'
-  - '[INLINE] StartStation string'
-  - '[INLINE] ID string'
-  - '[INLINE] ID string'
-  - '[INLINE] StationList string --> (TAINTED 1x) --> [ROUTE_DB.Route.Stations]'
-  - '[INLINE] StationList string --> (TAINTED 1x) --> [ROUTE_DB.Route.Stations]'
-  - '[INLINE] EndStation string --> (TAINTED 1x) --> [ROUTE_DB.Route.EndStation]'
-  - '[INLINE] EndStation string'
+  - (inline) ID string
+  - (inline) ID string
+  - |-
+    (inline) StationList string -->
+       W-TAINTED 1x = (ROUTE_DB.Route.Stations)
+  - |-
+    (inline) StationList string -->
+       W-TAINTED 1x = (ROUTE_DB.Route.Stations)
+  - |-
+    (inline) EndStation string -->
+       W-TAINTED 1x = (ROUTE_DB.Route.EndStation)
+  - (inline) EndStation string
+  - |-
+    (inline) StartStation string -->
+       W-TAINTED 1x = (ROUTE_DB.Route.StartStation)
+  - (inline) StartStation string
   - info route.RouteInfo struct{ID string, StartStation string, EndStation string, StationList string, DistanceList string}
   - coll NoSQLCollection {database = "route", collection = "route"}
   - err .error
+  - |-
+    distances []int64 -->
+       W-TAINTED 1x = (ROUTE_DB.Route.Distances)
+  - |-
+    (inline) "," string -->
+       W-TAINTED 1x = (ROUTE_DB.Route.Stations)
+  - |-
+    stations []string -->
+       W-TAINTED 1x = (ROUTE_DB.Route.Stations)
+  - (inline) ID string
+  - |-
+    (inline) ID string -->
+       W-TAINTED 1x = (ROUTE_DB.Route.ID)
+  - |-
+    (inline) EndStation string -->
+       W-TAINTED 1x = (ROUTE_DB.Route.EndStation)
+  - |-
+    (inline) EndStation string -->
+       W-TAINTED 1x = (ROUTE_DB.Route.EndStation)
+  - |-
+    (inline) StartStation string -->
+       W-TAINTED 1x = (ROUTE_DB.Route.StartStation)
+  - |-
+    (inline) StartStation string -->
+       W-TAINTED 1x = (ROUTE_DB.Route.StartStation)
+  - |-
+    (inline) distances []int64 -->
+       W-TAINTED 1x = (ROUTE_DB.Route.Distances)
+  - |-
+    (inline) Distances []int64 -->
+       W-TAINTED 1x = (ROUTE_DB.Route.Distances)
+  - |-
+    (inline) "," string -->
+       W-TAINTED 1x = (ROUTE_DB.Route.Stations)
+  - |-
+    (inline) StationList string -->
+       W-TAINTED 1x = (ROUTE_DB.Route.Stations)
+  - |-
+    (inline) StationList string -->
+       W-TAINTED 1x = (ROUTE_DB.Route.Stations)
+  - |-
+    (inline) stations []string -->
+       W-TAINTED 1x = (ROUTE_DB.Route.Stations)
+  - |-
+    (inline) Stations []string -->
+       W-TAINTED 1x = (ROUTE_DB.Route.Stations)
+  - |-
+    route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} -->
+       W-TAINTED 1x = (ROUTE_DB.Route)
+  - old_exists false bool
+  - |-
+    res NoSQLCursor {database = "route", collection = "route"} -->
+       R-TAINTED 2x = (ROUTE_DB.document, ROUTE_DB.NoSQLCursor)
+  - err .error
 (*route.RouteServiceImpl).DeleteRoute(ctx context.Context, id string) error:
-  block 0 (Body):
-  - '[INLINE] db NoSQLDatabase'
+  block 2 (IfDone):
+  - (inline) db NoSQLDatabase
   - r (*route.RouteServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
   - id string
   - coll NoSQLCollection {database = "route", collection = "route"}
   - err .error
 (*route.RouteServiceImpl).GetAllRoutes(ctx context.Context) ([]route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}, error):
- block 0 (Body):
-  - '[INLINE] db NoSQLDatabase'
+ block 8 (IfDone):
+  - (inline) db NoSQLDatabase
   - r (*route.RouteServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
   - routes []route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
   - err error
   - coll NoSQLCollection {database = "route", collection = "route"}
   - err .error
+  - |-
+    res NoSQLCursor {database = "route", collection = "route"} -->
+       R-TAINTED 2x = (ROUTE_DB.document, ROUTE_DB.NoSQLCursor)
+  - err .error
+  - err .error
 (*route.RouteServiceImpl).GetRouteById(ctx context.Context, id string) (route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}, error):
- block 0 (Body):
-  - '[INLINE] db NoSQLDatabase'
+ block 11 (IfDone):
+  - (inline) db NoSQLDatabase
   - r (*route.RouteServiceImpl struct{db NoSQLDatabase})
-  - '[INLINE] ref <ctx context.Context> @ RouteService'
+  - (inline) ref <ctx context.Context> @ RouteService
   - ctx context.Context
-  - '[INLINE] ref <string> @ RouteService'
+  - (inline) ref <string> @ RouteService
   - id string
   - coll NoSQLCollection {database = "route", collection = "route"}
   - err .error
+  - |-
+    res NoSQLCursor {database = "route", collection = "route"} -->
+       R-TAINTED 2x = (ROUTE_DB.document, ROUTE_DB.NoSQLCursor)
+  - err .error
+  - route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
+  - exists bool
+  - err .error
 (*route.RouteServiceImpl).GetRouteByIds(ctx context.Context, ids []string) ([]route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}, error):
  block 0 (Body):
-  - '[INLINE] db NoSQLDatabase'
+  - (inline) db NoSQLDatabase
   - r (*route.RouteServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
   - ids []string
-  - '[INLINE] route route.Route struct{ID string, Stations []string, Distances []int64,
-    StartStation string, EndStation string}'
+  - (inline) route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
   - routes []route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
   - _ .error
-  - '[INLINE] route route.Route struct{ID string, Stations []string, Distances []int64,
-    StartStation string, EndStation string}'
+  - (inline) route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
   - routes []route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
 (*route.RouteServiceImpl).GetRouteByStartAndEnd(ctx context.Context, start string, end string) (route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}, error):
- block 0 (Body):
-  - '[INLINE] db NoSQLDatabase'
+ block 11 (IfDone):
+  - (inline) db NoSQLDatabase
   - r (*route.RouteServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
   - start string
   - end string
   - coll NoSQLCollection {database = "route", collection = "route"}
+  - err .error
+  - (inline) string
+  - (inline) struct{ "endstation" string, string}
+  - (inline) primitive.D
+  - (inline) string
+  - (inline) struct{ "startstation" string, string}
+  - (inline) primitive.D
+  - (inline) primitive.A
+  - (inline) primitive.A
+  - (inline) struct{ "$and" string, primitive.A}
+  - query primitive.D
+  - |-
+    res NoSQLCursor {database = "route", collection = "route"} -->
+       R-TAINTED 2x = (ROUTE_DB.document, ROUTE_DB.NoSQLCursor)
+  - err .error
+  - route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
+  - exists bool
   - err .error
 route.NewRouteServiceImpl(ctx context.Context, db NoSQLDatabase) ((*route.RouteServiceImpl struct{db NoSQLDatabase}), error):
   block 0 (Body):

@@ -1,81 +1,133 @@
 ? (*station.StationServiceImpl).CreateStation(ctx context.Context, station station.Station struct{ID string, Name string, StayTime int64}) error:
- block 0 (Body):
-  - '[INLINE] stationDB NoSQLDatabase'
+ block 11 (IfDone):
+  - (inline) stationDB NoSQLDatabase
   - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
   - ctx context.Context
-  - '[INLINE] ID string --> (TAINTED 1x) --> [STATION_DB.Station.ID]'
-  - '[INLINE] ID string --> (TAINTED 1x) --> [STATION_DB.Station.ID]'
-  - station station.Station struct{ID string, Name string, StayTime int64} --> (TAINTED 1x) --> [STATION_DB.Station]
+  - |-
+    (inline) ID string -->
+       W-TAINTED 1x = (STATION_DB.Station.ID)
+  - |-
+    (inline) ID string -->
+       W-TAINTED 1x = (STATION_DB.Station.ID)
+  - |-
+    station station.Station struct{ID string, Name string, StayTime int64} -->
+       W-TAINTED 1x = (STATION_DB.Station)
   - coll NoSQLCollection {database = "station", collection = "station"}
   - err .error
+  - (inline) "id" string
+  - (inline) "id" string
+  - (inline) struct{ "id" string, ID string}
+  - query primitive.D
+  - res NoSQLCursor {database = "station", collection = "station"}
+  - err .error
+  - st station.Station struct{ID string, Name string, StayTime int64}
+  - exists bool
+  - err .error
 (*station.StationServiceImpl).DeleteStation(ctx context.Context, id string) error:
-  block 0 (Body):
-  - '[INLINE] stationDB NoSQLDatabase'
+  block 2 (IfDone):
+  - (inline) stationDB NoSQLDatabase
   - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
   - ctx context.Context
   - id string
   - coll NoSQLCollection {database = "station", collection = "station"}
   - err .error
+  - (inline) string
+  - (inline) struct{ "id" string, string}
+  - query primitive.D
 (*station.StationServiceImpl).Exists(ctx context.Context, name string) (bool, error):
-  block 0 (Body):
-  - '[INLINE] stationDB NoSQLDatabase'
+  block 5 (IfDone):
+  - (inline) stationDB NoSQLDatabase
   - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
   - ctx context.Context
   - name string
   - coll NoSQLCollection {database = "station", collection = "station"}
   - err .error
+  - (inline) string
+  - (inline) struct{ "name" string, string}
+  - query primitive.D
+  - |-
+    res NoSQLCursor {database = "station", collection = "station"} -->
+       R-TAINTED 2x = (STATION_DB.document, STATION_DB.NoSQLCursor)
+  - err .error
+  - st station.Station struct{ID string, Name string, StayTime int64}
+  - exists bool
+  - err .error
 (*station.StationServiceImpl).FindByID(ctx context.Context, id string) (station.Station struct{ID string, Name string, StayTime int64}, error):
- block 0 (Body):
-  - '[INLINE] stationDB NoSQLDatabase'
+ block 11 (IfDone):
+  - (inline) stationDB NoSQLDatabase
   - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - '[INLINE] ref <ctx context.Context> @ StationService'
+  - (inline) ref <ctx context.Context> @ StationService
   - ctx context.Context
-  - '[INLINE] ref <string> @ StationService'
+  - (inline) ref <string> @ StationService
   - id string
   - coll NoSQLCollection {database = "station", collection = "station"}
+  - err .error
+  - (inline) string
+  - (inline) struct{ "id" string, string}
+  - query primitive.D
+  - |-
+    res NoSQLCursor {database = "station", collection = "station"} -->
+       R-TAINTED 2x = (STATION_DB.document, STATION_DB.NoSQLCursor)
+  - err .error
+  - st station.Station struct{ID string, Name string, StayTime int64}
+  - exists bool
   - err .error
 (*station.StationServiceImpl).FindByIDs(ctx context.Context, ids []string) ([]station.Station struct{ID string, Name string, StayTime int64}, error):
  block 0 (Body):
-  - '[INLINE] stationDB NoSQLDatabase'
+  - (inline) stationDB NoSQLDatabase
   - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
   - ctx context.Context
   - ids []string
-  - '[INLINE] st station.Station struct{ID string, Name string, StayTime int64}'
+  - (inline) st station.Station struct{ID string, Name string, StayTime int64}
   - stations []station.Station struct{ID string, Name string, StayTime int64}
   - _ .error
-  - '[INLINE] st station.Station struct{ID string, Name string, StayTime int64}'
+  - (inline) st station.Station struct{ID string, Name string, StayTime int64}
   - stations []station.Station struct{ID string, Name string, StayTime int64}
 (*station.StationServiceImpl).FindID(ctx context.Context, name string) (string, error):
-  block 0 (Body):
-  - '[INLINE] stationDB NoSQLDatabase'
+  block 11 (IfDone):
+  - (inline) stationDB NoSQLDatabase
   - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - '[INLINE] ref <ctx context.Context> @ StationService'
+  - (inline) ref <ctx context.Context> @ StationService
   - ctx context.Context
-  - '[INLINE] ref <string> @ StationService'
+  - (inline) ref <string> @ StationService
   - name string
   - coll NoSQLCollection {database = "station", collection = "station"}
   - err .error
+  - (inline) string
+  - (inline) struct{ "name" string, string}
+  - query primitive.D
+  - |-
+    res NoSQLCursor {database = "station", collection = "station"} -->
+       R-TAINTED 2x = (STATION_DB.document, STATION_DB.NoSQLCursor)
+  - err .error
+  - st station.Station struct{ID string, Name string, StayTime int64}
+  - exists bool
+  - err .error
 (*station.StationServiceImpl).FindIDs(ctx context.Context, names []string) ([]string, error):
   block 0 (Body):
-  - '[INLINE] stationDB NoSQLDatabase'
+  - (inline) stationDB NoSQLDatabase
   - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
   - ctx context.Context
   - names []string
-  - '[INLINE] id string'
+  - (inline) id string
   - ids []string
   - _ .error
-  - '[INLINE] id string'
+  - (inline) id string
   - ids []string
 (*station.StationServiceImpl).UpdateStation(ctx context.Context, station station.Station struct{ID string, Name string, StayTime int64}) (bool, error):
- block 0 (Body):
-  - '[INLINE] stationDB NoSQLDatabase'
+ block 2 (IfDone):
+  - (inline) stationDB NoSQLDatabase
   - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
   - ctx context.Context
-  - '[INLINE] ID string'
-  - '[INLINE] ID string'
+  - (inline) ID string
+  - (inline) ID string
   - station station.Station struct{ID string, Name string, StayTime int64}
   - coll NoSQLCollection {database = "station", collection = "station"}
   - err .error
+  - (inline) "id" string
+  - (inline) "id" string
+  - (inline) struct{ "id" string, ID string}
+  - query primitive.D
 station.NewStationServiceImpl(ctx context.Context, db NoSQLDatabase) ((*station.StationServiceImpl struct{stationDB NoSQLDatabase}), error):
  block 0 (Body):
   - ctx context.Context

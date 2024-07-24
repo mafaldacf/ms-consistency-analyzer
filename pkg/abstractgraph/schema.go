@@ -40,30 +40,30 @@ func addUnfoldedEntriesToDatastore(variable variables.Variable, entryName string
 	}
 }
 
-func taintDataflow(app *app.App, variable variables.Variable, call *AbstractDatabaseCall, datastore *datastores.Datastore) {
-	fmt.Printf("\n------------- TAINT DATAFLOW FOR CALL %s @ %s -------------\n\n", call.GetName(), datastore.Name)
+func taintDataflowWriteOp(app *app.App, variable variables.Variable, call *AbstractDatabaseCall, datastore *datastores.Datastore) {
+	fmt.Printf("\n------------- TAINT WRITE DATAFLOW FOR CALL %s @ %s -------------\n\n", call.GetName(), datastore.Name)
 	fmt.Println()
 
 	// taint direct dataflow
 	rootField := datastore.Schema.GetField(variable.GetType().GetName())
-	variable.GetVariableInfo().SetDirectDataflow(datastore.Name, call.Service, variable, rootField)
-	logger.Logger.Debugf("[TAINT DIRECT] %s ---> (%02d) %s [%s]", rootField.GetFullName(), variable.GetId(), variable.String(), utils.GetType(variable))
+	variable.GetVariableInfo().SetDirectDataflow(datastore.Name, call.Service, variable, rootField, true)
+	logger.Logger.Debugf("[TAINT WRITE DIRECT] %s ---> (%02d) %s [%s]", rootField.GetFullName(), variable.GetId(), variable.String(), utils.GetType(variable))
 	if !slices.Contains(app.TaintedVariables[rootField.GetFullName()], variable) {
 		app.TaintedVariables[rootField.GetFullName()] = append(app.TaintedVariables[rootField.GetFullName()], variable)
 	}
 	var taintedVariables []variables.Variable
 
 	// taint indirect dataflow
-	vars, names := variables.GetReversedNestedFieldsAndNames(variable, true)
+	vars, names := variables.GetReversedNestedFieldsAndNames(variable, true, "")
 
 	for i, v := range vars {
 		dbField := datastore.Schema.GetField(names[i])
 		deps := variables.GetIndirectDependenciesWithCurrent(v)
-		logger.Logger.Infof("[TENTATIVE TAINT VAR] [%s] (%02d) (NUM DEPS = %d) %s", utils.GetType(v), v.GetId(), len(deps), v.LongString())
+		logger.Logger.Infof("[TENTATIVE TAINT WRITE VAR] [%s] (%02d) (NUM DEPS = %d) %s", utils.GetType(v), v.GetId(), len(deps), v.LongString())
 		for _, dep := range deps {
 			if !slices.Contains(taintedVariables, dep) {
-				v.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, dep, variable, dbField)
-				logger.Logger.Debugf("\t\t[TAINT INDIRECT] %s ---> (%02d) %s [%s]", dbField.GetFullName(), dep.GetId(), dep.String(), utils.GetType(dep))
+				v.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, dep, variable, dbField, true)
+				logger.Logger.Debugf("\t\t[TAINT WRITE INDIRECT] %s ---> (%02d) %s [%s]", dbField.GetFullName(), dep.GetId(), dep.String(), utils.GetType(dep))
 
 				taintedVariables = append(taintedVariables, dep)
 				app.AddTaintedVariableIfNotExists(dbField.GetFullName(), dep)
@@ -73,16 +73,82 @@ func taintDataflow(app *app.App, variable variables.Variable, call *AbstractData
 	fmt.Println()
 }
 
+func taintDataflowReadOp(app *app.App, variable variables.Variable, call *AbstractDatabaseCall, datastore *datastores.Datastore, fieldName string) {
+	fmt.Printf("\n------------- TAINT READ DATAFLOW FOR CALL %s @ %s -------------\n\n", call.GetName(), datastore.Name)
+	fmt.Println()
+
+	// taint direct dataflow
+	rootField := datastore.Schema.GetField(fieldName)
+	variable.GetVariableInfo().SetDirectDataflow(datastore.Name, call.Service, variable, rootField, false)
+	logger.Logger.Debugf("[TAINT READ DIRECT] %s ---> (%02d) %s [%s]", rootField.GetFullName(), variable.GetId(), variable.String(), utils.GetType(variable))
+	if !slices.Contains(app.TaintedVariables[rootField.GetFullName()], variable) {
+		app.TaintedVariables[rootField.GetFullName()] = append(app.TaintedVariables[rootField.GetFullName()], variable)
+	}
+	var taintedVariables []variables.Variable
+
+	// taint indirect dataflow
+	rootUnfoldedField := datastore.Schema.GetRootUnfoldedField()
+	vars, names := variables.GetReversedNestedFieldsAndNames(variable, true, rootUnfoldedField.GetName())
+
+	for i, v := range vars {
+		dbField := datastore.Schema.GetField(names[i])
+		deps := variables.GetIndirectDependenciesWithCurrent(v)
+		logger.Logger.Infof("[TENTATIVE TAINT READ VAR] [%s] (%02d) (NUM DEPS = %d) %s", utils.GetType(v), v.GetId(), len(deps), v.LongString())
+		for _, dep := range deps {
+			if !slices.Contains(taintedVariables, dep) {
+				v.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, dep, variable, dbField, false)
+				logger.Logger.Debugf("\t\t[TAINT READ INDIRECT] %s ---> (%02d) %s [%s]", dbField.GetFullName(), dep.GetId(), dep.String(), utils.GetType(dep))
+
+				taintedVariables = append(taintedVariables, dep)
+				app.AddTaintedVariableIfNotExists(dbField.GetFullName(), dep)
+			}
+		}
+	}
+	fmt.Println()
+}
+
+func taintDataflowReadOpUnnamed(app *app.App, variable variables.Variable, call *AbstractDatabaseCall, datastore *datastores.Datastore, fieldName string) {
+	fmt.Printf("\n------------- TAINT READ UNNAMED DATAFLOW FOR CALL %s @ %s -------------\n\n", call.GetName(), datastore.Name)
+	fmt.Println()
+
+	// taint direct dataflow
+	rootField := datastore.Schema.GetField(fieldName)
+	// variable is expected to be e.g. a cursor for nosql
+	variable.GetVariableInfo().SetDirectDataflow(datastore.Name, call.Service, variable, rootField, false)
+	logger.Logger.Debugf("[TAINT READ DIRECT] %s ---> (%02d) %s [%s]", rootField.GetFullName(), variable.GetId(), variable.String(), utils.GetType(variable))
+	if !slices.Contains(app.TaintedVariables[rootField.GetFullName()], variable) {
+		app.TaintedVariables[rootField.GetFullName()] = append(app.TaintedVariables[rootField.GetFullName()], variable)
+	}
+	
+	var taintedVariables []variables.Variable
+	deps := variables.GetIndirectDependenciesWithCurrent(variable)
+	logger.Logger.Infof("[TENTATIVE TAINT READ UNNAMED VAR] [%s] (%02d) (NUM DEPS = %d) %s", utils.GetType(variable), variable.GetId(), len(deps), variable.LongString())
+	for _, dep := range deps {
+		if !slices.Contains(taintedVariables, dep) {
+			variable.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, dep, variable, &datastores.Entry{
+				Name: dep.GetType().GetName(),
+				Type: dep.GetType().GetName(),
+				Datastore: datastore.Name,
+			}, false)
+			logger.Logger.Debugf("\t\t[TAINT READ UNNAMED INDIRECT] <unnamed> ---> (%02d) %s [%s]", dep.GetId(), dep.String(), utils.GetType(dep))
+
+			taintedVariables = append(taintedVariables, dep)
+			app.AddTaintedVariableIfNotExists(dep.GetType().GetName(), dep)
+		}
+	}
+	fmt.Println()
+}
+
 func referenceTaintedDataflow(writtenVariable variables.Variable, datastore *datastores.Datastore) {
 	fmt.Printf("\n------------- REFERENCE TAINTED DATAFLOW FOR WRITTEN VARIABLE %s @ %s -------------\n\n", writtenVariable.GetType().GetName(), datastore.Name)
 	fmt.Println()
-	vars, names := variables.GetReversedNestedFieldsAndNames(writtenVariable, true)
+	vars, names := variables.GetReversedNestedFieldsAndNames(writtenVariable, true, "")
 	for i, variable := range vars {
 		dbField := datastore.Schema.GetField(names[i])
 		deps := variables.GetIndirectDependenciesWithCurrent(variable)
 		logger.Logger.Infof("[TENTATIVE REF TAINTED VAR] [%s] (%02d) %s", utils.GetType(variable), variable.GetId(), variable.LongString())
 		for _, dep := range deps {
-			for _, df := range dep.GetVariableInfo().GetAllDataflows() {
+			for _, df := range dep.GetVariableInfo().GetAllWriteDataflows() {
 				if df.Datastore != datastore.Name {
 					datastore.Schema.AddForeignReferenceToField(dbField, df.Field)
 					logger.Logger.Debugf("\t\t[REF TAINTED DEP] (%s -> %s) from %s [%s]", dbField.GetFullName(), df.Field.GetFullName(), dep.String(), utils.GetType(dep))
@@ -93,136 +159,54 @@ func referenceTaintedDataflow(writtenVariable variables.Variable, datastore *dat
 	fmt.Println()
 }
 
-func computeForeignDependencySets(parentSet *DependencySet, v variables.Variable) []*DependencySet {
-	var sets []*DependencySet
-	set := &DependencySet{
-		Variable: v,
-	}
-	sets = append(sets, set)
-	logger.Logger.Debugf("visiting %s (%s)", v.String(), utils.GetType(v))
-	appendDataflowDependencies := func(dep variables.Variable, isRef bool) {
-		logger.Logger.Infof("\t\tgetting data flow dependencies for %s (%s)", dep.String(), utils.GetType(dep))
-		for _, df := range dep.GetVariableInfo().Dataflows {
-			if df.DirectWrite {
-				logger.Logger.Infof("\t\t\tappending dataflow: %s", df.String())
-				name := dep.GetType().GetName()
-				if compositeVariable, ok := set.Variable.(*variables.CompositeVariable); ok && parentSet != nil {
-					logger.Logger.Warnf("skipping composite variable %s", compositeVariable.String())
-					parentSet.Dependencies = append(parentSet.Dependencies, dep)
-					parentSet.DependencyNames = append(set.DependencyNames, name)
-				} else {
-					set.Dependencies = append(set.Dependencies, dep)
-					set.DependencyNames = append(set.DependencyNames, name)
-				}
+var writtenDatastores = make(map[string]bool, 0)
 
-			} else {
-				name := df.IndirectSource.GetType().GetName()
-				if isRef {
-					name = v.GetType().GetName() + "." + name
-					logger.Logger.Infof("\t\t\t appending dataflow: %s", df.String())
-				} else {
-					logger.Logger.Infof("\t\t\t appending (ref) dataflow: %s", df.String())
-				}
-				if compositeVariable, ok := set.Variable.(*variables.CompositeVariable); ok && parentSet != nil {
-					logger.Logger.Warnf("skipping composite variable %s", compositeVariable.String())
-					parentSet.Dependencies = append(parentSet.Dependencies, dep)
-					parentSet.DependencyNames = append(set.DependencyNames, name)
-				} else {
-					set.Dependencies = append(set.Dependencies, dep)
-					set.DependencyNames = append(set.DependencyNames, name)
-				}
-			}
-		}
-	}
-	if v.GetVariableInfo().HasReference() {
-		appendDataflowDependencies(v.GetVariableInfo().GetReference(), false)
-		sets = append(sets, computeForeignDependencySets(set, v.GetVariableInfo().GetReference())...)
-	}
-	for _, dep := range v.GetDependencies() {
-		if !slices.Contains(set.Dependencies, dep) {
-			appendDataflowDependencies(dep, true)
-			sets = append(sets, computeForeignDependencySets(set, dep)...)
-		}
-	}
-
-	return sets
-}
-
-func searchForeignDataflow(variable variables.Variable, datastore *datastores.Datastore, app *app.App) {
-	fmt.Printf("\n------------- SEARCH FOREIGN DATAFLOW @ %s -------------\n\n", datastore.Name)
-	sets := computeForeignDependencySets(nil, variable)
-	for _, set := range sets {
-		logger.Logger.Debugf("------ visiting set for %v ------", set.Variable.String())
-		for _, v := range set.Dependencies {
-			var foreignVariables []variables.Variable
-			var foreignDatastores []datastores.DatabaseInstance
-
-			for _, df := range v.GetVariableInfo().GetForeignDataflows(datastore) {
-				logger.Logger.Infof("\t\t foreign dataflow: %s", df.String())
-				foreignVariables = append(foreignVariables, df.GetVariable())
-				foreignDatastores = append(foreignDatastores, app.Databases[df.GetDatastore()])
-			}
-
-			for i, foreignVariable := range foreignVariables {
-				foreignDatastore := foreignDatastores[i]
-				logger.Logger.Infof("\t\t\t foreign variable %s (id = %d) @ %s", foreignVariable.String(), foreignVariable.GetId(), foreignDatastore.GetName())
-				foreignField := foreignDatastore.GetDatastore().Schema.GetFieldById(foreignVariable.GetId())
-				if foreignField == nil {
-					foreignField = foreignDatastore.GetDatastore().Schema.GetField(foreignVariable.GetType().GetName())
-				}
-
-				datastore.Schema.AddFKReference(
-					set.Variable.GetVariableInfo().Name,
-					foreignVariable.GetType().String(),
-					foreignField,
-					foreignDatastore.GetDatastore().Name,
-				)
-			}
-			fmt.Println()
-		}
-	}
-}
 func BuildSchema(app *app.App, node AbstractNode) {
-	/* if dbCall, ok := node.(*AbstractDatabaseCall); ok && dbCall.ParsedCall.Method.IsRead() {
+	if dbCall, ok := node.(*AbstractDatabaseCall); ok && dbCall.ParsedCall.Method.IsRead() {
 		datastore := dbCall.DbInstance.GetDatastore()
+		if found := writtenDatastores[datastore.Name]; !found {
+			logger.Logger.Warnf("[SCHEMA] skipping read for abstract node: %s", dbCall.String())
+			return
+		}
 		params := dbCall.Params
+		returns := dbCall.Returns
 		switch datastore.Type {
 		case datastores.Queue:
 			msg := params[1]
-			attachSinkToDataflow(app, msg, dbCall, datastore)
+			taintDataflowReadOp(app, msg, dbCall, datastore, "message")
+		case datastores.NoSQL:
+			doc := returns[0]
+			taintDataflowReadOpUnnamed(app, doc, dbCall, datastore, "document")
 		}
 
-	} */
+	}
 	if dbCall, ok := node.(*AbstractDatabaseCall); ok && dbCall.ParsedCall.Method.IsWrite() {
 		datastore := dbCall.DbInstance.GetDatastore()
+		if found := writtenDatastores[datastore.Name]; !found {
+			writtenDatastores[datastore.Name] = true
+		}
 		params := dbCall.Params
 		logger.Logger.Infof("[SCHEMA] [%s] building schema based on abstract node (%s)", datastore.Name, dbCall.GetName())
-		
-		switch datastore.Type {
-		case datastores.Cache:
-			key := params[1]
-			value := params[2]
-			addEntryToDatastore(key, "key", datastore)
-			addUnfoldedEntriesToDatastore(value, "value", datastore)
 
-			//taintDataflow(app, key, dbCall, datastore)
-			taintDataflow(app, value, dbCall, datastore)
-			//logger.Logger.Fatal("exiting...")
-			//searchForeignDataflow(key, datastore, app)
-			//searchForeignDataflow(value, datastore, app)
-			referenceTaintedDataflow(key, datastore)
-			referenceTaintedDataflow(value, datastore)
+		switch datastore.Type {
+		case datastores.Queue:
+			msg := params[1]
+			addUnfoldedEntriesToDatastore(msg, "message", datastore)
+			taintDataflowWriteOp(app, msg, dbCall, datastore)
+
+			//searchForeignDataflow(msg, datastore, app)
+			referenceTaintedDataflow(msg, datastore)
 
 		case datastores.NoSQL:
 			doc := params[1]
 			addUnfoldedEntriesToDatastore(doc, "document", datastore)
-			for i, param := range params  {
+			for i, param := range params {
 				logger.Logger.Debugf("BUILD SCHEMA!!! (%d) (%s)", i, utils.GetType(param))
 				if _, ok := param.(*variables.StructVariable); ok {
-					variables.GetReversedNestedFieldsAndNames(param, true)
+					variables.GetReversedNestedFieldsAndNames(param, true, "")
 				}
 			}
-			taintDataflow(app, doc, dbCall, datastore)
+			taintDataflowWriteOp(app, doc, dbCall, datastore)
 
 			//searchForeignDataflow(doc, datastore, app)
 			referenceTaintedDataflow(doc, datastore)
@@ -230,18 +214,24 @@ func BuildSchema(app *app.App, node AbstractNode) {
 		case datastores.SQL:
 			doc := params[1]
 			addUnfoldedEntriesToDatastore(doc, "document", datastore)
-			taintDataflow(app, doc, dbCall, datastore)
+			taintDataflowWriteOp(app, doc, dbCall, datastore)
 
 			//searchForeignDataflow(doc, datastore, app)
 			referenceTaintedDataflow(doc, datastore)
 
-		case datastores.Queue:
-			msg := params[1]
-			addUnfoldedEntriesToDatastore(msg, "message", datastore)
-			taintDataflow(app, msg, dbCall, datastore)
+		case datastores.Cache:
+			key := params[1]
+			value := params[2]
+			addEntryToDatastore(key, "key", datastore)
+			addUnfoldedEntriesToDatastore(value, "value", datastore)
 
-			//searchForeignDataflow(msg, datastore, app)
-			referenceTaintedDataflow(msg, datastore)
+			//taintDataflow(app, key, dbCall, datastore)
+			taintDataflowWriteOp(app, value, dbCall, datastore)
+			//logger.Logger.Fatal("exiting...")
+			//searchForeignDataflow(key, datastore, app)
+			//searchForeignDataflow(value, datastore, app)
+			referenceTaintedDataflow(key, datastore)
+			referenceTaintedDataflow(value, datastore)
 		}
 
 	}

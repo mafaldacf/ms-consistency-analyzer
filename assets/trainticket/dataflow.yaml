@@ -16,6 +16,10 @@ CONFIG_DB.Config:
 CONFIG_DB.Config.Name:
 - write <Name string (BasicVariable)> from <conf config.Config struct{Name string, Value string, Description string} (StructVariable)>
 - write <Name string (FieldVariable)> from <conf config.Config struct{Name string, Value string, Description string} (StructVariable)>
+CONFIG_DB.document:
+- read <res NoSQLCursor {database = "config", collection = "config"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "config", collection = "config"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "config", collection = "config"} (BlueprintBackendVariable)>
 CONSIGNPRICE_DB.ConsignPrice:
 - write <priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64} (StructVariable)>
 - write <priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64} (StructVariable)>
@@ -23,6 +27,16 @@ CONSIGNPRICE_DB.ConsignPrice:
 CONSIGNPRICE_DB.ConsignPrice.Index:
 - write <0 int (BasicVariable)> from <priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64} (StructVariable)>
 - write <Index int64 (FieldVariable)> from <priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64} (StructVariable)>
+CONSIGNPRICE_DB.document:
+- read <res NoSQLCursor {database = "consign", collection = "consign"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "consign", collection = "consign"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "consign", collection = "consign"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "consign", collection = "consign"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "consign", collection = "consign"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "consign", collection = "consign"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "consign", collection = "consign"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "consign", collection = "consign"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "consign", collection = "consign"} (BlueprintBackendVariable)>
 CONTACTS_DB.Contact:
 - write <contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} (StructVariable)>
 - write <contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} (StructVariable)> from
@@ -49,6 +63,79 @@ MONEY_DB.Money.Price:
 MONEY_DB.Money.UserID:
 - write <UserID string (BasicVariable)> from <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>
 - write <UserID string (FieldVariable)> from <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>
+NoSQLCursor:
+- read <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "config", collection = "config"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "config", collection = "config"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "config", collection = "config"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "consign", collection = "consign"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "consign", collection = "consign"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "consign", collection = "consign"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "consign", collection = "consign"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "consign", collection = "consign"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "consign", collection = "consign"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "consign", collection = "consign"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "consign", collection = "consign"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "consign", collection = "consign"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "trainfood", collection = "trainfood"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "trainfood", collection = "trainfood"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "trainfood", collection = "trainfood"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "train", collection = "train"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "train", collection = "train"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "train", collection = "train"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "train", collection = "train"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "train", collection = "train"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "train", collection = "train"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
 PAYMENTS_DB.Payment:
 - write <payment payment.Payment struct{ID string, OrderID string, UserID string, Price string} (StructVariable)>
 - write <payment payment.Payment struct{ID string, OrderID string, UserID string, Price string} (StructVariable)> from <payment payment.Payment struct{ID string, OrderID string, UserID string, Price string} (StructVariable)>
@@ -61,6 +148,19 @@ PRICE_DB.PriceConfig:
 PRICE_DB.PriceConfig.ID:
 - write <ID string (BasicVariable)> from <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructVariable)>
 - write <ID string (FieldVariable)> from <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructVariable)>
+PRICE_DB.document:
+- read <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} (BlueprintBackendVariable)>
 ROUTE_DB.Route:
 - write <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
 - write <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
@@ -82,6 +182,22 @@ ROUTE_DB.Route.Stations:
 - write <StationList string (BasicVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
 - write <"," string (BasicVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
 - write <Stations []string (FieldVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+ROUTE_DB.document:
+- read <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "route", collection = "route"} (BlueprintBackendVariable)>
 STATION_DB.Station:
 - write <station station.Station struct{ID string, Name string, StayTime int64} (StructVariable)>
 - write <station station.Station struct{ID string, Name string, StayTime int64} (StructVariable)>
@@ -89,24 +205,61 @@ STATION_DB.Station:
 STATION_DB.Station.ID:
 - write <ID string (BasicVariable)> from <station station.Station struct{ID string, Name string, StayTime int64} (StructVariable)>
 - write <ID string (FieldVariable)> from <station station.Station struct{ID string, Name string, StayTime int64} (StructVariable)>
+STATION_DB.document:
+- read <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "station", collection = "station"} (BlueprintBackendVariable)>
 STATIONFOOD_DB.StationFoodStore:
 - write <store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}} (StructVariable)>
 - write <store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}} (StructVariable)> from <store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}} (StructVariable)>
 STATIONFOOD_DB.StationFoodStore.ID:
 - write <ID string (BasicVariable)> from <store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}} (StructVariable)>
 - write <ID string (FieldVariable)> from <store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}} (StructVariable)>
+STATIONFOOD_DB.document:
+- read <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "stationfood", collection = "stationfood"} (BlueprintBackendVariable)>
 TRAIN_DB.TrainType:
 - write <tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} (StructVariable)>
 - write <tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} (StructVariable)> from <tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} (StructVariable)>
 TRAIN_DB.TrainType.Name:
 - write <Name string (BasicVariable)> from <tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} (StructVariable)>
 - write <Name string (FieldVariable)> from <tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} (StructVariable)>
+TRAIN_DB.document:
+- read <res NoSQLCursor {database = "train", collection = "train"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "train", collection = "train"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "train", collection = "train"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "train", collection = "train"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "train", collection = "train"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "train", collection = "train"} (BlueprintBackendVariable)>
 TRAINFOOD_DB.TrainFood:
 - write <tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}} (StructVariable)>
 - write <tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}} (StructVariable)> from <tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}} (StructVariable)>
 TRAINFOOD_DB.TrainFood.TripID:
 - write <TripID string (BasicVariable)> from <tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}} (StructVariable)>
 - write <TripID string (FieldVariable)> from <tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}} (StructVariable)>
+TRAINFOOD_DB.document:
+- read <res NoSQLCursor {database = "trainfood", collection = "trainfood"} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = "trainfood", collection = "trainfood"} (BlueprintBackendVariable)>
+  from <res NoSQLCursor {database = "trainfood", collection = "trainfood"} (BlueprintBackendVariable)>
 USER_DB.User:
 - write <user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string} (StructVariable)>
 - write <user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string} (StructVariable)> from

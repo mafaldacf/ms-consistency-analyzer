@@ -316,7 +316,13 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 	case *ast.TypeAssertExpr:
 		variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 		assertedType := lookup.ComputeTypeForAstExpr(service.File, e.Type)
-		variable.(*variables.InterfaceVariable).UpgradeToAssertedType(assertedType)
+		if interfaceVariable, ok := variable.(*variables.InterfaceVariable); ok {
+			interfaceVariable.UpgradeToAssertedType(assertedType)
+			newVariable := lookup.CreateVariableFromType(variable.GetVariableInfo().GetName(), variable.GetType())
+			newVariable.UpgradeFromPreviousInterface(interfaceVariable)
+		} else {
+			logger.Logger.Fatalf("[CFG LOOKUP] unexpected type (%s) for variable (%s)", utils.GetType(variable), variable.String())
+		}
 	case *ast.IndexExpr:
 		variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 		if variable == nil {

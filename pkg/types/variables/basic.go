@@ -68,3 +68,9 @@ func (v *BasicVariable) GetUnassaignedVariables() []Variable {
 	}
 	return variables
 }
+
+func (v *BasicVariable) UpgradeFromPreviousInterface(interfaceVariable *InterfaceVariable) {
+	v.GetVariableInfo().Reference = interfaceVariable.GetVariableInfo().Reference
+	v.GetVariableInfo().Dataflows = interfaceVariable.GetVariableInfo().Dataflows
+	v.GetVariableInfo().IndirectDataflows = interfaceVariable.GetVariableInfo().IndirectDataflows
+}

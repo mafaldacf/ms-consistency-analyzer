@@ -161,12 +161,12 @@ func (v *StructVariable) GetUnassaignedVariables() []Variable {
 	return variables
 }
 
-func (t *StructVariable) GetNestedFieldVariables(prefix string) ([]Variable, []string) {
+func (v *StructVariable) GetNestedFieldVariables(prefix string) ([]Variable, []string) {
 	var nestedVariables []Variable
 	var nestedIDs []string
 
-	logger.Logger.Debugf("[VARS STRUCT] found (%d) field VARIABLES for (%s)", len(t.Fields), t.String())
-	for _, f := range t.Fields {
+	logger.Logger.Debugf("[VARS STRUCT] found (%d) field VARIABLES for (%s)", len(v.Fields), v.String())
+	for _, f := range v.Fields {
 		if fieldVariable, ok := f.(*FieldVariable); ok {
 			nestedFieldVariables, nestedFieldIDs := fieldVariable.GetNestedFieldVariables(prefix)
 			nestedVariables = append(nestedVariables, nestedFieldVariables...)
@@ -178,11 +178,11 @@ func (t *StructVariable) GetNestedFieldVariables(prefix string) ([]Variable, []s
 	return nestedVariables, nestedIDs
 }
 
-func (t *StructVariable) GetNestedFieldVariablesWithReferences(prefix string) ([]Variable, []string) {
-	logger.Logger.Debugf("HAS REFERENCE????? %v", t.GetVariableInfo().GetReference())
-	nestedVariables, nestedIDs := t.GetNestedFieldVariables(prefix)
-	if reference := t.GetVariableInfo().GetReference(); reference != nil {
-		logger.Logger.Debugf("HEREEEEE FOR REFERENCE %s", reference.String())
+func (v *StructVariable) GetNestedFieldVariablesWithReferences(prefix string) ([]Variable, []string) {
+	logger.Logger.Debugf("[VARS STRUCT] HAS REFERENCE????? %v", v.GetVariableInfo().GetReference())
+	nestedVariables, nestedIDs := v.GetNestedFieldVariables(prefix)
+	if reference := v.GetVariableInfo().GetReference(); reference != nil {
+		logger.Logger.Debugf("[VARS STRUCT] HEREEEEE FOR REFERENCE %s", reference.String())
 		nestedVariablesRef, nestedIDsRef := reference.Variable.(*StructVariable).GetNestedFieldVariablesWithReferences(prefix)
 		nestedVariables = append(nestedVariables, nestedVariablesRef...)
 		nestedIDs = append(nestedIDs, nestedIDsRef...)
@@ -190,11 +190,11 @@ func (t *StructVariable) GetNestedFieldVariablesWithReferences(prefix string) ([
 	return nestedVariables, nestedIDs
 }
 
-func (t *StructVariable) CopyFrom(target *StructVariable) {
+func (v *StructVariable) CopyFrom(target *StructVariable) {
 	logger.Logger.Debugf("[VARS STRUCT COPY] copying from %s", target.LongString())
 	for name, targetField := range target.Fields {
-		if _, ok := t.Fields[name]; !ok {
-			t.Fields[name] = targetField
+		if _, ok := v.Fields[name]; !ok {
+			v.Fields[name] = targetField
 		}
 	}
 }

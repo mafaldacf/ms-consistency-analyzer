@@ -1,9 +1,15 @@
 (*DeliveryServiceImpl).Run(ctx context.Context):
-  block 0 (Body):
-  - '[INLINE] delQ Queue'
-  - '[INLINE] db NoSQLDatabase'
+  block 14 (IfDone):
+  - (inline) db NoSQLDatabase
+  - (inline) delQ Queue
   - d (*delivery.DeliveryServiceImpl struct{db NoSQLDatabase, delQ Queue})
   - ctx context.Context
+  - delivery delivery.Delivery struct{ID string, OrderID string, FoodName string, StoreName string, StationName string}
+  - didpop bool
+  - err .error
+  - coll NoSQLCollection {database = "delivery", collection = "delivery"}
+  - err .error
+  - err .error
 .NewDeliveryServiceImpl(ctx context.Context, queue Queue, db NoSQLDatabase):
   block 0 (Body):
   - ctx context.Context

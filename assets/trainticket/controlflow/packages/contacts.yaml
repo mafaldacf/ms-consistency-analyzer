@@ -1,63 +1,117 @@
 ? (*contacts.ContactsServiceImpl).CreateContacts(ctx context.Context, contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}) error:
- block 0 (Body):
-  - '[INLINE] contactsDB NoSQLDatabase'
+ block 11 (IfDone):
+  - (inline) contactsDB NoSQLDatabase
   - c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
   - ctx context.Context
-  - '[INLINE] DocumentType int --> (TAINTED 1x) --> [CONTACTS_DB.Contact.DocumentType]'
-  - '[INLINE] DocumentType int --> (TAINTED 1x) --> [CONTACTS_DB.Contact.DocumentType]'
-  - '[INLINE] DocumentNumber string --> (TAINTED 1x) --> [CONTACTS_DB.Contact.DocumentNumber]'
-  - '[INLINE] DocumentNumber string --> (TAINTED 1x) --> [CONTACTS_DB.Contact.DocumentNumber]'
-  - '[INLINE] AccountID string --> (TAINTED 1x) --> [CONTACTS_DB.Contact.AccountID]'
-  - '[INLINE] AccountID string --> (TAINTED 1x) --> [CONTACTS_DB.Contact.AccountID]'
-  - contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} --> (TAINTED 1x) --> [CONTACTS_DB.Contact]
+  - |-
+    (inline) DocumentType int -->
+       W-TAINTED 1x = (CONTACTS_DB.Contact.DocumentType)
+  - |-
+    (inline) DocumentType int -->
+       W-TAINTED 1x = (CONTACTS_DB.Contact.DocumentType)
+  - |-
+    (inline) DocumentNumber string -->
+       W-TAINTED 1x = (CONTACTS_DB.Contact.DocumentNumber)
+  - |-
+    (inline) DocumentNumber string -->
+       W-TAINTED 1x = (CONTACTS_DB.Contact.DocumentNumber)
+  - |-
+    (inline) AccountID string -->
+       W-TAINTED 1x = (CONTACTS_DB.Contact.AccountID)
+  - |-
+    (inline) AccountID string -->
+       W-TAINTED 1x = (CONTACTS_DB.Contact.AccountID)
+  - |-
+    contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} -->
+       W-TAINTED 1x = (CONTACTS_DB.Contact)
   - coll NoSQLCollection {database = "contacts", collection = "contacts"}
   - err .error
+  - (inline) "documenttype" string
+  - (inline) "documenttype" string
+  - (inline) struct{ "documenttype" string, DocumentType int}
+  - (inline) "documentnumber" string
+  - (inline) "documentnumber" string
+  - (inline) struct{ "documentnumber" string, DocumentNumber string}
+  - (inline) "accountid" string
+  - (inline) "accountid" string
+  - (inline) struct{ "accountid" string, AccountID string}
+  - query primitive.D
+  - res NoSQLCursor {database = "contacts", collection = "contacts"}
+  - err .error
+  - existing contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
+  - exists bool
+  - err .error
 (*contacts.ContactsServiceImpl).Delete(ctx context.Context, contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}) error:
- block 0 (Body):
-  - '[INLINE] contactsDB NoSQLDatabase'
+ block 2 (IfDone):
+  - (inline) contactsDB NoSQLDatabase
   - c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
   - ctx context.Context
-  - '[INLINE] ID string'
-  - '[INLINE] ID string'
+  - (inline) ID string
+  - (inline) ID string
   - contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
   - coll NoSQLCollection {database = "contacts", collection = "contacts"}
   - err .error
+  - (inline) "id" string
+  - (inline) "id" string
+  - (inline) struct{ "id" string, ID string}
+  - query primitive.D
 (*contacts.ContactsServiceImpl).FindContactsByAccountId(ctx context.Context, id string) ([]contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}, error):
- block 0 (Body):
-  - '[INLINE] contactsDB NoSQLDatabase'
+ block 8 (IfDone):
+  - (inline) contactsDB NoSQLDatabase
   - c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
   - ctx context.Context
   - id string
   - account_contacts []contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
   - coll NoSQLCollection {database = "contacts", collection = "contacts"}
   - err .error
+  - (inline) string
+  - (inline) struct{ "accountid" string, string}
+  - query primitive.D
+  - res NoSQLCursor {database = "contacts", collection = "contacts"}
+  - err .error
+  - err .error
 (*contacts.ContactsServiceImpl).FindContactsById(ctx context.Context, id string)
   (contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}, error):
- block 0 (Body):
-  - '[INLINE] contactsDB NoSQLDatabase'
+ block 11 (IfDone):
+  - (inline) contactsDB NoSQLDatabase
   - c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
   - ctx context.Context
   - id string
   - coll NoSQLCollection {database = "contacts", collection = "contacts"}
   - err .error
+  - (inline) string
+  - (inline) struct{ "id" string, string}
+  - query primitive.D
+  - res NoSQLCursor {database = "contacts", collection = "contacts"}
+  - err .error
+  - contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
+  - exists bool
+  - err .error
 (*contacts.ContactsServiceImpl).GetAllContacts(ctx context.Context) ([]contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}, error):
- block 0 (Body):
-  - '[INLINE] contactsDB NoSQLDatabase'
+ block 8 (IfDone):
+  - (inline) contactsDB NoSQLDatabase
   - c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
   - ctx context.Context
   - all_contacts []contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
   - coll NoSQLCollection {database = "contacts", collection = "contacts"}
   - err .error
+  - res NoSQLCursor {database = "contacts", collection = "contacts"}
+  - err .error
+  - err .error
 (*contacts.ContactsServiceImpl).Modify(ctx context.Context, contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}) (bool, error):
- block 0 (Body):
-  - '[INLINE] contactsDB NoSQLDatabase'
+ block 2 (IfDone):
+  - (inline) contactsDB NoSQLDatabase
   - c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
   - ctx context.Context
-  - '[INLINE] ID string'
-  - '[INLINE] ID string'
+  - (inline) ID string
+  - (inline) ID string
   - contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
   - coll NoSQLCollection {database = "contacts", collection = "contacts"}
   - err .error
+  - (inline) "id" string
+  - (inline) "id" string
+  - (inline) struct{ "id" string, ID string}
+  - query primitive.D
 contacts.NewContactsServiceImpl(ctx context.Context, db NoSQLDatabase) ((*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase}), error):
  block 0 (Body):
   - ctx context.Context

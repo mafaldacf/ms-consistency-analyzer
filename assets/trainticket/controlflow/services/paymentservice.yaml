@@ -1,62 +1,98 @@
 ? (*PaymentServiceImpl).AddMoney(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}):
- block 0 (Body):
-  - '[INLINE] moneyDB NoSQLDatabase'
-  - '[INLINE] paymentDB NoSQLDatabase'
+ block 2 (IfDone):
+  - (inline) paymentDB NoSQLDatabase
+  - (inline) moneyDB NoSQLDatabase
   - p (*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase})
   - ctx context.Context
-  - '[INLINE] Price string --> (TAINTED 1x) --> [MONEY_DB.Money.Price]'
-  - '[INLINE] Price string'
-  - '[INLINE] UserID string --> (TAINTED 1x) --> [MONEY_DB.Money.UserID]'
-  - '[INLINE] UserID string'
+  - |-
+    (inline) Price string -->
+       W-TAINTED 1x = (MONEY_DB.Money.Price)
+  - (inline) Price string
+  - |-
+    (inline) UserID string -->
+       W-TAINTED 1x = (MONEY_DB.Money.UserID)
+  - (inline) UserID string
   - payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}
-  - '[INLINE] string --> (TAINTED 1x) --> [MONEY_DB.Money.ID]'
-  - '[INLINE] ID string --> (TAINTED 1x) --> [MONEY_DB.Money.ID]'
-  - '[INLINE] Price string --> (TAINTED 1x) --> [MONEY_DB.Money.Price]'
-  - '[INLINE] Price string --> (TAINTED 1x) --> [MONEY_DB.Money.Price]'
-  - '[INLINE] UserID string --> (TAINTED 1x) --> [MONEY_DB.Money.UserID]'
-  - '[INLINE] UserID string --> (TAINTED 1x) --> [MONEY_DB.Money.UserID]'
-  - m payment.Money struct{ID string, UserID string, Price string} --> (TAINTED 1x)
-    --> [MONEY_DB.Money]
+  - |-
+    (inline) string -->
+       W-TAINTED 1x = (MONEY_DB.Money.ID)
+  - |-
+    (inline) ID string -->
+       W-TAINTED 1x = (MONEY_DB.Money.ID)
+  - |-
+    (inline) Price string -->
+       W-TAINTED 1x = (MONEY_DB.Money.Price)
+  - |-
+    (inline) Price string -->
+       W-TAINTED 1x = (MONEY_DB.Money.Price)
+  - |-
+    (inline) UserID string -->
+       W-TAINTED 1x = (MONEY_DB.Money.UserID)
+  - |-
+    (inline) UserID string -->
+       W-TAINTED 1x = (MONEY_DB.Money.UserID)
+  - |-
+    m payment.Money struct{ID string, UserID string, Price string} -->
+       W-TAINTED 1x = (MONEY_DB.Money)
   - coll NoSQLCollection {database = "payment", collection = "money"}
   - err .error
 (*PaymentServiceImpl).Cleanup(ctx context.Context):
-  block 0 (Body):
-  - '[INLINE] moneyDB NoSQLDatabase'
-  - '[INLINE] paymentDB NoSQLDatabase'
+  block 8 (IfDone):
+  - (inline) paymentDB NoSQLDatabase
+  - (inline) moneyDB NoSQLDatabase
   - p (*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase})
   - ctx context.Context
   - pay_coll NoSQLCollection {database = "payment", collection = "payment"}
   - err .error
+  - err .error
+  - money_coll NoSQLCollection {database = "payment", collection = "money"}
+  - err .error
 (*PaymentServiceImpl).InitPayment(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}):
- block 0 (Body):
-  - '[INLINE] moneyDB NoSQLDatabase'
-  - '[INLINE] paymentDB NoSQLDatabase'
+ block 11 (IfDone):
+  - (inline) moneyDB NoSQLDatabase
+  - (inline) paymentDB NoSQLDatabase
   - p (*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase})
   - ctx context.Context
-  - '[INLINE] ID string --> (TAINTED 1x) --> [PAYMENTS_DB.Payment.ID]'
-  - '[INLINE] ID string --> (TAINTED 1x) --> [PAYMENTS_DB.Payment.ID]'
-  - payment payment.Payment struct{ID string, OrderID string, UserID string, Price string} --> (TAINTED 1x) --> [PAYMENTS_DB.Payment]
+  - |-
+    (inline) ID string -->
+       W-TAINTED 1x = (PAYMENTS_DB.Payment.ID)
+  - |-
+    (inline) ID string -->
+       W-TAINTED 1x = (PAYMENTS_DB.Payment.ID)
+  - |-
+    payment payment.Payment struct{ID string, OrderID string, UserID string, Price string} -->
+       W-TAINTED 1x = (PAYMENTS_DB.Payment)
   - coll NoSQLCollection {database = "payment", collection = "payment"}
   - err .error
+  - res NoSQLCursor {database = "payment", collection = "payment"}
+  - err .error
+  - stored payment.Payment struct{ID string, OrderID string, UserID string, Price string}
+  - exists bool
+  - err .error
 (*PaymentServiceImpl).Pay(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}):
- block 0 (Body):
-  - '[INLINE] paymentDB NoSQLDatabase'
-  - '[INLINE] moneyDB NoSQLDatabase'
+ block 8 (IfDone):
+  - (inline) moneyDB NoSQLDatabase
+  - (inline) paymentDB NoSQLDatabase
   - p (*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase})
   - ctx context.Context
-  - '[INLINE] OrderID string'
-  - '[INLINE] OrderID string'
+  - (inline) OrderID string
+  - (inline) OrderID string
   - payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}
   - coll NoSQLCollection {database = "payment", collection = "payment"}
   - err .error
+  - ok bool
+  - err .error
 (*PaymentServiceImpl).Query(ctx context.Context):
-  block 0 (Body):
-  - '[INLINE] moneyDB NoSQLDatabase'
-  - '[INLINE] paymentDB NoSQLDatabase'
+  block 5 (IfDone):
+  - (inline) moneyDB NoSQLDatabase
+  - (inline) paymentDB NoSQLDatabase
   - p (*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase})
   - ctx context.Context
   - payments []payment.Payment struct{ID string, OrderID string, UserID string, Price string}
   - coll NoSQLCollection {database = "payment", collection = "payment"}
+  - err .error
+  - res NoSQLCursor {database = "payment", collection = "payment"}
+  - err .error
   - err .error
 .NewPaymentServiceImpl(ctx context.Context, payDB NoSQLDatabase, moneyDB NoSQLDatabase):
   block 0 (Body):

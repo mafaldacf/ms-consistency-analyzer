@@ -99,6 +99,11 @@ func (s *Schema) AddEntry(name string, t string, id int64, datastore string) Fie
 	s.Fields = append(s.Fields, e)
 	return e
 }
+
+func (s *Schema) GetRootUnfoldedField() Field {
+	return s.UnfoldedFields[0]
+}
+
 func (s *Schema) GetField(name string) Field {
 	for _, f := range s.Fields {
 		if f.GetName() == name {
@@ -115,7 +120,7 @@ func (s *Schema) GetField(name string) Field {
 			return f
 		}
 	}
-	logger.Logger.Debugf("[FIXME] no field for name %s in datastore schema %v", name, s.String())
+	logger.Logger.Fatalf("[FIXME] no field for name %s in datastore schema %v", name, s.String())
 	return nil
 }
 

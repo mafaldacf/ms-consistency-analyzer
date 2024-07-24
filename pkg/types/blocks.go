@@ -23,7 +23,7 @@ func (block *Block) VarsString() string {
 	s := "variables = ["
 	for i, v := range block.Vars {
 		s += v.String()
-		if i < len(block.Vars) - 1 {
+		if i < len(block.Vars)-1 {
 			s += ", "
 		}
 
@@ -107,18 +107,7 @@ func (block *Block) AddVariable(variable variables.Variable) {
 		return
 	}
 
-	/* if len(block.Vars) == 0 || block.Vars[len(block.Vars)-1] != variable {
-		logger.Logger.Tracef("[BLOCK] added %s (%s) to block", variable.String(), utils.GetType(variable))
-		block.Vars = append(block.Vars, variable)
-	} else {
-		lst := ""
-		for _, v := range block.Vars {
-			lst += fmt.Sprintf("\t\t\t - %s\n", v.String())
-		}
-		logger.Logger.Fatalf("[BLOCK] %s (%s) already exists in block with vars list:\n%s", variable.String(), utils.GetType(variable), lst)
-	} */
-
-	logger.Logger.Debugf("[BLOCK] added %s (%s) to block", variable.String(), utils.GetType(variable))
+	logger.Logger.Debugf("[BLOCK (%d)] added %s (%s) to block", block.Block.Index, variable.String(), utils.GetType(variable))
 	block.Vars = append(block.Vars, variable)
 }
 
@@ -138,7 +127,7 @@ func (block *Block) GetSuccs() []*cfg.Block {
 	return block.Block.Succs
 }
 
-func (block *Block) CopyVarsFromPredecessor(predecessor *Block) {
+func (block *Block) AppendVarsFromPredecessor(predecessor *Block) {
 	logger.Logger.Tracef("[BLOCK] copying vars %d -> %d: %v -> %v", predecessor.GetIndex(), block.GetIndex(), predecessor.Vars, block.Vars)
 	block.Vars = append(predecessor.Vars, block.Vars...)
 }

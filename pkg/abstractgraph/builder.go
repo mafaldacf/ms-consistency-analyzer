@@ -238,7 +238,7 @@ func (graph *AbstractGraph) referenceMethodBlockVars(parsedCall types.Call, chil
 		logger.Logger.Infof("\t\t[REF BLOCK VAR] added reference (%d) from creator (%s): (%s) -> (%s)", blockVar.GetId(), child.GetCallerStr(), blockVar.GetType().GetName(), param.GetVariableInfo().GetName())
 		if _, ok := blockVar.(*variables.StructVariable); ok {
 			logger.Logger.Debugf("WTFFFFFFF!!!!")
-			variables.GetReversedNestedFieldsAndNames(blockVar, true)
+			variables.GetReversedNestedFieldsAndNames(blockVar, true, "")
 		}
 		for _, dep := range variables.GetIndirectDependenciesWithCurrent(param) {
 			if dep.GetVariableInfo().IsUnassigned() {

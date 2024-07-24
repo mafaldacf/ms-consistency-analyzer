@@ -39,9 +39,18 @@ func (f *ParsedMethod) YamlCalls() []string {
 func (cfg *CFG) Yaml() map[string][]string {
 	data := make(map[string][]string)
 
-	if len(cfg.ParsedBlocks) > 0 {
-		data[cfg.ParsedBlocks[0].Block.String()] = cfg.ParsedBlocks[0].Yaml()
+	// iterate in reverse
+	for i := len(cfg.ParsedBlocks) - 1; i >= 0; i-- {
+		block := cfg.ParsedBlocks[i]
+		if block.Block.Live {
+			data[block.Block.String()] = block.Yaml()
+			break
+		}
 	}
+
+	/* if len(cfg.ParsedBlocks) > 0 {
+		data[cfg.ParsedBlocks[len(cfg.ParsedBlocks)-1].Block.String()] = cfg.ParsedBlocks[len(cfg.ParsedBlocks)-1].Yaml()
+	} */
 
 	/* var blocks []string
 	for _, block := range cfg.ParsedBlocks {
@@ -54,6 +63,26 @@ func (cfg *CFG) Yaml() map[string][]string {
 // ------
 // BLOCKS
 // ------
+
+func getTaintedFieldsListAndString(dfs []*variables.Dataflow) ([]string, string) {
+	var fieldsLst []string
+	fieldsStr := ""
+	for _, df := range dfs {
+		if df.Field == nil {
+			logger.Logger.Fatalf("GOT NIL FIELD FOR DF (%s, %s). %s", df.Datastore, df.Service, df.Variable.String())
+		}
+		if !slices.Contains(fieldsLst, df.Field.GetFullName()) {
+			fieldsLst = append(fieldsLst, df.Field.GetFullName())
+		}
+	}
+	for i, db := range fieldsLst {
+		fieldsStr += db
+		if i < len(fieldsLst)-1 {
+			fieldsStr += ", "
+		}
+	}
+	return fieldsLst, fieldsStr
+}
 
 func (block *Block) Yaml() []string {
 	data := []string{}
@@ -72,27 +101,22 @@ func (block *Block) Yaml() []string {
 			if i != lastIndex {
 				// last index corresponds to the original variabl from where we got the parameters
 				// note that it is the last since the deps slice was reversed
-				variableString = "[INLINE] " + variableString
+				variableString = "(inline) " + variableString
 			}
-
-			dfs := append(v.GetVariableInfo().Dataflows, v.GetVariableInfo().IndirectDataflows...)
-			if len(dfs) > 0 {
-				var taintedDBFields []string
-				str := ""
-				for _, df := range dfs {
-					if !slices.Contains(taintedDBFields, df.Field.GetFullName()) {
-						taintedDBFields = append(taintedDBFields, df.Field.GetFullName())
-					}
+			dfsWriteOps := v.GetVariableInfo().GetAllWriteDataflows()
+			dfsReadOps := v.GetVariableInfo().GetAllReadDataflows()
+			if len(dfsWriteOps) > 0 || len(dfsReadOps) > 0 {
+				writeOpsLst, writeOpsStr := getTaintedFieldsListAndString(dfsWriteOps)
+				readOpsLst, readOpsStr := getTaintedFieldsListAndString(dfsReadOps)
+				if len(dfsWriteOps) > 0 && len(dfsReadOps) == 0 {
+					data = append(data, fmt.Sprintf("%s -->\n   W-TAINTED %dx = (%s)", variableString, len(writeOpsLst), writeOpsStr))
+				} else if len(dfsWriteOps) == 0 && len(dfsReadOps) > 0 {
+					data = append(data, fmt.Sprintf("%s -->\n   R-TAINTED %dx = (%s)", variableString, len(readOpsLst), readOpsStr))
+				} else {
+					data = append(data, fmt.Sprintf("%s -->\n   W-TAINTED %dx = (%s)\n   R-TAINTED %dx = (%s)", variableString, len(writeOpsLst), writeOpsStr, len(readOpsLst), readOpsStr))
 				}
-				for i, db := range taintedDBFields {
-					str += db
-					if i < len(taintedDBFields)-1 {
-						str += ", "
-					}
-				}
-				data = append(data, fmt.Sprintf("%s --> (TAINTED %dx) --> [%s]", variableString, len(taintedDBFields), str))
 			} else {
-				data = append(data, fmt.Sprintf("%s", variableString))
+				data = append(data, variableString)
 			}
 		}
 

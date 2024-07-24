@@ -39,7 +39,7 @@ func visitBasicBlock(service *service.Service, method *types.ParsedMethod, block
 
 	for _, succ := range block.GetSuccs() {
 		parsedSucc := method.ParsedCfg.GetParsedBlockAtIndex(succ.Index)
-		parsedSucc.CopyVarsFromPredecessor(block)
+		parsedSucc.AppendVarsFromPredecessor(block)
 		visitBasicBlock(service, method, parsedSucc, visited)
 	}
 }
@@ -70,9 +70,16 @@ func assignLeftValues(service *service.Service, method *types.ParsedMethod, bloc
 					rvariable.GetVariableInfo().SetUnassigned()
 					rvariable.GetVariableInfo().SetName(e.Name)
 					block.AddVariable(rvariable)
-					if rvariable.GetVariableInfo().GetName() == "query" {
-						logger.Logger.Debugf("GOT DEPENDENCIES FOR QUERY: %v", variables.GetIndirectDependenciesWithCurrent(rvariable))
-					}
+					// HERE FOR QUERY (SliceVariable): query primitive.D = (struct{Key "postid" string, Value int64})
+					/* if rvariable.GetVariableInfo().GetName() == "query" {
+						for _, b := range method.ParsedCfg.Cfg.Blocks {
+							logger.Logger.Debugf("BLOCK: index = %d, kind = %v, nodes = %v", b.Index, b.Kind, b.Live)
+							for _, n := range b.Nodes {
+								logger.Logger.Debugf("\t\t - Node: %v", utils.GetType(n))
+							}
+						}
+						logger.Logger.Fatalf("[BLOCK (%d)] HERE FOR QUERY (%s): %s", block.Block.Index, utils.GetType(rvariable), rvariable.LongString())
+					} */
 				} else {
 					logger.Logger.Warnf("[CFG] FIX ME!!!! WE SHOULD SEARCH FOR THE LEFT VARIABLE THAT ALREADY EXISTS IN THE BLOCK")
 					lvariable := rvariable.DeepCopy(true)

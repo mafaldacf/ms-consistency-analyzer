@@ -1,50 +1,100 @@
 (*StationFoodServiceImpl).Cleanup(ctx context.Context):
-  block 0 (Body):
-  - '[INLINE] db NoSQLDatabase'
+  block 2 (IfDone):
+  - (inline) db NoSQLDatabase
   - s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
   - coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
   - err .error
 (*StationFoodServiceImpl).CreateFoodStore(ctx context.Context, store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}):
- block 0 (Body):
-  - '[INLINE] db NoSQLDatabase'
+ block 8 (IfDone):
+  - (inline) db NoSQLDatabase
   - s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
-  - '[INLINE] ID string --> (TAINTED 1x) --> [STATIONFOOD_DB.StationFoodStore.ID]'
-  - '[INLINE] ID string --> (TAINTED 1x) --> [STATIONFOOD_DB.StationFoodStore.ID]'
-  - store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}} --> (TAINTED 1x) --> [STATIONFOOD_DB.StationFoodStore]
+  - |-
+    (inline) ID string -->
+       W-TAINTED 1x = (STATIONFOOD_DB.StationFoodStore.ID)
+  - |-
+    (inline) ID string -->
+       W-TAINTED 1x = (STATIONFOOD_DB.StationFoodStore.ID)
+  - |-
+    store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}} -->
+       W-TAINTED 1x = (STATIONFOOD_DB.StationFoodStore)
   - coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
   - err .error
+  - (inline) "id" string
+  - (inline) "id" string
+  - (inline) struct{ "id" string, ID string}
+  - query primitive.D
+  - res NoSQLCursor {database = "stationfood", collection = "stationfood"}
+  - err .error
+  - st stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
+  - exists bool
+  - err .error
 (*StationFoodServiceImpl).GetFoodStoreByID(ctx context.Context, id string):
-  block 0 (Body):
-  - '[INLINE] db NoSQLDatabase'
+  block 14 (IfDone):
+  - (inline) db NoSQLDatabase
   - s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
   - id string
   - coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
   - err .error
+  - |-
+    res NoSQLCursor {database = "stationfood", collection = "stationfood"} -->
+       R-TAINTED 2x = (STATIONFOOD_DB.document, STATIONFOOD_DB.NoSQLCursor)
+  - err .error
+  - store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
+  - exists bool
+  - err .error
 (*StationFoodServiceImpl).GetFoodStoresByStationNames(ctx context.Context, stations []string):
-  block 0 (Body):
-  - '[INLINE] db NoSQLDatabase'
+  block 8 (IfDone):
+  - (inline) db NoSQLDatabase
   - s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
   - stations []string
   - coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
   - err .error
+  - doc primitive.A
+  - (inline) primitive.A
+  - (inline) struct{ "$in" string, primitive.A}
+  - (inline) primitive.D
+  - (inline) primitive.D
+  - (inline) struct{ "stationname" string, primitive.D}
+  - query primitive.D
+  - |-
+    res NoSQLCursor {database = "stationfood", collection = "stationfood"} -->
+       R-TAINTED 2x = (STATIONFOOD_DB.document, STATIONFOOD_DB.NoSQLCursor)
+  - err .error
+  - stores []stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
+  - err .error
 (*StationFoodServiceImpl).ListFoodStores(ctx context.Context):
-  block 0 (Body):
-  - '[INLINE] db NoSQLDatabase'
+  block 8 (IfDone):
+  - (inline) db NoSQLDatabase
   - s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
   - coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
   - err .error
+  - |-
+    res NoSQLCursor {database = "stationfood", collection = "stationfood"} -->
+       R-TAINTED 2x = (STATIONFOOD_DB.document, STATIONFOOD_DB.NoSQLCursor)
+  - err .error
+  - stores []stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
+  - err .error
 (*StationFoodServiceImpl).ListFoodStoresByStationName(ctx context.Context, station string):
-  block 0 (Body):
-  - '[INLINE] db NoSQLDatabase'
+  block 8 (IfDone):
+  - (inline) db NoSQLDatabase
   - s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
   - ctx context.Context
   - station string
   - coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
+  - err .error
+  - (inline) string
+  - (inline) struct{ "stationname" string, string}
+  - query primitive.D
+  - |-
+    res NoSQLCursor {database = "stationfood", collection = "stationfood"} -->
+       R-TAINTED 2x = (STATIONFOOD_DB.document, STATIONFOOD_DB.NoSQLCursor)
+  - err .error
+  - stores []stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
   - err .error
 .NewStationFoodServiceImpl(ctx context.Context, db NoSQLDatabase):
   block 0 (Body):
