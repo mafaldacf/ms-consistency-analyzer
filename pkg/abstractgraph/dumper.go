@@ -82,16 +82,6 @@ func (graph *AbstractGraph) dumpDiGraph() {
 		elem := abstractNodesToVisit.Front()
 		n := elem.Value.(AbstractNode)
 		abstractNodesToVisit.Remove(elem)
-		
-		/* logger.Logger.Infof("%s[%d] %v", strings.Repeat(" ", n.GetDepth()*3), n.GetDepth(), n.String())
-		for _, p := range n.GetParams() {
-			logger.Logger.Warnf("%s[PARAM] (%d) %v", strings.Repeat(" ", n.GetDepth()*3), p.GetId(), p.String())
-			for _, d := range variables.GetIndirectDependencies(p) {
-				logger.Logger.Debugf("%s[DEP] (%d) %v", strings.Repeat(" ", n.GetDepth()*3), d.GetId(), d.String())
-				}
-				}
-		logger.Logger.Info() */
-		//fmt.Println()
 
 		if _, exists := visitedAbstractNodes[n]; !exists {
 			caller := n.GetCallerStr()

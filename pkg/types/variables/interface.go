@@ -3,8 +3,9 @@ package variables
 import "analyzer/pkg/types/gotypes"
 
 type InterfaceVariable struct {
-	Variable     `json:"-"`
-	VariableInfo *VariableInfo `json:"variable"`
+	Variable           `json:"-"`
+	VariableInfo       *VariableInfo `json:"variable"`
+	UnderlyingVariable Variable      `json:"-"`
 }
 
 func (v *InterfaceVariable) String() string {
@@ -35,11 +36,25 @@ func (v *InterfaceVariable) GetVariableInfo() *VariableInfo {
 }
 
 func (v *InterfaceVariable) GetDependencies() []Variable {
+	if v.UnderlyingVariable != nil {
+		return []Variable{v.UnderlyingVariable}
+	}
 	return nil
+}
+
+func (v *InterfaceVariable) GetNestedIndirectDependencies() []Variable {
+	var deps = []Variable{v}
+	if v.UnderlyingVariable != nil {
+		deps = append(deps, v.UnderlyingVariable.GetNestedIndirectDependencies()...)
+	}
+	return deps
 }
 
 func (v *InterfaceVariable) AddReferenceWithID(target Variable, creator string) {
 	v.VariableInfo.AddReferenceWithID(target, creator)
+	if v.UnderlyingVariable != nil {
+		v.UnderlyingVariable.AddReferenceWithID(target, creator)
+	}
 }
 
 func (v *InterfaceVariable) DeepCopy(force bool) Variable {

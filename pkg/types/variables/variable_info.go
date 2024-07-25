@@ -36,6 +36,21 @@ func (vinfo *VariableInfo) GetAllDataflows() []*Dataflow {
 	return append(vinfo.Dataflows, vinfo.IndirectDataflows...)
 }
 
+func (vinfo *VariableInfo) GetAllDataflowsForDatastore(datastore string) []*Dataflow {
+	var dataflows []*Dataflow
+	for _, df := range vinfo.Dataflows {
+		if df.IsOpInDatastore(datastore) {
+			dataflows = append(dataflows, df)
+		}
+	}
+	for _, df := range vinfo.IndirectDataflows {
+		if df.IsOpInDatastore(datastore) {
+			dataflows = append(dataflows, df)
+		}
+	}
+	return dataflows
+}
+
 func (vinfo *VariableInfo) GetAllWriteDataflows() []*Dataflow {
 	var dataflows []*Dataflow
 	for _, df := range vinfo.Dataflows {

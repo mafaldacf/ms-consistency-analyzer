@@ -55,7 +55,18 @@ func (v *TupleVariable) GetTupleType() *gotypes.TupleType {
 }
 
 func (v *TupleVariable) GetDependencies() []Variable {
-	return nil
+	return v.Variables
+}
+
+func (v *TupleVariable) GetNestedIndirectDependencies() []Variable {
+	var deps = []Variable{v}
+	if v.GetVariableInfo().HasReference() {
+		deps = append(deps, v.GetVariableInfo().GetReference().GetNestedIndirectDependencies()...)
+	}
+	for _, elem := range v.Variables {
+		deps = append(deps, elem.GetNestedIndirectDependencies()...)
+	}
+	return deps
 }
 
 func (v *TupleVariable) String() string {

@@ -56,12 +56,20 @@
           {
             "variable": {
               "name": "ReqID",
-              "type": "int64"
+              "type": "int64",
+              "ref": {
+                "name": "ReqID",
+                "creator": "NotifyService"
+              }
             },
             "wrapped_variable": {
               "variable": {
                 "name": "reqID",
-                "type": "int64"
+                "type": "int64",
+                "ref": {
+                  "name": "ReqID",
+                  "creator": "NotifyService"
+                }
               }
             }
           },
@@ -123,24 +131,40 @@
               "PostID": {
                 "variable": {
                   "name": "PostID",
-                  "type": "int64"
+                  "type": "int64",
+                  "ref": {
+                    "name": "PostID",
+                    "creator": "NotifyService"
+                  }
                 },
                 "wrapped_variable": {
                   "variable": {
                     "name": "postID",
-                    "type": "int64"
+                    "type": "int64",
+                    "ref": {
+                      "name": "PostID",
+                      "creator": "NotifyService"
+                    }
                   }
                 }
               },
               "ReqID": {
                 "variable": {
                   "name": "ReqID",
-                  "type": "int64"
+                  "type": "int64",
+                  "ref": {
+                    "name": "ReqID",
+                    "creator": "NotifyService"
+                  }
                 },
                 "wrapped_variable": {
                   "variable": {
                     "name": "reqID",
-                    "type": "int64"
+                    "type": "int64",
+                    "ref": {
+                      "name": "ReqID",
+                      "creator": "NotifyService"
+                    }
                   }
                 }
               },
@@ -200,51 +224,39 @@
               "PostID": {
                 "variable": {
                   "name": "PostID",
-                  "type": "string"
+                  "type": "string",
+                  "ref": {
+                    "name": "PostID",
+                    "creator": "NotifyService"
+                  }
                 },
                 "wrapped_variable": {
                   "variable": {
-                    "type": "string"
-                  },
-                  "func_composition": [
-                    {
-                      "variable": {
-                        "name": "PostID",
-                        "type": "int64"
-                      },
-                      "wrapped_variable": {
-                        "variable": {
-                          "name": "postID",
-                          "type": "int64"
-                        }
-                      }
+                    "type": "string",
+                    "ref": {
+                      "name": "PostID",
+                      "creator": "NotifyService"
                     }
-                  ]
+                  }
                 }
               },
               "ReqID": {
                 "variable": {
                   "name": "ReqID",
-                  "type": "string"
+                  "type": "string",
+                  "ref": {
+                    "name": "ReqID",
+                    "creator": "NotifyService"
+                  }
                 },
                 "wrapped_variable": {
                   "variable": {
-                    "type": "string"
-                  },
-                  "func_composition": [
-                    {
-                      "variable": {
-                        "name": "ReqID",
-                        "type": "int64"
-                      },
-                      "wrapped_variable": {
-                        "variable": {
-                          "name": "reqID",
-                          "type": "int64"
-                        }
-                      }
+                    "type": "string",
+                    "ref": {
+                      "name": "ReqID",
+                      "creator": "NotifyService"
                     }
-                  ]
+                  }
                 }
               }
             },
@@ -284,12 +296,12 @@
                   },
                   {
                     "variable": {
-                      "name": "message",
+                      "name": "event",
                       "type": "(\u0026map[string]interface{})"
                     },
                     "addr_of": {
                       "variable": {
-                        "name": "message",
+                        "name": "event",
                         "type": "map[string]interface{}",
                         "ref": {
                           "name": "message",
@@ -300,26 +312,13 @@
                         {
                           "Key": {
                             "variable": {
-                              "type": "\"ReqID\" string"
-                            }
-                          },
-                          "Value": {
-                            "variable": {
-                              "name": "\"ReqID\"",
-                              "type": "string"
-                            }
-                          }
-                        },
-                        {
-                          "Key": {
-                            "variable": {
                               "type": "\"PostID\" string"
                             }
                           },
                           "Value": {
                             "variable": {
-                              "name": "\"PostID\"",
-                              "type": "string"
+                              "name": "PostID",
+                              "type": "interface{}"
                             }
                           }
                         },
@@ -331,8 +330,21 @@
                           },
                           "Value": {
                             "variable": {
-                              "name": "\"Timestamp\"",
-                              "type": "string"
+                              "name": "Timestamp",
+                              "type": "interface{}"
+                            }
+                          }
+                        },
+                        {
+                          "Key": {
+                            "variable": {
+                              "type": "\"ReqID\" string"
+                            }
+                          },
+                          "Value": {
+                            "variable": {
+                              "name": "ReqID",
+                              "type": "interface{}"
                             }
                           }
                         }
@@ -423,7 +435,7 @@
                       {
                         "variable": {
                           "name": "result",
-                          "type": "NoSQLCursor {database = \"post\", collection = \"post\"}"
+                          "type": "NoSQLCursor {database = post, collection = post}"
                         }
                       },
                       {
@@ -451,57 +463,13 @@
                     "variable": {
                       "name": "reqID",
                       "type": "int64"
-                    },
-                    "func_composition": [
-                      {
-                        "variable": {
-                          "name": "ReqID",
-                          "type": "string",
-                          "ref": {
-                            "name": "ReqID",
-                            "creator": "NotifyService"
-                          }
-                        },
-                        "wrapped_variable": {
-                          "variable": {
-                            "name": "ReqID",
-                            "type": "string",
-                            "ref": {
-                              "name": "ReqID",
-                              "creator": "NotifyService"
-                            }
-                          }
-                        }
-                      }
-                    ]
+                    }
                   },
                   {
                     "variable": {
                       "name": "postID",
                       "type": "int64"
-                    },
-                    "func_composition": [
-                      {
-                        "variable": {
-                          "name": "PostID",
-                          "type": "string",
-                          "ref": {
-                            "name": "PostID",
-                            "creator": "NotifyService"
-                          }
-                        },
-                        "wrapped_variable": {
-                          "variable": {
-                            "name": "PostID",
-                            "type": "string",
-                            "ref": {
-                              "name": "PostID",
-                              "creator": "NotifyService"
-                            }
-                          }
-                        }
-                      }
-                    ]
+                    }
                   }
                 ],
                 "returns": [

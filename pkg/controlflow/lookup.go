@@ -78,21 +78,6 @@ func unwrapTupleIfSingleElement(variable variables.Variable) variables.Variable 
 	return variable
 }
 
-// unwrapIfUserType returns the most inner unwrapped type along with the most inner user type
-// if no user type is found, then it returns the current type twice
-func unwrapIfUserType(t gotypes.Type) (gotypes.Type, gotypes.Type) {
-	if userType, ok := t.(*gotypes.UserType); ok {
-		unwrappedType, t := unwrapIfUserType(userType.UserType)
-		// always return the inned user type
-		// if we found a wrapped value, we return the current user type (which is the most inner one)
-		if _, ok := t.(*gotypes.UserType); !ok {
-			t = userType
-		}
-		return unwrappedType, t
-	}
-	return t, t
-}
-
 func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMethod, block *types.Block, expr ast.Expr, assign bool) (variable variables.Variable, packageType *gotypes.PackageType) {
 	logger.Logger.Debugf("[CFG LOOKUP EXPR] (%s) visiting expression (%v)", utils.GetType(expr), expr)
 	switch e := expr.(type) {
@@ -230,6 +215,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 	// 		- composite lit:
 	// 			[]string{"alice", "bob"}
 	case *ast.CompositeLit:
+		logger.Logger.Debugf("INSIDE COMPOSITE LIT FOR e.Type (%v), and e.Elts (%v)", e.Type, e.Elts)
 		if e.Type == nil {
 			structVariable := &variables.StructVariable{
 				VariableInfo: &variables.VariableInfo{
@@ -248,7 +234,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		}
 
 		eType := lookup.ComputeTypeForAstExpr(service.GetFile(), e.Type)
-		eType, eTypeOrUserType := unwrapIfUserType(eType)
+		eType, eTypeOrUserType := gotypes.UnwrapUserType(eType)
 
 		switch eType.(type) {
 		case *gotypes.StructType:
@@ -317,9 +303,15 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, assign)
 		assertedType := lookup.ComputeTypeForAstExpr(service.File, e.Type)
 		if interfaceVariable, ok := variable.(*variables.InterfaceVariable); ok {
-			interfaceVariable.UpgradeToAssertedType(assertedType)
-			newVariable := lookup.CreateVariableFromType(variable.GetVariableInfo().GetName(), variable.GetType())
+			// FIXME: it is creating two duplicates:
+			// (i) InterfaceVariable during lookup with e.g. BasicType after UpgradeToAssertedType
+			// (ii) The e.g. BasicVariable after UpgradeFromPreviousInterface with e.g. the BasicType
+			//interfaceVariable.UpgradeToAssertedType(assertedType)
+			newVariable := lookup.CreateVariableFromType(variable.GetVariableInfo().GetName(), assertedType)
 			newVariable.UpgradeFromPreviousInterface(interfaceVariable)
+			block.AddVariable(newVariable)
+			logger.Logger.Warnf("[FIXME - ASSERT!!!!] CREATED NEW VARIABLE (%s): %s", variables.GetVariableTypeAndTypeString(newVariable), newVariable.String())
+			return newVariable, nil
 		} else {
 			logger.Logger.Fatalf("[CFG LOOKUP] unexpected type (%s) for variable (%s)", utils.GetType(variable), variable.String())
 		}

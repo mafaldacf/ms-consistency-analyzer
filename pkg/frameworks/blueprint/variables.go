@@ -50,6 +50,10 @@ func (v *BlueprintBackendVariable) GetDependencies() []variables.Variable {
 	return nil
 }
 
+func (v *BlueprintBackendVariable) GetNestedIndirectDependencies() []variables.Variable {
+	return nil
+}
+
 func (v *BlueprintBackendVariable) AddReferenceWithID(target variables.Variable, creator string) {
 	v.VariableInfo.AddReferenceWithID(target, creator)
 }

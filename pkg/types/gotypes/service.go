@@ -47,6 +47,9 @@ func (t *ServiceType) LongString() string {
 func (t *ServiceType) GetName() string {
 	return t.Name
 }
+func (t *ServiceType) GetLongName() string {
+	return t.Name
+}
 func (t *ServiceType) GetPackage() string {
 	return t.Package
 }

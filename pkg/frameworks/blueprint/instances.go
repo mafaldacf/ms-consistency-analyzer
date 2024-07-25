@@ -28,12 +28,20 @@ func (q *QueueInstance) String() string {
 	return q.Name + " " + q.Datastore.GetKindString()
 }
 
+func (q *QueueInstance) LongString() string {
+	return q.Name + " " + q.GetTypeLongName()
+}
+
 func (q *QueueInstance) IsQueue() bool {
 	return true
 }
 
 func (q *QueueInstance) GetTypeName() string {
 	return "Queue"
+}
+
+func (q *QueueInstance) GetTypeLongName() string {
+	return q.GetDatastore().GetTypeLongName()
 }
 
 // MarshalJSON is used by app.Save()
@@ -51,30 +59,38 @@ type CacheInstance struct {
 	BlueprintDatabaseInstance
 }
 
-func (nosql *CacheInstance) GetName() string {
-	return nosql.Name
+func (cache *CacheInstance) GetName() string {
+	return cache.Name
 }
 
-func (nosql *CacheInstance) String() string {
-	return nosql.Name + " " + nosql.Datastore.GetKindString()
+func (cache *CacheInstance) String() string {
+	return cache.Name + " " + cache.Datastore.GetKindString()
 }
 
-func (nosql *CacheInstance) IsQueue() bool {
+func (cache *CacheInstance) LongString() string {
+	return cache.Name + " " + cache.GetTypeLongName()
+}
+
+func (cache *CacheInstance) IsQueue() bool {
 	return false
 }
 
-func (nosql *CacheInstance) GetTypeName() string {
+func (cache *CacheInstance) GetTypeName() string {
 	return "Cache"
 }
 
+func (cache *CacheInstance) GetTypeLongName() string {
+	return cache.GetDatastore().GetTypeLongName()
+}
+
 // MarshalJSON is used by app.Save()
-func (nosql *CacheInstance) MarshalJSON() ([]byte, error) {
+func (cache *CacheInstance) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Name      string                `json:"name"`
 		Datastore *datastores.Datastore `json:"datastore"`
 	}{
-		Name:      nosql.GetName(),
-		Datastore: nosql.GetDatastore(),
+		Name:      cache.GetName(),
+		Datastore: cache.GetDatastore(),
 	})
 }
 
@@ -90,12 +106,20 @@ func (nosql *NoSQLInstance) String() string {
 	return nosql.Name + " " + nosql.Datastore.GetKindString()
 }
 
+func (nosql *NoSQLInstance) LongString() string {
+	return nosql.Name + " " + nosql.GetTypeLongName()
+}
+
 func (nosql *NoSQLInstance) IsQueue() bool {
 	return false
 }
 
 func (nosql *NoSQLInstance) GetTypeName() string {
 	return "NoSQLDatabase"
+}
+
+func (nosql *NoSQLInstance) GetTypeLongName() string {
+	return nosql.GetDatastore().GetTypeLongName()
 }
 
 // MarshalJSON is used by app.Save()

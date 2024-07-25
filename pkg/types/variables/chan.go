@@ -31,6 +31,14 @@ func (v *ChanVariable) GetDependencies() []Variable {
 	return nil
 }
 
+func (v *ChanVariable) GetNestedIndirectDependencies() []Variable {
+	var deps = []Variable{v}
+	if v.GetVariableInfo().HasReference() {
+		deps = append(deps, v.GetVariableInfo().GetReference().GetNestedIndirectDependencies()...)
+	}
+	return deps
+}
+
 func (v *ChanVariable) AddReferenceWithID(target Variable, creator string) {
 	v.VariableInfo.AddReferenceWithID(target, creator)
 }

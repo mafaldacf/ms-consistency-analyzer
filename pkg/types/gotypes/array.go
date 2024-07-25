@@ -30,6 +30,9 @@ func (t *ArrayType) LongString() string {
 func (t *ArrayType) GetName() string {
 	return t.String()
 }
+func (t *ArrayType) GetLongName() string {
+	return t.String()
+}
 func (t *ArrayType) GetBasicValue() string {
 	logger.Logger.Fatalf("unable to get value for array type %s", t.String())
 	return ""

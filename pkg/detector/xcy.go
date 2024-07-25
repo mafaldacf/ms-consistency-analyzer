@@ -59,9 +59,9 @@ func (op *Operation) MarshalJSON() ([]byte, error) {
 	}{
 		Service:  op.Service,
 		Method:   op.Method,
-		Key:      fmt.Sprintf("%s (#%d)", op.Key.GetVariableInfo().GetName(), op.Key.GetId()),
-		Object:   fmt.Sprintf("%s (#%d)", op.Object.GetVariableInfo().GetName(), op.Object.GetId()),
-		Database: op.Database.GetName(),
+		Key:      fmt.Sprintf("%s %s", op.Key.GetVariableInfo().GetName(), op.Key.GetVariableInfo().GetType().GetLongName()),
+		Object:   fmt.Sprintf("%s %s", op.Object.GetVariableInfo().GetName(), op.Object.GetVariableInfo().GetType().GetLongName()),
+		Database: fmt.Sprintf("%s %s", op.Database.GetName(), op.Database.GetTypeLongName()),
 	})
 }
 
@@ -156,7 +156,7 @@ func (request *Request) addInconsistency(write *Operation, read *Operation) {
 		Read:  read,
 	}
 	request.Inconsistencies = append(request.Inconsistencies, inconsistency)
-	logger.Logger.Infof("[XCY] found inconsistency at datastore %s", inconsistency.Write.Database.GetName())
+	logger.Logger.Warnf("[XCY] found inconsistency at datastore %s", inconsistency.Write.Database.GetName())
 }
 
 func (request *Request) TransverseRequestOperations() {
@@ -170,33 +170,37 @@ func (request *Request) TransverseRequestOperations() {
 }
 
 func (request *Request) captureInconsistency(read *Operation, readCall *abstractgraph.AbstractDatabaseCall) {
-	/* if readCall.Subscriber {
-		return
-	} */
 	// iterate in reverse
 	for i := len(request.Writes) - 1; i >= 0; i-- {
 		write := request.Writes[i]
-		logger.Logger.Warnf("[XCY] evaluating XCY violation for read (%s @ %s) and write (%s @ %s)",
-			read.Key.GetVariableInfo().Name,
-			readCall.DbInstance.GetName(),
-			write.Key.GetVariableInfo().Name,
-			write.Database.GetName(),
-		)
-		readKeyDeps := variables.GetIndirectDependenciesWithCurrent(read.Key)
-		logger.Logger.Debugf("[READ KEY] has ref? %t", read.Key.GetVariableInfo().HasReference())
-		logger.Logger.Debugf("[READ KEY] dependencies for (%s) %s: \n%v", utils.GetType(read.Key), read.Key.String(), variables.GetDependenciesStringLst(readKeyDeps...))
-		writeValueDeps := variables.GetIndirectDependenciesWithCurrent(write.Object)
-		logger.Logger.Debugf("[WRITE VALUE] dependencies for (%s) %s: \n%v", utils.GetType(write.Object), write.Object.String(), variables.GetDependenciesStringLst(writeValueDeps...))
-		
+
 		if readCall.DbInstance == write.Database {
-			if variables.ContainsMatchingDependencies2(readKeyDeps, writeValueDeps) {
-				request.addInconsistency(write, read)
+
+			if readCall.DbInstance.IsQueue() {
+				// skip inconsistencies between a write and a read in the same queue
+				return
+			}
+
+			logger.Logger.Debugf("[XCY] evaluating XCY violation for read (%s @ %s) and write (%s @ %s)", read.Key.GetVariableInfo().Name, readCall.DbInstance.GetName(), write.Key.GetVariableInfo().Name, write.Database.GetName())
+			readKeyDeps := read.Key.GetNestedIndirectDependencies()
+			writeValueDeps := write.Object.GetNestedIndirectDependencies()
+
+			logger.Logger.Tracef("[READ KEY] dependencies for (%s) %s: \n%v", utils.GetType(read.Key), read.Key.String(), variables.GetDependenciesStringLst(readKeyDeps...))
+			logger.Logger.Tracef("[WRITE VALUE] dependencies for (%s) %s: \n%v", utils.GetType(write.Object), write.Object.String(), variables.GetDependenciesStringLst(writeValueDeps...))
+			
+			for _, dep := range readKeyDeps {
+				dfs := dep.GetVariableInfo().GetAllDataflowsForDatastore(readCall.DbInstance.GetName())
+				for _, df := range dfs {
+					for _, v := range writeValueDeps {
+						if df.Variable == v {
+							request.addInconsistency(write, read)
+							return
+						}
+					}
+				}
 			}
 		}
-	}/* 
-	if readCall.Subscriber {
-		logger.Logger.Fatal("EXIT!")
-	} */
+	}
 }
 
 func (request *Request) transverseOperations(node abstractgraph.AbstractNode) {

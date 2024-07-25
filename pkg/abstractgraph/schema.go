@@ -58,7 +58,7 @@ func taintDataflowWriteOp(app *app.App, variable variables.Variable, call *Abstr
 
 	for i, v := range vars {
 		dbField := datastore.Schema.GetField(names[i])
-		deps := variables.GetIndirectDependenciesWithCurrent(v)
+		deps := v.GetNestedIndirectDependencies()
 		logger.Logger.Infof("[TENTATIVE TAINT WRITE VAR] [%s] (%02d) (NUM DEPS = %d) %s", utils.GetType(v), v.GetId(), len(deps), v.LongString())
 		for _, dep := range deps {
 			if !slices.Contains(taintedVariables, dep) {
@@ -92,7 +92,7 @@ func taintDataflowReadOp(app *app.App, variable variables.Variable, call *Abstra
 
 	for i, v := range vars {
 		dbField := datastore.Schema.GetField(names[i])
-		deps := variables.GetIndirectDependenciesWithCurrent(v)
+		deps := v.GetNestedIndirectDependencies()
 		logger.Logger.Infof("[TENTATIVE TAINT READ VAR] [%s] (%02d) (NUM DEPS = %d) %s", utils.GetType(v), v.GetId(), len(deps), v.LongString())
 		for _, dep := range deps {
 			if !slices.Contains(taintedVariables, dep) {
@@ -119,15 +119,15 @@ func taintDataflowReadOpUnnamed(app *app.App, variable variables.Variable, call 
 	if !slices.Contains(app.TaintedVariables[rootField.GetFullName()], variable) {
 		app.TaintedVariables[rootField.GetFullName()] = append(app.TaintedVariables[rootField.GetFullName()], variable)
 	}
-	
+
 	var taintedVariables []variables.Variable
-	deps := variables.GetIndirectDependenciesWithCurrent(variable)
+	deps := variable.GetNestedIndirectDependencies()
 	logger.Logger.Infof("[TENTATIVE TAINT READ UNNAMED VAR] [%s] (%02d) (NUM DEPS = %d) %s", utils.GetType(variable), variable.GetId(), len(deps), variable.LongString())
 	for _, dep := range deps {
 		if !slices.Contains(taintedVariables, dep) {
 			variable.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, dep, variable, &datastores.Entry{
-				Name: dep.GetType().GetName(),
-				Type: dep.GetType().GetName(),
+				Name:      dep.GetType().GetName(),
+				Type:      dep.GetType().GetName(),
 				Datastore: datastore.Name,
 			}, false)
 			logger.Logger.Debugf("\t\t[TAINT READ UNNAMED INDIRECT] <unnamed> ---> (%02d) %s [%s]", dep.GetId(), dep.String(), utils.GetType(dep))
@@ -145,7 +145,7 @@ func referenceTaintedDataflow(writtenVariable variables.Variable, datastore *dat
 	vars, names := variables.GetReversedNestedFieldsAndNames(writtenVariable, true, "")
 	for i, variable := range vars {
 		dbField := datastore.Schema.GetField(names[i])
-		deps := variables.GetIndirectDependenciesWithCurrent(variable)
+		deps := variable.GetNestedIndirectDependencies()
 		logger.Logger.Infof("[TENTATIVE REF TAINTED VAR] [%s] (%02d) %s", utils.GetType(variable), variable.GetId(), variable.LongString())
 		for _, dep := range deps {
 			for _, df := range dep.GetVariableInfo().GetAllWriteDataflows() {
@@ -177,6 +177,8 @@ func BuildSchema(app *app.App, node AbstractNode) {
 		case datastores.NoSQL:
 			doc := returns[0]
 			taintDataflowReadOpUnnamed(app, doc, dbCall, datastore, "document")
+			query := params[1]
+			taintDataflowReadOpUnnamed(app, query, dbCall, datastore, "document")
 		}
 
 	}

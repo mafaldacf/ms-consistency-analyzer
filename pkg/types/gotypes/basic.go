@@ -1,6 +1,9 @@
 package gotypes
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
 type BasicType struct {
 	Type  `json:"-"`
@@ -29,8 +32,14 @@ func (t *BasicType) GetName() string {
 	return t.String()
 }
 func (t *BasicType) GetBasicValue() string {
-	return t.Value
+	// remove double quotes " " if they exist
+	value := t.Value
+	if strings.HasPrefix(value, "\"") && strings.HasSuffix(value, "\"") {
+		value = value[1 : len(value)-1]
+	}
+	return value
 }
+
 func (t *BasicType) AddValue(value string) {
 	t.Value += value
 }

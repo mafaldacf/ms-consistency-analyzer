@@ -29,6 +29,10 @@ func (v *BackendVariable) GetDependencies() []Variable {
 	return nil
 }
 
+func (v *BackendVariable) GetNestedIndirectDependencies() []Variable {
+	return nil
+}
+
 func (v *BackendVariable) DeepCopy(force bool) Variable {
 	return &BackendVariable{
 		VariableInfo: v.VariableInfo.DeepCopy(force),

@@ -1,13 +1,14 @@
 (*news.NewsServiceImpl).Hello(ctx context.Context, val string) (string, error):
   block 0 (Body):
-  - n (*news.NewsServiceImpl struct{})
-  - ctx context.Context
-  - val string
+  - '[0] (inline) (StructVariable UserType) news.NewsServiceImpl struct{}'
+  - '[-1] (PointerVariable PointerType) n (*news.NewsServiceImpl struct{})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BasicVariable BasicType) val string'
   - |-
-    str `[
+    [-1] (BasicVariable BasicType) str `[
                            {"Title": "News Service Complete", "Content": "Congratulations:Your News Service Complete"},
                            {"Title": "Total Ticket System Complete", "Content": "Just a total test"}
                         ]` byte
 news.NewNewsServiceImpl(ctx context.Context) ((*news.NewsServiceImpl struct{}), error):
   block 0 (Body):
-  - ctx context.Context
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'

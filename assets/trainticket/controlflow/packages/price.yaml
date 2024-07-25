@@ -1,142 +1,224 @@
 ? (*price.PriceServiceImpl).CreateNewPriceConfig(ctx context.Context, pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}) error:
  block 12 (IfDone):
-  - (inline) priceDB NoSQLDatabase
-  - p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase})
-  - ctx context.Context
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) priceDB NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) price.PriceServiceImpl struct{priceDB
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) p (*price.PriceServiceImpl struct{priceDB
+    NoSQLDatabase})'
+  - '[1] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    (inline) ID string -->
-       W-TAINTED 1x = (PRICE_DB.PriceConfig.ID)
+    [3] (inline) (BasicVariable BasicType) ID string -->
+       w-tainted 1x: write(price_db.PriceConfig.ID)
   - |-
-    (inline) ID string -->
-       W-TAINTED 1x = (PRICE_DB.PriceConfig.ID)
+    [2] (inline) (FieldVariable FieldType) ID string -->
+       w-tainted 1x: write(price_db.PriceConfig.ID)
   - |-
-    pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} -->
-       W-TAINTED 1x = (PRICE_DB.PriceConfig)
-  - coll NoSQLCollection {database = "priceConfig", collection = "priceConfig"}
-  - err .error
-  - _ price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
-  - err .error
-  - (inline) "id" string
-  - (inline) "id" string
-  - (inline) struct{ "id" string, ID string}
-  - query primitive.D
-  - ok bool
-  - err .error
+    [-1] (StructVariable UserType) pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} -->
+       w-tainted 1x: write(price_db.PriceConfig)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = priceConfig, collection = priceConfig}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (StructVariable UserType) _ price.PriceConfig struct{ID string, TrainType
+    string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[0] (inline) (BasicVariable BasicType) "id" string'
+  - '[0] (inline) (FieldVariable FieldType) "id" string'
+  - '[0] (inline) (StructVariable StructType) struct{ "id" string, ID string}'
+  - '[-1] (SliceVariable UserType) query primitive.D'
+  - '[-1] (BasicVariable BasicType) ok bool'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*price.PriceServiceImpl).DeletePriceConfig(ctx context.Context, id string) error:
   block 2 (IfDone):
-  - (inline) priceDB NoSQLDatabase
-  - p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase})
-  - ctx context.Context
-  - id string
-  - coll NoSQLCollection {database = "priceConfig", collection = "priceConfig"}
-  - err .error
-  - (inline) string
-  - (inline) struct{ "id" string, string}
-  - query primitive.D
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) priceDB NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) price.PriceServiceImpl struct{priceDB
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) p (*price.PriceServiceImpl struct{priceDB
+    NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BasicVariable BasicType) id string'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = priceConfig, collection = priceConfig}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[0] (inline) (FieldVariable FieldType) string'
+  - '[0] (inline) (StructVariable StructType) struct{ "id" string,  string}'
+  - '[-1] (SliceVariable UserType) query primitive.D'
 (*price.PriceServiceImpl).FindByID(ctx context.Context, id string) (price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}, error):
  block 11 (IfDone):
-  - (inline) priceDB NoSQLDatabase
-  - p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase})
-  - (inline) ref <ctx context.Context> @ PriceService
-  - ctx context.Context
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) priceDB NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) price.PriceServiceImpl struct{priceDB
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) p (*price.PriceServiceImpl struct{priceDB
+    NoSQLDatabase})'
+  - '[1] (inline) (Reference UserType) ref <ctx context.Context> @ PriceService'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    (inline) ID string -->
-       W-TAINTED 1x = (PRICE_DB.PriceConfig.ID)
+    [3] (inline) (BasicVariable BasicType) ID string -->
+       w-tainted 1x: write(price_db.PriceConfig.ID)
   - |-
-    (inline) ref <ID string> @ PriceService -->
-       W-TAINTED 1x = (PRICE_DB.PriceConfig.ID)
-  - id string
-  - coll NoSQLCollection {database = "priceConfig", collection = "priceConfig"}
-  - err .error
-  - (inline) string
-  - (inline) struct{ "id" string, string}
-  - query primitive.D
-  - |-
-    res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} -->
-       R-TAINTED 2x = (PRICE_DB.document, PRICE_DB.NoSQLCursor)
-  - err .error
-  - pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
-  - exists bool
-  - err .error
+    [2] (inline) (Reference FieldType) ref <ID string> @ PriceService -->
+       w-tainted 1x: write(price_db.PriceConfig.ID)
+  - '[-1] (BasicVariable BasicType) id string'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = priceConfig, collection = priceConfig}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[0] (inline) (FieldVariable FieldType) string'
+  - '[0] (inline) (StructVariable StructType) struct{ "id" string,  string}'
+  - '[-1] (SliceVariable UserType) query primitive.D'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
+    = priceConfig, collection = priceConfig}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (StructVariable UserType) pc price.PriceConfig struct{ID string, TrainType
+    string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}'
+  - '[-1] (BasicVariable BasicType) exists bool'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*price.PriceServiceImpl).FindByRouteIDAndTrainType(ctx context.Context, routeID string, trainType string) (price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}, error):
  block 11 (IfDone):
-  - (inline) priceDB NoSQLDatabase
-  - p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase})
-  - (inline) ref <ctx context.Context> @ PriceService
-  - ctx context.Context
-  - (inline) ":" string
-  - (inline) rt string
-  - (inline) ref <routeid []string> @ PriceService
-  - routeID string
-  - (inline) ":" string
-  - (inline) rt string
-  - (inline) ref <trainType []string> @ PriceService
-  - trainType string
-  - coll NoSQLCollection {database = "priceConfig", collection = "priceConfig"}
-  - err .error
-  - (inline) string
-  - (inline) struct{ "traintype" string, string}
-  - (inline) primitive.D
-  - (inline) string
-  - (inline) struct{ "routeid" string, string}
-  - (inline) primitive.D
-  - (inline) primitive.A
-  - (inline) primitive.A
-  - (inline) struct{ "$and" string, primitive.A}
-  - query primitive.D
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) priceDB NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) price.PriceServiceImpl struct{priceDB
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) p (*price.PriceServiceImpl struct{priceDB
+    NoSQLDatabase})'
+  - '[4] (inline) (Reference UserType) ref <ctx context.Context> @ PriceService'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} -->
-       R-TAINTED 2x = (PRICE_DB.document, PRICE_DB.NoSQLCursor)
-  - err .error
-  - pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
-  - exists bool
-  - err .error
+    [7] (inline) (BasicVariable BasicType) ":" string -->
+       r-tainted 1x: read(price_db.":" string)
+  - |-
+    [6] (inline) (BasicVariable BasicType) rt string -->
+       r-tainted 1x: read(price_db.string)
+  - |-
+    [5] (inline) (Reference SliceType) ref <routeid []string> @ PriceService -->
+       r-tainted 1x: read(price_db.[]string)
+  - |-
+    [-1] (BasicVariable BasicType) routeID string -->
+       r-tainted 1x: read(price_db.string)
+  - |-
+    [10] (inline) (BasicVariable BasicType) ":" string -->
+       r-tainted 1x: read(price_db.":" string)
+  - |-
+    [9] (inline) (BasicVariable BasicType) rt string -->
+       r-tainted 1x: read(price_db.string)
+  - |-
+    [8] (inline) (Reference SliceType) ref <trainType []string> @ PriceService -->
+       r-tainted 1x: read(price_db.[]string)
+  - |-
+    [-1] (BasicVariable BasicType) trainType string -->
+       r-tainted 1x: read(price_db.string)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = priceConfig, collection = priceConfig}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - |-
+    [0] (inline) (FieldVariable FieldType) string -->
+       r-tainted 1x: read(price_db.)
+  - |-
+    [0] (inline) (StructVariable StructType) struct{ "traintype" string, string} -->
+       r-tainted 1x: read(price_db.struct{ "traintype" string, string})
+  - |-
+    [0] (inline) (SliceVariable UserType) primitive.D -->
+       r-tainted 1x: read(price_db.D)
+  - |-
+    [0] (inline) (FieldVariable FieldType) string -->
+       r-tainted 1x: read(price_db.)
+  - |-
+    [0] (inline) (StructVariable StructType) struct{ "routeid" string, string} -->
+       r-tainted 1x: read(price_db.struct{ "routeid" string, string})
+  - |-
+    [0] (inline) (SliceVariable UserType) primitive.D -->
+       r-tainted 1x: read(price_db.D)
+  - |-
+    [0] (inline) (SliceVariable UserType) primitive.A -->
+       r-tainted 1x: read(price_db.A)
+  - |-
+    [0] (inline) (FieldVariable FieldType) primitive.A -->
+       r-tainted 1x: read(price_db.)
+  - |-
+    [0] (inline) (StructVariable StructType) struct{ "$and" string, primitive.A} -->
+       r-tainted 1x: read(price_db.struct{ "$and" string, primitive.A})
+  - |-
+    [-1] (SliceVariable UserType) query primitive.D -->
+       r-tainted 10x: read(price_db.document, price_db.D, price_db.struct{ "$and" string, primitive.A}, price_db., price_db.A, price_db.struct{ "routeid" string, string}, price_db.string, price_db.[]string, price_db.":" string, price_db.struct{ "traintype" string, string})
+  - |-
+    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = priceConfig, collection = priceConfig} -->
+       r-tainted 1x: read(price_db.document)
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (StructVariable UserType) pc price.PriceConfig struct{ID string, TrainType
+    string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}'
+  - '[-1] (BasicVariable BasicType) exists bool'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*price.PriceServiceImpl).FindByRouteIDsAndTrainTypes(ctx context.Context, rtsAndTypes []string) (map[string]price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}, error):
  block 0 (Body):
-  - (inline) priceDB NoSQLDatabase
-  - p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase})
-  - ctx context.Context
-  - rtsAndTypes []string
-  - res map[string]price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
-  - rt string
-  - (inline) ":" string
-  - pieces []string
-  - (inline) ":" string
-  - (inline) rt string
-  - routeid []string
-  - (inline) ":" string
-  - (inline) rt string
-  - trainType []string
-  - pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
-  - _ .error
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) priceDB NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) price.PriceServiceImpl struct{priceDB
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) p (*price.PriceServiceImpl struct{priceDB
+    NoSQLDatabase})'
+  - '[4] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ArrayVariable ArrayType) rtsAndTypes []string'
+  - '[-1] (inline) (StructVariable UserType) pc price.PriceConfig struct{ID string,
+    TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate
+    float64}'
+  - '[-1] (MapVariable MapType) res map[string]price.PriceConfig struct{ID string,
+    TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate
+    float64}'
+  - '[-1] (BasicVariable BasicType) rt string'
+  - '[0] (inline) (BasicVariable BasicType) ":" string'
+  - '[-1] (SliceVariable SliceType) pieces []string'
+  - |-
+    [7] (inline) (BasicVariable BasicType) ":" string -->
+       r-tainted 1x: read(price_db.":" string)
+  - |-
+    [6] (inline) (BasicVariable BasicType) rt string -->
+       r-tainted 1x: read(price_db.string)
+  - |-
+    [5] (SliceVariable SliceType) routeid []string -->
+       r-tainted 1x: read(price_db.[]string)
+  - |-
+    [10] (inline) (BasicVariable BasicType) ":" string -->
+       r-tainted 1x: read(price_db.":" string)
+  - |-
+    [9] (inline) (BasicVariable BasicType) rt string -->
+       r-tainted 1x: read(price_db.string)
+  - |-
+    [8] (SliceVariable SliceType) trainType []string -->
+       r-tainted 1x: read(price_db.[]string)
+  - '[-1] (InterfaceVariable UserType) _ .error'
 (*price.PriceServiceImpl).GetAllPriceConfig(ctx context.Context) ([]price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}, error):
  block 8 (IfDone):
-  - (inline) priceDB NoSQLDatabase
-  - p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase})
-  - ctx context.Context
-  - coll NoSQLCollection {database = "priceConfig", collection = "priceConfig"}
-  - err .error
-  - |-
-    res NoSQLCursor {database = "priceConfig", collection = "priceConfig"} -->
-       R-TAINTED 2x = (PRICE_DB.document, PRICE_DB.NoSQLCursor)
-  - err .error
-  - pcs []price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
-  - err .error
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) priceDB NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) price.PriceServiceImpl struct{priceDB
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) p (*price.PriceServiceImpl struct{priceDB
+    NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = priceConfig, collection = priceConfig}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
+    = priceConfig, collection = priceConfig}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (ArrayVariable ArrayType) pcs []price.PriceConfig struct{ID string, TrainType
+    string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*price.PriceServiceImpl).UpdatePriceConfig(ctx context.Context, pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}) (bool, error):
  block 2 (IfDone):
-  - (inline) priceDB NoSQLDatabase
-  - p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase})
-  - ctx context.Context
-  - (inline) ID string
-  - (inline) ID string
-  - pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
-  - coll NoSQLCollection {database = "priceConfig", collection = "priceConfig"}
-  - err .error
-  - (inline) "id" string
-  - (inline) "id" string
-  - (inline) struct{ "id" string, ID string}
-  - query primitive.D
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) priceDB NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) price.PriceServiceImpl struct{priceDB
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) p (*price.PriceServiceImpl struct{priceDB
+    NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (inline) (BasicVariable BasicType) ID string'
+  - '[-1] (inline) (FieldVariable FieldType) ID string'
+  - '[-1] (StructVariable UserType) pc price.PriceConfig struct{ID string, TrainType
+    string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = priceConfig, collection = priceConfig}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[0] (inline) (BasicVariable BasicType) "id" string'
+  - '[0] (inline) (FieldVariable FieldType) "id" string'
+  - '[0] (inline) (StructVariable StructType) struct{ "id" string, ID string}'
+  - '[-1] (SliceVariable UserType) query primitive.D'
 price.NewPriceServiceImpl(ctx context.Context, db NoSQLDatabase) ((*price.PriceServiceImpl struct{priceDB NoSQLDatabase}), error):
  block 0 (Body):
-  - ctx context.Context
-  - db NoSQLDatabase
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'

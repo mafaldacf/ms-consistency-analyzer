@@ -1,101 +1,128 @@
 ? (*payment.PaymentServiceImpl).AddMoney(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}) error:
  block 2 (IfDone):
-  - (inline) moneyDB NoSQLDatabase
-  - (inline) paymentDB NoSQLDatabase
-  - p (*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase})
-  - ctx context.Context
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) moneyDB NoSQLDatabase'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) paymentDB NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) payment.PaymentServiceImpl struct{paymentDB
+    NoSQLDatabase, moneyDB NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) p (*payment.PaymentServiceImpl struct{paymentDB
+    NoSQLDatabase, moneyDB NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    (inline) Price string -->
-       W-TAINTED 1x = (MONEY_DB.Money.Price)
-  - (inline) Price string
+    [-1] (inline) (BasicVariable BasicType) Price string -->
+       w-tainted 1x: write(money_db.Money.Price)
+  - '[-1] (inline) (FieldVariable FieldType) Price string'
   - |-
-    (inline) UserID string -->
-       W-TAINTED 1x = (MONEY_DB.Money.UserID)
-  - (inline) UserID string
-  - payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}
+    [-1] (inline) (BasicVariable BasicType) UserID string -->
+       w-tainted 1x: write(money_db.Money.UserID)
+  - '[-1] (inline) (FieldVariable FieldType) UserID string'
+  - '[-1] (StructVariable UserType) payment payment.Payment struct{ID string, OrderID
+    string, UserID string, Price string}'
   - |-
-    (inline) string -->
-       W-TAINTED 1x = (MONEY_DB.Money.ID)
+    [0] (inline) (BasicVariable BasicType) string -->
+       w-tainted 1x: write(money_db.Money.ID)
   - |-
-    (inline) ID string -->
-       W-TAINTED 1x = (MONEY_DB.Money.ID)
+    [-1] (inline) (FieldVariable FieldType) ID string -->
+       w-tainted 1x: write(money_db.Money.ID)
   - |-
-    (inline) Price string -->
-       W-TAINTED 1x = (MONEY_DB.Money.Price)
+    [-1] (inline) (BasicVariable BasicType) Price string -->
+       w-tainted 1x: write(money_db.Money.Price)
   - |-
-    (inline) Price string -->
-       W-TAINTED 1x = (MONEY_DB.Money.Price)
+    [-1] (inline) (FieldVariable FieldType) Price string -->
+       w-tainted 1x: write(money_db.Money.Price)
   - |-
-    (inline) UserID string -->
-       W-TAINTED 1x = (MONEY_DB.Money.UserID)
+    [-1] (inline) (BasicVariable BasicType) UserID string -->
+       w-tainted 1x: write(money_db.Money.UserID)
   - |-
-    (inline) UserID string -->
-       W-TAINTED 1x = (MONEY_DB.Money.UserID)
+    [-1] (inline) (FieldVariable FieldType) UserID string -->
+       w-tainted 1x: write(money_db.Money.UserID)
   - |-
-    m payment.Money struct{ID string, UserID string, Price string} -->
-       W-TAINTED 1x = (MONEY_DB.Money)
-  - coll NoSQLCollection {database = "payment", collection = "money"}
-  - err .error
+    [-1] (StructVariable UserType) m payment.Money struct{ID string, UserID string, Price string} -->
+       w-tainted 1x: write(money_db.Money)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = payment, collection = money}'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*payment.PaymentServiceImpl).Cleanup(ctx context.Context) error:
   block 8 (IfDone):
-  - (inline) paymentDB NoSQLDatabase
-  - (inline) moneyDB NoSQLDatabase
-  - p (*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase})
-  - ctx context.Context
-  - pay_coll NoSQLCollection {database = "payment", collection = "payment"}
-  - err .error
-  - err .error
-  - money_coll NoSQLCollection {database = "payment", collection = "money"}
-  - err .error
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) moneyDB NoSQLDatabase'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) paymentDB NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) payment.PaymentServiceImpl struct{paymentDB
+    NoSQLDatabase, moneyDB NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) p (*payment.PaymentServiceImpl struct{paymentDB
+    NoSQLDatabase, moneyDB NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) pay_coll NoSQLCollection
+    {database = payment, collection = payment}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) money_coll NoSQLCollection
+    {database = payment, collection = money}'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*payment.PaymentServiceImpl).InitPayment(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}) error:
  block 11 (IfDone):
-  - (inline) moneyDB NoSQLDatabase
-  - (inline) paymentDB NoSQLDatabase
-  - p (*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase})
-  - ctx context.Context
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) moneyDB NoSQLDatabase'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) paymentDB NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) payment.PaymentServiceImpl struct{paymentDB
+    NoSQLDatabase, moneyDB NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) p (*payment.PaymentServiceImpl struct{paymentDB
+    NoSQLDatabase, moneyDB NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    (inline) ID string -->
-       W-TAINTED 1x = (PAYMENTS_DB.Payment.ID)
+    [-1] (inline) (BasicVariable BasicType) ID string -->
+       w-tainted 1x: write(payments_db.Payment.ID)
   - |-
-    (inline) ID string -->
-       W-TAINTED 1x = (PAYMENTS_DB.Payment.ID)
+    [-1] (inline) (FieldVariable FieldType) ID string -->
+       w-tainted 1x: write(payments_db.Payment.ID)
   - |-
-    payment payment.Payment struct{ID string, OrderID string, UserID string, Price string} -->
-       W-TAINTED 1x = (PAYMENTS_DB.Payment)
-  - coll NoSQLCollection {database = "payment", collection = "payment"}
-  - err .error
-  - res NoSQLCursor {database = "payment", collection = "payment"}
-  - err .error
-  - stored payment.Payment struct{ID string, OrderID string, UserID string, Price string}
-  - exists bool
-  - err .error
+    [-1] (StructVariable UserType) payment payment.Payment struct{ID string, OrderID string, UserID string, Price string} -->
+       w-tainted 1x: write(payments_db.Payment)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = payment, collection = payment}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
+    = payment, collection = payment}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (StructVariable UserType) stored payment.Payment struct{ID string, OrderID
+    string, UserID string, Price string}'
+  - '[-1] (BasicVariable BasicType) exists bool'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*payment.PaymentServiceImpl).Pay(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}) error:
  block 8 (IfDone):
-  - (inline) moneyDB NoSQLDatabase
-  - (inline) paymentDB NoSQLDatabase
-  - p (*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase})
-  - ctx context.Context
-  - (inline) OrderID string
-  - (inline) OrderID string
-  - payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}
-  - coll NoSQLCollection {database = "payment", collection = "payment"}
-  - err .error
-  - ok bool
-  - err .error
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) moneyDB NoSQLDatabase'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) paymentDB NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) payment.PaymentServiceImpl struct{paymentDB
+    NoSQLDatabase, moneyDB NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) p (*payment.PaymentServiceImpl struct{paymentDB
+    NoSQLDatabase, moneyDB NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (inline) (BasicVariable BasicType) OrderID string'
+  - '[-1] (inline) (FieldVariable FieldType) OrderID string'
+  - '[-1] (StructVariable UserType) payment payment.Payment struct{ID string, OrderID
+    string, UserID string, Price string}'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = payment, collection = payment}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (BasicVariable BasicType) ok bool'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*payment.PaymentServiceImpl).Query(ctx context.Context) ([]payment.Payment struct{ID string, OrderID string, UserID string, Price string}, error):
  block 5 (IfDone):
-  - (inline) moneyDB NoSQLDatabase
-  - (inline) paymentDB NoSQLDatabase
-  - p (*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase})
-  - ctx context.Context
-  - payments []payment.Payment struct{ID string, OrderID string, UserID string, Price string}
-  - coll NoSQLCollection {database = "payment", collection = "payment"}
-  - err .error
-  - res NoSQLCursor {database = "payment", collection = "payment"}
-  - err .error
-  - err .error
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) paymentDB NoSQLDatabase'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) moneyDB NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) payment.PaymentServiceImpl struct{paymentDB
+    NoSQLDatabase, moneyDB NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) p (*payment.PaymentServiceImpl struct{paymentDB
+    NoSQLDatabase, moneyDB NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ArrayVariable ArrayType) payments []payment.Payment struct{ID string, OrderID
+    string, UserID string, Price string}'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = payment, collection = payment}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
+    = payment, collection = payment}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (InterfaceVariable UserType) err .error'
 payment.NewPaymentServiceImpl(ctx context.Context, payDB NoSQLDatabase, moneyDB NoSQLDatabase) ((*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase}), error):
  block 0 (Body):
-  - ctx context.Context
-  - payDB NoSQLDatabase
-  - moneyDB NoSQLDatabase
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) payDB NoSQLDatabase'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) moneyDB NoSQLDatabase'

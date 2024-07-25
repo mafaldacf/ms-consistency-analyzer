@@ -38,6 +38,9 @@ func (t *SignatureType) LongString() string {
 func (t *SignatureType) GetName() string {
 	return ""
 }
+func (t *SignatureType) GetLongName() string {
+	return ""
+}
 func (t *SignatureType) GetPackage() string {
 	return ""
 }

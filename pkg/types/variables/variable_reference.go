@@ -23,7 +23,7 @@ func (ref *Reference) MarshalJSON() ([]byte, error) {
 		Creator: ref.Creator,
 		//Id:      ref.Variable.GetId(),
 		//Variable: ref.Variable,
-		/* IndirectDeps: getDependenciesString(GetIndirectDependenciesWithCurrent(ref)...), */
+		/* IndirectDeps: getDependenciesString(GetIndirectDependencies(ref)...), */
 		/* Params:  		ref.Variable.GetDependencies(), */
 	})
 }
@@ -54,4 +54,12 @@ func (ref *Reference) GetDependencies() []Variable {
 		return ref.Variable.GetDependencies()
 	}
 	return nil
+}
+
+func (ref *Reference) GetNestedIndirectDependencies() []Variable {
+	var deps = []Variable{ref}
+	if ref.Variable != nil {
+		deps = append(deps, ref.Variable.GetNestedIndirectDependencies()...)
+	}
+	return deps
 }

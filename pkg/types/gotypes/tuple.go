@@ -29,7 +29,10 @@ func (t *TupleType) LongString() string {
 	return t.String()
 }
 func (t *TupleType) GetName() string {
-	return ""
+	return t.String()
+}
+func (t *TupleType) GetLongName() string {
+	return t.String()
 }
 func (t *TupleType) GetTypes() []Type {
 	return t.Types

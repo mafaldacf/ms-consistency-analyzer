@@ -71,6 +71,17 @@ func (v *SliceVariable) GetDependencies() []Variable {
 	return v.Elements
 }
 
+func (v *SliceVariable) GetNestedIndirectDependencies() []Variable {
+	var deps = []Variable{v}
+	if v.GetVariableInfo().HasReference() {
+		deps = append(deps, v.GetVariableInfo().GetReference().GetNestedIndirectDependencies()...)
+	}
+	for _, elem := range v.Elements {
+		deps = append(deps, elem.GetNestedIndirectDependencies()...)
+	}
+	return deps
+}
+
 func (v *SliceVariable) GetElementAt(index int) Variable {
 	if index > len(v.Elements)-1 {
 		logger.Logger.Fatalf("[VARS SLICE] element at index (%d) does not exist in array variable with len (%d): %s", index, len(v.Elements), v.String())

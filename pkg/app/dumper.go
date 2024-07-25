@@ -225,8 +225,13 @@ func (app *App) dumpYamlControlflow() {
 	for _, p := range app.Packages {
 		pkgData := make(map[string]interface{})
 		for _, m := range p.ParsedMethods {
-			data := m.Yaml()
+			data, blockVarsStr := m.Yaml()
 			pkgData[m.LongString()] = data
+			prefix := ""
+			if m.AttachedService != "" {
+				prefix = m.AttachedService + "_"
+			}
+			utils.DumpDebugFile(blockVarsStr, app.Name, fmt.Sprintf("controlflow/methods/%s%s", prefix, m.Name))
 		}
 		utils.DumpToYamlFile(pkgData, app.Name, fmt.Sprintf("controlflow/packages/%s", strings.ToLower(p.Name)))
 	}

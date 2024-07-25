@@ -23,10 +23,13 @@ func (t *PackageType) String() string {
 	return t.Name
 }
 func (t *PackageType) LongString() string {
-	return t.Name + "" + t.Path
+	return t.Name + " " + t.Path
 }
 func (t *PackageType) GetName() string {
 	return t.Name
+}
+func (t *PackageType) GetLongName() string {
+	return t.LongString()
 }
 func (t *PackageType) GetBasicValue() string {
 	logger.Logger.Fatalf("[TYPES PACKAGE] unable to get value for package type %s", t.String())

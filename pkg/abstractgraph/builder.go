@@ -9,7 +9,6 @@ import (
 	"analyzer/pkg/lookup"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
-	"analyzer/pkg/types/gotypes"
 	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
 )
@@ -64,21 +63,6 @@ func (graph *AbstractGraph) matchIdentifiers(node AbstractNode) {
 	}
 }
 
-// FIXME: this should be recursive!!
-func getVariableIfPointer(variable variables.Variable) variables.Variable {
-	if variable.GetVariableInfo() == nil {
-		logger.Logger.Fatalf("missing info for variable %v", variable)
-	}
-	if variable.GetType() == nil {
-		logger.Logger.Fatalf("missing type for variable %v", variable)
-	}
-
-	if _, ok := variable.GetType().(*gotypes.PointerType); ok {
-		return variable.GetDependencies()[0]
-	}
-	return variable
-}
-
 func (graph *AbstractGraph) initBuild(app *app.App, serviceNode *service.Service, targetMethod *types.ParsedMethod) {
 	graph.addEntry(serviceNode, targetMethod)
 	for _, abstractEntry := range graph.Nodes {
@@ -122,15 +106,6 @@ func (graph *AbstractGraph) addEntry(node *service.Service, method *types.Parsed
 	// add entry node to graph
 	entryCall := graph.createDummyAbstractServiceCall(node, method, nil, 0)
 	graph.Nodes = append(graph.Nodes, &entryCall)
-	// build entry node
-	/* for _, param := range entryCall.Params {
-		v := controlflow.CreateVariableFromType(node, param.GetVariableInfo().GetName(), param.GetType())
-		v.GetId() = graph.getAndIncGIndex()
-		param.GetVariableInfo().Reference = &types.Reference{
-			Creator:  "Client",
-			Variable: v,
-		}
-	} */
 }
 
 func (graph *AbstractGraph) recurseBuild(app *app.App, abstractNode AbstractNode) {
@@ -195,33 +170,6 @@ func getPushMethodIfPublisherChild(rootParent AbstractNode, child *AbstractDatab
 	return nil
 }
 
-func (graph *AbstractGraph) referencePublisherParams(queueHandler *AbstractQueueHandler, child *AbstractDatabaseCall) bool {
-	pushMethod := getPushMethodIfPublisherChild(queueHandler, child)
-	if pushMethod == nil {
-		return false
-	}
-	queueHandler.Enable()
-	for pushParamIdx, popParamIdx := range pushMethod.MatchQueueIdentifiers() {
-		pushParam := queueHandler.Publisher.GetParam(pushParamIdx)
-		popParam := child.GetParam(popParamIdx)
-		popParam = getVariableIfPointer(popParam)
-
-		if addressVar, ok := popParam.(*variables.AddressVariable); ok {
-			popParam = addressVar.GetAddressOf()
-		} else if ptrVar, ok := popParam.(*variables.PointerVariable); ok {
-			popParam = ptrVar.GetPointerTo()
-		}
-
-		popParam.GetVariableInfo().AddReferenceWithID(pushParam, "unknown creator")
-		if pushParam.GetVariableInfo().HasReference() {
-			popParam.GetVariableInfo().GetReference().Creator = pushParam.GetVariableInfo().GetReference().Creator
-		} else {
-			popParam.GetVariableInfo().GetReference().Creator = queueHandler.Publisher.ParsedCall.CallerTypeName.GetName()
-		}
-	}
-	return true
-}
-
 // FIXME: we should actually create a new deep copy for the CFG
 // to avoid changing it if we have another abstract node that will use the same parsed method
 func (graph *AbstractGraph) referenceMethodBlockVars(parsedCall types.Call, child AbstractNode) {
@@ -240,7 +188,7 @@ func (graph *AbstractGraph) referenceMethodBlockVars(parsedCall types.Call, chil
 			logger.Logger.Debugf("WTFFFFFFF!!!!")
 			variables.GetReversedNestedFieldsAndNames(blockVar, true, "")
 		}
-		for _, dep := range variables.GetIndirectDependenciesWithCurrent(param) {
+		for _, dep := range param.GetNestedIndirectDependencies() {
 			if dep.GetVariableInfo().IsUnassigned() {
 				dep.GetVariableInfo().AssignID(graph.getAndIncGIndex())
 				logger.Logger.Debugf("\t\t\t[GID DEP] assigned new gid (%d) to (%s)", dep.GetId(), dep.String())
@@ -260,23 +208,18 @@ func (graph *AbstractGraph) referenceQueuePopMethodBlockVars(queueHandler *Abstr
 	for pushParamIdx, popParamIdx := range queuePushMethod.MatchQueueIdentifiers() {
 		pushParam := queueHandler.Publisher.GetParam(pushParamIdx)
 		popParam := queuePopCall.GetParam(popParamIdx)
-		popParam = getVariableIfPointer(popParam)
 
-		if addressVar, ok := popParam.(*variables.AddressVariable); ok {
-			popParam = addressVar.GetAddressOf()
-		} else if ptrVar, ok := popParam.(*variables.PointerVariable); ok {
-			popParam = ptrVar.GetPointerTo()
-		}
+		popParam = variables.UnwrapAddressVariable(popParam)
 
 		logger.Logger.Warnf("FIXMEEEEEEEEEE! IDK IF IT IS WORKING IN NOTIFY BECAUSE OF ASSIGNMENTS AND ASSERTS AFTERWARDS")
-		popParam.AddReferenceWithID(pushParam, queuePopCall.GetCallerStr())
-		logger.Logger.Infof("\t\t[QUEUE POP - REF BLOCK VAR] added reference (%d) from creator (%s): (%s) -> (%s)", popParam.GetId(), queuePopCall.GetCallerStr(), popParam.GetType().GetName(), popParam.GetVariableInfo().GetName())
-		for _, dep := range variables.GetIndirectDependenciesWithCurrent(pushParam) {
+		for _, dep := range pushParam.GetNestedIndirectDependencies() {
 			if dep.GetVariableInfo().IsUnassigned() {
 				dep.GetVariableInfo().AssignID(graph.getAndIncGIndex())
 				logger.Logger.Debugf("\t\t\t[QUEUE POP - GID DEP] assigned new gid (%d) to (%s)", dep.GetId(), dep.String())
 			}
 		}
+		popParam.AddReferenceWithID(pushParam, queuePopCall.GetCallerStr())
+		logger.Logger.Infof("\t\t[QUEUE POP - REF BLOCK VAR] added reference (%d) from creator (%s): (%s) -> (%s)", popParam.GetId(), queuePopCall.GetCallerStr(), popParam.GetType().GetName(), popParam.GetVariableInfo().GetName())
 	}
 	//logger.Logger.Fatal("EXIT!")
 }
@@ -348,7 +291,6 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 			logger.Logger.Infof("[GRAPH] adding temporary node for abstract service call: %s", tempChild.String())
 			graph.referenceMethodBlockVars(parsedCall, tempChild)
 			logger.Logger.Infof("[GRAPH] added temporary node for abstract service call: %s", tempChild.String())
-			//logger.Logger.Fatal("EXIT!")
 		}
 	}
 }
@@ -366,86 +308,14 @@ func (graph *AbstractGraph) appendPublisherQueueHandlers(app *app.App, publisher
 				DbInstance:          instance,
 				Publisher:           publisher,
 			}
-			for _, p := range handlerMethod.GetParams() {
-				abstractHandler.ParsedCall.Params = append(abstractHandler.ParsedCall.Params, &variables.CompositeVariable{
-					VariableInfo: &variables.VariableInfo{
-						Name: p.GetName(),
-						Type: p.GetType(),
-					},
-				})
+			blockVariables := handlerMethod.GetParsedCfg().GetEntryParsedBlock().GetVariables()
+			for i := range handlerMethod.GetParams() {
+				if handlerMethod.HasReceiver() {
+					i = i + 1
+				}
+				abstractHandler.ParsedCall.Params = append(abstractHandler.ParsedCall.Params, blockVariables[i])
 			}
 			publisher.Children = append(publisher.Children, abstractHandler)
-		}
-	}
-}
-
-func getDependencies(v variables.Variable) []variables.Variable {
-	indirectDeps := []variables.Variable{v}
-
-	// indirect dependencySets from potential reference
-	if v.GetVariableInfo().HasReference() {
-		indirectDeps = append(indirectDeps, getDependencies(v.GetVariableInfo().GetReference())...)
-	}
-	// direct dependencySets
-	for _, dep := range v.GetDependencies() {
-		indirectDeps = append(indirectDeps, getDependencies(dep)...)
-	}
-
-	return indirectDeps
-}
-
-func (graph *AbstractGraph) referenceServiceCallerParams(parent AbstractNode, caller AbstractNode, child AbstractNode) {
-	fmt.Println()
-	if caller == parent {
-		logger.Logger.Infof("[REF] reference caller (%s) to callee (%s.%s)", caller.GetName(), child.GetCallee(), child.GetName())
-	} else {
-		logger.Logger.Infof("[REF] reference caller (%s) from parent (%s) to callee (%s.%s)", caller.GetName(), parent.GetName(), child.GetCallee(), child.GetName())
-	}
-
-	for _, childParam := range child.GetParams() {
-		deps := getDependencies(childParam)
-		logger.Logger.Infof("\t[REF CHILD PARAM] visit (%s)", childParam.String())
-
-		for _, dep := range deps {
-			logger.Logger.Debugf("\t\t[REF CHILD PARAM DEP] visit dep (%s)", dep.String())
-			if dep.GetVariableInfo().HasReference() {
-				continue
-			}
-			for callerParamIdx, callerParam := range caller.GetParams() {
-				logger.Logger.Tracef("\t[REF CALLER PARAM] visit (%s)", callerParam.String())
-				if dep.GetVariableInfo().IsBlockParameter() && dep.GetVariableInfo().EqualBlockParamIndex(callerParamIdx) {
-					if dep.GetVariableInfo().IsUnassigned() {
-						if parent != caller && callerParam.GetVariableInfo().HasReference() {
-							// this can happen with the context variable (e.g. handleMessage called by the workerThread in the NotifyService)
-							dep.GetVariableInfo().AddOriginalReferenceWithID(callerParam.GetVariableInfo().GetReference())
-							//dep = callerParam.DeepCopy(true)
-						} else {
-							if callerParam.GetVariableInfo().IsUnassigned() {
-								unassaignedVariables := callerParam.GetUnassaignedVariables()
-								for _, v := range unassaignedVariables {
-									v.GetVariableInfo().AssignID(graph.getAndIncGIndex())
-									logger.Logger.Warnf("\t\t\t[NEW GID] assigned new gid (%d) to (%s)", v.GetId(), v.String())
-								}
-							}
-							//dep = callerParam.DeepCopy(true)
-							logger.Logger.Warnf("\t\t\t[VARIABLE] added reference (%d) from creator (%s): (%s) -> (%s)", dep.GetId(), child.GetCallerStr(), dep.GetType().GetName(), callerParam.GetVariableInfo().GetName())
-							dep.AddReferenceWithID(callerParam, child.GetCallerStr())
-
-							// FIXME: THIS IS HARD CODED
-							if structVariable, ok := childParam.(*variables.StructVariable); ok {
-								if structParentVariable, ok := callerParam.(*variables.StructVariable); ok {
-									structVariable.CopyFrom(structParentVariable)
-								} else {
-									logger.Logger.Warnf("FIXMEEEEEEEEE %s (%s) vs %s (%s)", childParam.String(), child.GetName(), callerParam.String(), parent.GetName())
-								}
-							}
-						}
-					}
-					if dep.GetVariableInfo().IsUnassigned() {
-						dep.GetVariableInfo().AssignID(graph.getAndIncGIndex())
-					}
-				}
-			}
 		}
 	}
 }

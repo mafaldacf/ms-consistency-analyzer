@@ -70,8 +70,16 @@ func (v *FieldVariable) GetVariableInfo() *VariableInfo {
 }
 
 func (v *FieldVariable) GetDependencies() []Variable {
-	var deps = []Variable{v.WrappedVariable}
-	return append(deps, v.WrappedVariable.GetDependencies()...)
+	return []Variable{v.WrappedVariable}
+}
+
+func (v *FieldVariable) GetNestedIndirectDependencies() []Variable {
+	var deps = []Variable{v}
+	if v.GetVariableInfo().HasReference() {
+		deps = append(deps, v.GetVariableInfo().GetReference().GetNestedIndirectDependencies()...)
+	}
+	deps = append(deps, v.WrappedVariable.GetNestedIndirectDependencies()...)
+	return deps
 }
 
 func (v *FieldVariable) AddReferenceWithID(target Variable, creator string) {

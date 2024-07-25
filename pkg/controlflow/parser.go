@@ -70,6 +70,12 @@ func assignLeftValues(service *service.Service, method *types.ParsedMethod, bloc
 					rvariable.GetVariableInfo().SetUnassigned()
 					rvariable.GetVariableInfo().SetName(e.Name)
 					block.AddVariable(rvariable)
+					/* for _, d := range rvariable.GetNestedIndirectDependencies() {
+						logger.Logger.Debugf("\t\t\t- (%s) %s", variables.GetVariableTypeAndTypeString(d), d.String())
+					} */
+					/* if e.Name == "workerMessage" {
+						logger.Logger.Fatal("1 HERE!")
+					} */
 					// HERE FOR QUERY (SliceVariable): query primitive.D = (struct{Key "postid" string, Value int64})
 					/* if rvariable.GetVariableInfo().GetName() == "query" {
 						for _, b := range method.ParsedCfg.Cfg.Blocks {
@@ -86,6 +92,9 @@ func assignLeftValues(service *service.Service, method *types.ParsedMethod, bloc
 					lvariable.GetVariableInfo().SetName(e.Name)
 					lvariable.GetVariableInfo().SetUnassigned()
 					block.AddVariable(lvariable)
+					if e.Name == "workerMessage" {
+						logger.Logger.Fatal("2 HERE!")
+					}
 				}
 			} else if assignStmt.Tok == token.ADD_ASSIGN {
 				lvariable := block.GetLastestVariable(e.Name)
@@ -275,15 +284,7 @@ func saveParsedFuncCallParams(service *service.Service, method *types.ParsedMeth
 			logger.Logger.Warnf("[CFG] upgrading variable %s with new type %s", param.GetVariableInfo().Name, param.GetType().String())
 		}
 		parsedCall.AddParam(param)
-		/* logger.Logger.Debugf("added param with type (%s): %s", utils.GetType(param), param.String())
-		for _, d := range variables.GetIndirectDependencies(param) {
-			logger.Logger.Debugf("\t\t\t - %s", d.String())
-		} */
 	}
-	//logger.Logger.Debugf("[CFG] added params to func call %s", parsedCall.String())
-	/* if parsedCall.GetName() == "InsertOne" {
-		logger.Logger.Fatalf("(2) FOUND CALL TO SERVICE VAR %s: BLOCK VARS:\n%v", parsedCall.GetName(), block.Vars)
-	} */
 }
 
 func getFuncCallDeps(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr) []variables.Variable {
@@ -342,16 +343,20 @@ func computeExternalFuncCallReturns(service *service.Service, callExpr *ast.Call
 			} else {
 				for _, t := range signatureResults.(*gotypes.TupleType).Types {
 					newVar := lookup.CreateVariableFromType("", t)
-					compositeVar := &variables.CompositeVariable{
-						VariableInfo: &variables.VariableInfo{
-							Type: newVar.GetType(),
-							Id:   variables.VARIABLE_UNASSIGNED_ID,
-						},
-						Params: deps,
+					ok := variables.AddUnderlyingDependencies(newVar, deps)
+					if !ok {
+						logger.Logger.Fatalf("[CFG CALLS] cannot keep variable (%s) (%s) for underlying deps list with len (%d): %v", variables.GetVariableTypeAndTypeString(newVar), newVar.String(), len(deps), deps)
+						newVar = &variables.GenericVariable{
+							VariableInfo: &variables.VariableInfo{
+								Type: newVar.GetType(),
+								Id:   variables.VARIABLE_UNASSIGNED_ID,
+							},
+							Params: deps,
+						}
 					}
-					logger.Logger.Warnf("CREATED COMPOSITE VAR FOR (%d) DEPS: %s", len(deps), compositeVar.String())
-					tupleVar.Variables = append(tupleVar.Variables, compositeVar)
+					tupleVar.Variables = append(tupleVar.Variables, newVar)
 				}
+				logger.Logger.Warnf("CREATED COMPOSITE VAR FOR (%d) TUPLE: %s", len(deps), tupleVar.String())
 			}
 
 		}

@@ -1,107 +1,126 @@
 ? (*train.TrainServiceImpl).AllTrains(ctx context.Context) ([]train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}, error):
  block 8 (IfDone):
-  - (inline) db NoSQLDatabase
-  - ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
-  - ctx context.Context
-  - trains []train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}
-  - coll NoSQLCollection {database = "train", collection = "train"}
-  - err .error
-  - res NoSQLCursor {database = "train", collection = "train"}
-  - err .error
-  - err .error
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) train.TrainServiceImpl struct{db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) ts (*train.TrainServiceImpl struct{db NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ArrayVariable ArrayType) trains []train.TrainType struct{ID string, Name
+    string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = train, collection = train}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
+    = train, collection = train}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*train.TrainServiceImpl).Create(ctx context.Context, tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}) (bool, error):
  block 14 (IfDone):
-  - (inline) db NoSQLDatabase
-  - ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
-  - ctx context.Context
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) train.TrainServiceImpl struct{db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) ts (*train.TrainServiceImpl struct{db NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    (inline) Name string -->
-       W-TAINTED 1x = (TRAIN_DB.TrainType.Name)
+    [-1] (inline) (BasicVariable BasicType) Name string -->
+       w-tainted 1x: write(train_db.TrainType.Name)
   - |-
-    (inline) Name string -->
-       W-TAINTED 1x = (TRAIN_DB.TrainType.Name)
+    [-1] (inline) (FieldVariable FieldType) Name string -->
+       w-tainted 1x: write(train_db.TrainType.Name)
   - |-
-    tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} -->
-       W-TAINTED 1x = (TRAIN_DB.TrainType)
-  - coll NoSQLCollection {database = "train", collection = "train"}
-  - err .error
-  - (inline) "name" string
-  - (inline) "name" string
-  - (inline) struct{ "name" string, Name string}
-  - query primitive.D
-  - res NoSQLCursor {database = "train", collection = "train"}
-  - err .error
-  - saved_tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}
-  - exists bool
-  - err .error
-  - err .error
+    [-1] (StructVariable UserType) tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} -->
+       w-tainted 1x: write(train_db.TrainType)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = train, collection = train}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[0] (inline) (BasicVariable BasicType) "name" string'
+  - '[0] (inline) (FieldVariable FieldType) "name" string'
+  - '[0] (inline) (StructVariable StructType) struct{ "name" string, Name string}'
+  - '[-1] (SliceVariable UserType) query primitive.D'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
+    = train, collection = train}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (StructVariable UserType) saved_tt train.TrainType struct{ID string, Name
+    string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}'
+  - '[-1] (BasicVariable BasicType) exists bool'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*train.TrainServiceImpl).Delete(ctx context.Context, id string) (bool, error):
   block 5 (IfDone):
-  - (inline) db NoSQLDatabase
-  - ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
-  - ctx context.Context
-  - id string
-  - coll NoSQLCollection {database = "train", collection = "train"}
-  - err .error
-  - err .error
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) train.TrainServiceImpl struct{db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) ts (*train.TrainServiceImpl struct{db NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BasicVariable BasicType) id string'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = train, collection = train}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*train.TrainServiceImpl).Retrieve(ctx context.Context, id string) (train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}, error):
  block 11 (IfDone):
-  - (inline) db NoSQLDatabase
-  - ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
-  - ctx context.Context
-  - id string
-  - coll NoSQLCollection {database = "train", collection = "train"}
-  - err .error
-  - (inline) string
-  - (inline) struct{ "id" string, string}
-  - query primitive.D
-  - |-
-    res NoSQLCursor {database = "train", collection = "train"} -->
-       R-TAINTED 2x = (TRAIN_DB.document, TRAIN_DB.NoSQLCursor)
-  - err .error
-  - tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}
-  - exists bool
-  - err .error
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) train.TrainServiceImpl struct{db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) ts (*train.TrainServiceImpl struct{db NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BasicVariable BasicType) id string'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = train, collection = train}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[0] (inline) (FieldVariable FieldType) string'
+  - '[0] (inline) (StructVariable StructType) struct{ "id" string,  string}'
+  - '[-1] (SliceVariable UserType) query primitive.D'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
+    = train, collection = train}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (StructVariable UserType) tt train.TrainType struct{ID string, Name string,
+    EconomyClass int64, ComfortClass int64, AvgSpeed int64}'
+  - '[-1] (BasicVariable BasicType) exists bool'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*train.TrainServiceImpl).RetrieveByName(ctx context.Context, name string) (train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}, error):
  block 11 (IfDone):
-  - (inline) db NoSQLDatabase
-  - ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
-  - ctx context.Context
-  - name string
-  - coll NoSQLCollection {database = "train", collection = "train"}
-  - err .error
-  - (inline) string
-  - (inline) struct{ "name" string, string}
-  - query primitive.D
-  - |-
-    res NoSQLCursor {database = "train", collection = "train"} -->
-       R-TAINTED 2x = (TRAIN_DB.document, TRAIN_DB.NoSQLCursor)
-  - err .error
-  - tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}
-  - exists bool
-  - err .error
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) train.TrainServiceImpl struct{db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) ts (*train.TrainServiceImpl struct{db NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BasicVariable BasicType) name string'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = train, collection = train}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[0] (inline) (FieldVariable FieldType) string'
+  - '[0] (inline) (StructVariable StructType) struct{ "name" string,  string}'
+  - '[-1] (SliceVariable UserType) query primitive.D'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
+    = train, collection = train}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (StructVariable UserType) tt train.TrainType struct{ID string, Name string,
+    EconomyClass int64, ComfortClass int64, AvgSpeed int64}'
+  - '[-1] (BasicVariable BasicType) exists bool'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*train.TrainServiceImpl).RetrieveByNames(ctx context.Context, names []string) ([]train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}, error):
  block 0 (Body):
-  - (inline) db NoSQLDatabase
-  - ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
-  - ctx context.Context
-  - names []string
-  - trainTypes []train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) train.TrainServiceImpl struct{db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) ts (*train.TrainServiceImpl struct{db NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ArrayVariable ArrayType) names []string'
+  - '[-1] (ArrayVariable ArrayType) trainTypes []train.TrainType struct{ID string,
+    Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}'
 (*train.TrainServiceImpl).Update(ctx context.Context, ttype train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}) (bool, error):
  block 2 (IfDone):
-  - (inline) db NoSQLDatabase
-  - ts (*train.TrainServiceImpl struct{db NoSQLDatabase})
-  - ctx context.Context
-  - (inline) ID string
-  - (inline) ID string
-  - ttype train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}
-  - coll NoSQLCollection {database = "train", collection = "train"}
-  - err .error
-  - (inline) "id" string
-  - (inline) "id" string
-  - (inline) struct{ "id" string, ID string}
-  - query primitive.D
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) train.TrainServiceImpl struct{db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) ts (*train.TrainServiceImpl struct{db NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (inline) (BasicVariable BasicType) ID string'
+  - '[-1] (inline) (FieldVariable FieldType) ID string'
+  - '[-1] (StructVariable UserType) ttype train.TrainType struct{ID string, Name string,
+    EconomyClass int64, ComfortClass int64, AvgSpeed int64}'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = train, collection = train}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[0] (inline) (BasicVariable BasicType) "id" string'
+  - '[0] (inline) (FieldVariable FieldType) "id" string'
+  - '[0] (inline) (StructVariable StructType) struct{ "id" string, ID string}'
+  - '[-1] (SliceVariable UserType) query primitive.D'
 train.NewTrainServiceImpl(ctx context.Context, db NoSQLDatabase) ((*train.TrainServiceImpl struct{db NoSQLDatabase}), error):
   block 0 (Body):
-  - ctx context.Context
-  - db NoSQLDatabase
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'

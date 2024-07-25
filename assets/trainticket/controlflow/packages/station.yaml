@@ -1,134 +1,202 @@
 ? (*station.StationServiceImpl).CreateStation(ctx context.Context, station station.Station struct{ID string, Name string, StayTime int64}) error:
  block 11 (IfDone):
-  - (inline) stationDB NoSQLDatabase
-  - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - ctx context.Context
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) stationDB NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) station.StationServiceImpl struct{stationDB
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*station.StationServiceImpl struct{stationDB
+    NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    (inline) ID string -->
-       W-TAINTED 1x = (STATION_DB.Station.ID)
+    [-1] (inline) (BasicVariable BasicType) ID string -->
+       w-tainted 1x: write(station_db.Station.ID)
   - |-
-    (inline) ID string -->
-       W-TAINTED 1x = (STATION_DB.Station.ID)
+    [-1] (inline) (FieldVariable FieldType) ID string -->
+       w-tainted 1x: write(station_db.Station.ID)
   - |-
-    station station.Station struct{ID string, Name string, StayTime int64} -->
-       W-TAINTED 1x = (STATION_DB.Station)
-  - coll NoSQLCollection {database = "station", collection = "station"}
-  - err .error
-  - (inline) "id" string
-  - (inline) "id" string
-  - (inline) struct{ "id" string, ID string}
-  - query primitive.D
-  - res NoSQLCursor {database = "station", collection = "station"}
-  - err .error
-  - st station.Station struct{ID string, Name string, StayTime int64}
-  - exists bool
-  - err .error
+    [-1] (StructVariable UserType) station station.Station struct{ID string, Name string, StayTime int64} -->
+       w-tainted 1x: write(station_db.Station)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = station, collection = station}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[0] (inline) (BasicVariable BasicType) "id" string'
+  - '[0] (inline) (FieldVariable FieldType) "id" string'
+  - '[0] (inline) (StructVariable StructType) struct{ "id" string, ID string}'
+  - '[-1] (SliceVariable UserType) query primitive.D'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
+    = station, collection = station}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (StructVariable UserType) st station.Station struct{ID string, Name string,
+    StayTime int64}'
+  - '[-1] (BasicVariable BasicType) exists bool'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*station.StationServiceImpl).DeleteStation(ctx context.Context, id string) error:
   block 2 (IfDone):
-  - (inline) stationDB NoSQLDatabase
-  - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - ctx context.Context
-  - id string
-  - coll NoSQLCollection {database = "station", collection = "station"}
-  - err .error
-  - (inline) string
-  - (inline) struct{ "id" string, string}
-  - query primitive.D
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) stationDB NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) station.StationServiceImpl struct{stationDB
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*station.StationServiceImpl struct{stationDB
+    NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BasicVariable BasicType) id string'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = station, collection = station}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[0] (inline) (FieldVariable FieldType) string'
+  - '[0] (inline) (StructVariable StructType) struct{ "id" string,  string}'
+  - '[-1] (SliceVariable UserType) query primitive.D'
 (*station.StationServiceImpl).Exists(ctx context.Context, name string) (bool, error):
   block 5 (IfDone):
-  - (inline) stationDB NoSQLDatabase
-  - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - ctx context.Context
-  - name string
-  - coll NoSQLCollection {database = "station", collection = "station"}
-  - err .error
-  - (inline) string
-  - (inline) struct{ "name" string, string}
-  - query primitive.D
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) stationDB NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) station.StationServiceImpl struct{stationDB
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*station.StationServiceImpl struct{stationDB
+    NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    res NoSQLCursor {database = "station", collection = "station"} -->
-       R-TAINTED 2x = (STATION_DB.document, STATION_DB.NoSQLCursor)
-  - err .error
-  - st station.Station struct{ID string, Name string, StayTime int64}
-  - exists bool
-  - err .error
+    [-1] (BasicVariable BasicType) name string -->
+       r-tainted 1x: read(station_db.string)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = station, collection = station}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - |-
+    [0] (inline) (FieldVariable FieldType) string -->
+       r-tainted 1x: read(station_db.)
+  - |-
+    [0] (inline) (StructVariable StructType) struct{ "name" string, string} -->
+       r-tainted 1x: read(station_db.struct{ "name" string, string})
+  - |-
+    [-1] (SliceVariable UserType) query primitive.D -->
+       r-tainted 5x: read(station_db.document, station_db.D, station_db.struct{ "name" string, string}, station_db., station_db.string)
+  - |-
+    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = station, collection = station} -->
+       r-tainted 1x: read(station_db.document)
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (StructVariable UserType) st station.Station struct{ID string, Name string,
+    StayTime int64}'
+  - '[-1] (BasicVariable BasicType) exists bool'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*station.StationServiceImpl).FindByID(ctx context.Context, id string) (station.Station struct{ID string, Name string, StayTime int64}, error):
  block 11 (IfDone):
-  - (inline) stationDB NoSQLDatabase
-  - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - (inline) ref <ctx context.Context> @ StationService
-  - ctx context.Context
-  - (inline) ref <string> @ StationService
-  - id string
-  - coll NoSQLCollection {database = "station", collection = "station"}
-  - err .error
-  - (inline) string
-  - (inline) struct{ "id" string, string}
-  - query primitive.D
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) stationDB NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) station.StationServiceImpl struct{stationDB
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*station.StationServiceImpl struct{stationDB
+    NoSQLDatabase})'
+  - '[13] (inline) (Reference UserType) ref <ctx context.Context> @ StationService'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    res NoSQLCursor {database = "station", collection = "station"} -->
-       R-TAINTED 2x = (STATION_DB.document, STATION_DB.NoSQLCursor)
-  - err .error
-  - st station.Station struct{ID string, Name string, StayTime int64}
-  - exists bool
-  - err .error
+    [14] (inline) (Reference BasicType) ref <string> @ StationService -->
+       r-tainted 1x: read(station_db.string)
+  - |-
+    [0] (BasicVariable BasicType) id string -->
+       r-tainted 1x: read(station_db.string)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = station, collection = station}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - |-
+    [0] (inline) (FieldVariable FieldType) string -->
+       r-tainted 1x: read(station_db.)
+  - |-
+    [0] (inline) (StructVariable StructType) struct{ "id" string, string} -->
+       r-tainted 1x: read(station_db.struct{ "id" string, string})
+  - |-
+    [-1] (SliceVariable UserType) query primitive.D -->
+       r-tainted 5x: read(station_db.document, station_db.D, station_db.struct{ "id" string, string}, station_db., station_db.string)
+  - |-
+    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = station, collection = station} -->
+       r-tainted 1x: read(station_db.document)
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (StructVariable UserType) st station.Station struct{ID string, Name string,
+    StayTime int64}'
+  - '[-1] (BasicVariable BasicType) exists bool'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*station.StationServiceImpl).FindByIDs(ctx context.Context, ids []string) ([]station.Station struct{ID string, Name string, StayTime int64}, error):
  block 0 (Body):
-  - (inline) stationDB NoSQLDatabase
-  - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - ctx context.Context
-  - ids []string
-  - (inline) st station.Station struct{ID string, Name string, StayTime int64}
-  - stations []station.Station struct{ID string, Name string, StayTime int64}
-  - _ .error
-  - (inline) st station.Station struct{ID string, Name string, StayTime int64}
-  - stations []station.Station struct{ID string, Name string, StayTime int64}
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) stationDB NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) station.StationServiceImpl struct{stationDB
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*station.StationServiceImpl struct{stationDB
+    NoSQLDatabase})'
+  - '[13] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ArrayVariable ArrayType) ids []string'
+  - '[-1] (inline) (StructVariable UserType) st station.Station struct{ID string,
+    Name string, StayTime int64}'
+  - '[-1] (ArrayVariable ArrayType) stations []station.Station struct{ID string, Name
+    string, StayTime int64}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+  - '[-1] (inline) (StructVariable UserType) st station.Station struct{ID string,
+    Name string, StayTime int64}'
+  - '[-1] (ArrayVariable ArrayType) stations []station.Station struct{ID string, Name
+    string, StayTime int64}'
 (*station.StationServiceImpl).FindID(ctx context.Context, name string) (string, error):
   block 11 (IfDone):
-  - (inline) stationDB NoSQLDatabase
-  - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - (inline) ref <ctx context.Context> @ StationService
-  - ctx context.Context
-  - (inline) ref <string> @ StationService
-  - name string
-  - coll NoSQLCollection {database = "station", collection = "station"}
-  - err .error
-  - (inline) string
-  - (inline) struct{ "name" string, string}
-  - query primitive.D
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) stationDB NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) station.StationServiceImpl struct{stationDB
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*station.StationServiceImpl struct{stationDB
+    NoSQLDatabase})'
+  - '[11] (inline) (Reference UserType) ref <ctx context.Context> @ StationService'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    res NoSQLCursor {database = "station", collection = "station"} -->
-       R-TAINTED 2x = (STATION_DB.document, STATION_DB.NoSQLCursor)
-  - err .error
-  - st station.Station struct{ID string, Name string, StayTime int64}
-  - exists bool
-  - err .error
+    [12] (inline) (Reference BasicType) ref <string> @ StationService -->
+       r-tainted 1x: read(station_db.string)
+  - |-
+    [0] (BasicVariable BasicType) name string -->
+       r-tainted 1x: read(station_db.string)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = station, collection = station}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - |-
+    [0] (inline) (FieldVariable FieldType) string -->
+       r-tainted 1x: read(station_db.)
+  - |-
+    [0] (inline) (StructVariable StructType) struct{ "name" string, string} -->
+       r-tainted 1x: read(station_db.struct{ "name" string, string})
+  - |-
+    [-1] (SliceVariable UserType) query primitive.D -->
+       r-tainted 5x: read(station_db.document, station_db.D, station_db.struct{ "name" string, string}, station_db., station_db.string)
+  - |-
+    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = station, collection = station} -->
+       r-tainted 1x: read(station_db.document)
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (StructVariable UserType) st station.Station struct{ID string, Name string,
+    StayTime int64}'
+  - '[-1] (BasicVariable BasicType) exists bool'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*station.StationServiceImpl).FindIDs(ctx context.Context, names []string) ([]string, error):
   block 0 (Body):
-  - (inline) stationDB NoSQLDatabase
-  - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - ctx context.Context
-  - names []string
-  - (inline) id string
-  - ids []string
-  - _ .error
-  - (inline) id string
-  - ids []string
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) stationDB NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) station.StationServiceImpl struct{stationDB
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*station.StationServiceImpl struct{stationDB
+    NoSQLDatabase})'
+  - '[11] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ArrayVariable ArrayType) names []string'
+  - '[-1] (inline) (BasicVariable BasicType) id string'
+  - '[-1] (ArrayVariable ArrayType) ids []string'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+  - '[-1] (inline) (BasicVariable BasicType) id string'
+  - '[-1] (ArrayVariable ArrayType) ids []string'
 (*station.StationServiceImpl).UpdateStation(ctx context.Context, station station.Station struct{ID string, Name string, StayTime int64}) (bool, error):
  block 2 (IfDone):
-  - (inline) stationDB NoSQLDatabase
-  - s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-  - ctx context.Context
-  - (inline) ID string
-  - (inline) ID string
-  - station station.Station struct{ID string, Name string, StayTime int64}
-  - coll NoSQLCollection {database = "station", collection = "station"}
-  - err .error
-  - (inline) "id" string
-  - (inline) "id" string
-  - (inline) struct{ "id" string, ID string}
-  - query primitive.D
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) stationDB NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) station.StationServiceImpl struct{stationDB
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*station.StationServiceImpl struct{stationDB
+    NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (inline) (BasicVariable BasicType) ID string'
+  - '[-1] (inline) (FieldVariable FieldType) ID string'
+  - '[-1] (StructVariable UserType) station station.Station struct{ID string, Name
+    string, StayTime int64}'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = station, collection = station}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[0] (inline) (BasicVariable BasicType) "id" string'
+  - '[0] (inline) (FieldVariable FieldType) "id" string'
+  - '[0] (inline) (StructVariable StructType) struct{ "id" string, ID string}'
+  - '[-1] (SliceVariable UserType) query primitive.D'
 station.NewStationServiceImpl(ctx context.Context, db NoSQLDatabase) ((*station.StationServiceImpl struct{stationDB NoSQLDatabase}), error):
  block 0 (Body):
-  - ctx context.Context
-  - db NoSQLDatabase
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'

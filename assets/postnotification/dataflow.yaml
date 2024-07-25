@@ -1,42 +1,86 @@
+'"postid" string': []
+D:
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{Key "postid" string, Value int64} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <Key "postid" string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <"postid" string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <Value int64 (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <postID int64 (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <postID int64> @ NotifyService (Reference)> from <query primitive.D (SliceVariable)>
+- read <postID int64 (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <PostID string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <PostID string> @ NotifyService (Reference)> from <query primitive.D (SliceVariable)>
+- read <PostID string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <PostID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <PostID interface{} (InterfaceVariable)> from <query primitive.D (SliceVariable)>
+- read <PostID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <PostID string> @ NotifyService (Reference)> from <query primitive.D (SliceVariable)>
+Key: []
 NOTIF_QUEUE.Message:
 - write <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
 - write <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
-- read <message map[string]interface{} (MapVariable)> from <message (&map[string]interface{}) (AddressVariable)>
-- read <ref <message postnotification.Message struct{ReqID string, PostID string, Timestamp string}> @ NotifyService (Reference)> from <message (&map[string]interface{}) (AddressVariable)>
+- read <event map[string]interface{} (MapVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <message postnotification.Message struct{ReqID string, PostID string, Timestamp string}> @ NotifyService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <Timestamp interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
 - write <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
 - write <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
 NOTIF_QUEUE.Message.PostID:
-- write <string (CompositeVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
+- write <string (BasicVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
+- write <ref <PostID interface{}> @ NotifyService (Reference)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
+- write <PostID interface{} (InterfaceVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
 - write <PostID int64 (FieldVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
+- write <ref <PostID interface{}> @ NotifyService (Reference)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
 - write <postID int64 (BasicVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
-- read <string (CompositeVariable)> from <message (&map[string]interface{}) (AddressVariable)>
-- read <PostID int64 (FieldVariable)> from <message (&map[string]interface{}) (AddressVariable)>
-- read <postID int64 (BasicVariable)> from <message (&map[string]interface{}) (AddressVariable)>
+- write <ref <PostID interface{}> @ NotifyService (Reference)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
+- read <string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <PostID interface{}> @ NotifyService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <PostID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <PostID int64 (FieldVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <PostID interface{}> @ NotifyService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <postID int64 (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <PostID interface{}> @ NotifyService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
 - write <PostID int64 (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <ref <PostID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
 - write <postID int64 (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <ref <PostID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <PostID interface{} (InterfaceVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
 - write <PostID string (FieldVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
-- read <PostID string (FieldVariable)> from <message (&map[string]interface{}) (AddressVariable)>
+- write <ref <PostID interface{}> @ NotifyService (Reference)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
+- read <PostID string (FieldVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <PostID interface{}> @ NotifyService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
 NOTIF_QUEUE.Message.ReqID:
-- write <string (CompositeVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
+- write <string (BasicVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
+- write <ref <ReqID interface{}> @ NotifyService (Reference)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
+- write <ReqID interface{} (InterfaceVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
 - write <ReqID int64 (FieldVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
+- write <ref <ReqID interface{}> @ NotifyService (Reference)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
 - write <reqID int64 (BasicVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
-- read <string (CompositeVariable)> from <message (&map[string]interface{}) (AddressVariable)>
-- read <ReqID int64 (FieldVariable)> from <message (&map[string]interface{}) (AddressVariable)>
-- read <reqID int64 (BasicVariable)> from <message (&map[string]interface{}) (AddressVariable)>
+- write <ref <ReqID interface{}> @ NotifyService (Reference)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
+- read <string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <ReqID interface{}> @ NotifyService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ReqID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ReqID int64 (FieldVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <ReqID interface{}> @ NotifyService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <reqID int64 (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <ReqID interface{}> @ NotifyService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
 - write <ReqID int64 (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <ref <ReqID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
 - write <reqID int64 (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <ref <ReqID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <ReqID interface{} (InterfaceVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
 - write <ReqID string (FieldVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
-- read <ReqID string (FieldVariable)> from <message (&map[string]interface{}) (AddressVariable)>
+- write <ref <ReqID interface{}> @ NotifyService (Reference)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
+- read <ReqID string (FieldVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <ReqID interface{}> @ NotifyService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
 NOTIF_QUEUE.message:
-- read <message (&map[string]interface{}) (AddressVariable)>
-NoSQLCursor:
-- read <result NoSQLCursor {database = "post", collection = "post"} (BlueprintBackendVariable)>
-- read <result NoSQLCursor {database = "post", collection = "post"} (BlueprintBackendVariable)>
-  from <result NoSQLCursor {database = "post", collection = "post"} (BlueprintBackendVariable)>
+- read <event (&map[string]interface{}) (AddressVariable)>
 POST_NOSQL.Post:
 - write <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
 - write <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
 - write <ref <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}> @ UploadService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
 POST_NOSQL.Post.Creator:
 - write <Creator postnotification.Creator struct{Username string} (FieldVariable)>
   from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
@@ -51,10 +95,16 @@ POST_NOSQL.Post.Mentions:
 - write <Mentions []string (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
 POST_NOSQL.Post.PostID:
 - write <postID int64 (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <ref <PostID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <PostID interface{} (InterfaceVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
 - write <PostID int64 (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <ref <PostID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
 POST_NOSQL.Post.ReqID:
 - write <reqID int64 (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <ref <ReqID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <ReqID interface{} (InterfaceVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
 - write <ReqID int64 (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <ref <ReqID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
 POST_NOSQL.Post.Text:
 - write <text string (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
 - write <Text string (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
@@ -62,6 +112,26 @@ POST_NOSQL.Post.Timestamp:
 - write <timestamp int64 (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
 - write <Timestamp int64 (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
 POST_NOSQL.document:
-- read <result NoSQLCursor {database = "post", collection = "post"} (BlueprintBackendVariable)>
-- read <result NoSQLCursor {database = "post", collection = "post"} (BlueprintBackendVariable)>
-  from <result NoSQLCursor {database = "post", collection = "post"} (BlueprintBackendVariable)>
+- read <result NoSQLCursor {database = post, collection = post} (BlueprintBackendVariable)>
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{Key "postid" string, Value int64} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <Key "postid" string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <"postid" string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <Value int64 (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <postID int64 (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <postID int64> @ NotifyService (Reference)> from <query primitive.D (SliceVariable)>
+- read <postID int64 (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <PostID string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <PostID string> @ NotifyService (Reference)> from <query primitive.D (SliceVariable)>
+- read <PostID string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <PostID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <PostID interface{} (InterfaceVariable)> from <query primitive.D (SliceVariable)>
+- read <PostID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <PostID string> @ NotifyService (Reference)> from <query primitive.D (SliceVariable)>
+PostID: []
+Value: []
+int64: []
+interface{}: []
+string: []
+struct{Key "postid" string, Value int64}: []

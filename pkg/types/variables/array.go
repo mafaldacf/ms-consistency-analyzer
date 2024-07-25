@@ -99,6 +99,17 @@ func (v *ArrayVariable) GetDependencies() []Variable {
 	return v.Elements
 }
 
+func (v *ArrayVariable) GetNestedIndirectDependencies() []Variable {
+	var deps = []Variable{v}
+	if v.GetVariableInfo().HasReference() {
+		deps = append(deps, v.GetVariableInfo().GetReference().GetNestedIndirectDependencies()...)
+	}
+	for _, elem := range v.Elements {
+		deps = append(deps, elem.GetNestedIndirectDependencies()...)
+	}
+	return deps
+}
+
 func (v *ArrayVariable) DeepCopy(force bool) Variable {
 	copy := &ArrayVariable{
 		VariableInfo: v.VariableInfo.DeepCopy(force),

@@ -14,12 +14,12 @@ import (
 // PARSED METHODS
 // --------------
 
-func (f *ParsedMethod) Yaml() interface{} {
+func (f *ParsedMethod) Yaml() (interface{}, string) {
 	logger.Logger.Tracef("[YAML] dumping yaml data for method (%s)", f.Name)
 	if f.ParsedCfg != nil {
 		return f.ParsedCfg.Yaml()
 	}
-	return nil
+	return nil, ""
 }
 
 func (f *ParsedMethod) YamlCalls() []string {
@@ -36,28 +36,21 @@ func (f *ParsedMethod) YamlCalls() []string {
 // CFGS
 // ----
 
-func (cfg *CFG) Yaml() map[string][]string {
+func (cfg *CFG) Yaml() (map[string][]string, string) {
 	data := make(map[string][]string)
 
 	// iterate in reverse
 	for i := len(cfg.ParsedBlocks) - 1; i >= 0; i-- {
 		block := cfg.ParsedBlocks[i]
 		if block.Block.Live {
-			data[block.Block.String()] = block.Yaml()
-			break
+			logger.Logger.Tracef("parsing cfg for method: %s", cfg.FullMethod)
+			var blockVarsStr string
+			data[block.Block.String()], blockVarsStr = block.Yaml()
+			return data, blockVarsStr
 		}
 	}
 
-	/* if len(cfg.ParsedBlocks) > 0 {
-		data[cfg.ParsedBlocks[len(cfg.ParsedBlocks)-1].Block.String()] = cfg.ParsedBlocks[len(cfg.ParsedBlocks)-1].Yaml()
-	} */
-
-	/* var blocks []string
-	for _, block := range cfg.ParsedBlocks {
-		blocks = append(blocks, block.Block.String())
-	}
-	data["blocks"] = blocks */
-	return data
+	return data, ""
 }
 
 // ------
@@ -71,8 +64,9 @@ func getTaintedFieldsListAndString(dfs []*variables.Dataflow) ([]string, string)
 		if df.Field == nil {
 			logger.Logger.Fatalf("GOT NIL FIELD FOR DF (%s, %s). %s", df.Datastore, df.Service, df.Variable.String())
 		}
-		if !slices.Contains(fieldsLst, df.Field.GetFullName()) {
-			fieldsLst = append(fieldsLst, df.Field.GetFullName())
+		n := df.Datastore + "." + df.Field.GetName()
+		if !slices.Contains(fieldsLst, n) {
+			fieldsLst = append(fieldsLst, n)
 		}
 	}
 	for i, db := range fieldsLst {
@@ -84,11 +78,53 @@ func getTaintedFieldsListAndString(dfs []*variables.Dataflow) ([]string, string)
 	return fieldsLst, fieldsStr
 }
 
-func (block *Block) Yaml() []string {
+func getIndirectDependencies(v variables.Variable, i int) ([]variables.Variable, string) {
+	blockVarsStr := ""
+
+	padding := ""
+	for j := 0; j < i; j++ {
+		padding += "_"
+	}
+
+	visitedOp := make(map[string]bool)
+	opStr := ""
+	for _, df := range v.GetVariableInfo().GetAllDataflows() {
+		s := df.GetOpString() + "(" + df.Datastore + "), "
+		if ok := visitedOp[s]; !ok {
+			visitedOp[s] = true
+			opStr += s
+		}
+	}
+	if opStr != "" {
+		opStr = "// " + opStr
+	}
+
+	blockVarsStr += fmt.Sprintf("[%s] (%s) %s %s\n", padding, variables.GetVariableTypeAndTypeString(v), v.String(), opStr)
+
+	var deps = []variables.Variable{v}
+	// indirect dependencies from reference
+	if v.GetVariableInfo().HasReference() {
+		indirectDeps, indirectStr := getIndirectDependencies(v.GetVariableInfo().GetReference(), i+1)
+		blockVarsStr += indirectStr
+		deps = append(deps, indirectDeps...)
+	}
+	// direct dependencies
+	for _, dep := range v.GetDependencies() {
+		directDeps, indirectStr := getIndirectDependencies(dep, i+1)
+		blockVarsStr += indirectStr
+		deps = append(deps, directDeps...)
+	}
+
+	return deps, blockVarsStr
+}
+
+func (block *Block) Yaml() ([]string, string) {
 	data := []string{}
 	visited := make(map[variables.Variable]bool)
+	allBlockVarsStr := ""
 	for _, v := range block.Vars {
-		deps := variables.GetIndirectDependenciesWithCurrent(v)
+		deps, blockVarsStr := getIndirectDependencies(v, 0)
+		allBlockVarsStr += blockVarsStr + "\n"
 		slices.Reverse(deps)
 		for i, v := range deps {
 			lastIndex := len(deps) - 1
@@ -101,7 +137,9 @@ func (block *Block) Yaml() []string {
 			if i != lastIndex {
 				// last index corresponds to the original variabl from where we got the parameters
 				// note that it is the last since the deps slice was reversed
-				variableString = "(inline) " + variableString
+				variableString = fmt.Sprintf("[%d] (inline) (%s) %s", v.GetId(), variables.GetVariableTypeAndTypeString(v), variableString)
+			} else {
+				variableString = fmt.Sprintf("[%d] (%s) %s", v.GetId(), variables.GetVariableTypeAndTypeString(v), variableString)
 			}
 			dfsWriteOps := v.GetVariableInfo().GetAllWriteDataflows()
 			dfsReadOps := v.GetVariableInfo().GetAllReadDataflows()
@@ -109,11 +147,11 @@ func (block *Block) Yaml() []string {
 				writeOpsLst, writeOpsStr := getTaintedFieldsListAndString(dfsWriteOps)
 				readOpsLst, readOpsStr := getTaintedFieldsListAndString(dfsReadOps)
 				if len(dfsWriteOps) > 0 && len(dfsReadOps) == 0 {
-					data = append(data, fmt.Sprintf("%s -->\n   W-TAINTED %dx = (%s)", variableString, len(writeOpsLst), writeOpsStr))
+					data = append(data, fmt.Sprintf("%s -->\n   w-tainted %dx: write(%s)", variableString, len(writeOpsLst), writeOpsStr))
 				} else if len(dfsWriteOps) == 0 && len(dfsReadOps) > 0 {
-					data = append(data, fmt.Sprintf("%s -->\n   R-TAINTED %dx = (%s)", variableString, len(readOpsLst), readOpsStr))
+					data = append(data, fmt.Sprintf("%s -->\n   r-tainted %dx: read(%s)", variableString, len(readOpsLst), readOpsStr))
 				} else {
-					data = append(data, fmt.Sprintf("%s -->\n   W-TAINTED %dx = (%s)\n   R-TAINTED %dx = (%s)", variableString, len(writeOpsLst), writeOpsStr, len(readOpsLst), readOpsStr))
+					data = append(data, fmt.Sprintf("%s -->\n   w-tainted %dx: write(%s)\n   r-tainted %dx: read(%s)", variableString, len(writeOpsLst), writeOpsStr, len(readOpsLst), readOpsStr))
 				}
 			} else {
 				data = append(data, variableString)
@@ -121,7 +159,7 @@ func (block *Block) Yaml() []string {
 		}
 
 	}
-	return data
+	return data, allBlockVarsStr
 }
 
 // --------

@@ -1,103 +1,162 @@
 (*stationfood.StationFoodServiceImpl).Cleanup(ctx context.Context) error:
   block 2 (IfDone):
-  - (inline) db NoSQLDatabase
-  - s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
-  - ctx context.Context
-  - coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
-  - err .error
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) stationfood.StationFoodServiceImpl struct{db
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db
+    NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = stationfood, collection = stationfood}'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*stationfood.StationFoodServiceImpl).CreateFoodStore(ctx context.Context, store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}) error:
  block 8 (IfDone):
-  - (inline) db NoSQLDatabase
-  - s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
-  - ctx context.Context
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) stationfood.StationFoodServiceImpl struct{db
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db
+    NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    (inline) ID string -->
-       W-TAINTED 1x = (STATIONFOOD_DB.StationFoodStore.ID)
+    [-1] (inline) (BasicVariable BasicType) ID string -->
+       w-tainted 1x: write(stationfood_db.StationFoodStore.ID)
   - |-
-    (inline) ID string -->
-       W-TAINTED 1x = (STATIONFOOD_DB.StationFoodStore.ID)
+    [-1] (inline) (FieldVariable FieldType) ID string -->
+       w-tainted 1x: write(stationfood_db.StationFoodStore.ID)
   - |-
-    store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}} -->
-       W-TAINTED 1x = (STATIONFOOD_DB.StationFoodStore)
-  - coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
-  - err .error
-  - (inline) "id" string
-  - (inline) "id" string
-  - (inline) struct{ "id" string, ID string}
-  - query primitive.D
-  - res NoSQLCursor {database = "stationfood", collection = "stationfood"}
-  - err .error
-  - st stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
-  - exists bool
-  - err .error
+    [-1] (StructVariable UserType) store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}} -->
+       w-tainted 1x: write(stationfood_db.StationFoodStore)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = stationfood, collection = stationfood}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[0] (inline) (BasicVariable BasicType) "id" string'
+  - '[0] (inline) (FieldVariable FieldType) "id" string'
+  - '[0] (inline) (StructVariable StructType) struct{ "id" string, ID string}'
+  - '[-1] (SliceVariable UserType) query primitive.D'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
+    = stationfood, collection = stationfood}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (StructVariable UserType) st stationfood.StationFoodStore struct{ID string,
+    StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee
+    float64, Foods []food.Food struct{Name string, Price float64}}'
+  - '[-1] (BasicVariable BasicType) exists bool'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*stationfood.StationFoodServiceImpl).GetFoodStoreByID(ctx context.Context, id string)
   (stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}, error):
  block 14 (IfDone):
-  - (inline) db NoSQLDatabase
-  - s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
-  - ctx context.Context
-  - id string
-  - coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
-  - err .error
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) stationfood.StationFoodServiceImpl struct{db
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db
+    NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    res NoSQLCursor {database = "stationfood", collection = "stationfood"} -->
-       R-TAINTED 2x = (STATIONFOOD_DB.document, STATIONFOOD_DB.NoSQLCursor)
-  - err .error
-  - store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
-  - exists bool
-  - err .error
+    [-1] (BasicVariable BasicType) id string -->
+       r-tainted 1x: read(stationfood_db.string)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = stationfood, collection = stationfood}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - |-
+    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = stationfood, collection = stationfood} -->
+       r-tainted 1x: read(stationfood_db.document)
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (StructVariable UserType) store stationfood.StationFoodStore struct{ID string,
+    StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee
+    float64, Foods []food.Food struct{Name string, Price float64}}'
+  - '[-1] (BasicVariable BasicType) exists bool'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*stationfood.StationFoodServiceImpl).GetFoodStoresByStationNames(ctx context.Context, stations []string) ([]stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}, error):
  block 8 (IfDone):
-  - (inline) db NoSQLDatabase
-  - s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
-  - ctx context.Context
-  - stations []string
-  - coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
-  - err .error
-  - doc primitive.A
-  - (inline) primitive.A
-  - (inline) struct{ "$in" string, primitive.A}
-  - (inline) primitive.D
-  - (inline) primitive.D
-  - (inline) struct{ "stationname" string, primitive.D}
-  - query primitive.D
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) stationfood.StationFoodServiceImpl struct{db
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db
+    NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ArrayVariable ArrayType) stations []string'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = stationfood, collection = stationfood}'
+  - '[-1] (InterfaceVariable UserType) err .error'
   - |-
-    res NoSQLCursor {database = "stationfood", collection = "stationfood"} -->
-       R-TAINTED 2x = (STATIONFOOD_DB.document, STATIONFOOD_DB.NoSQLCursor)
-  - err .error
-  - stores []stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
-  - err .error
+    [-1] (SliceVariable UserType) doc primitive.A -->
+       r-tainted 1x: read(stationfood_db.A)
+  - |-
+    [0] (inline) (FieldVariable FieldType) primitive.A -->
+       r-tainted 1x: read(stationfood_db.)
+  - |-
+    [0] (inline) (StructVariable StructType) struct{ "$in" string, primitive.A} -->
+       r-tainted 1x: read(stationfood_db.struct{ "$in" string, primitive.A})
+  - |-
+    [0] (inline) (SliceVariable UserType) primitive.D -->
+       r-tainted 1x: read(stationfood_db.D)
+  - |-
+    [0] (inline) (FieldVariable FieldType) primitive.D -->
+       r-tainted 1x: read(stationfood_db.)
+  - |-
+    [0] (inline) (StructVariable StructType) struct{ "stationname" string, primitive.D} -->
+       r-tainted 1x: read(stationfood_db.struct{ "stationname" string, primitive.D})
+  - |-
+    [-1] (SliceVariable UserType) query primitive.D -->
+       r-tainted 6x: read(stationfood_db.document, stationfood_db.D, stationfood_db.struct{ "stationname" string, primitive.D}, stationfood_db., stationfood_db.struct{ "$in" string, primitive.A}, stationfood_db.A)
+  - |-
+    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = stationfood, collection = stationfood} -->
+       r-tainted 1x: read(stationfood_db.document)
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (ArrayVariable ArrayType) stores []stationfood.StationFoodStore struct{ID
+    string, StationName string, StoreName string, Telephone string, BusinessTime string,
+    DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*stationfood.StationFoodServiceImpl).ListFoodStores(ctx context.Context) ([]stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}, error):
  block 8 (IfDone):
-  - (inline) db NoSQLDatabase
-  - s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
-  - ctx context.Context
-  - coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
-  - err .error
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) stationfood.StationFoodServiceImpl struct{db
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db
+    NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = stationfood, collection = stationfood}'
+  - '[-1] (InterfaceVariable UserType) err .error'
   - |-
-    res NoSQLCursor {database = "stationfood", collection = "stationfood"} -->
-       R-TAINTED 2x = (STATIONFOOD_DB.document, STATIONFOOD_DB.NoSQLCursor)
-  - err .error
-  - stores []stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
-  - err .error
+    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = stationfood, collection = stationfood} -->
+       r-tainted 1x: read(stationfood_db.document)
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (ArrayVariable ArrayType) stores []stationfood.StationFoodStore struct{ID
+    string, StationName string, StoreName string, Telephone string, BusinessTime string,
+    DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*stationfood.StationFoodServiceImpl).ListFoodStoresByStationName(ctx context.Context, station string) ([]stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}, error):
  block 8 (IfDone):
-  - (inline) db NoSQLDatabase
-  - s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
-  - ctx context.Context
-  - station string
-  - coll NoSQLCollection {database = "stationfood", collection = "stationfood"}
-  - err .error
-  - (inline) string
-  - (inline) struct{ "stationname" string, string}
-  - query primitive.D
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) stationfood.StationFoodServiceImpl struct{db
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db
+    NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    res NoSQLCursor {database = "stationfood", collection = "stationfood"} -->
-       R-TAINTED 2x = (STATIONFOOD_DB.document, STATIONFOOD_DB.NoSQLCursor)
-  - err .error
-  - stores []stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
-  - err .error
+    [-1] (BasicVariable BasicType) station string -->
+       r-tainted 1x: read(stationfood_db.string)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = stationfood, collection = stationfood}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - |-
+    [0] (inline) (FieldVariable FieldType) string -->
+       r-tainted 1x: read(stationfood_db.)
+  - |-
+    [0] (inline) (StructVariable StructType) struct{ "stationname" string, string} -->
+       r-tainted 1x: read(stationfood_db.struct{ "stationname" string, string})
+  - |-
+    [-1] (SliceVariable UserType) query primitive.D -->
+       r-tainted 5x: read(stationfood_db.document, stationfood_db.D, stationfood_db.struct{ "stationname" string, string}, stationfood_db., stationfood_db.string)
+  - |-
+    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = stationfood, collection = stationfood} -->
+       r-tainted 1x: read(stationfood_db.document)
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (ArrayVariable ArrayType) stores []stationfood.StationFoodStore struct{ID
+    string, StationName string, StoreName string, Telephone string, BusinessTime string,
+    DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}'
+  - '[-1] (InterfaceVariable UserType) err .error'
 stationfood.NewStationFoodServiceImpl(ctx context.Context, db NoSQLDatabase) ((*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase}), error):
  block 0 (Body):
-  - ctx context.Context
-  - db NoSQLDatabase
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'

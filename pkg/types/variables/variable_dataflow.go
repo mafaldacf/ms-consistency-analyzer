@@ -30,6 +30,10 @@ func (df *Dataflow) IsWriteOp() bool {
 	return df.Write
 }
 
+func (df *Dataflow) IsOpInDatastore(datastore string) bool {
+	return df.Datastore == datastore
+}
+
 func (df *Dataflow) String() string {
 	if df.Direct {
 		return fmt.Sprintf("direct write <%s> @ (%s, %s)", df.Variable.String(), df.Service, df.Datastore)

@@ -28,6 +28,9 @@ func (t *ChanType) LongString() string {
 func (t *ChanType) GetName() string {
 	return t.String()
 }
+func (t *ChanType) GetLongName() string {
+	return t.String()
+}
 func (t *ChanType) GetBasicValue() string {
 	logger.Logger.Fatalf("unable to get value for chan type %s", t.String())
 	return ""

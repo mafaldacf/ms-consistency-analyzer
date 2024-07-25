@@ -42,6 +42,9 @@ func (t *InterfaceType) LongString() string {
 func (t *InterfaceType) GetName() string {
 	return t.String()
 }
+func (t *InterfaceType) GetLongName() string {
+	return t.String()
+}
 func (t *InterfaceType) GetBasicValue() string {
 	logger.Logger.Fatalf("unable to get value for interface type %s", t.String())
 	return ""

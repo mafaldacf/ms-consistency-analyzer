@@ -2,6 +2,7 @@ package datastores
 
 import (
 	"encoding/json"
+	"fmt"
 )
 
 type DatastoreType int
@@ -27,6 +28,10 @@ type Datastore struct {
 	Type   DatastoreType
 	Kind   DatastoreKind
 	Schema *Schema
+}
+
+func (ds *Datastore) GetTypeLongName() string {
+	return fmt.Sprintf("%s (%s)", ds.GetKindString(), ds.GetTypeString())
 }
 
 func (ds *Datastore) GetTypeString() string {

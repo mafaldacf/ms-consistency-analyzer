@@ -69,10 +69,21 @@ func (v *MapVariable) AddKeyValuePair(key Variable, value Variable) {
 
 func (v *MapVariable) GetDependencies() []Variable {
 	var dependencies []Variable
-	for _, v := range v.KeyValues {
-		dependencies = append(dependencies, v.GetDependencies()...)
+	for _, value := range v.KeyValues {
+		dependencies = append(dependencies, value)
 	}
 	return dependencies
+}
+
+func (v *MapVariable) GetNestedIndirectDependencies() []Variable {
+	var deps = []Variable{v}
+	if v.GetVariableInfo().HasReference() {
+		deps = append(deps, v.GetVariableInfo().GetReference().GetNestedIndirectDependencies()...)
+	}
+	for _, elem := range v.KeyValues {
+		deps = append(deps, elem.GetNestedIndirectDependencies()...)
+	}
+	return deps
 }
 
 func (v *MapVariable) DeepCopy(force bool) Variable {
@@ -115,12 +126,12 @@ func (v *MapVariable) AddReferenceWithID(target Variable, creator string) {
 		for key, value := range v.KeyValues {
 			targetValue, ok := targetMap.KeyValues[key]
 			if !ok {
-				logger.Logger.Warnf("invalid target key %s in map: %v", key, targetMap)
+				logger.Logger.Warnf("[VARS MAP - REF] invalid target key %s in map: %v", key, targetMap)
 			} else {
 				targetValue.AddReferenceWithID(value, creator)
 			}
 		}
-		logger.Logger.Debugf("[VARS MAP] added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
+		logger.Logger.Debugf("[VARS MAP - REF] added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
 		return
 	}
 	// exception: map[string]interface{} --> struct
@@ -130,18 +141,21 @@ func (v *MapVariable) AddReferenceWithID(target Variable, creator string) {
 				for key, value := range v.KeyValues {
 					targetValue, ok := targetStructVariable.Fields[key.GetType().GetBasicValue()]
 					if !ok {
-						logger.Logger.Debugf("invalid target key %s in struct: %v", key, targetStructVariable)
+						logger.Logger.Warnf("[VARS MAP - REF] skipping target key (%s) (%s) in struct (%s) with fields:", utils.GetType(key), key.GetType().GetBasicValue(), targetStructVariable)
+						for k, f := range targetStructVariable.Fields {
+							logger.Logger.Warnf("\t\t [VARS MAP - REF] - %s: (%s) %s", k, GetVariableTypeAndTypeString(f), f.String())
+						}
 					} else {
-						logger.Logger.Debugf("[VARS MAP] target (%s) got referenced to value (%s)", targetValue.String(), value.String())
+						logger.Logger.Debugf("[VARS MAP - REF] target (%s) got referenced to value (%s)", targetValue.String(), value.String())
 						targetValue.AddReferenceWithID(value, creator)
 					}
 				}
-				logger.Logger.Debugf("[VARS MAP] added reference (%s) (%s) -> (%s) (%s) with id = %d (creator: %s)", v.VariableInfo.Name, utils.GetType(v), target.GetVariableInfo().GetName(), utils.GetType(target), v.VariableInfo.Id, creator)
+				logger.Logger.Debugf("[VARS MAP - REF] added reference (%s) (%s) -> (%s) (%s) with id = %d (creator: %s)", v.VariableInfo.Name, utils.GetType(v), target.GetVariableInfo().GetName(), utils.GetType(target), v.VariableInfo.Id, creator)
 				return
 			}
 		}
 	}
-	logger.Logger.Fatalf("[VARS MAP] attempted to reference variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
+	logger.Logger.Fatalf("[VARS MAP - REF] attempted to reference variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
 
 }
 

@@ -1,158 +1,206 @@
 ? (*RouteServiceImpl).CreateAndModify(ctx context.Context, info route.RouteInfo struct{ID string, StartStation string, EndStation string, StationList string, DistanceList string}):
  block 25 (IfDone):
-  - (inline) db NoSQLDatabase
-  - r (*route.RouteServiceImpl struct{db NoSQLDatabase})
-  - ctx context.Context
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) route.RouteServiceImpl struct{db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) r (*route.RouteServiceImpl struct{db NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    (inline) EndStation string -->
-       W-TAINTED 1x = (ROUTE_DB.Route.EndStation)
-  - (inline) EndStation string
+    [-1] (inline) (BasicVariable BasicType) StartStation string -->
+       w-tainted 1x: write(route_db.Route.StartStation)
+  - '[-1] (inline) (FieldVariable FieldType) StartStation string'
   - |-
-    (inline) StartStation string -->
-       W-TAINTED 1x = (ROUTE_DB.Route.StartStation)
-  - (inline) StartStation string
-  - (inline) ID string
-  - (inline) ID string
+    [-1] (inline) (BasicVariable BasicType) ID string -->
+       r-tainted 1x: read(route_db.string)
   - |-
-    (inline) StationList string -->
-       W-TAINTED 1x = (ROUTE_DB.Route.Stations)
+    [-1] (inline) (FieldVariable FieldType) ID string -->
+       r-tainted 1x: read(route_db.ID)
   - |-
-    (inline) StationList string -->
-       W-TAINTED 1x = (ROUTE_DB.Route.Stations)
-  - info route.RouteInfo struct{ID string, StartStation string, EndStation string, StationList string, DistanceList string}
-  - coll NoSQLCollection {database = "route", collection = "route"}
-  - err .error
+    [-1] (inline) (BasicVariable BasicType) StationList string -->
+       w-tainted 1x: write(route_db.Route.Stations)
   - |-
-    distances []int64 -->
-       W-TAINTED 1x = (ROUTE_DB.Route.Distances)
+    [-1] (inline) (FieldVariable FieldType) StationList string -->
+       w-tainted 1x: write(route_db.Route.Stations)
   - |-
-    (inline) "," string -->
-       W-TAINTED 1x = (ROUTE_DB.Route.Stations)
+    [-1] (inline) (BasicVariable BasicType) EndStation string -->
+       w-tainted 1x: write(route_db.Route.EndStation)
+  - '[-1] (inline) (FieldVariable FieldType) EndStation string'
+  - '[-1] (StructVariable UserType) info route.RouteInfo struct{ID string, StartStation
+    string, EndStation string, StationList string, DistanceList string}'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = route, collection = route}'
+  - '[-1] (InterfaceVariable UserType) err .error'
   - |-
-    stations []string -->
-       W-TAINTED 1x = (ROUTE_DB.Route.Stations)
+    [-1] (ArrayVariable SliceType) distances []int64 -->
+       w-tainted 1x: write(route_db.Route.Distances)
   - |-
-    (inline) EndStation string -->
-       W-TAINTED 1x = (ROUTE_DB.Route.EndStation)
+    [0] (inline) (BasicVariable BasicType) "," string -->
+       w-tainted 1x: write(route_db.Route.Stations)
   - |-
-    (inline) EndStation string -->
-       W-TAINTED 1x = (ROUTE_DB.Route.EndStation)
+    [-1] (SliceVariable SliceType) stations []string -->
+       w-tainted 1x: write(route_db.Route.Stations)
   - |-
-    (inline) StartStation string -->
-       W-TAINTED 1x = (ROUTE_DB.Route.StartStation)
+    [-1] (inline) (BasicVariable BasicType) ID string -->
+       r-tainted 1x: read(route_db.string)
   - |-
-    (inline) StartStation string -->
-       W-TAINTED 1x = (ROUTE_DB.Route.StartStation)
+    [-1] (inline) (FieldVariable FieldType) ID string -->
+       w-tainted 1x: write(route_db.Route.ID)
   - |-
-    (inline) distances []int64 -->
-       W-TAINTED 1x = (ROUTE_DB.Route.Distances)
+    [-1] (inline) (BasicVariable BasicType) EndStation string -->
+       w-tainted 1x: write(route_db.Route.EndStation)
   - |-
-    (inline) Distances []int64 -->
-       W-TAINTED 1x = (ROUTE_DB.Route.Distances)
+    [-1] (inline) (FieldVariable FieldType) EndStation string -->
+       w-tainted 1x: write(route_db.Route.EndStation)
   - |-
-    (inline) "," string -->
-       W-TAINTED 1x = (ROUTE_DB.Route.Stations)
+    [-1] (inline) (BasicVariable BasicType) StartStation string -->
+       w-tainted 1x: write(route_db.Route.StartStation)
   - |-
-    (inline) StationList string -->
-       W-TAINTED 1x = (ROUTE_DB.Route.Stations)
+    [-1] (inline) (FieldVariable FieldType) StartStation string -->
+       w-tainted 1x: write(route_db.Route.StartStation)
   - |-
-    (inline) StationList string -->
-       W-TAINTED 1x = (ROUTE_DB.Route.Stations)
+    [-1] (inline) (ArrayVariable SliceType) distances []int64 -->
+       w-tainted 1x: write(route_db.Route.Distances)
   - |-
-    (inline) stations []string -->
-       W-TAINTED 1x = (ROUTE_DB.Route.Stations)
+    [-1] (inline) (FieldVariable FieldType) Distances []int64 -->
+       w-tainted 1x: write(route_db.Route.Distances)
   - |-
-    (inline) Stations []string -->
-       W-TAINTED 1x = (ROUTE_DB.Route.Stations)
-  - (inline) ID string
+    [0] (inline) (BasicVariable BasicType) "," string -->
+       w-tainted 1x: write(route_db.Route.Stations)
   - |-
-    (inline) ID string -->
-       W-TAINTED 1x = (ROUTE_DB.Route.ID)
+    [-1] (inline) (BasicVariable BasicType) StationList string -->
+       w-tainted 1x: write(route_db.Route.Stations)
   - |-
-    route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} -->
-       W-TAINTED 1x = (ROUTE_DB.Route)
-  - old_exists false bool
+    [-1] (inline) (FieldVariable FieldType) StationList string -->
+       w-tainted 1x: write(route_db.Route.Stations)
   - |-
-    res NoSQLCursor {database = "route", collection = "route"} -->
-       R-TAINTED 2x = (ROUTE_DB.document, ROUTE_DB.NoSQLCursor)
-  - err .error
+    [-1] (inline) (SliceVariable SliceType) stations []string -->
+       w-tainted 1x: write(route_db.Route.Stations)
+  - |-
+    [-1] (inline) (FieldVariable FieldType) Stations []string -->
+       w-tainted 1x: write(route_db.Route.Stations)
+  - |-
+    [-1] (StructVariable UserType) route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} -->
+       w-tainted 1x: write(route_db.Route)
+  - '[-1] (BasicVariable BasicType) old_exists false bool'
+  - |-
+    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = route, collection = route} -->
+       r-tainted 1x: read(route_db.document)
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*RouteServiceImpl).DeleteRoute(ctx context.Context, id string):
   block 2 (IfDone):
-  - (inline) db NoSQLDatabase
-  - r (*route.RouteServiceImpl struct{db NoSQLDatabase})
-  - ctx context.Context
-  - id string
-  - coll NoSQLCollection {database = "route", collection = "route"}
-  - err .error
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) route.RouteServiceImpl struct{db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) r (*route.RouteServiceImpl struct{db NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BasicVariable BasicType) id string'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = route, collection = route}'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*RouteServiceImpl).GetAllRoutes(ctx context.Context):
   block 8 (IfDone):
-  - (inline) db NoSQLDatabase
-  - r (*route.RouteServiceImpl struct{db NoSQLDatabase})
-  - ctx context.Context
-  - routes []route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
-  - err error
-  - coll NoSQLCollection {database = "route", collection = "route"}
-  - err .error
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) route.RouteServiceImpl struct{db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) r (*route.RouteServiceImpl struct{db NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ArrayVariable ArrayType) routes []route.Route struct{ID string, Stations
+    []string, Distances []int64, StartStation string, EndStation string}'
+  - '[-1] (BasicVariable BasicType) err error'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = route, collection = route}'
+  - '[-1] (InterfaceVariable UserType) err .error'
   - |-
-    res NoSQLCursor {database = "route", collection = "route"} -->
-       R-TAINTED 2x = (ROUTE_DB.document, ROUTE_DB.NoSQLCursor)
-  - err .error
-  - err .error
+    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = route, collection = route} -->
+       r-tainted 1x: read(route_db.document)
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*RouteServiceImpl).GetRouteById(ctx context.Context, id string):
   block 11 (IfDone):
-  - (inline) db NoSQLDatabase
-  - r (*route.RouteServiceImpl struct{db NoSQLDatabase})
-  - (inline) ref <ctx context.Context> @ RouteService
-  - ctx context.Context
-  - (inline) ref <string> @ RouteService
-  - id string
-  - coll NoSQLCollection {database = "route", collection = "route"}
-  - err .error
-  - |-
-    res NoSQLCursor {database = "route", collection = "route"} -->
-       R-TAINTED 2x = (ROUTE_DB.document, ROUTE_DB.NoSQLCursor)
-  - err .error
-  - route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
-  - exists bool
-  - err .error
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) route.RouteServiceImpl struct{db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) r (*route.RouteServiceImpl struct{db NoSQLDatabase})'
+  - '[21] (inline) (Reference UserType) ref <ctx context.Context> @ RouteService'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[22] (inline) (Reference BasicType) ref <string> @ RouteService'
+  - '[0] (BasicVariable BasicType) id string'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = route, collection = route}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
+    = route, collection = route}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (StructVariable UserType) route route.Route struct{ID string, Stations []string,
+    Distances []int64, StartStation string, EndStation string}'
+  - '[-1] (BasicVariable BasicType) exists bool'
+  - '[-1] (InterfaceVariable UserType) err .error'
 (*RouteServiceImpl).GetRouteByIds(ctx context.Context, ids []string):
   block 0 (Body):
-  - (inline) db NoSQLDatabase
-  - r (*route.RouteServiceImpl struct{db NoSQLDatabase})
-  - ctx context.Context
-  - ids []string
-  - (inline) route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
-  - routes []route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
-  - _ .error
-  - (inline) route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
-  - routes []route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) route.RouteServiceImpl struct{db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) r (*route.RouteServiceImpl struct{db NoSQLDatabase})'
+  - '[21] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ArrayVariable ArrayType) ids []string'
+  - '[-1] (inline) (StructVariable UserType) route route.Route struct{ID string, Stations
+    []string, Distances []int64, StartStation string, EndStation string}'
+  - '[-1] (ArrayVariable ArrayType) routes []route.Route struct{ID string, Stations
+    []string, Distances []int64, StartStation string, EndStation string}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+  - '[-1] (inline) (StructVariable UserType) route route.Route struct{ID string, Stations
+    []string, Distances []int64, StartStation string, EndStation string}'
+  - '[-1] (ArrayVariable ArrayType) routes []route.Route struct{ID string, Stations
+    []string, Distances []int64, StartStation string, EndStation string}'
 (*RouteServiceImpl).GetRouteByStartAndEnd(ctx context.Context, start string, end string):
   block 11 (IfDone):
-  - (inline) db NoSQLDatabase
-  - r (*route.RouteServiceImpl struct{db NoSQLDatabase})
-  - ctx context.Context
-  - start string
-  - end string
-  - coll NoSQLCollection {database = "route", collection = "route"}
-  - err .error
-  - (inline) string
-  - (inline) struct{ "endstation" string, string}
-  - (inline) primitive.D
-  - (inline) string
-  - (inline) struct{ "startstation" string, string}
-  - (inline) primitive.D
-  - (inline) primitive.A
-  - (inline) primitive.A
-  - (inline) struct{ "$and" string, primitive.A}
-  - query primitive.D
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) route.RouteServiceImpl struct{db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) r (*route.RouteServiceImpl struct{db NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    res NoSQLCursor {database = "route", collection = "route"} -->
-       R-TAINTED 2x = (ROUTE_DB.document, ROUTE_DB.NoSQLCursor)
-  - err .error
-  - route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
-  - exists bool
-  - err .error
+    [-1] (BasicVariable BasicType) start string -->
+       r-tainted 1x: read(route_db.string)
+  - |-
+    [-1] (BasicVariable BasicType) end string -->
+       r-tainted 1x: read(route_db.string)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = route, collection = route}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - |-
+    [0] (inline) (FieldVariable FieldType) string -->
+       r-tainted 1x: read(route_db.)
+  - |-
+    [0] (inline) (StructVariable StructType) struct{ "endstation" string, string} -->
+       r-tainted 1x: read(route_db.struct{ "endstation" string, string})
+  - |-
+    [0] (inline) (SliceVariable UserType) primitive.D -->
+       r-tainted 1x: read(route_db.D)
+  - |-
+    [0] (inline) (FieldVariable FieldType) string -->
+       r-tainted 1x: read(route_db.)
+  - |-
+    [0] (inline) (StructVariable StructType) struct{ "startstation" string, string} -->
+       r-tainted 1x: read(route_db.struct{ "startstation" string, string})
+  - |-
+    [0] (inline) (SliceVariable UserType) primitive.D -->
+       r-tainted 1x: read(route_db.D)
+  - |-
+    [0] (inline) (SliceVariable UserType) primitive.A -->
+       r-tainted 1x: read(route_db.A)
+  - |-
+    [0] (inline) (FieldVariable FieldType) primitive.A -->
+       r-tainted 1x: read(route_db.)
+  - |-
+    [0] (inline) (StructVariable StructType) struct{ "$and" string, primitive.A} -->
+       r-tainted 1x: read(route_db.struct{ "$and" string, primitive.A})
+  - |-
+    [-1] (SliceVariable UserType) query primitive.D -->
+       r-tainted 8x: read(route_db.document, route_db.D, route_db.struct{ "$and" string, primitive.A}, route_db., route_db.A, route_db.struct{ "startstation" string, string}, route_db.string, route_db.struct{ "endstation" string, string})
+  - |-
+    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = route, collection = route} -->
+       r-tainted 1x: read(route_db.document)
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (StructVariable UserType) route route.Route struct{ID string, Stations []string,
+    Distances []int64, StartStation string, EndStation string}'
+  - '[-1] (BasicVariable BasicType) exists bool'
+  - '[-1] (InterfaceVariable UserType) err .error'
 .NewRouteServiceImpl(ctx context.Context, db NoSQLDatabase):
   block 0 (Body):
-  - ctx context.Context
-  - db NoSQLDatabase
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'

@@ -131,6 +131,10 @@ func (t *BlueprintBackendType) GetName() string {
 	return t.Name
 }
 
+func (t *BlueprintBackendType) GetLongName() string {
+	return t.Package + "." + t.Name
+}
+
 func (t *BlueprintBackendType) GetPackage() string {
 	return t.Package
 }

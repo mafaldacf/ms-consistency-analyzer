@@ -29,6 +29,9 @@ func (t *MapType) LongString() string {
 func (t *MapType) GetName() string {
 	return t.String()
 }
+func (t *MapType) GetLongName() string {
+	return t.String()
+}
 func (t *MapType) GetBasicValue() string {
 	logger.Logger.Fatalf("unable to get value for map type %s", t.String())
 	return ""

@@ -33,7 +33,16 @@ func (v *PointerVariable) GetVariableInfo() *VariableInfo {
 }
 
 func (v *PointerVariable) GetDependencies() []Variable {
-	return v.PointerTo.GetDependencies()
+	return []Variable{v.PointerTo}
+}
+
+func (v *PointerVariable) GetNestedIndirectDependencies() []Variable {
+	var deps = []Variable{v}
+	if v.GetVariableInfo().HasReference() {
+		deps = append(deps, v.GetVariableInfo().GetReference().GetNestedIndirectDependencies()...)
+	}
+	deps = append(deps, v.PointerTo.GetNestedIndirectDependencies()...)
+	return deps
 }
 
 func (v *PointerVariable) GetPointerTo() Variable {

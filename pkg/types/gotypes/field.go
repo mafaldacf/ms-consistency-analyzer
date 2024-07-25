@@ -57,6 +57,15 @@ func (t *FieldType) GetName() string {
 	}
 	return t.WrappedType.GetName()
 }
+func (t *FieldType) GetLongName() string {
+	if t.WrappedType == nil {
+		logger.Logger.Fatalf("[TYPES FIELD] unexpected nil underlying type for Field Type %s", t.FieldName)
+	}
+	if t.StructField {
+		return t.FieldName
+	}
+	return t.WrappedType.GetLongName()
+}
 func (t *FieldType) GetPackage() string {
 	logger.Logger.Fatalf("unable to get package for field type %s", t.String())
 	return ""

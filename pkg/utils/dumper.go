@@ -41,6 +41,21 @@ func (lst *OrderedPropertyList) AddOrderedProperty(name string, prop interface{}
 // Dumpers
 // -------
 
+func DumpDebugFile(data string, appname string, filename string) {
+	path := fmt.Sprintf("assets/%s/%s.cpp", appname, filename)
+	// ensure the directory exists
+	dir := filepath.Dir(path)
+	err := os.MkdirAll(dir, 0755)
+	if err != nil {
+		logger.Logger.Fatalf("error creating directory %s: %s", dir, err.Error())
+	}
+	err = os.WriteFile(path, []byte(data), 0644)
+	if err != nil {
+		logger.Logger.Fatalf("error writing data to %s: %s", path, err.Error())
+	}
+	logger.Logger.Tracef("[JSON] go file %s", path)
+}
+
 func DumpToJSONFile(data interface{}, appname string, filename string) {
 	path := fmt.Sprintf("assets/%s/%s.json", appname, filename)
 	// ensure the directory exists
@@ -59,7 +74,7 @@ func DumpToJSONFile(data interface{}, appname string, filename string) {
 	if err != nil {
 		logger.Logger.Fatalf("error writing yaml data to %s: %s", path, err.Error())
 	}
-	logger.Logger.Infof("[JSON] saved file %s", path)
+	logger.Logger.Tracef("[JSON] saved file %s", path)
 }
 
 func DumpToYamlFile(data interface{}, appname string, filename string) {
@@ -71,7 +86,7 @@ func DumpToYamlFile(data interface{}, appname string, filename string) {
 	yamlStr := fixYamlStrings(string(yamlData))
 	//yamlStr := string(yamlData)
 	path := fmt.Sprintf("assets/%s/%s.yaml", appname, filename)
-	
+
 	// ensure the directory exists
 	dir := filepath.Dir(path)
 	err = os.MkdirAll(dir, 0755)
@@ -84,7 +99,7 @@ func DumpToYamlFile(data interface{}, appname string, filename string) {
 	if err != nil {
 		logger.Logger.Fatalf("error writing yaml data to %s: %s", path, err.Error())
 	}
-	logger.Logger.Infof("[YAML] saved file %s", path)
+	logger.Logger.Tracef("[YAML] saved file %s", path)
 }
 
 // remove unwanted new lines within items with braces
@@ -93,9 +108,9 @@ func DumpToYamlFile(data interface{}, appname string, filename string) {
 // exception goes for when there is just "interface{}"", where we maintain the lack of space
 func fixYamlStrings(yamlStr string) string {
 	var sb strings.Builder
-	inBraces := false     // { }
-	inAngles := false     // < >
-	inQuotes := false     // " " or ' '
+	inBraces := false      // { }
+	inAngles := false      // < >
+	inQuotes := false      // " " or ' '
 	inParentheses := false // ( )
 
 	for i, r := range yamlStr {
@@ -170,7 +185,7 @@ func fixYamlStrings(yamlStr string) string {
 				// skip newline if next character is colon
 				continue
 			}
-			if i > 0 && len(yamlStr) > i - 1 {
+			if i > 0 && len(yamlStr) > i-1 {
 				if r == ':' && yamlStr[i-1] == '\n' {
 					// add newline after colon
 					sb.WriteRune(r)
@@ -180,14 +195,14 @@ func fixYamlStrings(yamlStr string) string {
 				if r == '?' && yamlStr[i-1] == '\n' {
 					continue
 				}
-				if i > 1 && len(yamlStr) > i - 2 {
+				if i > 1 && len(yamlStr) > i-2 {
 					if r == ' ' && yamlStr[i-1] == '?' && yamlStr[i-2] == '\n' {
 						continue
 					}
 				}
 				if r == ' ' && yamlStr[i-1] == ':' && yamlStr[i+1] == '-' {
 					sb.WriteRune('\t')
-					continue		
+					continue
 				}
 			}
 			/* if r == '-' && yamlStr[i-1] == '\n' {

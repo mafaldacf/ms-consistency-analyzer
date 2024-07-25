@@ -1,35 +1,52 @@
 {
-  "xcy_violations": null,
+  "xcy_violations": [
+    {
+      "write": {
+        "service": "StorageService",
+        "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+        "key": "post postnotification.Post",
+        "object": "post postnotification.Post",
+        "database": "post_nosql MongoDB (NoSQLDatabase)"
+      },
+      "read": {
+        "service": "StorageService",
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "key": "query go.mongodb.org/mongo-driver/bson/primitive.D",
+        "object": "result github.com/blueprint-uservices/blueprint/runtime/core/backend.NoSQLCursor",
+        "database": "post_nosql MongoDB (NoSQLDatabase)"
+      }
+    }
+  ],
   "writes": [
     {
       "service": "StorageService",
       "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
-      "key": "post (#-1)",
-      "object": "post (#-1)",
-      "database": "post_nosql"
+      "key": "post postnotification.Post",
+      "object": "post postnotification.Post",
+      "database": "post_nosql MongoDB (NoSQLDatabase)"
     },
     {
       "service": "UploadService",
       "method": "Queue.Push(ctx context.Context, item interface{})",
-      "key": "message (#19)",
-      "object": "message (#19)",
-      "database": "notif_queue"
+      "key": "message postnotification.Message",
+      "object": "message postnotification.Message",
+      "database": "notif_queue RabbitMQ (Queue)"
     }
   ],
   "reads": [
     {
       "service": "NotifyService",
       "method": "Queue.Pop(ctx context.Context, item interface{})",
-      "key": "message (#0)",
-      "object": "message (#0)",
-      "database": "notif_queue"
+      "key": "event (\u0026map[string]interface{})",
+      "object": "event (\u0026map[string]interface{})",
+      "database": "notif_queue RabbitMQ (Queue)"
     },
     {
       "service": "StorageService",
       "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
-      "key": "query (#-1)",
-      "object": "result (#-1)",
-      "database": "post_nosql"
+      "key": "query go.mongodb.org/mongo-driver/bson/primitive.D",
+      "object": "result github.com/blueprint-uservices/blueprint/runtime/core/backend.NoSQLCursor",
+      "database": "post_nosql MongoDB (NoSQLDatabase)"
     }
   ]
 }

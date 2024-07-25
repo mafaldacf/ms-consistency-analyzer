@@ -27,6 +27,9 @@ func (t *GenericType) LongString() string {
 func (t *GenericType) GetName() string {
 	return t.String()
 }
+func (t *GenericType) GetLongName() string {
+	return t.String()
+}
 func (t *GenericType) GetBasicValue() string {
 	logger.Logger.Fatalf("unable to get value for generic type %s", t.String())
 	return ""

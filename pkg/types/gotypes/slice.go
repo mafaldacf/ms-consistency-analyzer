@@ -25,7 +25,10 @@ func (t *SliceType) LongString() string {
 	return t.String()
 }
 func (t *SliceType) GetName() string {
-	return ""
+	return t.String()
+}
+func (t *SliceType) GetLongName() string {
+	return t.String()
 }
 func (t *SliceType) GetUnderlyingType() Type {
 	if t.UnderlyingType == nil {

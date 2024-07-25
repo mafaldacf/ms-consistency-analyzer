@@ -70,6 +70,9 @@ func (t *StructType) LongString() string {
 func (t *StructType) GetName() string {
 	return t.String()
 }
+func (t *StructType) GetLongName() string {
+	return t.String()
+}
 func (t *StructType) GetBasicValue() string {
 	logger.Logger.Fatalf("[TYPES STRUCT] unable to get value for struct type %s", t.String())
 	return ""

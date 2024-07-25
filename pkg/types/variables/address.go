@@ -33,7 +33,16 @@ func (v *AddressVariable) GetVariableInfo() *VariableInfo {
 }
 
 func (v *AddressVariable) GetDependencies() []Variable {
-	return v.AddressOf.GetDependencies()
+	return []Variable{v.AddressOf}
+}
+
+func (v *AddressVariable) GetNestedIndirectDependencies() []Variable {
+	var deps = []Variable{v}
+	if v.GetVariableInfo().HasReference() {
+		deps = append(deps, v.GetVariableInfo().GetReference().GetNestedIndirectDependencies()...)
+	}
+	deps = append(deps, v.AddressOf.GetNestedIndirectDependencies()...)
+	return deps
 }
 
 func (v *AddressVariable) GetAddressOf() Variable {

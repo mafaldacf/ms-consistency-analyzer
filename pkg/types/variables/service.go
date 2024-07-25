@@ -37,6 +37,10 @@ func (v *ServiceVariable) GetDependencies() []Variable {
 	return nil
 }
 
+func (v *ServiceVariable) GetNestedIndirectDependencies() []Variable {
+	return nil
+}
+
 func (v *ServiceVariable) DeepCopy(force bool) Variable {
 	return &ServiceVariable{
 		VariableInfo: v.VariableInfo.DeepCopy(force),
