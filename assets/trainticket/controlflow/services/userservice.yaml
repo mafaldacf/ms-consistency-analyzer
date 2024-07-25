@@ -96,9 +96,8 @@
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = user, collection = user}'
   - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (BasicVariable BasicType) "userid" string'
-  - '[0] (inline) (FieldVariable FieldType) "userid" string'
-  - '[0] (inline) (StructVariable StructType) struct{ "userid" string, UserID string}'
+  - '[0] (inline) (FieldVariable FieldType) string'
+  - '[0] (inline) (StructVariable StructType) struct{ "userid" string,  string}'
   - '[-1] (SliceVariable UserType) query primitive.D'
 .NewUserServiceImpl(ctx context.Context, db NoSQLDatabase):
   block 0 (Body):

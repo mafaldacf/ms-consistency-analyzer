@@ -13,10 +13,8 @@
 [] (InterfaceVariable UserType) err .error 
 
 [] (SliceVariable UserType) query primitive.D 
-[_] (StructVariable StructType) struct{ "tripid" string, TripID string} 
-[__] (FieldVariable FieldType) "tripid" string 
-[___] (BasicVariable BasicType) "tripid" string 
-[__] (FieldVariable FieldType) TripID string // write(trainfood_db), 
+[_] (StructVariable StructType) struct{ "tripid" string,  string} 
+[__] (FieldVariable FieldType) string 
 [___] (BasicVariable BasicType) TripID string // write(trainfood_db), 
 
 [] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = trainfood, collection = trainfood} 

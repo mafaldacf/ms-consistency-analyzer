@@ -1,0 +1,27 @@
+OrderService:
+- fields:
+    order_db: NoSQLDatabase
+    shipment_queue: Queue
+    stock_service: StockService
+- services:
+    StockService: threechain2.StockService
+- datastores:
+    shipment_queue: Queue
+    stock_db: NoSQLDatabase
+ShipmentService:
+- fields:
+    num_workers: 4 int
+    order_service: OrderService
+    shipment_db: NoSQLDatabase
+    shipment_queue: Queue
+- services:
+    OrderService: threechain2.OrderService
+- datastores:
+    shipment_db: NoSQLDatabase
+    shipment_queue: Queue
+StockService:
+- fields:
+    stock_db: NoSQLDatabase
+- services: {}
+- datastores:
+    stock_db: NoSQLDatabase

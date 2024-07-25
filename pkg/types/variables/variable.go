@@ -39,6 +39,26 @@ func GetDependenciesStringLst(deps ...Variable) string {
 	return out
 }
 
+func WrapToFieldVariable(variable Variable, structVariable *StructVariable, addTypeToStruct bool) {
+	fieldVariable, ok := variable.(*FieldVariable)
+	if !ok {
+		fieldVariable = &FieldVariable{
+			VariableInfo: &VariableInfo{
+				Type: &gotypes.FieldType{
+					WrappedType: variable.GetType(),
+				},
+				Id: VARIABLE_INLINE_ID,
+			},
+			WrappedVariable: variable,
+		}
+	}
+	if addTypeToStruct {
+		structVariable.AddFieldVariableAndType(fieldVariable)
+	} else {
+		structVariable.AddFieldVariable(fieldVariable)
+	}
+}
+
 func UnwrapAddressVariable(variable Variable) Variable {
 	if addressVar, ok := variable.(*AddressVariable); ok {
 		return UnwrapAddressVariable(addressVar.GetAddressOf())
@@ -49,6 +69,13 @@ func UnwrapAddressVariable(variable Variable) Variable {
 func UnwrapPointerVariable(variable Variable) Variable {
 	if pointerVar, ok := variable.(*PointerVariable); ok {
 		return UnwrapPointerVariable(pointerVar.GetPointerTo())
+	}
+	return variable
+}
+
+func UnwrapFieldVariable(variable Variable) Variable {
+	if fieldVar, ok := variable.(*FieldVariable); ok {
+		return UnwrapPointerVariable(fieldVar.WrappedVariable)
 	}
 	return variable
 }

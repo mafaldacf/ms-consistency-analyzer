@@ -1,7 +1,7 @@
 [] (PointerVariable PointerType) s (*postnotification.StorageServiceImpl struct{cache Cache, db NoSQLDatabase}) 
 [_] (StructVariable UserType) postnotification.StorageServiceImpl struct{cache Cache, db NoSQLDatabase} 
-[__] (BlueprintBackendVariable BlueprintBackendType) cache Cache 
 [__] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
+[__] (BlueprintBackendVariable BlueprintBackendType) cache Cache 
 
 [] (InterfaceVariable UserType) ctx context.Context 
 

@@ -1,8 +1,8 @@
 [] (PointerVariable PointerType) n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int}) 
 [_] (StructVariable UserType) postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue Queue, numWorkers int} 
+[__] (ServiceVariable ServiceType) storageService postnotification.StorageService 
 [__] (BlueprintBackendVariable BlueprintBackendType) queue Queue 
 [__] (BasicVariable BasicType) numWorkers 4 int 
-[__] (ServiceVariable ServiceType) storageService postnotification.StorageService 
 
 [] (InterfaceVariable UserType) ctx context.Context 
 

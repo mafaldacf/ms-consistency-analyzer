@@ -13,11 +13,9 @@
 [] (InterfaceVariable UserType) err .error 
 
 [] (SliceVariable UserType) query primitive.D 
-[_] (StructVariable StructType) struct{ "name" string, Name string} 
-[__] (FieldVariable FieldType) Name string // write(config_db), 
+[_] (StructVariable StructType) struct{ "name" string,  string} 
+[__] (FieldVariable FieldType) string 
 [___] (BasicVariable BasicType) Name string // write(config_db), 
-[__] (FieldVariable FieldType) "name" string 
-[___] (BasicVariable BasicType) "name" string 
 
 [] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = config, collection = config} 
 

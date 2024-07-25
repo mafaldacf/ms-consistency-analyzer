@@ -78,7 +78,7 @@ def build_digraph(data, graph_type, labeled):
             digraph, pos,
             edge_labels=combined_edge_labels,
             font_color='black',
-            font_size=9,
+            font_size=10,
             label_pos=0.65,
             connectionstyle='arc3,rad=0.3',
         )
@@ -106,7 +106,7 @@ def save(app, graph, labeled):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Visualize graphs based on the specified application and graph type")
-    parser.add_argument('--app', '-a', required=True, choices=['postnotification', 'foobar', 'sockshop', 'trainticket'], help="The application for which to visualize the graph")
+    parser.add_argument('--app', '-a', required=True, choices=['postnotification', 'foobar', 'sockshop', 'trainticket', 'threechain2'], help="The application for which to visualize the graph")
     parser.add_argument('--graph', '-g', required=True, choices=['app', 'call'], help="The type of graph to visualize")
     parser.add_argument('--labeled', '-l', action='store_true', help="Construct labeled digraph")
     args = parser.parse_args()

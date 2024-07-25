@@ -8,6 +8,7 @@ import (
 	specs_postnotification "github.com/blueprint-uservices/blueprint/examples/postnotification/wiring/specs"
 	specs_sockshop "github.com/blueprint-uservices/blueprint/examples/sockshop/wiring/specs"
 	specs_trainticket "github.com/blueprint-uservices/blueprint/examples/train_ticket/wiring/specs"
+	specs_threechain2 "github.com/blueprint-uservices/blueprint/examples/threechain2/wiring/specs"
 	"github.com/blueprint-uservices/blueprint/plugins/cmdbuilder"
 	"github.com/blueprint-uservices/blueprint/plugins/golang"
 	"github.com/blueprint-uservices/blueprint/plugins/mongodb"
@@ -33,6 +34,8 @@ func BuildBlueprintAppInfo(appName string) ([]*frameworks.ServiceInfo, []datasto
 		spec = specs_sockshop.Docker
 	case "trainticket":
 		spec = specs_trainticket.Docker
+	case "threechain2":
+		spec = specs_threechain2.Docker
 	default:
 		logger.Logger.Fatalf("unknown application %s", appName)
 	}

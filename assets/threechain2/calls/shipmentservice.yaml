@@ -1,0 +1,13 @@
+(*ShipmentServiceImpl).Run(ctx context.Context):
+- (*threechain2.ShipmentServiceImpl).workerThread(ctx context.Context) error
+(*ShipmentServiceImpl).createPendingShipment(ctx context.Context, shipmentMessage threechain2.ShipmentMessage struct{OrderID string, Username string}):
+	- NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
+  - (*threechain2.OrderServiceImpl).ReadOrder(ctx context.Context, orderID string)
+    (threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64}, error)
+(*ShipmentServiceImpl).workerThread(ctx context.Context):
+- Queue.Pop(ctx context.Context, item interface{}) (err, interface{})
+- (*threechain2.ShipmentServiceImpl).createPendingShipment(ctx context.Context, shipmentMessage threechain2.ShipmentMessage struct{OrderID string, Username string}) error
+.NewOrderServiceImpl(ctx context.Context, stock_service threechain2.StockService, order_db NoSQLDatabase, shipment_queue Queue): []
+.NewShipmentServiceImpl(ctx context.Context, order_service threechain2.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue):
+ []
+.NewStockServiceImpl(ctx context.Context, stock_db NoSQLDatabase): []

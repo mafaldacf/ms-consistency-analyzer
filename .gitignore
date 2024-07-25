@@ -6,4 +6,3 @@ info.md
 assets/postnotification/datastores_old.yaml
 .venv/
 .DS_Store
-assets/trainticket/detection/**

@@ -3,6 +3,7 @@ package detector
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
 	"strings"
 
 	"analyzer/pkg/abstractgraph"
@@ -86,8 +87,33 @@ func (op *Operation) String() string {
 }
 
 type Inconsistency struct {
-	Write *Operation `json:"write"`
-	Read  *Operation `json:"read"`
+	Write     *Operation            `json:"write"`
+	Read      *Operation            `json:"read"`
+	Dataflows []*variables.Dataflow `json:"dataflows_in_path"`
+}
+
+func (inconsistency *Inconsistency) MarshalJSON() ([]byte, error) {
+	var dataflows []string
+	for _, df := range inconsistency.Dataflows {
+		prefix := ""
+		if !df.Direct {
+			prefix = "[indirect] "
+		}
+		repr := fmt.Sprintf("%s%s(%s, %s.%s)", prefix, df.GetOpString(), df.Service, df.Datastore, df.Field.GetName())
+		if !slices.Contains(dataflows, repr) {
+			dataflows = append(dataflows, repr)
+		}
+	}
+
+	return json.Marshal(&struct {
+		Write     *Operation `json:"write"`
+		Read      *Operation `json:"read"`
+		Dataflows []string   `json:"dataflows_in_path"`
+	}{
+		Write:     inconsistency.Write,
+		Read:      inconsistency.Read,
+		Dataflows: dataflows,
+	})
 }
 
 func (i *Inconsistency) String() string {
@@ -96,7 +122,7 @@ func (i *Inconsistency) String() string {
 
 type Request struct {
 	EntryNode       abstractgraph.AbstractNode `json:"-"`
-	Inconsistencies []*Inconsistency           `json:"xcy_violations"`
+	Inconsistencies []*Inconsistency           `json:"xcy_inconsistencies"`
 	Writes          []*Operation               `json:"writes"`
 	Reads           []*Operation               `json:"reads"`
 }
@@ -187,17 +213,26 @@ func (request *Request) captureInconsistency(read *Operation, readCall *abstract
 
 			logger.Logger.Tracef("[READ KEY] dependencies for (%s) %s: \n%v", utils.GetType(read.Key), read.Key.String(), variables.GetDependenciesStringLst(readKeyDeps...))
 			logger.Logger.Tracef("[WRITE VALUE] dependencies for (%s) %s: \n%v", utils.GetType(write.Object), write.Object.String(), variables.GetDependenciesStringLst(writeValueDeps...))
-			
+
+			inconsistency := &Inconsistency{
+				Write: write,
+				Read:  read,
+			}
+
 			for _, dep := range readKeyDeps {
 				dfs := dep.GetVariableInfo().GetAllDataflowsForDatastore(readCall.DbInstance.GetName())
 				for _, df := range dfs {
 					for _, v := range writeValueDeps {
 						if df.Variable == v {
-							request.addInconsistency(write, read)
-							return
+							inconsistency.Dataflows = append(inconsistency.Dataflows, v.GetVariableInfo().GetAllDataflows()...)
 						}
 					}
 				}
+			}
+
+			if inconsistency.Dataflows != nil {
+				request.Inconsistencies = append(request.Inconsistencies, inconsistency)
+				logger.Logger.Warnf("[XCY] found inconsistency at datastore %s", inconsistency.Write.Database.GetName())
 			}
 		}
 	}

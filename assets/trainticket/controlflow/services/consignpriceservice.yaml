@@ -39,7 +39,7 @@
     NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) c (*consignprice.ConsignPriceServiceImpl struct{db
     NoSQLDatabase})'
-  - '[20] (InterfaceVariable UserType) ctx context.Context'
+  - '[18] (InterfaceVariable UserType) ctx context.Context'
   - '[-1] (BasicVariable BasicType) weight float64'
   - '[-1] (BasicVariable BasicType) isWithinRegion bool'
   - '[-1] (inline) (BasicVariable BasicType) InitialPrice float64'
@@ -57,7 +57,7 @@
     NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) c (*consignprice.ConsignPriceServiceImpl struct{db
     NoSQLDatabase})'
-  - '[20] (inline) (Reference UserType) ref <ctx context.Context> @ ConsignPriceService'
+  - '[18] (inline) (Reference UserType) ref <ctx context.Context> @ ConsignPriceService'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = consign, collection = consign}'
@@ -92,14 +92,14 @@
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
     = consign, collection = consign}'
   - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (inline) (BasicVariable BasicType) BeyondPrice float64'
+  - '[-1] (inline) (FieldVariable FieldType) BeyondPrice float64'
   - '[-1] (inline) (BasicVariable BasicType) WithinPrice float64'
   - '[-1] (inline) (FieldVariable FieldType) WithinPrice float64'
   - '[-1] (inline) (BasicVariable BasicType) InitialPrice float64'
   - '[-1] (inline) (FieldVariable FieldType) InitialPrice float64'
   - '[-1] (inline) (BasicVariable BasicType) InitialWeight float64'
   - '[-1] (inline) (FieldVariable FieldType) InitialWeight float64'
-  - '[-1] (inline) (BasicVariable BasicType) BeyondPrice float64'
-  - '[-1] (inline) (FieldVariable FieldType) BeyondPrice float64'
   - '[-1] (StructVariable UserType) cp consignprice.ConsignPrice struct{ID string,
     Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64,
     BeyondPrice float64}'

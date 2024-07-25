@@ -30,9 +30,8 @@
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = trainfood, collection = trainfood}'
   - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (BasicVariable BasicType) "tripid" string'
-  - '[0] (inline) (FieldVariable FieldType) "tripid" string'
-  - '[0] (inline) (StructVariable StructType) struct{ "tripid" string, TripID string}'
+  - '[0] (inline) (FieldVariable FieldType) string'
+  - '[0] (inline) (StructVariable StructType) struct{ "tripid" string,  string}'
   - '[-1] (SliceVariable UserType) query primitive.D'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
     = trainfood, collection = trainfood}'
@@ -54,9 +53,8 @@
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = trainfood, collection = trainfood}'
   - '[-1] (InterfaceVariable UserType) err .error'
-  - |-
-    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = trainfood, collection = trainfood} -->
-       r-tainted 1x: read(trainfood_db.document)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
+    = trainfood, collection = trainfood}'
   - '[-1] (InterfaceVariable UserType) err .error'
   - '[-1] (ArrayVariable ArrayType) all_foods []trainfood.TrainFood struct{ID string,
     TripID string, Foods []food.Food struct{Name string, Price float64}}'
@@ -69,15 +67,12 @@
   - '[-1] (PointerVariable PointerType) t (*trainfood.TrainFoodServiceImpl struct{db
     NoSQLDatabase})'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - |-
-    [-1] (BasicVariable BasicType) tripid string -->
-       r-tainted 1x: read(trainfood_db.string)
+  - '[-1] (BasicVariable BasicType) tripid string'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = trainfood, collection = trainfood}'
   - '[-1] (InterfaceVariable UserType) err .error'
-  - |-
-    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = trainfood, collection = trainfood} -->
-       r-tainted 1x: read(trainfood_db.document)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
+    = trainfood, collection = trainfood}'
   - '[-1] (InterfaceVariable UserType) err .error'
   - '[-1] (StructVariable UserType) tf trainfood.TrainFood struct{ID string, TripID
     string, Foods []food.Food struct{Name string, Price float64}}'

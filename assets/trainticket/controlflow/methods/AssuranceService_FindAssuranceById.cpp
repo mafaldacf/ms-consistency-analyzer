@@ -6,8 +6,7 @@
 [_] (Reference UserType) ref <ctx context.Context> @ AssuranceService 
 
 [] (BasicVariable BasicType) id string // read(assurance_db), 
-[_] (Reference FieldType) ref <ID string> @ AssuranceService // read(assurance_db), 
-[__] (BasicVariable BasicType) ID string // read(assurance_db), 
+[_] (Reference BasicType) ref <ID string> @ AssuranceService // read(assurance_db), 
 
 [] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = assurance, collection = assurance} 
 
@@ -17,8 +16,7 @@
 [_] (StructVariable StructType) struct{ "id" string,  string} // read(assurance_db), 
 [__] (FieldVariable FieldType) string // read(assurance_db), 
 [___] (BasicVariable BasicType) id string // read(assurance_db), 
-[____] (Reference FieldType) ref <ID string> @ AssuranceService // read(assurance_db), 
-[_____] (BasicVariable BasicType) ID string // read(assurance_db), 
+[____] (Reference BasicType) ref <ID string> @ AssuranceService // read(assurance_db), 
 
 [] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = assurance, collection = assurance} // read(assurance_db), 
 

@@ -5,14 +5,14 @@
 [] (InterfaceVariable UserType) ctx context.Context 
 [_] (Reference UserType) ref <ctx context.Context> @ RouteService 
 
-[] (BasicVariable BasicType) id string 
-[_] (Reference BasicType) ref <string> @ RouteService 
+[] (BasicVariable BasicType) id string // read(route_db), 
+[_] (Reference BasicType) ref <string> @ RouteService // read(route_db), 
 
 [] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = route, collection = route} 
 
 [] (InterfaceVariable UserType) err .error 
 
-[] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = route, collection = route} 
+[] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = route, collection = route} // read(route_db), 
 
 [] (InterfaceVariable UserType) err .error 
 

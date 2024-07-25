@@ -1,0 +1,13 @@
+{
+  "xcy_inconsistencies": null,
+  "writes": [
+    {
+      "service": "UserService",
+      "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+      "key": "user user.User",
+      "object": "user user.User",
+      "database": "user_db MongoDB (NoSQLDatabase)"
+    }
+  ],
+  "reads": null
+}

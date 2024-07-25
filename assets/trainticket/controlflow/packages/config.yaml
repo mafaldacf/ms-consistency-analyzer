@@ -16,9 +16,8 @@
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = config, collection = config}'
   - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (BasicVariable BasicType) "name" string'
-  - '[0] (inline) (FieldVariable FieldType) "name" string'
-  - '[0] (inline) (StructVariable StructType) struct{ "name" string, Name string}'
+  - '[0] (inline) (FieldVariable FieldType) string'
+  - '[0] (inline) (StructVariable StructType) struct{ "name" string,  string}'
   - '[-1] (SliceVariable UserType) query primitive.D'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
     = config, collection = config}'
@@ -46,15 +45,24 @@
   - '[0] (inline) (StructVariable UserType) config.ConfigServiceImpl struct{db NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BasicVariable BasicType) name string'
+  - |-
+    [-1] (BasicVariable BasicType) name string -->
+       r-tainted 1x: read(config_db.string)
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = config, collection = config}'
   - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "name" string,  string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = config, collection = config}'
+  - |-
+    [0] (inline) (FieldVariable FieldType) string -->
+       r-tainted 1x: read(config_db.)
+  - |-
+    [0] (inline) (StructVariable StructType) struct{ "name" string, string} -->
+       r-tainted 1x: read(config_db.struct{ "name" string, string})
+  - |-
+    [-1] (SliceVariable UserType) query primitive.D -->
+       r-tainted 5x: read(config_db.document, config_db.D, config_db.struct{ "name" string, string}, config_db., config_db.string)
+  - |-
+    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = config, collection = config} -->
+       r-tainted 1x: read(config_db.document)
   - '[-1] (InterfaceVariable UserType) err .error'
   - '[-1] (StructVariable UserType) conf config.Config struct{Name string, Value string,
     Description string}'
@@ -88,9 +96,8 @@
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = config, collection = config}'
   - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (BasicVariable BasicType) "name" string'
-  - '[0] (inline) (FieldVariable FieldType) "name" string'
-  - '[0] (inline) (StructVariable StructType) struct{ "name" string, Name string}'
+  - '[0] (inline) (FieldVariable FieldType) string'
+  - '[0] (inline) (StructVariable StructType) struct{ "name" string,  string}'
   - '[-1] (SliceVariable UserType) query primitive.D'
 config.NewConfigServiceImpl(ctx context.Context, db NoSQLDatabase) ((*config.ConfigServiceImpl struct{db NoSQLDatabase}), error):
   block 0 (Body):

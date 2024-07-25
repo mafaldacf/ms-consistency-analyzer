@@ -17,20 +17,14 @@
 [] (InterfaceVariable UserType) err .error 
 
 [] (SliceVariable UserType) query primitive.D 
-[_] (StructVariable StructType) struct{ "accountid" string, AccountID string} 
-[__] (FieldVariable FieldType) "accountid" string 
-[___] (BasicVariable BasicType) "accountid" string 
-[__] (FieldVariable FieldType) AccountID string // write(contacts_db), 
+[_] (StructVariable StructType) struct{ "accountid" string,  string} 
+[__] (FieldVariable FieldType) string 
 [___] (BasicVariable BasicType) AccountID string // write(contacts_db), 
-[_] (StructVariable StructType) struct{ "documentnumber" string, DocumentNumber string} 
-[__] (FieldVariable FieldType) "documentnumber" string 
-[___] (BasicVariable BasicType) "documentnumber" string 
-[__] (FieldVariable FieldType) DocumentNumber string // write(contacts_db), 
+[_] (StructVariable StructType) struct{ "documentnumber" string,  string} 
+[__] (FieldVariable FieldType) string 
 [___] (BasicVariable BasicType) DocumentNumber string // write(contacts_db), 
-[_] (StructVariable StructType) struct{ "documenttype" string, DocumentType int} 
-[__] (FieldVariable FieldType) "documenttype" string 
-[___] (BasicVariable BasicType) "documenttype" string 
-[__] (FieldVariable FieldType) DocumentType int // write(contacts_db), 
+[_] (StructVariable StructType) struct{ "documenttype" string,  int} 
+[__] (FieldVariable FieldType) int 
 [___] (BasicVariable BasicType) DocumentType int // write(contacts_db), 
 
 [] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = contacts, collection = contacts} 

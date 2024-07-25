@@ -12,12 +12,12 @@
 [__] (BasicVariable BasicType) Price string // write(money_db), 
 
 [] (StructVariable UserType) m payment.Money struct{ID string, UserID string, Price string} // write(money_db), 
+[_] (FieldVariable FieldType) ID string // write(money_db), 
+[__] (BasicVariable BasicType) string // write(money_db), 
 [_] (FieldVariable FieldType) UserID string // write(money_db), 
 [__] (BasicVariable BasicType) UserID string // write(money_db), 
 [_] (FieldVariable FieldType) Price string // write(money_db), 
 [__] (BasicVariable BasicType) Price string // write(money_db), 
-[_] (FieldVariable FieldType) ID string // write(money_db), 
-[__] (BasicVariable BasicType) string // write(money_db), 
 
 [] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = payment, collection = money} 
 

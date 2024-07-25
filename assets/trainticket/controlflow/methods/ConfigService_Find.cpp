@@ -4,18 +4,18 @@
 
 [] (InterfaceVariable UserType) ctx context.Context 
 
-[] (BasicVariable BasicType) name string 
+[] (BasicVariable BasicType) name string // read(config_db), 
 
 [] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = config, collection = config} 
 
 [] (InterfaceVariable UserType) err .error 
 
-[] (SliceVariable UserType) query primitive.D 
-[_] (StructVariable StructType) struct{ "name" string,  string} 
-[__] (FieldVariable FieldType) string 
-[___] (BasicVariable BasicType) name string 
+[] (SliceVariable UserType) query primitive.D // read(config_db), 
+[_] (StructVariable StructType) struct{ "name" string,  string} // read(config_db), 
+[__] (FieldVariable FieldType) string // read(config_db), 
+[___] (BasicVariable BasicType) name string // read(config_db), 
 
-[] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = config, collection = config} 
+[] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = config, collection = config} // read(config_db), 
 
 [] (InterfaceVariable UserType) err .error 
 

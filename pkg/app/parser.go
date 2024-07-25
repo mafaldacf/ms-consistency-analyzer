@@ -25,6 +25,7 @@ const (
 	PACKAGE_PATH_FOOBAR            string = "github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar"
 	PACKAGE_PATH_SOCKSHOP          string = "github.com/blueprint-uservices/blueprint/examples/sockshop/workflow"
 	PACKAGE_PATH_TRAIN_TICKET      string = "github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow"
+	PACKAGE_PATH_THREECHAIN2       string = "github.com/blueprint-uservices/blueprint/examples/threechain2/workflow"
 	PACKAGE_PATH_BLUEPRINT         string = "github.com/blueprint-uservices/blueprint/runtime/core/backend"
 )
 
@@ -123,6 +124,8 @@ func (app *App) ParsePackages(servicesInfo []*frameworks.ServiceInfo) {
 		basePackagePath = PACKAGE_PATH_SOCKSHOP
 	case "trainticket":
 		basePackagePath = PACKAGE_PATH_TRAIN_TICKET
+	case "threechain2":
+		basePackagePath = PACKAGE_PATH_THREECHAIN2
 	default:
 		logger.Logger.Fatalf("unknown application name %s", app.Name)
 	}

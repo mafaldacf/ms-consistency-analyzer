@@ -5,9 +5,9 @@
 [] (InterfaceVariable UserType) ctx context.Context 
 
 [] (StructVariable UserType) info route.RouteInfo struct{ID string, StartStation string, EndStation string, StationList string, DistanceList string} 
-[_] (FieldVariable FieldType) StationList string // write(route_db), 
+[_] (FieldVariable FieldType) StationList string 
 [__] (BasicVariable BasicType) StationList string // write(route_db), 
-[_] (FieldVariable FieldType) ID string // read(route_db), 
+[_] (FieldVariable FieldType) ID string 
 [__] (BasicVariable BasicType) ID string // read(route_db), 
 [_] (FieldVariable FieldType) StartStation string 
 [__] (BasicVariable BasicType) StartStation string // write(route_db), 
@@ -21,8 +21,7 @@
 [] (ArrayVariable SliceType) distances []int64 // write(route_db), 
 
 [] (SliceVariable SliceType) stations []string // write(route_db), 
-[_] (FieldVariable FieldType) StationList string // write(route_db), 
-[__] (BasicVariable BasicType) StationList string // write(route_db), 
+[_] (BasicVariable BasicType) StationList string // write(route_db), 
 [_] (BasicVariable BasicType) "," string // write(route_db), 
 
 [] (StructVariable UserType) route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} // write(route_db), 
@@ -36,8 +35,7 @@
 [__] (BasicVariable BasicType) ID string // read(route_db), 
 [_] (FieldVariable FieldType) Stations []string // write(route_db), 
 [__] (SliceVariable SliceType) stations []string // write(route_db), 
-[___] (FieldVariable FieldType) StationList string // write(route_db), 
-[____] (BasicVariable BasicType) StationList string // write(route_db), 
+[___] (BasicVariable BasicType) StationList string // write(route_db), 
 [___] (BasicVariable BasicType) "," string // write(route_db), 
 
 [] (BasicVariable BasicType) old_exists false bool 

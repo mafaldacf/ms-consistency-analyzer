@@ -1,0 +1,6 @@
+(*StockServiceImpl).ReserveStock(ctx context.Context, product string, quantity int):
+- NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
+.NewOrderServiceImpl(ctx context.Context, stock_service threechain2.StockService, order_db NoSQLDatabase, shipment_queue Queue): []
+.NewShipmentServiceImpl(ctx context.Context, order_service threechain2.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue):
+ []
+.NewStockServiceImpl(ctx context.Context, stock_db NoSQLDatabase): []

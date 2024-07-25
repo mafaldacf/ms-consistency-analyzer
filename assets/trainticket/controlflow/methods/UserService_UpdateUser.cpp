@@ -13,9 +13,7 @@
 [] (InterfaceVariable UserType) err .error 
 
 [] (SliceVariable UserType) query primitive.D 
-[_] (StructVariable StructType) struct{ "userid" string, UserID string} 
-[__] (FieldVariable FieldType) "userid" string 
-[___] (BasicVariable BasicType) "userid" string 
-[__] (FieldVariable FieldType) UserID string 
+[_] (StructVariable StructType) struct{ "userid" string,  string} 
+[__] (FieldVariable FieldType) string 
 [___] (BasicVariable BasicType) UserID string 
 

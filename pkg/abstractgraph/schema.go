@@ -55,6 +55,8 @@ func taintDataflowWriteOp(app *app.App, variable variables.Variable, call *Abstr
 
 	// taint indirect dataflow
 	vars, names := variables.GetReversedNestedFieldsAndNames(variable, true, "")
+	logger.Logger.Warnf("VARS = %s", vars)
+	logger.Logger.Warnf("names = %s", names)
 
 	for i, v := range vars {
 		dbField := datastore.Schema.GetField(names[i])

@@ -4,13 +4,13 @@
 
 [] (InterfaceVariable UserType) ctx context.Context 
 
-[] (BasicVariable BasicType) tripid string // read(trainfood_db), 
+[] (BasicVariable BasicType) tripid string 
 
 [] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = trainfood, collection = trainfood} 
 
 [] (InterfaceVariable UserType) err .error 
 
-[] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = trainfood, collection = trainfood} // read(trainfood_db), 
+[] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = trainfood, collection = trainfood} 
 
 [] (InterfaceVariable UserType) err .error 
 

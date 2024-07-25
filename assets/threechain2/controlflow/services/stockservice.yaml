@@ -1,0 +1,33 @@
+(*StockServiceImpl).ReserveStock(ctx context.Context, product string, quantity int):
+  block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) stock_db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) threechain2.StockServiceImpl struct{stock_db
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*threechain2.StockServiceImpl struct{stock_db
+    NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BasicVariable BasicType) product string'
+  - '[-1] (BasicVariable BasicType) quantity int'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+    {database = stock_database, collection = stock_collection}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+  - '[0] (inline) (FieldVariable FieldType) Quantity int'
+  - '[0] (inline) (FieldVariable FieldType) Product string'
+  - '[-1] (StructVariable UserType) stock threechain2.Stock struct{Product string,
+    Quantity int}'
+.NewOrderServiceImpl(ctx context.Context, stock_service threechain2.StockService, order_db NoSQLDatabase, shipment_queue Queue):
+  block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ServiceVariable ServiceType) stock_service threechain2.StockService'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) order_db NoSQLDatabase'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) shipment_queue Queue'
+.NewShipmentServiceImpl(ctx context.Context, order_service threechain2.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue):
+ block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ServiceVariable ServiceType) order_service threechain2.OrderService'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) shipment_queue Queue'
+.NewStockServiceImpl(ctx context.Context, stock_db NoSQLDatabase):
+  block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) stock_db NoSQLDatabase'

@@ -1,0 +1,21 @@
+{
+  "xcy_inconsistencies": null,
+  "writes": [
+    {
+      "service": "StationFoodService",
+      "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+      "key": "store stationfood.StationFoodStore",
+      "object": "store stationfood.StationFoodStore",
+      "database": "stationfood_db MongoDB (NoSQLDatabase)"
+    }
+  ],
+  "reads": [
+    {
+      "service": "StationFoodService",
+      "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+      "key": "query go.mongodb.org/mongo-driver/bson/primitive.D",
+      "object": "res github.com/blueprint-uservices/blueprint/runtime/core/backend.NoSQLCursor",
+      "database": "stationfood_db MongoDB (NoSQLDatabase)"
+    }
+  ]
+}

@@ -1,0 +1,13 @@
+{
+  "xcy_inconsistencies": null,
+  "writes": null,
+  "reads": [
+    {
+      "service": "ContactsService",
+      "method": "NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D)",
+      "key": "query go.mongodb.org/mongo-driver/bson/primitive.D",
+      "object": "res github.com/blueprint-uservices/blueprint/runtime/core/backend.NoSQLCursor",
+      "database": "contacts_db MongoDB (NoSQLDatabase)"
+    }
+  ]
+}

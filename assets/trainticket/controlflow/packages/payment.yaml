@@ -18,12 +18,6 @@
   - '[-1] (StructVariable UserType) payment payment.Payment struct{ID string, OrderID
     string, UserID string, Price string}'
   - |-
-    [0] (inline) (BasicVariable BasicType) string -->
-       w-tainted 1x: write(money_db.Money.ID)
-  - |-
-    [-1] (inline) (FieldVariable FieldType) ID string -->
-       w-tainted 1x: write(money_db.Money.ID)
-  - |-
     [-1] (inline) (BasicVariable BasicType) Price string -->
        w-tainted 1x: write(money_db.Money.Price)
   - |-
@@ -35,6 +29,12 @@
   - |-
     [-1] (inline) (FieldVariable FieldType) UserID string -->
        w-tainted 1x: write(money_db.Money.UserID)
+  - |-
+    [0] (inline) (BasicVariable BasicType) string -->
+       w-tainted 1x: write(money_db.Money.ID)
+  - |-
+    [-1] (inline) (FieldVariable FieldType) ID string -->
+       w-tainted 1x: write(money_db.Money.ID)
   - |-
     [-1] (StructVariable UserType) m payment.Money struct{ID string, UserID string, Price string} -->
        w-tainted 1x: write(money_db.Money)

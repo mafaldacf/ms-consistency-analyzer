@@ -18,14 +18,14 @@
 [] (InterfaceVariable UserType) err .error 
 
 [] (StructVariable UserType) cp consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64} 
-[_] (FieldVariable FieldType) InitialWeight float64 
-[__] (BasicVariable BasicType) InitialWeight float64 
-[_] (FieldVariable FieldType) InitialPrice float64 
-[__] (BasicVariable BasicType) InitialPrice float64 
 [_] (FieldVariable FieldType) WithinPrice float64 
 [__] (BasicVariable BasicType) WithinPrice float64 
 [_] (FieldVariable FieldType) BeyondPrice float64 
 [__] (BasicVariable BasicType) BeyondPrice float64 
+[_] (FieldVariable FieldType) InitialWeight float64 
+[__] (BasicVariable BasicType) InitialWeight float64 
+[_] (FieldVariable FieldType) InitialPrice float64 
+[__] (BasicVariable BasicType) InitialPrice float64 
 
 [] (BasicVariable BasicType) exists bool 
 
@@ -33,12 +33,8 @@
 
 [] (BasicVariable BasicType) info string 
 [_] (BasicVariable BasicType) "The price of weight within %.2f is %.2f. The price of extra weight within the region is %.2f and beyond the region is %.2f" string 
-[_] (FieldVariable FieldType) InitialWeight float64 
-[__] (BasicVariable BasicType) InitialWeight float64 
-[_] (FieldVariable FieldType) InitialPrice float64 
-[__] (BasicVariable BasicType) InitialPrice float64 
-[_] (FieldVariable FieldType) WithinPrice float64 
-[__] (BasicVariable BasicType) WithinPrice float64 
-[_] (FieldVariable FieldType) BeyondPrice float64 
-[__] (BasicVariable BasicType) BeyondPrice float64 
+[_] (BasicVariable BasicType) InitialWeight float64 
+[_] (BasicVariable BasicType) InitialPrice float64 
+[_] (BasicVariable BasicType) WithinPrice float64 
+[_] (BasicVariable BasicType) BeyondPrice float64 
 

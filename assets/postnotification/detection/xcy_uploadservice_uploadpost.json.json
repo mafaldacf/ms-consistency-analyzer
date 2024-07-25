@@ -1,5 +1,5 @@
 {
-  "xcy_violations": [
+  "xcy_inconsistencies": [
     {
       "write": {
         "service": "StorageService",
@@ -14,7 +14,13 @@
         "key": "query go.mongodb.org/mongo-driver/bson/primitive.D",
         "object": "result github.com/blueprint-uservices/blueprint/runtime/core/backend.NoSQLCursor",
         "database": "post_nosql MongoDB (NoSQLDatabase)"
-      }
+      },
+      "dataflows_in_path": [
+        "[indirect] write(StorageService, post_nosql.Post.PostID)",
+        "[indirect] write(UploadService, notif_queue.Message.PostID)",
+        "[indirect] read(NotifyService, notif_queue.Message.PostID)",
+        "[indirect] read(StorageService, post_nosql.interface{})"
+      ]
     }
   ],
   "writes": [

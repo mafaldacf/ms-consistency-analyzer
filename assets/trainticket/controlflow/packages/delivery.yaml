@@ -1,7 +1,7 @@
 (*delivery.DeliveryServiceImpl).Run(ctx context.Context) error:
   block 14 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) delQ Queue'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) delQ Queue'
   - '[0] (inline) (StructVariable UserType) delivery.DeliveryServiceImpl struct{db
     NoSQLDatabase, delQ Queue}'
   - '[-1] (PointerVariable PointerType) d (*delivery.DeliveryServiceImpl struct{db

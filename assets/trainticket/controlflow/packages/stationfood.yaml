@@ -29,9 +29,8 @@
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = stationfood, collection = stationfood}'
   - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (BasicVariable BasicType) "id" string'
-  - '[0] (inline) (FieldVariable FieldType) "id" string'
-  - '[0] (inline) (StructVariable StructType) struct{ "id" string, ID string}'
+  - '[0] (inline) (FieldVariable FieldType) string'
+  - '[0] (inline) (StructVariable StructType) struct{ "id" string,  string}'
   - '[-1] (SliceVariable UserType) query primitive.D'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
     = stationfood, collection = stationfood}'

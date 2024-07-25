@@ -1,7 +1,7 @@
 [] (PointerVariable PointerType) s (*postnotification.StorageServiceImpl struct{cache Cache, db NoSQLDatabase}) 
 [_] (StructVariable UserType) postnotification.StorageServiceImpl struct{cache Cache, db NoSQLDatabase} 
-[__] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
 [__] (BlueprintBackendVariable BlueprintBackendType) cache Cache 
+[__] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
 
 [] (InterfaceVariable UserType) ctx context.Context 
 
@@ -12,7 +12,6 @@
 [__] (BasicVariable BasicType) PostID int64 
 
 [] (BasicVariable BasicType) postIDStr string 
-[_] (FieldVariable FieldType) PostID int64 
-[__] (BasicVariable BasicType) PostID int64 
+[_] (BasicVariable BasicType) PostID int64 
 [_] (BasicVariable BasicType) 10 int 
 

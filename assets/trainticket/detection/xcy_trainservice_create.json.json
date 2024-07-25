@@ -1,0 +1,21 @@
+{
+  "xcy_inconsistencies": null,
+  "writes": [
+    {
+      "service": "TrainService",
+      "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+      "key": "tt train.TrainType",
+      "object": "tt train.TrainType",
+      "database": "train_db MongoDB (NoSQLDatabase)"
+    }
+  ],
+  "reads": [
+    {
+      "service": "TrainService",
+      "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+      "key": "query go.mongodb.org/mongo-driver/bson/primitive.D",
+      "object": "res github.com/blueprint-uservices/blueprint/runtime/core/backend.NoSQLCursor",
+      "database": "train_db MongoDB (NoSQLDatabase)"
+    }
+  ]
+}

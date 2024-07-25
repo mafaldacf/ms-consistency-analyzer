@@ -6,12 +6,12 @@
 (*AssuranceServiceImpl).DeleteByOrderId(ctx context.Context, order_id string):
 - NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D) interface{}
 (*AssuranceServiceImpl).FindAssuranceById(ctx context.Context, id string):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = consign, collection = consign}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = contacts, collection = contacts}, interface{})
 (*AssuranceServiceImpl).FindAssuranceByOrderId(ctx context.Context, order_id string):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = consign, collection = consign}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = contacts, collection = contacts}, interface{})
 (*AssuranceServiceImpl).GetAllAssuranceTypes(ctx context.Context): []
 (*AssuranceServiceImpl).GetAllAssurances(ctx context.Context):
-- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = consign, collection = consign}, interface{})
+- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = contacts, collection = contacts}, interface{})
 (*AssuranceServiceImpl).Modify(ctx context.Context, assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}):
 	- (*assurance.AssuranceServiceImpl).FindAssuranceById(ctx context.Context, id string)
     (assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}, error)

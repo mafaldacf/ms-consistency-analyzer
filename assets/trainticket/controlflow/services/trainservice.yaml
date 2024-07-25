@@ -31,9 +31,8 @@
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = train, collection = train}'
   - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (BasicVariable BasicType) "name" string'
-  - '[0] (inline) (FieldVariable FieldType) "name" string'
-  - '[0] (inline) (StructVariable StructType) struct{ "name" string, Name string}'
+  - '[0] (inline) (FieldVariable FieldType) string'
+  - '[0] (inline) (StructVariable StructType) struct{ "name" string,  string}'
   - '[-1] (SliceVariable UserType) query primitive.D'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
     = train, collection = train}'
@@ -60,15 +59,24 @@
   - '[0] (inline) (StructVariable UserType) train.TrainServiceImpl struct{db NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) ts (*train.TrainServiceImpl struct{db NoSQLDatabase})'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BasicVariable BasicType) id string'
+  - |-
+    [-1] (BasicVariable BasicType) id string -->
+       r-tainted 1x: read(train_db.string)
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = train, collection = train}'
   - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "id" string,  string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = train, collection = train}'
+  - |-
+    [0] (inline) (FieldVariable FieldType) string -->
+       r-tainted 1x: read(train_db.)
+  - |-
+    [0] (inline) (StructVariable StructType) struct{ "id" string, string} -->
+       r-tainted 1x: read(train_db.struct{ "id" string, string})
+  - |-
+    [-1] (SliceVariable UserType) query primitive.D -->
+       r-tainted 5x: read(train_db.document, train_db.D, train_db.struct{ "id" string, string}, train_db., train_db.string)
+  - |-
+    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = train, collection = train} -->
+       r-tainted 1x: read(train_db.document)
   - '[-1] (InterfaceVariable UserType) err .error'
   - '[-1] (StructVariable UserType) tt train.TrainType struct{ID string, Name string,
     EconomyClass int64, ComfortClass int64, AvgSpeed int64}'
@@ -116,9 +124,8 @@
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = train, collection = train}'
   - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (BasicVariable BasicType) "id" string'
-  - '[0] (inline) (FieldVariable FieldType) "id" string'
-  - '[0] (inline) (StructVariable StructType) struct{ "id" string, ID string}'
+  - '[0] (inline) (FieldVariable FieldType) string'
+  - '[0] (inline) (StructVariable StructType) struct{ "id" string,  string}'
   - '[-1] (SliceVariable UserType) query primitive.D'
 .NewTrainServiceImpl(ctx context.Context, db NoSQLDatabase):
   block 0 (Body):

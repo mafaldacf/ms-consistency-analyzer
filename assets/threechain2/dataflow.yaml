@@ -1,0 +1,166 @@
+'"orderID" string': []
+D:
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{Key "orderID" string, Value string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <Value string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <orderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <OrderID string> @ ShipmentService (Reference)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <OrderID string> @ ShipmentService (Reference)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <OrderID interface{} (InterfaceVariable)> from <query primitive.D (SliceVariable)>
+- read <Key "orderID" string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <"orderID" string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{Key "orderID" string, Value string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <Key "orderID" string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <"orderID" string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <Value string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <orderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <OrderID string> @ ShipmentService (Reference)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <OrderID string> @ ShipmentService (Reference)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <OrderID interface{} (InterfaceVariable)> from <query primitive.D (SliceVariable)>
+Key: []
+OrderID: []
+SHIPMENT_DB.Shipment:
+- write <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+- write <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+SHIPMENT_DB.Shipment.OrderID:
+- write <OrderID string (BasicVariable)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+- write <ref <OrderID string> @ ShipmentService (Reference)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+- write <OrderID string (FieldVariable)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+- write <OrderID string (BasicVariable)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+- write <OrderID interface{} (InterfaceVariable)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+- write <OrderID string (FieldVariable)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+SHIPMENT_DB.Shipment.Status:
+- write <"pending" string (BasicVariable)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+- write <Status "pending" string (FieldVariable)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+SHIPMENT_DB.Shipment.Username:
+- write <Username string (BasicVariable)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+- write <ref <Username string> @ ShipmentService (Reference)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+- write <Username string (FieldVariable)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+- write <Username string (BasicVariable)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+- write <Username interface{} (InterfaceVariable)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+- write <Username string (FieldVariable)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+SHIPMENT_QUEUE.ShipmentMessage:
+- write <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)>
+- write <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)> from <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)>
+- read <event map[string]interface{} (MapVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <message threechain2.ShipmentMessage struct{OrderID string, Username string}>
+  @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- write <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)>
+- write <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)> from <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)>
+SHIPMENT_QUEUE.ShipmentMessage.OrderID:
+- write <orderID string (BasicVariable)> from <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <OrderID interface{}> @ ShipmentService (Reference)> from <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+- write <OrderID interface{} (InterfaceVariable)> from <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+- write <orderID string (BasicVariable)> from <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)>
+- write <ref <OrderID interface{}> @ ShipmentService (Reference)> from <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)>
+- write <OrderID interface{} (InterfaceVariable)> from <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)>
+- read <orderID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <OrderID interface{}> @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <OrderID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- write <OrderID string (FieldVariable)> from <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)>
+- write <ref <OrderID interface{}> @ ShipmentService (Reference)> from <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)>
+- read <OrderID string (FieldVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <OrderID interface{}> @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+SHIPMENT_QUEUE.ShipmentMessage.Username:
+- write <username string (BasicVariable)> from <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <Username interface{}> @ ShipmentService (Reference)> from <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+- write <Username interface{} (InterfaceVariable)> from <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+- write <username string (BasicVariable)> from <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)>
+- write <ref <Username interface{}> @ ShipmentService (Reference)> from <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)>
+- write <Username interface{} (InterfaceVariable)> from <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)>
+- read <username string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <Username interface{}> @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <Username interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- write <Username string (FieldVariable)> from <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)>
+- write <ref <Username interface{}> @ ShipmentService (Reference)> from <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)>
+- read <Username string (FieldVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <Username interface{}> @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+SHIPMENT_QUEUE.message:
+- read <event (&map[string]interface{}) (AddressVariable)>
+STOCK_DB.Order:
+- write <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+- write <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)> from <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+STOCK_DB.Order.OrderID:
+- write <orderID string (BasicVariable)> from <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <OrderID interface{}> @ ShipmentService (Reference)> from <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+- write <OrderID interface{} (InterfaceVariable)> from <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+- write <orderID string (BasicVariable)> from <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)>
+- write <ref <OrderID interface{}> @ ShipmentService (Reference)> from <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)>
+- write <OrderID interface{} (InterfaceVariable)> from <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)>
+- read <orderID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <OrderID interface{}> @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <OrderID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- write <OrderID string (FieldVariable)> from <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+STOCK_DB.Order.Product:
+- write <product string (BasicVariable)> from <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+- write <Product string (FieldVariable)> from <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+STOCK_DB.Order.Quantity:
+- write <quantity int (BasicVariable)> from <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+- write <Quantity int (FieldVariable)> from <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+STOCK_DB.Order.Timestamp:
+- write <1 int (BasicVariable)> from <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+- write <Timestamp 1 int (FieldVariable)> from <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+STOCK_DB.Order.Username:
+- write <username string (BasicVariable)> from <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <Username interface{}> @ ShipmentService (Reference)> from <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+- write <Username interface{} (InterfaceVariable)> from <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+- write <username string (BasicVariable)> from <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)>
+- write <ref <Username interface{}> @ ShipmentService (Reference)> from <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)>
+- write <Username interface{} (InterfaceVariable)> from <message threechain2.ShipmentMessage struct{OrderID string, Username string} (StructVariable)>
+- read <username string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <Username interface{}> @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <Username interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- write <Username string (FieldVariable)> from <order threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64} (StructVariable)>
+STOCK_DB.document:
+- read <result NoSQLCursor {database = order_database, collection = order_collection} (BlueprintBackendVariable)>
+- read <result NoSQLCursor {database = order_database, collection = order_collection} (BlueprintBackendVariable)>
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{Key "orderID" string, Value string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <Value string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <orderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <OrderID string> @ ShipmentService (Reference)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <OrderID string> @ ShipmentService (Reference)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <OrderID interface{} (InterfaceVariable)> from <query primitive.D (SliceVariable)>
+- read <Key "orderID" string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <"orderID" string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{Key "orderID" string, Value string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <Key "orderID" string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <"orderID" string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <Value string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <orderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <OrderID string> @ ShipmentService (Reference)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <OrderID string> @ ShipmentService (Reference)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <OrderID interface{} (InterfaceVariable)> from <query primitive.D (SliceVariable)>
+Value: []
+interface{}: []
+string:
+- write <OrderID string (BasicVariable)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+- write <ref <OrderID string> @ ShipmentService (Reference)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+- write <OrderID string (FieldVariable)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+- write <OrderID string (BasicVariable)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+- write <OrderID interface{} (InterfaceVariable)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+- write <OrderID string (BasicVariable)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+- write <ref <OrderID string> @ ShipmentService (Reference)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+- write <OrderID string (FieldVariable)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+- write <OrderID string (BasicVariable)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+- write <OrderID interface{} (InterfaceVariable)> from <shipment threechain2.Shipment struct{OrderID string, Username string, Status string} (StructVariable)>
+struct{Key "orderID" string, Value string}: []

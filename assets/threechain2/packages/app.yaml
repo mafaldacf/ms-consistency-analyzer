@@ -1,0 +1,67 @@
+threechain2:
+- package: threechain2
+- package path: github.com/blueprint-uservices/blueprint/examples/threechain2/workflow/threechain2
+- module: github.com/blueprint-uservices/blueprint/examples/threechain2/workflow
+- files:
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/threechain2/workflow/threechain2/OrderService.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/threechain2/workflow/threechain2/ShipmentService.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/threechain2/workflow/threechain2/StockService.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/threechain2/workflow/threechain2/models.go
+- imports:
+  - context
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+  - sync
+- imported types:
+  - .error
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
+    NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.All(ctx context.Context, obj interface{})}
+  - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
+  - Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}
+  - atomic.Uint64
+  - atomic.align64
+  - atomic.noCopy
+  - context.Context
+  - primitive.D
+  - primitive.E
+  - sync.WaitGroup
+  - sync.noCopy
+- declared types:
+  - threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64}
+  - threechain2.OrderService
+  - threechain2.OrderServiceImpl struct{stock_service threechain2.StockService, order_db {instance = stock_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, shipment_queue  {instance = shipment_queue}
+    interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}}
+  - threechain2.Shipment struct{OrderID string, Username string, Status string}
+  - threechain2.ShipmentMessage struct{OrderID string, Username string}
+  - threechain2.ShipmentService
+  - threechain2.ShipmentServiceImpl struct{order_service threechain2.OrderService, shipment_db {instance = shipment_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, shipment_queue  {instance = shipment_queue} interface{Queue.Push(ctx context.Context, item interface{}),
+    Queue.Pop(ctx context.Context, item interface{})}, num_workers int}
+  - threechain2.Stock struct{Product string, Quantity int}
+  - threechain2.StockService
+  - threechain2.StockServiceImpl struct{stock_db {instance = stock_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+- service types:
+  - threechain2.OrderService
+  - threechain2.ShipmentService
+  - threechain2.StockService
+- datastore types:
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}),
+    NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.All(ctx context.Context, obj interface{})}
+  - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
+  - Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}
+- declared variables: []
+- parsed methods:
+  - (*threechain2.OrderServiceImpl).CreateOrder(ctx context.Context, orderID string, username string, product string, quantity int) error
+  - (*threechain2.OrderServiceImpl).ReadOrder(ctx context.Context, orderID string)
+    (threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64}, error)
+  - (*threechain2.ShipmentServiceImpl).Run(ctx context.Context) error
+  - (*threechain2.ShipmentServiceImpl).createPendingShipment(ctx context.Context, shipmentMessage threechain2.ShipmentMessage struct{OrderID string, Username string})
+    error
+  - (*threechain2.ShipmentServiceImpl).workerThread(ctx context.Context) error
+  - (*threechain2.StockServiceImpl).ReserveStock(ctx context.Context, product string, quantity int) error
+  - threechain2.NewOrderServiceImpl(ctx context.Context, stock_service threechain2.StockService, order_db NoSQLDatabase, shipment_queue Queue) (threechain2.OrderService, error)
+  - threechain2.NewShipmentServiceImpl(ctx context.Context, order_service threechain2.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue) (threechain2.ShipmentService, error)
+  - threechain2.NewStockServiceImpl(ctx context.Context, stock_db NoSQLDatabase) (threechain2.StockService, error)

@@ -1,0 +1,592 @@
+[
+  {
+    "method": "(*OrderServiceImpl).CreateOrder(ctx context.Context, orderID string, username string, product string, quantity int)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+        "depth": 1,
+        "caller": "OrderService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "order",
+              "type": "threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64}"
+            },
+            "struct_fields": {
+              "OrderID": {
+                "variable": {
+                  "name": "OrderID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "orderID",
+                    "type": "string",
+                    "ref": {
+                      "name": "OrderID",
+                      "creator": "ShipmentService"
+                    }
+                  }
+                }
+              },
+              "Product": {
+                "variable": {
+                  "name": "Product",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "product",
+                    "type": "string"
+                  }
+                }
+              },
+              "Quantity": {
+                "variable": {
+                  "name": "Quantity",
+                  "type": "int"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "quantity",
+                    "type": "int"
+                  }
+                }
+              },
+              "Timestamp": {
+                "variable": {
+                  "name": "Timestamp",
+                  "type": "1 int"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "type": "1 int"
+                  }
+                }
+              },
+              "Username": {
+                "variable": {
+                  "name": "Username",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "username",
+                    "type": "string",
+                    "ref": {
+                      "name": "Username",
+                      "creator": "ShipmentService"
+                    }
+                  }
+                }
+              }
+            },
+            "omitempty": null
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "stock_db"
+      },
+      {
+        "method": "Queue.Push(ctx context.Context, item interface{})",
+        "depth": 1,
+        "caller": "OrderService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "message",
+              "type": "threechain2.ShipmentMessage struct{OrderID string, Username string}"
+            },
+            "struct_fields": {
+              "OrderID": {
+                "variable": {
+                  "name": "OrderID",
+                  "type": "string",
+                  "ref": {
+                    "name": "OrderID",
+                    "creator": "ShipmentService"
+                  }
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "orderID",
+                    "type": "string",
+                    "ref": {
+                      "name": "OrderID",
+                      "creator": "ShipmentService"
+                    }
+                  }
+                }
+              },
+              "Username": {
+                "variable": {
+                  "name": "Username",
+                  "type": "string",
+                  "ref": {
+                    "name": "Username",
+                    "creator": "ShipmentService"
+                  }
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "username",
+                    "type": "string",
+                    "ref": {
+                      "name": "Username",
+                      "creator": "ShipmentService"
+                    }
+                  }
+                }
+              }
+            },
+            "omitempty": null
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": "bool"
+            }
+          },
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "queue_handlers": [
+          {
+            "method": "(*ShipmentServiceImpl).workerThread(ctx context.Context)",
+            "depth": 2,
+            "caller": "shipment_queue RabbitMQ",
+            "edges": [
+              {
+                "method": "Queue.Pop(ctx context.Context, item interface{})",
+                "depth": 3,
+                "caller": "ShipmentService",
+                "params": [
+                  {
+                    "variable": {
+                      "name": "ctx",
+                      "type": "context.Context"
+                    }
+                  },
+                  {
+                    "variable": {
+                      "name": "event",
+                      "type": "(\u0026map[string]interface{})"
+                    },
+                    "addr_of": {
+                      "variable": {
+                        "name": "event",
+                        "type": "map[string]interface{}",
+                        "ref": {
+                          "name": "message",
+                          "creator": "ShipmentService"
+                        }
+                      },
+                      "key_values": [
+                        {
+                          "Key": {
+                            "variable": {
+                              "type": "\"OrderID\" string"
+                            }
+                          },
+                          "Value": {
+                            "variable": {
+                              "name": "OrderID",
+                              "type": "interface{}"
+                            }
+                          }
+                        },
+                        {
+                          "Key": {
+                            "variable": {
+                              "type": "\"Username\" string"
+                            }
+                          },
+                          "Value": {
+                            "variable": {
+                              "name": "Username",
+                              "type": "interface{}"
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "returns": [
+                  {
+                    "variable": {
+                      "type": "bool"
+                    }
+                  },
+                  {
+                    "variable": {
+                      "type": ".error"
+                    }
+                  }
+                ],
+                "datastore": "shipment_queue",
+                "subscriber": true
+              },
+              {
+                "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+                "depth": 3,
+                "caller": "ShipmentService",
+                "params": [
+                  {
+                    "variable": {
+                      "name": "ctx",
+                      "type": "context.Context",
+                      "ref": {
+                        "name": "ctx",
+                        "creator": "ShipmentService"
+                      }
+                    }
+                  },
+                  {
+                    "variable": {
+                      "name": "shipment",
+                      "type": "threechain2.Shipment struct{OrderID string, Username string, Status string}"
+                    },
+                    "struct_fields": {
+                      "OrderID": {
+                        "variable": {
+                          "name": "OrderID",
+                          "type": "string"
+                        },
+                        "wrapped_variable": {
+                          "variable": {
+                            "name": "OrderID",
+                            "type": "string",
+                            "ref": {
+                              "name": "OrderID",
+                              "creator": "ShipmentService"
+                            }
+                          }
+                        }
+                      },
+                      "Status": {
+                        "variable": {
+                          "name": "Status",
+                          "type": "\"pending\" string"
+                        },
+                        "wrapped_variable": {
+                          "variable": {
+                            "type": "\"pending\" string"
+                          }
+                        }
+                      },
+                      "Username": {
+                        "variable": {
+                          "name": "Username",
+                          "type": "string"
+                        },
+                        "wrapped_variable": {
+                          "variable": {
+                            "name": "Username",
+                            "type": "string",
+                            "ref": {
+                              "name": "Username",
+                              "creator": "ShipmentService"
+                            }
+                          }
+                        }
+                      }
+                    },
+                    "omitempty": null
+                  }
+                ],
+                "returns": [
+                  {
+                    "variable": {
+                      "type": ".error"
+                    }
+                  }
+                ],
+                "datastore": "shipment_db",
+                "subscriber": true
+              },
+              {
+                "method": "(*OrderServiceImpl).ReadOrder(ctx context.Context, orderID string)",
+                "depth": 3,
+                "caller": "ShipmentService",
+                "edges": [
+                  {
+                    "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+                    "depth": 4,
+                    "caller": "OrderService",
+                    "params": [
+                      {
+                        "variable": {
+                          "name": "ctx",
+                          "type": "context.Context",
+                          "ref": {
+                            "name": "ctx",
+                            "creator": "ShipmentService"
+                          }
+                        }
+                      },
+                      {
+                        "variable": {
+                          "name": "query",
+                          "type": "primitive.D"
+                        },
+                        "slice_variables": [
+                          {
+                            "variable": {
+                              "type": "struct{Key \"orderID\" string, Value string}"
+                            },
+                            "struct_fields": {
+                              "Key": {
+                                "variable": {
+                                  "name": "Key",
+                                  "type": "\"orderID\" string"
+                                },
+                                "wrapped_variable": {
+                                  "variable": {
+                                    "type": "\"orderID\" string"
+                                  }
+                                }
+                              },
+                              "Value": {
+                                "variable": {
+                                  "name": "Value",
+                                  "type": "string"
+                                },
+                                "wrapped_variable": {
+                                  "variable": {
+                                    "name": "orderID",
+                                    "type": "string",
+                                    "ref": {
+                                      "name": "OrderID",
+                                      "creator": "ShipmentService"
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            "omitempty": null
+                          }
+                        ]
+                      }
+                    ],
+                    "returns": [
+                      {
+                        "variable": {
+                          "name": "result",
+                          "type": "NoSQLCursor {database = order_database, collection = order_collection}"
+                        }
+                      },
+                      {
+                        "variable": {
+                          "name": "_",
+                          "type": ".error"
+                        }
+                      }
+                    ],
+                    "datastore": "stock_db"
+                  }
+                ],
+                "params": [
+                  {
+                    "variable": {
+                      "name": "ctx",
+                      "type": "context.Context",
+                      "ref": {
+                        "name": "ctx",
+                        "creator": "ShipmentService"
+                      }
+                    }
+                  },
+                  {
+                    "variable": {
+                      "name": "OrderID",
+                      "type": "string",
+                      "ref": {
+                        "name": "OrderID",
+                        "creator": "ShipmentService"
+                      }
+                    }
+                  }
+                ],
+                "returns": [
+                  {
+                    "variable": {
+                      "type": "threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64}"
+                    },
+                    "omitempty": null
+                  },
+                  {
+                    "variable": {
+                      "type": ".error"
+                    }
+                  }
+                ]
+              }
+            ],
+            "params": [
+              {
+                "variable": {
+                  "name": "ctx",
+                  "type": "context.Context"
+                }
+              }
+            ]
+          }
+        ],
+        "datastore": "shipment_queue"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "orderID",
+          "type": "string"
+        }
+      },
+      {
+        "variable": {
+          "name": "username",
+          "type": "string"
+        }
+      },
+      {
+        "variable": {
+          "name": "product",
+          "type": "string"
+        }
+      },
+      {
+        "variable": {
+          "name": "quantity",
+          "type": "int"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*OrderServiceImpl).ReadOrder(ctx context.Context, orderID string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "OrderService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context",
+              "ref": {
+                "name": "ctx",
+                "creator": "ShipmentService"
+              }
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{Key \"orderID\" string, Value string}"
+                },
+                "struct_fields": {
+                  "Key": {
+                    "variable": {
+                      "name": "Key",
+                      "type": "\"orderID\" string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "type": "\"orderID\" string"
+                      }
+                    }
+                  },
+                  "Value": {
+                    "variable": {
+                      "name": "Value",
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "orderID",
+                        "type": "string",
+                        "ref": {
+                          "name": "OrderID",
+                          "creator": "ShipmentService"
+                        }
+                      }
+                    }
+                  }
+                },
+                "omitempty": null
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "result",
+              "type": "NoSQLCursor {database = order_database, collection = order_collection}"
+            }
+          },
+          {
+            "variable": {
+              "name": "_",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "stock_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "orderID",
+          "type": "string"
+        }
+      }
+    ]
+  }
+]

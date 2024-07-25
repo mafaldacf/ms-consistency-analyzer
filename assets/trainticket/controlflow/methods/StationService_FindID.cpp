@@ -5,20 +5,20 @@
 [] (InterfaceVariable UserType) ctx context.Context 
 [_] (Reference UserType) ref <ctx context.Context> @ StationService 
 
-[] (BasicVariable BasicType) name string // read(station_db), 
-[_] (Reference BasicType) ref <string> @ StationService // read(station_db), 
+[] (BasicVariable BasicType) name string 
+[_] (Reference BasicType) ref <string> @ StationService 
 
 [] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = station, collection = station} 
 
 [] (InterfaceVariable UserType) err .error 
 
-[] (SliceVariable UserType) query primitive.D // read(station_db), 
-[_] (StructVariable StructType) struct{ "name" string,  string} // read(station_db), 
-[__] (FieldVariable FieldType) string // read(station_db), 
-[___] (BasicVariable BasicType) name string // read(station_db), 
-[____] (Reference BasicType) ref <string> @ StationService // read(station_db), 
+[] (SliceVariable UserType) query primitive.D 
+[_] (StructVariable StructType) struct{ "name" string,  string} 
+[__] (FieldVariable FieldType) string 
+[___] (BasicVariable BasicType) name string 
+[____] (Reference BasicType) ref <string> @ StationService 
 
-[] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = station, collection = station} // read(station_db), 
+[] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = station, collection = station} 
 
 [] (InterfaceVariable UserType) err .error 
 

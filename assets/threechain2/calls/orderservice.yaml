@@ -1,0 +1,9 @@
+(*OrderServiceImpl).CreateOrder(ctx context.Context, orderID string, username string, product string, quantity int):
+- NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
+- Queue.Push(ctx context.Context, item interface{}) (err, interface{})
+(*OrderServiceImpl).ReadOrder(ctx context.Context, orderID string):
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = order_database, collection = order_collection}, interface{})
+.NewOrderServiceImpl(ctx context.Context, stock_service threechain2.StockService, order_db NoSQLDatabase, shipment_queue Queue): []
+.NewShipmentServiceImpl(ctx context.Context, order_service threechain2.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue):
+ []
+.NewStockServiceImpl(ctx context.Context, stock_db NoSQLDatabase): []
