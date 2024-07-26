@@ -1,10 +1,10 @@
 (*ShipmentServiceImpl).Run(ctx context.Context):
   block 4 (ForPost):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase'
+  - '[-1] (inline) (ServiceVariable ServiceType) order_service threechain2.OrderService'
   - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
     Queue'
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase'
-  - '[-1] (inline) (ServiceVariable ServiceType) order_service threechain2.OrderService'
   - '[0] (inline) (StructVariable UserType) threechain2.ShipmentServiceImpl struct{order_service
     threechain2.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers
     int}'
@@ -17,11 +17,11 @@
   - '[-1] (InterfaceVariable UserType) err .error'
 (*ShipmentServiceImpl).createPendingShipment(ctx context.Context, shipmentMessage threechain2.ShipmentMessage struct{OrderID string, Username string}):
  block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) order_service threechain2.OrderService'
+  - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
     Queue'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase'
-  - '[-1] (inline) (ServiceVariable ServiceType) order_service threechain2.OrderService'
-  - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
   - '[0] (inline) (StructVariable UserType) threechain2.ShipmentServiceImpl struct{order_service
     threechain2.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers
     int}'
@@ -99,11 +99,11 @@
        w-tainted 1x: write(shipment_db.Shipment)
 (*ShipmentServiceImpl).workerThread(ctx context.Context):
   block 0 (Body):
-  - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
     Queue'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase'
   - '[-1] (inline) (ServiceVariable ServiceType) order_service threechain2.OrderService'
+  - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
   - '[0] (inline) (StructVariable UserType) threechain2.ShipmentServiceImpl struct{order_service
     threechain2.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers
     int}'

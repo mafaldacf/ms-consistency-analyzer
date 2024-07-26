@@ -72,6 +72,11 @@ type BlueprintBackendType struct {
 	NoSQLComponent *NoSQLComponent
 }
 
+func (t *BlueprintBackendType) IsSameType(other gotypes.Type) bool {
+	_, ok := other.(*BlueprintBackendType)
+	return ok
+}
+
 func (t *BlueprintBackendType) String() string {
 	if t.NoSQLComponent != nil {
 		return t.NoSQLComponent.String()

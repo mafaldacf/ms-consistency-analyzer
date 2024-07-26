@@ -56,21 +56,6 @@ func lookupImportedPackageFromIdent(service *service.Service, ident *ast.Ident) 
 	return nil
 }
 
-func wrapToFieldVariable(variable variables.Variable) *variables.FieldVariable {
-	if fieldVariable, ok := variable.(*variables.FieldVariable); ok { // already field variable
-		return fieldVariable
-	}
-	return &variables.FieldVariable{
-		VariableInfo: &variables.VariableInfo{
-			Type: &gotypes.FieldType{
-				WrappedType: variable.GetType(),
-			},
-			Id: variables.VARIABLE_INLINE_ID,
-		},
-		WrappedVariable: variable,
-	}
-}
-
 func unwrapTupleIfSingleElement(variable variables.Variable) variables.Variable {
 	if tupleVar, ok := variable.(*variables.TupleVariable); ok && len(tupleVar.Variables) == 1 {
 		return tupleVar.Variables[0]
@@ -184,7 +169,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 	case *ast.KeyValueExpr:
 		if key, ok := e.Key.(*ast.Ident); ok {
 			variable, _ = lookupVariableFromAstExpr(service, method, block, e.Value, false)
-			variable = &variables.FieldVariable{
+			fieldVariable := &variables.FieldVariable{
 				VariableInfo: &variables.VariableInfo{
 					Name: key.Name,
 					Type: &gotypes.FieldType{
@@ -195,8 +180,9 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 				},
 				WrappedVariable: variable,
 			}
+			variable.GetVariableInfo().SetParent(variable, fieldVariable)
 			logger.Logger.Debugf("KEY VALUE EXPR - RETURNING VARIABLE WITH TYPE (%s): %s", utils.GetType(variable), variable.String())
-			return variable, nil
+			return fieldVariable, nil
 		}
 		logger.Logger.Fatalf("[CFG LOOKUP] unsupported key type (%s) for expr: %v", utils.GetType(e.Key), e.Key)
 
@@ -262,6 +248,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			for _, elt := range e.Elts {
 				eltVar, _ := lookupVariableFromAstExpr(service, method, block, elt, false)
 				arrayVariable.AddElement(eltVar)
+				eltVar.GetVariableInfo().SetParent(eltVar, arrayVariable)
 			}
 			return arrayVariable, nil
 		case *gotypes.SliceType:
@@ -274,6 +261,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			for _, elt := range e.Elts {
 				eltVar, _ := lookupVariableFromAstExpr(service, method, block, elt, false)
 				sliceVariable.AddElement(eltVar)
+				eltVar.GetVariableInfo().SetParent(eltVar, sliceVariable)
 			}
 			return sliceVariable, nil
 		default:
@@ -344,7 +332,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			addrType := &gotypes.AddressType{
 				AddressOf: variable.GetType(),
 			}
-			variable = &variables.AddressVariable{
+			addressVariable := &variables.AddressVariable{
 				AddressOf: variable,
 				VariableInfo: &variables.VariableInfo{
 					Type: addrType,
@@ -352,12 +340,14 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 					Name: variable.GetVariableInfo().Name,
 				},
 			}
+			variable.GetVariableInfo().SetParent(variable, addressVariable)
+			return addressVariable, packageType
 		} else if e.Op == token.MUL { // e.g. *post
 			variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, inAssignment)
 			addrType := &gotypes.AddressType{
 				AddressOf: variable.GetType(),
 			}
-			variable = &variables.PointerVariable{
+			pointerVariable := &variables.PointerVariable{
 				PointerTo: variable,
 				VariableInfo: &variables.VariableInfo{
 					Type: addrType,
@@ -365,6 +355,8 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 					Name: variable.GetVariableInfo().Name,
 				},
 			}
+			variable.GetVariableInfo().SetParent(variable, pointerVariable)
+			return pointerVariable, packageType
 
 		} else {
 			logger.Logger.Fatalf("unknown token %v for unary expr %v", e.Op, e)
@@ -376,7 +368,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			addrType_x := &gotypes.AddressType{
 				AddressOf: variable_x.GetType(),
 			}
-			variable_x = &variables.AddressVariable{
+			address_variable_x := &variables.AddressVariable{
 				AddressOf: variable_x,
 				VariableInfo: &variables.VariableInfo{
 					Type: addrType_x,
@@ -384,11 +376,13 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 					Name: variable_x.GetVariableInfo().Name,
 				},
 			}
+			variable_x.GetVariableInfo().SetParent(variable_x, address_variable_x)
+
 			variable_y, t_y := lookupVariableFromAstExpr(service, method, block, e.X, inAssignment)
 			addrType_y := &gotypes.AddressType{
 				AddressOf: variable_y.GetType(),
 			}
-			variable_y = &variables.AddressVariable{
+			address_variable_y := &variables.AddressVariable{
 				AddressOf: variable_y,
 				VariableInfo: &variables.VariableInfo{
 					Type: addrType_y,
@@ -396,11 +390,13 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 					Name: variable_x.GetVariableInfo().Name,
 				},
 			}
+			variable_y.GetVariableInfo().SetParent(variable_y, address_variable_y)
+
 			if !t_x.IsSameType(t_y) {
 				logger.Logger.Fatalf("x expr (%v) and y expr (%v) differ types (%v vs %v)", e.X, e.Y, t_x, t_y)
 			}
 			packageType = t_x
-			variable = variable_x
+			variable = address_variable_x
 			logger.Logger.Warnf("FIXMEEEEEEE!!!!!!!!")
 		} else {
 			logger.Logger.Fatalf("unknown token %v for binary expr %v", e.Op, e)

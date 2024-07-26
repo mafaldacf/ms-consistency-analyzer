@@ -54,13 +54,13 @@ func taintDataflowWriteOp(app *app.App, variable variables.Variable, call *Abstr
 	var taintedVariables []variables.Variable
 
 	// taint indirect dataflow
-	vars, names := variables.GetReversedNestedFieldsAndNames(variable, true, "")
+	vars, names := variables.GetReversedNestedFieldsAndNames(variable, "")
 	logger.Logger.Warnf("VARS = %s", vars)
 	logger.Logger.Warnf("names = %s", names)
 
 	for i, v := range vars {
 		dbField := datastore.Schema.GetField(names[i])
-		deps := v.GetNestedIndirectDependencies()
+		deps := v.GetNestedDependencies(false)
 		logger.Logger.Infof("[TENTATIVE TAINT WRITE VAR] [%s] (%02d) (NUM DEPS = %d) %s", utils.GetType(v), v.GetId(), len(deps), v.LongString())
 		for _, dep := range deps {
 			if !slices.Contains(taintedVariables, dep) {
@@ -90,11 +90,11 @@ func taintDataflowReadOp(app *app.App, variable variables.Variable, call *Abstra
 
 	// taint indirect dataflow
 	rootUnfoldedField := datastore.Schema.GetRootUnfoldedField()
-	vars, names := variables.GetReversedNestedFieldsAndNames(variable, true, rootUnfoldedField.GetName())
+	vars, names := variables.GetReversedNestedFieldsAndNames(variable, rootUnfoldedField.GetName())
 
 	for i, v := range vars {
 		dbField := datastore.Schema.GetField(names[i])
-		deps := v.GetNestedIndirectDependencies()
+		deps := v.GetNestedDependencies(false)
 		logger.Logger.Infof("[TENTATIVE TAINT READ VAR] [%s] (%02d) (NUM DEPS = %d) %s", utils.GetType(v), v.GetId(), len(deps), v.LongString())
 		for _, dep := range deps {
 			if !slices.Contains(taintedVariables, dep) {
@@ -123,7 +123,7 @@ func taintDataflowReadOpUnnamed(app *app.App, variable variables.Variable, call 
 	}
 
 	var taintedVariables []variables.Variable
-	deps := variable.GetNestedIndirectDependencies()
+	deps := variable.GetNestedDependencies(false)
 	logger.Logger.Infof("[TENTATIVE TAINT READ UNNAMED VAR] [%s] (%02d) (NUM DEPS = %d) %s", utils.GetType(variable), variable.GetId(), len(deps), variable.LongString())
 	for _, dep := range deps {
 		if !slices.Contains(taintedVariables, dep) {
@@ -144,10 +144,10 @@ func taintDataflowReadOpUnnamed(app *app.App, variable variables.Variable, call 
 func referenceTaintedDataflow(writtenVariable variables.Variable, datastore *datastores.Datastore) {
 	fmt.Printf("\n------------- REFERENCE TAINTED DATAFLOW FOR WRITTEN VARIABLE %s @ %s -------------\n\n", writtenVariable.GetType().GetName(), datastore.Name)
 	fmt.Println()
-	vars, names := variables.GetReversedNestedFieldsAndNames(writtenVariable, true, "")
+	vars, names := variables.GetReversedNestedFieldsAndNames(writtenVariable, "")
 	for i, variable := range vars {
 		dbField := datastore.Schema.GetField(names[i])
-		deps := variable.GetNestedIndirectDependencies()
+		deps := variable.GetNestedDependencies(false)
 		logger.Logger.Infof("[TENTATIVE REF TAINTED VAR] [%s] (%02d) %s", utils.GetType(variable), variable.GetId(), variable.LongString())
 		for _, dep := range deps {
 			for _, df := range dep.GetVariableInfo().GetAllWriteDataflows() {
@@ -207,7 +207,7 @@ func BuildSchema(app *app.App, node AbstractNode) {
 			for i, param := range params {
 				logger.Logger.Debugf("BUILD SCHEMA!!! (%d) (%s)", i, utils.GetType(param))
 				if _, ok := param.(*variables.StructVariable); ok {
-					variables.GetReversedNestedFieldsAndNames(param, true, "")
+					variables.GetReversedNestedFieldsAndNames(param, "")
 				}
 			}
 			taintDataflowWriteOp(app, doc, dbCall, datastore)

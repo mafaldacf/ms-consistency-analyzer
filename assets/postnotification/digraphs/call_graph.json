@@ -5,6 +5,10 @@
       "type": "client"
     },
     {
+      "id": "AnalyticsService",
+      "type": "service"
+    },
+    {
       "id": "NotifyService",
       "type": "service"
     },
@@ -17,15 +21,41 @@
       "type": "service"
     },
     {
-      "id": "notif_queue RabbitMQ",
+      "id": "analytics_db MongoDB",
       "type": "datastore"
     },
     {
-      "id": "post_nosql MongoDB",
+      "id": "analytics_queue RabbitMQ",
+      "type": "datastore"
+    },
+    {
+      "id": "notifications_queue RabbitMQ",
+      "type": "datastore"
+    },
+    {
+      "id": "posts_db MongoDB",
       "type": "datastore"
     }
   ],
   "edges": [
+    {
+      "caller": "AnalyticsService",
+      "callee": "analytics_db MongoDB",
+      "call": "InsertOne",
+      "depth": 4
+    },
+    {
+      "caller": "AnalyticsService",
+      "callee": "analytics_db MongoDB",
+      "call": "FindOne",
+      "depth": 5
+    },
+    {
+      "caller": "AnalyticsService",
+      "callee": "analytics_queue RabbitMQ",
+      "call": "Pop",
+      "depth": 4
+    },
     {
       "caller": "Client",
       "callee": "UploadService",
@@ -40,19 +70,31 @@
     },
     {
       "caller": "NotifyService",
-      "callee": "notif_queue RabbitMQ",
+      "callee": "notifications_queue RabbitMQ",
       "call": "Pop",
       "depth": 3
     },
     {
       "caller": "StorageService",
-      "callee": "post_nosql MongoDB",
+      "callee": "AnalyticsService",
+      "call": "ReadAnalytics",
+      "depth": 4
+    },
+    {
+      "caller": "StorageService",
+      "callee": "analytics_queue RabbitMQ",
+      "call": "Push",
+      "depth": 2
+    },
+    {
+      "caller": "StorageService",
+      "callee": "posts_db MongoDB",
       "call": "InsertOne",
       "depth": 2
     },
     {
       "caller": "StorageService",
-      "callee": "post_nosql MongoDB",
+      "callee": "posts_db MongoDB",
       "call": "FindOne",
       "depth": 4
     },
@@ -64,12 +106,18 @@
     },
     {
       "caller": "UploadService",
-      "callee": "notif_queue RabbitMQ",
+      "callee": "notifications_queue RabbitMQ",
       "call": "Push",
       "depth": 1
     },
     {
-      "caller": "notif_queue RabbitMQ",
+      "caller": "analytics_queue RabbitMQ",
+      "callee": "AnalyticsService",
+      "call": "workerThread",
+      "depth": 3
+    },
+    {
+      "caller": "notifications_queue RabbitMQ",
       "callee": "NotifyService",
       "call": "workerThread",
       "depth": 2

@@ -43,12 +43,14 @@ func (v *FieldVariable) AssignVariable(rvariable Variable) {
 	if v.GetType().IsSameType(rvariable.GetType()) {
 		logger.Logger.Infof("[VAR FIELD] (a) assigning variables with types (%s --> %s) for lvariable (%s) and rvariable (%s)", utils.GetType(v.WrappedVariable), utils.GetType(rvariable), v.WrappedVariable.String(), rvariable.String())
 		v.WrappedVariable = rvariable.(*FieldVariable).WrappedVariable.DeepCopy(false)
+		v.WrappedVariable.GetVariableInfo().SetParent(v.WrappedVariable, v)
 		return
 	}
 	// e.g. post.Text = text
 	if v.WrappedVariable.GetType().IsSameType(rvariable.GetType()) {
 		logger.Logger.Infof("[VAR FIELD] (b) assigning variables with types (%s --> %s) for lvariable (%s) and rvariable (%s)", utils.GetType(v.WrappedVariable), utils.GetType(rvariable), v.WrappedVariable.String(), rvariable.String())
 		v.WrappedVariable = rvariable.DeepCopy(false)
+		v.WrappedVariable.GetVariableInfo().SetParent(v.WrappedVariable, v)
 		return
 	}
 
@@ -59,6 +61,7 @@ func (v *FieldVariable) AssignVariable(rvariable Variable) {
 		// maintain left slice and add copy right array
 		v.WrappedVariable = rvariable.DeepCopy(false)
 		v.WrappedVariable.(*ArrayVariable).UpgradeToSlice()
+		v.WrappedVariable.GetVariableInfo().SetParent(v.WrappedVariable, v)
 		return
 	}
 
@@ -73,21 +76,17 @@ func (v *FieldVariable) GetDependencies() []Variable {
 	return []Variable{v.WrappedVariable}
 }
 
-func (v *FieldVariable) GetNestedIndirectDependencies() []Variable {
+func (v *FieldVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	var deps = []Variable{v}
-	if v.GetVariableInfo().HasReference() {
-		deps = append(deps, v.GetVariableInfo().GetReference().GetNestedIndirectDependencies()...)
+	if v.GetVariableInfo().HasReferences() {
+		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
 	}
-	deps = append(deps, v.WrappedVariable.GetNestedIndirectDependencies()...)
+	deps = append(deps, v.WrappedVariable.GetNestedDependencies(nearestFields)...)
 	return deps
 }
 
 func (v *FieldVariable) AddReferenceWithID(target Variable, creator string) {
-	v.VariableInfo.Id = target.GetId()
-	v.VariableInfo.Reference = &Reference{
-		Creator:  creator,
-		Variable: target,
-	}
+	v.VariableInfo.AddReferenceWithID(v, target, creator)
 	v.WrappedVariable.AddReferenceWithID(target, creator)
 }
 
@@ -96,6 +95,7 @@ func (v *FieldVariable) DeepCopy(force bool) Variable {
 		VariableInfo:    v.VariableInfo.DeepCopy(force),
 		WrappedVariable: v.WrappedVariable.DeepCopy(force),
 	}
+	copy.WrappedVariable.GetVariableInfo().SetParent(v.WrappedVariable, copy)
 	return copy
 }
 
@@ -134,7 +134,7 @@ func (t *FieldVariable) GetNestedFieldVariables(prefix string) ([]Variable, []st
 
 func (t *FieldVariable) GetNestedFieldVariablesWithReferences(prefix string) ([]Variable, []string) {
 	nestedVariables, nestedIDs := t.GetNestedFieldVariables(prefix)
-	if reference := t.GetVariableInfo().GetReference(); reference != nil {
+	for _, reference := range t.GetVariableInfo().GetReferences() {
 		logger.Logger.Debugf("HEREEEEE FOR REFERENCE %s", reference.String())
 		nestedVariablesRef, nestedIDsRef := reference.Variable.(*FieldVariable).GetNestedFieldVariablesWithReferences(prefix)
 		nestedVariables = append(nestedVariables, nestedVariablesRef...)

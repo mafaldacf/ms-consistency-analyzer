@@ -42,6 +42,7 @@ func (v *MapVariable) GetKeyValueIfExists(targetKey Variable) Variable {
 
 func (v *MapVariable) AddKeyValue(key Variable, value Variable) {
 	v.KeyValues[key] = value
+	value.GetVariableInfo().SetParent(value, v)
 }
 
 func (v *MapVariable) GetId() int64 {
@@ -65,6 +66,7 @@ func (v *MapVariable) GetVariableInfo() *VariableInfo {
 
 func (v *MapVariable) AddKeyValuePair(key Variable, value Variable) {
 	v.KeyValues[key] = value
+	value.GetVariableInfo().SetParent(value, v)
 }
 
 func (v *MapVariable) GetDependencies() []Variable {
@@ -75,13 +77,13 @@ func (v *MapVariable) GetDependencies() []Variable {
 	return dependencies
 }
 
-func (v *MapVariable) GetNestedIndirectDependencies() []Variable {
+func (v *MapVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	var deps = []Variable{v}
-	if v.GetVariableInfo().HasReference() {
-		deps = append(deps, v.GetVariableInfo().GetReference().GetNestedIndirectDependencies()...)
+	if v.GetVariableInfo().HasReferences() {
+		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
 	}
 	for _, elem := range v.KeyValues {
-		deps = append(deps, elem.GetNestedIndirectDependencies()...)
+		deps = append(deps, elem.GetNestedDependencies(nearestFields)...)
 	}
 	return deps
 }
@@ -93,6 +95,7 @@ func (v *MapVariable) DeepCopy(force bool) Variable {
 	}
 	for k, v := range v.KeyValues {
 		copy.KeyValues[k] = v.DeepCopy(force)
+		copy.KeyValues[k].GetVariableInfo().SetParent(copy.KeyValues[k], copy)
 	}
 	return copy
 }
@@ -121,7 +124,7 @@ func (v *MapVariable) MarshalJSON() ([]byte, error) {
 }
 
 func (v *MapVariable) AddReferenceWithID(target Variable, creator string) {
-	v.VariableInfo.AddReferenceWithID(target, creator)
+	v.VariableInfo.AddReferenceWithID(v, target, creator)
 	if targetMap, ok := target.(*MapVariable); ok {
 		for key, value := range v.KeyValues {
 			targetValue, ok := targetMap.KeyValues[key]
@@ -156,7 +159,6 @@ func (v *MapVariable) AddReferenceWithID(target Variable, creator string) {
 		}
 	}
 	logger.Logger.Fatalf("[VARS MAP - REF] attempted to reference variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
-
 }
 
 func (v *MapVariable) GetNestedFieldVariables(prefix string) ([]Variable, []string) {
@@ -177,9 +179,9 @@ func (v *MapVariable) GetNestedFieldVariables(prefix string) ([]Variable, []stri
 }
 
 func (v *MapVariable) GetNestedFieldVariablesWithReferences(prefix string) ([]Variable, []string) {
-	logger.Logger.Debugf("[VARS MAP] HAS REFERENCE????? %v", v.GetVariableInfo().GetReference())
+	logger.Logger.Debugf("[VARS MAP] HAS REFERENCE????? %v", v.GetVariableInfo().GetReferences())
 	nestedVariables, nestedIDs := v.GetNestedFieldVariables(prefix)
-	if reference := v.GetVariableInfo().GetReference(); reference != nil {
+	for _, reference := range v.GetVariableInfo().GetReferences() {
 		logger.Logger.Debugf("[VARS MAP] HEREEEEE FOR REFERENCE %s", reference.String())
 		if referenceMapVar, ok := reference.Variable.(*MapVariable); ok {
 			nestedVariablesRef, nestedIDsRef := referenceMapVar.GetNestedFieldVariablesWithReferences(prefix)

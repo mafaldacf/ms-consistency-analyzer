@@ -99,12 +99,21 @@ func getIndirectDependencies(v variables.Variable, i int) ([]variables.Variable,
 		opStr = "// " + opStr
 	}
 
-	blockVarsStr += fmt.Sprintf("[%s] (%s) %s %s\n", padding, variables.GetVariableTypeAndTypeString(v), v.String(), opStr)
+	/* parentStr := ""
+	for _, parent := range v.GetVariableInfo().Parents {
+		parentStr += parent.String() + ", "
+	}
+	if parentStr != "" {
+		blockVarsStr += fmt.Sprintf("[%s] (%d) (%s) %s (parents = %s) %s\n", padding, v.GetId(), variables.GetVariableTypeAndTypeString(v), v.String(), parentStr, opStr)
+	} else {
+		blockVarsStr += fmt.Sprintf("[%s] (%d) (%s) %s (parents = <>) %s\n", padding, v.GetId(), variables.GetVariableTypeAndTypeString(v), v.String(), opStr)
+	} */
+	blockVarsStr += fmt.Sprintf("[%s] (%d) (%s) %s %s\n", padding, v.GetId(), variables.GetVariableTypeAndTypeString(v), v.String(), opStr)
 
 	var deps = []variables.Variable{v}
 	// indirect dependencies from reference
-	if v.GetVariableInfo().HasReference() {
-		indirectDeps, indirectStr := getIndirectDependencies(v.GetVariableInfo().GetReference(), i+1)
+	for _, ref := range v.GetVariableInfo().GetReferences() {
+		indirectDeps, indirectStr := getIndirectDependencies(ref, i+1)
 		blockVarsStr += indirectStr
 		deps = append(deps, indirectDeps...)
 	}
@@ -114,6 +123,21 @@ func getIndirectDependencies(v variables.Variable, i int) ([]variables.Variable,
 		blockVarsStr += indirectStr
 		deps = append(deps, directDeps...)
 	}
+
+	/* for _, refBy := range v.GetVariableInfo().ReferencedBy {
+		opStr := ""
+		for _, df := range refBy.GetVariableInfo().GetAllDataflows() {
+			s := df.GetOpString() + "(" + df.Datastore + "), "
+			if ok := visitedOp[s]; !ok {
+				visitedOp[s] = true
+				opStr += s
+			}
+		}
+		if opStr != "" {
+			opStr = "// " + opStr
+		}
+		blockVarsStr += fmt.Sprintf("[%s] (%d) (%s) ref_by <%s> %s\n", padding, refBy.GetId(), variables.GetVariableTypeAndTypeString(refBy), refBy.String(), opStr)
+	} */
 
 	return deps, blockVarsStr
 }

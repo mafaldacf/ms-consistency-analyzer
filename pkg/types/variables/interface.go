@@ -42,16 +42,16 @@ func (v *InterfaceVariable) GetDependencies() []Variable {
 	return nil
 }
 
-func (v *InterfaceVariable) GetNestedIndirectDependencies() []Variable {
+func (v *InterfaceVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	var deps = []Variable{v}
 	if v.UnderlyingVariable != nil {
-		deps = append(deps, v.UnderlyingVariable.GetNestedIndirectDependencies()...)
+		deps = append(deps, v.UnderlyingVariable.GetNestedDependencies(nearestFields)...)
 	}
 	return deps
 }
 
 func (v *InterfaceVariable) AddReferenceWithID(target Variable, creator string) {
-	v.VariableInfo.AddReferenceWithID(target, creator)
+	v.VariableInfo.AddReferenceWithID(v, target, creator)
 	if v.UnderlyingVariable != nil {
 		v.UnderlyingVariable.AddReferenceWithID(target, creator)
 	}
@@ -60,6 +60,9 @@ func (v *InterfaceVariable) AddReferenceWithID(target Variable, creator string) 
 func (v *InterfaceVariable) DeepCopy(force bool) Variable {
 	copy := &InterfaceVariable{
 		VariableInfo: v.VariableInfo.DeepCopy(force),
+	}
+	if v.UnderlyingVariable != nil {
+		copy.UnderlyingVariable = v.UnderlyingVariable.DeepCopy(force)
 	}
 	return copy
 }

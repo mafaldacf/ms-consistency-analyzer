@@ -70,7 +70,7 @@ func assignLeftValues(service *service.Service, method *types.ParsedMethod, bloc
 					rvariable.GetVariableInfo().SetUnassigned()
 					rvariable.GetVariableInfo().SetName(e.Name)
 					block.AddVariable(rvariable)
-					/* for _, d := range rvariable.GetNestedIndirectDependencies() {
+					/* for _, d := range rvariable.GetNestedDependencies(false) {
 						logger.Logger.Debugf("\t\t\t- (%s) %s", variables.GetVariableTypeAndTypeString(d), d.String())
 					} */
 					/* if e.Name == "workerMessage" {
@@ -313,6 +313,7 @@ func computeInternalFuncCallReturns(service *service.Service, callExpr *ast.Call
 			for _, t := range signatureResults.(*gotypes.TupleType).Types {
 				newVar := lookup.CreateVariableFromType("", t)
 				tupleVar.Variables = append(tupleVar.Variables, newVar)
+				newVar.GetVariableInfo().SetParent(newVar, tupleVar)
 				tupleType.Types = append(tupleType.Types, newVar.GetType())
 				call.AddReturn(newVar)
 			}
@@ -340,6 +341,7 @@ func computeExternalFuncCallReturns(service *service.Service, callExpr *ast.Call
 				newVar := lookup.CreateVariableFromType("", signatureResults.(*gotypes.TupleType).Types[0])
 				logger.Logger.Warnf("[FIXMEEEEEEE!!!!!!] (IS THIS EVEN CORRECT???) CREATED VAR FOR RETURNED TUPLE IN EXTERNAL FUNC CALL: %s", newVar.String())
 				tupleVar.Variables = append(tupleVar.Variables, newVar)
+				newVar.GetVariableInfo().SetParent(newVar, tupleVar)
 			} else {
 				for _, t := range signatureResults.(*gotypes.TupleType).Types {
 					newVar := lookup.CreateVariableFromType("", t)
@@ -355,6 +357,7 @@ func computeExternalFuncCallReturns(service *service.Service, callExpr *ast.Call
 						}
 					}
 					tupleVar.Variables = append(tupleVar.Variables, newVar)
+					newVar.GetVariableInfo().SetParent(newVar, tupleVar)
 				}
 				logger.Logger.Warnf("CREATED COMPOSITE VAR FOR (%d) TUPLE: %s", len(deps), tupleVar.String())
 			}

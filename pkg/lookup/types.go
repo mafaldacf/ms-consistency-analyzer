@@ -47,10 +47,12 @@ func CreateVariableFromType(name string, t gotypes.Type) variables.Variable {
 	case *gotypes.ArrayType:
 		return &variables.ArrayVariable{VariableInfo: info}
 	case *gotypes.AddressType:
-		v := &variables.AddressVariable{
+		addressOfVariable := CreateVariableFromType("", e.AddressOf)
+		addressVariable := &variables.AddressVariable{
 			VariableInfo: info, AddressOf: CreateVariableFromType("", e.AddressOf),
 		}
-		return v
+		addressOfVariable.GetVariableInfo().SetParent(addressOfVariable, addressVariable)
+		return addressVariable
 	case *gotypes.PointerType:
 		v := &variables.PointerVariable{
 			VariableInfo: info, PointerTo: CreateVariableFromType("", e.PointerTo),
@@ -64,10 +66,13 @@ func CreateVariableFromType(name string, t gotypes.Type) variables.Variable {
 		return &variables.MapVariable{VariableInfo: info, KeyValues: make(map[variables.Variable]variables.Variable, 0)}
 	case *gotypes.FieldType:
 		info.Name = e.FieldName
-		return &variables.FieldVariable{
+		wrappedFieldVariable := CreateVariableFromType(name, e.WrappedType)
+		fieldVariable := &variables.FieldVariable{
 			VariableInfo:    info,
-			WrappedVariable: CreateVariableFromType(name, e.WrappedType),
+			WrappedVariable: wrappedFieldVariable,
 		}
+		wrappedFieldVariable.GetVariableInfo().SetParent(wrappedFieldVariable, fieldVariable)
+		return fieldVariable
 	case *blueprint.BlueprintBackendType:
 		info.Type = e.DeepCopy(true)
 		if e.IsNoSQLCollection() {

@@ -8,6 +8,7 @@ import (
 type Reference struct {
 	Variable
 	Creator string
+	Id      int64
 }
 
 func (ref *Reference) MarshalJSON() ([]byte, error) {
@@ -56,10 +57,10 @@ func (ref *Reference) GetDependencies() []Variable {
 	return nil
 }
 
-func (ref *Reference) GetNestedIndirectDependencies() []Variable {
+func (ref *Reference) GetNestedDependencies(nearestFields bool) []Variable {
 	var deps = []Variable{ref}
 	if ref.Variable != nil {
-		deps = append(deps, ref.Variable.GetNestedIndirectDependencies()...)
+		deps = append(deps, ref.Variable.GetNestedDependencies(nearestFields)...)
 	}
 	return deps
 }

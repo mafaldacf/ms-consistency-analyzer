@@ -20,6 +20,13 @@ func (v *SliceVariable) GetElements() []Variable {
 	return v.Elements
 }
 
+func (v *SliceVariable) AddReferenceWithID(target Variable, creator string) {
+	v.VariableInfo.AddReferenceWithID(v, target, creator)
+	for i := 0; i < len(v.Elements); i++ {
+		v.AddReferenceWithID(target.GetElementAt(i), creator)
+	}
+}
+
 func (v *SliceVariable) AppendElements(varElements Variable) {
 	if varElementsSlice, ok := varElements.(*SliceVariable); ok {
 		v.Elements = append(v.Elements, varElementsSlice.GetElements()...)
@@ -34,10 +41,14 @@ func (v *SliceVariable) AppendElements(varElements Variable) {
 
 func (v *SliceVariable) AddElement(element Variable) {
 	v.Elements = append(v.Elements, element)
+	element.GetVariableInfo().SetParent(element, v)
 }
 
-func (v *SliceVariable) AddElements(element []Variable) {
-	v.Elements = append(v.Elements, element...)
+func (v *SliceVariable) AddElements(elements []Variable) {
+	v.Elements = append(v.Elements, elements...)
+	for _, elem := range elements {
+		elem.GetVariableInfo().SetParent(elem, v)
+	}
 }
 
 func (v *SliceVariable) GetVariableAt(index int) Variable {
@@ -71,13 +82,13 @@ func (v *SliceVariable) GetDependencies() []Variable {
 	return v.Elements
 }
 
-func (v *SliceVariable) GetNestedIndirectDependencies() []Variable {
+func (v *SliceVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	var deps = []Variable{v}
-	if v.GetVariableInfo().HasReference() {
-		deps = append(deps, v.GetVariableInfo().GetReference().GetNestedIndirectDependencies()...)
+	if v.GetVariableInfo().HasReferences() {
+		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
 	}
 	for _, elem := range v.Elements {
-		deps = append(deps, elem.GetNestedIndirectDependencies()...)
+		deps = append(deps, elem.GetNestedDependencies(nearestFields)...)
 	}
 	return deps
 }
@@ -115,7 +126,9 @@ func (v *SliceVariable) LongString() string {
 func (v *SliceVariable) DeepCopy(force bool) Variable {
 	copy := &SliceVariable{VariableInfo: v.VariableInfo.DeepCopy(force)}
 	for _, v := range v.Elements {
-		copy.Elements = append(copy.Elements, v.DeepCopy(force))
+		newElem := v.DeepCopy(force)
+		copy.Elements = append(copy.Elements, newElem)
+		newElem.GetVariableInfo().SetParent(newElem, copy)
 	}
 	return copy
 }

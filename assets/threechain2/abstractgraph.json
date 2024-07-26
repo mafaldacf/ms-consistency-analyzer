@@ -16,6 +16,7 @@
             }
           },
           {
+            "Origin": null,
             "variable": {
               "name": "order",
               "type": "threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64}"
@@ -30,10 +31,12 @@
                   "variable": {
                     "name": "orderID",
                     "type": "string",
-                    "ref": {
-                      "name": "OrderID",
-                      "creator": "ShipmentService"
-                    }
+                    "refs": [
+                      {
+                        "name": "OrderID",
+                        "creator": "ShipmentService"
+                      }
+                    ]
                   }
                 }
               },
@@ -81,10 +84,12 @@
                   "variable": {
                     "name": "username",
                     "type": "string",
-                    "ref": {
-                      "name": "Username",
-                      "creator": "ShipmentService"
-                    }
+                    "refs": [
+                      {
+                        "name": "Username",
+                        "creator": "ShipmentService"
+                      }
+                    ]
                   }
                 }
               }
@@ -113,6 +118,7 @@
             }
           },
           {
+            "Origin": null,
             "variable": {
               "name": "message",
               "type": "threechain2.ShipmentMessage struct{OrderID string, Username string}"
@@ -122,19 +128,23 @@
                 "variable": {
                   "name": "OrderID",
                   "type": "string",
-                  "ref": {
-                    "name": "OrderID",
-                    "creator": "ShipmentService"
-                  }
+                  "refs": [
+                    {
+                      "name": "OrderID",
+                      "creator": "ShipmentService"
+                    }
+                  ]
                 },
                 "wrapped_variable": {
                   "variable": {
                     "name": "orderID",
                     "type": "string",
-                    "ref": {
-                      "name": "OrderID",
-                      "creator": "ShipmentService"
-                    }
+                    "refs": [
+                      {
+                        "name": "OrderID",
+                        "creator": "ShipmentService"
+                      }
+                    ]
                   }
                 }
               },
@@ -142,19 +152,23 @@
                 "variable": {
                   "name": "Username",
                   "type": "string",
-                  "ref": {
-                    "name": "Username",
-                    "creator": "ShipmentService"
-                  }
+                  "refs": [
+                    {
+                      "name": "Username",
+                      "creator": "ShipmentService"
+                    }
+                  ]
                 },
                 "wrapped_variable": {
                   "variable": {
                     "name": "username",
                     "type": "string",
-                    "ref": {
-                      "name": "Username",
-                      "creator": "ShipmentService"
-                    }
+                    "refs": [
+                      {
+                        "name": "Username",
+                        "creator": "ShipmentService"
+                      }
+                    ]
                   }
                 }
               }
@@ -200,10 +214,12 @@
                       "variable": {
                         "name": "event",
                         "type": "map[string]interface{}",
-                        "ref": {
-                          "name": "message",
-                          "creator": "ShipmentService"
-                        }
+                        "refs": [
+                          {
+                            "name": "message",
+                            "creator": "ShipmentService"
+                          }
+                        ]
                       },
                       "key_values": [
                         {
@@ -260,13 +276,16 @@
                     "variable": {
                       "name": "ctx",
                       "type": "context.Context",
-                      "ref": {
-                        "name": "ctx",
-                        "creator": "ShipmentService"
-                      }
+                      "refs": [
+                        {
+                          "name": "ctx",
+                          "creator": "ShipmentService"
+                        }
+                      ]
                     }
                   },
                   {
+                    "Origin": null,
                     "variable": {
                       "name": "shipment",
                       "type": "threechain2.Shipment struct{OrderID string, Username string, Status string}"
@@ -281,10 +300,12 @@
                           "variable": {
                             "name": "OrderID",
                             "type": "string",
-                            "ref": {
-                              "name": "OrderID",
-                              "creator": "ShipmentService"
-                            }
+                            "refs": [
+                              {
+                                "name": "OrderID",
+                                "creator": "ShipmentService"
+                              }
+                            ]
                           }
                         }
                       },
@@ -308,10 +329,12 @@
                           "variable": {
                             "name": "Username",
                             "type": "string",
-                            "ref": {
-                              "name": "Username",
-                              "creator": "ShipmentService"
-                            }
+                            "refs": [
+                              {
+                                "name": "Username",
+                                "creator": "ShipmentService"
+                              }
+                            ]
                           }
                         }
                       }
@@ -343,10 +366,12 @@
                         "variable": {
                           "name": "ctx",
                           "type": "context.Context",
-                          "ref": {
-                            "name": "ctx",
-                            "creator": "ShipmentService"
-                          }
+                          "refs": [
+                            {
+                              "name": "ctx",
+                              "creator": "ShipmentService"
+                            }
+                          ]
                         }
                       },
                       {
@@ -356,6 +381,7 @@
                         },
                         "slice_variables": [
                           {
+                            "Origin": null,
                             "variable": {
                               "type": "struct{Key \"orderID\" string, Value string}"
                             },
@@ -380,10 +406,12 @@
                                   "variable": {
                                     "name": "orderID",
                                     "type": "string",
-                                    "ref": {
-                                      "name": "OrderID",
-                                      "creator": "ShipmentService"
-                                    }
+                                    "refs": [
+                                      {
+                                        "name": "OrderID",
+                                        "creator": "ShipmentService"
+                                      }
+                                    ]
                                   }
                                 }
                               }
@@ -415,25 +443,30 @@
                     "variable": {
                       "name": "ctx",
                       "type": "context.Context",
-                      "ref": {
-                        "name": "ctx",
-                        "creator": "ShipmentService"
-                      }
+                      "refs": [
+                        {
+                          "name": "ctx",
+                          "creator": "ShipmentService"
+                        }
+                      ]
                     }
                   },
                   {
                     "variable": {
                       "name": "OrderID",
                       "type": "string",
-                      "ref": {
-                        "name": "OrderID",
-                        "creator": "ShipmentService"
-                      }
+                      "refs": [
+                        {
+                          "name": "OrderID",
+                          "creator": "ShipmentService"
+                        }
+                      ]
                     }
                   }
                 ],
                 "returns": [
                   {
+                    "Origin": null,
                     "variable": {
                       "type": "threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64}"
                     },
@@ -507,10 +540,12 @@
             "variable": {
               "name": "ctx",
               "type": "context.Context",
-              "ref": {
-                "name": "ctx",
-                "creator": "ShipmentService"
-              }
+              "refs": [
+                {
+                  "name": "ctx",
+                  "creator": "ShipmentService"
+                }
+              ]
             }
           },
           {
@@ -520,6 +555,7 @@
             },
             "slice_variables": [
               {
+                "Origin": null,
                 "variable": {
                   "type": "struct{Key \"orderID\" string, Value string}"
                 },
@@ -544,10 +580,12 @@
                       "variable": {
                         "name": "orderID",
                         "type": "string",
-                        "ref": {
-                          "name": "OrderID",
-                          "creator": "ShipmentService"
-                        }
+                        "refs": [
+                          {
+                            "name": "OrderID",
+                            "creator": "ShipmentService"
+                          }
+                        ]
                       }
                     }
                   }

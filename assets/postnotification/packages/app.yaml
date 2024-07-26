@@ -20,6 +20,7 @@ postnotification:
 - package path: github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification
 - module: github.com/blueprint-uservices/blueprint/examples/postnotification/workflow
 - files:
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/AnalyticsService.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/NotifyService.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/StorageService.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/UploadService.go
@@ -51,16 +52,24 @@ postnotification:
   - sync.WaitGroup
   - sync.noCopy
 - declared types:
+  - postnotification.Analytics struct{PostID int64}
+  - postnotification.AnalyticsService
+  - postnotification.AnalyticsServiceImpl struct{analytics_queue {instance = analytics_queue}
+    interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}, analytics_db  {instance = analytics_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, num_workers int}
   - postnotification.Creator struct{Username string}
   - postnotification.Message struct{ReqID string, PostID string, Timestamp string}
   - postnotification.NotifyService
-  - postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, queue {instance = notif_queue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}, numWorkers int}
+  - postnotification.NotifyServiceImpl struct{storage_service postnotification.StorageService, notifications_queue {instance = notifications_queue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})},
+    num_workers int}
   - postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}
   - postnotification.StorageService
-  - postnotification.StorageServiceImpl struct{cache {instance = post_cache} interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{})}, db  {instance = post_nosql} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - postnotification.StorageServiceImpl struct{analytics_service postnotification.AnalyticsService, posts_cache {instance = posts_cache} interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{})}, posts_db  {instance = posts_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, analytics_queue  {instance = analytics_queue} interface{Queue.Push(ctx context.Context, item interface{}),
+    Queue.Pop(ctx context.Context, item interface{})}}
+  - postnotification.TriggerAnalyticsMessage struct{PostID string}
   - postnotification.UploadService
-  - postnotification.UploadServiceImpl struct{storageService postnotification.StorageService, queue {instance = notif_queue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}}
+  - postnotification.UploadServiceImpl struct{storage_service postnotification.StorageService, notifications_queue {instance = notifications_queue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}}
 - service types:
+  - postnotification.AnalyticsService
   - postnotification.NotifyService
   - postnotification.StorageService
   - postnotification.UploadService
@@ -75,17 +84,21 @@ postnotification:
   - Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}
 - declared variables: []
 - parsed methods:
+  - (*postnotification.AnalyticsServiceImpl).ReadAnalytics(ctx context.Context, postID int64) (postnotification.Analytics struct{PostID int64}, error)
+  - (*postnotification.AnalyticsServiceImpl).Run(ctx context.Context) error
+  - (*postnotification.AnalyticsServiceImpl).handleMessage(ctx context.Context, message postnotification.TriggerAnalyticsMessage struct{PostID string}) error
+  - (*postnotification.AnalyticsServiceImpl).workerThread(ctx context.Context) error
   - (*postnotification.NotifyServiceImpl).Run(ctx context.Context) error
   - (*postnotification.NotifyServiceImpl).handleMessage(ctx context.Context, message postnotification.Message struct{ReqID string, PostID string, Timestamp string})
     error
   - (*postnotification.NotifyServiceImpl).workerThread(ctx context.Context, workerID int) error
   - (*postnotification.StorageServiceImpl).ReadPost(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}, error)
-  - (*postnotification.StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}, error)
+  - (*postnotification.StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}, postnotification.Analytics struct{PostID int64}, error)
   - (*postnotification.StorageServiceImpl).StorePost(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}})
     error
   - (*postnotification.StorageServiceImpl).StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}) error
   - (*postnotification.UploadServiceImpl).UploadPost(ctx context.Context, username string, text string) (int64, error)
-  - postnotification.NewNotifyServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue) (postnotification.NotifyService, error)
-  - postnotification.NewStorageServiceImpl(ctx context.Context, cache Cache, db NoSQLDatabase)
-    (postnotification.StorageService, error)
-  - postnotification.NewUploadServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue) (postnotification.UploadService, error)
+  - postnotification.NewAnalyticsServiceImpl(ctx context.Context, analytics_db NoSQLDatabase, analytics_queue Queue) (postnotification.AnalyticsService, error)
+  - postnotification.NewNotifyServiceImpl(ctx context.Context, storage_service postnotification.StorageService, notifications_queue Queue) (postnotification.NotifyService, error)
+  - postnotification.NewStorageServiceImpl(ctx context.Context, analytics_service postnotification.AnalyticsService, posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue) (postnotification.StorageService, error)
+  - postnotification.NewUploadServiceImpl(ctx context.Context, storage_service postnotification.StorageService, notifications_queue Queue) (postnotification.UploadService, error)

@@ -37,7 +37,7 @@ func (v *ServiceVariable) GetDependencies() []Variable {
 	return nil
 }
 
-func (v *ServiceVariable) GetNestedIndirectDependencies() []Variable {
+func (v *ServiceVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	return nil
 }
 
@@ -48,7 +48,7 @@ func (v *ServiceVariable) DeepCopy(force bool) Variable {
 }
 
 func (v *ServiceVariable) AddReferenceWithID(target Variable, creator string) {
-	v.VariableInfo.AddReferenceWithID(target, creator)
+	v.VariableInfo.AddReferenceWithID(v, target, creator)
 }
 
 func (v *ServiceVariable) GetUnassaignedVariables() []Variable {

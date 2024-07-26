@@ -36,12 +36,12 @@ func (v *PointerVariable) GetDependencies() []Variable {
 	return []Variable{v.PointerTo}
 }
 
-func (v *PointerVariable) GetNestedIndirectDependencies() []Variable {
+func (v *PointerVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	var deps = []Variable{v}
-	if v.GetVariableInfo().HasReference() {
-		deps = append(deps, v.GetVariableInfo().GetReference().GetNestedIndirectDependencies()...)
+	if v.GetVariableInfo().HasReferences() {
+		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
 	}
-	deps = append(deps, v.PointerTo.GetNestedIndirectDependencies()...)
+	deps = append(deps, v.PointerTo.GetNestedDependencies(nearestFields)...)
 	return deps
 }
 
@@ -65,6 +65,7 @@ func (v *PointerVariable) DeepCopy(force bool) Variable {
 		VariableInfo: v.VariableInfo.DeepCopy(force),
 		PointerTo:    v.PointerTo, // underlying values of pointers are never deep copied
 	}
+	copy.PointerTo.GetVariableInfo().SetParent(copy.PointerTo, copy)
 	return copy
 }
 

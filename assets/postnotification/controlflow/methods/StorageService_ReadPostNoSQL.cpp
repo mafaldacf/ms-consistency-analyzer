@@ -1,49 +1,57 @@
-[] (PointerVariable PointerType) s (*postnotification.StorageServiceImpl struct{cache Cache, db NoSQLDatabase}) 
-[_] (StructVariable UserType) postnotification.StorageServiceImpl struct{cache Cache, db NoSQLDatabase} 
-[__] (BlueprintBackendVariable BlueprintBackendType) cache Cache 
-[__] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
+[] (-1) (PointerVariable PointerType) s (*postnotification.StorageServiceImpl struct{analytics_service postnotification.AnalyticsService, posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue}) 
+[_] (0) (StructVariable UserType) postnotification.StorageServiceImpl struct{analytics_service postnotification.AnalyticsService, posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue} 
+[__] (-1) (BlueprintBackendVariable BlueprintBackendType) posts_cache Cache 
+[__] (-1) (BlueprintBackendVariable BlueprintBackendType) posts_db NoSQLDatabase 
+[__] (-1) (BlueprintBackendVariable BlueprintBackendType) analytics_queue Queue 
+[__] (-1) (ServiceVariable ServiceType) analytics_service postnotification.AnalyticsService 
 
-[] (InterfaceVariable UserType) ctx context.Context 
-[_] (Reference UserType) ref <ctx context.Context> @ NotifyService 
-[__] (Reference UserType) ref <ctx context.Context> @ NotifyService 
+[] (45) (InterfaceVariable UserType) ctx context.Context 
+[_] (-1) (Reference UserType) ref <ctx context.Context> @ NotifyService 
+[__] (34) (Reference UserType) ref <ctx context.Context> @ NotifyService 
 
-[] (BasicVariable BasicType) reqID int64 
-[_] (Reference BasicType) ref <reqID int64> @ NotifyService 
-[__] (BasicVariable BasicType) ReqID string 
-[___] (Reference FieldType) ref <ReqID string> @ NotifyService 
-[____] (BasicVariable BasicType) ReqID string 
-[_____] (InterfaceVariable InterfaceType) ReqID interface{} // write(post_nosql), write(notif_queue), read(notif_queue), 
+[] (-1) (BasicVariable BasicType) reqID int64 
+[_] (30) (Reference BasicType) ref <reqID int64> @ NotifyService 
+[__] (0) (BasicVariable BasicType) ReqID string 
+[___] (36) (Reference FieldType) ref <ReqID string> @ NotifyService 
+[____] (37) (BasicVariable BasicType) ReqID string 
+[_____] (38) (InterfaceVariable InterfaceType) ReqID interface{} // write(posts_db), write(notifications_queue), read(notifications_queue), 
 
-[] (BasicVariable BasicType) postID int64 // read(post_nosql), 
-[_] (Reference BasicType) ref <postID int64> @ NotifyService // read(post_nosql), 
-[__] (BasicVariable BasicType) PostID string // read(post_nosql), 
-[___] (Reference FieldType) ref <PostID string> @ NotifyService // read(post_nosql), 
-[____] (BasicVariable BasicType) PostID string // read(post_nosql), 
-[_____] (InterfaceVariable InterfaceType) PostID interface{} // write(post_nosql), write(notif_queue), read(notif_queue), read(post_nosql), 
+[] (46) (BasicVariable BasicType) postID int64 // read(posts_db), read(analytics_db), 
+[_] (32) (Reference BasicType) ref <postID int64> @ NotifyService // read(posts_db), read(analytics_db), 
+[__] (47) (BasicVariable BasicType) PostID string // read(posts_db), read(analytics_db), 
+[___] (39) (Reference FieldType) ref <PostID string> @ NotifyService // read(posts_db), read(analytics_db), 
+[____] (40) (BasicVariable BasicType) PostID string // read(posts_db), read(analytics_db), 
+[_____] (41) (InterfaceVariable InterfaceType) PostID interface{} // write(posts_db), write(analytics_queue), read(analytics_queue), write(analytics_db), write(notifications_queue), read(notifications_queue), read(posts_db), read(analytics_db), 
 
-[] (StructVariable UserType) post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} 
+[] (-1) (StructVariable UserType) post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} 
 
-[] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = post, collection = post} 
+[] (-1) (StructVariable UserType) analytics postnotification.Analytics struct{PostID int64} 
 
-[] (InterfaceVariable UserType) err .error 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = post, collection = post} 
 
-[] (SliceVariable UserType) query primitive.D // read(post_nosql), 
-[_] (StructVariable StructType) struct{Key "postid" string, Value int64} // read(post_nosql), 
-[__] (FieldVariable FieldType) Key "postid" string // read(post_nosql), 
-[___] (BasicVariable BasicType) "postid" string // read(post_nosql), 
-[__] (FieldVariable FieldType) Value int64 // read(post_nosql), 
-[___] (BasicVariable BasicType) postID int64 // read(post_nosql), 
-[____] (Reference BasicType) ref <postID int64> @ NotifyService // read(post_nosql), 
-[_____] (BasicVariable BasicType) PostID string // read(post_nosql), 
-[______] (Reference FieldType) ref <PostID string> @ NotifyService // read(post_nosql), 
-[_______] (BasicVariable BasicType) PostID string // read(post_nosql), 
-[________] (InterfaceVariable InterfaceType) PostID interface{} // write(post_nosql), write(notif_queue), read(notif_queue), read(post_nosql), 
+[] (-1) (InterfaceVariable UserType) err .error 
 
-[] (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database = post, collection = post} // read(post_nosql), 
+[] (-1) (SliceVariable UserType) query primitive.D // read(posts_db), 
+[_] (0) (StructVariable StructType) struct{Key "postid" string, Value int64} // read(posts_db), 
+[__] (0) (FieldVariable FieldType) Key "postid" string // read(posts_db), 
+[___] (0) (BasicVariable BasicType) "postid" string // read(posts_db), 
+[__] (0) (FieldVariable FieldType) Value int64 // read(posts_db), 
+[___] (46) (BasicVariable BasicType) postID int64 // read(posts_db), read(analytics_db), 
+[____] (32) (Reference BasicType) ref <postID int64> @ NotifyService // read(posts_db), read(analytics_db), 
+[_____] (47) (BasicVariable BasicType) PostID string // read(posts_db), read(analytics_db), 
+[______] (39) (Reference FieldType) ref <PostID string> @ NotifyService // read(posts_db), read(analytics_db), 
+[_______] (40) (BasicVariable BasicType) PostID string // read(posts_db), read(analytics_db), 
+[________] (41) (InterfaceVariable InterfaceType) PostID interface{} // write(posts_db), write(analytics_queue), read(analytics_queue), write(analytics_db), write(notifications_queue), read(notifications_queue), read(posts_db), read(analytics_db), 
 
-[] (InterfaceVariable UserType) err .error 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database = post, collection = post} // read(posts_db), 
 
-[] (BasicVariable BasicType) res bool 
+[] (-1) (InterfaceVariable UserType) err .error 
 
-[] (InterfaceVariable UserType) err .error 
+[] (-1) (BasicVariable BasicType) res bool 
+
+[] (-1) (InterfaceVariable UserType) err .error 
+
+[] (-1) (StructVariable UserType) analytics postnotification.Analytics struct{PostID int64} 
+
+[] (-1) (InterfaceVariable UserType) err .error 
 

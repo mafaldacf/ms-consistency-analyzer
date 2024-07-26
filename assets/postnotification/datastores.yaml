@@ -1,4 +1,34 @@
-NOTIF_QUEUE:
+ANALYTICS_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- schema:
+  - fields:
+    - document: postnotification.Analytics struct{PostID int64}
+  - unfolded_fields:
+    - Analytics: postnotification.Analytics struct{PostID int64}
+    - Analytics.PostID: int64
+  - foreign_fields:
+    - Analytics:
+      - ANALYTICS_QUEUE.TriggerAnalyticsMessage.PostID
+      - POSTS_DB.Post.PostID
+    - Analytics.PostID:
+      - ANALYTICS_QUEUE.TriggerAnalyticsMessage.PostID
+      - POSTS_DB.Post.PostID
+ANALYTICS_QUEUE:
+- type: Queue
+- kind: RabbitMQ
+- schema:
+  - fields:
+    - message: postnotification.TriggerAnalyticsMessage struct{PostID string}
+  - unfolded_fields:
+    - TriggerAnalyticsMessage: postnotification.TriggerAnalyticsMessage struct{PostID string}
+    - TriggerAnalyticsMessage.PostID: string
+  - foreign_fields:
+    - TriggerAnalyticsMessage:
+      - POSTS_DB.Post.PostID
+    - TriggerAnalyticsMessage.PostID:
+      - POSTS_DB.Post.PostID
+NOTIFICATIONS_QUEUE:
 - type: Queue
 - kind: RabbitMQ
 - schema:
@@ -11,20 +41,24 @@ NOTIF_QUEUE:
     - Message.Timestamp: string
   - foreign_fields:
     - Message:
-      - POST_NOSQL.Post.PostID
-      - POST_NOSQL.Post.ReqID
+      - ANALYTICS_DB.Analytics.PostID
+      - ANALYTICS_QUEUE.TriggerAnalyticsMessage.PostID
+      - POSTS_DB.Post.PostID
+      - POSTS_DB.Post.ReqID
     - Message.ReqID:
-      - POST_NOSQL.Post.ReqID
+      - POSTS_DB.Post.ReqID
     - Message.PostID:
-      - POST_NOSQL.Post.PostID
-POST_CACHE:
+      - ANALYTICS_DB.Analytics.PostID
+      - ANALYTICS_QUEUE.TriggerAnalyticsMessage.PostID
+      - POSTS_DB.Post.PostID
+POSTS_CACHE:
 - type: Cache
 - kind: Redis
 - schema:
   - fields: []
   - unfolded_fields: []
   - foreign_fields: []
-POST_NOSQL:
+POSTS_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
 - schema:

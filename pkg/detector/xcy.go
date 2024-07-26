@@ -208,8 +208,8 @@ func (request *Request) captureInconsistency(read *Operation, readCall *abstract
 			}
 
 			logger.Logger.Debugf("[XCY] evaluating XCY violation for read (%s @ %s) and write (%s @ %s)", read.Key.GetVariableInfo().Name, readCall.DbInstance.GetName(), write.Key.GetVariableInfo().Name, write.Database.GetName())
-			readKeyDeps := read.Key.GetNestedIndirectDependencies()
-			writeValueDeps := write.Object.GetNestedIndirectDependencies()
+			readKeyDeps := read.Key.GetNestedDependencies(false)
+			writeValueDeps := write.Object.GetNestedDependencies(false)
 
 			logger.Logger.Tracef("[READ KEY] dependencies for (%s) %s: \n%v", utils.GetType(read.Key), read.Key.String(), variables.GetDependenciesStringLst(readKeyDeps...))
 			logger.Logger.Tracef("[WRITE VALUE] dependencies for (%s) %s: \n%v", utils.GetType(write.Object), write.Object.String(), variables.GetDependenciesStringLst(writeValueDeps...))

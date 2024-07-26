@@ -6,6 +6,7 @@ import (
 
 type BackendVariable struct {
 	Variable     `json:"-"`
+	Origin       *Variable
 	VariableInfo *VariableInfo `json:"variable"`
 }
 
@@ -29,7 +30,7 @@ func (v *BackendVariable) GetDependencies() []Variable {
 	return nil
 }
 
-func (v *BackendVariable) GetNestedIndirectDependencies() []Variable {
+func (v *BackendVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	return nil
 }
 
@@ -40,7 +41,7 @@ func (v *BackendVariable) DeepCopy(force bool) Variable {
 }
 
 func (v *BackendVariable) AddReferenceWithID(target Variable, creator string) {
-	v.VariableInfo.AddReferenceWithID(target, creator)
+	v.VariableInfo.AddReferenceWithID(v, target, creator)
 }
 
 func (v *BackendVariable) GetUnassaignedVariables() []Variable {

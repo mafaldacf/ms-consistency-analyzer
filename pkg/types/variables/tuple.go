@@ -25,6 +25,13 @@ func (v *TupleVariable) GetVariables() []Variable {
 	return v.Variables
 }
 
+func (v *TupleVariable) AddReferenceWithID(target Variable, creator string) {
+	v.VariableInfo.AddReferenceWithID(v, target, creator)
+	for i := 0; i < len(v.Variables); i++ {
+		v.AddReferenceWithID(target.GetElementAt(i), creator)
+	}
+}
+
 func (v *TupleVariable) MergeTupleVariable(tupleVariable *TupleVariable) {
 	logger.Logger.Warnf("[VARS TUPLE] merging tuple variable (%s) to (%s)", tupleVariable.String(), v.String())
 	v.Variables = append(v.Variables, tupleVariable.GetVariables()...)
@@ -58,13 +65,13 @@ func (v *TupleVariable) GetDependencies() []Variable {
 	return v.Variables
 }
 
-func (v *TupleVariable) GetNestedIndirectDependencies() []Variable {
+func (v *TupleVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	var deps = []Variable{v}
-	if v.GetVariableInfo().HasReference() {
-		deps = append(deps, v.GetVariableInfo().GetReference().GetNestedIndirectDependencies()...)
+	if v.GetVariableInfo().HasReferences() {
+		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
 	}
 	for _, elem := range v.Variables {
-		deps = append(deps, elem.GetNestedIndirectDependencies()...)
+		deps = append(deps, elem.GetNestedDependencies(nearestFields)...)
 	}
 	return deps
 }
@@ -94,7 +101,9 @@ func (v *TupleVariable) LongString() string {
 func (v *TupleVariable) DeepCopy(force bool) Variable {
 	copy := &TupleVariable{VariableInfo: v.VariableInfo.DeepCopy(force)}
 	for _, v := range v.Variables {
-		copy.Variables = append(copy.Variables, v.DeepCopy(force))
+		newElem := v.DeepCopy(force)
+		copy.Variables = append(copy.Variables, newElem)
+		newElem.GetVariableInfo().SetParent(newElem, copy)
 	}
 	return copy
 }

@@ -36,12 +36,12 @@ func (v *AddressVariable) GetDependencies() []Variable {
 	return []Variable{v.AddressOf}
 }
 
-func (v *AddressVariable) GetNestedIndirectDependencies() []Variable {
+func (v *AddressVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	var deps = []Variable{v}
-	if v.GetVariableInfo().HasReference() {
-		deps = append(deps, v.GetVariableInfo().GetReference().GetNestedIndirectDependencies()...)
+	if v.GetVariableInfo().HasReferences() {
+		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
 	}
-	deps = append(deps, v.AddressOf.GetNestedIndirectDependencies()...)
+	deps = append(deps, v.AddressOf.GetNestedDependencies(nearestFields)...)
 	return deps
 }
 
@@ -62,6 +62,7 @@ func (v *AddressVariable) DeepCopy(force bool) Variable {
 		VariableInfo: v.VariableInfo.DeepCopy(force),
 		AddressOf:    v.AddressOf, // underlying values of addresses are never deep copied
 	}
+	copy.AddressOf.GetVariableInfo().SetParent(copy.AddressOf, copy)
 	return copy
 }
 

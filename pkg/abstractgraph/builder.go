@@ -186,9 +186,9 @@ func (graph *AbstractGraph) referenceMethodBlockVars(parsedCall types.Call, chil
 		logger.Logger.Infof("\t\t[REF BLOCK VAR] added reference (%d) from creator (%s): (%s) -> (%s)", blockVar.GetId(), child.GetCallerStr(), blockVar.GetType().GetName(), param.GetVariableInfo().GetName())
 		if _, ok := blockVar.(*variables.StructVariable); ok {
 			logger.Logger.Debugf("WTFFFFFFF!!!!")
-			variables.GetReversedNestedFieldsAndNames(blockVar, true, "")
+			variables.GetReversedNestedFieldsAndNames(blockVar, "")
 		}
-		for _, dep := range param.GetNestedIndirectDependencies() {
+		for _, dep := range param.GetNestedDependencies(false) {
 			if dep.GetVariableInfo().IsUnassigned() {
 				dep.GetVariableInfo().AssignID(graph.getAndIncGIndex())
 				logger.Logger.Debugf("\t\t\t[GID DEP] assigned new gid (%d) to (%s)", dep.GetId(), dep.String())
@@ -212,7 +212,7 @@ func (graph *AbstractGraph) referenceQueuePopMethodBlockVars(queueHandler *Abstr
 		popParam = variables.UnwrapAddressVariable(popParam)
 
 		logger.Logger.Warnf("FIXMEEEEEEEEEE! IDK IF IT IS WORKING IN NOTIFY BECAUSE OF ASSIGNMENTS AND ASSERTS AFTERWARDS")
-		for _, dep := range pushParam.GetNestedIndirectDependencies() {
+		for _, dep := range pushParam.GetNestedDependencies(false) {
 			if dep.GetVariableInfo().IsUnassigned() {
 				dep.GetVariableInfo().AssignID(graph.getAndIncGIndex())
 				logger.Logger.Debugf("\t\t\t[QUEUE POP - GID DEP] assigned new gid (%d) to (%s)", dep.GetId(), dep.String())

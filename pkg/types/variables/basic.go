@@ -42,20 +42,20 @@ func (v *BasicVariable) GetDependencies() []Variable {
 	return v.UnderlyingVariables
 }
 
-func (v *BasicVariable) GetNestedIndirectDependencies() []Variable {
+func (v *BasicVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	var deps = []Variable{v}
-	if v.GetVariableInfo().HasReference() {
-		deps = append(deps, v.GetVariableInfo().GetReference().GetNestedIndirectDependencies()...)
+	if v.GetVariableInfo().HasReferences() {
+		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
 	}
 	for _, elem := range v.UnderlyingVariables {
 		logger.Logger.Tracef("GOT NESTED DEP FOR ELEM %s (%s)", elem.String(), GetVariableTypeAndTypeString(elem))
-		deps = append(deps, elem.GetNestedIndirectDependencies()...)
+		deps = append(deps, elem.GetNestedDependencies(nearestFields)...)
 	}
 	return deps
 }
 
 func (v *BasicVariable) AddReferenceWithID(target Variable, creator string) {
-	v.VariableInfo.AddReferenceWithID(target, creator)
+	v.VariableInfo.AddReferenceWithID(v, target, creator)
 	for _, v := range v.UnderlyingVariables {
 		v.AddReferenceWithID(target, creator)
 	}
@@ -89,4 +89,5 @@ func (v *BasicVariable) UpgradeFromPreviousInterface(interfaceVariable *Interfac
 	v.GetVariableInfo().Dataflows = interfaceVariable.GetVariableInfo().Dataflows
 	v.GetVariableInfo().IndirectDataflows = interfaceVariable.GetVariableInfo().IndirectDataflows */
 	v.UnderlyingVariables = append(v.UnderlyingVariables, interfaceVariable)
+	interfaceVariable.GetVariableInfo().AddParent(interfaceVariable, v)
 }

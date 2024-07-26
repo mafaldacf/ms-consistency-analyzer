@@ -24,7 +24,8 @@ type Variable interface {
 	GetType() gotypes.Type
 	AssignVariable(variable Variable)
 	UpgradeFromPreviousInterface(interfaceVariable *InterfaceVariable)
-	GetNestedIndirectDependencies() []Variable
+	GetNestedDependencies(nearestFields bool) []Variable
+	GetElementAt(index int) Variable
 }
 
 func GetVariableTypeAndTypeString(v Variable) string {
@@ -116,7 +117,7 @@ func AddUnderlyingDependencies(variable Variable, deps []Variable) bool {
 	return false
 }
 
-func GetReversedNestedFieldsAndNames(variable Variable, includeReferences bool, fieldName string) (nestedVariables []Variable, nestedNames []string) {
+func GetReversedNestedFieldsAndNames(variable Variable, fieldName string) (nestedVariables []Variable, nestedNames []string) {
 	logger.Logger.Debugf("[VARS] get reversed nested fields and names for variable (%s): %s", utils.GetType(variable), variable.String())
 
 	// e.g. in queue.pop we need to explicitly specify the fieldname otherwise it will be wrong because we are reading from an inteface
@@ -127,12 +128,7 @@ func GetReversedNestedFieldsAndNames(variable Variable, includeReferences bool, 
 	if structVariable, ok := variable.(*StructVariable); ok {
 		variables := []Variable{structVariable}
 		names := []string{fieldName}
-
-		if includeReferences {
-			nestedVariables, nestedNames = structVariable.GetNestedFieldVariablesWithReferences(fieldName)
-		} else {
-			nestedVariables, nestedNames = structVariable.GetNestedFieldVariables(fieldName)
-		}
+		nestedVariables, nestedNames = structVariable.GetNestedFieldVariablesWithReferences(fieldName)
 
 		variables = append(variables, nestedVariables...)
 		names = append(names, nestedNames...)
@@ -142,12 +138,7 @@ func GetReversedNestedFieldsAndNames(variable Variable, includeReferences bool, 
 	} else if mapVariable, ok := variable.(*MapVariable); ok {
 		variables := []Variable{mapVariable}
 		names := []string{fieldName}
-
-		if includeReferences {
-			nestedVariables, nestedNames = mapVariable.GetNestedFieldVariablesWithReferences(fieldName)
-		} else {
-			nestedVariables, nestedNames = mapVariable.GetNestedFieldVariables(fieldName)
-		}
+		nestedVariables, nestedNames = mapVariable.GetNestedFieldVariablesWithReferences(fieldName)
 
 		variables = append(variables, nestedVariables...)
 		names = append(names, nestedNames...)
@@ -155,7 +146,7 @@ func GetReversedNestedFieldsAndNames(variable Variable, includeReferences bool, 
 		slices.Reverse(names)
 		return variables, names
 	} else if addressVariable, ok := variable.(*AddressVariable); ok {
-		return GetReversedNestedFieldsAndNames(addressVariable.AddressOf, includeReferences, fieldName)
+		return GetReversedNestedFieldsAndNames(addressVariable.AddressOf, fieldName)
 	} else {
 		logger.Logger.Fatalf("unexpected type (%s) for variable (%s)", utils.GetType(variable), variable.String())
 	}

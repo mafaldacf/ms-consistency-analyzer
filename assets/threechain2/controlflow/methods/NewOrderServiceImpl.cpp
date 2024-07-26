@@ -1,8 +1,8 @@
-[] (InterfaceVariable UserType) ctx context.Context 
+[] (-1) (InterfaceVariable UserType) ctx context.Context 
 
-[] (ServiceVariable ServiceType) stock_service threechain2.StockService 
+[] (-1) (ServiceVariable ServiceType) stock_service threechain2.StockService 
 
-[] (BlueprintBackendVariable BlueprintBackendType) order_db NoSQLDatabase 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) order_db NoSQLDatabase 
 
-[] (BlueprintBackendVariable BlueprintBackendType) shipment_queue Queue 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) shipment_queue Queue 
 

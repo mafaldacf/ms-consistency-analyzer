@@ -35,19 +35,19 @@ func (v *GenericVariable) GetDependencies() []Variable {
 	return v.Params
 }
 
-func (v *GenericVariable) GetNestedIndirectDependencies() []Variable {
+func (v *GenericVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	var deps = []Variable{v}
-	if v.GetVariableInfo().HasReference() {
-		deps = append(deps, v.GetVariableInfo().GetReference().GetNestedIndirectDependencies()...)
+	if v.GetVariableInfo().HasReferences() {
+		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
 	}
 	for _, elem := range v.Params {
-		deps = append(deps, elem.GetNestedIndirectDependencies()...)
+		deps = append(deps, elem.GetNestedDependencies(nearestFields)...)
 	}
 	return deps
 }
 
 func (v *GenericVariable) AddReferenceWithID(target Variable, creator string) {
-	v.VariableInfo.AddReferenceWithID(target, creator)
+	v.VariableInfo.AddReferenceWithID(v, target, creator)
 	if targetGeneric, ok := target.(*GenericVariable); ok {
 		for i, p := range v.Params {
 			if i > len(targetGeneric.Params) {

@@ -1,11 +1,13 @@
 (*NotifyServiceImpl).Run(ctx context.Context):
 - (*postnotification.NotifyServiceImpl).workerThread(ctx context.Context, workerID int) error
 (*NotifyServiceImpl).handleMessage(ctx context.Context, message postnotification.Message struct{ReqID string, PostID string, Timestamp string}):
-	- (*postnotification.StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}, error)
+	- (*postnotification.StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}, postnotification.Analytics struct{PostID int64}, error)
 (*NotifyServiceImpl).workerThread(ctx context.Context, workerID int):
 - Queue.Pop(ctx context.Context, item interface{}) (err, interface{})
 - (*postnotification.NotifyServiceImpl).handleMessage(ctx context.Context, message postnotification.Message struct{ReqID string, PostID string, Timestamp string})
   error
-.NewNotifyServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue): []
-.NewStorageServiceImpl(ctx context.Context, cache Cache, db NoSQLDatabase): []
-.NewUploadServiceImpl(ctx context.Context, storageService postnotification.StorageService, queue Queue): []
+.NewAnalyticsServiceImpl(ctx context.Context, analytics_db NoSQLDatabase, analytics_queue Queue): []
+.NewNotifyServiceImpl(ctx context.Context, storage_service postnotification.StorageService, notifications_queue Queue): []
+.NewStorageServiceImpl(ctx context.Context, analytics_service postnotification.AnalyticsService, posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue):
+ []
+.NewUploadServiceImpl(ctx context.Context, storage_service postnotification.StorageService, notifications_queue Queue): []

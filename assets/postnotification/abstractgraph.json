@@ -18,19 +18,73 @@
                 "variable": {
                   "name": "ctx",
                   "type": "context.Context",
-                  "ref": {
-                    "name": "ctx",
-                    "creator": "UploadService"
-                  }
+                  "refs": [
+                    {
+                      "name": "ctx",
+                      "creator": "UploadService"
+                    }
+                  ]
                 }
               },
               {
+                "Origin": null,
                 "variable": {
                   "name": "post",
                   "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}",
-                  "ref": {
-                    "name": "post",
-                    "creator": "UploadService"
+                  "refs": [
+                    {
+                      "name": "post",
+                      "creator": "UploadService"
+                    }
+                  ]
+                },
+                "omitempty": null
+              }
+            ],
+            "returns": [
+              {
+                "variable": {
+                  "name": "err",
+                  "type": ".error"
+                }
+              }
+            ],
+            "datastore": "posts_db"
+          },
+          {
+            "method": "Queue.Push(ctx context.Context, item interface{})",
+            "depth": 2,
+            "caller": "StorageService",
+            "params": [
+              {
+                "variable": {
+                  "name": "ctx",
+                  "type": "context.Context",
+                  "refs": [
+                    {
+                      "name": "ctx",
+                      "creator": "UploadService"
+                    }
+                  ]
+                }
+              },
+              {
+                "Origin": null,
+                "variable": {
+                  "name": "message",
+                  "type": "postnotification.TriggerAnalyticsMessage struct{PostID string}"
+                },
+                "struct_fields": {
+                  "PostID": {
+                    "variable": {
+                      "name": "PostID",
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "type": "string"
+                      }
+                    }
                   }
                 },
                 "omitempty": null
@@ -39,11 +93,132 @@
             "returns": [
               {
                 "variable": {
+                  "name": "_",
+                  "type": "bool"
+                }
+              },
+              {
+                "variable": {
+                  "name": "err",
                   "type": ".error"
                 }
               }
             ],
-            "datastore": "post_nosql"
+            "queue_handlers": [
+              {
+                "method": "(*AnalyticsServiceImpl).workerThread(ctx context.Context)",
+                "depth": 3,
+                "caller": "analytics_queue RabbitMQ",
+                "edges": [
+                  {
+                    "method": "Queue.Pop(ctx context.Context, item interface{})",
+                    "depth": 4,
+                    "caller": "AnalyticsService",
+                    "params": [
+                      {
+                        "variable": {
+                          "name": "ctx",
+                          "type": "context.Context"
+                        }
+                      },
+                      {
+                        "variable": {
+                          "name": "event",
+                          "type": "(\u0026postnotification.TriggerAnalyticsMessage struct{PostID string})"
+                        },
+                        "addr_of": {
+                          "Origin": null,
+                          "variable": {
+                            "name": "event",
+                            "type": "postnotification.TriggerAnalyticsMessage struct{PostID string}",
+                            "refs": [
+                              {
+                                "name": "message",
+                                "creator": "AnalyticsService"
+                              }
+                            ]
+                          },
+                          "omitempty": null
+                        }
+                      }
+                    ],
+                    "returns": [
+                      {
+                        "variable": {
+                          "type": "bool"
+                        }
+                      },
+                      {
+                        "variable": {
+                          "type": ".error"
+                        }
+                      }
+                    ],
+                    "datastore": "analytics_queue",
+                    "subscriber": true
+                  },
+                  {
+                    "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+                    "depth": 4,
+                    "caller": "AnalyticsService",
+                    "params": [
+                      {
+                        "variable": {
+                          "name": "ctx",
+                          "type": "context.Context",
+                          "refs": [
+                            {
+                              "name": "ctx",
+                              "creator": "AnalyticsService"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "Origin": null,
+                        "variable": {
+                          "name": "analytics",
+                          "type": "postnotification.Analytics struct{PostID int64}"
+                        },
+                        "struct_fields": {
+                          "PostID": {
+                            "variable": {
+                              "name": "PostID",
+                              "type": "int64"
+                            },
+                            "wrapped_variable": {
+                              "variable": {
+                                "name": "postID",
+                                "type": "int64"
+                              }
+                            }
+                          }
+                        },
+                        "omitempty": null
+                      }
+                    ],
+                    "returns": [
+                      {
+                        "variable": {
+                          "type": ".error"
+                        }
+                      }
+                    ],
+                    "datastore": "analytics_db",
+                    "subscriber": true
+                  }
+                ],
+                "params": [
+                  {
+                    "variable": {
+                      "name": "ctx",
+                      "type": "context.Context"
+                    }
+                  }
+                ]
+              }
+            ],
+            "datastore": "analytics_queue"
           }
         ],
         "params": [
@@ -57,13 +232,16 @@
             "variable": {
               "name": "reqID",
               "type": "int64",
-              "ref": {
-                "name": "ReqID",
-                "creator": "NotifyService"
-              }
+              "refs": [
+                {
+                  "name": "ReqID",
+                  "creator": "NotifyService"
+                }
+              ]
             }
           },
           {
+            "Origin": null,
             "variable": {
               "name": "post",
               "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}"
@@ -75,6 +253,7 @@
                   "type": "postnotification.Creator struct{Username string}"
                 },
                 "wrapped_variable": {
+                  "Origin": null,
                   "variable": {
                     "type": "postnotification.Creator struct{Username string}"
                   },
@@ -127,10 +306,12 @@
                   "variable": {
                     "name": "postID",
                     "type": "int64",
-                    "ref": {
-                      "name": "PostID",
-                      "creator": "NotifyService"
-                    }
+                    "refs": [
+                      {
+                        "name": "PostID",
+                        "creator": "NotifyService"
+                      }
+                    ]
                   }
                 }
               },
@@ -143,10 +324,12 @@
                   "variable": {
                     "name": "reqID",
                     "type": "int64",
-                    "ref": {
-                      "name": "ReqID",
-                      "creator": "NotifyService"
-                    }
+                    "refs": [
+                      {
+                        "name": "ReqID",
+                        "creator": "NotifyService"
+                      }
+                    ]
                   }
                 }
               },
@@ -198,6 +381,7 @@
             }
           },
           {
+            "Origin": null,
             "variable": {
               "name": "message",
               "type": "postnotification.Message struct{ReqID string, PostID string, Timestamp string}"
@@ -207,18 +391,22 @@
                 "variable": {
                   "name": "PostID",
                   "type": "string",
-                  "ref": {
-                    "name": "PostID",
-                    "creator": "NotifyService"
-                  }
+                  "refs": [
+                    {
+                      "name": "PostID",
+                      "creator": "NotifyService"
+                    }
+                  ]
                 },
                 "wrapped_variable": {
                   "variable": {
                     "type": "string",
-                    "ref": {
-                      "name": "PostID",
-                      "creator": "NotifyService"
-                    }
+                    "refs": [
+                      {
+                        "name": "PostID",
+                        "creator": "NotifyService"
+                      }
+                    ]
                   }
                 }
               },
@@ -226,18 +414,22 @@
                 "variable": {
                   "name": "ReqID",
                   "type": "string",
-                  "ref": {
-                    "name": "ReqID",
-                    "creator": "NotifyService"
-                  }
+                  "refs": [
+                    {
+                      "name": "ReqID",
+                      "creator": "NotifyService"
+                    }
+                  ]
                 },
                 "wrapped_variable": {
                   "variable": {
                     "type": "string",
-                    "ref": {
-                      "name": "ReqID",
-                      "creator": "NotifyService"
-                    }
+                    "refs": [
+                      {
+                        "name": "ReqID",
+                        "creator": "NotifyService"
+                      }
+                    ]
                   }
                 }
               }
@@ -263,7 +455,7 @@
           {
             "method": "(*NotifyServiceImpl).workerThread(ctx context.Context, workerID int)",
             "depth": 2,
-            "caller": "notif_queue RabbitMQ",
+            "caller": "notifications_queue RabbitMQ",
             "edges": [
               {
                 "method": "Queue.Pop(ctx context.Context, item interface{})",
@@ -285,25 +477,14 @@
                       "variable": {
                         "name": "event",
                         "type": "map[string]interface{}",
-                        "ref": {
-                          "name": "message",
-                          "creator": "NotifyService"
-                        }
+                        "refs": [
+                          {
+                            "name": "message",
+                            "creator": "NotifyService"
+                          }
+                        ]
                       },
                       "key_values": [
-                        {
-                          "Key": {
-                            "variable": {
-                              "type": "\"Timestamp\" string"
-                            }
-                          },
-                          "Value": {
-                            "variable": {
-                              "name": "Timestamp",
-                              "type": "interface{}"
-                            }
-                          }
-                        },
                         {
                           "Key": {
                             "variable": {
@@ -329,6 +510,19 @@
                               "type": "interface{}"
                             }
                           }
+                        },
+                        {
+                          "Key": {
+                            "variable": {
+                              "type": "\"Timestamp\" string"
+                            }
+                          },
+                          "Value": {
+                            "variable": {
+                              "name": "Timestamp",
+                              "type": "interface{}"
+                            }
+                          }
                         }
                       ]
                     }
@@ -346,7 +540,7 @@
                     }
                   }
                 ],
-                "datastore": "notif_queue",
+                "datastore": "notifications_queue",
                 "subscriber": true
               },
               {
@@ -363,10 +557,12 @@
                         "variable": {
                           "name": "ctx",
                           "type": "context.Context",
-                          "ref": {
-                            "name": "ctx",
-                            "creator": "NotifyService"
-                          }
+                          "refs": [
+                            {
+                              "name": "ctx",
+                              "creator": "NotifyService"
+                            }
+                          ]
                         }
                       },
                       {
@@ -376,6 +572,7 @@
                         },
                         "slice_variables": [
                           {
+                            "Origin": null,
                             "variable": {
                               "type": "struct{Key \"postid\" string, Value int64}"
                             },
@@ -400,10 +597,12 @@
                                   "variable": {
                                     "name": "postID",
                                     "type": "int64",
-                                    "ref": {
-                                      "name": "postID",
-                                      "creator": "NotifyService"
-                                    }
+                                    "refs": [
+                                      {
+                                        "name": "postID",
+                                        "creator": "NotifyService"
+                                      }
+                                    ]
                                   }
                                 }
                               }
@@ -427,7 +626,136 @@
                         }
                       }
                     ],
-                    "datastore": "post_nosql"
+                    "datastore": "posts_db"
+                  },
+                  {
+                    "method": "(*AnalyticsServiceImpl).ReadAnalytics(ctx context.Context, postID int64)",
+                    "depth": 4,
+                    "caller": "StorageService",
+                    "edges": [
+                      {
+                        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+                        "depth": 5,
+                        "caller": "AnalyticsService",
+                        "params": [
+                          {
+                            "variable": {
+                              "name": "ctx",
+                              "type": "context.Context",
+                              "refs": [
+                                {
+                                  "name": "ctx",
+                                  "creator": "StorageService"
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "variable": {
+                              "name": "query",
+                              "type": "primitive.D"
+                            },
+                            "slice_variables": [
+                              {
+                                "Origin": null,
+                                "variable": {
+                                  "type": "struct{Key \"postid\" string, Value int64}"
+                                },
+                                "struct_fields": {
+                                  "Key": {
+                                    "variable": {
+                                      "name": "Key",
+                                      "type": "\"postid\" string"
+                                    },
+                                    "wrapped_variable": {
+                                      "variable": {
+                                        "type": "\"postid\" string"
+                                      }
+                                    }
+                                  },
+                                  "Value": {
+                                    "variable": {
+                                      "name": "Value",
+                                      "type": "int64"
+                                    },
+                                    "wrapped_variable": {
+                                      "variable": {
+                                        "name": "postID",
+                                        "type": "int64",
+                                        "refs": [
+                                          {
+                                            "name": "postID",
+                                            "creator": "StorageService"
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                },
+                                "omitempty": null
+                              }
+                            ]
+                          }
+                        ],
+                        "returns": [
+                          {
+                            "variable": {
+                              "name": "result",
+                              "type": "NoSQLCursor {database = analytics_db, collection = analytics_collection}"
+                            }
+                          },
+                          {
+                            "variable": {
+                              "name": "err",
+                              "type": ".error"
+                            }
+                          }
+                        ],
+                        "datastore": "analytics_db"
+                      }
+                    ],
+                    "params": [
+                      {
+                        "variable": {
+                          "name": "ctx",
+                          "type": "context.Context",
+                          "refs": [
+                            {
+                              "name": "ctx",
+                              "creator": "NotifyService"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "variable": {
+                          "name": "postID",
+                          "type": "int64",
+                          "refs": [
+                            {
+                              "name": "postID",
+                              "creator": "NotifyService"
+                            }
+                          ]
+                        }
+                      }
+                    ],
+                    "returns": [
+                      {
+                        "Origin": null,
+                        "variable": {
+                          "name": "analytics",
+                          "type": "postnotification.Analytics struct{PostID int64}"
+                        },
+                        "omitempty": null
+                      },
+                      {
+                        "variable": {
+                          "name": "err",
+                          "type": ".error"
+                        }
+                      }
+                    ]
                   }
                 ],
                 "params": [
@@ -435,10 +763,12 @@
                     "variable": {
                       "name": "ctx",
                       "type": "context.Context",
-                      "ref": {
-                        "name": "ctx",
-                        "creator": "NotifyService"
-                      }
+                      "refs": [
+                        {
+                          "name": "ctx",
+                          "creator": "NotifyService"
+                        }
+                      ]
                     }
                   },
                   {
@@ -456,9 +786,18 @@
                 ],
                 "returns": [
                   {
+                    "Origin": null,
                     "variable": {
                       "name": "_",
                       "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}"
+                    },
+                    "omitempty": null
+                  },
+                  {
+                    "Origin": null,
+                    "variable": {
+                      "name": "_",
+                      "type": "postnotification.Analytics struct{PostID int64}"
                     },
                     "omitempty": null
                   },
@@ -487,7 +826,7 @@
             ]
           }
         ],
-        "datastore": "notif_queue"
+        "datastore": "notifications_queue"
       }
     ],
     "params": [

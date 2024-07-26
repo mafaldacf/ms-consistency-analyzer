@@ -1,25 +1,38 @@
-NotifyService:
+AnalyticsService:
 - fields:
-    numWorkers: 4 int
-    queue: Queue
-    storageService: StorageService
-- services:
-    StorageService: postnotification.StorageService
-- datastores:
-    notif_queue: Queue
-StorageService:
-- fields:
-    cache: Cache
-    db: NoSQLDatabase
+    analytics_db: NoSQLDatabase
+    analytics_queue: Queue
+    num_workers: 4 int
 - services: {}
 - datastores:
-    post_cache: Cache
-    post_nosql: NoSQLDatabase
-UploadService:
+    analytics_db: NoSQLDatabase
+    analytics_queue: Queue
+NotifyService:
 - fields:
-    queue: Queue
-    storageService: StorageService
+    notifications_queue: Queue
+    num_workers: 4 int
+    storage_service: StorageService
 - services:
     StorageService: postnotification.StorageService
 - datastores:
-    notif_queue: Queue
+    notifications_queue: Queue
+StorageService:
+- fields:
+    analytics_queue: Queue
+    analytics_service: AnalyticsService
+    posts_cache: Cache
+    posts_db: NoSQLDatabase
+- services:
+    AnalyticsService: postnotification.AnalyticsService
+- datastores:
+    analytics_queue: Queue
+    posts_cache: Cache
+    posts_db: NoSQLDatabase
+UploadService:
+- fields:
+    notifications_queue: Queue
+    storage_service: StorageService
+- services:
+    StorageService: postnotification.StorageService
+- datastores:
+    notifications_queue: Queue

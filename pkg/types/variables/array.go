@@ -20,10 +20,14 @@ func (v *ArrayVariable) UpgradeToSlice() *SliceVariable {
 	v.VariableInfo.Type = &gotypes.SliceType{
 		UnderlyingType: v.GetArrayType().ElementsType,
 	}
-	return &SliceVariable{
+	sliceVariable := &SliceVariable{
 		VariableInfo: v.VariableInfo,
 		Elements:     v.Elements,
 	}
+	for _, elem := range sliceVariable.Elements {
+		elem.GetVariableInfo().SetParent(elem, sliceVariable)
+	}
+	return sliceVariable
 }
 
 func (v *ArrayVariable) LongString() string {
@@ -35,6 +39,13 @@ func (v *ArrayVariable) LongString() string {
 		}
 	}
 	return s + ")"
+}
+
+func (v *ArrayVariable) AddReferenceWithID(target Variable, creator string) {
+	v.VariableInfo.AddReferenceWithID(v, target, creator)
+	for i := 0; i < len(v.Elements); i++ {
+		v.AddReferenceWithID(target.GetElementAt(i), creator)
+	}
 }
 
 func (v *ArrayVariable) GetElements() []Variable {
@@ -99,13 +110,13 @@ func (v *ArrayVariable) GetDependencies() []Variable {
 	return v.Elements
 }
 
-func (v *ArrayVariable) GetNestedIndirectDependencies() []Variable {
+func (v *ArrayVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	var deps = []Variable{v}
-	if v.GetVariableInfo().HasReference() {
-		deps = append(deps, v.GetVariableInfo().GetReference().GetNestedIndirectDependencies()...)
+	if v.GetVariableInfo().HasReferences() {
+		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
 	}
 	for _, elem := range v.Elements {
-		deps = append(deps, elem.GetNestedIndirectDependencies()...)
+		deps = append(deps, elem.GetNestedDependencies(nearestFields)...)
 	}
 	return deps
 }
@@ -114,8 +125,10 @@ func (v *ArrayVariable) DeepCopy(force bool) Variable {
 	copy := &ArrayVariable{
 		VariableInfo: v.VariableInfo.DeepCopy(force),
 	}
-	for _, v := range v.Elements {
-		copy.Elements = append(copy.Elements, v.DeepCopy(force))
+	for _, elem := range v.Elements {
+		newElem := elem.DeepCopy(force)
+		copy.Elements = append(copy.Elements, newElem)
+		newElem.GetVariableInfo().SetParent(newElem, copy)
 	}
 	return copy
 }
