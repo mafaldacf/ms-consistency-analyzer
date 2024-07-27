@@ -1,19 +1,19 @@
-[] (PointerVariable PointerType) c (*config.ConfigServiceImpl struct{db NoSQLDatabase}) 
-[_] (StructVariable UserType) config.ConfigServiceImpl struct{db NoSQLDatabase} 
-[__] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
+[] (-1) (PointerVariable PointerType) c (*config.ConfigServiceImpl struct{db NoSQLDatabase}) 
+[_] (0) (StructVariable UserType) config.ConfigServiceImpl struct{db NoSQLDatabase} 
+[__] (-1) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
 
-[] (InterfaceVariable UserType) ctx context.Context 
+[] (-1) (InterfaceVariable UserType) ctx context.Context 
 
-[] (StructVariable UserType) conf config.Config struct{Name string, Value string, Description string} 
-[_] (FieldVariable FieldType) Name string 
-[__] (BasicVariable BasicType) Name string 
+[] (-1) (StructVariable UserType) conf config.Config struct{Name string, Value string, Description string} 
+[_] (-1) (FieldVariable FieldType) Name string 
+[__] (-1) (BasicVariable BasicType) Name string 
 
-[] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = config, collection = config} 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = config, collection = config} 
 
-[] (InterfaceVariable UserType) err .error 
+[] (-1) (InterfaceVariable UserType) err .error 
 
-[] (SliceVariable UserType) query primitive.D 
-[_] (StructVariable StructType) struct{ "name" string,  string} 
-[__] (FieldVariable FieldType) string 
-[___] (BasicVariable BasicType) Name string 
+[] (-1) (SliceVariable UserType) query primitive.D 
+[_] (0) (StructVariable StructType) struct{ "name" string,  string} 
+[__] (0) (FieldVariable FieldType) string 
+[___] (-1) (BasicVariable BasicType) Name string 
 

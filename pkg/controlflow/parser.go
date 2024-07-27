@@ -71,7 +71,7 @@ func assignLeftValues(service *service.Service, method *types.ParsedMethod, bloc
 					rvariable.GetVariableInfo().SetName(e.Name)
 					block.AddVariable(rvariable)
 					/* for _, d := range rvariable.GetNestedDependencies(false) {
-						logger.Logger.Debugf("\t\t\t- (%s) %s", variables.GetVariableTypeAndTypeString(d), d.String())
+						logger.Logger.Debugf("\t\t\t- (%s) %s", variables.VariableTypeName(d), d.String())
 					} */
 					/* if e.Name == "workerMessage" {
 						logger.Logger.Fatal("1 HERE!")
@@ -88,7 +88,7 @@ func assignLeftValues(service *service.Service, method *types.ParsedMethod, bloc
 					} */
 				} else {
 					logger.Logger.Warnf("[CFG] FIX ME!!!! WE SHOULD SEARCH FOR THE LEFT VARIABLE THAT ALREADY EXISTS IN THE BLOCK")
-					lvariable := rvariable.DeepCopy(true)
+					lvariable := rvariable.Copy(true)
 					lvariable.GetVariableInfo().SetName(e.Name)
 					lvariable.GetVariableInfo().SetUnassigned()
 					block.AddVariable(lvariable)
@@ -347,7 +347,7 @@ func computeExternalFuncCallReturns(service *service.Service, callExpr *ast.Call
 					newVar := lookup.CreateVariableFromType("", t)
 					ok := variables.AddUnderlyingDependencies(newVar, deps)
 					if !ok {
-						logger.Logger.Fatalf("[CFG CALLS] cannot keep variable (%s) (%s) for underlying deps list with len (%d): %v", variables.GetVariableTypeAndTypeString(newVar), newVar.String(), len(deps), deps)
+						logger.Logger.Fatalf("[CFG CALLS] cannot keep variable (%s) (%s) for underlying deps list with len (%d): %v", variables.VariableTypeName(newVar), newVar.String(), len(deps), deps)
 						newVar = &variables.GenericVariable{
 							VariableInfo: &variables.VariableInfo{
 								Type: newVar.GetType(),

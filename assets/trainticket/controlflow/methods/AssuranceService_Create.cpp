@@ -1,28 +1,28 @@
-[] (PointerVariable PointerType) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase}) 
-[_] (StructVariable UserType) assurance.AssuranceServiceImpl struct{db NoSQLDatabase} 
-[__] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
+[] (-1) (PointerVariable PointerType) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase}) 
+[_] (0) (StructVariable UserType) assurance.AssuranceServiceImpl struct{db NoSQLDatabase} 
+[__] (-1) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
 
-[] (InterfaceVariable UserType) ctx context.Context 
+[] (16) (InterfaceVariable UserType) ctx context.Context 
 
-[] (BasicVariable BasicType) typeindex int64 
+[] (17) (BasicVariable BasicType) typeindex int64 
 
-[] (BasicVariable BasicType) orderid string // write(assurance_db), 
+[] (-1) (BasicVariable BasicType) orderid string // write(assurance_db), 
 
-[] (StructVariable UserType) at assurance.AssuranceType struct{Index int64, Name string, Price float64} // write(assurance_db), 
+[] (-1) (StructVariable UserType) at assurance.AssuranceType struct{Index int64, Name string, Price float64} // write(assurance_db), 
 
-[] (InterfaceVariable UserType) err .error 
+[] (-1) (InterfaceVariable UserType) err .error 
 
-[] (BasicVariable BasicType) id string // write(assurance_db), 
+[] (-1) (BasicVariable BasicType) id string // write(assurance_db), 
 
-[] (StructVariable UserType) assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}} // write(assurance_db), 
-[_] (FieldVariable FieldType) ID string // write(assurance_db), 
-[__] (BasicVariable BasicType) id string // write(assurance_db), 
-[_] (FieldVariable FieldType) OrderID string // write(assurance_db), 
-[__] (BasicVariable BasicType) orderid string // write(assurance_db), 
-[_] (FieldVariable FieldType) AT assurance.AssuranceType struct{Index int64, Name string, Price float64} // write(assurance_db), 
-[__] (StructVariable UserType) at assurance.AssuranceType struct{Index int64, Name string, Price float64} // write(assurance_db), 
+[] (-1) (StructVariable UserType) assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}} // write(assurance_db), 
+[_] (-1) (FieldVariable FieldType) ID string // write(assurance_db), 
+[__] (-1) (BasicVariable BasicType) id string // write(assurance_db), 
+[_] (-1) (FieldVariable FieldType) OrderID string // write(assurance_db), 
+[__] (-1) (BasicVariable BasicType) orderid string // write(assurance_db), 
+[_] (-1) (FieldVariable FieldType) AT assurance.AssuranceType struct{Index int64, Name string, Price float64} // write(assurance_db), 
+[__] (-1) (StructVariable UserType) at assurance.AssuranceType struct{Index int64, Name string, Price float64} // write(assurance_db), 
 
-[] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = assurance, collection = assurance} 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = assurance, collection = assurance} 
 
-[] (InterfaceVariable UserType) err .error 
+[] (-1) (InterfaceVariable UserType) err .error 
 

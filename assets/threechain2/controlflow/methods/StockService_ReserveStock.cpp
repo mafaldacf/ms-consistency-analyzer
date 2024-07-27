@@ -13,8 +13,8 @@
 [] (-1) (InterfaceVariable UserType) _ .error 
 
 [] (-1) (StructVariable UserType) stock threechain2.Stock struct{Product string, Quantity int} 
-[_] (0) (FieldVariable FieldType) Product string 
-[__] (-1) (BasicVariable BasicType) product string 
 [_] (0) (FieldVariable FieldType) Quantity int 
 [__] (-1) (BasicVariable BasicType) quantity int 
+[_] (0) (FieldVariable FieldType) Product string 
+[__] (-1) (BasicVariable BasicType) product string 
 

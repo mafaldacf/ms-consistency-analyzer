@@ -1,6 +1,9 @@
 package variables
 
-import "analyzer/pkg/types/gotypes"
+import (
+	"analyzer/pkg/logger"
+	"analyzer/pkg/types/gotypes"
+)
 
 type InterfaceVariable struct {
 	Variable           `json:"-"`
@@ -57,12 +60,23 @@ func (v *InterfaceVariable) AddReferenceWithID(target Variable, creator string) 
 	}
 }
 
-func (v *InterfaceVariable) DeepCopy(force bool) Variable {
+func (v *InterfaceVariable) Copy(force bool) Variable {
 	copy := &InterfaceVariable{
-		VariableInfo: v.VariableInfo.DeepCopy(force),
+		VariableInfo: v.VariableInfo.Copy(force),
 	}
 	if v.UnderlyingVariable != nil {
-		copy.UnderlyingVariable = v.UnderlyingVariable.DeepCopy(force)
+		copy.UnderlyingVariable = v.UnderlyingVariable.Copy(force)
+	}
+	return copy
+}
+
+func (v *InterfaceVariable) DeepCopy() Variable {
+	logger.Logger.Debugf("[VARS INTERFACE - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
+	copy := &InterfaceVariable{
+		VariableInfo: v.VariableInfo.DeepCopy(),
+	}
+	if v.UnderlyingVariable != nil {
+		copy.UnderlyingVariable = v.UnderlyingVariable.DeepCopy()
 	}
 	return copy
 }

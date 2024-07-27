@@ -19,7 +19,8 @@ type Variable interface {
 	GetDependencies() []Variable
 	AddReferenceWithID(reference Variable, creator string)
 	GetUnassaignedVariables() []Variable
-	DeepCopy(force bool) Variable
+	Copy(force bool) Variable
+	DeepCopy() Variable
 	GetId() int64
 	GetType() gotypes.Type
 	AssignVariable(variable Variable)
@@ -28,14 +29,14 @@ type Variable interface {
 	GetElementAt(index int) Variable
 }
 
-func GetVariableTypeAndTypeString(v Variable) string {
+func VariableTypeName(v Variable) string {
 	return utils.GetType(v) + " " + utils.GetType(v.GetType())
 }
 
 func GetDependenciesStringLst(deps ...Variable) string {
 	out := ""
 	for _, d := range deps {
-		out += fmt.Sprintf("\t\t\t\t\t - [%d] (%s) %s: %s\n", d.GetId(), GetVariableTypeAndTypeString(d), d.GetVariableInfo().GetName(), d.GetVariableInfo().String())
+		out += fmt.Sprintf("\t\t\t\t\t - [%d] (%s) %s: %s\n", d.GetId(), VariableTypeName(d), d.GetVariableInfo().GetName(), d.GetVariableInfo().String())
 	}
 	return out
 }
@@ -107,7 +108,7 @@ func AddUnderlyingDependencies(variable Variable, deps []Variable) bool {
 		for _, dep := range deps {
 			depType, _ := gotypes.UnwrapUserAndFieldTypes(dep.GetType())
 			if !sliceType.UnderlyingType.IsSameType(depType) {
-				logger.Logger.Fatalf("[CFG CALLS] (%s) --- (%s) %s", utils.GetType(sliceType.UnderlyingType), GetVariableTypeAndTypeString(dep), dep.String())
+				logger.Logger.Fatalf("[CFG CALLS] (%s) --- (%s) %s", utils.GetType(sliceType.UnderlyingType), VariableTypeName(dep), dep.String())
 				return false
 			}
 		}

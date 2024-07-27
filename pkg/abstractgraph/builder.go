@@ -37,9 +37,6 @@ func Build(app *app.App, frontends []string) *AbstractGraph {
 		graph.cleanVisited(node)
 	}
 	graph.GIndex = 1
-	for _, abstractEntry := range graph.Nodes {
-		graph.matchIdentifiers(abstractEntry)
-	}
 	return graph
 }
 
@@ -47,19 +44,6 @@ func (graph *AbstractGraph) cleanVisited(node AbstractNode) {
 	node.SetVisited(false)
 	for _, edge := range node.GetChildren() {
 		graph.cleanVisited(edge)
-	}
-}
-
-func (graph *AbstractGraph) matchIdentifiers(node AbstractNode) {
-	if node.IsVisited() {
-		return
-	}
-	logger.Logger.Tracef("matching identifiers for node %s (params = %v)", node.String(), node.GetParams())
-	node.SetVisited(true)
-	/* graph.referenceCallerServiceParamss(node) */
-	/* graph.matchQueuePublishersToReceiversParams(node) */
-	for _, child := range node.GetChildren() {
-		graph.matchIdentifiers(child)
 	}
 }
 
@@ -80,17 +64,20 @@ func (graph *AbstractGraph) createDummyAbstractServiceCall(node *service.Service
 		callerStr = parent.DbInstance.String()
 	}
 
+	parsedCall := types.ParsedCall{
+		Name:    method.Name,
+		CallStr: node.Name,
+		Method:  method,
+		Params:  nil, // just a reminder that it is not set
+		Returns: nil, // just a reminder that it is not set
+	}
+
 	call := AbstractServiceCall{
 		ParsedCall: &types.ParsedServiceCall{
-			ParsedCall: types.ParsedCall{
-				Name:    method.Name,
-				CallStr: node.Name,
-				Method:  method,
-			},
+			ParsedCall: parsedCall.DeepCopy(),
 		},
 		Caller: callerStr,
 		Callee: node.Name,
-		Method: method,
 		Depth:  depth,
 	}
 	for _, p := range method.GetParams() {
@@ -98,7 +85,6 @@ func (graph *AbstractGraph) createDummyAbstractServiceCall(node *service.Service
 		call.ParsedCall.Params = append(call.ParsedCall.Params, v)
 		logger.Logger.Debugf("[GRAPH - DUMMY] created variable %s (%s)", v.String(), utils.GetType(v))
 	}
-	call.Params = call.ParsedCall.Params
 	return call
 }
 
@@ -133,7 +119,7 @@ func (graph *AbstractGraph) recurseBuild(app *app.App, abstractNode AbstractNode
 			fmt.Println("------------------------------------------------------------------------------------------------------------------------------------------------")
 			logger.Logger.Infof("[ABSTRACT DATABASE CALL] %s", node.String())
 			fmt.Println("------------------------------------------------------------------------------------------------------------------------------------------------")
-			graph.appendPublisherQueueHandlers(app, node)
+			graph.createQueueHandlerNodes(app, node)
 		}
 		fmt.Println()
 	case *AbstractQueueHandler:
@@ -174,9 +160,7 @@ func getPushMethodIfPublisherChild(rootParent AbstractNode, child *AbstractDatab
 // to avoid changing it if we have another abstract node that will use the same parsed method
 func (graph *AbstractGraph) referenceMethodBlockVars(parsedCall types.Call, child AbstractNode) {
 	entryBlock := parsedCall.GetMethod().(*types.ParsedMethod).GetParsedCfg().GetEntryParsedBlock()
-	logger.Logger.Debugf("PARAMS: %v", parsedCall.GetParams())
 	for i, param := range parsedCall.GetParams() {
-		logger.Logger.Debugf("PARAM (%d): %s", i, param.String())
 		// variable at block index 0 is the receiver so we need to skip that one
 		if parsedCall.GetMethod().(*types.ParsedMethod).HasReceiver() {
 			i = i + 1
@@ -185,7 +169,6 @@ func (graph *AbstractGraph) referenceMethodBlockVars(parsedCall types.Call, chil
 		blockVar.AddReferenceWithID(param, child.GetCallerStr())
 		logger.Logger.Infof("\t\t[REF BLOCK VAR] added reference (%d) from creator (%s): (%s) -> (%s)", blockVar.GetId(), child.GetCallerStr(), blockVar.GetType().GetName(), param.GetVariableInfo().GetName())
 		if _, ok := blockVar.(*variables.StructVariable); ok {
-			logger.Logger.Debugf("WTFFFFFFF!!!!")
 			variables.GetReversedNestedFieldsAndNames(blockVar, "")
 		}
 		for _, dep := range param.GetNestedDependencies(false) {
@@ -231,10 +214,7 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 		case *types.ParsedDatabaseCall:
 			child := &AbstractDatabaseCall{
 				ParsedCall: parsedCall,
-				Params:     parsedCall.Params,
-				Returns:    parsedCall.Returns,
 				Service:    parsedCall.CallerTypeName.GetName(),
-				Method:     parsedCall.Method,
 				DbInstance: parsedCall.DbInstance,
 				Subscriber: rootIsQueueHandler,
 				Depth:      rootParent.GetNextDepth(),
@@ -246,27 +226,14 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 			if queueHandler, ok := rootParent.(*AbstractQueueHandler); ok && !queueHandler.IsEnabled() {
 				graph.referenceQueuePopMethodBlockVars(queueHandler, child)
 				queueHandler.Enable()
-			} /*  else {
-				graph.referenceMethodBlockVars(parsedCall, child)
-			} */
+			}
 			logger.Logger.Infof("[GRAPH] added node for abstract database call with parent (%s): %s", child.GetCallerStr(), child.String())
-
-			/* if rootIsQueueHandler && !rootQueueHandler.IsEnabled() {
-				if !graph.referencePublisherParams(rootQueueHandler, child) {
-					graph.referenceServiceCallerParams(rootParent, directParent, child)
-				}
-			} else {
-				graph.referenceServiceCallerParams(rootParent, directParent, child)
-			} */
 
 		case *types.ParsedServiceCall:
 			child := &AbstractServiceCall{
-				ParsedCall: parsedCall,
+				ParsedCall: parsedCall.DeepCopy(),
 				Caller:     parsedCall.CallerTypeName.GetName(),
 				Callee:     parsedCall.CalleeTypeName.GetName(),
-				Params:     parsedCall.Params,
-				Returns:    parsedCall.Returns,
-				Method:     parsedCall.Method,
 				Depth:      rootParent.GetNextDepth(),
 			}
 			rootParent.AddChild(child)
@@ -278,13 +245,9 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 			tempChild := &AbstractTempInternalCall{
 				ParsedCall: parsedCall,
 				Service:    parsedCall.ServiceTypeName.GetName(),
-				Params:     parsedCall.Params,
-				Returns:    parsedCall.Returns,
-				Method:     parsedCall.Method,
 				Depth:      rootParent.GetNextDepth(),
 			}
 
-			//graph.referenceServiceCallerParams(rootParent, directParent, tempChild)
 			tempMethod := graph.Services[tempChild.Service].GetInternalOrPackageMethod(tempChild.ParsedCall.Name)
 			graph.appendAbstractEdges(rootParent, tempChild, tempMethod)
 
@@ -295,7 +258,7 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 	}
 }
 
-func (graph *AbstractGraph) appendPublisherQueueHandlers(app *app.App, publisher *AbstractDatabaseCall) {
+func (graph *AbstractGraph) createQueueHandlerNodes(app *app.App, publisher *AbstractDatabaseCall) {
 	instance := publisher.ParsedCall.GetTargetedDatabaseInstance()
 	if instance == nil {
 		logger.Logger.Fatalf("received unexpected nil database for queue publisher parsed call: %s", publisher.ParsedCall.String())
@@ -307,13 +270,6 @@ func (graph *AbstractGraph) appendPublisherQueueHandlers(app *app.App, publisher
 				AbstractServiceCall: graph.createDummyAbstractServiceCall(node, handlerMethod, publisher, publisher.GetNextDepth()),
 				DbInstance:          instance,
 				Publisher:           publisher,
-			}
-			blockVariables := handlerMethod.GetParsedCfg().GetEntryParsedBlock().GetVariables()
-			for i := range handlerMethod.GetParams() {
-				if handlerMethod.HasReceiver() {
-					i = i + 1
-				}
-				abstractHandler.ParsedCall.Params = append(abstractHandler.ParsedCall.Params, blockVariables[i])
 			}
 			publisher.Children = append(publisher.Children, abstractHandler)
 		}

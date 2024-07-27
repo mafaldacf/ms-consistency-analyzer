@@ -29,9 +29,16 @@ func (ref *Reference) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func (ref *Reference) DeepCopy(force bool) Variable {
+func (ref *Reference) Copy(force bool) Variable {
 	return &Reference{
-		Variable: ref.Variable.DeepCopy(force),
+		Variable: ref.Variable.Copy(force),
+		Creator:  ref.Creator,
+	}
+}
+
+func (ref *Reference) DeepCopy() Variable {
+	return &Reference{
+		Variable: ref.Variable.DeepCopy(),
 		Creator:  ref.Creator,
 	}
 }

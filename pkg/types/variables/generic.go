@@ -57,17 +57,28 @@ func (v *GenericVariable) AddReferenceWithID(target Variable, creator string) {
 			}
 		}
 	} else {
-		logger.Logger.Fatalf("[VARS GENERIC - REF] skipping referenced variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), GetVariableTypeAndTypeString(v), GetVariableTypeAndTypeString(target))
+		logger.Logger.Fatalf("[VARS GENERIC - REF] skipping referenced variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), VariableTypeName(v), VariableTypeName(target))
 	}
 	logger.Logger.Tracef("[VARS GENERIC - REF] added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
 }
 
-func (v *GenericVariable) DeepCopy(force bool) Variable {
+func (v *GenericVariable) Copy(force bool) Variable {
 	copy := &GenericVariable{
-		VariableInfo: v.VariableInfo.DeepCopy(force),
+		VariableInfo: v.VariableInfo.Copy(force),
 	}
 	for _, p := range v.Params {
-		copy.Params = append(copy.Params, p.DeepCopy(force))
+		copy.Params = append(copy.Params, p.Copy(force))
+	}
+	return copy
+}
+
+func (v *GenericVariable) DeepCopy() Variable {
+	logger.Logger.Debugf("[VARS GENERIC - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
+	copy := &GenericVariable{
+		VariableInfo: v.VariableInfo.DeepCopy(),
+	}
+	for _, p := range v.Params {
+		copy.Params = append(copy.Params, p.DeepCopy())
 	}
 	return copy
 }

@@ -14,6 +14,12 @@ func (v *BlueprintBackendVariable) IsNoSQLCollection() bool {
 	return v.GetBlueprintBackendType().IsNoSQLComponent() && v.GetBlueprintBackendType().IsNoSQLCollection()
 }
 
+func (v *BlueprintBackendVariable) DeepCopy() variables.Variable {
+	return &BlueprintBackendVariable{
+		VariableInfo: v.VariableInfo.DeepCopy(),
+	}
+}
+
 func (v *BlueprintBackendVariable) IsNoSQLCursor() bool {
 	return v.GetBlueprintBackendType().IsNoSQLComponent() && v.GetBlueprintBackendType().IsNoSQLCursor()
 }
@@ -58,7 +64,7 @@ func (v *BlueprintBackendVariable) AddReferenceWithID(target variables.Variable,
 	v.VariableInfo.AddReferenceWithID(v, target, creator)
 }
 
-func (v *BlueprintBackendVariable) DeepCopy(force bool) variables.Variable {
+func (v *BlueprintBackendVariable) Copy(force bool) variables.Variable {
 	copy := &BlueprintBackendVariable{
 		VariableInfo: v.VariableInfo,
 	}

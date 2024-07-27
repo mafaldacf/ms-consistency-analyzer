@@ -42,6 +42,8 @@ func main() {
 
 	abstractGraph := abstractgraph.Build(app, frontends)
 
+	//logger.Logger.Fatal("EXIT")
+
 	fmt.Println()
 	fmt.Println(" ----------------------------------------------------------------------------------------------------------------- ")
 	fmt.Println(" -------------------------------------------- BUILD DATASTORES SCHEMA -------------------------------------------- ")

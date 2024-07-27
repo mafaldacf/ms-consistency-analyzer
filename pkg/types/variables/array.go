@@ -121,12 +121,25 @@ func (v *ArrayVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	return deps
 }
 
-func (v *ArrayVariable) DeepCopy(force bool) Variable {
+func (v *ArrayVariable) Copy(force bool) Variable {
 	copy := &ArrayVariable{
-		VariableInfo: v.VariableInfo.DeepCopy(force),
+		VariableInfo: v.VariableInfo.Copy(force),
 	}
 	for _, elem := range v.Elements {
-		newElem := elem.DeepCopy(force)
+		newElem := elem.Copy(force)
+		copy.Elements = append(copy.Elements, newElem)
+		newElem.GetVariableInfo().SetParent(newElem, copy)
+	}
+	return copy
+}
+
+func (v *ArrayVariable) DeepCopy() Variable {
+	logger.Logger.Debugf("[VARS ARRAY - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
+	copy := &ArrayVariable{
+		VariableInfo: v.VariableInfo.DeepCopy(),
+	}
+	for _, elem := range v.Elements {
+		newElem := elem.DeepCopy()
 		copy.Elements = append(copy.Elements, newElem)
 		newElem.GetVariableInfo().SetParent(newElem, copy)
 	}

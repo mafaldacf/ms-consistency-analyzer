@@ -81,18 +81,29 @@
     NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) s (*station.StationServiceImpl struct{stationDB
     NoSQLDatabase})'
-  - '[10] (inline) (Reference UserType) ref <ctx context.Context> @ StationService'
+  - '[12] (inline) (Reference UserType) ref <ctx context.Context> @ StationService'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[11] (inline) (Reference BasicType) ref <string> @ StationService'
-  - '[0] (BasicVariable BasicType) id string'
+  - |-
+    [13] (inline) (Reference BasicType) ref <string> @ StationService -->
+       r-tainted 1x: read(station_db.string)
+  - |-
+    [0] (BasicVariable BasicType) id string -->
+       r-tainted 1x: read(station_db.string)
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = station, collection = station}'
   - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "id" string,  string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = station, collection = station}'
+  - |-
+    [0] (inline) (FieldVariable FieldType) string -->
+       r-tainted 1x: read(station_db.)
+  - |-
+    [0] (inline) (StructVariable StructType) struct{ "id" string, string} -->
+       r-tainted 1x: read(station_db.struct{ "id" string, string})
+  - |-
+    [-1] (SliceVariable UserType) query primitive.D -->
+       r-tainted 5x: read(station_db.document, station_db.D, station_db.struct{ "id" string, string}, station_db., station_db.string)
+  - |-
+    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = station, collection = station} -->
+       r-tainted 1x: read(station_db.document)
   - '[-1] (InterfaceVariable UserType) err .error'
   - '[-1] (StructVariable UserType) st station.Station struct{ID string, Name string,
     StayTime int64}'
@@ -105,7 +116,7 @@
     NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) s (*station.StationServiceImpl struct{stationDB
     NoSQLDatabase})'
-  - '[10] (InterfaceVariable UserType) ctx context.Context'
+  - '[12] (InterfaceVariable UserType) ctx context.Context'
   - '[-1] (ArrayVariable ArrayType) ids []string'
   - '[-1] (inline) (StructVariable UserType) st station.Station struct{ID string,
     Name string, StayTime int64}'
@@ -123,9 +134,9 @@
     NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) s (*station.StationServiceImpl struct{stationDB
     NoSQLDatabase})'
-  - '[12] (inline) (Reference UserType) ref <ctx context.Context> @ StationService'
+  - '[10] (inline) (Reference UserType) ref <ctx context.Context> @ StationService'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[13] (inline) (Reference BasicType) ref <string> @ StationService'
+  - '[11] (inline) (Reference BasicType) ref <string> @ StationService'
   - '[0] (BasicVariable BasicType) name string'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = station, collection = station}'
@@ -147,7 +158,7 @@
     NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) s (*station.StationServiceImpl struct{stationDB
     NoSQLDatabase})'
-  - '[12] (InterfaceVariable UserType) ctx context.Context'
+  - '[10] (InterfaceVariable UserType) ctx context.Context'
   - '[-1] (ArrayVariable ArrayType) names []string'
   - '[-1] (inline) (BasicVariable BasicType) id string'
   - '[-1] (ArrayVariable ArrayType) ids []string'

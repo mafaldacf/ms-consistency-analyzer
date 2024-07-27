@@ -1,9 +1,9 @@
 (*AnalyticsServiceImpl).ReadAnalytics(ctx context.Context, postID int64):
   block 8 (IfDone):
-  - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_db NoSQLDatabase'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_queue
     Queue'
+  - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_db NoSQLDatabase'
   - '[0] (inline) (StructVariable UserType) postnotification.AnalyticsServiceImpl
     struct{analytics_queue Queue, analytics_db NoSQLDatabase, num_workers int}'
   - '[-1] (PointerVariable PointerType) a (*postnotification.AnalyticsServiceImpl
@@ -62,10 +62,10 @@
   - '[-1] (InterfaceVariable UserType) err .error'
 (*AnalyticsServiceImpl).Run(ctx context.Context):
   block 4 (ForPost):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_queue
-    Queue'
   - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_db NoSQLDatabase'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_queue
+    Queue'
   - '[0] (inline) (StructVariable UserType) postnotification.AnalyticsServiceImpl
     struct{analytics_queue Queue, analytics_db NoSQLDatabase, num_workers int}'
   - '[-1] (PointerVariable PointerType) n (*postnotification.AnalyticsServiceImpl
@@ -95,7 +95,7 @@
        w-tainted 4x: write(posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID, notifications_queue.Message.PostID)
        r-tainted 2x: read(analytics_queue.TriggerAnalyticsMessage.PostID, notifications_queue.Message.PostID)
   - |-
-    [4] (inline) (Reference FieldType) ref <PostID int64> @ UploadService -->
+    [5] (inline) (Reference FieldType) ref <PostID int64> @ UploadService -->
        w-tainted 3x: write(posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID)
        r-tainted 1x: read(analytics_queue.TriggerAnalyticsMessage.PostID)
   - |-
@@ -150,10 +150,10 @@
        w-tainted 1x: write(analytics_db.Analytics)
 (*AnalyticsServiceImpl).workerThread(ctx context.Context):
   block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_db NoSQLDatabase'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_queue
     Queue'
   - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_db NoSQLDatabase'
   - '[0] (inline) (StructVariable UserType) postnotification.AnalyticsServiceImpl
     struct{analytics_queue Queue, analytics_db NoSQLDatabase, num_workers int}'
   - '[-1] (PointerVariable PointerType) n (*postnotification.AnalyticsServiceImpl
@@ -169,7 +169,7 @@
        w-tainted 4x: write(posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID, notifications_queue.Message.PostID)
        r-tainted 2x: read(analytics_queue.TriggerAnalyticsMessage.PostID, notifications_queue.Message.PostID)
   - |-
-    [4] (inline) (Reference FieldType) ref <PostID int64> @ UploadService -->
+    [5] (inline) (Reference FieldType) ref <PostID int64> @ UploadService -->
        w-tainted 3x: write(posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID)
        r-tainted 1x: read(analytics_queue.TriggerAnalyticsMessage.PostID)
   - |-

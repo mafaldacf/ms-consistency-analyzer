@@ -10,7 +10,7 @@
   - '[1] (InterfaceVariable UserType) ctx context.Context'
   - '[-1] (BasicVariable BasicType) username string'
   - |-
-    [7] (BasicVariable BasicType) text string -->
+    [8] (BasicVariable BasicType) text string -->
        w-tainted 1x: write(posts_db.Post.Text)
   - |-
     [38] (inline) (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService -->
@@ -29,45 +29,45 @@
        w-tainted 4x: write(posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID, notifications_queue.Message.PostID)
        r-tainted 2x: read(analytics_queue.TriggerAnalyticsMessage.PostID, notifications_queue.Message.PostID)
   - |-
-    [13] (BasicVariable BasicType) timestamp int64 -->
+    [14] (BasicVariable BasicType) timestamp int64 -->
        w-tainted 1x: write(posts_db.Post.Timestamp)
   - |-
-    [11] (inline) (BasicVariable BasicType) "bob" string -->
+    [12] (inline) (BasicVariable BasicType) "bob" string -->
        w-tainted 1x: write(posts_db.Post.Mentions)
   - |-
-    [10] (inline) (BasicVariable BasicType) "alice" string -->
+    [11] (inline) (BasicVariable BasicType) "alice" string -->
        w-tainted 1x: write(posts_db.Post.Mentions)
   - |-
-    [9] (ArrayVariable ArrayType) mentions []string -->
+    [10] (ArrayVariable ArrayType) mentions []string -->
        w-tainted 1x: write(posts_db.Post.Mentions)
   - |-
-    [12] (inline) (FieldVariable FieldType) Timestamp int64 -->
-       w-tainted 1x: write(posts_db.Post.Timestamp)
-  - |-
-    [8] (inline) (FieldVariable FieldType) Mentions []string -->
-       w-tainted 1x: write(posts_db.Post.Mentions)
-  - |-
-    [6] (inline) (FieldVariable FieldType) Text string -->
+    [7] (inline) (FieldVariable FieldType) Text string -->
        w-tainted 1x: write(posts_db.Post.Text)
   - |-
-    [4] (inline) (FieldVariable FieldType) PostID int64 -->
+    [5] (inline) (FieldVariable FieldType) PostID int64 -->
        w-tainted 3x: write(posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID)
        r-tainted 1x: read(analytics_queue.TriggerAnalyticsMessage.PostID)
   - |-
-    [18] (inline) (FieldVariable FieldType) ReqID int64 -->
+    [4] (inline) (FieldVariable FieldType) ReqID int64 -->
        w-tainted 1x: write(posts_db.Post.ReqID)
   - |-
-    [17] (inline) (BasicVariable BasicType) "some username" string -->
+    [18] (inline) (BasicVariable BasicType) "some username" string -->
        w-tainted 1x: write(posts_db.Post.Creator.Username)
   - |-
-    [16] (inline) (FieldVariable FieldType) Username "some username" string -->
+    [17] (inline) (FieldVariable FieldType) Username "some username" string -->
        w-tainted 1x: write(posts_db.Post.Creator.Username)
   - |-
-    [15] (inline) (StructVariable UserType) postnotification.Creator struct{Username string} -->
+    [16] (inline) (StructVariable UserType) postnotification.Creator struct{Username string} -->
        w-tainted 1x: write(posts_db.Post.Creator)
   - |-
-    [14] (inline) (FieldVariable FieldType) Creator postnotification.Creator struct{Username string} -->
+    [15] (inline) (FieldVariable FieldType) Creator postnotification.Creator struct{Username string} -->
        w-tainted 1x: write(posts_db.Post.Creator)
+  - |-
+    [13] (inline) (FieldVariable FieldType) Timestamp int64 -->
+       w-tainted 1x: write(posts_db.Post.Timestamp)
+  - |-
+    [9] (inline) (FieldVariable FieldType) Mentions []string -->
+       w-tainted 1x: write(posts_db.Post.Mentions)
   - |-
     [3] (StructVariable UserType) post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} -->
        w-tainted 1x: write(posts_db.Post)
@@ -114,10 +114,10 @@
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) analytics_db NoSQLDatabase'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) analytics_queue Queue'
-  - '[0] (inline) (FieldVariable FieldType) analytics_queue Queue'
-  - '[0] (inline) (FieldVariable FieldType) analytics_db NoSQLDatabase'
   - '[0] (inline) (BasicVariable BasicType) 4 int'
   - '[0] (inline) (FieldVariable FieldType) num_workers 4 int'
+  - '[0] (inline) (FieldVariable FieldType) analytics_queue Queue'
+  - '[0] (inline) (FieldVariable FieldType) analytics_db NoSQLDatabase'
   - '[0] (inline) (StructVariable UserType) postnotification.AnalyticsServiceImpl
     struct{analytics_queue Queue, analytics_db NoSQLDatabase, num_workers int}'
   - '[-1] (AddressVariable AddressType) n (&postnotification.AnalyticsServiceImpl

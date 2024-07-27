@@ -1,14 +1,14 @@
-[] (PointerVariable PointerType) ts (*train.TrainServiceImpl struct{db NoSQLDatabase}) 
-[_] (StructVariable UserType) train.TrainServiceImpl struct{db NoSQLDatabase} 
-[__] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
+[] (-1) (PointerVariable PointerType) ts (*train.TrainServiceImpl struct{db NoSQLDatabase}) 
+[_] (0) (StructVariable UserType) train.TrainServiceImpl struct{db NoSQLDatabase} 
+[__] (-1) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
 
-[] (InterfaceVariable UserType) ctx context.Context 
+[] (-1) (InterfaceVariable UserType) ctx context.Context 
 
-[] (BasicVariable BasicType) id string 
+[] (-1) (BasicVariable BasicType) id string 
 
-[] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = train, collection = train} 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = train, collection = train} 
 
-[] (InterfaceVariable UserType) err .error 
+[] (-1) (InterfaceVariable UserType) err .error 
 
-[] (InterfaceVariable UserType) err .error 
+[] (-1) (InterfaceVariable UserType) err .error 
 

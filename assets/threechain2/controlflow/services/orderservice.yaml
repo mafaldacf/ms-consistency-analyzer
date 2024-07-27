@@ -1,9 +1,9 @@
 (*OrderServiceImpl).CreateOrder(ctx context.Context, orderID string, username string, product string, quantity int):
   block 0 (Body):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
-    Queue'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) order_db NoSQLDatabase'
   - '[-1] (inline) (ServiceVariable ServiceType) stock_service threechain2.StockService'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
+    Queue'
   - '[0] (inline) (StructVariable UserType) threechain2.OrderServiceImpl struct{stock_service
     threechain2.StockService, order_db NoSQLDatabase, shipment_queue Queue}'
   - '[-1] (PointerVariable PointerType) c (*threechain2.OrderServiceImpl struct{stock_service
@@ -77,10 +77,10 @@
        r-tainted 1x: read(shipment_queue.ShipmentMessage)
 (*OrderServiceImpl).ReadOrder(ctx context.Context, orderID string):
   block 0 (Body):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) order_db NoSQLDatabase'
   - '[-1] (inline) (ServiceVariable ServiceType) stock_service threechain2.StockService'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
     Queue'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) order_db NoSQLDatabase'
   - '[0] (inline) (StructVariable UserType) threechain2.OrderServiceImpl struct{stock_service
     threechain2.StockService, order_db NoSQLDatabase, shipment_queue Queue}'
   - '[-1] (PointerVariable PointerType) c (*threechain2.OrderServiceImpl struct{stock_service

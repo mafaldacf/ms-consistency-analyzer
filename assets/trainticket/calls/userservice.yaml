@@ -1,11 +1,11 @@
 (*UserServiceImpl).DeleteUser(ctx context.Context, userID string):
 - NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D) interface{}
 (*UserServiceImpl).FindByUserID(ctx context.Context, userID string):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = contacts, collection = contacts}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = consign, collection = consign}, interface{})
 (*UserServiceImpl).FindByUsername(ctx context.Context, username string):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = contacts, collection = contacts}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = consign, collection = consign}, interface{})
 (*UserServiceImpl).GetAllUsers(ctx context.Context):
-- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = contacts, collection = contacts}, interface{})
+- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = consign, collection = consign}, interface{})
 (*UserServiceImpl).SaveUser(ctx context.Context, user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}):
 	- NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
 (*UserServiceImpl).UpdateUser(ctx context.Context, user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}):

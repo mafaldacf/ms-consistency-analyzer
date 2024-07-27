@@ -1,27 +1,27 @@
-[] (PointerVariable PointerType) c (*config.ConfigServiceImpl struct{db NoSQLDatabase}) 
-[_] (StructVariable UserType) config.ConfigServiceImpl struct{db NoSQLDatabase} 
-[__] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
+[] (-1) (PointerVariable PointerType) c (*config.ConfigServiceImpl struct{db NoSQLDatabase}) 
+[_] (0) (StructVariable UserType) config.ConfigServiceImpl struct{db NoSQLDatabase} 
+[__] (-1) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
 
-[] (InterfaceVariable UserType) ctx context.Context 
+[] (-1) (InterfaceVariable UserType) ctx context.Context 
 
-[] (BasicVariable BasicType) name string // read(config_db), 
+[] (-1) (BasicVariable BasicType) name string 
 
-[] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = config, collection = config} 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = config, collection = config} 
 
-[] (InterfaceVariable UserType) err .error 
+[] (-1) (InterfaceVariable UserType) err .error 
 
-[] (SliceVariable UserType) query primitive.D // read(config_db), 
-[_] (StructVariable StructType) struct{ "name" string,  string} // read(config_db), 
-[__] (FieldVariable FieldType) string // read(config_db), 
-[___] (BasicVariable BasicType) name string // read(config_db), 
+[] (-1) (SliceVariable UserType) query primitive.D 
+[_] (0) (StructVariable StructType) struct{ "name" string,  string} 
+[__] (0) (FieldVariable FieldType) string 
+[___] (-1) (BasicVariable BasicType) name string 
 
-[] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = config, collection = config} // read(config_db), 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = config, collection = config} 
 
-[] (InterfaceVariable UserType) err .error 
+[] (-1) (InterfaceVariable UserType) err .error 
 
-[] (StructVariable UserType) conf config.Config struct{Name string, Value string, Description string} 
+[] (-1) (StructVariable UserType) conf config.Config struct{Name string, Value string, Description string} 
 
-[] (BasicVariable BasicType) exists bool 
+[] (-1) (BasicVariable BasicType) exists bool 
 
-[] (InterfaceVariable UserType) err .error 
+[] (-1) (InterfaceVariable UserType) err .error 
 

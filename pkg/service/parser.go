@@ -137,7 +137,7 @@ func (service *Service) computeFieldFromType(field *ast.Field, paramName string,
 			FieldInfo: types.FieldInfo{
 				Ast:  field,
 				Name: paramName,
-				Type: t.DeepCopy(true),
+				Type: t.Copy(true),
 			},
 			IsQueue: t.IsQueue(),
 			Idx:     idx,

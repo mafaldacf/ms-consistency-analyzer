@@ -1,14 +1,14 @@
 (*StationFoodServiceImpl).Cleanup(ctx context.Context):
 - NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D) interface{}
 (*StationFoodServiceImpl).CreateFoodStore(ctx context.Context, store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}):
-	- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = contacts, collection = contacts}, interface{})
+	- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = consign, collection = consign}, interface{})
   - NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
 (*StationFoodServiceImpl).GetFoodStoreByID(ctx context.Context, id string):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = contacts, collection = contacts}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = consign, collection = consign}, interface{})
 (*StationFoodServiceImpl).GetFoodStoresByStationNames(ctx context.Context, stations []string):
-- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = contacts, collection = contacts}, interface{})
+- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = consign, collection = consign}, interface{})
 (*StationFoodServiceImpl).ListFoodStores(ctx context.Context):
-- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = contacts, collection = contacts}, interface{})
+- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = consign, collection = consign}, interface{})
 (*StationFoodServiceImpl).ListFoodStoresByStationName(ctx context.Context, station string):
-- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = contacts, collection = contacts}, interface{})
+- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = consign, collection = consign}, interface{})
 .NewStationFoodServiceImpl(ctx context.Context, db NoSQLDatabase): []

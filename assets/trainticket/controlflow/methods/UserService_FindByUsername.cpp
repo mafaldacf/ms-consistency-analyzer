@@ -1,27 +1,27 @@
-[] (PointerVariable PointerType) u (*user.UserServiceImpl struct{userDB NoSQLDatabase}) 
-[_] (StructVariable UserType) user.UserServiceImpl struct{userDB NoSQLDatabase} 
-[__] (BlueprintBackendVariable BlueprintBackendType) userDB NoSQLDatabase 
+[] (-1) (PointerVariable PointerType) u (*user.UserServiceImpl struct{userDB NoSQLDatabase}) 
+[_] (0) (StructVariable UserType) user.UserServiceImpl struct{userDB NoSQLDatabase} 
+[__] (-1) (BlueprintBackendVariable BlueprintBackendType) userDB NoSQLDatabase 
 
-[] (InterfaceVariable UserType) ctx context.Context 
+[] (-1) (InterfaceVariable UserType) ctx context.Context 
 
-[] (BasicVariable BasicType) username string 
+[] (-1) (BasicVariable BasicType) username string 
 
-[] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = user, collection = user} 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = user, collection = user} 
 
-[] (InterfaceVariable UserType) err .error 
+[] (-1) (InterfaceVariable UserType) err .error 
 
-[] (SliceVariable UserType) query primitive.D 
-[_] (StructVariable StructType) struct{ "username" string,  string} 
-[__] (FieldVariable FieldType) string 
-[___] (BasicVariable BasicType) username string 
+[] (-1) (SliceVariable UserType) query primitive.D 
+[_] (0) (StructVariable StructType) struct{ "username" string,  string} 
+[__] (0) (FieldVariable FieldType) string 
+[___] (-1) (BasicVariable BasicType) username string 
 
-[] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = user, collection = user} 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = user, collection = user} 
 
-[] (InterfaceVariable UserType) err .error 
+[] (-1) (InterfaceVariable UserType) err .error 
 
-[] (StructVariable UserType) user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string} 
+[] (-1) (StructVariable UserType) user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string} 
 
-[] (BasicVariable BasicType) exists bool 
+[] (-1) (BasicVariable BasicType) exists bool 
 
-[] (InterfaceVariable UserType) err .error 
+[] (-1) (InterfaceVariable UserType) err .error 
 

@@ -35,12 +35,12 @@
 [__] (0) (BasicVariable BasicType) 1 int // write(stock_db), 
 
 [] (1) (StructVariable UserType) message threechain2.ShipmentMessage struct{OrderID string, Username string} // write(shipment_queue), read(shipment_queue), 
-[_] (-1) (FieldVariable FieldType) Username string // write(shipment_queue), read(shipment_queue), 
-[__] (15) (Reference InterfaceType) ref <Username interface{}> @ ShipmentService // write(stock_db), write(shipment_queue), read(shipment_queue), write(shipment_db), 
-[__] (-1) (BasicVariable BasicType) username string // write(stock_db), write(shipment_queue), read(shipment_queue), 
-[___] (15) (Reference InterfaceType) ref <Username interface{}> @ ShipmentService // write(stock_db), write(shipment_queue), read(shipment_queue), write(shipment_db), 
 [_] (-1) (FieldVariable FieldType) OrderID string // write(shipment_queue), read(shipment_queue), 
 [__] (12) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService // write(stock_db), write(shipment_queue), read(shipment_queue), write(shipment_db), read(stock_db), 
 [__] (-1) (BasicVariable BasicType) orderID string // write(stock_db), write(shipment_queue), read(shipment_queue), 
 [___] (12) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService // write(stock_db), write(shipment_queue), read(shipment_queue), write(shipment_db), read(stock_db), 
+[_] (-1) (FieldVariable FieldType) Username string // write(shipment_queue), read(shipment_queue), 
+[__] (15) (Reference InterfaceType) ref <Username interface{}> @ ShipmentService // write(stock_db), write(shipment_queue), read(shipment_queue), write(shipment_db), 
+[__] (-1) (BasicVariable BasicType) username string // write(stock_db), write(shipment_queue), read(shipment_queue), 
+[___] (15) (Reference InterfaceType) ref <Username interface{}> @ ShipmentService // write(stock_db), write(shipment_queue), read(shipment_queue), write(shipment_db), 
 

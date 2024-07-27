@@ -10,10 +10,10 @@ import (
 
 type StructVariable struct {
 	Variable     `json:"-"`
-	Origin       *Variable
+	Origin       *Variable           `json:"-"`
 	VariableInfo *VariableInfo       `json:"variable"`
 	Fields       map[string]Variable `json:"struct_fields,omitempty"`
-	FieldsLst    []Variable          `json:"omitempty"`
+	FieldsLst    []Variable          `json:"-"`
 }
 
 func (v *StructVariable) String() string {
@@ -116,13 +116,26 @@ func (v *StructVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	return deps
 }
 
-func (v *StructVariable) DeepCopy(force bool) Variable {
+func (v *StructVariable) Copy(force bool) Variable {
 	copy := &StructVariable{
-		VariableInfo: v.VariableInfo.DeepCopy(force),
+		VariableInfo: v.VariableInfo.Copy(force),
 		Fields:       make(map[string]Variable),
 	}
 	for n, p := range v.Fields {
-		copy.Fields[n] = p.DeepCopy(force)
+		copy.Fields[n] = p.Copy(force)
+		copy.Fields[n].GetVariableInfo().SetParent(copy.Fields[n], copy)
+	}
+	return copy
+}
+
+func (v *StructVariable) DeepCopy() Variable {
+	logger.Logger.Debugf("[VARS STRUCT - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
+	copy := &StructVariable{
+		VariableInfo: v.VariableInfo.DeepCopy(),
+		Fields:       make(map[string]Variable),
+	}
+	for n, p := range v.Fields {
+		copy.Fields[n] = p.DeepCopy()
 		copy.Fields[n].GetVariableInfo().SetParent(copy.Fields[n], copy)
 	}
 	return copy
@@ -209,17 +222,15 @@ func (v *StructVariable) GetNestedFieldVariables(prefix string) ([]Variable, []s
 			nestedVariables = append(nestedVariables, nestedFieldVariables...)
 			nestedIDs = append(nestedIDs, nestedFieldIDs...)
 		} else {
-			logger.Logger.Fatalf("[VARS STRUCT] ignoring field variable (%s) for (%s)", f.String(), GetVariableTypeAndTypeString(f))
+			logger.Logger.Fatalf("[VARS STRUCT] ignoring field variable (%s) for (%s)", f.String(), VariableTypeName(f))
 		}
 	}
 	return nestedVariables, nestedIDs
 }
 
 func (v *StructVariable) GetNestedFieldVariablesWithReferences(prefix string) ([]Variable, []string) {
-	logger.Logger.Debugf("[VARS STRUCT] HAS REFERENCE????? %v", v.GetVariableInfo().GetReferences())
 	nestedVariables, nestedIDs := v.GetNestedFieldVariables(prefix)
 	for _, reference := range v.GetVariableInfo().GetReferences() {
-		logger.Logger.Debugf("[VARS STRUCT] HEREEEEE FOR REFERENCE %s", reference.String())
 		nestedVariablesRef, nestedIDsRef := reference.Variable.(*StructVariable).GetNestedFieldVariablesWithReferences(prefix)
 		nestedVariables = append(nestedVariables, nestedVariablesRef...)
 		nestedIDs = append(nestedIDs, nestedIDsRef...)

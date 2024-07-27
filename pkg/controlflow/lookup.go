@@ -299,7 +299,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			newVariable := lookup.CreateVariableFromType(variable.GetVariableInfo().GetName(), assertedType)
 			newVariable.UpgradeFromPreviousInterface(interfaceVariable)
 			block.AddVariable(newVariable)
-			logger.Logger.Warnf("[FIXME - ASSERT!!!!] CREATED NEW VARIABLE (%s): %s", variables.GetVariableTypeAndTypeString(newVariable), newVariable.String())
+			logger.Logger.Warnf("[FIXME - ASSERT!!!!] CREATED NEW VARIABLE (%s): %s", variables.VariableTypeName(newVariable), newVariable.String())
 			return newVariable, nil
 		} else {
 			logger.Logger.Fatalf("[CFG LOOKUP] unexpected type (%s) for variable (%s)", utils.GetType(variable), variable.String())

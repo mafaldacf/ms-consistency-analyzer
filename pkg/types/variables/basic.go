@@ -48,7 +48,7 @@ func (v *BasicVariable) GetNestedDependencies(nearestFields bool) []Variable {
 		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
 	}
 	for _, elem := range v.UnderlyingVariables {
-		logger.Logger.Tracef("GOT NESTED DEP FOR ELEM %s (%s)", elem.String(), GetVariableTypeAndTypeString(elem))
+		logger.Logger.Tracef("GOT NESTED DEP FOR ELEM %s (%s)", elem.String(), VariableTypeName(elem))
 		deps = append(deps, elem.GetNestedDependencies(nearestFields)...)
 	}
 	return deps
@@ -61,13 +61,26 @@ func (v *BasicVariable) AddReferenceWithID(target Variable, creator string) {
 	}
 }
 
-func (v *BasicVariable) DeepCopy(force bool) Variable {
+func (v *BasicVariable) Copy(force bool) Variable {
 	var underlyingVariablesCopy []Variable
 	for _, v := range v.UnderlyingVariables {
-		underlyingVariablesCopy = append(underlyingVariablesCopy, v.DeepCopy(force))
+		underlyingVariablesCopy = append(underlyingVariablesCopy, v.Copy(force))
 	}
 	copy := &BasicVariable{
-		VariableInfo:        v.VariableInfo.DeepCopy(force),
+		VariableInfo:        v.VariableInfo.Copy(force),
+		UnderlyingVariables: underlyingVariablesCopy,
+	}
+	return copy
+}
+
+func (v *BasicVariable) DeepCopy() Variable {
+	logger.Logger.Debugf("[VARS BASIC - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
+	var underlyingVariablesCopy []Variable
+	for _, v := range v.UnderlyingVariables {
+		underlyingVariablesCopy = append(underlyingVariablesCopy, v.DeepCopy())
+	}
+	copy := &BasicVariable{
+		VariableInfo:        v.VariableInfo.DeepCopy(),
 		UnderlyingVariables: underlyingVariablesCopy,
 	}
 	return copy

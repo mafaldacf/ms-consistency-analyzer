@@ -74,7 +74,7 @@ func CreateVariableFromType(name string, t gotypes.Type) variables.Variable {
 		wrappedFieldVariable.GetVariableInfo().SetParent(wrappedFieldVariable, fieldVariable)
 		return fieldVariable
 	case *blueprint.BlueprintBackendType:
-		info.Type = e.DeepCopy(true)
+		info.Type = e.Copy(true)
 		if e.IsNoSQLCollection() {
 			// blueprint NoSQL type (blueprint.NoSQLCollectionType) is later assigned
 			return &blueprint.BlueprintBackendVariable{VariableInfo: info}

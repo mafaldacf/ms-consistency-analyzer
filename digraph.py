@@ -106,11 +106,24 @@ def save(app, graph, labeled):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Visualize graphs based on the specified application and graph type")
-    parser.add_argument('--app', '-a', required=True, choices=['postnotification', 'foobar', 'sockshop', 'trainticket', 'threechain2'], help="The application for which to visualize the graph")
-    parser.add_argument('--graph', '-g', required=True, choices=['app', 'call'], help="The type of graph to visualize")
+    parser.add_argument('--app', '-a', choices=['postnotification', 'foobar', 'sockshop', 'trainticket', 'threechain2'], help="The application for which to visualize the graph")
+    parser.add_argument('--graph', '-g', choices=['app', 'call'], help="The type of graph to visualize")
     parser.add_argument('--labeled', '-l', action='store_true', help="Construct labeled digraph")
+    parser.add_argument('--all', action='store_true', help="Construct all combinations of digraphs for all applications")
     args = parser.parse_args()
 
-    data = load(args.app, args.graph)
-    build_digraph(data, args.graph, args.labeled)
-    save(args.app, args.graph, args.labeled)
+    if args.all:
+        apps = ['postnotification', 'trainticket', 'threechain2']
+        graphs = ['app', 'call']
+        for app in apps:
+            for graph in graphs:
+                data = load(app, graph)
+                build_digraph(data, graph, False)
+                save(app, graph, False)
+                if graph == 'call':
+                    build_digraph(data, graph, True)
+                    save(app, graph, True)
+    else:     
+        data = load(args.app, args.graph)
+        build_digraph(data, args.graph, args.labeled)
+        save(args.app, args.graph, args.labeled)

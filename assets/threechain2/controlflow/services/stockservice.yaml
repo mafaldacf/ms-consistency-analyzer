@@ -11,8 +11,8 @@
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
     {database = stock_database, collection = stock_collection}'
   - '[-1] (InterfaceVariable UserType) _ .error'
-  - '[0] (inline) (FieldVariable FieldType) Quantity int'
   - '[0] (inline) (FieldVariable FieldType) Product string'
+  - '[0] (inline) (FieldVariable FieldType) Quantity int'
   - '[-1] (StructVariable UserType) stock threechain2.Stock struct{Product string,
     Quantity int}'
 .NewOrderServiceImpl(ctx context.Context, stock_service threechain2.StockService, order_db NoSQLDatabase, shipment_queue Queue):

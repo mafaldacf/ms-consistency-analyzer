@@ -104,11 +104,11 @@ func getIndirectDependencies(v variables.Variable, i int) ([]variables.Variable,
 		parentStr += parent.String() + ", "
 	}
 	if parentStr != "" {
-		blockVarsStr += fmt.Sprintf("[%s] (%d) (%s) %s (parents = %s) %s\n", padding, v.GetId(), variables.GetVariableTypeAndTypeString(v), v.String(), parentStr, opStr)
+		blockVarsStr += fmt.Sprintf("[%s] (%d) (%s) %s (parents = %s) %s\n", padding, v.GetId(), variables.VariableTypeName(v), v.String(), parentStr, opStr)
 	} else {
-		blockVarsStr += fmt.Sprintf("[%s] (%d) (%s) %s (parents = <>) %s\n", padding, v.GetId(), variables.GetVariableTypeAndTypeString(v), v.String(), opStr)
+		blockVarsStr += fmt.Sprintf("[%s] (%d) (%s) %s (parents = <>) %s\n", padding, v.GetId(), variables.VariableTypeName(v), v.String(), opStr)
 	} */
-	blockVarsStr += fmt.Sprintf("[%s] (%d) (%s) %s %s\n", padding, v.GetId(), variables.GetVariableTypeAndTypeString(v), v.String(), opStr)
+	blockVarsStr += fmt.Sprintf("[%s] (%d) (%s) %s %s\n", padding, v.GetId(), variables.VariableTypeName(v), v.String(), opStr)
 
 	var deps = []variables.Variable{v}
 	// indirect dependencies from reference
@@ -136,7 +136,7 @@ func getIndirectDependencies(v variables.Variable, i int) ([]variables.Variable,
 		if opStr != "" {
 			opStr = "// " + opStr
 		}
-		blockVarsStr += fmt.Sprintf("[%s] (%d) (%s) ref_by <%s> %s\n", padding, refBy.GetId(), variables.GetVariableTypeAndTypeString(refBy), refBy.String(), opStr)
+		blockVarsStr += fmt.Sprintf("[%s] (%d) (%s) ref_by <%s> %s\n", padding, refBy.GetId(), variables.VariableTypeName(refBy), refBy.String(), opStr)
 	} */
 
 	return deps, blockVarsStr
@@ -161,9 +161,9 @@ func (block *Block) Yaml() ([]string, string) {
 			if i != lastIndex {
 				// last index corresponds to the original variabl from where we got the parameters
 				// note that it is the last since the deps slice was reversed
-				variableString = fmt.Sprintf("[%d] (inline) (%s) %s", v.GetId(), variables.GetVariableTypeAndTypeString(v), variableString)
+				variableString = fmt.Sprintf("[%d] (inline) (%s) %s", v.GetId(), variables.VariableTypeName(v), variableString)
 			} else {
-				variableString = fmt.Sprintf("[%d] (%s) %s", v.GetId(), variables.GetVariableTypeAndTypeString(v), variableString)
+				variableString = fmt.Sprintf("[%d] (%s) %s", v.GetId(), variables.VariableTypeName(v), variableString)
 			}
 			dfsWriteOps := v.GetVariableInfo().GetAllWriteDataflows()
 			dfsReadOps := v.GetVariableInfo().GetAllReadDataflows()

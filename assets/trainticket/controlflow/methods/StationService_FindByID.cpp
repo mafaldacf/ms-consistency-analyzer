@@ -1,30 +1,30 @@
-[] (PointerVariable PointerType) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase}) 
-[_] (StructVariable UserType) station.StationServiceImpl struct{stationDB NoSQLDatabase} 
-[__] (BlueprintBackendVariable BlueprintBackendType) stationDB NoSQLDatabase 
+[] (-1) (PointerVariable PointerType) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase}) 
+[_] (0) (StructVariable UserType) station.StationServiceImpl struct{stationDB NoSQLDatabase} 
+[__] (-1) (BlueprintBackendVariable BlueprintBackendType) stationDB NoSQLDatabase 
 
-[] (InterfaceVariable UserType) ctx context.Context 
-[_] (Reference UserType) ref <ctx context.Context> @ StationService 
+[] (-1) (InterfaceVariable UserType) ctx context.Context 
+[_] (12) (Reference UserType) ref <ctx context.Context> @ StationService 
 
-[] (BasicVariable BasicType) id string 
-[_] (Reference BasicType) ref <string> @ StationService 
+[] (0) (BasicVariable BasicType) id string // read(station_db), 
+[_] (13) (Reference BasicType) ref <string> @ StationService // read(station_db), 
 
-[] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = station, collection = station} 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = station, collection = station} 
 
-[] (InterfaceVariable UserType) err .error 
+[] (-1) (InterfaceVariable UserType) err .error 
 
-[] (SliceVariable UserType) query primitive.D 
-[_] (StructVariable StructType) struct{ "id" string,  string} 
-[__] (FieldVariable FieldType) string 
-[___] (BasicVariable BasicType) id string 
-[____] (Reference BasicType) ref <string> @ StationService 
+[] (-1) (SliceVariable UserType) query primitive.D // read(station_db), 
+[_] (0) (StructVariable StructType) struct{ "id" string,  string} // read(station_db), 
+[__] (0) (FieldVariable FieldType) string // read(station_db), 
+[___] (0) (BasicVariable BasicType) id string // read(station_db), 
+[____] (13) (Reference BasicType) ref <string> @ StationService // read(station_db), 
 
-[] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = station, collection = station} 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = station, collection = station} // read(station_db), 
 
-[] (InterfaceVariable UserType) err .error 
+[] (-1) (InterfaceVariable UserType) err .error 
 
-[] (StructVariable UserType) st station.Station struct{ID string, Name string, StayTime int64} 
+[] (-1) (StructVariable UserType) st station.Station struct{ID string, Name string, StayTime int64} 
 
-[] (BasicVariable BasicType) exists bool 
+[] (-1) (BasicVariable BasicType) exists bool 
 
-[] (InterfaceVariable UserType) err .error 
+[] (-1) (InterfaceVariable UserType) err .error 
 

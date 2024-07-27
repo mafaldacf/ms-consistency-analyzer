@@ -88,13 +88,26 @@ func (v *MapVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	return deps
 }
 
-func (v *MapVariable) DeepCopy(force bool) Variable {
+func (v *MapVariable) Copy(force bool) Variable {
 	copy := &MapVariable{
 		KeyValues:    make(map[Variable]Variable, 0),
-		VariableInfo: v.VariableInfo.DeepCopy(force),
+		VariableInfo: v.VariableInfo.Copy(force),
 	}
 	for k, v := range v.KeyValues {
-		copy.KeyValues[k] = v.DeepCopy(force)
+		copy.KeyValues[k] = v.Copy(force)
+		copy.KeyValues[k].GetVariableInfo().SetParent(copy.KeyValues[k], copy)
+	}
+	return copy
+}
+
+func (v *MapVariable) DeepCopy() Variable {
+	logger.Logger.Debugf("[VARS MAP - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
+	copy := &MapVariable{
+		KeyValues:    make(map[Variable]Variable, 0),
+		VariableInfo: v.VariableInfo.DeepCopy(),
+	}
+	for k, v := range v.KeyValues {
+		copy.KeyValues[k] = v.DeepCopy()
 		copy.KeyValues[k].GetVariableInfo().SetParent(copy.KeyValues[k], copy)
 	}
 	return copy
@@ -146,7 +159,7 @@ func (v *MapVariable) AddReferenceWithID(target Variable, creator string) {
 					if !ok {
 						logger.Logger.Warnf("[VARS MAP - REF] skipping target key (%s) (%s) in struct (%s) with fields:", utils.GetType(key), key.GetType().GetBasicValue(), targetStructVariable)
 						for k, f := range targetStructVariable.Fields {
-							logger.Logger.Warnf("\t\t [VARS MAP - REF] - %s: (%s) %s", k, GetVariableTypeAndTypeString(f), f.String())
+							logger.Logger.Warnf("\t\t [VARS MAP - REF] - %s: (%s) %s", k, VariableTypeName(f), f.String())
 						}
 					} else {
 						logger.Logger.Debugf("[VARS MAP - REF] target (%s) got referenced to value (%s)", targetValue.String(), value.String())
@@ -172,7 +185,7 @@ func (v *MapVariable) GetNestedFieldVariables(prefix string) ([]Variable, []stri
 			nestedVariables = append(nestedVariables, nestedFieldVariables...)
 			nestedIDs = append(nestedIDs, nestedFieldIDs...)
 		} else {
-			logger.Logger.Warnf("[VARS MAP] ignoring field key typed (%s) for value variable (%s) in map variable (%s): (%s)", utils.GetType(value), value.String(), GetVariableTypeAndTypeString(v), v.String())
+			logger.Logger.Warnf("[VARS MAP] ignoring field key typed (%s) for value variable (%s) in map variable (%s): (%s)", utils.GetType(value), value.String(), VariableTypeName(v), v.String())
 		}
 	}
 	return nestedVariables, nestedIDs
@@ -192,7 +205,7 @@ func (v *MapVariable) GetNestedFieldVariablesWithReferences(prefix string) ([]Va
 			nestedVariables = append(nestedVariables, nestedVariablesRef...)
 			nestedIDs = append(nestedIDs, nestedIDsRef...)
 		} else {
-			logger.Logger.Warnf("[VARS MAP] ignoring reference typed (%s) for reference variable (%s) in map variable (%s): (%s)", utils.GetType(reference.Variable), reference.Variable.String(), GetVariableTypeAndTypeString(v), v.String())
+			logger.Logger.Warnf("[VARS MAP] ignoring reference typed (%s) for reference variable (%s) in map variable (%s): (%s)", utils.GetType(reference.Variable), reference.Variable.String(), VariableTypeName(v), v.String())
 		}
 	}
 	return nestedVariables, nestedIDs

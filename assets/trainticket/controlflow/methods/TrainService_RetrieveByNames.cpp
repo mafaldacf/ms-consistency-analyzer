@@ -1,10 +1,10 @@
-[] (PointerVariable PointerType) ts (*train.TrainServiceImpl struct{db NoSQLDatabase}) 
-[_] (StructVariable UserType) train.TrainServiceImpl struct{db NoSQLDatabase} 
-[__] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
+[] (-1) (PointerVariable PointerType) ts (*train.TrainServiceImpl struct{db NoSQLDatabase}) 
+[_] (0) (StructVariable UserType) train.TrainServiceImpl struct{db NoSQLDatabase} 
+[__] (-1) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
 
-[] (InterfaceVariable UserType) ctx context.Context 
+[] (-1) (InterfaceVariable UserType) ctx context.Context 
 
-[] (ArrayVariable ArrayType) names []string 
+[] (-1) (ArrayVariable ArrayType) names []string 
 
-[] (ArrayVariable ArrayType) trainTypes []train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} 
+[] (-1) (ArrayVariable ArrayType) trainTypes []train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} 
 

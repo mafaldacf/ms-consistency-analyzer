@@ -1,19 +1,19 @@
-[] (PointerVariable PointerType) u (*user.UserServiceImpl struct{userDB NoSQLDatabase}) 
-[_] (StructVariable UserType) user.UserServiceImpl struct{userDB NoSQLDatabase} 
-[__] (BlueprintBackendVariable BlueprintBackendType) userDB NoSQLDatabase 
+[] (-1) (PointerVariable PointerType) u (*user.UserServiceImpl struct{userDB NoSQLDatabase}) 
+[_] (0) (StructVariable UserType) user.UserServiceImpl struct{userDB NoSQLDatabase} 
+[__] (-1) (BlueprintBackendVariable BlueprintBackendType) userDB NoSQLDatabase 
 
-[] (InterfaceVariable UserType) ctx context.Context 
+[] (-1) (InterfaceVariable UserType) ctx context.Context 
 
-[] (BasicVariable BasicType) userID string 
+[] (-1) (BasicVariable BasicType) userID string 
 
-[] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = user, collection = user} 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = user, collection = user} 
 
-[] (InterfaceVariable UserType) err .error 
+[] (-1) (InterfaceVariable UserType) err .error 
 
-[] (SliceVariable UserType) query primitive.D 
-[_] (StructVariable StructType) struct{ "userid" string,  string} 
-[__] (FieldVariable FieldType) string 
-[___] (BasicVariable BasicType) userID string 
+[] (-1) (SliceVariable UserType) query primitive.D 
+[_] (0) (StructVariable StructType) struct{ "userid" string,  string} 
+[__] (0) (FieldVariable FieldType) string 
+[___] (-1) (BasicVariable BasicType) userID string 
 
-[] (InterfaceVariable UserType) err .error 
+[] (-1) (InterfaceVariable UserType) err .error 
 

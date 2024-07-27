@@ -42,14 +42,14 @@ func (v *FieldVariable) AssignVariable(rvariable Variable) {
 	// e.g. post.Text = post2.Text2
 	if v.GetType().IsSameType(rvariable.GetType()) {
 		logger.Logger.Infof("[VAR FIELD] (a) assigning variables with types (%s --> %s) for lvariable (%s) and rvariable (%s)", utils.GetType(v.WrappedVariable), utils.GetType(rvariable), v.WrappedVariable.String(), rvariable.String())
-		v.WrappedVariable = rvariable.(*FieldVariable).WrappedVariable.DeepCopy(false)
+		v.WrappedVariable = rvariable.(*FieldVariable).WrappedVariable.Copy(false)
 		v.WrappedVariable.GetVariableInfo().SetParent(v.WrappedVariable, v)
 		return
 	}
 	// e.g. post.Text = text
 	if v.WrappedVariable.GetType().IsSameType(rvariable.GetType()) {
 		logger.Logger.Infof("[VAR FIELD] (b) assigning variables with types (%s --> %s) for lvariable (%s) and rvariable (%s)", utils.GetType(v.WrappedVariable), utils.GetType(rvariable), v.WrappedVariable.String(), rvariable.String())
-		v.WrappedVariable = rvariable.DeepCopy(false)
+		v.WrappedVariable = rvariable.Copy(false)
 		v.WrappedVariable.GetVariableInfo().SetParent(v.WrappedVariable, v)
 		return
 	}
@@ -59,7 +59,7 @@ func (v *FieldVariable) AssignVariable(rvariable Variable) {
 	_, rightArrayOk := rvariable.GetType().(*gotypes.ArrayType)
 	if leftSliceOk && rightArrayOk {
 		// maintain left slice and add copy right array
-		v.WrappedVariable = rvariable.DeepCopy(false)
+		v.WrappedVariable = rvariable.Copy(false)
 		v.WrappedVariable.(*ArrayVariable).UpgradeToSlice()
 		v.WrappedVariable.GetVariableInfo().SetParent(v.WrappedVariable, v)
 		return
@@ -90,10 +90,20 @@ func (v *FieldVariable) AddReferenceWithID(target Variable, creator string) {
 	v.WrappedVariable.AddReferenceWithID(target, creator)
 }
 
-func (v *FieldVariable) DeepCopy(force bool) Variable {
+func (v *FieldVariable) Copy(force bool) Variable {
 	copy := &FieldVariable{
-		VariableInfo:    v.VariableInfo.DeepCopy(force),
-		WrappedVariable: v.WrappedVariable.DeepCopy(force),
+		VariableInfo:    v.VariableInfo.Copy(force),
+		WrappedVariable: v.WrappedVariable.Copy(force),
+	}
+	copy.WrappedVariable.GetVariableInfo().SetParent(v.WrappedVariable, copy)
+	return copy
+}
+
+func (v *FieldVariable) DeepCopy() Variable {
+	logger.Logger.Debugf("[VARS FIELD - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
+	copy := &FieldVariable{
+		VariableInfo:    v.VariableInfo.DeepCopy(),
+		WrappedVariable: v.WrappedVariable.DeepCopy(),
 	}
 	copy.WrappedVariable.GetVariableInfo().SetParent(v.WrappedVariable, copy)
 	return copy

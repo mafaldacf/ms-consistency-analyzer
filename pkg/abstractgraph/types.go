@@ -44,11 +44,8 @@ type AbstractServiceCall struct {
 	Visited      bool
 	Caller       string
 	Callee       string
-	Method       types.Method
 	// nodes representing database calls cannot contain children as well
 	Children   []AbstractNode
-	Params     []variables.Variable
-	Returns    []variables.Variable
 	ParsedCall *types.ParsedServiceCall
 	Depth      int
 }
@@ -64,10 +61,10 @@ func (call *AbstractServiceCall) MarshalJSON() ([]byte, error) {
 	}{
 		Caller:   call.Caller,
 		Depth:    call.Depth,
-		Method:   call.Method.String(),
+		Method:   call.ParsedCall.Method.String(),
 		Children: call.Children,
-		Params:   call.Params,
-		Returns:  call.Returns,
+		Params:   call.ParsedCall.Params,
+		Returns:  call.ParsedCall.Returns,
 	})
 }
 
@@ -80,15 +77,15 @@ func (call *AbstractServiceCall) GetNextDepth() int {
 }
 
 func (call *AbstractServiceCall) GetParams() []variables.Variable {
-	return call.Params
+	return call.ParsedCall.Params
 }
 
 func (call *AbstractServiceCall) GetReturns() []variables.Variable {
-	return call.Returns
+	return call.ParsedCall.Returns
 }
 
 func (call *AbstractServiceCall) GetParam(index int) variables.Variable {
-	return call.Params[index]
+	return call.ParsedCall.Params[index]
 }
 
 func (call *AbstractServiceCall) GetName() string {
@@ -100,7 +97,7 @@ func (call *AbstractServiceCall) GetCallee() string {
 }
 
 func (call *AbstractServiceCall) GetMethodStr() string {
-	return call.Method.String()
+	return call.ParsedCall.Method.String()
 }
 
 func (call *AbstractServiceCall) String() string {
@@ -143,10 +140,7 @@ func (call *AbstractServiceCall) GetNodeType() string {
 type AbstractTempInternalCall struct {
 	AbstractNode
 	Visited    bool
-	Method     types.Method
 	Service    string
-	Params     []variables.Variable
-	Returns    []variables.Variable
 	ParsedCall *types.ParsedInternalCall
 	Children   []AbstractNode
 	Depth      int
@@ -161,11 +155,11 @@ func (call *AbstractTempInternalCall) MarshalJSON() ([]byte, error) {
 		Returns  []variables.Variable `json:"returns,omitempty"`
 		Children []AbstractNode       `json:"edges"`
 	}{
-		Method:   call.Method.String(),
+		Method:   call.ParsedCall.Method.String(),
 		Depth:    call.Depth,
 		Service:  call.Service,
-		Params:   call.Params,
-		Returns:  call.Returns,
+		Params:   call.ParsedCall.Params,
+		Returns:  call.ParsedCall.Returns,
 		Children: call.Children,
 	})
 }
@@ -183,7 +177,7 @@ func (call *AbstractTempInternalCall) GetChildren() []AbstractNode {
 }
 
 func (call *AbstractTempInternalCall) GetMethodStr() string {
-	return call.Method.String()
+	return call.ParsedCall.Method.String()
 }
 
 func (call *AbstractTempInternalCall) String() string {
@@ -195,15 +189,15 @@ func (call *AbstractTempInternalCall) LongString() string {
 }
 
 func (call *AbstractTempInternalCall) GetParams() []variables.Variable {
-	return call.Params
+	return call.ParsedCall.Params
 }
 
 func (call *AbstractTempInternalCall) GetReturns() []variables.Variable {
-	return call.Returns
+	return call.ParsedCall.Returns
 }
 
 func (call *AbstractTempInternalCall) GetParam(index int) variables.Variable {
-	return call.Params[index]
+	return call.ParsedCall.Params[index]
 }
 
 func (call *AbstractTempInternalCall) GetName() string {
@@ -262,10 +256,7 @@ func (call *AbstractQueueHandler) Enable() {
 type AbstractDatabaseCall struct {
 	AbstractNode
 	Visited    bool
-	Method     types.Method
 	Service    string
-	Params     []variables.Variable
-	Returns    []variables.Variable
 	ParsedCall *types.ParsedDatabaseCall
 	Children   []AbstractNode
 	DbInstance datastores.DatabaseInstance
@@ -284,11 +275,11 @@ func (call *AbstractDatabaseCall) MarshalJSON() ([]byte, error) {
 		DbInstance string               `json:"datastore"`
 		Subscriber bool                 `json:"subscriber,omitempty"`
 	}{
-		Method:     call.Method.String(),
+		Method:     call.ParsedCall.Method.String(),
 		Depth:      call.Depth,
 		Service:    call.Service,
-		Params:     call.Params,
-		Returns:    call.Returns,
+		Params:     call.ParsedCall.Params,
+		Returns:    call.ParsedCall.Returns,
 		Children:   call.Children,
 		DbInstance: call.DbInstance.GetName(),
 		Subscriber: call.Subscriber,
@@ -304,26 +295,26 @@ func (call *AbstractDatabaseCall) GetNextDepth() int {
 }
 
 func (call *AbstractDatabaseCall) GetParams() []variables.Variable {
-	return call.Params
+	return call.ParsedCall.Params
 }
 
 func (call *AbstractDatabaseCall) GetParam(index int) variables.Variable {
-	if index > 0 && index < len(call.Params) {
+	if index > 0 && index < len(call.ParsedCall.Params) {
 		logger.Logger.Tracef("got param with index %d for call %s", index, call.LongString())
-		return call.Params[index]
+		return call.ParsedCall.Params[index]
 	}
 	logger.Logger.Fatalf("cannot get param with index %d for call %s", index, call.LongString())
 	return nil
 }
 
 func (call *AbstractDatabaseCall) GetReturns() []variables.Variable {
-	return call.Returns
+	return call.ParsedCall.Returns
 }
 
 func (call *AbstractDatabaseCall) GetReturn(index int) variables.Variable {
-	if index >= 0 && index < len(call.Returns) {
+	if index >= 0 && index < len(call.ParsedCall.Returns) {
 		logger.Logger.Tracef("got return with index %d for call %s", index, call.LongString())
-		return call.Returns[index]
+		return call.ParsedCall.Returns[index]
 	}
 	logger.Logger.Fatalf("cannot get return with index %d for call %s", index, call.LongString())
 	return nil
@@ -334,7 +325,7 @@ func (call *AbstractDatabaseCall) GetName() string {
 }
 
 func (call *AbstractDatabaseCall) GetMethodStr() string {
-	return call.Method.String()
+	return call.ParsedCall.Method.String()
 }
 
 func (call *AbstractDatabaseCall) String() string {

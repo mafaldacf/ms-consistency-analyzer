@@ -1,16 +1,16 @@
 (*StationServiceImpl).CreateStation(ctx context.Context, station station.Station struct{ID string, Name string, StayTime int64}):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = contacts, collection = contacts}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = consign, collection = consign}, interface{})
 - NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
 (*StationServiceImpl).DeleteStation(ctx context.Context, id string):
 - NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D) interface{}
 (*StationServiceImpl).Exists(ctx context.Context, name string):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = contacts, collection = contacts}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = consign, collection = consign}, interface{})
 (*StationServiceImpl).FindByID(ctx context.Context, id string):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = contacts, collection = contacts}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = consign, collection = consign}, interface{})
 (*StationServiceImpl).FindByIDs(ctx context.Context, ids []string):
 - (*station.StationServiceImpl).FindByID(ctx context.Context, id string) (station.Station struct{ID string, Name string, StayTime int64}, error)
 (*StationServiceImpl).FindID(ctx context.Context, name string):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = contacts, collection = contacts}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = consign, collection = consign}, interface{})
 (*StationServiceImpl).FindIDs(ctx context.Context, names []string):
 - (*station.StationServiceImpl).FindID(ctx context.Context, name string) (string, error)
 (*StationServiceImpl).UpdateStation(ctx context.Context, station station.Station struct{ID string, Name string, StayTime int64}):

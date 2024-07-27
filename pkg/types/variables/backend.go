@@ -1,12 +1,13 @@
 package variables
 
 import (
+	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
 )
 
 type BackendVariable struct {
 	Variable     `json:"-"`
-	Origin       *Variable
+	Origin       *Variable     `json:"-"`
 	VariableInfo *VariableInfo `json:"variable"`
 }
 
@@ -34,9 +35,16 @@ func (v *BackendVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	return nil
 }
 
-func (v *BackendVariable) DeepCopy(force bool) Variable {
+func (v *BackendVariable) Copy(force bool) Variable {
 	return &BackendVariable{
-		VariableInfo: v.VariableInfo.DeepCopy(force),
+		VariableInfo: v.VariableInfo.Copy(force),
+	}
+}
+
+func (v *BackendVariable) DeepCopy() Variable {
+	logger.Logger.Debugf("[VARS BACKEND - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
+	return &BackendVariable{
+		VariableInfo: v.VariableInfo.DeepCopy(),
 	}
 }
 

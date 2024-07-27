@@ -57,10 +57,20 @@ func (v *AddressVariable) AddReferenceWithID(target Variable, creator string) {
 	}
 }
 
-func (v *AddressVariable) DeepCopy(force bool) Variable {
+func (v *AddressVariable) Copy(force bool) Variable {
 	copy := &AddressVariable{
-		VariableInfo: v.VariableInfo.DeepCopy(force),
+		VariableInfo: v.VariableInfo.Copy(force),
 		AddressOf:    v.AddressOf, // underlying values of addresses are never deep copied
+	}
+	copy.AddressOf.GetVariableInfo().SetParent(copy.AddressOf, copy)
+	return copy
+}
+
+func (v *AddressVariable) DeepCopy() Variable {
+	logger.Logger.Debugf("[VARS ADDRESS - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
+	copy := &AddressVariable{
+		VariableInfo: v.VariableInfo.DeepCopy(),
+		AddressOf:    v.AddressOf.DeepCopy(), // underlying values of addresses are never deep copied
 	}
 	copy.AddressOf.GetVariableInfo().SetParent(copy.AddressOf, copy)
 	return copy

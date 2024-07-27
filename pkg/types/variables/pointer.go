@@ -60,10 +60,20 @@ func (v *PointerVariable) AddReferenceWithID(target Variable, creator string) {
 	}
 }
 
-func (v *PointerVariable) DeepCopy(force bool) Variable {
+func (v *PointerVariable) Copy(force bool) Variable {
 	copy := &PointerVariable{
-		VariableInfo: v.VariableInfo.DeepCopy(force),
+		VariableInfo: v.VariableInfo.Copy(force),
 		PointerTo:    v.PointerTo, // underlying values of pointers are never deep copied
+	}
+	copy.PointerTo.GetVariableInfo().SetParent(copy.PointerTo, copy)
+	return copy
+}
+
+func (v *PointerVariable) DeepCopy() Variable {
+	logger.Logger.Debugf("[VARS POINTER - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
+	copy := &PointerVariable{
+		VariableInfo: v.VariableInfo.DeepCopy(),
+		PointerTo:    v.PointerTo.DeepCopy(), // underlying values of pointers are never deep copied
 	}
 	copy.PointerTo.GetVariableInfo().SetParent(copy.PointerTo, copy)
 	return copy

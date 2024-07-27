@@ -16,6 +16,8 @@ D:
 - read <query primitive.D (SliceVariable)>
 - read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
 - read <struct{Key "orderID" string, Value string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <Key "orderID" string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <"orderID" string (BasicVariable)> from <query primitive.D (SliceVariable)>
 - read <Value string (FieldVariable)> from <query primitive.D (SliceVariable)>
 - read <orderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
 - read <ref <OrderID string> @ ShipmentService (Reference)> from <query primitive.D (SliceVariable)>
@@ -24,8 +26,6 @@ D:
 - read <OrderID string (FieldVariable)> from <query primitive.D (SliceVariable)>
 - read <OrderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
 - read <OrderID interface{} (InterfaceVariable)> from <query primitive.D (SliceVariable)>
-- read <Key "orderID" string (FieldVariable)> from <query primitive.D (SliceVariable)>
-- read <"orderID" string (BasicVariable)> from <query primitive.D (SliceVariable)>
 Key: []
 OrderID: []
 SHIPMENT_DB.Shipment:
@@ -140,6 +140,8 @@ STOCK_DB.document:
 - read <query primitive.D (SliceVariable)>
 - read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
 - read <struct{Key "orderID" string, Value string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <Key "orderID" string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <"orderID" string (BasicVariable)> from <query primitive.D (SliceVariable)>
 - read <Value string (FieldVariable)> from <query primitive.D (SliceVariable)>
 - read <orderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
 - read <ref <OrderID string> @ ShipmentService (Reference)> from <query primitive.D (SliceVariable)>
@@ -148,8 +150,6 @@ STOCK_DB.document:
 - read <OrderID string (FieldVariable)> from <query primitive.D (SliceVariable)>
 - read <OrderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
 - read <OrderID interface{} (InterfaceVariable)> from <query primitive.D (SliceVariable)>
-- read <Key "orderID" string (FieldVariable)> from <query primitive.D (SliceVariable)>
-- read <"orderID" string (BasicVariable)> from <query primitive.D (SliceVariable)>
 Value: []
 interface{}: []
 string:

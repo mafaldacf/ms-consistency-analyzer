@@ -1,6 +1,9 @@
 package variables
 
-import "analyzer/pkg/types/gotypes"
+import (
+	"analyzer/pkg/logger"
+	"analyzer/pkg/types/gotypes"
+)
 
 type ChanVariable struct {
 	Variable     `json:"-"`
@@ -42,12 +45,22 @@ func (v *ChanVariable) GetNestedDependencies(nearestFields bool) []Variable {
 func (v *ChanVariable) AddReferenceWithID(target Variable, creator string) {
 	v.VariableInfo.AddReferenceWithID(v, target, creator)
 }
-func (v *ChanVariable) DeepCopy(force bool) Variable {
+
+func (v *ChanVariable) Copy(force bool) Variable {
 	copy := &ChanVariable{
-		VariableInfo: v.VariableInfo.DeepCopy(force),
+		VariableInfo: v.VariableInfo.Copy(force),
 	}
 	return copy
 }
+
+func (v *ChanVariable) DeepCopy() Variable {
+	logger.Logger.Debugf("[VARS CHAN - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
+	copy := &ChanVariable{
+		VariableInfo: v.VariableInfo.DeepCopy(),
+	}
+	return copy
+}
+
 func (v *ChanVariable) GetUnassaignedVariables() []Variable {
 	var variables []Variable
 	if v.GetVariableInfo().IsUnassigned() {

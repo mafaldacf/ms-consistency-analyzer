@@ -31,6 +31,18 @@ func (block *Block) VarsString() string {
 	return s + "]"
 }
 
+func (block *Block) DeepCopy() *Block {
+	var copyVars []variables.Variable
+	for _, v := range block.Vars {
+		copyVars = append(copyVars, v.DeepCopy())
+	}
+	return &Block{
+		Block: block.Block,
+		Vars:  copyVars,
+		Info:  block.Info,
+	}
+}
+
 func (block *Block) GetVariableAt(index int) variables.Variable {
 	if index < len(block.Vars) {
 		return block.Vars[index]

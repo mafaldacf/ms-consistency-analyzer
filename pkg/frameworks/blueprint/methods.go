@@ -29,7 +29,18 @@ type BackendMethod struct {
 	Operation OperationType
 }
 
-func (b *BackendMethod) DeepCopy() *BackendMethod {
+func (b *BackendMethod) Copy() *BackendMethod {
+	return &BackendMethod{
+		Name:      b.Name,
+		Backend:   b.Backend,
+		Component: b.Component,
+		Params:    b.Params,
+		Returns:   b.Returns,
+		Operation: b.Operation,
+	}
+}
+
+func (b *BackendMethod) DeepCopy() types.Method {
 	return &BackendMethod{
 		Name:      b.Name,
 		Backend:   b.Backend,

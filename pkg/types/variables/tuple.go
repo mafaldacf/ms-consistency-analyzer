@@ -98,10 +98,21 @@ func (v *TupleVariable) LongString() string {
 	return s + ")"
 }
 
-func (v *TupleVariable) DeepCopy(force bool) Variable {
-	copy := &TupleVariable{VariableInfo: v.VariableInfo.DeepCopy(force)}
+func (v *TupleVariable) Copy(force bool) Variable {
+	copy := &TupleVariable{VariableInfo: v.VariableInfo.Copy(force)}
 	for _, v := range v.Variables {
-		newElem := v.DeepCopy(force)
+		newElem := v.Copy(force)
+		copy.Variables = append(copy.Variables, newElem)
+		newElem.GetVariableInfo().SetParent(newElem, copy)
+	}
+	return copy
+}
+
+func (v *TupleVariable) DeepCopy() Variable {
+	logger.Logger.Debugf("[VARS TUPLE - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
+	copy := &TupleVariable{VariableInfo: v.VariableInfo.DeepCopy()}
+	for _, v := range v.Variables {
+		newElem := v.DeepCopy()
 		copy.Variables = append(copy.Variables, newElem)
 		newElem.GetVariableInfo().SetParent(newElem, copy)
 	}

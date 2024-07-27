@@ -1,6 +1,7 @@
 package variables
 
 import (
+	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
 )
 
@@ -41,9 +42,16 @@ func (v *ServiceVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	return nil
 }
 
-func (v *ServiceVariable) DeepCopy(force bool) Variable {
+func (v *ServiceVariable) Copy(force bool) Variable {
 	return &ServiceVariable{
-		VariableInfo: v.VariableInfo.DeepCopy(force),
+		VariableInfo: v.VariableInfo.Copy(force),
+	}
+}
+
+func (v *ServiceVariable) DeepCopy() Variable {
+	logger.Logger.Debugf("[VARS SERVICE - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
+	return &ServiceVariable{
+		VariableInfo: v.VariableInfo.DeepCopy(),
 	}
 }
 

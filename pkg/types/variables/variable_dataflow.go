@@ -41,16 +41,12 @@ func (df *Dataflow) String() string {
 	return fmt.Sprintf("indirect write <%s> by <%s> @ (%s, %s)", df.Variable.String(), df.IndirectSource.String(), df.Service, df.Datastore)
 }
 
-func (df *Dataflow) DeepCopy(force bool) *Dataflow {
-	return &Dataflow{
-		Datastore:      df.Datastore,
-		Service:        df.Service,
-		Direct:         df.Direct,
-		Variable:       df.Variable.DeepCopy(force),
-		IndirectSource: df.Variable.DeepCopy(force),
-		Field:          df.Field, //FIXME: deep copy
-		Write:          df.Write,
-	}
+func (df *Dataflow) Copy(force bool) *Dataflow {
+	return df
+}
+
+func (df *Dataflow) DeepCopy() *Dataflow {
+	return df
 }
 
 func (df *Dataflow) ShortString() string {

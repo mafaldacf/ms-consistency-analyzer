@@ -30,6 +30,22 @@ func InitParsedCFG(cfg *cfg.CFG, fullMethod string) *CFG {
 	return parsedCfg
 }
 
+func (cfg *CFG) DeepCopy() *CFG {
+	var parsedBlockCopies []*Block
+	for _, b := range cfg.ParsedBlocks {
+		parsedBlockCopies = append(parsedBlockCopies, b.DeepCopy())
+	}
+	return &CFG{
+		Cfg:          cfg.Cfg,
+		ParsedBlocks: parsedBlockCopies,
+		Package:      cfg.Package,
+		FileHash:     cfg.FileHash,
+		FullMethod:   cfg.FullMethod,
+		HasReceiver:  cfg.HasReceiver,
+		ReceiverType: cfg.ReceiverType,
+	}
+}
+
 func (cfg *CFG) String() string {
 	str := fmt.Sprintf("%s: ", cfg.FullMethod)
 	for i, block := range cfg.ParsedBlocks {

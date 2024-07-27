@@ -170,8 +170,8 @@ func BuildSchema(app *app.App, node AbstractNode) {
 			logger.Logger.Warnf("[SCHEMA] skipping read for abstract node: %s", dbCall.String())
 			return
 		}
-		params := dbCall.Params
-		returns := dbCall.Returns
+		params := dbCall.GetParams()
+		returns := dbCall.GetReturns()
 		switch datastore.Type {
 		case datastores.Queue:
 			msg := params[1]
@@ -189,7 +189,7 @@ func BuildSchema(app *app.App, node AbstractNode) {
 		if found := writtenDatastores[datastore.Name]; !found {
 			writtenDatastores[datastore.Name] = true
 		}
-		params := dbCall.Params
+		params := dbCall.GetParams()
 		logger.Logger.Infof("[SCHEMA] [%s] building schema based on abstract node (%s)", datastore.Name, dbCall.GetName())
 
 		switch datastore.Type {

@@ -41,7 +41,7 @@ type NoSQLComponent struct {
 	Collection string
 }
 
-func (t *NoSQLComponent) DeepCopy() *NoSQLComponent {
+func (t *NoSQLComponent) Copy() *NoSQLComponent {
 	return &NoSQLComponent{
 		Type:       t.Type,
 		Database:   t.Database,
@@ -210,14 +210,14 @@ func (t *BlueprintBackendType) SetNoSQLDatabaseCursor(databaseName string, colle
 	t.DbInstance = dbInstance
 }
 
-func (t *BlueprintBackendType) DeepCopy(force bool) *BlueprintBackendType {
+func (t *BlueprintBackendType) Copy(force bool) *BlueprintBackendType {
 	var methods []*BackendMethod
 	for _, m := range t.Methods {
-		methods = append(methods, m.DeepCopy())
+		methods = append(methods, m.Copy())
 	}
 	var noSQLComponent *NoSQLComponent
 	if t.NoSQLComponent != nil {
-		noSQLComponent = t.NoSQLComponent.DeepCopy()
+		noSQLComponent = t.NoSQLComponent.Copy()
 	}
 	return &BlueprintBackendType{
 		Name:           t.Name,

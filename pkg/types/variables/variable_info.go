@@ -86,7 +86,7 @@ func (vinfo *VariableInfo) GetAllReadDataflows() []*Dataflow {
 	return dataflows
 }
 
-func (vinfo *VariableInfo) DeepCopy(force bool) *VariableInfo {
+func (vinfo *VariableInfo) Copy(force bool) *VariableInfo {
 	// skip deep copy, especially since we can have references and dataflows
 	if !force {
 		return vinfo
@@ -94,15 +94,41 @@ func (vinfo *VariableInfo) DeepCopy(force bool) *VariableInfo {
 
 	var dataflows []*Dataflow
 	for _, df := range vinfo.Dataflows {
-		dataflows = append(dataflows, df.DeepCopy(force))
+		dataflows = append(dataflows, df.Copy(force))
 	}
 	var indirectDataflows []*Dataflow
 	for _, df := range vinfo.IndirectDataflows {
-		indirectDataflows = append(indirectDataflows, df.DeepCopy(force))
+		indirectDataflows = append(indirectDataflows, df.Copy(force))
 	}
 	var refsCopy []*Reference
 	for _, r := range vinfo.References {
-		refsCopy = append(refsCopy, r.DeepCopy(force).(*Reference))
+		refsCopy = append(refsCopy, r.Copy(force).(*Reference))
+	}
+	return &VariableInfo{
+		Name:              vinfo.Name,
+		Type:              vinfo.Type,
+		Id:                vinfo.Id,
+		References:        refsCopy,
+		IsBlockParam:      vinfo.IsBlockParam,
+		BlockParamIdx:     vinfo.BlockParamIdx,
+		Dataflows:         dataflows,
+		IndirectDataflows: indirectDataflows,
+	}
+}
+
+func (vinfo *VariableInfo) DeepCopy() *VariableInfo {
+	var dataflows []*Dataflow
+	for _, df := range vinfo.Dataflows {
+		dataflows = append(dataflows, df.DeepCopy())
+	}
+	var indirectDataflows []*Dataflow
+	for _, df := range vinfo.IndirectDataflows {
+		indirectDataflows = append(indirectDataflows, df.DeepCopy())
+	}
+	var refsCopy []*Reference
+	for _, r := range vinfo.References {
+		logger.Logger.Infof("[VARS INFO - DEEP COPY] deep copy reference (%s) for creator = %s", vinfo.String(), r.Creator)
+		refsCopy = append(refsCopy, r.DeepCopy().(*Reference))
 	}
 	return &VariableInfo{
 		Name:              vinfo.Name,
@@ -219,13 +245,13 @@ func (vinfo *VariableInfo) SetParent(current Variable, parent Variable) {
 }
 
 func (vinfo *VariableInfo) AddParent(current Variable, parent Variable) {
-	if current == parent || current.GetType().IsSameType(parent.GetType()) || vinfo == parent.GetVariableInfo() {
+	if current == parent || vinfo == parent.GetVariableInfo() {
 		pc, file, line, ok := runtime.Caller(1)
 		if !ok {
-			logger.Logger.Fatalf("RECURSION!! (%s) %s", GetVariableTypeAndTypeString(parent), parent.String())
+			logger.Logger.Fatalf("RECURSION!! (%s) %s", VariableTypeName(parent), parent.String())
 		}
 		callerFunc := runtime.FuncForPC(pc).Name()
-		logger.Logger.Fatalf("RECURSION!! (%s) %s \n\t\t\t\t\t(caller: %s) \n\t\t\t\t\t %s:%d", GetVariableTypeAndTypeString(parent), parent.String(), callerFunc, file, line)
+		logger.Logger.Fatalf("RECURSION!! (%s) %s \n\t\t\t\t\t(caller: %s) \n\t\t\t\t\t %s:%d", VariableTypeName(parent), parent.String(), callerFunc, file, line)
 	}
 	vinfo.Parents = append(vinfo.Parents, parent)
 }
@@ -239,10 +265,10 @@ func (vinfo *VariableInfo) getNearestField() []*FieldVariable {
 			if parent.GetVariableInfo() == nil {
 				pc, file, line, ok := runtime.Caller(1)
 				if !ok {
-					logger.Logger.Warnf("NIL INFO FOR V (%s): %s", GetVariableTypeAndTypeString(parent), parent.String())
+					logger.Logger.Warnf("NIL INFO FOR V (%s): %s", VariableTypeName(parent), parent.String())
 				}
 				callerFunc := runtime.FuncForPC(pc).Name()
-				logger.Logger.Warnf("NIL INFO FOR V (%s): %s \n\t\t\t\t\t(caller: %s) \n\t\t\t\t\t %s:%d", GetVariableTypeAndTypeString(parent), parent.String(), callerFunc, file, line)
+				logger.Logger.Warnf("NIL INFO FOR V (%s): %s \n\t\t\t\t\t(caller: %s) \n\t\t\t\t\t %s:%d", VariableTypeName(parent), parent.String(), callerFunc, file, line)
 				return nil
 			}
 			nearestFields = append(nearestFields, parent.GetVariableInfo().getNearestField()...)

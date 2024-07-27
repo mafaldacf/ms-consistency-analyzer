@@ -29,9 +29,30 @@ type ParsedCall struct {
 	Name    string
 
 	Pos     token.Pos
+	Method  Method
 	Params  []variables.Variable
 	Returns []variables.Variable
-	Method  Method
+}
+
+func (call ParsedCall) DeepCopy() ParsedCall {
+	newCall := ParsedCall{
+		Ast:     call.Ast,
+		CallStr: call.CallStr,
+		Name:    call.Name,
+		Pos:     call.Pos,
+		Method:  call.Method,
+		Params:  nil,
+		Returns: call.Returns, //TODO: set nil
+	}
+
+	// we actually don't need to deep copy the CFG block
+	// what we need is to cpy the parsed call's params and returns
+	// since they are the ones that are looked up for the references between abstract nodes
+	for _, v := range newCall.Params {
+		newCall.Params = append(newCall.Params, v.DeepCopy())
+	}
+
+	return newCall
 }
 
 func (call ParsedCall) GetArgument(i int) variables.Variable {
@@ -72,6 +93,15 @@ type ParsedServiceCall struct {
 	CalleeTypeName gotypes.Type
 }
 
+func (svcCall *ParsedServiceCall) DeepCopy() *ParsedServiceCall {
+	return &ParsedServiceCall{
+		Call:           svcCall.Call,
+		ParsedCall:     svcCall.ParsedCall.DeepCopy(),
+		CallerTypeName: svcCall.CallerTypeName,
+		CalleeTypeName: svcCall.CalleeTypeName,
+	}
+}
+
 func (svcCall *ParsedServiceCall) GetCallTypeNames() (gotypes.Type, gotypes.Type) {
 	return svcCall.CallerTypeName, svcCall.CalleeTypeName
 }
@@ -93,7 +123,7 @@ func (svcCall *ParsedServiceCall) GetName() string {
 }
 
 func (svcCall *ParsedServiceCall) AddParam(param variables.Variable) {
-	deepCopy := param.DeepCopy(false)
+	deepCopy := param.Copy(false)
 	logger.Logger.Tracef("[------- DEEP COPY -------] [%s] %v", utils.GetType(deepCopy), deepCopy.String())
 	if deepCopy.GetVariableInfo() == nil {
 		logger.Logger.Fatalf("[------- DEEP COPY -------] [%s] %v: %v", utils.GetType(deepCopy), deepCopy.String(), deepCopy.GetVariableInfo())
@@ -120,6 +150,15 @@ type ParsedDatabaseCall struct {
 	CallerTypeName gotypes.Type
 }
 
+func (dbCall *ParsedDatabaseCall) DeepCopy() *ParsedDatabaseCall {
+	return &ParsedDatabaseCall{
+		Call:           dbCall.Call,
+		ParsedCall:     dbCall.ParsedCall.DeepCopy(),
+		DbInstance:     dbCall.DbInstance,
+		CallerTypeName: dbCall.CallerTypeName,
+	}
+}
+
 func (dbCall *ParsedDatabaseCall) IsAtPos(pos token.Pos) bool {
 	return dbCall.ParsedCall.Pos == pos
 }
@@ -141,7 +180,7 @@ func (dbCall *ParsedDatabaseCall) GetName() string {
 }
 
 func (dbCall *ParsedDatabaseCall) AddParam(param variables.Variable) {
-	deepCopy := param.DeepCopy(false)
+	deepCopy := param.Copy(false)
 	logger.Logger.Tracef("[------- DEEP COPY -------] [%s] %v", utils.GetType(deepCopy), deepCopy.String())
 	if deepCopy.GetVariableInfo() == nil {
 		logger.Logger.Fatalf("[------- DEEP COPY -------] [%s] %v: %v", utils.GetType(deepCopy), deepCopy.String(), deepCopy.GetVariableInfo())
@@ -165,6 +204,14 @@ type ParsedInternalCall struct {
 	Call
 	ParsedCall
 	ServiceTypeName gotypes.Type
+}
+
+func (internalCall *ParsedInternalCall) DeepCopy() *ParsedInternalCall {
+	return &ParsedInternalCall{
+		Call:            internalCall.Call,
+		ParsedCall:      internalCall.ParsedCall.DeepCopy(),
+		ServiceTypeName: internalCall.ServiceTypeName,
+	}
 }
 
 func (internalCall *ParsedInternalCall) String() string {

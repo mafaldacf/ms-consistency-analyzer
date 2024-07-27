@@ -20,6 +20,7 @@ type Method interface {
 	IsUpdate() bool
 	IsRead() bool
 	IsFetchNoSQLCollection() bool
+	DeepCopy() Method
 }
 
 type ParsedMethod struct {
@@ -45,6 +46,23 @@ type ParsedMethod struct {
 	Receiver *MethodField `json:"-"`
 }
 
+func (f *ParsedMethod) DeepCopy() Method {
+	return &ParsedMethod{
+		Ast:             f.Ast,
+		Name:            f.Name,
+		Calls:           f.Calls,
+		Package:         f.Package,
+		ParsedCfg:       f.ParsedCfg.DeepCopy(),
+		DbInstances:     f.DbInstances,
+		Exported:        f.Exported,
+		Parsed:          f.Parsed,
+		AttachedService: f.AttachedService,
+		Constructor:     f.Constructor,
+		Params:          f.Params,
+		Returns:         f.Returns,
+		Receiver:        f.Receiver,
+	}
+}
 func (f *ParsedMethod) GetAst() *ast.FuncDecl {
 	return f.Ast
 }

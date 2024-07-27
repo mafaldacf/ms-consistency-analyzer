@@ -16,7 +16,6 @@
             }
           },
           {
-            "Origin": null,
             "variable": {
               "name": "order",
               "type": "threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64}"
@@ -93,8 +92,7 @@
                   }
                 }
               }
-            },
-            "omitempty": null
+            }
           }
         ],
         "returns": [
@@ -118,7 +116,6 @@
             }
           },
           {
-            "Origin": null,
             "variable": {
               "name": "message",
               "type": "threechain2.ShipmentMessage struct{OrderID string, Username string}"
@@ -172,8 +169,7 @@
                   }
                 }
               }
-            },
-            "omitempty": null
+            }
           }
         ],
         "returns": [
@@ -285,7 +281,6 @@
                     }
                   },
                   {
-                    "Origin": null,
                     "variable": {
                       "name": "shipment",
                       "type": "threechain2.Shipment struct{OrderID string, Username string, Status string}"
@@ -338,8 +333,7 @@
                           }
                         }
                       }
-                    },
-                    "omitempty": null
+                    }
                   }
                 ],
                 "returns": [
@@ -381,7 +375,6 @@
                         },
                         "slice_variables": [
                           {
-                            "Origin": null,
                             "variable": {
                               "type": "struct{Key \"orderID\" string, Value string}"
                             },
@@ -415,8 +408,7 @@
                                   }
                                 }
                               }
-                            },
-                            "omitempty": null
+                            }
                           }
                         ]
                       }
@@ -438,39 +430,12 @@
                     "datastore": "stock_db"
                   }
                 ],
-                "params": [
-                  {
-                    "variable": {
-                      "name": "ctx",
-                      "type": "context.Context",
-                      "refs": [
-                        {
-                          "name": "ctx",
-                          "creator": "ShipmentService"
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "variable": {
-                      "name": "OrderID",
-                      "type": "string",
-                      "refs": [
-                        {
-                          "name": "OrderID",
-                          "creator": "ShipmentService"
-                        }
-                      ]
-                    }
-                  }
-                ],
+                "params": null,
                 "returns": [
                   {
-                    "Origin": null,
                     "variable": {
                       "type": "threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64}"
-                    },
-                    "omitempty": null
+                    }
                   },
                   {
                     "variable": {
@@ -555,7 +520,6 @@
             },
             "slice_variables": [
               {
-                "Origin": null,
                 "variable": {
                   "type": "struct{Key \"orderID\" string, Value string}"
                 },
@@ -589,8 +553,7 @@
                       }
                     }
                   }
-                },
-                "omitempty": null
+                }
               }
             ]
           }

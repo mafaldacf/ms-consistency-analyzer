@@ -123,10 +123,21 @@ func (v *SliceVariable) LongString() string {
 	return s + ")"
 }
 
-func (v *SliceVariable) DeepCopy(force bool) Variable {
-	copy := &SliceVariable{VariableInfo: v.VariableInfo.DeepCopy(force)}
+func (v *SliceVariable) Copy(force bool) Variable {
+	copy := &SliceVariable{VariableInfo: v.VariableInfo.Copy(force)}
 	for _, v := range v.Elements {
-		newElem := v.DeepCopy(force)
+		newElem := v.Copy(force)
+		copy.Elements = append(copy.Elements, newElem)
+		newElem.GetVariableInfo().SetParent(newElem, copy)
+	}
+	return copy
+}
+
+func (v *SliceVariable) DeepCopy() Variable {
+	logger.Logger.Debugf("[VARS SLICE - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
+	copy := &SliceVariable{VariableInfo: v.VariableInfo.DeepCopy()}
+	for _, v := range v.Elements {
+		newElem := v.DeepCopy()
 		copy.Elements = append(copy.Elements, newElem)
 		newElem.GetVariableInfo().SetParent(newElem, copy)
 	}
