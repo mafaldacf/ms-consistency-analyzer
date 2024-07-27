@@ -14,12 +14,48 @@ ASSURANCE_DB.Assurance.ID:
 ASSURANCE_DB.Assurance.OrderID:
 - write <orderid string (BasicVariable)> from <assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}} (StructVariable)>
 - write <OrderID string (FieldVariable)> from <assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}} (StructVariable)>
+ASSURANCE_DB.document:
+- read <res NoSQLCursor {database = assurance, collection = assurance} (BlueprintBackendVariable)>
+- read <res NoSQLCursor {database = assurance, collection = assurance} (BlueprintBackendVariable)>
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{ "id" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <id string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <ID string> @ AssuranceService (Reference)> from <query primitive.D (SliceVariable)>
+- read <ID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{ "id" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <id string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <ID string> @ AssuranceService (Reference)> from <query primitive.D (SliceVariable)>
+- read <ID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <res NoSQLCursor {database = assurance, collection = assurance} (BlueprintBackendVariable)>
+- read <primitive.D (SliceVariable)>
+- read <primitive.D (SliceVariable)> from <primitive.D (SliceVariable)>
+- read <res NoSQLCursor {database = assurance, collection = assurance} (BlueprintBackendVariable)>
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{ "orderid" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <order_id string (BasicVariable)> from <query primitive.D (SliceVariable)>
 CONFIG_DB.Config:
 - write <conf config.Config struct{Name string, Value string, Description string} (StructVariable)>
 - write <conf config.Config struct{Name string, Value string, Description string} (StructVariable)> from <conf config.Config struct{Name string, Value string, Description string} (StructVariable)>
 CONFIG_DB.Config.Name:
 - write <Name string (BasicVariable)> from <conf config.Config struct{Name string, Value string, Description string} (StructVariable)>
 - write <Name string (FieldVariable)> from <conf config.Config struct{Name string, Value string, Description string} (StructVariable)>
+CONFIG_DB.document:
+- read <res NoSQLCursor {database = config, collection = config} (BlueprintBackendVariable)>
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{ "name" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <name string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <res NoSQLCursor {database = config, collection = config} (BlueprintBackendVariable)>
+- read <primitive.D (SliceVariable)>
+- read <primitive.D (SliceVariable)> from <primitive.D (SliceVariable)>
 CONSIGNPRICE_DB.ConsignPrice:
 - write <priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64} (StructVariable)>
 - write <priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64} (StructVariable)>
@@ -44,33 +80,16 @@ CONTACTS_DB.document:
 - read <res NoSQLCursor {database = contacts, collection = contacts} (BlueprintBackendVariable)>
 - read <primitive.D (SliceVariable)>
 - read <primitive.D (SliceVariable)> from <primitive.D (SliceVariable)>
-- read <res NoSQLCursor {database = contacts, collection = contacts} (BlueprintBackendVariable)>
-- read <query primitive.D (SliceVariable)>
-- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
-- read <struct{ "id" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
-- read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
-- read <id string (BasicVariable)> from <query primitive.D (SliceVariable)>
-- read <res NoSQLCursor {database = contacts, collection = contacts} (BlueprintBackendVariable)>
-- read <query primitive.D (SliceVariable)>
-- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
-- read <struct{ "accountid" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
-- read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
-- read <id string (BasicVariable)> from <query primitive.D (SliceVariable)>
 D:
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{ "username" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <username string (BasicVariable)> from <query primitive.D (SliceVariable)>
 - read <primitive.D (SliceVariable)>
 - read <primitive.D (SliceVariable)> from <primitive.D (SliceVariable)>
 - read <query primitive.D (SliceVariable)>
 - read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
-- read <struct{ "id" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
-- read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
-- read <id string (BasicVariable)> from <query primitive.D (SliceVariable)>
-- read <query primitive.D (SliceVariable)>
-- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
-- read <struct{ "accountid" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
-- read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
-- read <id string (BasicVariable)> from <query primitive.D (SliceVariable)>
-- read <query primitive.D (SliceVariable)>
-- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
 - read <struct{ "$and" string, primitive.A} (StructVariable)> from <query primitive.D (SliceVariable)>
 - read <primitive.A (FieldVariable)> from <query primitive.D (SliceVariable)>
 - read <primitive.A (SliceVariable)> from <query primitive.D (SliceVariable)>
@@ -111,6 +130,8 @@ D:
 - read <trainType []string (SliceVariable)> from <query primitive.D (SliceVariable)>
 - read <rt string (BasicVariable)> from <query primitive.D (SliceVariable)>
 - read <":" string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <primitive.D (SliceVariable)>
+- read <primitive.D (SliceVariable)> from <primitive.D (SliceVariable)>
 - read <query primitive.D (SliceVariable)>
 - read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
 - read <struct{ "name" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
@@ -128,8 +149,29 @@ D:
 - read <struct{ "id" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
 - read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
 - read <id string (BasicVariable)> from <query primitive.D (SliceVariable)>
-- read <ref <string> @ StationService (Reference)> from <query primitive.D (SliceVariable)>
-- read <string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <ID string> @ AssuranceService (Reference)> from <query primitive.D (SliceVariable)>
+- read <ID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{ "id" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <id string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <ID string> @ AssuranceService (Reference)> from <query primitive.D (SliceVariable)>
+- read <ID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <primitive.D (SliceVariable)>
+- read <primitive.D (SliceVariable)> from <primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{ "orderid" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <order_id string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{ "name" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <name string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <primitive.D (SliceVariable)>
+- read <primitive.D (SliceVariable)> from <primitive.D (SliceVariable)>
 - read <primitive.D (SliceVariable)>
 - read <primitive.D (SliceVariable)> from <primitive.D (SliceVariable)>
 - read <primitive.D (SliceVariable)>
@@ -137,16 +179,24 @@ D:
 - read <struct{ "tripid" string, string} (StructVariable)> from <primitive.D (SliceVariable)>
 - read <string (FieldVariable)> from <primitive.D (SliceVariable)>
 - read <tripid string (BasicVariable)> from <primitive.D (SliceVariable)>
-- read <query primitive.D (SliceVariable)>
-- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
-- read <struct{ "id" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
-- read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
-- read <id string (BasicVariable)> from <query primitive.D (SliceVariable)>
 - read <primitive.D (SliceVariable)>
 - read <primitive.D (SliceVariable)> from <primitive.D (SliceVariable)>
 - read <struct{ "id" string, string} (StructVariable)> from <primitive.D (SliceVariable)>
 - read <string (FieldVariable)> from <primitive.D (SliceVariable)>
 - read <ID string (BasicVariable)> from <primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{ "$and" string, primitive.A} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <primitive.A (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <primitive.A (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{ "startstation" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <start string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{ "endstation" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <end string (BasicVariable)> from <query primitive.D (SliceVariable)>
 - read <primitive.D (SliceVariable)>
 - read <primitive.D (SliceVariable)> from <primitive.D (SliceVariable)>
 - read <query primitive.D (SliceVariable)>
@@ -162,13 +212,6 @@ D:
 - read <struct{ "$in" string, primitive.A} (StructVariable)> from <query primitive.D (SliceVariable)>
 - read <primitive.A (FieldVariable)> from <query primitive.D (SliceVariable)>
 - read <doc primitive.A (SliceVariable)> from <query primitive.D (SliceVariable)>
-- read <primitive.D (SliceVariable)>
-- read <primitive.D (SliceVariable)> from <primitive.D (SliceVariable)>
-- read <struct{ "id" string, string} (StructVariable)> from <primitive.D (SliceVariable)>
-- read <string (FieldVariable)> from <primitive.D (SliceVariable)>
-- read <id string (BasicVariable)> from <primitive.D (SliceVariable)>
-- read <primitive.D (SliceVariable)>
-- read <primitive.D (SliceVariable)> from <primitive.D (SliceVariable)>
 MONEY_DB.Money:
 - write <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>
 - write <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>
@@ -188,10 +231,6 @@ PAYMENTS_DB.Payment:
 PAYMENTS_DB.Payment.ID:
 - write <ID string (BasicVariable)> from <payment payment.Payment struct{ID string, OrderID string, UserID string, Price string} (StructVariable)>
 - write <ID string (FieldVariable)> from <payment payment.Payment struct{ID string, OrderID string, UserID string, Price string} (StructVariable)>
-PAYMENTS_DB.document:
-- read <res NoSQLCursor {database = payment, collection = payment} (BlueprintBackendVariable)>
-- read <primitive.D (SliceVariable)>
-- read <primitive.D (SliceVariable)> from <primitive.D (SliceVariable)>
 PRICE_DB.PriceConfig:
 - write <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructVariable)>
 - write <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructVariable)> from <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructVariable)>
@@ -243,6 +282,9 @@ PRICE_DB.document:
 - read <trainType []string (SliceVariable)> from <query primitive.D (SliceVariable)>
 - read <rt string (BasicVariable)> from <query primitive.D (SliceVariable)>
 - read <":" string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <res NoSQLCursor {database = priceConfig, collection = priceConfig} (BlueprintBackendVariable)>
+- read <primitive.D (SliceVariable)>
+- read <primitive.D (SliceVariable)> from <primitive.D (SliceVariable)>
 ROUTE_DB.Route:
 - write <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
 - write <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
@@ -270,6 +312,20 @@ ROUTE_DB.document:
 - read <struct{ "id" string, string} (StructVariable)> from <primitive.D (SliceVariable)>
 - read <string (FieldVariable)> from <primitive.D (SliceVariable)>
 - read <ID string (BasicVariable)> from <primitive.D (SliceVariable)>
+- read <res NoSQLCursor {database = route, collection = route} (BlueprintBackendVariable)>
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{ "$and" string, primitive.A} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <primitive.A (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <primitive.A (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{ "startstation" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <start string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{ "endstation" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <end string (BasicVariable)> from <query primitive.D (SliceVariable)>
 STATION_DB.Station:
 - write <station station.Station struct{ID string, Name string, StayTime int64} (StructVariable)>
 - write <station station.Station struct{ID string, Name string, StayTime int64} (StructVariable)>
@@ -285,14 +341,6 @@ STATION_DB.document:
 - read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
 - read <name string (BasicVariable)> from <query primitive.D (SliceVariable)>
 - read <res NoSQLCursor {database = station, collection = station} (BlueprintBackendVariable)>
-- read <res NoSQLCursor {database = station, collection = station} (BlueprintBackendVariable)>
-- read <query primitive.D (SliceVariable)>
-- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
-- read <struct{ "id" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
-- read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
-- read <id string (BasicVariable)> from <query primitive.D (SliceVariable)>
-- read <ref <string> @ StationService (Reference)> from <query primitive.D (SliceVariable)>
-- read <string (BasicVariable)> from <query primitive.D (SliceVariable)>
 - read <query primitive.D (SliceVariable)>
 - read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
 - read <struct{ "id" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
@@ -325,25 +373,12 @@ STATIONFOOD_DB.document:
 - read <struct{ "$in" string, primitive.A} (StructVariable)> from <query primitive.D (SliceVariable)>
 - read <primitive.A (FieldVariable)> from <query primitive.D (SliceVariable)>
 - read <doc primitive.A (SliceVariable)> from <query primitive.D (SliceVariable)>
-- read <res NoSQLCursor {database = stationfood, collection = stationfood} (BlueprintBackendVariable)>
-- read <primitive.D (SliceVariable)>
-- read <primitive.D (SliceVariable)> from <primitive.D (SliceVariable)>
-- read <struct{ "id" string, string} (StructVariable)> from <primitive.D (SliceVariable)>
-- read <string (FieldVariable)> from <primitive.D (SliceVariable)>
-- read <id string (BasicVariable)> from <primitive.D (SliceVariable)>
 TRAIN_DB.TrainType:
 - write <tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} (StructVariable)>
 - write <tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} (StructVariable)> from <tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} (StructVariable)>
 TRAIN_DB.TrainType.Name:
 - write <Name string (BasicVariable)> from <tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} (StructVariable)>
 - write <Name string (FieldVariable)> from <tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} (StructVariable)>
-TRAIN_DB.document:
-- read <res NoSQLCursor {database = train, collection = train} (BlueprintBackendVariable)>
-- read <query primitive.D (SliceVariable)>
-- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
-- read <struct{ "id" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
-- read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
-- read <id string (BasicVariable)> from <query primitive.D (SliceVariable)>
 TRAINFOOD_DB.TrainFood:
 - write <tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}} (StructVariable)>
 - write <tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}} (StructVariable)> from <tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}} (StructVariable)>
@@ -364,14 +399,24 @@ USER_DB.User:
 - write <user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string} (StructVariable)>
 - write <user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string} (StructVariable)> from
   <user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string} (StructVariable)>
+USER_DB.document:
+- read <res NoSQLCursor {database = user, collection = user} (BlueprintBackendVariable)>
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{ "username" string, string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <username string (BasicVariable)> from <query primitive.D (SliceVariable)>
 string: []
 struct{ "$and" string, primitive.A}: []
 struct{ "$in" string, primitive.A}: []
-struct{ "accountid" string, string}: []
+struct{ "endstation" string, string}: []
 struct{ "id" string, string}: []
 struct{ "name" string, string}: []
+struct{ "orderid" string, string}: []
 struct{ "routeid" string, string}: []
+struct{ "startstation" string, string}: []
 struct{ "stationname" string, primitive.D}: []
 struct{ "stationname" string, string}: []
 struct{ "traintype" string, string}: []
 struct{ "tripid" string, string}: []
+struct{ "username" string, string}: []

@@ -31,7 +31,7 @@ threechain2:
 - declared types:
   - threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64}
   - threechain2.OrderService
-  - threechain2.OrderServiceImpl struct{stock_service threechain2.StockService, order_db {instance = stock_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, shipment_queue  {instance = shipment_queue}
+  - threechain2.OrderServiceImpl struct{stock_service threechain2.StockService, order_db {instance = order_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, shipment_queue  {instance = shipment_queue}
     interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}}
   - threechain2.Shipment struct{OrderID string, Username string, Status string}
   - threechain2.ShipmentMessage struct{OrderID string, Username string}

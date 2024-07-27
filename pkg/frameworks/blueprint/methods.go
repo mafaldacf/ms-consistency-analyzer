@@ -196,7 +196,7 @@ func (b *BackendMethod) GetWrittenObjectIndex() int {
 	switch b.FullName() {
 	case "Cache.Put":
 		return 2
-	case "NoSQLDatabase.NoSQLCollection.InsertOne":
+	case "NoSQLDatabase.NoSQLCollection.InsertOne", "NoSQLDatabase.NoSQLCollection.UpdateOne":
 		return 1
 	case "Queue.Push":
 		return 1
@@ -225,7 +225,7 @@ func (b *BackendMethod) GetWrittenKeyIndex() int {
 	switch b.FullName() {
 	case "Cache.Put":
 		return 1
-	case "NoSQLDatabase.NoSQLCollection.InsertOne":
+	case "NoSQLDatabase.NoSQLCollection.InsertOne", "NoSQLDatabase.NoSQLCollection.UpdateOne":
 		return 1
 	case "Queue.Push":
 		return 1
@@ -313,6 +313,11 @@ func buildBackendNoSQLCollectionMethods() []*BackendMethod {
 		Params:  []*types.MethodField{&ctxParam, &filterParam, &docParam},
 		Returns: []*types.MethodField{&boolReturn, &errorReturn},
 	})
+	// UpdateOne(ctx context.Context, filter bson.D, update bson.D) (int, error)
+	methods = append(methods, &BackendMethod{Name: "UpdateOne", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Operation: OP_UPDATE,
+		Params:  []*types.MethodField{&ctxParam, &filterParam, &updateParam},
+		Returns: []*types.MethodField{&intReturn, &errorReturn},
+	})
 	// InsertOne(ctx context.Context, document interface{}) error
 	methods = append(methods, &BackendMethod{Name: "InsertOne", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Operation: OP_WRITE,
 		Params:  []*types.MethodField{&ctxParam, &docParam},
@@ -397,6 +402,15 @@ var filterParam = types.MethodField{
 		},
 	},
 }
+var updateParam = types.MethodField{
+	FieldInfo: types.FieldInfo{
+		Name: "update",
+		Type: &gotypes.UserType{
+			Name:    "D",
+			Package: "bson",
+		},
+	},
+}
 var projectionParam = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Name: "projection",
@@ -451,5 +465,13 @@ var errorReturn = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		// error is actually an interface
 		Type: &gotypes.InterfaceType{Methods: make(map[string]string)},
+	},
+}
+var intReturn = types.MethodField{
+	FieldInfo: types.FieldInfo{
+		// error is actually an interface
+		Type: &gotypes.BasicType{
+			Name: "int",
+		},
 	},
 }

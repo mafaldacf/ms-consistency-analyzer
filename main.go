@@ -4,6 +4,8 @@ import (
 	"flag"
 	"fmt"
 
+	"gopkg.in/yaml.v2"
+
 	"analyzer/pkg/abstractgraph"
 	"analyzer/pkg/app"
 	"analyzer/pkg/detector"
@@ -61,23 +63,43 @@ func main() {
 	fmt.Println()
 
 	var requests []*detector.Request
+	detectionModes := detector.GetAllDetectioModes()
 	for _, entryNode := range abstractGraph.Nodes {
-		request := detector.InitRequest(entryNode)
-		request.TransverseRequestOperations()
-		requests = append(requests, request)
-	}
-	for _, request := range requests {
-		request.SaveInconsistencies(app.Name)
+		for i, detectionMode := range detectionModes {
+			request := detector.InitRequest(entryNode, detectionMode)
+			fmt.Printf("\n\n------------------------- ENTRY NODE = %s -------------------------\n", entryNode.String())
+			fmt.Printf("------------------------- (%d/%d) XCY DETECTOR MODE = %s -------------------------\n\n", i+1, len(detectionModes), request.DetectionModeName())
+			request.InitTransversal()
+			requests = append(requests, request)
+		}
 	}
 
-	fmt.Println()
+	for _, request := range requests {
+		request.DumpToYAMLFile(app.Name)
+	}
+
+	/* fmt.Println()
 	fmt.Println(" ----------------------------------------------------------------------------------------------------------------- ")
 	fmt.Println(" --------------------------------------------------- DUMPERS ----------------------------------------------------- ")
 	fmt.Println(" ----------------------------------------------------------------------------------------------------------------- ")
-	fmt.Println()
+	fmt.Println() */
 
 	app.Dump()
 	abstractGraph.Dump()
 
 	fmt.Println()
+
+	fmt.Println()
+	fmt.Println("-----------------------------------------------------------------------------------------------------------------")
+	fmt.Println("------------------------------------------------- XCY SUMMARY ---------------------------------------------------")
+	fmt.Println("-----------------------------------------------------------------------------------------------------------------")
+	fmt.Println()
+
+	for _, request := range requests {
+		if len(request.Inconsistencies) > 0 {
+			data, _ := yaml.Marshal(request.DumpYaml(false))
+			fmt.Println(string(data))
+			fmt.Println("----------------------------------------------------------")
+		}
+	}
 }

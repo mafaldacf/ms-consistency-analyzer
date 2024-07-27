@@ -189,8 +189,9 @@
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = priceConfig, collection = priceConfig}'
   - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = priceConfig, collection = priceConfig}'
+  - |-
+    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = priceConfig, collection = priceConfig} -->
+       r-tainted 1x: read(price_db.document)
   - '[-1] (InterfaceVariable UserType) err .error'
   - '[-1] (ArrayVariable ArrayType) pcs []price.PriceConfig struct{ID string, TrainType
     string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}'

@@ -168,6 +168,11 @@ func (v *StructVariable) AddFieldKeyVariableIfNotExists(name string, field Varia
 }
 
 func (v *StructVariable) attachReferenceToFields(target Variable, creator string) {
+	if targetField, ok := target.(*FieldVariable); ok {
+		logger.Logger.Warnf("FOUND FIELD THAT IS ALSO A STRUCT!!!!")
+		target = targetField.WrappedVariable
+	}
+
 	if referenceStruct, ok := target.(*StructVariable); ok {
 		logger.Logger.Infof("[VARS STRUCT - REF] current variable has %d fields & reference variable has (%d)", len(v.Fields), len(referenceStruct.Fields))
 		for name, field := range referenceStruct.Fields {

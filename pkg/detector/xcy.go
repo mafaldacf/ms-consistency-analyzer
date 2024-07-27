@@ -4,92 +4,112 @@ import (
 	"encoding/json"
 	"fmt"
 	"slices"
-	"strings"
+
+	"github.com/golang-collections/collections/stack"
 
 	"analyzer/pkg/abstractgraph"
-	"analyzer/pkg/datastores"
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
 )
 
-type Parameters interface {
-	String() string
-}
-type KeyValue struct {
-	Parameters
-	Key   variables.Variable
-	Value variables.Variable
-}
-
-func (kv *KeyValue) String() string {
-	return fmt.Sprintf("KV { key: %s (#%d), value: %s (#%d) }",
-		kv.Key.GetVariableInfo().GetName(), kv.Key.GetId(),
-		kv.Value.GetVariableInfo().GetName(), kv.Value.GetId(),
-	)
+type Request struct {
+	EntryNode       abstractgraph.AbstractNode `json:"-"`
+	DetectionMode   DetectionMode              `json:"detection_mode"`
+	Inconsistencies []*Inconsistency           `json:"xcy_inconsistencies"`
+	Lineages        []*Lineage                 `json:"lineages"`
+	Writes          []*Operation               `json:"-"`
+	Reads           []*Operation               `json:"-"`
+	LineagesStack   *stack.Stack               `json:"-"`
 }
 
-type Message struct {
-	Parameters
-	Message variables.Variable
+func GetAllDetectioModes() []DetectionMode {
+	return []DetectionMode{CROSS_ASSOCIATIONS_DEFAULT, CROSS_ASSOCIATIONS_LINEAGES, LINEAGES_IMPLICIT_DEFAULT, LINEAGES_IMPLICIT_EQUAL_DATASTORES}
 }
 
-func (m *Message) String() string {
-	return fmt.Sprintf("MSG { message: %s (#%d) }",
-		m.Message.GetVariableInfo().GetName(), m.Message.GetId(),
-	)
+type DetectionMode int
+
+const (
+	CROSS_ASSOCIATIONS_DEFAULT DetectionMode = iota
+	CROSS_ASSOCIATIONS_LINEAGES
+	LINEAGES_IMPLICIT_DEFAULT
+	LINEAGES_IMPLICIT_EQUAL_DATASTORES
+)
+
+func (request *Request) DetectionModeName() string {
+	var detectionMap = map[DetectionMode]string{
+		CROSS_ASSOCIATIONS_DEFAULT:         "CROSS_ASSOCIATIONS_DEFAULT",
+		CROSS_ASSOCIATIONS_LINEAGES:        "CROSS_ASSOCIATIONS_LINEAGES",
+		LINEAGES_IMPLICIT_DEFAULT:          "LINEAGES_IMPLICIT_DEFAULT",
+		LINEAGES_IMPLICIT_EQUAL_DATASTORES: "LINEAGES_IMPLICIT_EQUAL_DATASTORES",
+	}
+	return detectionMap[request.DetectionMode]
 }
 
-type Operation struct {
-	Service  string
-	Method   string
-	Key      variables.Variable
-	Object   variables.Variable
-	Database datastores.DatabaseInstance
-	Write    bool
+func (request *Request) DetectionModeUsesLineages() bool {
+	var modesWithLineages = []DetectionMode{
+		CROSS_ASSOCIATIONS_LINEAGES,
+		LINEAGES_IMPLICIT_DEFAULT,
+		LINEAGES_IMPLICIT_EQUAL_DATASTORES,
+	}
+	return slices.Contains(modesWithLineages, request.DetectionMode)
 }
 
-func (op *Operation) MarshalJSON() ([]byte, error) {
+func (request *Request) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Service  string `json:"service"`
-		Method   string `json:"method"`
-		Key      string `json:"key"`
-		Object   string `json:"object"`
-		Database string `json:"database"`
+		Mode                  string           `json:"detection_mode"`
+		NumberInconsistencies int              `json:"number_inconsistencies"`
+		Inconsistencies       []*Inconsistency `json:"xcy_inconsistencies"`
+		Lineages              []*Lineage       `json:"lineages"`
 	}{
-		Service:  op.Service,
-		Method:   op.Method,
-		Key:      fmt.Sprintf("%s %s", op.Key.GetVariableInfo().GetName(), op.Key.GetVariableInfo().GetType().GetLongName()),
-		Object:   fmt.Sprintf("%s %s", op.Object.GetVariableInfo().GetName(), op.Object.GetVariableInfo().GetType().GetLongName()),
-		Database: fmt.Sprintf("%s %s", op.Database.GetName(), op.Database.GetTypeLongName()),
+		Mode:                  request.DetectionModeName(),
+		NumberInconsistencies: len(request.Inconsistencies),
+		Inconsistencies:       request.Inconsistencies,
+		Lineages:              request.Lineages,
 	})
 }
 
-func (op *Operation) String() string {
-	if op.Key == nil {
-		logger.Logger.Fatalf("nil key in %s", op.Method)
+func (request *Request) AddInconsistency(inconsistency *Inconsistency) {
+	request.Inconsistencies = append(request.Inconsistencies, inconsistency)
+}
+
+func (request *Request) AddWrite(op *Operation) {
+	request.Writes = append(request.Writes, op)
+}
+
+func (request *Request) AddRead(op *Operation) {
+	request.Reads = append(request.Reads, op)
+}
+
+func (request *Request) PushLineage() {
+	lineage := &Lineage{
+		ID: len(request.Lineages),
 	}
-	if op.Object == nil {
-		logger.Logger.Fatalf("nil object in %s", op.Method)
+	if lineage.ID != 0 {
+		lineage.Previous = request.CurrentLineage()
 	}
-	opType := "write"
-	if !op.Write {
-		opType = "read"
-	}
-	return fmt.Sprintf("{ %s(%s, %s, %s, %s) }",
-		opType,
-		op.Service,
-		op.Database.GetName(),
-		op.Key.GetVariableInfo().GetName(),
-		op.Object.GetVariableInfo().GetName(),
-	)
+	request.LineagesStack.Push(lineage)
+	logger.Logger.Infof("[XCY LINEAGES - PUSH] %s", lineage.String())
+	request.Lineages = append(request.Lineages, lineage)
+}
+
+func (request *Request) CurrentLineage() *Lineage {
+	lineage := request.LineagesStack.Peek().(*Lineage)
+	logger.Logger.Tracef("[XCY LINEAGES - PEEK] %s", lineage.String())
+	return lineage
+}
+
+func (request *Request) PopLineage() *Lineage {
+	lineage := request.LineagesStack.Pop().(*Lineage)
+	logger.Logger.Infof("[XCY LINEAGES - POP] %s", lineage.String())
+	return lineage
 }
 
 type Inconsistency struct {
-	Write     *Operation            `json:"write"`
-	Read      *Operation            `json:"read"`
-	Dataflows []*variables.Dataflow `json:"dataflows_in_path"`
+	Write     *Operation
+	Read      *Operation
+	Dataflows []*variables.Dataflow
 }
 
 func (inconsistency *Inconsistency) MarshalJSON() ([]byte, error) {
@@ -108,7 +128,7 @@ func (inconsistency *Inconsistency) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Write     *Operation `json:"write"`
 		Read      *Operation `json:"read"`
-		Dataflows []string   `json:"dataflows_in_path"`
+		Dataflows []string   `json:"-"`
 	}{
 		Write:     inconsistency.Write,
 		Read:      inconsistency.Read,
@@ -117,20 +137,17 @@ func (inconsistency *Inconsistency) MarshalJSON() ([]byte, error) {
 }
 
 func (i *Inconsistency) String() string {
-	return fmt.Sprintf("READ: %v / WRITE: %v", i.Read.String(), i.Write.String())
+	return fmt.Sprintf("READ = %v / WRITE = %v", i.Read.String(), i.Write.String())
 }
 
-type Request struct {
-	EntryNode       abstractgraph.AbstractNode `json:"-"`
-	Inconsistencies []*Inconsistency           `json:"xcy_inconsistencies"`
-	Writes          []*Operation               `json:"writes"`
-	Reads           []*Operation               `json:"reads"`
-}
-
-func InitRequest(entryNode abstractgraph.AbstractNode) *Request {
-	return &Request{
-		EntryNode: entryNode,
+func InitRequest(entryNode abstractgraph.AbstractNode, detectionMode DetectionMode) *Request {
+	request := &Request{
+		EntryNode:     entryNode,
+		LineagesStack: stack.New(),
+		DetectionMode: detectionMode,
 	}
+	request.PushLineage()
+	return request
 }
 
 func createOperation(key variables.Variable, object variables.Variable, call *abstractgraph.AbstractDatabaseCall, write bool) *Operation {
@@ -151,7 +168,10 @@ func (request *Request) saveWriteOperation(call *abstractgraph.AbstractDatabaseC
 	object := call.GetParam(objIndex)
 
 	write := createOperation(key, object, call, true)
-	request.Writes = append(request.Writes, write)
+
+	request.AddWrite(write)
+	request.CurrentLineage().AddOperation(write)
+
 	return write
 }
 
@@ -172,41 +192,47 @@ func (request *Request) saveReadOperation(call *abstractgraph.AbstractDatabaseCa
 	}
 
 	read := createOperation(key, object, call, false)
-	request.Reads = append(request.Reads, read)
+	request.AddRead(read)
+
 	return read
 }
 
-func (request *Request) addInconsistency(write *Operation, read *Operation) {
-	inconsistency := &Inconsistency{
-		Write: write,
-		Read:  read,
-	}
-	request.Inconsistencies = append(request.Inconsistencies, inconsistency)
-	logger.Logger.Warnf("[XCY] found inconsistency at datastore %s", inconsistency.Write.Database.GetName())
-}
+func (request *Request) captureConservativeInconsistency(read *Operation, readCall *abstractgraph.AbstractDatabaseCall) {
+	// iterate in reverse
 
-func (request *Request) TransverseRequestOperations() {
-	logger.Logger.Infof("[XCY] init tranversal for entry node: %s", request.EntryNode.GetName())
-	for _, edge := range request.EntryNode.GetChildren() {
-		fmt.Println("\n------------------------------------------------------------------------------------------------------------------------------------------------")
-		logger.Logger.Infof("[XCY] transversing child node: %s", edge.GetName())
-		fmt.Println("------------------------------------------------------------------------------------------------------------------------------------------------")
-		request.transverseOperations(edge)
-	}
 }
 
 func (request *Request) captureInconsistency(read *Operation, readCall *abstractgraph.AbstractDatabaseCall) {
-	// iterate in reverse
-	for i := len(request.Writes) - 1; i >= 0; i-- {
-		write := request.Writes[i]
+	if readCall.DbInstance.IsQueue() {
+		// skip inconsistencies between a write and a read in the same queue
+		return
+	}
+
+	dependencies := request.CurrentLineage().GetDependencies()
+	logger.Logger.Tracef("[XCY LINEAGES] got dependencies: %v", dependencies)
+
+	for _, write := range dependencies {
+		if request.DetectionMode == LINEAGES_IMPLICIT_DEFAULT {
+			inconsistency := &Inconsistency{
+				Write: write,
+				Read:  read,
+			}
+			request.AddInconsistency(inconsistency)
+			continue
+		}
+
+		if request.DetectionMode == LINEAGES_IMPLICIT_EQUAL_DATASTORES {
+			if readCall.DbInstance == write.Database {
+				inconsistency := &Inconsistency{
+					Write: write,
+					Read:  read,
+				}
+				request.AddInconsistency(inconsistency)
+			}
+			continue
+		}
 
 		if readCall.DbInstance == write.Database {
-
-			if readCall.DbInstance.IsQueue() {
-				// skip inconsistencies between a write and a read in the same queue
-				return
-			}
-
 			logger.Logger.Debugf("[XCY] evaluating XCY violation for read (%s @ %s) and write (%s @ %s)", read.Key.GetVariableInfo().Name, readCall.DbInstance.GetName(), write.Key.GetVariableInfo().Name, write.Database.GetName())
 			readKeyDeps := read.Key.GetNestedDependencies(false)
 			writeValueDeps := write.Object.GetNestedDependencies(false)
@@ -231,23 +257,42 @@ func (request *Request) captureInconsistency(read *Operation, readCall *abstract
 			}
 
 			if inconsistency.Dataflows != nil {
-				request.Inconsistencies = append(request.Inconsistencies, inconsistency)
-				logger.Logger.Warnf("[XCY] found inconsistency at datastore %s", inconsistency.Write.Database.GetName())
+				logger.Logger.Warnf("[XCY] found inconsistency: %s", inconsistency.String())
+				request.AddInconsistency(inconsistency)
 			}
 		}
 	}
 }
 
+func (request *Request) InitTransversal() {
+	logger.Logger.Tracef("[XCY] init tranversal for entry node: %s", request.EntryNode.GetName())
+	for _, edge := range request.EntryNode.GetChildren() {
+		/* fmt.Println("\n------------------------------------------------------------------------------------------------------------------------------------------------")
+		logger.Logger.Infof("[XCY] transversing child node: %s", edge.GetName())
+		fmt.Println("------------------------------------------------------------------------------------------------------------------------------------------------") */
+		request.transverseOperations(edge)
+	}
+}
+
 func (request *Request) transverseOperations(node abstractgraph.AbstractNode) {
+	// FIXME: maybe we should link the two stateful nodes (push and pop) in the abstract graph
+	// instead of placing a stateless queue handler between both
+	if request.DetectionModeUsesLineages() {
+		if _, ok := node.(*abstractgraph.AbstractQueueHandler); ok {
+			request.PushLineage()
+		}
+	}
+
 	if dbCall, ok := node.(*abstractgraph.AbstractDatabaseCall); ok {
+		var operation *Operation
 		if backend, ok := dbCall.ParsedCall.Method.(*blueprint.BackendMethod); ok {
 			if backend.IsWrite() {
-				write := request.saveWriteOperation(dbCall, backend)
-				logger.Logger.Infof("[XCY] saved write %s", write.String())
+				operation = request.saveWriteOperation(dbCall, backend)
+				logger.Logger.Infof("[XCY] saved write %s", operation.String())
 			} else if backend.IsRead() {
-				read := request.saveReadOperation(dbCall, backend)
-				logger.Logger.Infof("[XCY] saved read %s", read.String())
-				request.captureInconsistency(read, dbCall)
+				operation = request.saveReadOperation(dbCall, backend)
+				logger.Logger.Infof("[XCY] saved read %s", operation.String())
+				request.captureInconsistency(operation, dbCall)
 			} else {
 				logger.Logger.Warnf("[XCY] ignoring operation: %s", dbCall.String())
 			}
@@ -256,9 +301,12 @@ func (request *Request) transverseOperations(node abstractgraph.AbstractNode) {
 	for _, edge := range node.GetChildren() {
 		request.transverseOperations(edge)
 	}
-}
 
-func (request *Request) SaveInconsistencies(app string) {
-	filename := fmt.Sprintf("detection/xcy_%s_%s.json", strings.ToLower(request.EntryNode.GetCallee()), strings.ToLower(request.EntryNode.GetName()))
-	utils.DumpToJSONFile(request, app, filename)
+	// FIXME: maybe we should link the two stateful nodes (push and pop) in the abstract graph
+	// instead of placing a stateless queue handler between both
+	if request.DetectionModeUsesLineages() {
+		if _, ok := node.(*abstractgraph.AbstractQueueHandler); ok {
+			request.PopLineage()
+		}
+	}
 }

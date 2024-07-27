@@ -4,28 +4,28 @@
 
 [] (-1) (InterfaceVariable UserType) ctx context.Context 
 
-[] (-1) (BasicVariable BasicType) start string 
+[] (-1) (BasicVariable BasicType) start string // read(route_db), 
 
-[] (-1) (BasicVariable BasicType) end string 
+[] (-1) (BasicVariable BasicType) end string // read(route_db), 
 
 [] (-1) (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = route, collection = route} 
 
 [] (-1) (InterfaceVariable UserType) err .error 
 
-[] (-1) (SliceVariable UserType) query primitive.D 
-[_] (0) (StructVariable StructType) struct{ "$and" string,  primitive.A} 
-[__] (0) (FieldVariable FieldType) primitive.A 
-[___] (0) (SliceVariable UserType) primitive.A 
-[____] (0) (SliceVariable UserType) primitive.D 
-[_____] (0) (StructVariable StructType) struct{ "startstation" string,  string} 
-[______] (0) (FieldVariable FieldType) string 
-[_______] (-1) (BasicVariable BasicType) start string 
-[____] (0) (SliceVariable UserType) primitive.D 
-[_____] (0) (StructVariable StructType) struct{ "endstation" string,  string} 
-[______] (0) (FieldVariable FieldType) string 
-[_______] (-1) (BasicVariable BasicType) end string 
+[] (-1) (SliceVariable UserType) query primitive.D // read(route_db), 
+[_] (0) (StructVariable StructType) struct{ "$and" string,  primitive.A} // read(route_db), 
+[__] (0) (FieldVariable FieldType) primitive.A // read(route_db), 
+[___] (0) (SliceVariable UserType) primitive.A // read(route_db), 
+[____] (0) (SliceVariable UserType) primitive.D // read(route_db), 
+[_____] (0) (StructVariable StructType) struct{ "startstation" string,  string} // read(route_db), 
+[______] (0) (FieldVariable FieldType) string // read(route_db), 
+[_______] (-1) (BasicVariable BasicType) start string // read(route_db), 
+[____] (0) (SliceVariable UserType) primitive.D // read(route_db), 
+[_____] (0) (StructVariable StructType) struct{ "endstation" string,  string} // read(route_db), 
+[______] (0) (FieldVariable FieldType) string // read(route_db), 
+[_______] (-1) (BasicVariable BasicType) end string // read(route_db), 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = route, collection = route} 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = route, collection = route} // read(route_db), 
 
 [] (-1) (InterfaceVariable UserType) err .error 
 

@@ -5,16 +5,32 @@
     NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) s (*threechain2.StockServiceImpl struct{stock_db
     NoSQLDatabase})'
+  - '[1] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BasicVariable BasicType) product string'
-  - '[-1] (BasicVariable BasicType) quantity int'
+  - |-
+    [2] (inline) (Reference BasicType) ref <product string> @ OrderService -->
+       w-tainted 2x: write(order_db.Order.Product, stock_db.Stock.Product)
+  - |-
+    [-1] (BasicVariable BasicType) product string -->
+       w-tainted 1x: write(stock_db.Stock.Product)
+  - |-
+    [3] (inline) (Reference BasicType) ref <quantity int> @ OrderService -->
+       w-tainted 2x: write(order_db.Order.Quantity, stock_db.Stock.Quantity)
+  - |-
+    [-1] (BasicVariable BasicType) quantity int -->
+       w-tainted 1x: write(stock_db.Stock.Quantity)
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
     {database = stock_database, collection = stock_collection}'
   - '[-1] (InterfaceVariable UserType) _ .error'
-  - '[0] (inline) (FieldVariable FieldType) Product string'
-  - '[0] (inline) (FieldVariable FieldType) Quantity int'
-  - '[-1] (StructVariable UserType) stock threechain2.Stock struct{Product string,
-    Quantity int}'
+  - |-
+    [0] (inline) (FieldVariable FieldType) Quantity int -->
+       w-tainted 1x: write(stock_db.Stock.Quantity)
+  - |-
+    [0] (inline) (FieldVariable FieldType) Product string -->
+       w-tainted 1x: write(stock_db.Stock.Product)
+  - |-
+    [-1] (StructVariable UserType) stock threechain2.Stock struct{Product string, Quantity int} -->
+       w-tainted 1x: write(stock_db.Stock)
 .NewOrderServiceImpl(ctx context.Context, stock_service threechain2.StockService, order_db NoSQLDatabase, shipment_queue Queue):
   block 0 (Body):
   - '[-1] (InterfaceVariable UserType) ctx context.Context'

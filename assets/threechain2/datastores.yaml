@@ -1,45 +1,4 @@
-SHIPMENT_DB:
-- type: NoSQLDatabase
-- kind: MongoDB
-- schema:
-  - fields:
-    - document: threechain2.Shipment struct{OrderID string, Username string, Status string}
-  - unfolded_fields:
-    - Shipment: threechain2.Shipment struct{OrderID string, Username string, Status string}
-    - Shipment.OrderID: string
-    - Shipment.Username: string
-    - Shipment.Status: string
-  - foreign_fields:
-    - Shipment:
-      - SHIPMENT_QUEUE.ShipmentMessage.OrderID
-      - SHIPMENT_QUEUE.ShipmentMessage.Username
-      - STOCK_DB.Order.OrderID
-      - STOCK_DB.Order.Username
-    - Shipment.OrderID:
-      - SHIPMENT_QUEUE.ShipmentMessage.OrderID
-      - STOCK_DB.Order.OrderID
-    - Shipment.Username:
-      - SHIPMENT_QUEUE.ShipmentMessage.Username
-      - STOCK_DB.Order.Username
-SHIPMENT_QUEUE:
-- type: Queue
-- kind: RabbitMQ
-- schema:
-  - fields:
-    - message: threechain2.ShipmentMessage struct{OrderID string, Username string}
-  - unfolded_fields:
-    - ShipmentMessage: threechain2.ShipmentMessage struct{OrderID string, Username string}
-    - ShipmentMessage.OrderID: string
-    - ShipmentMessage.Username: string
-  - foreign_fields:
-    - ShipmentMessage:
-      - STOCK_DB.Order.OrderID
-      - STOCK_DB.Order.Username
-    - ShipmentMessage.OrderID:
-      - STOCK_DB.Order.OrderID
-    - ShipmentMessage.Username:
-      - STOCK_DB.Order.Username
-STOCK_DB:
+ORDER_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
 - schema:
@@ -53,3 +12,62 @@ STOCK_DB:
     - Order.Quantity: int
     - Order.Timestamp: int64
   - foreign_fields: []
+SHIPMENT_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- schema:
+  - fields:
+    - document: threechain2.Shipment struct{OrderID string, Username string, Status string}
+  - unfolded_fields:
+    - Shipment: threechain2.Shipment struct{OrderID string, Username string, Status string}
+    - Shipment.OrderID: string
+    - Shipment.Username: string
+    - Shipment.Status: string
+  - foreign_fields:
+    - Shipment:
+      - ORDER_DB.Order.OrderID
+      - ORDER_DB.Order.Username
+      - SHIPMENT_QUEUE.ShipmentMessage.OrderID
+      - SHIPMENT_QUEUE.ShipmentMessage.Username
+    - Shipment.OrderID:
+      - ORDER_DB.Order.OrderID
+      - SHIPMENT_QUEUE.ShipmentMessage.OrderID
+    - Shipment.Username:
+      - ORDER_DB.Order.Username
+      - SHIPMENT_QUEUE.ShipmentMessage.Username
+SHIPMENT_QUEUE:
+- type: Queue
+- kind: RabbitMQ
+- schema:
+  - fields:
+    - message: threechain2.ShipmentMessage struct{OrderID string, Username string}
+  - unfolded_fields:
+    - ShipmentMessage: threechain2.ShipmentMessage struct{OrderID string, Username string}
+    - ShipmentMessage.OrderID: string
+    - ShipmentMessage.Username: string
+  - foreign_fields:
+    - ShipmentMessage:
+      - ORDER_DB.Order.OrderID
+      - ORDER_DB.Order.Username
+    - ShipmentMessage.OrderID:
+      - ORDER_DB.Order.OrderID
+    - ShipmentMessage.Username:
+      - ORDER_DB.Order.Username
+STOCK_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- schema:
+  - fields:
+    - document: threechain2.Stock struct{Product string, Quantity int}
+  - unfolded_fields:
+    - Stock: threechain2.Stock struct{Product string, Quantity int}
+    - Stock.Product: string
+    - Stock.Quantity: int
+  - foreign_fields:
+    - Stock:
+      - ORDER_DB.Order.Product
+      - ORDER_DB.Order.Quantity
+    - Stock.Product:
+      - ORDER_DB.Order.Product
+    - Stock.Quantity:
+      - ORDER_DB.Order.Quantity

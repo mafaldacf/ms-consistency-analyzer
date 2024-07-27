@@ -1,0 +1,10 @@
+mode: LINEAGES_IMPLICIT_DEFAULT
+number_inconsistencies: 1
+xcy_inconsistencies:
+- _id: 0
+  read: read(route_db, , res) @ RouteService
+  write: write(route_db, route, route) @ RouteService
+xcy_lineages:
+- _id: 0
+  operations:
+  - write(route_db, route, route) @ RouteService

@@ -1,0 +1,7 @@
+mode: CROSS_ASSOCIATIONS_DEFAULT
+number_inconsistencies: 0
+xcy_inconsistencies: []
+xcy_lineages:
+- _id: 0
+  operations:
+  - write(train_db, tt, tt) @ TrainService

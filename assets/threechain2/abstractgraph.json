@@ -102,7 +102,93 @@
             }
           }
         ],
-        "datastore": "stock_db"
+        "datastore": "order_db"
+      },
+      {
+        "method": "(*StockServiceImpl).ReserveStock(ctx context.Context, product string, quantity int)",
+        "depth": 1,
+        "caller": "OrderService",
+        "edges": [
+          {
+            "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+            "depth": 2,
+            "caller": "StockService",
+            "params": [
+              {
+                "variable": {
+                  "name": "ctx",
+                  "type": "context.Context",
+                  "refs": [
+                    {
+                      "name": "ctx",
+                      "creator": "OrderService"
+                    }
+                  ]
+                }
+              },
+              {
+                "variable": {
+                  "name": "stock",
+                  "type": "threechain2.Stock struct{Product string, Quantity int}"
+                },
+                "struct_fields": {
+                  "Product": {
+                    "variable": {
+                      "name": "Product",
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "product",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "product",
+                            "creator": "OrderService"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "Quantity": {
+                    "variable": {
+                      "name": "Quantity",
+                      "type": "int"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "quantity",
+                        "type": "int",
+                        "refs": [
+                          {
+                            "name": "quantity",
+                            "creator": "OrderService"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            ],
+            "returns": [
+              {
+                "variable": {
+                  "type": ".error"
+                }
+              }
+            ],
+            "datastore": "stock_db"
+          }
+        ],
+        "params": null,
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ]
       },
       {
         "method": "Queue.Push(ctx context.Context, item interface{})",
@@ -427,7 +513,7 @@
                         }
                       }
                     ],
-                    "datastore": "stock_db"
+                    "datastore": "order_db"
                   }
                 ],
                 "params": null,
@@ -572,7 +658,7 @@
             }
           }
         ],
-        "datastore": "stock_db"
+        "datastore": "order_db"
       }
     ],
     "params": [

@@ -117,9 +117,8 @@
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = payment, collection = payment}'
   - '[-1] (InterfaceVariable UserType) err .error'
-  - |-
-    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = payment, collection = payment} -->
-       r-tainted 1x: read(payments_db.document)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
+    = payment, collection = payment}'
   - '[-1] (InterfaceVariable UserType) err .error'
   - '[-1] (InterfaceVariable UserType) err .error'
 payment.NewPaymentServiceImpl(ctx context.Context, payDB NoSQLDatabase, moneyDB NoSQLDatabase) ((*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase}), error):

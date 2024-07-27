@@ -1,0 +1,7 @@
+mode: LINEAGES_IMPLICIT_EQUAL_DATASTORES
+number_inconsistencies: 0
+xcy_inconsistencies: []
+xcy_lineages:
+- _id: 0
+  operations:
+  - write(trainfood_db, tf, tf) @ TrainFoodService

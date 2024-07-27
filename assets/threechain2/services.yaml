@@ -6,8 +6,8 @@ OrderService:
 - services:
     StockService: threechain2.StockService
 - datastores:
+    order_db: NoSQLDatabase
     shipment_queue: Queue
-    stock_db: NoSQLDatabase
 ShipmentService:
 - fields:
     num_workers: 4 int

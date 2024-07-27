@@ -1,0 +1,16 @@
+mode: CROSS_ASSOCIATIONS_DEFAULT
+number_inconsistencies: 2
+xcy_inconsistencies:
+- _id: 0
+  read: read(posts_db, query, result) @ StorageService
+  write: write(posts_db, post, post) @ StorageService
+- _id: 1
+  read: read(analytics_db, query, result) @ AnalyticsService
+  write: write(analytics_db, analytics, analytics) @ AnalyticsService
+xcy_lineages:
+- _id: 0
+  operations:
+  - write(posts_db, post, post) @ StorageService
+  - write(analytics_queue, message, message) @ StorageService
+  - write(analytics_db, analytics, analytics) @ AnalyticsService
+  - write(notifications_queue, message, message) @ UploadService

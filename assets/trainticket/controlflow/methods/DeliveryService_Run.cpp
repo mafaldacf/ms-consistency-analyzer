@@ -1,7 +1,7 @@
 [] (-1) (PointerVariable PointerType) d (*delivery.DeliveryServiceImpl struct{db NoSQLDatabase, delQ Queue}) 
 [_] (0) (StructVariable UserType) delivery.DeliveryServiceImpl struct{db NoSQLDatabase, delQ Queue} 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) delQ Queue 
 [__] (-1) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
+[__] (-1) (BlueprintBackendVariable BlueprintBackendType) delQ Queue 
 
 [] (-1) (InterfaceVariable UserType) ctx context.Context 
 
