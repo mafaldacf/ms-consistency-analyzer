@@ -1,6 +1,14 @@
 {
   "nodes": [
     {
+      "id": "BillingService",
+      "type": "service"
+    },
+    {
+      "id": "CartService",
+      "type": "service"
+    },
+    {
       "id": "OrderService",
       "type": "service"
     },
@@ -11,6 +19,14 @@
     {
       "id": "StockService",
       "type": "service"
+    },
+    {
+      "id": "billing_db MongoDB",
+      "type": "datastore"
+    },
+    {
+      "id": "cart_db MongoDB",
+      "type": "datastore"
     },
     {
       "id": "order_db MongoDB",
@@ -30,6 +46,22 @@
     }
   ],
   "edges": [
+    {
+      "caller": "BillingService",
+      "callee": "billing_db MongoDB"
+    },
+    {
+      "caller": "CartService",
+      "callee": "OrderService"
+    },
+    {
+      "caller": "CartService",
+      "callee": "cart_db MongoDB"
+    },
+    {
+      "caller": "OrderService",
+      "callee": "BillingService"
+    },
     {
       "caller": "OrderService",
       "callee": "StockService"

@@ -1,4 +1,4 @@
-(*StockServiceImpl).ReserveStock(ctx context.Context, productID string, quantity int):
+(*BillingServiceImpl).CreateBill(ctx context.Context, username string, productID string, quantity int, pricePerUnit int):
 - NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
 .NewBillingServiceImpl(ctx context.Context, bill_db NoSQLDatabase): []
 .NewCartServiceImpl(ctx context.Context, order_service threechain2.OrderService, cart_db NoSQLDatabase): []

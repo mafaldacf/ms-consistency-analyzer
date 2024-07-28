@@ -5,6 +5,14 @@
       "type": "client"
     },
     {
+      "id": "BillingService",
+      "type": "service"
+    },
+    {
+      "id": "CartService",
+      "type": "service"
+    },
+    {
       "id": "OrderService",
       "type": "service"
     },
@@ -15,6 +23,14 @@
     {
       "id": "StockService",
       "type": "service"
+    },
+    {
+      "id": "billing_db MongoDB",
+      "type": "datastore"
+    },
+    {
+      "id": "cart_db MongoDB",
+      "type": "datastore"
     },
     {
       "id": "order_db MongoDB",
@@ -35,76 +51,94 @@
   ],
   "edges": [
     {
-      "caller": "Client",
+      "caller": "BillingService",
+      "callee": "billing_db MongoDB",
+      "call": "InsertOne",
+      "depth": 3
+    },
+    {
+      "caller": "CartService",
       "callee": "OrderService",
       "call": "CreateOrder",
-      "depth": 0
+      "depth": 1
+    },
+    {
+      "caller": "CartService",
+      "callee": "cart_db MongoDB",
+      "call": "FindOne",
+      "depth": 1
+    },
+    {
+      "caller": "CartService",
+      "callee": "cart_db MongoDB",
+      "call": "Upsert",
+      "depth": 1
     },
     {
       "caller": "Client",
-      "callee": "OrderService",
-      "call": "ReadOrder",
+      "callee": "CartService",
+      "call": "Checkout",
       "depth": 0
+    },
+    {
+      "caller": "OrderService",
+      "callee": "BillingService",
+      "call": "CreateBill",
+      "depth": 2
     },
     {
       "caller": "OrderService",
       "callee": "StockService",
       "call": "ReserveStock",
-      "depth": 1
-    },
-    {
-      "caller": "OrderService",
-      "callee": "order_db MongoDB",
-      "call": "FindOne",
-      "depth": 1
+      "depth": 2
     },
     {
       "caller": "OrderService",
       "callee": "order_db MongoDB",
       "call": "InsertOne",
-      "depth": 1
+      "depth": 2
     },
     {
       "caller": "OrderService",
       "callee": "order_db MongoDB",
       "call": "FindOne",
-      "depth": 4
+      "depth": 5
     },
     {
       "caller": "OrderService",
       "callee": "shipment_queue RabbitMQ",
       "call": "Push",
-      "depth": 1
+      "depth": 2
     },
     {
       "caller": "ShipmentService",
       "callee": "OrderService",
       "call": "ReadOrder",
-      "depth": 3
+      "depth": 4
     },
     {
       "caller": "ShipmentService",
       "callee": "shipment_db MongoDB",
       "call": "InsertOne",
-      "depth": 3
+      "depth": 4
     },
     {
       "caller": "ShipmentService",
       "callee": "shipment_queue RabbitMQ",
       "call": "Pop",
-      "depth": 3
+      "depth": 4
     },
     {
       "caller": "StockService",
       "callee": "stock_db MongoDB",
       "call": "InsertOne",
-      "depth": 2
+      "depth": 3
     },
     {
       "caller": "shipment_queue RabbitMQ",
       "callee": "ShipmentService",
       "call": "workerThread",
-      "depth": 2
+      "depth": 3
     }
   ]
 }

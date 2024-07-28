@@ -9,6 +9,7 @@ xcy_lineages:
   operations:
   - write(order_db, order, order) @ OrderService
   - write(stock_db, stock, stock) @ StockService
+  - write(billing_db, bill, bill) @ BillingService
   - write(shipment_queue, message, message) @ OrderService
 - _id: 1
   operations:

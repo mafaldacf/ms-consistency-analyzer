@@ -2,6 +2,8 @@
 
 [] (-1) (ServiceVariable ServiceType) stock_service threechain2.StockService 
 
+[] (-1) (ServiceVariable ServiceType) billing_service threechain2.BillingService 
+
 [] (-1) (BlueprintBackendVariable BlueprintBackendType) order_db NoSQLDatabase 
 
 [] (-1) (BlueprintBackendVariable BlueprintBackendType) shipment_queue Queue 

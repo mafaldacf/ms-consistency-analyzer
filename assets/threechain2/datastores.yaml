@@ -1,14 +1,52 @@
+BILLING_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- schema:
+  - fields:
+    - document: threechain2.Bill struct{Username string, ProductID string, Quantity int, PricePerUnit int, TotalCost int}
+  - unfolded_fields:
+    - Bill: threechain2.Bill struct{Username string, ProductID string, Quantity int, PricePerUnit int, TotalCost int}
+    - Bill.Username: string
+    - Bill.ProductID: string
+    - Bill.Quantity: int
+    - Bill.PricePerUnit: int
+    - Bill.TotalCost: int
+  - foreign_fields:
+    - Bill:
+      - ORDER_DB.Order.ProductID
+      - ORDER_DB.Order.Quantity
+      - ORDER_DB.Order.Username
+      - STOCK_DB.Stock.ProductID
+      - STOCK_DB.Stock.Quantity
+    - Bill.Username:
+      - ORDER_DB.Order.Username
+    - Bill.ProductID:
+      - ORDER_DB.Order.ProductID
+      - STOCK_DB.Stock.ProductID
+    - Bill.Quantity:
+      - ORDER_DB.Order.Quantity
+      - STOCK_DB.Stock.Quantity
+    - Bill.TotalCost:
+      - ORDER_DB.Order.Quantity
+      - STOCK_DB.Stock.Quantity
+CART_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- schema:
+  - fields: []
+  - unfolded_fields: []
+  - foreign_fields: []
 ORDER_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
 - schema:
   - fields:
-    - document: threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64}
+    - document: threechain2.Order struct{OrderID string, Username string, ProductID string, Quantity int, Timestamp int64}
   - unfolded_fields:
-    - Order: threechain2.Order struct{OrderID string, Username string, Product string, Quantity int, Timestamp int64}
+    - Order: threechain2.Order struct{OrderID string, Username string, ProductID string, Quantity int, Timestamp int64}
     - Order.OrderID: string
     - Order.Username: string
-    - Order.Product: string
+    - Order.ProductID: string
     - Order.Quantity: int
     - Order.Timestamp: int64
   - foreign_fields: []
@@ -25,6 +63,7 @@ SHIPMENT_DB:
     - Shipment.Status: string
   - foreign_fields:
     - Shipment:
+      - BILLING_DB.Bill.Username
       - ORDER_DB.Order.OrderID
       - ORDER_DB.Order.Username
       - SHIPMENT_QUEUE.ShipmentMessage.OrderID
@@ -33,6 +72,7 @@ SHIPMENT_DB:
       - ORDER_DB.Order.OrderID
       - SHIPMENT_QUEUE.ShipmentMessage.OrderID
     - Shipment.Username:
+      - BILLING_DB.Bill.Username
       - ORDER_DB.Order.Username
       - SHIPMENT_QUEUE.ShipmentMessage.Username
 SHIPMENT_QUEUE:
@@ -47,27 +87,29 @@ SHIPMENT_QUEUE:
     - ShipmentMessage.Username: string
   - foreign_fields:
     - ShipmentMessage:
+      - BILLING_DB.Bill.Username
       - ORDER_DB.Order.OrderID
       - ORDER_DB.Order.Username
     - ShipmentMessage.OrderID:
       - ORDER_DB.Order.OrderID
     - ShipmentMessage.Username:
+      - BILLING_DB.Bill.Username
       - ORDER_DB.Order.Username
 STOCK_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
 - schema:
   - fields:
-    - document: threechain2.Stock struct{Product string, Quantity int}
+    - document: threechain2.Stock struct{ProductID string, Quantity int}
   - unfolded_fields:
-    - Stock: threechain2.Stock struct{Product string, Quantity int}
-    - Stock.Product: string
+    - Stock: threechain2.Stock struct{ProductID string, Quantity int}
+    - Stock.ProductID: string
     - Stock.Quantity: int
   - foreign_fields:
     - Stock:
-      - ORDER_DB.Order.Product
+      - ORDER_DB.Order.ProductID
       - ORDER_DB.Order.Quantity
-    - Stock.Product:
-      - ORDER_DB.Order.Product
+    - Stock.ProductID:
+      - ORDER_DB.Order.ProductID
     - Stock.Quantity:
       - ORDER_DB.Order.Quantity

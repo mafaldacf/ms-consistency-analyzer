@@ -5,34 +5,36 @@
 [__] (-1) (BlueprintBackendVariable BlueprintBackendType) shipment_queue Queue 
 [__] (-1) (BasicVariable BasicType) num_workers 4 int 
 
-[] (11) (InterfaceVariable UserType) ctx context.Context 
+[] (18) (InterfaceVariable UserType) ctx context.Context 
 
 [] (-1) (ChanVariable ChanType) forever chan struct{} 
 
-[] (4) (MapVariable MapType) event map[string]interface{} // read(shipment_queue), 
-[_] (4) (Reference UserType) ref <message threechain2.ShipmentMessage struct{OrderID string, Username string}> @ ShipmentService // write(shipment_queue), read(shipment_queue), 
+[] (12) (MapVariable MapType) event map[string]interface{} // read(shipment_queue), 
+[_] (12) (Reference UserType) ref <message threechain2.ShipmentMessage struct{OrderID string, Username string}> @ ShipmentService // write(shipment_queue), read(shipment_queue), 
 [__] (-1) (FieldVariable FieldType) OrderID string // write(shipment_queue), read(shipment_queue), 
-[___] (18) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService // write(order_db), write(shipment_queue), read(shipment_queue), write(shipment_db), read(order_db), 
-[___] (-1) (BasicVariable BasicType) orderID string // write(order_db), write(shipment_queue), read(shipment_queue), 
-[____] (18) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService // write(order_db), write(shipment_queue), read(shipment_queue), write(shipment_db), read(order_db), 
+[___] (25) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService // write(order_db), write(shipment_queue), read(shipment_queue), write(shipment_db), read(order_db), 
+[___] (-1) (BasicVariable BasicType) cartID string // write(order_db), write(shipment_queue), read(shipment_queue), 
+[____] (2) (Reference BasicType) ref <cartID string> @ CartService // write(order_db), write(shipment_queue), read(shipment_queue), 
+[____] (25) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService // write(order_db), write(shipment_queue), read(shipment_queue), write(shipment_db), read(order_db), 
 [__] (-1) (FieldVariable FieldType) Username string // write(shipment_queue), read(shipment_queue), 
-[___] (15) (Reference InterfaceType) ref <Username interface{}> @ ShipmentService // write(order_db), write(shipment_queue), read(shipment_queue), write(shipment_db), 
-[___] (-1) (BasicVariable BasicType) username string // write(order_db), write(shipment_queue), read(shipment_queue), 
-[____] (15) (Reference InterfaceType) ref <Username interface{}> @ ShipmentService // write(order_db), write(shipment_queue), read(shipment_queue), write(shipment_db), 
-[_] (18) (InterfaceVariable InterfaceType) OrderID interface{} // write(order_db), write(shipment_queue), read(shipment_queue), write(shipment_db), read(order_db), 
-[_] (15) (InterfaceVariable InterfaceType) Username interface{} // write(order_db), write(shipment_queue), read(shipment_queue), write(shipment_db), 
+[___] (22) (Reference InterfaceType) ref <Username interface{}> @ ShipmentService // write(order_db), write(billing_db), write(shipment_queue), read(shipment_queue), write(shipment_db), 
+[___] (-1) (BasicVariable BasicType) username string // write(order_db), write(shipment_queue), read(shipment_queue), write(billing_db), 
+[____] (3) (Reference BasicType) ref <Username string> @ CartService // write(order_db), write(billing_db), write(shipment_queue), read(shipment_queue), 
+[____] (22) (Reference InterfaceType) ref <Username interface{}> @ ShipmentService // write(order_db), write(billing_db), write(shipment_queue), read(shipment_queue), write(shipment_db), 
+[_] (25) (InterfaceVariable InterfaceType) OrderID interface{} // write(order_db), write(shipment_queue), read(shipment_queue), write(shipment_db), read(order_db), 
+[_] (22) (InterfaceVariable InterfaceType) Username interface{} // write(order_db), write(billing_db), write(shipment_queue), read(shipment_queue), write(shipment_db), 
 
-[] (17) (BasicVariable BasicType) OrderID string // write(shipment_db), read(order_db), 
-[_] (18) (InterfaceVariable InterfaceType) OrderID interface{} // write(order_db), write(shipment_queue), read(shipment_queue), write(shipment_db), read(order_db), 
+[] (24) (BasicVariable BasicType) OrderID string // write(shipment_db), read(order_db), 
+[_] (25) (InterfaceVariable InterfaceType) OrderID interface{} // write(order_db), write(shipment_queue), read(shipment_queue), write(shipment_db), read(order_db), 
 
-[] (14) (BasicVariable BasicType) Username string // write(shipment_db), 
-[_] (15) (InterfaceVariable InterfaceType) Username interface{} // write(order_db), write(shipment_queue), read(shipment_queue), write(shipment_db), 
+[] (21) (BasicVariable BasicType) Username string // write(shipment_db), 
+[_] (22) (InterfaceVariable InterfaceType) Username interface{} // write(order_db), write(billing_db), write(shipment_queue), read(shipment_queue), write(shipment_db), 
 
-[] (12) (StructVariable UserType) workerMessage threechain2.ShipmentMessage struct{OrderID string, Username string} 
-[_] (16) (FieldVariable FieldType) OrderID string // write(shipment_db), read(order_db), 
-[__] (17) (BasicVariable BasicType) OrderID string // write(shipment_db), read(order_db), 
-[___] (18) (InterfaceVariable InterfaceType) OrderID interface{} // write(order_db), write(shipment_queue), read(shipment_queue), write(shipment_db), read(order_db), 
-[_] (13) (FieldVariable FieldType) Username string // write(shipment_db), 
-[__] (14) (BasicVariable BasicType) Username string // write(shipment_db), 
-[___] (15) (InterfaceVariable InterfaceType) Username interface{} // write(order_db), write(shipment_queue), read(shipment_queue), write(shipment_db), 
+[] (19) (StructVariable UserType) workerMessage threechain2.ShipmentMessage struct{OrderID string, Username string} 
+[_] (23) (FieldVariable FieldType) OrderID string // write(shipment_db), read(order_db), 
+[__] (24) (BasicVariable BasicType) OrderID string // write(shipment_db), read(order_db), 
+[___] (25) (InterfaceVariable InterfaceType) OrderID interface{} // write(order_db), write(shipment_queue), read(shipment_queue), write(shipment_db), read(order_db), 
+[_] (20) (FieldVariable FieldType) Username string // write(shipment_db), 
+[__] (21) (BasicVariable BasicType) Username string // write(shipment_db), 
+[___] (22) (InterfaceVariable InterfaceType) Username interface{} // write(order_db), write(billing_db), write(shipment_queue), read(shipment_queue), write(shipment_db), 
 

@@ -1,5 +1,5 @@
 mode: LINEAGES_IMPLICIT_DEFAULT
-number_inconsistencies: 4
+number_inconsistencies: 5
 xcy_inconsistencies:
 - _id: 0
   read: read(order_db, query, result) @ OrderService
@@ -9,8 +9,11 @@ xcy_inconsistencies:
   write: write(shipment_queue, message, message) @ OrderService
 - _id: 2
   read: read(order_db, query, result) @ OrderService
-  write: write(stock_db, stock, stock) @ StockService
+  write: write(billing_db, bill, bill) @ BillingService
 - _id: 3
+  read: read(order_db, query, result) @ OrderService
+  write: write(stock_db, stock, stock) @ StockService
+- _id: 4
   read: read(order_db, query, result) @ OrderService
   write: write(order_db, order, order) @ OrderService
 xcy_lineages:
@@ -18,6 +21,7 @@ xcy_lineages:
   operations:
   - write(order_db, order, order) @ OrderService
   - write(stock_db, stock, stock) @ StockService
+  - write(billing_db, bill, bill) @ BillingService
   - write(shipment_queue, message, message) @ OrderService
 - _id: 1
   operations:

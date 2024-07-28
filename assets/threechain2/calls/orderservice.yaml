@@ -1,10 +1,14 @@
-(*OrderServiceImpl).CreateOrder(ctx context.Context, orderID string, username string, product string, quantity int):
+(*OrderServiceImpl).CreateOrder(ctx context.Context, cartID string, username string, productID string, quantity int, price int):
 - NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
-- (*threechain2.StockServiceImpl).ReserveStock(ctx context.Context, product string, quantity int) error
+- (*threechain2.StockServiceImpl).ReserveStock(ctx context.Context, productID string, quantity int) error
+- (*threechain2.BillingServiceImpl).CreateBill(ctx context.Context, username string, productID string, quantity int, pricePerUnit int) error
 - Queue.Push(ctx context.Context, item interface{}) (err, interface{})
 (*OrderServiceImpl).ReadOrder(ctx context.Context, orderID string):
 - NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = order_database, collection = order_collection}, interface{})
-.NewOrderServiceImpl(ctx context.Context, stock_service threechain2.StockService, order_db NoSQLDatabase, shipment_queue Queue): []
+.NewBillingServiceImpl(ctx context.Context, bill_db NoSQLDatabase): []
+.NewCartServiceImpl(ctx context.Context, order_service threechain2.OrderService, cart_db NoSQLDatabase): []
+.NewOrderServiceImpl(ctx context.Context, stock_service threechain2.StockService, billing_service threechain2.BillingService, order_db NoSQLDatabase, shipment_queue Queue):
+ []
 .NewShipmentServiceImpl(ctx context.Context, order_service threechain2.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue):
  []
 .NewStockServiceImpl(ctx context.Context, stock_db NoSQLDatabase): []
