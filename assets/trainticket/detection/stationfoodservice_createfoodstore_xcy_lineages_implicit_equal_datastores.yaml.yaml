@@ -4,4 +4,4 @@ xcy_inconsistencies: []
 xcy_lineages:
 - _id: 0
   operations:
-  - write(stationfood_db, store, store) @ StationFoodService
+  - (0, 0) write(stationfood_db, store, store) @ StationFoodService

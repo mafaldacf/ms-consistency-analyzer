@@ -1,6 +1,9 @@
 ANALYTICS_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
+- dependencies:
+  - analytics_queue
+  - posts_db
 - schema:
   - fields:
     - document: postnotification.Analytics struct{PostID int64}
@@ -17,6 +20,8 @@ ANALYTICS_DB:
 ANALYTICS_QUEUE:
 - type: Queue
 - kind: RabbitMQ
+- dependencies:
+  - posts_db
 - schema:
   - fields:
     - message: postnotification.TriggerAnalyticsMessage struct{PostID string}
@@ -31,6 +36,10 @@ ANALYTICS_QUEUE:
 NOTIFICATIONS_QUEUE:
 - type: Queue
 - kind: RabbitMQ
+- dependencies:
+  - posts_db
+  - analytics_queue
+  - analytics_db
 - schema:
   - fields:
     - message: postnotification.Message struct{ReqID string, PostID string, Timestamp string}
@@ -54,6 +63,7 @@ NOTIFICATIONS_QUEUE:
 POSTS_CACHE:
 - type: Cache
 - kind: Redis
+- dependencies: []
 - schema:
   - fields: []
   - unfolded_fields: []
@@ -61,6 +71,7 @@ POSTS_CACHE:
 POSTS_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
+- dependencies: []
 - schema:
   - fields:
     - document: postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}
@@ -74,3 +85,27 @@ POSTS_DB:
     - Post.Creator: postnotification.Creator struct{Username string}
     - Post.Creator.Username: string
   - foreign_fields: []
+TIMELINE_CACHE:
+- type: Cache
+- kind: Redis
+- dependencies:
+  - posts_db
+  - notifications_queue
+  - analytics_queue
+  - analytics_db
+- schema:
+  - fields:
+    - key: string
+    - value: Timeline
+  - unfolded_fields: []
+  - foreign_fields:
+    - key:
+      - NOTIFICATIONS_QUEUE.Message.ReqID
+      - POSTS_DB.Post.ReqID
+    - value:
+      - ANALYTICS_DB.Analytics.PostID
+      - ANALYTICS_QUEUE.TriggerAnalyticsMessage.PostID
+      - NOTIFICATIONS_QUEUE.Message.PostID
+      - NOTIFICATIONS_QUEUE.Message.ReqID
+      - POSTS_DB.Post.PostID
+      - POSTS_DB.Post.ReqID

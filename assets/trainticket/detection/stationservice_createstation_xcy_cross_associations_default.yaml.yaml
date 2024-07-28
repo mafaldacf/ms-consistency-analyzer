@@ -4,4 +4,4 @@ xcy_inconsistencies: []
 xcy_lineages:
 - _id: 0
   operations:
-  - write(station_db, station, station) @ StationService
+  - (0, 0) write(station_db, station, station) @ StationService

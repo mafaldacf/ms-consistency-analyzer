@@ -10,12 +10,14 @@ import (
 )
 
 type Operation struct {
-	Service  string
-	Method   string
-	Key      variables.Variable
-	Object   variables.Variable
-	Database datastores.DatabaseInstance
-	Write    bool
+	ID        int
+	LineageID int
+	Service   string
+	Method    string
+	Key       variables.Variable
+	Object    variables.Variable
+	Database  datastores.DatabaseInstance
+	Write     bool
 }
 
 func (op *Operation) MarshalJSON() ([]byte, error) {
@@ -45,7 +47,9 @@ func (op *Operation) String() string {
 	if !op.Write {
 		opType = "read"
 	}
-	return fmt.Sprintf("%s(%s, %s, %s) @ %s",
+	return fmt.Sprintf("(%d, %d) %s(%s, %s, %s) @ %s",
+		op.LineageID,
+		op.ID,
 		opType,
 		op.Database.GetName(),
 		op.Key.GetVariableInfo().GetName(),

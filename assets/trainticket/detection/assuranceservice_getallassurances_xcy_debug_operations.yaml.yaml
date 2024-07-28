@@ -1,0 +1,10 @@
+mode: DEBUG_OPERATIONS
+number_inconsistencies: 0
+xcy_inconsistencies: []
+xcy_lineages:
+- _id: 0
+  operations:
+  - (0, 0) read(assurance_db, , res) @ AssuranceService
+  xcy_dependencies:
+  - (0, 0) read(assurance_db, , res) @ AssuranceService
+  xcy_missing_dependencies: []

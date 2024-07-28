@@ -4,4 +4,4 @@ xcy_inconsistencies: []
 xcy_lineages:
 - _id: 0
   operations:
-  - write(route_db, route, route) @ RouteService
+  - (0, 0) write(route_db, route, route) @ RouteService

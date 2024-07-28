@@ -55,6 +55,18 @@ func (call ParsedCall) DeepCopy() ParsedCall {
 	return newCall
 }
 
+func (call ParsedCall) GetMethod() Method {
+	return call.Method
+}
+
+func (call ParsedCall) GetParams() []variables.Variable {
+	return call.Params
+}
+
+func (call ParsedCall) GetReturns() []variables.Variable {
+	return call.Returns
+}
+
 func (call ParsedCall) GetArgument(i int) variables.Variable {
 	if i > len(call.Params) {
 		logger.Logger.Fatalf("invalid argument index %d for length %d in params: %v", i, (call.Params), call.Params)
@@ -136,6 +148,10 @@ func (svcCall *ParsedServiceCall) AddReturn(ret variables.Variable) {
 }
 
 func (svcCall *ParsedServiceCall) GetParams() []variables.Variable {
+	return svcCall.Params
+}
+
+func (svcCall *ParsedServiceCall) GetReturns() []variables.Variable {
 	return svcCall.Params
 }
 

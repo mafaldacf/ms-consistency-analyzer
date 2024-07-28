@@ -10,4 +10,6 @@
 .NewNotifyServiceImpl(ctx context.Context, storage_service postnotification.StorageService, notifications_queue Queue): []
 .NewStorageServiceImpl(ctx context.Context, analytics_service postnotification.AnalyticsService, posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue):
  []
-.NewUploadServiceImpl(ctx context.Context, storage_service postnotification.StorageService, notifications_queue Queue): []
+.NewTimelineServiceImpl(ctx context.Context, storage_service postnotification.StorageService, timeline_cache Cache): []
+.NewUploadServiceImpl(ctx context.Context, storage_service postnotification.StorageService, notifications_queue Queue, timeline_cache Cache):
+ []

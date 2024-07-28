@@ -151,6 +151,7 @@ type Field interface {
 	HasId(id int64) bool
 	GetType() string
 	AddReference(Field)
+	GetDatastore() string
 }
 type Key struct {
 	Field     `json:"-"`
@@ -180,6 +181,9 @@ type ForeignEntry struct {
 func (f *Key) GetName() string {
 	return f.Name
 }
+func (f *Key) GetDatastore() string {
+	return f.Datastore
+}
 func (f *Key) GetFullName() string {
 	return strings.ToUpper(f.Datastore) + "." + f.Name
 }
@@ -197,6 +201,9 @@ func (f *Key) HasId(id int64) bool {
 func (f *Entry) GetName() string {
 	return f.Name
 }
+func (f *Entry) GetDatastore() string {
+	return f.Datastore
+}
 func (f *Entry) GetFullName() string {
 	return strings.ToUpper(f.Datastore) + "." + f.Name
 }
@@ -213,6 +220,9 @@ func (f *Entry) HasId(id int64) bool {
 // Foreign Key
 func (f *ForeignEntry) GetName() string {
 	return f.Name
+}
+func (f *ForeignEntry) GetDatastore() string {
+	return f.Datastore
 }
 func (f *ForeignEntry) GetFullName() string {
 	return strings.ToUpper(f.Datastore) + "." + f.Name

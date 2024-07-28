@@ -101,14 +101,14 @@
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
     = consign, collection = consign}'
   - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (inline) (BasicVariable BasicType) BeyondPrice float64'
+  - '[-1] (inline) (FieldVariable FieldType) BeyondPrice float64'
   - '[-1] (inline) (BasicVariable BasicType) WithinPrice float64'
   - '[-1] (inline) (FieldVariable FieldType) WithinPrice float64'
   - '[-1] (inline) (BasicVariable BasicType) InitialPrice float64'
   - '[-1] (inline) (FieldVariable FieldType) InitialPrice float64'
   - '[-1] (inline) (BasicVariable BasicType) InitialWeight float64'
   - '[-1] (inline) (FieldVariable FieldType) InitialWeight float64'
-  - '[-1] (inline) (BasicVariable BasicType) BeyondPrice float64'
-  - '[-1] (inline) (FieldVariable FieldType) BeyondPrice float64'
   - '[-1] (StructVariable UserType) cp consignprice.ConsignPrice struct{ID string,
     Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64,
     BeyondPrice float64}'

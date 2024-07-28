@@ -28,11 +28,21 @@ StorageService:
     analytics_queue: Queue
     posts_cache: Cache
     posts_db: NoSQLDatabase
+TimelineService:
+- fields:
+    storage_service: StorageService
+    timeline_cache: Cache
+- services:
+    StorageService: postnotification.StorageService
+- datastores:
+    timeline_cache: Cache
 UploadService:
 - fields:
     notifications_queue: Queue
     storage_service: StorageService
+    timeline_cache: Cache
 - services:
     StorageService: postnotification.StorageService
 - datastores:
     notifications_queue: Queue
+    timeline_cache: Cache

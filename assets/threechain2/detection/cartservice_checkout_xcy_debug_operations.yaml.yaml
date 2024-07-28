@@ -1,0 +1,33 @@
+mode: DEBUG_OPERATIONS
+number_inconsistencies: 0
+xcy_inconsistencies: []
+xcy_lineages:
+- _id: 0
+  operations:
+  - (0, 0) read(cart_db, query, result) @ CartService
+  - (0, 1) write(order_db, order, order) @ OrderService
+  - (0, 2) write(stock_db, stock, stock) @ StockService
+  - (0, 3) write(billing_db, bill, bill) @ BillingService
+  - (0, 4) write(shipment_queue, message, message) @ OrderService
+  xcy_dependencies:
+  - (0, 4) write(shipment_queue, message, message) @ OrderService
+  - (0, 3) write(billing_db, bill, bill) @ BillingService
+  - (0, 2) write(stock_db, stock, stock) @ StockService
+  - (0, 1) write(order_db, order, order) @ OrderService
+  - (0, 0) read(cart_db, query, result) @ CartService
+  xcy_missing_dependencies: []
+- _id: 1
+  operations:
+  - (1, 0) read(shipment_queue, event, event) @ ShipmentService
+  - (1, 1) write(shipment_db, shipment, shipment) @ ShipmentService
+  - (1, 2) read(order_db, query, result) @ OrderService
+  xcy_dependencies:
+  - (1, 2) read(order_db, query, result) @ OrderService
+  - (1, 1) write(shipment_db, shipment, shipment) @ ShipmentService
+  - (1, 0) read(shipment_queue, event, event) @ ShipmentService
+  - (0, 4) write(shipment_queue, message, message) @ OrderService
+  - (0, 3) write(billing_db, bill, bill) @ BillingService
+  - (0, 2) write(stock_db, stock, stock) @ StockService
+  - (0, 1) write(order_db, order, order) @ OrderService
+  - (0, 0) read(cart_db, query, result) @ CartService
+  xcy_missing_dependencies: []

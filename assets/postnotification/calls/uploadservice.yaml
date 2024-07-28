@@ -1,8 +1,11 @@
 (*UploadServiceImpl).UploadPost(ctx context.Context, username string, text string):
 - (*postnotification.StorageServiceImpl).StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}) error
 - Queue.Push(ctx context.Context, item interface{}) (err, interface{})
+- Cache.Put(ctx context.Context, key string, value interface{}) interface{}
 .NewAnalyticsServiceImpl(ctx context.Context, analytics_db NoSQLDatabase, analytics_queue Queue): []
 .NewNotifyServiceImpl(ctx context.Context, storage_service postnotification.StorageService, notifications_queue Queue): []
 .NewStorageServiceImpl(ctx context.Context, analytics_service postnotification.AnalyticsService, posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue):
  []
-.NewUploadServiceImpl(ctx context.Context, storage_service postnotification.StorageService, notifications_queue Queue): []
+.NewTimelineServiceImpl(ctx context.Context, storage_service postnotification.StorageService, timeline_cache Cache): []
+.NewUploadServiceImpl(ctx context.Context, storage_service postnotification.StorageService, notifications_queue Queue, timeline_cache Cache):
+ []

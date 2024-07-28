@@ -1,0 +1,12 @@
+mode: DEBUG_OPERATIONS
+number_inconsistencies: 0
+xcy_inconsistencies: []
+xcy_lineages:
+- _id: 0
+  operations:
+  - (0, 0) read(payments_db, , res) @ PaymentService
+  - (0, 1) write(payments_db, payment, payment) @ PaymentService
+  xcy_dependencies:
+  - (0, 1) write(payments_db, payment, payment) @ PaymentService
+  - (0, 0) read(payments_db, , res) @ PaymentService
+  xcy_missing_dependencies: []

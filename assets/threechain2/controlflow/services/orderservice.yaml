@@ -1,10 +1,10 @@
 (*OrderServiceImpl).CreateOrder(ctx context.Context, cartID string, username string, productID string, quantity int, price int):
   block 0 (Body):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
-    Queue'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) order_db NoSQLDatabase'
   - '[-1] (inline) (ServiceVariable ServiceType) billing_service threechain2.BillingService'
   - '[-1] (inline) (ServiceVariable ServiceType) stock_service threechain2.StockService'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
+    Queue'
   - '[0] (inline) (StructVariable UserType) threechain2.OrderServiceImpl struct{stock_service
     threechain2.StockService, billing_service threechain2.BillingService, order_db
     NoSQLDatabase, shipment_queue Queue}'
@@ -59,9 +59,6 @@
     {database = order_database, collection = order_collection}'
   - '[-1] (InterfaceVariable UserType) _ .error'
   - |-
-    [0] (inline) (FieldVariable FieldType) OrderID string -->
-       w-tainted 1x: write(order_db.Order.OrderID)
-  - |-
     [0] (inline) (BasicVariable BasicType) 1 int -->
        w-tainted 1x: write(order_db.Order.Timestamp)
   - |-
@@ -76,6 +73,9 @@
   - |-
     [0] (inline) (FieldVariable FieldType) Username string -->
        w-tainted 1x: write(order_db.Order.Username)
+  - |-
+    [0] (inline) (FieldVariable FieldType) OrderID string -->
+       w-tainted 1x: write(order_db.Order.OrderID)
   - |-
     [-1] (StructVariable UserType) order threechain2.Order struct{OrderID string, Username string, ProductID string, Quantity int, Timestamp int64} -->
        w-tainted 1x: write(order_db.Order)

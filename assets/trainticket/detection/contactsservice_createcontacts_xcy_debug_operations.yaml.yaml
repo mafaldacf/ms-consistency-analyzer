@@ -1,0 +1,12 @@
+mode: DEBUG_OPERATIONS
+number_inconsistencies: 0
+xcy_inconsistencies: []
+xcy_lineages:
+- _id: 0
+  operations:
+  - (0, 0) read(contacts_db, query, res) @ ContactsService
+  - (0, 1) write(contacts_db, contact, contact) @ ContactsService
+  xcy_dependencies:
+  - (0, 1) write(contacts_db, contact, contact) @ ContactsService
+  - (0, 0) read(contacts_db, query, res) @ ContactsService
+  xcy_missing_dependencies: []

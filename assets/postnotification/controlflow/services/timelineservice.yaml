@@ -1,0 +1,85 @@
+(*TimelineServiceImpl).ReadTimeline(ctx context.Context, reqID int64):
+  block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) timeline_cache
+    Cache'
+  - '[-1] (inline) (ServiceVariable ServiceType) storage_service postnotification.StorageService'
+  - '[0] (inline) (StructVariable UserType) postnotification.TimelineServiceImpl struct{storage_service
+    postnotification.StorageService, timeline_cache Cache}'
+  - '[-1] (PointerVariable PointerType) s (*postnotification.TimelineServiceImpl struct{storage_service
+    postnotification.StorageService, timeline_cache Cache})'
+  - '[1] (InterfaceVariable UserType) ctx context.Context'
+  - '[2] (BasicVariable BasicType) reqID int64'
+  - |-
+    [3] (inline) (BasicVariable BasicType) PostID int64 -->
+       r-tainted 2x: read(posts_db.int64, analytics_db.int64)
+  - '[-1] (inline) (FieldVariable FieldType) PostID int64'
+  - '[-1] (StructVariable UserType) timeline postnotification.Timeline struct{ReqID
+    int64, PostID int64}'
+  - '[0] (inline) (BasicVariable BasicType) 10 int'
+  - '[-1] (BasicVariable BasicType) reqIDStr string'
+  - '[-1] (StructVariable UserType) post postnotification.Post struct{ReqID int64,
+    PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator
+    struct{Username string}}'
+  - '[-1] (StructVariable UserType) analytics postnotification.Analytics struct{PostID
+    int64}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+.NewAnalyticsServiceImpl(ctx context.Context, analytics_db NoSQLDatabase, analytics_queue Queue):
+  block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) analytics_db NoSQLDatabase'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) analytics_queue Queue'
+  - '[0] (inline) (BasicVariable BasicType) 4 int'
+  - '[0] (inline) (FieldVariable FieldType) num_workers 4 int'
+  - '[0] (inline) (FieldVariable FieldType) analytics_queue Queue'
+  - '[0] (inline) (FieldVariable FieldType) analytics_db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) postnotification.AnalyticsServiceImpl
+    struct{analytics_queue Queue, analytics_db NoSQLDatabase, num_workers int}'
+  - '[-1] (AddressVariable AddressType) n (&postnotification.AnalyticsServiceImpl
+    struct{analytics_queue Queue, analytics_db NoSQLDatabase, num_workers int})'
+.NewNotifyServiceImpl(ctx context.Context, storage_service postnotification.StorageService, notifications_queue Queue):
+  block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ServiceVariable ServiceType) storage_service postnotification.StorageService'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) notifications_queue Queue'
+  - '[0] (inline) (BasicVariable BasicType) 4 int'
+  - '[0] (inline) (FieldVariable FieldType) num_workers 4 int'
+  - '[0] (inline) (FieldVariable FieldType) notifications_queue Queue'
+  - '[0] (inline) (FieldVariable FieldType) storage_service postnotification.StorageService'
+  - '[0] (inline) (StructVariable UserType) postnotification.NotifyServiceImpl struct{storage_service
+    postnotification.StorageService, notifications_queue Queue, num_workers int}'
+  - '[-1] (AddressVariable AddressType) n (&postnotification.NotifyServiceImpl struct{storage_service
+    postnotification.StorageService, notifications_queue Queue, num_workers int})'
+.NewStorageServiceImpl(ctx context.Context, analytics_service postnotification.AnalyticsService, posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue):
+ block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ServiceVariable ServiceType) analytics_service postnotification.AnalyticsService'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) posts_cache Cache'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) posts_db NoSQLDatabase'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) analytics_queue Queue'
+  - '[0] (inline) (FieldVariable FieldType) analytics_queue Queue'
+  - '[0] (inline) (FieldVariable FieldType) posts_db NoSQLDatabase'
+  - '[0] (inline) (FieldVariable FieldType) posts_cache Cache'
+  - '[0] (inline) (FieldVariable FieldType) analytics_service postnotification.AnalyticsService'
+  - '[0] (inline) (StructVariable UserType) postnotification.StorageServiceImpl struct{analytics_service
+    postnotification.AnalyticsService, posts_cache Cache, posts_db NoSQLDatabase,
+    analytics_queue Queue}'
+  - '[-1] (AddressVariable AddressType) s (&postnotification.StorageServiceImpl struct{analytics_service
+    postnotification.AnalyticsService, posts_cache Cache, posts_db NoSQLDatabase,
+    analytics_queue Queue})'
+.NewTimelineServiceImpl(ctx context.Context, storage_service postnotification.StorageService, timeline_cache Cache):
+  block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ServiceVariable ServiceType) storage_service postnotification.StorageService'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) timeline_cache Cache'
+  - '[0] (inline) (FieldVariable FieldType) timeline_cache Cache'
+  - '[0] (inline) (FieldVariable FieldType) storage_service postnotification.StorageService'
+  - '[0] (inline) (StructVariable UserType) postnotification.TimelineServiceImpl struct{storage_service
+    postnotification.StorageService, timeline_cache Cache}'
+  - '[-1] (AddressVariable AddressType) n (&postnotification.TimelineServiceImpl struct{storage_service
+    postnotification.StorageService, timeline_cache Cache})'
+.NewUploadServiceImpl(ctx context.Context, storage_service postnotification.StorageService, notifications_queue Queue, timeline_cache Cache):
+ block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ServiceVariable ServiceType) storage_service postnotification.StorageService'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) notifications_queue Queue'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) timeline_cache Cache'

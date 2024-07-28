@@ -79,9 +79,8 @@
   - '[-1] (InterfaceVariable UserType) err .error'
   - '[-1] (ArrayVariable ArrayType) configs []config.Config struct{Name string, Value
     string, Description string}'
-  - |-
-    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = config, collection = config} -->
-       r-tainted 1x: read(config_db.document)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
+    = config, collection = config}'
   - '[-1] (InterfaceVariable UserType) err .error'
   - '[-1] (InterfaceVariable UserType) err .error'
 (*ConfigServiceImpl).Update(ctx context.Context, conf config.Config struct{Name string, Value string, Description string}):

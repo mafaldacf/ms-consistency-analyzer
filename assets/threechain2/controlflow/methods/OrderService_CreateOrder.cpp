@@ -1,9 +1,9 @@
 [] (-1) (PointerVariable PointerType) c (*threechain2.OrderServiceImpl struct{stock_service threechain2.StockService, billing_service threechain2.BillingService, order_db NoSQLDatabase, shipment_queue Queue}) 
 [_] (0) (StructVariable UserType) threechain2.OrderServiceImpl struct{stock_service threechain2.StockService, billing_service threechain2.BillingService, order_db NoSQLDatabase, shipment_queue Queue} 
-[__] (-1) (ServiceVariable ServiceType) stock_service threechain2.StockService 
 [__] (-1) (ServiceVariable ServiceType) billing_service threechain2.BillingService 
 [__] (-1) (BlueprintBackendVariable BlueprintBackendType) order_db NoSQLDatabase 
 [__] (-1) (BlueprintBackendVariable BlueprintBackendType) shipment_queue Queue 
+[__] (-1) (ServiceVariable ServiceType) stock_service threechain2.StockService 
 
 [] (7) (InterfaceVariable UserType) ctx context.Context 
 [_] (1) (Reference UserType) ref <ctx context.Context> @ CartService 

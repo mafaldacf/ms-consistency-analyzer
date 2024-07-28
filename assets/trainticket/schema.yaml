@@ -1,6 +1,7 @@
 ASSURANCE_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
+- dependencies: []
 - schema:
   - fields:
     - document: assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
@@ -16,6 +17,7 @@ ASSURANCE_DB:
 CONFIG_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
+- dependencies: []
 - schema:
   - fields:
     - document: config.Config struct{Name string, Value string, Description string}
@@ -28,6 +30,7 @@ CONFIG_DB:
 CONSIGNPRICE_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
+- dependencies: []
 - schema:
   - fields:
     - document: consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64}
@@ -43,6 +46,7 @@ CONSIGNPRICE_DB:
 CONTACTS_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
+- dependencies: []
 - schema:
   - fields:
     - document: contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
@@ -58,6 +62,7 @@ CONTACTS_DB:
 DELIVERY_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
+- dependencies: []
 - schema:
   - fields: []
   - unfolded_fields: []
@@ -65,6 +70,7 @@ DELIVERY_DB:
 DELIVERY_Q:
 - type: Queue
 - kind: RabbitMQ
+- dependencies: []
 - schema:
   - fields: []
   - unfolded_fields: []
@@ -72,6 +78,7 @@ DELIVERY_Q:
 MONEY_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
+- dependencies: []
 - schema:
   - fields:
     - document: payment.Money struct{ID string, UserID string, Price string}
@@ -84,6 +91,7 @@ MONEY_DB:
 PAYMENTS_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
+- dependencies: []
 - schema:
   - fields:
     - document: payment.Payment struct{ID string, OrderID string, UserID string, Price string}
@@ -97,6 +105,7 @@ PAYMENTS_DB:
 PRICE_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
+- dependencies: []
 - schema:
   - fields:
     - document: price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
@@ -111,6 +120,7 @@ PRICE_DB:
 ROUTE_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
+- dependencies: []
 - schema:
   - fields:
     - document: route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
@@ -125,6 +135,7 @@ ROUTE_DB:
 STATION_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
+- dependencies: []
 - schema:
   - fields:
     - document: station.Station struct{ID string, Name string, StayTime int64}
@@ -137,6 +148,7 @@ STATION_DB:
 STATIONFOOD_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
+- dependencies: []
 - schema:
   - fields:
     - document: stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
@@ -153,6 +165,7 @@ STATIONFOOD_DB:
 TRAIN_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
+- dependencies: []
 - schema:
   - fields:
     - document: train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}
@@ -167,6 +180,7 @@ TRAIN_DB:
 TRAINFOOD_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
+- dependencies: []
 - schema:
   - fields:
     - document: trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}}
@@ -179,6 +193,7 @@ TRAINFOOD_DB:
 USER_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
+- dependencies: []
 - schema:
   - fields:
     - document: user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}

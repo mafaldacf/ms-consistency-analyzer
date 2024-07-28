@@ -54,6 +54,9 @@
     {database = bill_database, collection = bill_collection}'
   - '[-1] (InterfaceVariable UserType) _ .error'
   - |-
+    [0] (inline) (FieldVariable FieldType) Username string -->
+       w-tainted 1x: write(billing_db.Bill.Username)
+  - |-
     [0] (inline) (AddressVariable AddressType) quantity (&int) -->
        w-tainted 1x: write(billing_db.Bill.TotalCost)
   - |-
@@ -68,9 +71,6 @@
   - |-
     [0] (inline) (FieldVariable FieldType) ProductID string -->
        w-tainted 1x: write(billing_db.Bill.ProductID)
-  - |-
-    [0] (inline) (FieldVariable FieldType) Username string -->
-       w-tainted 1x: write(billing_db.Bill.Username)
   - |-
     [-1] (StructVariable UserType) bill threechain2.Bill struct{Username string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} -->
        w-tainted 1x: write(billing_db.Bill)

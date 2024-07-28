@@ -1,0 +1,14 @@
+mode: DEBUG_OPERATIONS
+number_inconsistencies: 0
+xcy_inconsistencies: []
+xcy_lineages:
+- _id: 0
+  operations:
+  - (0, 0) read(timeline_cache, reqIDStr, timeline) @ TimelineService
+  - (0, 1) read(posts_db, query, result) @ StorageService
+  - (0, 2) read(analytics_db, query, result) @ AnalyticsService
+  xcy_dependencies:
+  - (0, 2) read(analytics_db, query, result) @ AnalyticsService
+  - (0, 1) read(posts_db, query, result) @ StorageService
+  - (0, 0) read(timeline_cache, reqIDStr, timeline) @ TimelineService
+  xcy_missing_dependencies: []

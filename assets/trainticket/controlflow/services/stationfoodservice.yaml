@@ -48,12 +48,15 @@
   - '[-1] (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db
     NoSQLDatabase})'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BasicVariable BasicType) id string'
+  - |-
+    [-1] (BasicVariable BasicType) id string -->
+       r-tainted 1x: read(stationfood_db.string)
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = stationfood, collection = stationfood}'
   - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = stationfood, collection = stationfood}'
+  - |-
+    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = stationfood, collection = stationfood} -->
+       r-tainted 1x: read(stationfood_db.document)
   - '[-1] (InterfaceVariable UserType) err .error'
   - '[-1] (StructVariable UserType) store stationfood.StationFoodStore struct{ID string,
     StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee
@@ -72,15 +75,30 @@
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = stationfood, collection = stationfood}'
   - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (SliceVariable UserType) doc primitive.A'
-  - '[0] (inline) (FieldVariable FieldType) primitive.A'
-  - '[0] (inline) (StructVariable StructType) struct{ "$in" string,  primitive.A}'
-  - '[0] (inline) (SliceVariable UserType) primitive.D'
-  - '[0] (inline) (FieldVariable FieldType) primitive.D'
-  - '[0] (inline) (StructVariable StructType) struct{ "stationname" string,  primitive.D}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = stationfood, collection = stationfood}'
+  - |-
+    [-1] (SliceVariable UserType) doc primitive.A -->
+       r-tainted 1x: read(stationfood_db.A)
+  - |-
+    [0] (inline) (FieldVariable FieldType) primitive.A -->
+       r-tainted 1x: read(stationfood_db.)
+  - |-
+    [0] (inline) (StructVariable StructType) struct{ "$in" string, primitive.A} -->
+       r-tainted 1x: read(stationfood_db.struct{ "$in" string, primitive.A})
+  - |-
+    [0] (inline) (SliceVariable UserType) primitive.D -->
+       r-tainted 1x: read(stationfood_db.D)
+  - |-
+    [0] (inline) (FieldVariable FieldType) primitive.D -->
+       r-tainted 1x: read(stationfood_db.)
+  - |-
+    [0] (inline) (StructVariable StructType) struct{ "stationname" string, primitive.D} -->
+       r-tainted 1x: read(stationfood_db.struct{ "stationname" string, primitive.D})
+  - |-
+    [-1] (SliceVariable UserType) query primitive.D -->
+       r-tainted 6x: read(stationfood_db.document, stationfood_db.D, stationfood_db.struct{ "stationname" string, primitive.D}, stationfood_db., stationfood_db.struct{ "$in" string, primitive.A}, stationfood_db.A)
+  - |-
+    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = stationfood, collection = stationfood} -->
+       r-tainted 1x: read(stationfood_db.document)
   - '[-1] (InterfaceVariable UserType) err .error'
   - '[-1] (ArrayVariable ArrayType) stores []stationfood.StationFoodStore struct{ID
     string, StationName string, StoreName string, Telephone string, BusinessTime string,
@@ -113,15 +131,24 @@
   - '[-1] (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db
     NoSQLDatabase})'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BasicVariable BasicType) station string'
+  - |-
+    [-1] (BasicVariable BasicType) station string -->
+       r-tainted 1x: read(stationfood_db.string)
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = stationfood, collection = stationfood}'
   - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "stationname" string,  string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = stationfood, collection = stationfood}'
+  - |-
+    [0] (inline) (FieldVariable FieldType) string -->
+       r-tainted 1x: read(stationfood_db.)
+  - |-
+    [0] (inline) (StructVariable StructType) struct{ "stationname" string, string} -->
+       r-tainted 1x: read(stationfood_db.struct{ "stationname" string, string})
+  - |-
+    [-1] (SliceVariable UserType) query primitive.D -->
+       r-tainted 5x: read(stationfood_db.document, stationfood_db.D, stationfood_db.struct{ "stationname" string, string}, stationfood_db., stationfood_db.string)
+  - |-
+    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = stationfood, collection = stationfood} -->
+       r-tainted 1x: read(stationfood_db.document)
   - '[-1] (InterfaceVariable UserType) err .error'
   - '[-1] (ArrayVariable ArrayType) stores []stationfood.StationFoodStore struct{ID
     string, StationName string, StoreName string, Telephone string, BusinessTime string,

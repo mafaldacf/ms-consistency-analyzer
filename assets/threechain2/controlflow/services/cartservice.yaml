@@ -12,6 +12,14 @@
        w-tainted 2x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID)
        r-tainted 1x: read(shipment_queue.ShipmentMessage.OrderID)
   - |-
+    [6] (inline) (BasicVariable BasicType) PricePerUnit int -->
+       w-tainted 1x: write(billing_db.Bill.PricePerUnit)
+  - '[-1] (inline) (FieldVariable FieldType) PricePerUnit int'
+  - |-
+    [5] (inline) (BasicVariable BasicType) Quantity int -->
+       w-tainted 3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.TotalCost)
+  - '[-1] (inline) (FieldVariable FieldType) Quantity int'
+  - |-
     [4] (inline) (BasicVariable BasicType) ProductID string -->
        w-tainted 3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
   - '[-1] (inline) (FieldVariable FieldType) ProductID string'
@@ -20,14 +28,6 @@
        w-tainted 3x: write(order_db.Order.Username, billing_db.Bill.Username, shipment_queue.ShipmentMessage.Username)
        r-tainted 1x: read(shipment_queue.ShipmentMessage.Username)
   - '[-1] (inline) (FieldVariable FieldType) Username string'
-  - |-
-    [6] (inline) (BasicVariable BasicType) PricePerUnit int -->
-       w-tainted 1x: write(billing_db.Bill.PricePerUnit)
-  - '[-1] (inline) (FieldVariable FieldType) PricePerUnit int'
-  - |-
-    [5] (inline) (BasicVariable BasicType) Quantity int -->
-       w-tainted 3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.TotalCost)
-  - '[-1] (inline) (FieldVariable FieldType) Quantity int'
   - '[-1] (StructVariable UserType) cart threechain2.Cart struct{CartID string, Username
     string, ProductID string, Quantity int, PricePerUnit int, Status string}'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection

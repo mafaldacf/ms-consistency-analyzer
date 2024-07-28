@@ -131,11 +131,11 @@
   - '[-1] (SliceVariable UserType) update primitive.D'
 (*threechain2.OrderServiceImpl).CreateOrder(ctx context.Context, cartID string, username string, productID string, quantity int, price int) error:
  block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) stock_service threechain2.StockService'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
     Queue'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) order_db NoSQLDatabase'
   - '[-1] (inline) (ServiceVariable ServiceType) billing_service threechain2.BillingService'
-  - '[-1] (inline) (ServiceVariable ServiceType) stock_service threechain2.StockService'
   - '[0] (inline) (StructVariable UserType) threechain2.OrderServiceImpl struct{stock_service
     threechain2.StockService, billing_service threechain2.BillingService, order_db
     NoSQLDatabase, shipment_queue Queue}'
@@ -232,11 +232,11 @@
        r-tainted 1x: read(shipment_queue.ShipmentMessage)
 (*threechain2.OrderServiceImpl).ReadOrder(ctx context.Context, orderID string) (threechain2.Order struct{OrderID string, Username string, ProductID string, Quantity int, Timestamp int64}, error):
  block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) billing_service threechain2.BillingService'
+  - '[-1] (inline) (ServiceVariable ServiceType) stock_service threechain2.StockService'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
     Queue'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) order_db NoSQLDatabase'
-  - '[-1] (inline) (ServiceVariable ServiceType) billing_service threechain2.BillingService'
-  - '[-1] (inline) (ServiceVariable ServiceType) stock_service threechain2.StockService'
   - '[0] (inline) (StructVariable UserType) threechain2.OrderServiceImpl struct{stock_service
     threechain2.StockService, billing_service threechain2.BillingService, order_db
     NoSQLDatabase, shipment_queue Queue}'
@@ -271,14 +271,14 @@
     {database = order_database, collection = order_collection}'
   - '[-1] (InterfaceVariable UserType) _ .error'
   - |-
-    [0] (inline) (FieldVariable FieldType) Value string -->
-       r-tainted 1x: read(order_db.Value)
-  - |-
     [0] (inline) (BasicVariable BasicType) "orderID" string -->
        r-tainted 1x: read(order_db."orderID" string)
   - |-
     [0] (inline) (FieldVariable FieldType) Key "orderID" string -->
        r-tainted 1x: read(order_db.Key)
+  - |-
+    [0] (inline) (FieldVariable FieldType) Value string -->
+       r-tainted 1x: read(order_db.Value)
   - |-
     [0] (inline) (StructVariable StructType) struct{Key "orderID" string, Value string} -->
        r-tainted 1x: read(order_db.struct{Key "orderID" string, Value string})
@@ -291,11 +291,11 @@
   - '[-1] (InterfaceVariable UserType) _ .error'
 (*threechain2.ShipmentServiceImpl).Run(ctx context.Context) error:
   block 4 (ForPost):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase'
-  - '[-1] (inline) (ServiceVariable ServiceType) order_service threechain2.OrderService'
   - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
     Queue'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase'
+  - '[-1] (inline) (ServiceVariable ServiceType) order_service threechain2.OrderService'
   - '[0] (inline) (StructVariable UserType) threechain2.ShipmentServiceImpl struct{order_service
     threechain2.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers
     int}'
@@ -308,11 +308,11 @@
   - '[-1] (InterfaceVariable UserType) err .error'
 (*threechain2.ShipmentServiceImpl).createPendingShipment(ctx context.Context, shipmentMessage threechain2.ShipmentMessage struct{OrderID string, Username string}) error:
  block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase'
   - '[-1] (inline) (ServiceVariable ServiceType) order_service threechain2.OrderService'
   - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
     Queue'
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase'
   - '[0] (inline) (StructVariable UserType) threechain2.ShipmentServiceImpl struct{order_service
     threechain2.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers
     int}'
@@ -390,11 +390,11 @@
        w-tainted 1x: write(shipment_db.Shipment)
 (*threechain2.ShipmentServiceImpl).workerThread(ctx context.Context) error:
   block 0 (Body):
-  - '[-1] (inline) (ServiceVariable ServiceType) order_service threechain2.OrderService'
-  - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
     Queue'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase'
+  - '[-1] (inline) (ServiceVariable ServiceType) order_service threechain2.OrderService'
+  - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
   - '[0] (inline) (StructVariable UserType) threechain2.ShipmentServiceImpl struct{order_service
     threechain2.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers
     int}'

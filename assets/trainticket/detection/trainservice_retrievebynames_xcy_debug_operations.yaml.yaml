@@ -1,0 +1,8 @@
+mode: DEBUG_OPERATIONS
+number_inconsistencies: 0
+xcy_inconsistencies: []
+xcy_lineages:
+- _id: 0
+  operations: []
+  xcy_dependencies: []
+  xcy_missing_dependencies: []

@@ -10,7 +10,7 @@
 
 [] (-1) (ArrayVariable ArrayType) configs []config.Config struct{Name string, Value string, Description string} 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = config, collection = config} // read(config_db), 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = config, collection = config} 
 
 [] (-1) (InterfaceVariable UserType) err .error 
 

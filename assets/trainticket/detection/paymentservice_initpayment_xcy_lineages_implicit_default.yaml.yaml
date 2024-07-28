@@ -4,4 +4,4 @@ xcy_inconsistencies: []
 xcy_lineages:
 - _id: 0
   operations:
-  - write(payments_db, payment, payment) @ PaymentService
+  - (0, 0) write(payments_db, payment, payment) @ PaymentService

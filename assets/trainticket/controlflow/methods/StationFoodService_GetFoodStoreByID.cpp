@@ -4,13 +4,13 @@
 
 [] (-1) (InterfaceVariable UserType) ctx context.Context 
 
-[] (-1) (BasicVariable BasicType) id string 
+[] (-1) (BasicVariable BasicType) id string // read(stationfood_db), 
 
 [] (-1) (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = stationfood, collection = stationfood} 
 
 [] (-1) (InterfaceVariable UserType) err .error 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = stationfood, collection = stationfood} 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = stationfood, collection = stationfood} // read(stationfood_db), 
 
 [] (-1) (InterfaceVariable UserType) err .error 
 

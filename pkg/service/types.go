@@ -6,6 +6,8 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/golang-collections/collections/stack"
+
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
@@ -13,11 +15,28 @@ import (
 	"analyzer/pkg/utils"
 )
 
+type Context struct {
+	Block   *types.Block
+	File    *types.File
+	Package *types.Package
+}
+
+func (context *Context) GetBlock() *types.Block {
+	return context.Block
+}
+func (context *Context) GetFile() *types.File {
+	return context.File
+}
+func (context *Context) GetPackage() *types.Package {
+	return context.Package
+}
+
 type Service struct {
 	Name            string
 	ImplName        string
 	ConstructorName string
 	File            *types.File
+	Contexts        *stack.Stack
 
 	//TODO maybe use variable instead of Type + Fields
 	//Impl   variables.Variable
@@ -36,6 +55,20 @@ type Service struct {
 	Constructor         *types.ParsedMethod
 
 	ImplementsQueue bool
+}
+
+func (node *Service) NewContext() *Context {
+	var newContext *Context
+	node.Contexts.Push(newContext)
+	return newContext
+}
+
+func (node *Service) GetContext() *Context {
+	return node.Contexts.Peek().(*Context)
+}
+
+func (node *Service) PopContext() *Context {
+	return node.Contexts.Pop().(*Context)
 }
 
 func (node *Service) MarshalJSON() ([]byte, error) {

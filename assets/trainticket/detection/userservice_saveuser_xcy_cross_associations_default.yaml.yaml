@@ -4,4 +4,4 @@ xcy_inconsistencies: []
 xcy_lineages:
 - _id: 0
   operations:
-  - write(user_db, user, user) @ UserService
+  - (0, 0) write(user_db, user, user) @ UserService

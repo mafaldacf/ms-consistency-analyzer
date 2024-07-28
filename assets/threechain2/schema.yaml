@@ -1,6 +1,9 @@
 BILLING_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
+- dependencies:
+  - order_db
+  - stock_db
 - schema:
   - fields:
     - document: threechain2.Bill struct{Username string, ProductID string, Quantity int, PricePerUnit int, TotalCost int}
@@ -32,6 +35,7 @@ BILLING_DB:
 CART_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
+- dependencies: []
 - schema:
   - fields: []
   - unfolded_fields: []
@@ -39,6 +43,7 @@ CART_DB:
 ORDER_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
+- dependencies: []
 - schema:
   - fields:
     - document: threechain2.Order struct{OrderID string, Username string, ProductID string, Quantity int, Timestamp int64}
@@ -53,6 +58,10 @@ ORDER_DB:
 SHIPMENT_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
+- dependencies:
+  - order_db
+  - shipment_queue
+  - billing_db
 - schema:
   - fields:
     - document: threechain2.Shipment struct{OrderID string, Username string, Status string}
@@ -78,6 +87,9 @@ SHIPMENT_DB:
 SHIPMENT_QUEUE:
 - type: Queue
 - kind: RabbitMQ
+- dependencies:
+  - order_db
+  - billing_db
 - schema:
   - fields:
     - message: threechain2.ShipmentMessage struct{OrderID string, Username string}
@@ -98,6 +110,8 @@ SHIPMENT_QUEUE:
 STOCK_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
+- dependencies:
+  - order_db
 - schema:
   - fields:
     - document: threechain2.Stock struct{ProductID string, Quantity int}

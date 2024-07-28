@@ -2,13 +2,13 @@ mode: CROSS_ASSOCIATIONS_DEFAULT
 number_inconsistencies: 1
 xcy_inconsistencies:
 - _id: 0
-  read: read(order_db, query, result) @ OrderService
-  write: write(order_db, order, order) @ OrderService
+  read: (0, 5) read(order_db, query, result) @ OrderService
+  write: (0, 0) write(order_db, order, order) @ OrderService
 xcy_lineages:
 - _id: 0
   operations:
-  - write(order_db, order, order) @ OrderService
-  - write(stock_db, stock, stock) @ StockService
-  - write(billing_db, bill, bill) @ BillingService
-  - write(shipment_queue, message, message) @ OrderService
-  - write(shipment_db, shipment, shipment) @ ShipmentService
+  - (0, 0) write(order_db, order, order) @ OrderService
+  - (0, 1) write(stock_db, stock, stock) @ StockService
+  - (0, 2) write(billing_db, bill, bill) @ BillingService
+  - (0, 3) write(shipment_queue, message, message) @ OrderService
+  - (0, 4) write(shipment_db, shipment, shipment) @ ShipmentService

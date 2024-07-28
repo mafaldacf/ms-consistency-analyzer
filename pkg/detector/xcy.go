@@ -19,13 +19,12 @@ type Request struct {
 	DetectionMode   DetectionMode              `json:"detection_mode"`
 	Inconsistencies []*Inconsistency           `json:"xcy_inconsistencies"`
 	Lineages        []*Lineage                 `json:"lineages"`
-	Writes          []*Operation               `json:"-"`
-	Reads           []*Operation               `json:"-"`
+	Operations      []*Operation               `json:"-"`
 	LineagesStack   *stack.Stack               `json:"-"`
 }
 
 func GetAllDetectioModes() []DetectionMode {
-	return []DetectionMode{CROSS_ASSOCIATIONS_DEFAULT, CROSS_ASSOCIATIONS_LINEAGES, LINEAGES_IMPLICIT_DEFAULT, LINEAGES_IMPLICIT_EQUAL_DATASTORES}
+	return []DetectionMode{CROSS_ASSOCIATIONS_DEFAULT, CROSS_ASSOCIATIONS_LINEAGES, LINEAGES_IMPLICIT_DEFAULT, LINEAGES_IMPLICIT_EQUAL_DATASTORES, DEBUG_OPERATIONS}
 }
 
 type DetectionMode int
@@ -35,6 +34,7 @@ const (
 	CROSS_ASSOCIATIONS_LINEAGES
 	LINEAGES_IMPLICIT_DEFAULT
 	LINEAGES_IMPLICIT_EQUAL_DATASTORES
+	DEBUG_OPERATIONS
 )
 
 func (request *Request) DetectionModeName() string {
@@ -43,6 +43,7 @@ func (request *Request) DetectionModeName() string {
 		CROSS_ASSOCIATIONS_LINEAGES:        "CROSS_ASSOCIATIONS_LINEAGES",
 		LINEAGES_IMPLICIT_DEFAULT:          "LINEAGES_IMPLICIT_DEFAULT",
 		LINEAGES_IMPLICIT_EQUAL_DATASTORES: "LINEAGES_IMPLICIT_EQUAL_DATASTORES",
+		DEBUG_OPERATIONS:                   "DEBUG_OPERATIONS",
 	}
 	return detectionMap[request.DetectionMode]
 }
@@ -52,6 +53,7 @@ func (request *Request) DetectionModeUsesLineages() bool {
 		CROSS_ASSOCIATIONS_LINEAGES,
 		LINEAGES_IMPLICIT_DEFAULT,
 		LINEAGES_IMPLICIT_EQUAL_DATASTORES,
+		DEBUG_OPERATIONS,
 	}
 	return slices.Contains(modesWithLineages, request.DetectionMode)
 }
@@ -75,11 +77,15 @@ func (request *Request) AddInconsistency(inconsistency *Inconsistency) {
 }
 
 func (request *Request) AddWrite(op *Operation) {
-	request.Writes = append(request.Writes, op)
+	op.ID = len(request.CurrentLineage().Operations)
+	op.LineageID = request.CurrentLineage().ID
+	request.Operations = append(request.Operations, op)
 }
 
 func (request *Request) AddRead(op *Operation) {
-	request.Reads = append(request.Reads, op)
+	op.ID = len(request.CurrentLineage().Operations)
+	op.LineageID = request.CurrentLineage().ID
+	request.Operations = append(request.Operations, op)
 }
 
 func (request *Request) PushLineage() {
@@ -194,12 +200,11 @@ func (request *Request) saveReadOperation(call *abstractgraph.AbstractDatabaseCa
 	read := createOperation(key, object, call, false)
 	request.AddRead(read)
 
+	if request.DetectionMode == DEBUG_OPERATIONS {
+		request.CurrentLineage().AddOperation(read)
+	}
+
 	return read
-}
-
-func (request *Request) captureConservativeInconsistency(read *Operation, readCall *abstractgraph.AbstractDatabaseCall) {
-	// iterate in reverse
-
 }
 
 func (request *Request) captureInconsistency(read *Operation, readCall *abstractgraph.AbstractDatabaseCall) {
@@ -292,7 +297,9 @@ func (request *Request) transverseOperations(node abstractgraph.AbstractNode) {
 			} else if backend.IsRead() {
 				operation = request.saveReadOperation(dbCall, backend)
 				logger.Logger.Infof("[XCY] saved read %s", operation.String())
-				request.captureInconsistency(operation, dbCall)
+				if request.DetectionMode != DEBUG_OPERATIONS {
+					request.captureInconsistency(operation, dbCall)
+				}
 			} else {
 				logger.Logger.Warnf("[XCY] ignoring operation: %s", dbCall.String())
 			}

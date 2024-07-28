@@ -3,10 +3,10 @@
 [__] (-1) (BlueprintBackendVariable BlueprintBackendType) priceDB NoSQLDatabase 
 
 [] (-1) (InterfaceVariable UserType) ctx context.Context 
-[_] (8) (Reference UserType) ref <ctx context.Context> @ PriceService 
+[_] (1) (Reference UserType) ref <ctx context.Context> @ PriceService 
 
 [] (-1) (BasicVariable BasicType) id string 
-[_] (9) (Reference BasicType) ref <ID string> @ PriceService // write(price_db), 
+[_] (2) (Reference BasicType) ref <ID string> @ PriceService // write(price_db), 
 
 [] (-1) (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = priceConfig, collection = priceConfig} 
 
@@ -16,7 +16,7 @@
 [_] (0) (StructVariable StructType) struct{ "id" string,  string} 
 [__] (0) (FieldVariable FieldType) string 
 [___] (-1) (BasicVariable BasicType) id string 
-[____] (9) (Reference BasicType) ref <ID string> @ PriceService // write(price_db), 
+[____] (2) (Reference BasicType) ref <ID string> @ PriceService // write(price_db), 
 
 [] (-1) (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = priceConfig, collection = priceConfig} 
 

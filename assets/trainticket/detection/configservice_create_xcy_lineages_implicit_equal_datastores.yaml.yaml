@@ -4,4 +4,4 @@ xcy_inconsistencies: []
 xcy_lineages:
 - _id: 0
   operations:
-  - write(config_db, conf, conf) @ ConfigService
+  - (0, 0) write(config_db, conf, conf) @ ConfigService

@@ -2,7 +2,7 @@
 [_] (0) (StructVariable UserType) price.PriceServiceImpl struct{priceDB NoSQLDatabase} 
 [__] (-1) (BlueprintBackendVariable BlueprintBackendType) priceDB NoSQLDatabase 
 
-[] (1) (InterfaceVariable UserType) ctx context.Context 
+[] (3) (InterfaceVariable UserType) ctx context.Context 
 
 [] (-1) (ArrayVariable ArrayType) rtsAndTypes []string 
 
@@ -15,13 +15,13 @@
 [_] (-1) (BasicVariable BasicType) rt string 
 [_] (0) (BasicVariable BasicType) ":" string 
 
-[] (2) (SliceVariable SliceType) routeid []string 
-[_] (3) (BasicVariable BasicType) rt string 
-[_] (4) (BasicVariable BasicType) ":" string 
+[] (4) (SliceVariable SliceType) routeid []string // read(price_db), 
+[_] (5) (BasicVariable BasicType) rt string // read(price_db), 
+[_] (6) (BasicVariable BasicType) ":" string // read(price_db), 
 
-[] (5) (SliceVariable SliceType) trainType []string 
-[_] (6) (BasicVariable BasicType) rt string 
-[_] (7) (BasicVariable BasicType) ":" string 
+[] (7) (SliceVariable SliceType) trainType []string // read(price_db), 
+[_] (8) (BasicVariable BasicType) rt string // read(price_db), 
+[_] (9) (BasicVariable BasicType) ":" string // read(price_db), 
 
 [] (-1) (StructVariable UserType) pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} 
 

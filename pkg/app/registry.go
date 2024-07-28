@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	"github.com/golang-collections/collections/stack"
+
 	"analyzer/pkg/controlflow"
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/frameworks"
@@ -50,6 +52,7 @@ func (app *App) createServiceNodes(servicesInfo []*frameworks.ServiceInfo) {
 				Package: pkg.GetName(),
 				Name:    info.Name,
 			},
+			Contexts: stack.New(),
 		}
 
 		// add entries to be later parsed

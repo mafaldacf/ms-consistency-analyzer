@@ -4,4 +4,4 @@ xcy_inconsistencies: []
 xcy_lineages:
 - _id: 0
   operations:
-  - write(contacts_db, contact, contact) @ ContactsService
+  - (0, 0) write(contacts_db, contact, contact) @ ContactsService

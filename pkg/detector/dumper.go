@@ -2,13 +2,12 @@ package detector
 
 import (
 	"fmt"
+	"slices"
 	"strings"
 
-	"analyzer/pkg/utils"
-)
-
-import (
 	"gopkg.in/yaml.v2"
+
+	"analyzer/pkg/utils"
 )
 
 func (request *Request) MarshalYAML() ([]byte, error) {
@@ -45,19 +44,40 @@ func (inconsistency *Inconsistency) DumpYaml() map[string]interface{} {
 	data := make(map[string]interface{})
 	//data["write"] = inconsistency.Write.DumpYaml()
 	//data["read"] = inconsistency.Read.DumpYaml()
-    data["write"] = inconsistency.Write.String()
-    data["read"] = inconsistency.Read.String()
+	data["write"] = inconsistency.Write.String()
+	data["read"] = inconsistency.Read.String()
 	return data
 }
 
-func (lineage *Lineage) DumpYaml() map[string]interface{} {
+func (lineage *Lineage) DumpYaml(request *Request) map[string]interface{} {
 	data := make(map[string]interface{})
-    data["_id"] = lineage.ID
+	data["_id"] = lineage.ID
 	var dataOperations []string
 	for _, op := range lineage.Operations {
 		dataOperations = append(dataOperations, op.String())
 	}
 	data["operations"] = dataOperations
+
+	if request.DetectionMode == DEBUG_OPERATIONS {
+		var dataDependencies []string
+		lineageDependencies := lineage.GetDependencies()
+		for _, op := range lineageDependencies {
+			dataDependencies = append(dataDependencies, op.String())
+		}
+		data["xcy_dependencies"] = dataDependencies
+		
+		var dataMissingDependencies []string
+		allReqOps := request.Operations
+		if len(lineage.Operations) > 0 {
+			firstLineageOp := lineage.Operations[0]
+			for _, op := range allReqOps {
+				if op.LineageID < firstLineageOp.LineageID && !slices.Contains(lineageDependencies, op) {
+					dataMissingDependencies = append(dataMissingDependencies, op.String())
+				}
+			}
+		}
+		data["xcy_missing_dependencies"] = dataMissingDependencies
+	}
 
 	return data
 }
@@ -69,20 +89,20 @@ func (request *Request) DumpYaml(includeLineages bool) map[string]interface{} {
 
 	var dataInconsistencies []map[string]interface{}
 	for i, inconsistency := range request.Inconsistencies {
-        result := inconsistency.DumpYaml()
-        result["_id"] = i
+		result := inconsistency.DumpYaml()
+		result["_id"] = i
 		dataInconsistencies = append(dataInconsistencies, result)
 	}
 	data["xcy_inconsistencies"] = dataInconsistencies
 
-    if includeLineages {
-        var dataLineages []map[string]interface{}
-        for _, lineage := range request.Lineages {
-            dataLineages = append(dataLineages, lineage.DumpYaml())
-        }
-        data["xcy_lineages"] = dataLineages
-    }
-    return data
+	if includeLineages {
+		var dataLineages []map[string]interface{}
+		for _, lineage := range request.Lineages {
+			dataLineages = append(dataLineages, lineage.DumpYaml(request))
+		}
+		data["xcy_lineages"] = dataLineages
+	}
+	return data
 }
 
 func (request *Request) DumpToYAMLFile(app string) {

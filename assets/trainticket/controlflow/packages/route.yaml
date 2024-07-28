@@ -112,18 +112,13 @@
   - '[-1] (PointerVariable PointerType) r (*route.RouteServiceImpl struct{db NoSQLDatabase})'
   - '[19] (inline) (Reference UserType) ref <ctx context.Context> @ RouteService'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - |-
-    [20] (inline) (Reference BasicType) ref <string> @ RouteService -->
-       r-tainted 1x: read(route_db.string)
-  - |-
-    [0] (BasicVariable BasicType) id string -->
-       r-tainted 1x: read(route_db.string)
+  - '[20] (inline) (Reference BasicType) ref <string> @ RouteService'
+  - '[0] (BasicVariable BasicType) id string'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = route, collection = route}'
   - '[-1] (InterfaceVariable UserType) err .error'
-  - |-
-    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = route, collection = route} -->
-       r-tainted 1x: read(route_db.document)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
+    = route, collection = route}'
   - '[-1] (InterfaceVariable UserType) err .error'
   - '[-1] (StructVariable UserType) route route.Route struct{ID string, Stations []string,
     Distances []int64, StartStation string, EndStation string}'

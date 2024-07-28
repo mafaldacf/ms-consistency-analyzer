@@ -4,4 +4,4 @@ xcy_inconsistencies: []
 xcy_lineages:
 - _id: 0
   operations:
-  - write(trainfood_db, tf, tf) @ TrainFoodService
+  - (0, 0) write(trainfood_db, tf, tf) @ TrainFoodService

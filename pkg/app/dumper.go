@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+	"slices"
 	"sort"
 	"strings"
 
@@ -157,6 +158,8 @@ func (app *App) dumpYamlDatastores() {
 		}
 		schema.AddOrderedProperty("unfolded_fields", unfoldedFields)
 
+		var dependencies []string
+
 		propsForeignKeys := utils.NewOrderedPropertyList()
 		for _, f := range datastore.GetDatastore().Schema.Fields {
 			entry := f.(*datastores.Entry)
@@ -164,6 +167,9 @@ func (app *App) dumpYamlDatastores() {
 				var lst []string
 				for _, r := range entry.References {
 					lst = append(lst, r.GetFullName())
+					if !slices.Contains(dependencies, r.GetDatastore()) {
+						dependencies = append(dependencies, r.GetDatastore())
+					}
 				}
 				sort.Strings(lst)
 				propsForeignKeys.AddOrderedProperty(entry.GetName(), lst)
@@ -175,6 +181,9 @@ func (app *App) dumpYamlDatastores() {
 				var lst []string
 				for _, r := range entry.References {
 					lst = append(lst, r.GetFullName())
+					if !slices.Contains(dependencies, r.GetDatastore()) {
+						dependencies = append(dependencies, r.GetDatastore())
+					}
 				}
 				sort.Strings(lst)
 				propsForeignKeys.AddOrderedProperty(entry.GetName(), lst)
@@ -185,6 +194,7 @@ func (app *App) dumpYamlDatastores() {
 		props := utils.NewOrderedPropertyList()
 		props.AddOrderedProperty("type", datastore.GetDatastore().GetTypeString())
 		props.AddOrderedProperty("kind", datastore.GetDatastore().GetKindString())
+		props.AddOrderedProperty("dependencies", dependencies)
 		props.AddOrderedProperty("schema", schema.Result())
 		data[strings.ToUpper(datastore.GetName())] = props.Result()
 	}

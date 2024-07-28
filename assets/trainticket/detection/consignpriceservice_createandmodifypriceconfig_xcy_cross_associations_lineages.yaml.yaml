@@ -4,4 +4,4 @@ xcy_inconsistencies: []
 xcy_lineages:
 - _id: 0
   operations:
-  - write(consignprice_db, priceConfig, priceConfig) @ ConsignPriceService
+  - (0, 0) write(consignprice_db, priceConfig, priceConfig) @ ConsignPriceService

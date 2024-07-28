@@ -1,0 +1,12 @@
+mode: DEBUG_OPERATIONS
+number_inconsistencies: 0
+xcy_inconsistencies: []
+xcy_lineages:
+- _id: 0
+  operations:
+  - (0, 0) read(price_db, query, res) @ PriceService
+  - (0, 1) write(price_db, pc, pc) @ PriceService
+  xcy_dependencies:
+  - (0, 1) write(price_db, pc, pc) @ PriceService
+  - (0, 0) read(price_db, query, res) @ PriceService
+  xcy_missing_dependencies: []

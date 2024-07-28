@@ -1,5 +1,306 @@
 [
   {
+    "method": "(*TimelineServiceImpl).ReadTimeline(ctx context.Context, reqID int64)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "Cache.Get(ctx context.Context, key string, value interface{})",
+        "depth": 1,
+        "caller": "TimelineService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "reqIDStr",
+              "type": "string"
+            }
+          },
+          {
+            "variable": {
+              "name": "timeline",
+              "type": "(\u0026postnotification.Timeline struct{ReqID int64, PostID int64})"
+            },
+            "addr_of": {
+              "variable": {
+                "name": "timeline",
+                "type": "postnotification.Timeline struct{ReqID int64, PostID int64}"
+              },
+              "struct_fields": {
+                "PostID": {
+                  "variable": {
+                    "name": "PostID",
+                    "type": "int64"
+                  },
+                  "wrapped_variable": {
+                    "variable": {
+                      "name": "PostID",
+                      "type": "int64"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": "bool"
+            }
+          },
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "timeline_cache"
+      },
+      {
+        "method": "(*StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID int64)",
+        "depth": 1,
+        "caller": "TimelineService",
+        "edges": [
+          {
+            "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+            "depth": 2,
+            "caller": "StorageService",
+            "params": [
+              {
+                "variable": {
+                  "name": "ctx",
+                  "type": "context.Context",
+                  "refs": [
+                    {
+                      "name": "ctx",
+                      "creator": "TimelineService"
+                    },
+                    {
+                      "name": "ctx",
+                      "creator": "NotifyService"
+                    }
+                  ]
+                }
+              },
+              {
+                "variable": {
+                  "name": "query",
+                  "type": "primitive.D"
+                },
+                "slice_variables": [
+                  {
+                    "variable": {
+                      "type": "struct{Key \"postid\" string, Value int64}"
+                    },
+                    "struct_fields": {
+                      "Key": {
+                        "variable": {
+                          "name": "Key",
+                          "type": "\"postid\" string"
+                        },
+                        "wrapped_variable": {
+                          "variable": {
+                            "type": "\"postid\" string"
+                          }
+                        }
+                      },
+                      "Value": {
+                        "variable": {
+                          "name": "Value",
+                          "type": "int64"
+                        },
+                        "wrapped_variable": {
+                          "variable": {
+                            "name": "postID",
+                            "type": "int64",
+                            "refs": [
+                              {
+                                "name": "PostID",
+                                "creator": "TimelineService"
+                              },
+                              {
+                                "name": "postID",
+                                "creator": "NotifyService"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ],
+            "returns": [
+              {
+                "variable": {
+                  "name": "result",
+                  "type": "NoSQLCursor {database = post, collection = post}"
+                }
+              },
+              {
+                "variable": {
+                  "name": "err",
+                  "type": ".error"
+                }
+              }
+            ],
+            "datastore": "posts_db"
+          },
+          {
+            "method": "(*AnalyticsServiceImpl).ReadAnalytics(ctx context.Context, postID int64)",
+            "depth": 2,
+            "caller": "StorageService",
+            "edges": [
+              {
+                "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+                "depth": 3,
+                "caller": "AnalyticsService",
+                "params": [
+                  {
+                    "variable": {
+                      "name": "ctx",
+                      "type": "context.Context",
+                      "refs": [
+                        {
+                          "name": "ctx",
+                          "creator": "StorageService"
+                        },
+                        {
+                          "name": "ctx",
+                          "creator": "StorageService"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "variable": {
+                      "name": "query",
+                      "type": "primitive.D"
+                    },
+                    "slice_variables": [
+                      {
+                        "variable": {
+                          "type": "struct{Key \"postid\" string, Value int64}"
+                        },
+                        "struct_fields": {
+                          "Key": {
+                            "variable": {
+                              "name": "Key",
+                              "type": "\"postid\" string"
+                            },
+                            "wrapped_variable": {
+                              "variable": {
+                                "type": "\"postid\" string"
+                              }
+                            }
+                          },
+                          "Value": {
+                            "variable": {
+                              "name": "Value",
+                              "type": "int64"
+                            },
+                            "wrapped_variable": {
+                              "variable": {
+                                "name": "postID",
+                                "type": "int64",
+                                "refs": [
+                                  {
+                                    "name": "postID",
+                                    "creator": "StorageService"
+                                  },
+                                  {
+                                    "name": "postID",
+                                    "creator": "StorageService"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "returns": [
+                  {
+                    "variable": {
+                      "name": "result",
+                      "type": "NoSQLCursor {database = analytics_db, collection = analytics_collection}"
+                    }
+                  },
+                  {
+                    "variable": {
+                      "name": "err",
+                      "type": ".error"
+                    }
+                  }
+                ],
+                "datastore": "analytics_db"
+              }
+            ],
+            "params": null,
+            "returns": [
+              {
+                "variable": {
+                  "name": "analytics",
+                  "type": "postnotification.Analytics struct{PostID int64}"
+                }
+              },
+              {
+                "variable": {
+                  "name": "err",
+                  "type": ".error"
+                }
+              }
+            ]
+          }
+        ],
+        "params": null,
+        "returns": [
+          {
+            "variable": {
+              "name": "post",
+              "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}"
+            }
+          },
+          {
+            "variable": {
+              "name": "analytics",
+              "type": "postnotification.Analytics struct{PostID int64}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ]
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "reqID",
+          "type": "int64"
+        }
+      }
+    ]
+  },
+  {
     "method": "(*UploadServiceImpl).UploadPost(ctx context.Context, username string, text string)",
     "depth": 0,
     "caller": "Client",
@@ -339,6 +640,19 @@
                         {
                           "Key": {
                             "variable": {
+                              "type": "\"Timestamp\" string"
+                            }
+                          },
+                          "Value": {
+                            "variable": {
+                              "name": "Timestamp",
+                              "type": "interface{}"
+                            }
+                          }
+                        },
+                        {
+                          "Key": {
+                            "variable": {
                               "type": "\"ReqID\" string"
                             }
                           },
@@ -358,19 +672,6 @@
                           "Value": {
                             "variable": {
                               "name": "PostID",
-                              "type": "interface{}"
-                            }
-                          }
-                        },
-                        {
-                          "Key": {
-                            "variable": {
-                              "type": "\"Timestamp\" string"
-                            }
-                          },
-                          "Value": {
-                            "variable": {
-                              "name": "Timestamp",
                               "type": "interface{}"
                             }
                           }
@@ -411,6 +712,10 @@
                           "refs": [
                             {
                               "name": "ctx",
+                              "creator": "TimelineService"
+                            },
+                            {
+                              "name": "ctx",
                               "creator": "NotifyService"
                             }
                           ]
@@ -448,6 +753,10 @@
                                     "name": "postID",
                                     "type": "int64",
                                     "refs": [
+                                      {
+                                        "name": "PostID",
+                                        "creator": "TimelineService"
+                                      },
                                       {
                                         "name": "postID",
                                         "creator": "NotifyService"
@@ -495,6 +804,10 @@
                                 {
                                   "name": "ctx",
                                   "creator": "StorageService"
+                                },
+                                {
+                                  "name": "ctx",
+                                  "creator": "StorageService"
                                 }
                               ]
                             }
@@ -531,6 +844,10 @@
                                         "name": "postID",
                                         "type": "int64",
                                         "refs": [
+                                          {
+                                            "name": "postID",
+                                            "creator": "StorageService"
+                                          },
                                           {
                                             "name": "postID",
                                             "creator": "StorageService"
@@ -618,6 +935,77 @@
           }
         ],
         "datastore": "notifications_queue"
+      },
+      {
+        "method": "Cache.Put(ctx context.Context, key string, value interface{})",
+        "depth": 1,
+        "caller": "UploadService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "reqIDStr",
+              "type": "string"
+            }
+          },
+          {
+            "variable": {
+              "name": "timeline",
+              "type": "postnotification.Timeline struct{ReqID int64, PostID int64}"
+            },
+            "struct_fields": {
+              "PostID": {
+                "variable": {
+                  "name": "PostID",
+                  "type": "int64"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "postID",
+                    "type": "int64",
+                    "refs": [
+                      {
+                        "name": "PostID",
+                        "creator": "NotifyService"
+                      }
+                    ]
+                  }
+                }
+              },
+              "ReqID": {
+                "variable": {
+                  "name": "ReqID",
+                  "type": "int64"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "reqID",
+                    "type": "int64",
+                    "refs": [
+                      {
+                        "name": "ReqID",
+                        "creator": "NotifyService"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "timeline_cache"
       }
     ],
     "params": [

@@ -1,0 +1,44 @@
+mode: DEBUG_OPERATIONS
+number_inconsistencies: 0
+xcy_inconsistencies: []
+xcy_lineages:
+- _id: 0
+  operations:
+  - (0, 0) write(posts_db, post, post) @ StorageService
+  - (0, 1) write(analytics_queue, message, message) @ StorageService
+  - (0, 2) write(notifications_queue, message, message) @ UploadService
+  - (0, 3) write(timeline_cache, reqIDStr, timeline) @ UploadService
+  xcy_dependencies:
+  - (0, 3) write(timeline_cache, reqIDStr, timeline) @ UploadService
+  - (0, 2) write(notifications_queue, message, message) @ UploadService
+  - (0, 1) write(analytics_queue, message, message) @ StorageService
+  - (0, 0) write(posts_db, post, post) @ StorageService
+  xcy_missing_dependencies: []
+- _id: 1
+  operations:
+  - (1, 0) read(analytics_queue, event, event) @ AnalyticsService
+  - (1, 1) write(analytics_db, analytics, analytics) @ AnalyticsService
+  xcy_dependencies:
+  - (1, 1) write(analytics_db, analytics, analytics) @ AnalyticsService
+  - (1, 0) read(analytics_queue, event, event) @ AnalyticsService
+  - (0, 3) write(timeline_cache, reqIDStr, timeline) @ UploadService
+  - (0, 2) write(notifications_queue, message, message) @ UploadService
+  - (0, 1) write(analytics_queue, message, message) @ StorageService
+  - (0, 0) write(posts_db, post, post) @ StorageService
+  xcy_missing_dependencies: []
+- _id: 2
+  operations:
+  - (2, 0) read(notifications_queue, event, event) @ NotifyService
+  - (2, 1) read(posts_db, query, result) @ StorageService
+  - (2, 2) read(analytics_db, query, result) @ AnalyticsService
+  xcy_dependencies:
+  - (2, 2) read(analytics_db, query, result) @ AnalyticsService
+  - (2, 1) read(posts_db, query, result) @ StorageService
+  - (2, 0) read(notifications_queue, event, event) @ NotifyService
+  - (0, 3) write(timeline_cache, reqIDStr, timeline) @ UploadService
+  - (0, 2) write(notifications_queue, message, message) @ UploadService
+  - (0, 1) write(analytics_queue, message, message) @ StorageService
+  - (0, 0) write(posts_db, post, post) @ StorageService
+  xcy_missing_dependencies:
+  - (1, 0) read(analytics_queue, event, event) @ AnalyticsService
+  - (1, 1) write(analytics_db, analytics, analytics) @ AnalyticsService

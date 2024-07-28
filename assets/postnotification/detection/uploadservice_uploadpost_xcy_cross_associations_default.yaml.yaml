@@ -2,15 +2,16 @@ mode: CROSS_ASSOCIATIONS_DEFAULT
 number_inconsistencies: 2
 xcy_inconsistencies:
 - _id: 0
-  read: read(posts_db, query, result) @ StorageService
-  write: write(posts_db, post, post) @ StorageService
+  read: (0, 4) read(posts_db, query, result) @ StorageService
+  write: (0, 0) write(posts_db, post, post) @ StorageService
 - _id: 1
-  read: read(analytics_db, query, result) @ AnalyticsService
-  write: write(analytics_db, analytics, analytics) @ AnalyticsService
+  read: (0, 4) read(analytics_db, query, result) @ AnalyticsService
+  write: (0, 2) write(analytics_db, analytics, analytics) @ AnalyticsService
 xcy_lineages:
 - _id: 0
   operations:
-  - write(posts_db, post, post) @ StorageService
-  - write(analytics_queue, message, message) @ StorageService
-  - write(analytics_db, analytics, analytics) @ AnalyticsService
-  - write(notifications_queue, message, message) @ UploadService
+  - (0, 0) write(posts_db, post, post) @ StorageService
+  - (0, 1) write(analytics_queue, message, message) @ StorageService
+  - (0, 2) write(analytics_db, analytics, analytics) @ AnalyticsService
+  - (0, 3) write(notifications_queue, message, message) @ UploadService
+  - (0, 4) write(timeline_cache, reqIDStr, timeline) @ UploadService
