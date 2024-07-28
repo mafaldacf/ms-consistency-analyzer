@@ -8,5 +8,4 @@ xcy_lineages:
   - (0, 1) write(trainfood_db, tf, tf) @ TrainFoodService
   xcy_dependencies:
   - (0, 1) write(trainfood_db, tf, tf) @ TrainFoodService
-  - (0, 0) read(trainfood_db, query, res) @ TrainFoodService
   xcy_missing_dependencies: []

@@ -5,14 +5,14 @@
 [] (-1) (InterfaceVariable UserType) ctx context.Context 
 
 [] (-1) (StructVariable UserType) info route.RouteInfo struct{ID string, StartStation string, EndStation string, StationList string, DistanceList string} 
+[_] (-1) (FieldVariable FieldType) EndStation string 
+[__] (-1) (BasicVariable BasicType) EndStation string // write(route_db), 
 [_] (-1) (FieldVariable FieldType) StationList string 
 [__] (-1) (BasicVariable BasicType) StationList string // write(route_db), 
 [_] (-1) (FieldVariable FieldType) ID string 
 [__] (-1) (BasicVariable BasicType) ID string // read(route_db), 
 [_] (-1) (FieldVariable FieldType) StartStation string 
 [__] (-1) (BasicVariable BasicType) StartStation string // write(route_db), 
-[_] (-1) (FieldVariable FieldType) EndStation string 
-[__] (-1) (BasicVariable BasicType) EndStation string // write(route_db), 
 
 [] (-1) (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = route, collection = route} 
 

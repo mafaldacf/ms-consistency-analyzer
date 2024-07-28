@@ -1,5 +1,7 @@
 #!/usr/bin/env python3
+import glob
 import json
+import os
 import re
 import networkx as nx
 import matplotlib.pyplot as plt
@@ -83,13 +85,16 @@ def build_digraph(data, graph_type, labeled):
             connectionstyle='arc3,rad=0.3',
         )
 
-def load(app, graph):
-    filename = f"assets/{app}/digraphs/{graph}_graph.json"
+def load(app, graph, per_requests):
+    if per_requests:
+        filename = f"assets/{app}/digraphs/per_requests/{graph}.json"
+    else:
+        filename = f"assets/{app}/digraphs/{graph}_graph.json"
     with open(filename) as f:
         data = json.load(f)
     return data
 
-def save(app, graph, labeled):
+def save(app, graph, labeled, per_requests):
     if labeled:
         plt.title(f"{graph.capitalize()} Multi DiGraph Visualization")
     else:
@@ -97,12 +102,29 @@ def save(app, graph, labeled):
 
     #plt.show()
 
+    suffix_graph = "_graph"
+    prefix_per_requests = ""
+    if per_requests:
+        prefix_per_requests = "per_requests/figures/"
+        suffix_graph = ""
+
     if labeled:
-        output_path = f"assets/{app}/digraphs/{graph}_labeled_graph.png"
+        output_path = f"assets/{app}/digraphs/{prefix_per_requests}{graph}_labeled{suffix_graph}.png"
     else:
-        output_path = f"assets/{app}/digraphs/{graph}_graph.png"
+        output_path = f"assets/{app}/digraphs/{prefix_per_requests}{graph}{suffix_graph}.png"
+
+    output_dir = os.path.dirname(output_path)
+    os.makedirs(output_dir, exist_ok=True)
+
     plt.savefig(output_path, format='png')
     print(f"[INFO] graph saved to {output_path}")
+
+def search_all_per_requests(app):
+    directory = f"assets/{app}/digraphs/per_requests/"
+    pattern = os.path.join(directory, 'trace_*.json')
+    files = glob.glob(pattern)
+    names = [os.path.splitext(os.path.basename(file))[0] for file in files]
+    return names
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Visualize graphs based on the specified application and graph type")
@@ -113,17 +135,22 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if args.all:
-        apps = ['postnotification', 'trainticket', 'threechain2']
+        apps = ['postnotification', 'trainticket', 'threechain2', 'sockshop2', 'sockshop2']
         graphs = ['app', 'call']
         for app in apps:
             for graph in graphs:
-                data = load(app, graph)
+                data = load(app, graph, False)
                 build_digraph(data, graph, False)
-                save(app, graph, False)
+                save(app, graph, False, False)
                 if graph == 'call':
                     build_digraph(data, graph, True)
-                    save(app, graph, True)
+                    save(app, graph, True, False)
+            for graph in search_all_per_requests(app):
+                data = load(app, graph, True)
+                build_digraph(data, graph, True)
+                save(app, graph, True, True)
+
     else:     
-        data = load(args.app, args.graph)
+        data = load(args.app, args.graph, False)
         build_digraph(data, args.graph, args.labeled)
         save(args.app, args.graph, args.labeled)

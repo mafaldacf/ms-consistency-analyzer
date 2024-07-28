@@ -744,6 +744,8 @@ func parseBuiltInGoTypeCall(service *service.Service, method *types.ParsedMethod
 		return wrapInBasicVariable(deps[0], "byte")
 	case "string":
 		return wrapInBasicVariable(deps[0], "string")
+	case "float32":
+		return wrapInBasicVariable(deps[0], "float32")
 	default:
 		logger.Logger.Fatalf("[CFG] [%s] unexpected built-in go type (%s) for function call (%v)", service.GetName(), funcIdent.Name, callExpr)
 	}

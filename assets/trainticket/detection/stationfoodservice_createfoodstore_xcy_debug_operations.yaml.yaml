@@ -8,5 +8,4 @@ xcy_lineages:
   - (0, 1) write(stationfood_db, store, store) @ StationFoodService
   xcy_dependencies:
   - (0, 1) write(stationfood_db, store, store) @ StationFoodService
-  - (0, 0) read(stationfood_db, query, res) @ StationFoodService
   xcy_missing_dependencies: []

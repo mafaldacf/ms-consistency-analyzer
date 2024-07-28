@@ -20,13 +20,21 @@ require github.com/blueprint-uservices/blueprint/examples/threechain2/workflow v
 
 require github.com/blueprint-uservices/blueprint/examples/threechain2/wiring v0.0.0
 
-require github.com/blueprint-uservices/blueprint/examples/sockshop/workflow v0.0.0 // indirect
+require github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow v0.0.0 // indirect
 
-require github.com/blueprint-uservices/blueprint/examples/sockshop/wiring v0.0.0
+require github.com/blueprint-uservices/blueprint/examples/sockshop2/wiring v0.0.0
 
 require github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow v0.0.0 // indirect
 
 require github.com/blueprint-uservices/blueprint/examples/train_ticket/wiring v0.0.0
+
+require github.com/blueprint-uservices/blueprint/examples/dsb_hotel/workflow v0.0.0 // indirect
+
+require github.com/blueprint-uservices/blueprint/examples/dsb_hotel/wiring v0.0.0
+
+require github.com/blueprint-uservices/blueprint/examples/dsb_sn/workflow v0.0.0 // indirect
+
+require github.com/blueprint-uservices/blueprint/examples/dsb_sn/wiring v0.0.0
 
 require github.com/blueprint-uservices/blueprint/examples/foobar/workflow v0.0.0 // indirect
 
@@ -37,8 +45,11 @@ require (
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
-	github.com/blueprint-uservices/blueprint/examples/sockshop/workload v0.0.0-20240405152959-f078915d2306 // indirect
+	github.com/blueprint-uservices/blueprint/examples/dsb_hotel/workload v0.0.0-20240619221802-d064c5861c1e // indirect
+	github.com/blueprint-uservices/blueprint/examples/sockshop2/workload v0.0.0-20240405152959-f078915d2306 // indirect
+	github.com/bradfitz/gomemcache v0.0.0-20230905024940-24af94b03874 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
+	github.com/dgrijalva/jwt-go v3.2.0+incompatible // indirect
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/go-logr/logr v1.4.1 // indirect
 	github.com/go-logr/stdr v1.2.2 // indirect
@@ -46,6 +57,7 @@ require (
 	github.com/go-sql-driver/mysql v1.8.1 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/uuid v1.6.0 // indirect
+	github.com/hailocab/go-geoindex v0.0.0-20160127134810-64631bfe9711 // indirect
 	github.com/jmoiron/sqlx v1.4.0 // indirect
 	github.com/klauspost/compress v1.17.8 // indirect
 	github.com/mattn/go-sqlite3 v1.14.22 // indirect
@@ -60,6 +72,7 @@ require (
 	github.com/youmark/pkcs8 v0.0.0-20240424034433-3c2c7870ae76 // indirect
 	go.mongodb.org/mongo-driver v1.15.0 // indirect
 	go.opentelemetry.io/otel v1.26.0 // indirect
+	go.opentelemetry.io/otel/exporters/jaeger v1.17.0 // indirect
 	go.opentelemetry.io/otel/exporters/stdout/stdoutmetric v1.26.0 // indirect
 	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.26.0 // indirect
 	go.opentelemetry.io/otel/exporters/zipkin v1.26.0 // indirect
@@ -98,17 +111,29 @@ replace github.com/blueprint-uservices/blueprint/examples/threechain2/workflow =
 
 replace github.com/blueprint-uservices/blueprint/examples/threechain2/wiring => ./blueprint/examples/threechain2/wiring
 
-replace github.com/blueprint-uservices/blueprint/examples/sockshop => ./blueprint/examples/sockshop
+replace github.com/blueprint-uservices/blueprint/examples/sockshop2 => ./blueprint/examples/sockshop2
 
-replace github.com/blueprint-uservices/blueprint/examples/sockshop/workflow => ./blueprint/examples/sockshop/workflow
+replace github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow => ./blueprint/examples/sockshop2/workflow
 
-replace github.com/blueprint-uservices/blueprint/examples/sockshop/wiring => ./blueprint/examples/sockshop/wiring
+replace github.com/blueprint-uservices/blueprint/examples/sockshop2/wiring => ./blueprint/examples/sockshop2/wiring
 
 replace github.com/blueprint-uservices/blueprint/examples/train_ticket => ./blueprint/examples/train_ticket
 
 replace github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow => ./blueprint/examples/train_ticket/workflow
 
 replace github.com/blueprint-uservices/blueprint/examples/train_ticket/wiring => ./blueprint/examples/train_ticket/wiring
+
+replace github.com/blueprint-uservices/blueprint/examples/dsb_hotel => ./blueprint/examples/dsb_hotel
+
+replace github.com/blueprint-uservices/blueprint/examples/dsb_hotel/workflow => ./blueprint/examples/dsb_hotel/workflow
+
+replace github.com/blueprint-uservices/blueprint/examples/dsb_hotel/wiring => ./blueprint/examples/dsb_hotel/wiring
+
+replace github.com/blueprint-uservices/blueprint/examples/dsb_sn => ./blueprint/examples/dsb_sn
+
+replace github.com/blueprint-uservices/blueprint/examples/dsb_sn/workflow => ./blueprint/examples/dsb_sn/workflow
+
+replace github.com/blueprint-uservices/blueprint/examples/dsb_sn/wiring => ./blueprint/examples/dsb_sn/wiring
 
 replace github.com/blueprint-uservices/blueprint/examples/foobar => ./blueprint/examples/foobar
 

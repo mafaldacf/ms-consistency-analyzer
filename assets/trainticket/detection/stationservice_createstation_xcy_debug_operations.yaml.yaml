@@ -8,5 +8,4 @@ xcy_lineages:
   - (0, 1) write(station_db, station, station) @ StationService
   xcy_dependencies:
   - (0, 1) write(station_db, station, station) @ StationService
-  - (0, 0) read(station_db, query, res) @ StationService
   xcy_missing_dependencies: []

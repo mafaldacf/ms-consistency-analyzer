@@ -1,12 +1,12 @@
 (*ConfigServiceImpl).Create(ctx context.Context, conf config.Config struct{Name string, Value string, Description string}):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = user, collection = user}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = station, collection = station}, interface{})
 - NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
 (*ConfigServiceImpl).Delete(ctx context.Context, name string):
 - NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D) interface{}
 (*ConfigServiceImpl).Find(ctx context.Context, name string):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = user, collection = user}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = station, collection = station}, interface{})
 (*ConfigServiceImpl).FindAll(ctx context.Context):
-- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = user, collection = user}, interface{})
+- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = station, collection = station}, interface{})
 (*ConfigServiceImpl).Update(ctx context.Context, conf config.Config struct{Name string, Value string, Description string}):
 - NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}) (err, interface{})
 .NewConfigServiceImpl(ctx context.Context, db NoSQLDatabase): []

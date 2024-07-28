@@ -13,6 +13,7 @@ import (
 	"github.com/blueprint-uservices/blueprint/plugins/goproc"
 	"github.com/blueprint-uservices/blueprint/plugins/http"
 	"github.com/blueprint-uservices/blueprint/plugins/linuxcontainer"
+	"github.com/blueprint-uservices/blueprint/plugins/memcached"
 	"github.com/blueprint-uservices/blueprint/plugins/mongodb"
 	"github.com/blueprint-uservices/blueprint/plugins/rabbitmq"
 	"github.com/blueprint-uservices/blueprint/plugins/redis"
@@ -102,6 +103,10 @@ func inspectIR(builder *cmdbuilder.CmdBuilder) (map[*workflowspec.Service][]gola
 											services[workflowHandler.ServiceInfo] = append(services[workflowHandler.ServiceInfo], redisClient)
 											databases[redisClient.Name()] = redisClient
 											logger.Logger.Tracef("[IR HANDLER ARG] [redis.RedisGoClient] got node %s", redisClient.Name())
+										} else if memcachedClient, ok := arg.(*memcached.MemcachedGoClient); ok {
+											services[workflowHandler.ServiceInfo] = append(services[workflowHandler.ServiceInfo], memcachedClient)
+											databases[memcachedClient.Name()] = memcachedClient
+											logger.Logger.Tracef("[IR HANDLER ARG] [memcached.MemcachedGoClient] got node %s", memcachedClient.Name())
 										} else if rabbitClient, ok := arg.(*rabbitmq.RabbitmqGoClient); ok {
 											services[workflowHandler.ServiceInfo] = append(services[workflowHandler.ServiceInfo], rabbitClient)
 											databases[rabbitClient.Name()] = rabbitClient
@@ -126,6 +131,8 @@ func inspectIR(builder *cmdbuilder.CmdBuilder) (map[*workflowspec.Service][]gola
 			}
 		} else if redisContainer, ok := node.(*redis.RedisContainer); ok {
 			logger.Logger.Tracef("[IR INFO] ignoring redis.RedisContainer for node %s, interface %s", redisContainer.Name(), redisContainer.Iface)
+		} else if memachedContainer, ok := node.(*memcached.MemcachedContainer); ok {
+			logger.Logger.Tracef("[IR INFO] ignoring memcached.MemcachedContainer for node %s, interface %s", memachedContainer.Name(), memachedContainer.Iface)
 		} else if rabbitContainer, ok := node.(*rabbitmq.RabbitmqContainer); ok {
 			logger.Logger.Tracef("[IR INFO] ignoring rabbitmq.RabbitmqContainer for node %s, interface %s", rabbitContainer.Name(), rabbitContainer.Iface)
 		} else if mongoDbContainer, ok := node.(*mongodb.MongoDBContainer); ok {
@@ -139,11 +146,7 @@ func inspectIR(builder *cmdbuilder.CmdBuilder) (map[*workflowspec.Service][]gola
 		for _, arg := range value {
 			if workflowClient, ok := arg.(*workflow.WorkflowClient); ok {
 				logger.Logger.Tracef("[IR SERVICE] \t\t[workflow] %s", workflowClient.ServiceType)
-			} else if rabbitClient, ok := arg.(*rabbitmq.RabbitmqGoClient); ok {
-				logger.Logger.Tracef("[IR SERVICE] \t\t[rabbitmq] %s", rabbitClient.Name())
-			} else if redisClient, ok := arg.(*redis.RedisGoClient); ok {
-				logger.Logger.Tracef("[IR SERVICE] \t\t[redis] %s", redisClient.Name())
-			}
+			} 
 		}
 	}
 	logger.Logger.Trace()
@@ -153,6 +156,10 @@ func inspectIR(builder *cmdbuilder.CmdBuilder) (map[*workflowspec.Service][]gola
 			logger.Logger.Tracef("[IR DATASTORE] \t\t[rabbitmq] %s", rabbitClient.Name())
 		} else if redisClient, ok := value.(*redis.RedisGoClient); ok {
 			logger.Logger.Tracef("[IR DATASTORE] \t\t[redis] %s", redisClient.Name())
+		} else if memcachedClient, ok := value.(*memcached.MemcachedGoClient); ok {
+			logger.Logger.Tracef("[IR DATASTORE] \t\t[memcached] %s", memcachedClient.Name())
+		} else if mongodbClient, ok := value.(*mongodb.MongoDBGoClient); ok {
+			logger.Logger.Tracef("[IR DATASTORE] \t\t[mongodb] %s", mongodbClient.Name())
 		}
 	}
 	return services, databases, frontends

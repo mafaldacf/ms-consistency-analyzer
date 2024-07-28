@@ -5,6 +5,5 @@ xcy_lineages:
 - _id: 0
   operations:
   - (0, 0) read(train_db, , res) @ TrainService
-  xcy_dependencies:
-  - (0, 0) read(train_db, , res) @ TrainService
+  xcy_dependencies: []
   xcy_missing_dependencies: []

@@ -30,13 +30,15 @@ func getEmbeddedGolangNamedTypeIfExists(goType golangtypes.Type) (*golangtypes.N
 			goType = e.Elem()
 		case *golangtypes.Pointer:
 			goType = e.Elem()
+		case *golangtypes.Array:
+			goType = e.Elem()
 		case *golangtypes.Chan:
 			goType = e.Elem()
 		case *golangtypes.Named:
 			namedGoType = e
 			ok = true
 			stop = true
-		case *golangtypes.Signature, *golangtypes.Struct, *golangtypes.Basic, *golangtypes.Map:
+		case *golangtypes.Signature, *golangtypes.Struct, *golangtypes.Basic, *golangtypes.Map, *golangtypes.Interface:
 			// ignore
 			stop = true
 		default:
@@ -210,7 +212,7 @@ func ComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type, computeIf
 			return importedType
 		}
 
-		if computeIfNotFound {
+		if true {
 			return FindDefTypesAndAddToPackage(p, e, visitedNamedTypes, typeNameToFuncs, servicesPkgPath)
 		}
 	case *golangtypes.Struct:
@@ -263,6 +265,11 @@ func ComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type, computeIf
 	case *golangtypes.Chan:
 		chanType := &gotypes.ChanType{}
 		chanType.ChanType = ComputeTypesForGoTypes(p, e.Elem(), computeIfNotFound, visitedNamedTypes, typeNameToFuncs, servicesPkgPath)
+		return chanType
+	case *golangtypes.Map:
+		chanType := &gotypes.MapType{}
+		chanType.KeyType = ComputeTypesForGoTypes(p, e.Key(), computeIfNotFound, visitedNamedTypes, typeNameToFuncs, servicesPkgPath)
+		chanType.ValueType = ComputeTypesForGoTypes(p, e.Elem(), computeIfNotFound, visitedNamedTypes, typeNameToFuncs, servicesPkgPath)
 		return chanType
 	default:
 		if goType != nil {

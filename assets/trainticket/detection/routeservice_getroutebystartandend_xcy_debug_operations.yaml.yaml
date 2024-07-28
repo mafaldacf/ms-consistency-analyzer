@@ -5,6 +5,5 @@ xcy_lineages:
 - _id: 0
   operations:
   - (0, 0) read(route_db, query, res) @ RouteService
-  xcy_dependencies:
-  - (0, 0) read(route_db, query, res) @ RouteService
+  xcy_dependencies: []
   xcy_missing_dependencies: []

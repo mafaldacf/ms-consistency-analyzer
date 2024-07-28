@@ -8,5 +8,4 @@ xcy_lineages:
   - (0, 1) write(price_db, pc, pc) @ PriceService
   xcy_dependencies:
   - (0, 1) write(price_db, pc, pc) @ PriceService
-  - (0, 0) read(price_db, query, res) @ PriceService
   xcy_missing_dependencies: []

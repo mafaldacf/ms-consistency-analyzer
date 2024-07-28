@@ -62,21 +62,12 @@
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = consign, collection = consign}'
   - '[-1] (InterfaceVariable UserType) err .error'
-  - |-
-    [0] (inline) (BasicVariable BasicType) 0 int -->
-       r-tainted 1x: read(consignprice_db.0 int)
-  - |-
-    [0] (inline) (FieldVariable FieldType) 0 int -->
-       r-tainted 1x: read(consignprice_db.)
-  - |-
-    [0] (inline) (StructVariable StructType) struct{ "index" string, 0 int} -->
-       r-tainted 1x: read(consignprice_db.struct{ "index" string, 0 int})
-  - |-
-    [-1] (SliceVariable UserType) query primitive.D -->
-       r-tainted 5x: read(consignprice_db.document, consignprice_db.D, consignprice_db.struct{ "index" string, 0 int}, consignprice_db., consignprice_db.0 int)
-  - |-
-    [-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = consign, collection = consign} -->
-       r-tainted 1x: read(consignprice_db.document)
+  - '[0] (inline) (BasicVariable BasicType) 0 int'
+  - '[0] (inline) (FieldVariable FieldType) 0 int'
+  - '[0] (inline) (StructVariable StructType) struct{ "index" string,  0 int}'
+  - '[-1] (SliceVariable UserType) query primitive.D'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
+    = consign, collection = consign}'
   - '[-1] (InterfaceVariable UserType) err .error'
   - '[-1] (StructVariable UserType) cp consignprice.ConsignPrice struct{ID string,
     Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64,

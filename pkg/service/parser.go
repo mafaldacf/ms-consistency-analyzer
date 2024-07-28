@@ -119,10 +119,12 @@ func (service *Service) ParseFields() {
 		//FIXME: should only be service fields
 		if str, ok := n.(*ast.StructType); ok {
 			for idx, field := range str.Fields.List {
-				name := field.Names[0].Name
-				field := service.computeFieldFromType(field, name, idx)
-				service.Fields[name] = field
-				logger.Logger.Debugf("[PARSER] [%s] saved field (%s)\n", service.Name, service.Fields[name])
+				if len(field.Names) > 0 {
+					name := field.Names[0].Name
+					field := service.computeFieldFromType(field, name, idx)
+					service.Fields[name] = field
+					logger.Logger.Debugf("[PARSER] [%s] saved field (%s)\n", service.Name, service.Fields[name])
+				}
 			}
 		}
 		return true
@@ -357,7 +359,7 @@ func (service *Service) AttachDatastoreInstances(paramDBs map[string]datastores.
 					}
 					field := service.Fields[keyIdent.Name]
 					if field == nil {
-						logger.Logger.Fatalf("[PARSER] [%s] field (%s) unexpectedly not found", service.Name, keyIdent.Name)
+						logger.Logger.Fatalf("[PARSER] [%s] field (%s) unexpectedly not found for fields list: %v", service.Name, keyIdent.Name, service.Fields)
 					}
 					if dbField, ok := field.(*types.DatabaseField); ok {
 						valueIdent := kv.Value.(*ast.Ident)
@@ -366,7 +368,7 @@ func (service *Service) AttachDatastoreInstances(paramDBs map[string]datastores.
 						}
 						dbInstance := paramDBs[valueIdent.Name]
 						if dbInstance == nil {
-							logger.Logger.Fatalf("[PARSER] [%s] could not find database instance for constructor parameter (%s)", service.Name, valueIdent.Name)
+							logger.Logger.Fatalf("[PARSER] [%s] could not find database instance for constructor parameter (%s) for paramDBs list: %v", service.Name, valueIdent.Name, paramDBs)
 						}
 						dbField.DbInstance = dbInstance
 						dbField.GetType().(*blueprint.BlueprintBackendType).DbInstance = dbInstance
@@ -377,8 +379,14 @@ func (service *Service) AttachDatastoreInstances(paramDBs map[string]datastores.
 					} else if field, ok := field.(*types.GenericField); ok {
 						if basicLit, ok := kv.Value.(*ast.BasicLit); ok {
 							field.GetType().AddValue(basicLit.Value)
+						} else if _, ok := kv.Value.(*ast.CallExpr); ok {
+							logger.Logger.Warnf("[PARSER - TODOOOOOOO!!!!] [%s] ignoring value (%s) (%v)", service.Name, utils.GetType(kv.Value), kv.Value)
+						} else if _, ok := kv.Value.(*ast.UnaryExpr); ok {
+							logger.Logger.Warnf("[PARSER - TODOOOOOOO!!!!] [%s] ignoring value (%s) (%v)", service.Name, utils.GetType(kv.Value), kv.Value)
+						} else if _, ok := kv.Value.(*ast.Ident); ok {
+							logger.Logger.Warnf("[PARSER - TODOOOOOOO!!!!] [%s] ignoring value (%s) (%v)", service.Name, utils.GetType(kv.Value), kv.Value)
 						} else {
-							logger.Logger.Fatalf("[PARSER] [%s] ignoring value (%v)", service.Name, kv.Value)
+							logger.Logger.Fatalf("[PARSER] [%s] ignoring value (%s) (%v)", service.Name, utils.GetType(kv.Value), kv.Value)
 						}
 					} else {
 						logger.Logger.Fatalf("[PARSER] [%s] ignoring composite element (%s, %s)", service.Name, keyIdent.Name, utils.GetType(kv.Value))
@@ -389,9 +397,10 @@ func (service *Service) AttachDatastoreInstances(paramDBs map[string]datastores.
 		return true
 	})
 
-	logger.Logger.Infof("[PARSER] [%s] updating datastore instances in declared service impl user type...", service.Name)
+	logger.Logger.Infof("[PARSER] [%s] updating datastore instances in declared service impl user type: FIELDS = %v", service.Name, service.Fields)
 	impl := service.GetPackage().GetDeclaredType(service.ImplName).(*gotypes.UserType).UserType.(*gotypes.StructType)
 	for name, field := range service.Fields {
+		logger.Logger.Debugf("[PARSER] [%s] updating datastore instances in declared service impl user type: %s // %s", service.Name, name, field)
 		if implFieldType, ok := impl.GetFieldTypeByName(name).WrappedType.(*blueprint.BlueprintBackendType); ok {
 			if serviceFieldType, ok := field.GetType().(*blueprint.BlueprintBackendType); ok {
 				impl.UpdateFieldSubTypeByName(name, serviceFieldType)

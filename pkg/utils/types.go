@@ -9,6 +9,7 @@ import (
 )
 
 var builtInTypes = []string{
+	"nil",
 	"bool",
 	"string",
 	"int", "int8", "int16", "int32", "int64",

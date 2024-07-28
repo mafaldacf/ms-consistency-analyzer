@@ -1,3 +1,15 @@
+"":
+- package: ""
+- package path: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/...
+- module: ""
+- files: []
+- imports: []
+- imported types: []
+- declared types: []
+- service types: []
+- datastore types: []
+- declared variables: []
+- parsed methods: []
 assurance:
 - package: assurance
 - package path: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/assurance
@@ -13,7 +25,8 @@ assurance:
   - go.mongodb.org/mongo-driver/bson
 - imported types:
   - .error
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -28,7 +41,8 @@ assurance:
 - service types:
   - assurance.AssuranceService
 - datastore types:
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -59,7 +73,8 @@ config:
   - go.mongodb.org/mongo-driver/bson
 - imported types:
   - .error
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -73,7 +88,8 @@ config:
 - service types:
   - config.ConfigService
 - datastore types:
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -100,7 +116,8 @@ consignprice:
   - go.mongodb.org/mongo-driver/bson
 - imported types:
   - .error
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -114,7 +131,8 @@ consignprice:
 - service types:
   - consignprice.ConsignPriceService
 - datastore types:
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -140,7 +158,8 @@ contacts:
   - go.mongodb.org/mongo-driver/bson
 - imported types:
   - .error
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -154,7 +173,8 @@ contacts:
 - service types:
   - contacts.ContactsService
 - datastore types:
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -182,7 +202,8 @@ delivery:
   - golang.org/x/exp/slog
 - imported types:
   - .error
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
   - Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}
   - context.Context
@@ -194,7 +215,8 @@ delivery:
 - service types:
   - delivery.DeliveryService
 - datastore types:
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
   - Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}
 - declared variables: []
@@ -255,7 +277,8 @@ payment:
   - go.mongodb.org/mongo-driver/bson
 - imported types:
   - .error
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -270,7 +293,8 @@ payment:
 - service types:
   - payment.PaymentService
 - datastore types:
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -297,7 +321,8 @@ price:
   - strings
 - imported types:
   - .error
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -312,7 +337,8 @@ price:
 - service types:
   - price.PriceService
 - datastore types:
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -342,7 +368,8 @@ route:
   - strings
 - imported types:
   - .error
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -358,7 +385,8 @@ route:
 - service types:
   - route.RouteService
 - datastore types:
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -385,7 +413,8 @@ station:
   - go.mongodb.org/mongo-driver/bson
 - imported types:
   - .error
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -399,7 +428,8 @@ station:
 - service types:
   - station.StationService
 - datastore types:
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -429,7 +459,8 @@ stationfood:
   - go.mongodb.org/mongo-driver/bson
 - imported types:
   - .error
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -445,7 +476,8 @@ stationfood:
 - service types:
   - stationfood.StationFoodService
 - datastore types:
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -472,7 +504,8 @@ train:
   - go.mongodb.org/mongo-driver/bson
 - imported types:
   - .error
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -486,7 +519,8 @@ train:
 - service types:
   - train.TrainService
 - datastore types:
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -518,7 +552,8 @@ trainfood:
   - go.mongodb.org/mongo-driver/bson
 - imported types:
   - .error
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -533,7 +568,8 @@ trainfood:
 - service types:
   - trainfood.TrainFoodService
 - datastore types:
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -559,7 +595,8 @@ user:
   - go.mongodb.org/mongo-driver/bson
 - imported types:
   - .error
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -573,7 +610,8 @@ user:
 - service types:
   - user.UserService
 - datastore types:
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}

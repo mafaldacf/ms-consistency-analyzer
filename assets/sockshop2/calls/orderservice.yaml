@@ -1,0 +1,15 @@
+(*orderImpl).GetOrder(ctx context.Context, orderID string):
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = order_service, collection = orders}, interface{})
+(*orderImpl).GetOrders(ctx context.Context, customerID string):
+- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = order_service, collection = orders}, interface{})
+(*orderImpl).NewOrder(ctx context.Context, customerID string, addressID string, cardID string, cartID string):
+- (*cart.cartImpl).GetCart(ctx context.Context, customerID string) ([]cart.Item struct{ID string, Quantity int, UnitPrice float32}, error)
+- (*user.userServiceImpl).GetUsers(ctx context.Context, userid string) ([]user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, error)
+- (*user.userServiceImpl).GetAddresses(ctx context.Context, addressid string) ([]user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, error)
+- (*user.userServiceImpl).GetCards(ctx context.Context, cardid string) ([]user.Card struct{LongNum string, Expires string, CCV string, ID string}, error)
+- (*payment.paymentImpl).Authorise(ctx context.Context, amount float32) (payment.Authorisation struct{Authorised bool, Message string}, error)
+- (*shipping.shippingImpl).PostShipping(ctx context.Context, shipment shipping.Shipment struct{ID string, Name string, Status string}) (shipping.Shipment struct{ID string, Name string, Status string}, error)
+- NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
+- (*cart.cartImpl).DeleteCart(ctx context.Context, customerID string) error
+.NewOrderService(ctx context.Context, userService user.UserService, cartService cart.CartService, payments payment.PaymentService, shipping shipping.ShippingService, orderDB NoSQLDatabase):
+ []

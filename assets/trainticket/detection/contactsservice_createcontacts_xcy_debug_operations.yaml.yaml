@@ -8,5 +8,4 @@ xcy_lineages:
   - (0, 1) write(contacts_db, contact, contact) @ ContactsService
   xcy_dependencies:
   - (0, 1) write(contacts_db, contact, contact) @ ContactsService
-  - (0, 0) read(contacts_db, query, res) @ ContactsService
   xcy_missing_dependencies: []

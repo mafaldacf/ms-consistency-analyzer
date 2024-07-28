@@ -1,0 +1,20 @@
+{
+  "nodes": [
+    {
+      "id": "Client",
+      "type": "client"
+    },
+    {
+      "id": "TrainService",
+      "type": "service"
+    }
+  ],
+  "edges": [
+    {
+      "caller": "Client",
+      "callee": "TrainService",
+      "call": "RetrieveByNames",
+      "depth": 0
+    }
+  ]
+}

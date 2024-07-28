@@ -1,0 +1,67 @@
+CartService:
+- fields:
+    db: NoSQLDatabase
+- services: {}
+- datastores:
+    cart_db: NoSQLDatabase
+CatalogueService:
+- fields:
+    catalogue_db: NoSQLDatabase
+- services: {}
+- datastores:
+    catalogue_db: NoSQLDatabase
+FrontendService:
+- fields:
+    cart: CartService
+    catalogue: CatalogueService
+    order: OrderService
+    user: UserService
+- services:
+    CartService: cart.CartService
+    CatalogueService: catalogue.CatalogueService
+    OrderService: order.OrderService
+    UserService: user.UserService
+- datastores: {}
+OrderService:
+- fields:
+    carts: CartService
+    db: NoSQLDatabase
+    payments: PaymentService
+    shipping: ShippingService
+    users: UserService
+- services:
+    CartService: cart.CartService
+    PaymentService: payment.PaymentService
+    ShippingService: shipping.ShippingService
+    UserService: user.UserService
+- datastores:
+    order_db: NoSQLDatabase
+PaymentService:
+- fields:
+    declineOverAmount: float32
+- services: {}
+- datastores: {}
+QueueMaster:
+- fields:
+    exitOnError: bool
+    processed: 0 int32
+    q: Queue
+    shipping: ShippingService
+- services:
+    ShippingService: shipping.ShippingService
+- datastores:
+    shipqueue: Queue
+ShippingService:
+- fields:
+    db: NoSQLDatabase
+    q: Queue
+- services: {}
+- datastores:
+    shipdb: NoSQLDatabase
+    shipqueue: Queue
+UserService:
+- fields:
+    db: NoSQLDatabase
+- services: {}
+- datastores:
+    user_db: NoSQLDatabase

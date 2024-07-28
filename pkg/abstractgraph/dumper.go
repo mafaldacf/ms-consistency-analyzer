@@ -2,7 +2,9 @@ package abstractgraph
 
 import (
 	"container/list"
+	"fmt"
 	"sort"
+	"strings"
 	//"fmt"
 	/* "strings"
 
@@ -63,48 +65,58 @@ func (graph *AbstractGraph) dumpDiGraph() {
 			return edges[i].Call < edges[j].Call
 		})
 	}
-	
-	nodes := []node{}
-	edges := []edge{}
-	appendedServiceNodes := make(map[string]bool)
-	
-	var abstractNodesToVisit = list.New()
-	var visitedAbstractNodes = make(map[AbstractNode]bool)
-	
+
+	global_nodes := []node{}
+	global_edges := []edge{}
+
 	for _, n := range graph.Nodes {
+		var abstractNodesToVisit = list.New()
+		var visitedAbstractNodes = make(map[AbstractNode]bool)
+
 		abstractNodesToVisit.PushBack(n)
-	}
-	
-	nodes = append(nodes, node{Id: "Client", Type: "client"})
-	
-	//fmt.Println()
-	for abstractNodesToVisit.Len() > 0 {
-		elem := abstractNodesToVisit.Front()
-		n := elem.Value.(AbstractNode)
-		abstractNodesToVisit.Remove(elem)
+		nodes := []node{}
+		edges := []edge{}
+		appendedServiceNodes := make(map[string]bool)
 
-		if _, exists := visitedAbstractNodes[n]; !exists {
-			caller := n.GetCallerStr()
-			callee := n.GetCallee()
-			call := n.GetName()
+		nodes = append(nodes, node{Id: "Client", Type: "client"})
 
-			if _, exists := appendedServiceNodes[callee]; !exists {
-				nodes = append(nodes, node{Id: callee, Type: n.GetNodeType()})
-				appendedServiceNodes[callee] = true
-			}
-			edges = append(edges, edge{Caller: caller, Callee: callee, Call: call, Depth: n.GetDepth()})
-			visitedAbstractNodes[n] = true
+		//fmt.Println()
+		for abstractNodesToVisit.Len() > 0 {
+			elem := abstractNodesToVisit.Front()
+			n := elem.Value.(AbstractNode)
+			abstractNodesToVisit.Remove(elem)
 
-			for _, c := range n.GetChildren() {
-				if _, visited := visitedAbstractNodes[c]; !visited {
-					abstractNodesToVisit.PushBack(c)
+			if _, exists := visitedAbstractNodes[n]; !exists {
+				caller := n.GetCallerStr()
+				callee := n.GetCallee()
+				call := n.GetName()
+
+				if _, exists := appendedServiceNodes[callee]; !exists {
+					nodes = append(nodes, node{Id: callee, Type: n.GetNodeType()})
+					appendedServiceNodes[callee] = true
+				}
+				edges = append(edges, edge{Caller: caller, Callee: callee, Call: call, Depth: n.GetDepth()})
+				visitedAbstractNodes[n] = true
+
+				for _, c := range n.GetChildren() {
+					if _, visited := visitedAbstractNodes[c]; !visited {
+						abstractNodesToVisit.PushBack(c)
+					}
 				}
 			}
 		}
-	}
+		global_nodes = append(global_nodes, nodes...)
+		global_edges = append(global_edges, edges...)
 
-	sortEdges(edges)
-	sortNodes(nodes)
-	outputGraph := digraph{Nodes: nodes, Edges: edges}
+		sortEdges(edges)
+		sortNodes(nodes)
+		outputGraph := digraph{Nodes: nodes, Edges: edges}
+		utils.DumpToJSONFile(outputGraph, graph.AppName, fmt.Sprintf("digraphs/per_requests/trace_%s_%s", strings.ToLower(n.GetCallee()), strings.ToLower(n.GetName())))
+	}
+	
+	sortEdges(global_edges)
+	sortNodes(global_nodes)
+	outputGraph := digraph{Nodes: global_nodes, Edges: global_edges}
 	utils.DumpToJSONFile(outputGraph, graph.AppName, "digraphs/call_graph")
+
 }

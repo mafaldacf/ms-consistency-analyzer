@@ -9,12 +9,12 @@
 
 [] (-1) (InterfaceVariable UserType) err .error 
 
-[] (-1) (SliceVariable UserType) query primitive.D // read(consignprice_db), 
-[_] (0) (StructVariable StructType) struct{ "index" string,  0 int} // read(consignprice_db), 
-[__] (0) (FieldVariable FieldType) 0 int // read(consignprice_db), 
-[___] (0) (BasicVariable BasicType) 0 int // read(consignprice_db), 
+[] (-1) (SliceVariable UserType) query primitive.D 
+[_] (0) (StructVariable StructType) struct{ "index" string,  0 int} 
+[__] (0) (FieldVariable FieldType) 0 int 
+[___] (0) (BasicVariable BasicType) 0 int 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = consign, collection = consign} // read(consignprice_db), 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = consign, collection = consign} 
 
 [] (-1) (InterfaceVariable UserType) err .error 
 

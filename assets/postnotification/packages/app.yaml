@@ -1,3 +1,15 @@
+"":
+- package: ""
+- package path: github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification/...
+- module: ""
+- files: []
+- imports: []
+- imported types: []
+- declared types: []
+- service types: []
+- datastore types: []
+- declared variables: []
+- parsed methods: []
 common:
 - package: common
 - package path: github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification/common
@@ -38,7 +50,8 @@ postnotification:
   - .error
   - Cache interface{Cache.Put(ctx context.Context, key string, value interface{}),
     Cache.Get(ctx context.Context, key string, value interface{})}
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -81,7 +94,8 @@ postnotification:
 - datastore types:
   - Cache interface{Cache.Put(ctx context.Context, key string, value interface{}),
     Cache.Get(ctx context.Context, key string, value interface{})}
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}

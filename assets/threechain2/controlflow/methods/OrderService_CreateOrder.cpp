@@ -30,10 +30,6 @@
 [] (-1) (InterfaceVariable UserType) _ .error 
 
 [] (-1) (StructVariable UserType) order threechain2.Order struct{OrderID string, Username string, ProductID string, Quantity int, Timestamp int64} // write(order_db), 
-[_] (0) (FieldVariable FieldType) OrderID string // write(order_db), 
-[__] (-1) (BasicVariable BasicType) cartID string // write(order_db), write(shipment_queue), read(shipment_queue), 
-[___] (2) (Reference BasicType) ref <cartID string> @ CartService // write(order_db), write(shipment_queue), read(shipment_queue), 
-[___] (22) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService // write(order_db), write(shipment_queue), read(shipment_queue), write(shipment_db), read(order_db), 
 [_] (0) (FieldVariable FieldType) Username string // write(order_db), 
 [__] (-1) (BasicVariable BasicType) username string // write(order_db), write(shipment_queue), read(shipment_queue), write(billing_db), 
 [___] (3) (Reference BasicType) ref <Username string> @ CartService // write(order_db), write(billing_db), write(shipment_queue), read(shipment_queue), 
@@ -46,6 +42,10 @@
 [___] (5) (Reference BasicType) ref <Quantity int> @ CartService // write(order_db), write(stock_db), write(billing_db), 
 [_] (0) (FieldVariable FieldType) Timestamp 1 int // write(order_db), 
 [__] (0) (BasicVariable BasicType) 1 int // write(order_db), 
+[_] (0) (FieldVariable FieldType) OrderID string // write(order_db), 
+[__] (-1) (BasicVariable BasicType) cartID string // write(order_db), write(shipment_queue), read(shipment_queue), 
+[___] (2) (Reference BasicType) ref <cartID string> @ CartService // write(order_db), write(shipment_queue), read(shipment_queue), 
+[___] (22) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService // write(order_db), write(shipment_queue), read(shipment_queue), write(shipment_db), read(order_db), 
 
 [] (12) (StructVariable UserType) message threechain2.ShipmentMessage struct{OrderID string, Username string} // write(shipment_queue), read(shipment_queue), 
 [_] (-1) (FieldVariable FieldType) OrderID string // write(shipment_queue), read(shipment_queue), 

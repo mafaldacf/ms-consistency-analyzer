@@ -4,13 +4,16 @@ import (
 	"strings"
 
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/ir"
+	dsb_hotel "github.com/blueprint-uservices/blueprint/examples/dsb_hotel/wiring/specs"
+	dsb_sn "github.com/blueprint-uservices/blueprint/examples/dsb_sn/wiring/specs"
 	specs_foobar "github.com/blueprint-uservices/blueprint/examples/foobar/wiring/specs"
 	specs_postnotification "github.com/blueprint-uservices/blueprint/examples/postnotification/wiring/specs"
-	specs_sockshop "github.com/blueprint-uservices/blueprint/examples/sockshop/wiring/specs"
-	specs_trainticket "github.com/blueprint-uservices/blueprint/examples/train_ticket/wiring/specs"
+	specs_sockshop2 "github.com/blueprint-uservices/blueprint/examples/sockshop2/wiring/specs"
 	specs_threechain2 "github.com/blueprint-uservices/blueprint/examples/threechain2/wiring/specs"
+	specs_trainticket "github.com/blueprint-uservices/blueprint/examples/train_ticket/wiring/specs"
 	"github.com/blueprint-uservices/blueprint/plugins/cmdbuilder"
 	"github.com/blueprint-uservices/blueprint/plugins/golang"
+	"github.com/blueprint-uservices/blueprint/plugins/memcached"
 	"github.com/blueprint-uservices/blueprint/plugins/mongodb"
 	"github.com/blueprint-uservices/blueprint/plugins/rabbitmq"
 	"github.com/blueprint-uservices/blueprint/plugins/redis"
@@ -30,12 +33,16 @@ func BuildBlueprintAppInfo(appName string) ([]*frameworks.ServiceInfo, []datasto
 		spec = specs_postnotification.Docker
 	case "foobar":
 		spec = specs_foobar.Docker
-	case "sockshop":
-		spec = specs_sockshop.Docker
+	case "sockshop2":
+		spec = specs_sockshop2.Docker
 	case "trainticket":
 		spec = specs_trainticket.Docker
 	case "threechain2":
 		spec = specs_threechain2.Docker
+	case "dsb_hotel":
+		spec = dsb_hotel.Original
+	case "dsb_sn":
+		spec = dsb_sn.Docker
 	default:
 		logger.Logger.Fatalf("unknown application %s", appName)
 	}
@@ -101,6 +108,19 @@ func buildDatabasesInstances(databases map[string]ir.IRNode) []datastores.Databa
 					Datastore: &datastores.Datastore{
 						Type:   datastores.Cache,
 						Kind:   datastores.Redis,
+						Name:   name,
+						Schema: &datastores.Schema{},
+					},
+				},
+			})
+		case *memcached.MemcachedGoClient:
+			dbInstances = append(dbInstances, &CacheInstance{
+				BlueprintDatabaseInstance: BlueprintDatabaseInstance{
+					Name: name,
+					//FIXME, we can have many replicas
+					Datastore: &datastores.Datastore{
+						Type:   datastores.Cache,
+						Kind:   datastores.Memcached,
 						Name:   name,
 						Schema: &datastores.Schema{},
 					},

@@ -1,7 +1,7 @@
 [] (-1) (PointerVariable PointerType) c (*threechain2.CartServiceImpl struct{order_service threechain2.OrderService, cart_db NoSQLDatabase}) 
 [_] (0) (StructVariable UserType) threechain2.CartServiceImpl struct{order_service threechain2.OrderService, cart_db NoSQLDatabase} 
-[__] (-1) (ServiceVariable ServiceType) order_service threechain2.OrderService 
 [__] (-1) (BlueprintBackendVariable BlueprintBackendType) cart_db NoSQLDatabase 
+[__] (-1) (ServiceVariable ServiceType) order_service threechain2.OrderService 
 
 [] (1) (InterfaceVariable UserType) ctx context.Context 
 
@@ -23,10 +23,10 @@
 
 [] (-1) (SliceVariable UserType) query primitive.D 
 [_] (0) (StructVariable StructType) struct{Key "cartID" string, Value string} 
-[__] (0) (FieldVariable FieldType) Key "cartID" string 
-[___] (0) (BasicVariable BasicType) "cartID" string 
 [__] (0) (FieldVariable FieldType) Value string 
 [___] (2) (BasicVariable BasicType) cartID string // write(order_db), write(shipment_queue), read(shipment_queue), 
+[__] (0) (FieldVariable FieldType) Key "cartID" string 
+[___] (0) (BasicVariable BasicType) "cartID" string 
 
 [] (-1) (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database = cart_database, collection = cart_collection} 
 

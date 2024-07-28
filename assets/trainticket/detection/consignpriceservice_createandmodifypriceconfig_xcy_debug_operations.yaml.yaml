@@ -8,5 +8,4 @@ xcy_lineages:
   - (0, 1) write(consignprice_db, priceConfig, priceConfig) @ ConsignPriceService
   xcy_dependencies:
   - (0, 1) write(consignprice_db, priceConfig, priceConfig) @ ConsignPriceService
-  - (0, 0) read(consignprice_db, query, res) @ ConsignPriceService
   xcy_missing_dependencies: []

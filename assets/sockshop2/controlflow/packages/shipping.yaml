@@ -1,0 +1,80 @@
+? (*shipping.shippingImpl).GetShipment(ctx context.Context, id string) (shipping.Shipment struct{ID string, Name string, Status string}, error):
+ block 2 (IfDone):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) q Queue'
+  - '[0] (inline) (StructVariable UserType) shipping.shippingImpl struct{q Queue,
+    db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*shipping.shippingImpl struct{q Queue,
+    db NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BasicVariable BasicType) id string'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+    {database = shipping_service, collection = shipments}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) cursor NoSQLCursor {database
+    = shipping_service, collection = shipments}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (StructVariable UserType) shipment shipping.Shipment struct{ID string, Name
+    string, Status string}'
+(*shipping.shippingImpl).PostShipping(ctx context.Context, shipment shipping.Shipment struct{ID string, Name string, Status string}) (shipping.Shipment struct{ID string, Name string, Status string}, error):
+ block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) q Queue'
+  - '[0] (inline) (StructVariable UserType) shipping.shippingImpl struct{q Queue,
+    db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) service (*shipping.shippingImpl struct{q Queue,
+    db NoSQLDatabase})'
+  - '[11] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[16] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
+  - '[16] (InterfaceVariable UserType) ctx context.Context'
+  - |-
+    [27] (inline) (BasicVariable BasicType) "awaiting shipment" string -->
+       w-tainted 2x: write(shipqueue.Shipment.Status, shipdb.Shipment.Status)
+  - |-
+    [26] (inline) (FieldVariable FieldType) Status "awaiting shipment" string -->
+       w-tainted 2x: write(shipqueue.Shipment.Status, shipdb.Shipment.Status)
+  - |-
+    [12] (inline) (Reference BasicType) ref <userID string> @ FrontendService -->
+       w-tainted 3x: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.CustomerID)
+       r-tainted 1x: read(user_db.string)
+  - |-
+    [18] (inline) (BasicVariable BasicType) customerID string -->
+       w-tainted 3x: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.CustomerID)
+       r-tainted 1x: read(user_db.string)
+  - |-
+    [25] (inline) (FieldVariable FieldType) Name string -->
+       w-tainted 2x: write(shipqueue.Shipment.Name, shipdb.Shipment.Name)
+  - |-
+    [24] (inline) (BasicVariable BasicType) string -->
+       w-tainted 2x: write(shipqueue.Shipment.ID, shipdb.Shipment.ID)
+  - |-
+    [23] (inline) (FieldVariable FieldType) ID string -->
+       w-tainted 2x: write(shipqueue.Shipment.ID, shipdb.Shipment.ID)
+  - |-
+    [22] (inline) (Reference UserType) ref <shipment shipping.Shipment struct{ID string, Name string, Status string}> @ OrderService -->
+       w-tainted 2x: write(shipqueue.Shipment, shipdb.Shipment)
+  - |-
+    [-1] (StructVariable UserType) shipment shipping.Shipment struct{ID string, Name string, Status string} -->
+       w-tainted 2x: write(shipqueue.Shipment, shipdb.Shipment)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+    {database = shipping_service, collection = shipments}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+(*shipping.shippingImpl).UpdateStatus(ctx context.Context, id string, status string) error:
+  block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) q Queue'
+  - '[0] (inline) (StructVariable UserType) shipping.shippingImpl struct{q Queue,
+    db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*shipping.shippingImpl struct{q Queue,
+    db NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BasicVariable BasicType) id string'
+  - '[-1] (BasicVariable BasicType) status string'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+    {database = shipping_service, collection = shipments}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+shipping.NewShippingService(ctx context.Context, queue Queue, db NoSQLDatabase) (shipping.ShippingService, error):
+  block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) queue Queue'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'

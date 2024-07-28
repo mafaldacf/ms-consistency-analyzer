@@ -1,7 +1,7 @@
 (*StorageServiceImpl).ReadPostCache(ctx context.Context, reqID int64, postID int64):
 - Cache.Get(ctx context.Context, key string, value interface{}) (err, interface{})
 (*StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID int64):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = post, collection = post}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = analytics_db, collection = analytics_collection}, interface{})
 - (*postnotification.AnalyticsServiceImpl).ReadAnalytics(ctx context.Context, postID int64) (postnotification.Analytics struct{PostID int64}, error)
 (*StorageServiceImpl).StorePostCache(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}):
 	- Cache.Put(ctx context.Context, key string, value interface{}) interface{}

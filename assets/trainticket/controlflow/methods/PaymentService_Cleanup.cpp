@@ -1,7 +1,7 @@
 [] (-1) (PointerVariable PointerType) p (*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase}) 
 [_] (0) (StructVariable UserType) payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase} 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) moneyDB NoSQLDatabase 
 [__] (-1) (BlueprintBackendVariable BlueprintBackendType) paymentDB NoSQLDatabase 
+[__] (-1) (BlueprintBackendVariable BlueprintBackendType) moneyDB NoSQLDatabase 
 
 [] (-1) (InterfaceVariable UserType) ctx context.Context 
 

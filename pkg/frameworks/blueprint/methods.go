@@ -318,6 +318,11 @@ func buildBackendNoSQLCollectionMethods() []*BackendMethod {
 		Params:  []*types.MethodField{&ctxParam, &filterParam, &updateParam},
 		Returns: []*types.MethodField{&intReturn, &errorReturn},
 	})
+	// ReplaceOne(ctx context.Context, filter bson.D, replacement{}) (int, error)
+	methods = append(methods, &BackendMethod{Name: "ReplaceOne", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Operation: OP_UPDATE,
+		Params:  []*types.MethodField{&ctxParam, &filterParam, &replacementParam},
+		Returns: []*types.MethodField{&intReturn, &errorReturn},
+	})
 	// InsertOne(ctx context.Context, document interface{}) error
 	methods = append(methods, &BackendMethod{Name: "InsertOne", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Operation: OP_WRITE,
 		Params:  []*types.MethodField{&ctxParam, &docParam},
@@ -464,6 +469,11 @@ var NoSQLCollectionReturn = types.MethodField{
 var errorReturn = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		// error is actually an interface
+		Type: &gotypes.InterfaceType{Methods: make(map[string]string)},
+	},
+}
+var replacementParam = types.MethodField{
+	FieldInfo: types.FieldInfo{
 		Type: &gotypes.InterfaceType{Methods: make(map[string]string)},
 	},
 }

@@ -122,10 +122,15 @@ func (app *App) loadFieldsFromServicesConstructor(servicesInfo []*frameworks.Ser
 	for _, info := range servicesInfo {
 		service := app.Services[info.Name]
 		paramsDBs := make(map[string]datastores.DatabaseInstance, 0)
+		logger.Logger.Debugf("[%s] searching instances for constructor dbs: %v", service.GetName(), info.ConstructorDBs)
 		for param, instanceName := range info.ConstructorDBs {
 			dbInstance := app.Databases[instanceName]
+			if dbInstance == nil {
+				logger.Logger.Fatalf("[APP] [%s] could not find instance named (%s) in app with database list: %v", service.GetName(), instanceName, app.Databases)
+			}
 			paramsDBs[param] = dbInstance
 			service.Databases[dbInstance.GetName()] = dbInstance
+			logger.Logger.Debugf("[%s] added db new instance named (%s) for field key (%s) in list: %v", service.GetName(), dbInstance.GetName(), param, paramsDBs)
 		}
 		service.AttachDatastoreInstances(paramsDBs)
 		logger.Logger.Tracef("[APP] registered service node %s with %d service(s) and %d database(s)", service.Name, len(service.Services), len(service.Databases))

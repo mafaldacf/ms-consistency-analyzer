@@ -5,6 +5,5 @@ xcy_lineages:
 - _id: 0
   operations:
   - (0, 0) read(contacts_db, , res) @ ContactsService
-  xcy_dependencies:
-  - (0, 0) read(contacts_db, , res) @ ContactsService
+  xcy_dependencies: []
   xcy_missing_dependencies: []

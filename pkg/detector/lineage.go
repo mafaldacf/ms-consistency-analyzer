@@ -32,7 +32,9 @@ func (l *Lineage) GetDependencies() []*Operation {
 	var dependencies []*Operation
 	// reverse - start from most recent
 	for i := len(l.Operations) - 1; i >= 0; i-- {
-		dependencies = append(dependencies, l.Operations[i])
+		if l.Operations[i].Write {
+			dependencies = append(dependencies, l.Operations[i])
+		}
 	}
 	if !l.IsRoot() {
 		dependencies = append(dependencies, l.Previous.GetDependencies()...)

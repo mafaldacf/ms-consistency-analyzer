@@ -7,6 +7,5 @@ xcy_lineages:
   - (0, 0) write(route_db, route, route) @ RouteService
   - (0, 1) read(route_db, , res) @ RouteService
   xcy_dependencies:
-  - (0, 1) read(route_db, , res) @ RouteService
   - (0, 0) write(route_db, route, route) @ RouteService
   xcy_missing_dependencies: []

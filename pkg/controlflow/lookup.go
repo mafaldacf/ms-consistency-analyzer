@@ -30,6 +30,28 @@ func computeArrayIndex(expr ast.Expr) int {
 
 func lookupVariableFromIdentIfExists(service *service.Service, block *types.Block, ident *ast.Ident) variables.Variable {
 	logger.Logger.Debugf("[CFG LOOKUP IDENT] (%s) looking up variable for ident (%s)", service.GetName(), ident.Name)
+
+	if utils.IsBuiltInGoTypeOrFunc(ident.Name) {
+		if utils.IsBuiltInGoFunc(ident.Name) {
+			logger.Logger.Warnf("FIXME: IDENTIFIED BUILT IN FUNC FOR (%s)", ident.Name)
+			return nil
+		}
+	}
+	if utils.IsBuiltInConstValue(ident.Name) {
+		typeName := utils.GetBuiltInConstTypeName(ident.Name)
+		basicType := &gotypes.BasicType{
+			Name:  typeName,
+			Value: ident.Name,
+		}
+		variable := &variables.BasicVariable{
+			VariableInfo: &variables.VariableInfo{
+				Type: basicType,
+				Id:   variables.VARIABLE_INLINE_ID,
+			},
+		}
+		return variable
+	}
+
 	variable := block.GetLastestVariableIfExists(ident.Name)
 	if variable != nil {
 		return variable

@@ -12,7 +12,7 @@
 
 [] (-1) (InterfaceVariable UserType) err .error 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = route, collection = route} // read(route_db), 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = route, collection = route} 
 
 [] (-1) (InterfaceVariable UserType) err .error 
 

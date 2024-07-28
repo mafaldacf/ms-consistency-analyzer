@@ -665,12 +665,12 @@
                             {
                               "Key": {
                                 "variable": {
-                                  "type": "\"Username\" string"
+                                  "type": "\"OrderID\" string"
                                 }
                               },
                               "Value": {
                                 "variable": {
-                                  "name": "Username",
+                                  "name": "OrderID",
                                   "type": "interface{}"
                                 }
                               }
@@ -678,12 +678,12 @@
                             {
                               "Key": {
                                 "variable": {
-                                  "type": "\"OrderID\" string"
+                                  "type": "\"Username\" string"
                                 }
                               },
                               "Value": {
                                 "variable": {
-                                  "name": "OrderID",
+                                  "name": "Username",
                                   "type": "interface{}"
                                 }
                               }

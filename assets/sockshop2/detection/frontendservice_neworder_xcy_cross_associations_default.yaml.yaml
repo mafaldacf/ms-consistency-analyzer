@@ -1,0 +1,9 @@
+mode: CROSS_ASSOCIATIONS_DEFAULT
+number_inconsistencies: 0
+xcy_inconsistencies: []
+xcy_lineages:
+- _id: 0
+  operations:
+  - (0, 0) write(shipqueue, shipment, shipment) @ ShippingService
+  - (0, 1) write(shipdb, shipment, shipment) @ ShippingService
+  - (0, 2) write(order_db, order, order) @ OrderService

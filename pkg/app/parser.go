@@ -23,9 +23,11 @@ import (
 const (
 	PACKAGE_PATH_POST_NOTIFICATION string = "github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification"
 	PACKAGE_PATH_FOOBAR            string = "github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar"
-	PACKAGE_PATH_SOCKSHOP          string = "github.com/blueprint-uservices/blueprint/examples/sockshop/workflow"
+	PACKAGE_PATH_SOCKSHOP2         string = "github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow"
 	PACKAGE_PATH_TRAIN_TICKET      string = "github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow"
 	PACKAGE_PATH_THREECHAIN2       string = "github.com/blueprint-uservices/blueprint/examples/threechain2/workflow"
+	PACKAGE_PATH_DSB_HOTEL         string = "github.com/blueprint-uservices/blueprint/examples/dsb_hotel/workflow/hotelreservation"
+	PACKAGE_PATH_DSB_SN            string = "github.com/blueprint-uservices/blueprint/examples/dsb_sn/workflow/socialnetwork"
 	PACKAGE_PATH_BLUEPRINT         string = "github.com/blueprint-uservices/blueprint/runtime/core/backend"
 )
 
@@ -120,12 +122,16 @@ func (app *App) ParsePackages(servicesInfo []*frameworks.ServiceInfo) {
 		basePackagePath = PACKAGE_PATH_POST_NOTIFICATION
 	case "foobar":
 		basePackagePath = PACKAGE_PATH_FOOBAR
-	case "sockshop":
-		basePackagePath = PACKAGE_PATH_SOCKSHOP
+	case "sockshop2":
+		basePackagePath = PACKAGE_PATH_SOCKSHOP2
 	case "trainticket":
 		basePackagePath = PACKAGE_PATH_TRAIN_TICKET
 	case "threechain2":
 		basePackagePath = PACKAGE_PATH_THREECHAIN2
+	case "dsb_hotel":
+		basePackagePath = PACKAGE_PATH_DSB_HOTEL
+	case "dsb_sn":
+		basePackagePath = PACKAGE_PATH_DSB_SN
 	default:
 		logger.Logger.Fatalf("unknown application name %s", app.Name)
 	}

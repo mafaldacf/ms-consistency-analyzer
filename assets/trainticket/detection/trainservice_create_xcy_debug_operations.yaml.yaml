@@ -8,5 +8,4 @@ xcy_lineages:
   - (0, 1) write(train_db, tt, tt) @ TrainService
   xcy_dependencies:
   - (0, 1) write(train_db, tt, tt) @ TrainService
-  - (0, 0) read(train_db, query, res) @ TrainService
   xcy_missing_dependencies: []

@@ -62,7 +62,7 @@ func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 			if importedType != nil {
 				return importedType
 			}
-			
+
 			logger.Logger.Warnf("[LOOKUP AST SELECTOR] ------------ !!! DID NOT FIND IMPORTED TYPE NAMED (%s) FROM PACKAGE (%s)", e.Sel.Name, impt.Alias)
 			t := FindDefTypesAndAddToPackage(file.Package, goType, nil, nil, nil)
 			logger.Logger.Warnf("[LOOKUP AST SELECTOR] ------------  !!! FOUND AND ADDED NEW TYPE (%s) TO IMPORTS OF PACKAGE (%s)", t.String(), file.Package.Name)
@@ -110,6 +110,8 @@ func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 		return &gotypes.PointerType{
 			PointerTo: ComputeTypeForAstExpr(file, e.X),
 		}
+	case *ast.Ellipsis:
+		logger.Logger.Fatalf("[LOOKUP AST] could not compute type for expr %v (type = %s) \n\npkg: %s \n\nimportMap: %v", typeExpr, utils.GetType(e.Elt), file.Package.Name, file.Imports)
 	}
 	logger.Logger.Fatalf("[LOOKUP AST] could not compute type for expr %v (type = %s) \n\npkg: %s \n\nimportMap: %v", typeExpr, utils.GetType(typeExpr), file.Package.Name, file.Imports)
 	return nil
@@ -143,6 +145,14 @@ func ComputeFuncDeclFields(file *types.File, funcDecl *ast.FuncDecl) ([]*types.M
 		}
 		return params
 	}
+	var params []*types.MethodField
+	if funcDecl.Type.Params != nil {
+		params = parser(funcDecl.Type.Params.List)
+	}
+	var results []*types.MethodField
+	if funcDecl.Type.Results != nil {
+		results = parser(funcDecl.Type.Results.List)
+	}
 	var receiver *types.MethodField
 	if funcDecl.Recv != nil {
 		receiverLst := parser(funcDecl.Recv.List)
@@ -150,5 +160,5 @@ func ComputeFuncDeclFields(file *types.File, funcDecl *ast.FuncDecl) ([]*types.M
 			receiver = receiverLst[0]
 		}
 	}
-	return parser(funcDecl.Type.Params.List), parser(funcDecl.Type.Results.List), receiver
+	return params, results, receiver
 }

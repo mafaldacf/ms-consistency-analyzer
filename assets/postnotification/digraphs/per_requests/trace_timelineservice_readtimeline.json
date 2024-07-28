@@ -1,0 +1,70 @@
+{
+  "nodes": [
+    {
+      "id": "Client",
+      "type": "client"
+    },
+    {
+      "id": "AnalyticsService",
+      "type": "service"
+    },
+    {
+      "id": "StorageService",
+      "type": "service"
+    },
+    {
+      "id": "TimelineService",
+      "type": "service"
+    },
+    {
+      "id": "analytics_db MongoDB",
+      "type": "datastore"
+    },
+    {
+      "id": "posts_db MongoDB",
+      "type": "datastore"
+    },
+    {
+      "id": "timeline_cache Redis",
+      "type": "datastore"
+    }
+  ],
+  "edges": [
+    {
+      "caller": "AnalyticsService",
+      "callee": "analytics_db MongoDB",
+      "call": "FindOne",
+      "depth": 3
+    },
+    {
+      "caller": "Client",
+      "callee": "TimelineService",
+      "call": "ReadTimeline",
+      "depth": 0
+    },
+    {
+      "caller": "StorageService",
+      "callee": "AnalyticsService",
+      "call": "ReadAnalytics",
+      "depth": 2
+    },
+    {
+      "caller": "StorageService",
+      "callee": "posts_db MongoDB",
+      "call": "FindOne",
+      "depth": 2
+    },
+    {
+      "caller": "TimelineService",
+      "callee": "StorageService",
+      "call": "ReadPostNoSQL",
+      "depth": 1
+    },
+    {
+      "caller": "TimelineService",
+      "callee": "timeline_cache Redis",
+      "call": "Get",
+      "depth": 1
+    }
+  ]
+}

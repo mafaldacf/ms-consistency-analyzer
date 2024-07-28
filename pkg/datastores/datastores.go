@@ -19,6 +19,7 @@ type DatastoreKind int
 const (
 	MySQL DatastoreKind = iota
 	Redis
+	Memcached
 	MongoDB
 	RabbitMQ
 )

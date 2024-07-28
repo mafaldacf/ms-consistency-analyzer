@@ -25,7 +25,7 @@ func GenerateMethodCFG(parsedMethod *types.ParsedMethod) {
 		entryBlock.AddVariable(receiver)
 		parsedCfg.HasReceiver = true
 		parsedCfg.ReceiverType = receiver.GetType()
-		logger.Logger.Tracef("[CFG] added receiver %s (%s) (%s)", receiver.String(), utils.GetType(receiver.(*variables.PointerVariable).PointerTo), utils.GetType(receiver.(*variables.PointerVariable).PointerTo.GetType()))
+		logger.Logger.Tracef("[CFG] added receiver (%s) %s", variables.VariableTypeName(receiver), receiver.String())
 	}
 
 	for i, param := range parsedMethod.Params {

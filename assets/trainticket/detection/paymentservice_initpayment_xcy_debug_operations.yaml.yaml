@@ -8,5 +8,4 @@ xcy_lineages:
   - (0, 1) write(payments_db, payment, payment) @ PaymentService
   xcy_dependencies:
   - (0, 1) write(payments_db, payment, payment) @ PaymentService
-  - (0, 0) read(payments_db, , res) @ PaymentService
   xcy_missing_dependencies: []

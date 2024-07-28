@@ -1,8 +1,8 @@
 (*TimelineServiceImpl).ReadTimeline(ctx context.Context, reqID int64):
   block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) storage_service postnotification.StorageService'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) timeline_cache
     Cache'
-  - '[-1] (inline) (ServiceVariable ServiceType) storage_service postnotification.StorageService'
   - '[0] (inline) (StructVariable UserType) postnotification.TimelineServiceImpl struct{storage_service
     postnotification.StorageService, timeline_cache Cache}'
   - '[-1] (PointerVariable PointerType) s (*postnotification.TimelineServiceImpl struct{storage_service
