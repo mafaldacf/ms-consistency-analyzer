@@ -9,7 +9,7 @@
   - '[7] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
   - '[7] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    [22] (inline) (Reference InterfaceType) ref <Username interface{}> @ ShipmentService -->
+    [25] (inline) (Reference InterfaceType) ref <Username interface{}> @ ShipmentService -->
        w-tainted 4x: write(order_db.Order.Username, billing_db.Bill.Username, shipment_queue.ShipmentMessage.Username, shipment_db.Shipment.Username)
        r-tainted 1x: read(shipment_queue.ShipmentMessage.Username)
   - |-

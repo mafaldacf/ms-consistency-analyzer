@@ -1,7 +1,7 @@
 ? (*PaymentServiceImpl).AddMoney(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}):
  block 2 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) moneyDB NoSQLDatabase'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) paymentDB NoSQLDatabase'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) moneyDB NoSQLDatabase'
   - '[0] (inline) (StructVariable UserType) payment.PaymentServiceImpl struct{paymentDB
     NoSQLDatabase, moneyDB NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) p (*payment.PaymentServiceImpl struct{paymentDB
@@ -18,12 +18,6 @@
   - '[-1] (StructVariable UserType) payment payment.Payment struct{ID string, OrderID
     string, UserID string, Price string}'
   - |-
-    [-1] (inline) (BasicVariable BasicType) UserID string -->
-       w-tainted 1x: write(money_db.Money.UserID)
-  - |-
-    [-1] (inline) (FieldVariable FieldType) UserID string -->
-       w-tainted 1x: write(money_db.Money.UserID)
-  - |-
     [0] (inline) (BasicVariable BasicType) string -->
        w-tainted 1x: write(money_db.Money.ID)
   - |-
@@ -36,6 +30,12 @@
     [-1] (inline) (FieldVariable FieldType) Price string -->
        w-tainted 1x: write(money_db.Money.Price)
   - |-
+    [-1] (inline) (BasicVariable BasicType) UserID string -->
+       w-tainted 1x: write(money_db.Money.UserID)
+  - |-
+    [-1] (inline) (FieldVariable FieldType) UserID string -->
+       w-tainted 1x: write(money_db.Money.UserID)
+  - |-
     [-1] (StructVariable UserType) m payment.Money struct{ID string, UserID string, Price string} -->
        w-tainted 1x: write(money_db.Money)
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
@@ -43,8 +43,8 @@
   - '[-1] (InterfaceVariable UserType) err .error'
 (*PaymentServiceImpl).Cleanup(ctx context.Context):
   block 8 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) moneyDB NoSQLDatabase'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) paymentDB NoSQLDatabase'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) moneyDB NoSQLDatabase'
   - '[0] (inline) (StructVariable UserType) payment.PaymentServiceImpl struct{paymentDB
     NoSQLDatabase, moneyDB NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) p (*payment.PaymentServiceImpl struct{paymentDB

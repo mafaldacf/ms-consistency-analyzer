@@ -9,7 +9,7 @@
   - '[7] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
   - '[7] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    [22] (inline) (Reference InterfaceType) ref <Username interface{}> @ ShipmentService -->
+    [25] (inline) (Reference InterfaceType) ref <Username interface{}> @ ShipmentService -->
        w-tainted 4x: write(order_db.Order.Username, billing_db.Bill.Username, shipment_queue.ShipmentMessage.Username, shipment_db.Shipment.Username)
        r-tainted 1x: read(shipment_queue.ShipmentMessage.Username)
   - |-
@@ -76,8 +76,8 @@
        w-tainted 1x: write(billing_db.Bill)
 (*threechain2.CartServiceImpl).Checkout(ctx context.Context, cartID string) error:
   block 0 (Body):
-  - '[-1] (inline) (ServiceVariable ServiceType) order_service threechain2.OrderService'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) cart_db NoSQLDatabase'
+  - '[-1] (inline) (ServiceVariable ServiceType) order_service threechain2.OrderService'
   - '[0] (inline) (StructVariable UserType) threechain2.CartServiceImpl struct{order_service
     threechain2.OrderService, cart_db NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) c (*threechain2.CartServiceImpl struct{order_service
@@ -131,11 +131,11 @@
   - '[-1] (SliceVariable UserType) update primitive.D'
 (*threechain2.OrderServiceImpl).CreateOrder(ctx context.Context, cartID string, username string, productID string, quantity int, price int) error:
  block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
+    Queue'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) order_db NoSQLDatabase'
   - '[-1] (inline) (ServiceVariable ServiceType) billing_service threechain2.BillingService'
   - '[-1] (inline) (ServiceVariable ServiceType) stock_service threechain2.StockService'
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
-    Queue'
   - '[0] (inline) (StructVariable UserType) threechain2.OrderServiceImpl struct{stock_service
     threechain2.StockService, billing_service threechain2.BillingService, order_db
     NoSQLDatabase, shipment_queue Queue}'
@@ -145,7 +145,7 @@
   - '[1] (inline) (Reference UserType) ref <ctx context.Context> @ CartService'
   - '[7] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    [25] (inline) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService -->
+    [22] (inline) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService -->
        w-tainted 3x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID)
        r-tainted 2x: read(shipment_queue.ShipmentMessage.OrderID, order_db.interface{})
   - |-
@@ -157,7 +157,7 @@
        w-tainted 2x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID)
        r-tainted 1x: read(shipment_queue.ShipmentMessage.OrderID)
   - |-
-    [22] (inline) (Reference InterfaceType) ref <Username interface{}> @ ShipmentService -->
+    [25] (inline) (Reference InterfaceType) ref <Username interface{}> @ ShipmentService -->
        w-tainted 4x: write(order_db.Order.Username, billing_db.Bill.Username, shipment_queue.ShipmentMessage.Username, shipment_db.Shipment.Username)
        r-tainted 1x: read(shipment_queue.ShipmentMessage.Username)
   - |-
@@ -211,7 +211,7 @@
     [-1] (StructVariable UserType) order threechain2.Order struct{OrderID string, Username string, ProductID string, Quantity int, Timestamp int64} -->
        w-tainted 1x: write(order_db.Order)
   - |-
-    [22] (inline) (Reference InterfaceType) ref <Username interface{}> @ ShipmentService -->
+    [25] (inline) (Reference InterfaceType) ref <Username interface{}> @ ShipmentService -->
        w-tainted 4x: write(order_db.Order.Username, billing_db.Bill.Username, shipment_queue.ShipmentMessage.Username, shipment_db.Shipment.Username)
        r-tainted 1x: read(shipment_queue.ShipmentMessage.Username)
   - |-
@@ -219,7 +219,7 @@
        w-tainted 1x: write(shipment_queue.ShipmentMessage.Username)
        r-tainted 1x: read(shipment_queue.ShipmentMessage.Username)
   - |-
-    [25] (inline) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService -->
+    [22] (inline) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService -->
        w-tainted 3x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID)
        r-tainted 2x: read(shipment_queue.ShipmentMessage.OrderID, order_db.interface{})
   - |-
@@ -232,11 +232,11 @@
        r-tainted 1x: read(shipment_queue.ShipmentMessage)
 (*threechain2.OrderServiceImpl).ReadOrder(ctx context.Context, orderID string) (threechain2.Order struct{OrderID string, Username string, ProductID string, Quantity int, Timestamp int64}, error):
  block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
+    Queue'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) order_db NoSQLDatabase'
   - '[-1] (inline) (ServiceVariable ServiceType) billing_service threechain2.BillingService'
   - '[-1] (inline) (ServiceVariable ServiceType) stock_service threechain2.StockService'
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
-    Queue'
   - '[0] (inline) (StructVariable UserType) threechain2.OrderServiceImpl struct{stock_service
     threechain2.StockService, billing_service threechain2.BillingService, order_db
     NoSQLDatabase, shipment_queue Queue}'
@@ -247,15 +247,15 @@
   - '[-1] (inline) (Reference UserType) ref <ctx context.Context> @ ShipmentService'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    [25] (inline) (InterfaceVariable InterfaceType) OrderID interface{} -->
+    [22] (inline) (InterfaceVariable InterfaceType) OrderID interface{} -->
        w-tainted 3x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID)
        r-tainted 2x: read(shipment_queue.ShipmentMessage.OrderID, order_db.interface{})
   - |-
-    [24] (inline) (BasicVariable BasicType) OrderID string -->
+    [21] (inline) (BasicVariable BasicType) OrderID string -->
        w-tainted 1x: write(shipment_db.Shipment.OrderID)
        r-tainted 1x: read(order_db.string)
   - |-
-    [23] (inline) (Reference FieldType) ref <OrderID string> @ ShipmentService -->
+    [20] (inline) (Reference FieldType) ref <OrderID string> @ ShipmentService -->
        w-tainted 1x: write(shipment_db.Shipment.OrderID)
        r-tainted 1x: read(order_db.OrderID)
   - |-
@@ -291,11 +291,11 @@
   - '[-1] (InterfaceVariable UserType) _ .error'
 (*threechain2.ShipmentServiceImpl).Run(ctx context.Context) error:
   block 4 (ForPost):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase'
+  - '[-1] (inline) (ServiceVariable ServiceType) order_service threechain2.OrderService'
   - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
     Queue'
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase'
-  - '[-1] (inline) (ServiceVariable ServiceType) order_service threechain2.OrderService'
   - '[0] (inline) (StructVariable UserType) threechain2.ShipmentServiceImpl struct{order_service
     threechain2.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers
     int}'
@@ -308,11 +308,11 @@
   - '[-1] (InterfaceVariable UserType) err .error'
 (*threechain2.ShipmentServiceImpl).createPendingShipment(ctx context.Context, shipmentMessage threechain2.ShipmentMessage struct{OrderID string, Username string}) error:
  block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) order_service threechain2.OrderService'
+  - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
     Queue'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase'
-  - '[-1] (inline) (ServiceVariable ServiceType) order_service threechain2.OrderService'
-  - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
   - '[0] (inline) (StructVariable UserType) threechain2.ShipmentServiceImpl struct{order_service
     threechain2.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers
     int}'
@@ -322,32 +322,15 @@
   - '[18] (inline) (Reference UserType) ref <ctx context.Context> @ ShipmentService'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    [22] (inline) (InterfaceVariable InterfaceType) Username interface{} -->
-       w-tainted 4x: write(order_db.Order.Username, billing_db.Bill.Username, shipment_queue.ShipmentMessage.Username, shipment_db.Shipment.Username)
-       r-tainted 1x: read(shipment_queue.ShipmentMessage.Username)
-  - |-
-    [21] (inline) (BasicVariable BasicType) Username string -->
-       w-tainted 1x: write(shipment_db.Shipment.Username)
-  - |-
-    [20] (inline) (Reference FieldType) ref <Username string> @ ShipmentService -->
-       w-tainted 1x: write(shipment_db.Shipment.Username)
-  - |-
-    [0] (inline) (BasicVariable BasicType) Username string -->
-       w-tainted 1x: write(shipment_db.Shipment.Username)
-  - |-
-    [20] (inline) (Reference FieldType) ref <Username string> @ ShipmentService -->
-       w-tainted 1x: write(shipment_db.Shipment.Username)
-  - '[0] (inline) (FieldVariable FieldType) Username string'
-  - |-
-    [25] (inline) (InterfaceVariable InterfaceType) OrderID interface{} -->
+    [22] (inline) (InterfaceVariable InterfaceType) OrderID interface{} -->
        w-tainted 3x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID)
        r-tainted 2x: read(shipment_queue.ShipmentMessage.OrderID, order_db.interface{})
   - |-
-    [24] (inline) (BasicVariable BasicType) OrderID string -->
+    [21] (inline) (BasicVariable BasicType) OrderID string -->
        w-tainted 1x: write(shipment_db.Shipment.OrderID)
        r-tainted 1x: read(order_db.string)
   - |-
-    [23] (inline) (Reference FieldType) ref <OrderID string> @ ShipmentService -->
+    [20] (inline) (Reference FieldType) ref <OrderID string> @ ShipmentService -->
        w-tainted 1x: write(shipment_db.Shipment.OrderID)
        r-tainted 1x: read(order_db.OrderID)
   - |-
@@ -355,15 +338,32 @@
        w-tainted 1x: write(shipment_db.Shipment.OrderID)
        r-tainted 1x: read(order_db.string)
   - |-
-    [23] (inline) (Reference FieldType) ref <OrderID string> @ ShipmentService -->
+    [20] (inline) (Reference FieldType) ref <OrderID string> @ ShipmentService -->
        w-tainted 1x: write(shipment_db.Shipment.OrderID)
        r-tainted 1x: read(order_db.OrderID)
   - '[0] (inline) (FieldVariable FieldType) OrderID string'
   - |-
-    [20] (inline) (FieldVariable FieldType) Username string -->
+    [25] (inline) (InterfaceVariable InterfaceType) Username interface{} -->
+       w-tainted 4x: write(order_db.Order.Username, billing_db.Bill.Username, shipment_queue.ShipmentMessage.Username, shipment_db.Shipment.Username)
+       r-tainted 1x: read(shipment_queue.ShipmentMessage.Username)
+  - |-
+    [24] (inline) (BasicVariable BasicType) Username string -->
        w-tainted 1x: write(shipment_db.Shipment.Username)
   - |-
-    [23] (inline) (FieldVariable FieldType) OrderID string -->
+    [23] (inline) (Reference FieldType) ref <Username string> @ ShipmentService -->
+       w-tainted 1x: write(shipment_db.Shipment.Username)
+  - |-
+    [0] (inline) (BasicVariable BasicType) Username string -->
+       w-tainted 1x: write(shipment_db.Shipment.Username)
+  - |-
+    [23] (inline) (Reference FieldType) ref <Username string> @ ShipmentService -->
+       w-tainted 1x: write(shipment_db.Shipment.Username)
+  - '[0] (inline) (FieldVariable FieldType) Username string'
+  - |-
+    [23] (inline) (FieldVariable FieldType) Username string -->
+       w-tainted 1x: write(shipment_db.Shipment.Username)
+  - |-
+    [20] (inline) (FieldVariable FieldType) OrderID string -->
        w-tainted 1x: write(shipment_db.Shipment.OrderID)
        r-tainted 1x: read(order_db.OrderID)
   - '[19] (inline) (Reference UserType) ref <workerMessage threechain2.ShipmentMessage
@@ -390,11 +390,11 @@
        w-tainted 1x: write(shipment_db.Shipment)
 (*threechain2.ShipmentServiceImpl).workerThread(ctx context.Context) error:
   block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) order_service threechain2.OrderService'
   - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
     Queue'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase'
-  - '[-1] (inline) (ServiceVariable ServiceType) order_service threechain2.OrderService'
   - '[0] (inline) (StructVariable UserType) threechain2.ShipmentServiceImpl struct{order_service
     threechain2.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers
     int}'
@@ -404,15 +404,15 @@
   - '[18] (InterfaceVariable UserType) ctx context.Context'
   - '[-1] (ChanVariable ChanType) forever chan struct{}'
   - |-
-    [22] (inline) (InterfaceVariable InterfaceType) Username interface{} -->
+    [25] (inline) (InterfaceVariable InterfaceType) Username interface{} -->
        w-tainted 4x: write(order_db.Order.Username, billing_db.Bill.Username, shipment_queue.ShipmentMessage.Username, shipment_db.Shipment.Username)
        r-tainted 1x: read(shipment_queue.ShipmentMessage.Username)
   - |-
-    [25] (inline) (InterfaceVariable InterfaceType) OrderID interface{} -->
+    [22] (inline) (InterfaceVariable InterfaceType) OrderID interface{} -->
        w-tainted 3x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID)
        r-tainted 2x: read(shipment_queue.ShipmentMessage.OrderID, order_db.interface{})
   - |-
-    [22] (inline) (Reference InterfaceType) ref <Username interface{}> @ ShipmentService -->
+    [25] (inline) (Reference InterfaceType) ref <Username interface{}> @ ShipmentService -->
        w-tainted 4x: write(order_db.Order.Username, billing_db.Bill.Username, shipment_queue.ShipmentMessage.Username, shipment_db.Shipment.Username)
        r-tainted 1x: read(shipment_queue.ShipmentMessage.Username)
   - |-
@@ -424,7 +424,7 @@
        w-tainted 3x: write(order_db.Order.Username, shipment_queue.ShipmentMessage.Username, billing_db.Bill.Username)
        r-tainted 1x: read(shipment_queue.ShipmentMessage.Username)
   - |-
-    [22] (inline) (Reference InterfaceType) ref <Username interface{}> @ ShipmentService -->
+    [25] (inline) (Reference InterfaceType) ref <Username interface{}> @ ShipmentService -->
        w-tainted 4x: write(order_db.Order.Username, billing_db.Bill.Username, shipment_queue.ShipmentMessage.Username, shipment_db.Shipment.Username)
        r-tainted 1x: read(shipment_queue.ShipmentMessage.Username)
   - |-
@@ -432,7 +432,7 @@
        w-tainted 1x: write(shipment_queue.ShipmentMessage.Username)
        r-tainted 1x: read(shipment_queue.ShipmentMessage.Username)
   - |-
-    [25] (inline) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService -->
+    [22] (inline) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService -->
        w-tainted 3x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID)
        r-tainted 2x: read(shipment_queue.ShipmentMessage.OrderID, order_db.interface{})
   - |-
@@ -444,7 +444,7 @@
        w-tainted 2x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID)
        r-tainted 1x: read(shipment_queue.ShipmentMessage.OrderID)
   - |-
-    [25] (inline) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService -->
+    [22] (inline) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService -->
        w-tainted 3x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID)
        r-tainted 2x: read(shipment_queue.ShipmentMessage.OrderID, order_db.interface{})
   - |-
@@ -459,17 +459,17 @@
     [12] (MapVariable MapType) event map[string]interface{} -->
        r-tainted 1x: read(shipment_queue.ShipmentMessage)
   - |-
-    [24] (BasicVariable BasicType) OrderID string -->
+    [21] (BasicVariable BasicType) OrderID string -->
        w-tainted 1x: write(shipment_db.Shipment.OrderID)
        r-tainted 1x: read(order_db.string)
   - |-
-    [21] (BasicVariable BasicType) Username string -->
+    [24] (BasicVariable BasicType) Username string -->
        w-tainted 1x: write(shipment_db.Shipment.Username)
   - |-
-    [20] (inline) (FieldVariable FieldType) Username string -->
+    [23] (inline) (FieldVariable FieldType) Username string -->
        w-tainted 1x: write(shipment_db.Shipment.Username)
   - |-
-    [23] (inline) (FieldVariable FieldType) OrderID string -->
+    [20] (inline) (FieldVariable FieldType) OrderID string -->
        w-tainted 1x: write(shipment_db.Shipment.OrderID)
        r-tainted 1x: read(order_db.OrderID)
   - '[19] (StructVariable UserType) workerMessage threechain2.ShipmentMessage struct{OrderID

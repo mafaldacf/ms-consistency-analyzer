@@ -4,18 +4,18 @@
 
 [] (-1) (InterfaceVariable UserType) ctx context.Context 
 
-[] (-1) (BasicVariable BasicType) username string // read(user_db), 
+[] (-1) (BasicVariable BasicType) username string 
 
 [] (-1) (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = user, collection = user} 
 
 [] (-1) (InterfaceVariable UserType) err .error 
 
-[] (-1) (SliceVariable UserType) query primitive.D // read(user_db), 
-[_] (0) (StructVariable StructType) struct{ "username" string,  string} // read(user_db), 
-[__] (0) (FieldVariable FieldType) string // read(user_db), 
-[___] (-1) (BasicVariable BasicType) username string // read(user_db), 
+[] (-1) (SliceVariable UserType) query primitive.D 
+[_] (0) (StructVariable StructType) struct{ "username" string,  string} 
+[__] (0) (FieldVariable FieldType) string 
+[___] (-1) (BasicVariable BasicType) username string 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = user, collection = user} // read(user_db), 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = user, collection = user} 
 
 [] (-1) (InterfaceVariable UserType) err .error 
 

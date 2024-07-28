@@ -1,9 +1,9 @@
 [] (-1) (PointerVariable PointerType) c (*threechain2.OrderServiceImpl struct{stock_service threechain2.StockService, billing_service threechain2.BillingService, order_db NoSQLDatabase, shipment_queue Queue}) 
 [_] (0) (StructVariable UserType) threechain2.OrderServiceImpl struct{stock_service threechain2.StockService, billing_service threechain2.BillingService, order_db NoSQLDatabase, shipment_queue Queue} 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) shipment_queue Queue 
 [__] (-1) (ServiceVariable ServiceType) stock_service threechain2.StockService 
 [__] (-1) (ServiceVariable ServiceType) billing_service threechain2.BillingService 
 [__] (-1) (BlueprintBackendVariable BlueprintBackendType) order_db NoSQLDatabase 
+[__] (-1) (BlueprintBackendVariable BlueprintBackendType) shipment_queue Queue 
 
 [] (-1) (InterfaceVariable UserType) ctx context.Context 
 [_] (-1) (Reference UserType) ref <ctx context.Context> @ ShipmentService 
@@ -11,9 +11,9 @@
 
 [] (-1) (BasicVariable BasicType) orderID string // read(order_db), 
 [_] (0) (Reference BasicType) ref <OrderID string> @ ShipmentService // write(shipment_db), read(order_db), 
-[__] (23) (Reference FieldType) ref <OrderID string> @ ShipmentService // write(shipment_db), read(order_db), 
-[___] (24) (BasicVariable BasicType) OrderID string // write(shipment_db), read(order_db), 
-[____] (25) (InterfaceVariable InterfaceType) OrderID interface{} // write(order_db), write(shipment_queue), read(shipment_queue), write(shipment_db), read(order_db), 
+[__] (20) (Reference FieldType) ref <OrderID string> @ ShipmentService // write(shipment_db), read(order_db), 
+[___] (21) (BasicVariable BasicType) OrderID string // write(shipment_db), read(order_db), 
+[____] (22) (InterfaceVariable InterfaceType) OrderID interface{} // write(order_db), write(shipment_queue), read(shipment_queue), write(shipment_db), read(order_db), 
 
 [] (-1) (StructVariable UserType) order threechain2.Order struct{OrderID string, Username string, ProductID string, Quantity int, Timestamp int64} 
 
@@ -28,9 +28,9 @@
 [__] (0) (FieldVariable FieldType) Value string // read(order_db), 
 [___] (-1) (BasicVariable BasicType) orderID string // read(order_db), 
 [____] (0) (Reference BasicType) ref <OrderID string> @ ShipmentService // write(shipment_db), read(order_db), 
-[_____] (23) (Reference FieldType) ref <OrderID string> @ ShipmentService // write(shipment_db), read(order_db), 
-[______] (24) (BasicVariable BasicType) OrderID string // write(shipment_db), read(order_db), 
-[_______] (25) (InterfaceVariable InterfaceType) OrderID interface{} // write(order_db), write(shipment_queue), read(shipment_queue), write(shipment_db), read(order_db), 
+[_____] (20) (Reference FieldType) ref <OrderID string> @ ShipmentService // write(shipment_db), read(order_db), 
+[______] (21) (BasicVariable BasicType) OrderID string // write(shipment_db), read(order_db), 
+[_______] (22) (InterfaceVariable InterfaceType) OrderID interface{} // write(order_db), write(shipment_queue), read(shipment_queue), write(shipment_db), read(order_db), 
 
 [] (-1) (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database = order_database, collection = order_collection} // read(order_db), 
 

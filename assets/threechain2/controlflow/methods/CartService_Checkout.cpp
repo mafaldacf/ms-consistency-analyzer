@@ -1,7 +1,7 @@
 [] (-1) (PointerVariable PointerType) c (*threechain2.CartServiceImpl struct{order_service threechain2.OrderService, cart_db NoSQLDatabase}) 
 [_] (0) (StructVariable UserType) threechain2.CartServiceImpl struct{order_service threechain2.OrderService, cart_db NoSQLDatabase} 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) cart_db NoSQLDatabase 
 [__] (-1) (ServiceVariable ServiceType) order_service threechain2.OrderService 
+[__] (-1) (BlueprintBackendVariable BlueprintBackendType) cart_db NoSQLDatabase 
 
 [] (1) (InterfaceVariable UserType) ctx context.Context 
 

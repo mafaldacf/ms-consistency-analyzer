@@ -4,18 +4,18 @@
 
 [] (-1) (InterfaceVariable UserType) ctx context.Context 
 
-[] (-1) (BasicVariable BasicType) order_id string // read(assurance_db), 
+[] (-1) (BasicVariable BasicType) order_id string 
 
 [] (-1) (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = assurance, collection = assurance} 
 
 [] (-1) (InterfaceVariable UserType) err .error 
 
-[] (-1) (SliceVariable UserType) query primitive.D // read(assurance_db), 
-[_] (0) (StructVariable StructType) struct{ "orderid" string,  string} // read(assurance_db), 
-[__] (0) (FieldVariable FieldType) string // read(assurance_db), 
-[___] (-1) (BasicVariable BasicType) order_id string // read(assurance_db), 
+[] (-1) (SliceVariable UserType) query primitive.D 
+[_] (0) (StructVariable StructType) struct{ "orderid" string,  string} 
+[__] (0) (FieldVariable FieldType) string 
+[___] (-1) (BasicVariable BasicType) order_id string 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = assurance, collection = assurance} // read(assurance_db), 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = assurance, collection = assurance} 
 
 [] (-1) (InterfaceVariable UserType) err .error 
 

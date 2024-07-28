@@ -13,9 +13,9 @@
 [_] (46) (Reference BasicType) ref <postID int64> @ StorageService // read(posts_db), read(analytics_db), 
 [__] (32) (Reference BasicType) ref <postID int64> @ NotifyService // read(posts_db), read(analytics_db), 
 [___] (47) (BasicVariable BasicType) PostID string // read(posts_db), read(analytics_db), 
-[____] (39) (Reference FieldType) ref <PostID string> @ NotifyService // read(posts_db), read(analytics_db), 
-[_____] (40) (BasicVariable BasicType) PostID string // read(posts_db), read(analytics_db), 
-[______] (41) (InterfaceVariable InterfaceType) PostID interface{} // write(posts_db), write(analytics_queue), read(analytics_queue), write(analytics_db), write(notifications_queue), read(notifications_queue), read(posts_db), read(analytics_db), 
+[____] (36) (Reference FieldType) ref <PostID string> @ NotifyService // read(posts_db), read(analytics_db), 
+[_____] (37) (BasicVariable BasicType) PostID string // read(posts_db), read(analytics_db), 
+[______] (38) (InterfaceVariable InterfaceType) PostID interface{} // write(posts_db), write(analytics_queue), read(analytics_queue), write(analytics_db), write(notifications_queue), read(notifications_queue), read(posts_db), read(analytics_db), 
 
 [] (-1) (StructVariable UserType) analytics postnotification.Analytics struct{PostID int64} 
 
@@ -32,9 +32,9 @@
 [____] (46) (Reference BasicType) ref <postID int64> @ StorageService // read(posts_db), read(analytics_db), 
 [_____] (32) (Reference BasicType) ref <postID int64> @ NotifyService // read(posts_db), read(analytics_db), 
 [______] (47) (BasicVariable BasicType) PostID string // read(posts_db), read(analytics_db), 
-[_______] (39) (Reference FieldType) ref <PostID string> @ NotifyService // read(posts_db), read(analytics_db), 
-[________] (40) (BasicVariable BasicType) PostID string // read(posts_db), read(analytics_db), 
-[_________] (41) (InterfaceVariable InterfaceType) PostID interface{} // write(posts_db), write(analytics_queue), read(analytics_queue), write(analytics_db), write(notifications_queue), read(notifications_queue), read(posts_db), read(analytics_db), 
+[_______] (36) (Reference FieldType) ref <PostID string> @ NotifyService // read(posts_db), read(analytics_db), 
+[________] (37) (BasicVariable BasicType) PostID string // read(posts_db), read(analytics_db), 
+[_________] (38) (InterfaceVariable InterfaceType) PostID interface{} // write(posts_db), write(analytics_queue), read(analytics_queue), write(analytics_db), write(notifications_queue), read(notifications_queue), read(posts_db), read(analytics_db), 
 
 [] (-1) (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database = analytics_db, collection = analytics_collection} // read(analytics_db), 
 

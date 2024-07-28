@@ -137,7 +137,7 @@ func (app *App) dumpYamlDataflow() {
 		}
 		data[k] = dataflow
 	}
-	utils.DumpToYamlFile(data, app.Name, "dataflow")
+	utils.DumpToYamlFile(data, app.Name, "dataflow/datastores")
 }
 
 func (app *App) dumpYamlDatastores() {
@@ -188,7 +188,7 @@ func (app *App) dumpYamlDatastores() {
 		props.AddOrderedProperty("schema", schema.Result())
 		data[strings.ToUpper(datastore.GetName())] = props.Result()
 	}
-	utils.DumpToYamlFile(data, app.Name, "datastores")
+	utils.DumpToYamlFile(data, app.Name, "schema")
 }
 
 func (app *App) dumpYamlServices() {

@@ -1,7 +1,7 @@
 (*CartServiceImpl).Checkout(ctx context.Context, cartID string):
   block 0 (Body):
-  - '[-1] (inline) (ServiceVariable ServiceType) order_service threechain2.OrderService'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) cart_db NoSQLDatabase'
+  - '[-1] (inline) (ServiceVariable ServiceType) order_service threechain2.OrderService'
   - '[0] (inline) (StructVariable UserType) threechain2.CartServiceImpl struct{order_service
     threechain2.OrderService, cart_db NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) c (*threechain2.CartServiceImpl struct{order_service
@@ -11,6 +11,10 @@
     [2] (BasicVariable BasicType) cartID string -->
        w-tainted 2x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID)
        r-tainted 1x: read(shipment_queue.ShipmentMessage.OrderID)
+  - |-
+    [4] (inline) (BasicVariable BasicType) ProductID string -->
+       w-tainted 3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
+  - '[-1] (inline) (FieldVariable FieldType) ProductID string'
   - |-
     [3] (inline) (BasicVariable BasicType) Username string -->
        w-tainted 3x: write(order_db.Order.Username, billing_db.Bill.Username, shipment_queue.ShipmentMessage.Username)
@@ -24,10 +28,6 @@
     [5] (inline) (BasicVariable BasicType) Quantity int -->
        w-tainted 3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.TotalCost)
   - '[-1] (inline) (FieldVariable FieldType) Quantity int'
-  - |-
-    [4] (inline) (BasicVariable BasicType) ProductID string -->
-       w-tainted 3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
-  - '[-1] (inline) (FieldVariable FieldType) ProductID string'
   - '[-1] (StructVariable UserType) cart threechain2.Cart struct{CartID string, Username
     string, ProductID string, Quantity int, PricePerUnit int, Status string}'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection

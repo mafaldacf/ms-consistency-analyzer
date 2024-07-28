@@ -8,7 +8,7 @@
 
 [] (-1) (InterfaceVariable UserType) err .error 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = assurance, collection = assurance} // read(assurance_db), 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = assurance, collection = assurance} 
 
 [] (-1) (InterfaceVariable UserType) err .error 
 
