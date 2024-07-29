@@ -198,6 +198,8 @@ func (b *BackendMethod) GetWrittenObjectIndex() int {
 		return 2
 	case "NoSQLDatabase.NoSQLCollection.InsertOne", "NoSQLDatabase.NoSQLCollection.UpdateOne":
 		return 1
+	case "NoSQLDatabase.NoSQLCollection.Upsert":
+		return 2
 	case "Queue.Push":
 		return 1
 	default:
@@ -225,7 +227,7 @@ func (b *BackendMethod) GetWrittenKeyIndex() int {
 	switch b.FullName() {
 	case "Cache.Put":
 		return 1
-	case "NoSQLDatabase.NoSQLCollection.InsertOne", "NoSQLDatabase.NoSQLCollection.UpdateOne":
+	case "NoSQLDatabase.NoSQLCollection.InsertOne", "NoSQLDatabase.NoSQLCollection.UpdateOne", "NoSQLDatabase.NoSQLCollection.Upsert":
 		return 1
 	case "Queue.Push":
 		return 1

@@ -1,0 +1,959 @@
+(*shopping_app.AnalyticsServiceImpl).Run(ctx context.Context) error:
+  block 4 (ForPost):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_queue
+    Queue'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_db NoSQLDatabase'
+  - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
+  - '[0] (inline) (StructVariable UserType) shopping_app.AnalyticsServiceImpl struct{analytics_db
+    NoSQLDatabase, analytics_queue Queue, num_workers int}'
+  - '[-1] (PointerVariable PointerType) n (*shopping_app.AnalyticsServiceImpl struct{analytics_db
+    NoSQLDatabase, analytics_queue Queue, num_workers int})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (StructVariable UserType) wg sync.WaitGroup'
+  - '[-1] (BasicVariable BasicType) i 1 int'
+  - '[-1] (InterfaceVariable UserType) err .error'
+(*shopping_app.AnalyticsServiceImpl).updateAnalytics(ctx context.Context, message shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string}) error:
+ block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_queue
+    Queue'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_db NoSQLDatabase'
+  - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
+  - '[0] (inline) (StructVariable UserType) shopping_app.AnalyticsServiceImpl struct{analytics_db
+    NoSQLDatabase, analytics_queue Queue, num_workers int}'
+  - '[-1] (PointerVariable PointerType) s (*shopping_app.AnalyticsServiceImpl struct{analytics_db
+    NoSQLDatabase, analytics_queue Queue, num_workers int})'
+  - '[21] (inline) (Reference UserType) ref <ctx context.Context> @ AnalyticsService'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - |-
+    [25] (inline) (InterfaceVariable InterfaceType) ProductCategory interface{} -->
+       w-tainted 2x: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories)
+       r-tainted 1x: read(analytics_queue.AnalyticsMessage.ProductCategory)
+  - |-
+    [24] (inline) (BasicVariable BasicType) ProductCategory string -->
+       w-tainted 1x: write(analytics_db.Analytics.Categories)
+  - |-
+    [23] (inline) (Reference FieldType) ref <ProductCategory string> @ AnalyticsService -->
+       w-tainted 1x: write(analytics_db.Analytics.Categories)
+  - |-
+    [0] (inline) (BasicVariable BasicType) ProductCategory string -->
+       w-tainted 1x: write(analytics_db.Analytics.Categories)
+  - |-
+    [23] (inline) (Reference FieldType) ref <ProductCategory string> @ AnalyticsService -->
+       w-tainted 1x: write(analytics_db.Analytics.Categories)
+  - '[0] (inline) (FieldVariable FieldType) ProductCategory string'
+  - |-
+    [28] (inline) (InterfaceVariable InterfaceType) UserID interface{} -->
+       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [27] (inline) (BasicVariable BasicType) UserID string -->
+       w-tainted 1x: write(analytics_db.Analytics.UserID)
+  - |-
+    [26] (inline) (Reference FieldType) ref <UserID string> @ AnalyticsService -->
+       w-tainted 1x: write(analytics_db.Analytics.UserID)
+  - |-
+    [0] (inline) (BasicVariable BasicType) UserID string -->
+       w-tainted 1x: write(analytics_db.Analytics.UserID)
+  - |-
+    [26] (inline) (Reference FieldType) ref <UserID string> @ AnalyticsService -->
+       w-tainted 1x: write(analytics_db.Analytics.UserID)
+  - '[0] (inline) (FieldVariable FieldType) UserID string'
+  - |-
+    [23] (inline) (FieldVariable FieldType) ProductCategory string -->
+       w-tainted 1x: write(analytics_db.Analytics.Categories)
+  - |-
+    [26] (inline) (FieldVariable FieldType) UserID string -->
+       w-tainted 1x: write(analytics_db.Analytics.UserID)
+  - '[22] (inline) (Reference UserType) ref <workerMessage shopping_app.AnalyticsMessage
+    struct{UserID string, ProductCategory string}> @ AnalyticsService'
+  - '[-1] (StructVariable UserType) message shopping_app.AnalyticsMessage struct{UserID
+    string, ProductCategory string}'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+    {database = analytics_database, collection = analytics_collection}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+  - |-
+    [-1] (inline) (SliceVariable SliceType) Categories []string -->
+       w-tainted 1x: write(analytics_db.Analytics.Categories)
+  - '[-1] (inline) (FieldVariable FieldType) Categories []string'
+  - '[-1] (StructVariable UserType) analytics shopping_app.Analytics struct{UserID
+    string, Categories []string}'
+  - '[0] (inline) (FieldVariable FieldType) Value string'
+  - '[0] (inline) (BasicVariable BasicType) "userID" string'
+  - '[0] (inline) (FieldVariable FieldType) Key "userID" string'
+  - '[0] (inline) (StructVariable StructType) struct{Key "userID" string, Value string}'
+  - '[-1] (SliceVariable UserType) query primitive.D'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database
+    = analytics_database, collection = analytics_collection}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+  - |-
+    [0] (inline) (FieldVariable FieldType) Categories []string -->
+       w-tainted 1x: write(analytics_db.Analytics.Categories)
+  - |-
+    [0] (inline) (FieldVariable FieldType) UserID string -->
+       w-tainted 1x: write(analytics_db.Analytics.UserID)
+  - |-
+    [-1] (StructVariable UserType) updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} -->
+       w-tainted 1x: write(analytics_db.Analytics)
+(*shopping_app.AnalyticsServiceImpl).workerThread(ctx context.Context) error:
+  block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_db NoSQLDatabase'
+  - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_queue
+    Queue'
+  - '[0] (inline) (StructVariable UserType) shopping_app.AnalyticsServiceImpl struct{analytics_db
+    NoSQLDatabase, analytics_queue Queue, num_workers int}'
+  - '[-1] (PointerVariable PointerType) s (*shopping_app.AnalyticsServiceImpl struct{analytics_db
+    NoSQLDatabase, analytics_queue Queue, num_workers int})'
+  - '[21] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ChanVariable ChanType) forever chan struct{}'
+  - |-
+    [25] (inline) (InterfaceVariable InterfaceType) ProductCategory interface{} -->
+       w-tainted 2x: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories)
+       r-tainted 1x: read(analytics_queue.AnalyticsMessage.ProductCategory)
+  - |-
+    [28] (inline) (InterfaceVariable InterfaceType) UserID interface{} -->
+       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [25] (inline) (Reference InterfaceType) ref <ProductCategory interface{}> @ AnalyticsService -->
+       w-tainted 2x: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories)
+       r-tainted 1x: read(analytics_queue.AnalyticsMessage.ProductCategory)
+  - |-
+    [-1] (inline) (BasicVariable BasicType) Category string -->
+       w-tainted 1x: write(analytics_queue.AnalyticsMessage.ProductCategory)
+       r-tainted 1x: read(analytics_queue.AnalyticsMessage.ProductCategory)
+  - |-
+    [25] (inline) (Reference InterfaceType) ref <ProductCategory interface{}> @ AnalyticsService -->
+       w-tainted 2x: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories)
+       r-tainted 1x: read(analytics_queue.AnalyticsMessage.ProductCategory)
+  - |-
+    [-1] (inline) (FieldVariable FieldType) ProductCategory string -->
+       w-tainted 1x: write(analytics_queue.AnalyticsMessage.ProductCategory)
+       r-tainted 1x: read(analytics_queue.AnalyticsMessage.ProductCategory)
+  - |-
+    [43] (inline) (Reference InterfaceType) ref <UserID interface{}> @ ShipmentService -->
+       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [28] (inline) (Reference InterfaceType) ref <UserID interface{}> @ AnalyticsService -->
+       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [8] (inline) (Reference BasicType) ref <userID string> @ Frontend -->
+       w-tainted 4x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [-1] (inline) (BasicVariable BasicType) userID string -->
+       w-tainted 4x: write(order_db.Order.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, billing_db.Bill.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [28] (inline) (Reference InterfaceType) ref <UserID interface{}> @ AnalyticsService -->
+       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [-1] (inline) (FieldVariable FieldType) UserID string -->
+       w-tainted 1x: write(analytics_queue.AnalyticsMessage.UserID)
+       r-tainted 1x: read(analytics_queue.AnalyticsMessage.UserID)
+  - |-
+    [17] (inline) (Reference UserType) ref <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string}> @ AnalyticsService -->
+       w-tainted 1x: write(analytics_queue.AnalyticsMessage)
+       r-tainted 1x: read(analytics_queue.AnalyticsMessage)
+  - |-
+    [17] (MapVariable MapType) event map[string]interface{} -->
+       r-tainted 1x: read(analytics_queue.AnalyticsMessage)
+  - |-
+    [27] (BasicVariable BasicType) UserID string -->
+       w-tainted 1x: write(analytics_db.Analytics.UserID)
+  - |-
+    [24] (BasicVariable BasicType) ProductCategory string -->
+       w-tainted 1x: write(analytics_db.Analytics.Categories)
+  - |-
+    [23] (inline) (FieldVariable FieldType) ProductCategory string -->
+       w-tainted 1x: write(analytics_db.Analytics.Categories)
+  - |-
+    [26] (inline) (FieldVariable FieldType) UserID string -->
+       w-tainted 1x: write(analytics_db.Analytics.UserID)
+  - '[22] (StructVariable UserType) workerMessage shopping_app.AnalyticsMessage struct{UserID
+    string, ProductCategory string}'
+(*shopping_app.BillingServiceImpl).CreateBill(ctx context.Context, userID string, productID string, quantity int, pricePerUnit int) error:
+ block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) bill_db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) shopping_app.BillingServiceImpl struct{bill_db
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*shopping_app.BillingServiceImpl struct{bill_db
+    NoSQLDatabase})'
+  - '[6] (inline) (Reference UserType) ref <ctx context.Context> @ Frontend'
+  - '[12] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
+  - '[12] (InterfaceVariable UserType) ctx context.Context'
+  - |-
+    [43] (inline) (Reference InterfaceType) ref <UserID interface{}> @ ShipmentService -->
+       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [28] (inline) (Reference InterfaceType) ref <UserID interface{}> @ AnalyticsService -->
+       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [8] (inline) (Reference BasicType) ref <userID string> @ Frontend -->
+       w-tainted 4x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [-1] (inline) (Reference BasicType) ref <userID string> @ OrderService -->
+       w-tainted 4x: write(order_db.Order.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, billing_db.Bill.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [-1] (BasicVariable BasicType) userID string -->
+       w-tainted 1x: write(billing_db.Bill.UserID)
+  - |-
+    [9] (inline) (Reference BasicType) ref <productID string> @ Frontend -->
+       w-tainted 3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
+  - |-
+    [13] (inline) (Reference BasicType) ref <productID string> @ OrderService -->
+       w-tainted 3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
+  - |-
+    [13] (BasicVariable BasicType) productID string -->
+       w-tainted 1x: write(billing_db.Bill.ProductID)
+  - |-
+    [10] (inline) (Reference BasicType) ref <quantity int> @ Frontend -->
+       w-tainted 3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.TotalCost)
+  - |-
+    [14] (inline) (Reference BasicType) ref <quantity int> @ OrderService -->
+       w-tainted 3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.TotalCost)
+  - |-
+    [14] (BasicVariable BasicType) quantity int -->
+       w-tainted 2x: write(billing_db.Bill.Quantity, billing_db.Bill.TotalCost)
+  - |-
+    [11] (inline) (Reference BasicType) ref <price int> @ Frontend -->
+       w-tainted 1x: write(billing_db.Bill.PricePerUnit)
+  - |-
+    [16] (inline) (Reference BasicType) ref <price int> @ OrderService -->
+       w-tainted 1x: write(billing_db.Bill.PricePerUnit)
+  - |-
+    [-1] (BasicVariable BasicType) pricePerUnit int -->
+       w-tainted 1x: write(billing_db.Bill.PricePerUnit)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+    {database = bill_database, collection = bill_collection}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+  - |-
+    [0] (inline) (AddressVariable AddressType) quantity (&int) -->
+       w-tainted 1x: write(billing_db.Bill.TotalCost)
+  - |-
+    [0] (inline) (FieldVariable FieldType) TotalCost (&int) -->
+       w-tainted 1x: write(billing_db.Bill.TotalCost)
+  - |-
+    [0] (inline) (FieldVariable FieldType) PricePerUnit int -->
+       w-tainted 1x: write(billing_db.Bill.PricePerUnit)
+  - |-
+    [0] (inline) (FieldVariable FieldType) Quantity int -->
+       w-tainted 1x: write(billing_db.Bill.Quantity)
+  - |-
+    [0] (inline) (FieldVariable FieldType) ProductID string -->
+       w-tainted 1x: write(billing_db.Bill.ProductID)
+  - |-
+    [0] (inline) (FieldVariable FieldType) UserID string -->
+       w-tainted 1x: write(billing_db.Bill.UserID)
+  - |-
+    [-1] (StructVariable UserType) bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} -->
+       w-tainted 1x: write(billing_db.Bill)
+(*shopping_app.CartServiceImpl).AddProductToCart(ctx context.Context, cartID string, productID string) error:
+  block 2 (IfDone):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) cart_db NoSQLDatabase'
+  - '[-1] (inline) (ServiceVariable ServiceType) product_service shopping_app.ProductService'
+  - '[-1] (inline) (ServiceVariable ServiceType) order_service shopping_app.OrderService'
+  - '[0] (inline) (StructVariable UserType) shopping_app.CartServiceImpl struct{order_service
+    shopping_app.OrderService, product_service shopping_app.ProductService, cart_db
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) c (*shopping_app.CartServiceImpl struct{order_service
+    shopping_app.OrderService, product_service shopping_app.ProductService, cart_db
+    NoSQLDatabase})'
+  - '[1] (inline) (Reference UserType) ref <ctx context.Context> @ Frontend'
+  - '[4] (InterfaceVariable UserType) ctx context.Context'
+  - '[2] (inline) (Reference BasicType) ref <cartID string> @ Frontend'
+  - '[-1] (BasicVariable BasicType) cartID string'
+  - '[3] (inline) (Reference BasicType) ref <productID string> @ Frontend'
+  - '[5] (BasicVariable BasicType) productID string'
+  - '[-1] (StructVariable UserType) product shopping_app.Product struct{ProductID
+    string, Description string, PricePerUnit int, Category string}'
+  - |-
+    [-1] (inline) (BasicVariable BasicType) PricePerUnit int -->
+       w-tainted 1x: write(cart_db.Cart.PricePerUnit)
+  - '[-1] (inline) (FieldVariable FieldType) PricePerUnit int'
+  - |-
+    [-1] (inline) (BasicVariable BasicType) ProductID string -->
+       w-tainted 1x: write(cart_db.Cart.ProductID)
+  - '[-1] (inline) (FieldVariable FieldType) ProductID string'
+  - '[-1] (StructVariable UserType) product shopping_app.Product struct{ProductID
+    string, Description string, PricePerUnit int, Category string}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+  - |-
+    [-1] (inline) (BasicVariable BasicType) PricePerUnit int -->
+       w-tainted 1x: write(cart_db.Cart.PricePerUnit)
+  - |-
+    [-1] (inline) (FieldVariable FieldType) PricePerUnit int -->
+       w-tainted 1x: write(cart_db.Cart.PricePerUnit)
+  - |-
+    [0] (inline) (BasicVariable BasicType) 1 int -->
+       w-tainted 1x: write(cart_db.Cart.Quantity)
+  - |-
+    [-1] (inline) (FieldVariable FieldType) Quantity int -->
+       w-tainted 1x: write(cart_db.Cart.Quantity)
+  - |-
+    [-1] (inline) (BasicVariable BasicType) ProductID string -->
+       w-tainted 1x: write(cart_db.Cart.ProductID)
+  - |-
+    [-1] (inline) (FieldVariable FieldType) ProductID string -->
+       w-tainted 1x: write(cart_db.Cart.ProductID)
+  - |-
+    [-1] (StructVariable UserType) cart shopping_app.Cart struct{CartID string, UserID string, ProductID string, Quantity int, PricePerUnit int, Status string} -->
+       w-tainted 1x: write(cart_db.Cart)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+    {database = cart_database, collection = cart_collection}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+  - '[0] (inline) (FieldVariable FieldType) Value string'
+  - '[0] (inline) (BasicVariable BasicType) "cartID" string'
+  - '[0] (inline) (FieldVariable FieldType) Key "cartID" string'
+  - '[0] (inline) (StructVariable StructType) struct{Key "cartID" string, Value string}'
+  - '[-1] (SliceVariable UserType) query primitive.D'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database
+    = cart_database, collection = cart_collection}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+(*shopping_app.CartServiceImpl).Checkout(ctx context.Context, cartID string) error:
+  block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) product_service shopping_app.ProductService'
+  - '[-1] (inline) (ServiceVariable ServiceType) order_service shopping_app.OrderService'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) cart_db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) shopping_app.CartServiceImpl struct{order_service
+    shopping_app.OrderService, product_service shopping_app.ProductService, cart_db
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) c (*shopping_app.CartServiceImpl struct{order_service
+    shopping_app.OrderService, product_service shopping_app.ProductService, cart_db
+    NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BasicVariable BasicType) cartID string'
+  - '[-1] (inline) (BasicVariable BasicType) Quantity int'
+  - '[-1] (inline) (FieldVariable FieldType) Quantity int'
+  - '[-1] (inline) (BasicVariable BasicType) ProductID string'
+  - '[-1] (inline) (FieldVariable FieldType) ProductID string'
+  - '[-1] (inline) (BasicVariable BasicType) UserID string'
+  - '[-1] (inline) (FieldVariable FieldType) UserID string'
+  - '[-1] (inline) (BasicVariable BasicType) PricePerUnit int'
+  - '[-1] (inline) (FieldVariable FieldType) PricePerUnit int'
+  - '[-1] (StructVariable UserType) cart shopping_app.Cart struct{CartID string, UserID
+    string, ProductID string, Quantity int, PricePerUnit int, Status string}'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+    {database = cart_database, collection = cart_collection}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+  - '[0] (inline) (BasicVariable BasicType) "cartID" string'
+  - '[0] (inline) (FieldVariable FieldType) Key "cartID" string'
+  - '[0] (inline) (FieldVariable FieldType) Value string'
+  - '[0] (inline) (StructVariable StructType) struct{Key "cartID" string, Value string}'
+  - '[-1] (SliceVariable UserType) query primitive.D'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database
+    = cart_database, collection = cart_collection}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+  - '[0] (inline) (FieldVariable FieldType) Value string'
+  - '[0] (inline) (BasicVariable BasicType) "cartID" string'
+  - '[0] (inline) (FieldVariable FieldType) Key "cartID" string'
+  - '[0] (inline) (StructVariable StructType) struct{Key "cartID" string, Value string}'
+  - '[-1] (SliceVariable UserType) filter primitive.D'
+  - '[0] (inline) (BasicVariable BasicType) "completed" string'
+  - '[0] (inline) (FieldVariable FieldType) Value "completed" string'
+  - '[0] (inline) (BasicVariable BasicType) "status" string'
+  - '[0] (inline) (FieldVariable FieldType) Key "status" string'
+  - '[0] (inline) (StructVariable StructType) struct{Key "status" string, Value "completed"
+    string}'
+  - '[-1] (SliceVariable UserType) update primitive.D'
+(*shopping_app.FrontendImpl).AddProductToCart(ctx context.Context, cartID string, productID string) error:
+  block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) order_service shopping_app.OrderService'
+  - '[-1] (inline) (ServiceVariable ServiceType) cart_service shopping_app.CartService'
+  - '[0] (inline) (StructVariable UserType) shopping_app.FrontendImpl struct{cart_service
+    shopping_app.CartService, order_service shopping_app.OrderService}'
+  - '[-1] (PointerVariable PointerType) f (*shopping_app.FrontendImpl struct{cart_service
+    shopping_app.CartService, order_service shopping_app.OrderService})'
+  - '[1] (InterfaceVariable UserType) ctx context.Context'
+  - '[2] (BasicVariable BasicType) cartID string'
+  - '[3] (BasicVariable BasicType) productID string'
+(*shopping_app.FrontendImpl).Checkout(ctx context.Context, cartID string, userID string, productID string, quantity int, price int) error:
+ block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) cart_service shopping_app.CartService'
+  - '[-1] (inline) (ServiceVariable ServiceType) order_service shopping_app.OrderService'
+  - '[0] (inline) (StructVariable UserType) shopping_app.FrontendImpl struct{cart_service
+    shopping_app.CartService, order_service shopping_app.OrderService}'
+  - '[-1] (PointerVariable PointerType) f (*shopping_app.FrontendImpl struct{cart_service
+    shopping_app.CartService, order_service shopping_app.OrderService})'
+  - '[6] (InterfaceVariable UserType) ctx context.Context'
+  - |-
+    [7] (BasicVariable BasicType) cartID string -->
+       w-tainted 2x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID)
+       r-tainted 1x: read(shipment_queue.ShipmentMessage.OrderID)
+  - |-
+    [8] (BasicVariable BasicType) userID string -->
+       w-tainted 4x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [9] (BasicVariable BasicType) productID string -->
+       w-tainted 3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
+  - |-
+    [10] (BasicVariable BasicType) quantity int -->
+       w-tainted 3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.TotalCost)
+  - |-
+    [11] (BasicVariable BasicType) price int -->
+       w-tainted 1x: write(billing_db.Bill.PricePerUnit)
+(*shopping_app.FrontendImpl).ReadOrder(ctx context.Context, orderID string) (shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64}, error):
+ block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) order_service shopping_app.OrderService'
+  - '[-1] (inline) (ServiceVariable ServiceType) cart_service shopping_app.CartService'
+  - '[0] (inline) (StructVariable UserType) shopping_app.FrontendImpl struct{cart_service
+    shopping_app.CartService, order_service shopping_app.OrderService}'
+  - '[-1] (PointerVariable PointerType) f (*shopping_app.FrontendImpl struct{cart_service
+    shopping_app.CartService, order_service shopping_app.OrderService})'
+  - '[44] (InterfaceVariable UserType) ctx context.Context'
+  - |-
+    [45] (BasicVariable BasicType) orderID string -->
+       r-tainted 1x: read(order_db.string)
+(*shopping_app.OrderServiceImpl).CreateOrder(ctx context.Context, cartID string, userID string, productID string, quantity int, price int) error:
+ block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) order_db NoSQLDatabase'
+  - '[-1] (inline) (ServiceVariable ServiceType) product_service shopping_app.ProductService'
+  - '[-1] (inline) (ServiceVariable ServiceType) billing_service shopping_app.BillingService'
+  - '[-1] (inline) (ServiceVariable ServiceType) stock_service shopping_app.StockService'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_queue
+    Queue'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
+    Queue'
+  - '[0] (inline) (StructVariable UserType) shopping_app.OrderServiceImpl struct{stock_service
+    shopping_app.StockService, billing_service shopping_app.BillingService, product_service
+    shopping_app.ProductService, order_db NoSQLDatabase, shipment_queue Queue, analytics_queue
+    Queue}'
+  - '[-1] (PointerVariable PointerType) c (*shopping_app.OrderServiceImpl struct{stock_service
+    shopping_app.StockService, billing_service shopping_app.BillingService, product_service
+    shopping_app.ProductService, order_db NoSQLDatabase, shipment_queue Queue, analytics_queue
+    Queue})'
+  - '[6] (inline) (Reference UserType) ref <ctx context.Context> @ Frontend'
+  - '[12] (InterfaceVariable UserType) ctx context.Context'
+  - |-
+    [40] (inline) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService -->
+       w-tainted 3x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID)
+       r-tainted 2x: read(shipment_queue.ShipmentMessage.OrderID, order_db.interface{})
+  - |-
+    [7] (inline) (Reference BasicType) ref <cartID string> @ Frontend -->
+       w-tainted 2x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID)
+       r-tainted 1x: read(shipment_queue.ShipmentMessage.OrderID)
+  - |-
+    [-1] (BasicVariable BasicType) cartID string -->
+       w-tainted 2x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID)
+       r-tainted 1x: read(shipment_queue.ShipmentMessage.OrderID)
+  - |-
+    [43] (inline) (Reference InterfaceType) ref <UserID interface{}> @ ShipmentService -->
+       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [28] (inline) (Reference InterfaceType) ref <UserID interface{}> @ AnalyticsService -->
+       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [8] (inline) (Reference BasicType) ref <userID string> @ Frontend -->
+       w-tainted 4x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [-1] (BasicVariable BasicType) userID string -->
+       w-tainted 4x: write(order_db.Order.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, billing_db.Bill.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [9] (inline) (Reference BasicType) ref <productID string> @ Frontend -->
+       w-tainted 3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
+  - |-
+    [13] (BasicVariable BasicType) productID string -->
+       w-tainted 3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
+  - |-
+    [10] (inline) (Reference BasicType) ref <quantity int> @ Frontend -->
+       w-tainted 3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.TotalCost)
+  - |-
+    [14] (BasicVariable BasicType) quantity int -->
+       w-tainted 3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.TotalCost)
+  - |-
+    [11] (inline) (Reference BasicType) ref <price int> @ Frontend -->
+       w-tainted 1x: write(billing_db.Bill.PricePerUnit)
+  - |-
+    [16] (BasicVariable BasicType) price int -->
+       w-tainted 1x: write(billing_db.Bill.PricePerUnit)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+    {database = order_database, collection = order_collection}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+  - |-
+    [0] (inline) (BasicVariable BasicType) 1 int -->
+       w-tainted 1x: write(order_db.Order.Timestamp)
+  - |-
+    [0] (inline) (FieldVariable FieldType) Timestamp 1 int -->
+       w-tainted 1x: write(order_db.Order.Timestamp)
+  - |-
+    [0] (inline) (FieldVariable FieldType) Quantity int -->
+       w-tainted 1x: write(order_db.Order.Quantity)
+  - |-
+    [0] (inline) (FieldVariable FieldType) ProductID string -->
+       w-tainted 1x: write(order_db.Order.ProductID)
+  - |-
+    [0] (inline) (FieldVariable FieldType) UserID string -->
+       w-tainted 1x: write(order_db.Order.UserID)
+  - |-
+    [0] (inline) (FieldVariable FieldType) OrderID string -->
+       w-tainted 1x: write(order_db.Order.OrderID)
+  - |-
+    [-1] (StructVariable UserType) order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} -->
+       w-tainted 1x: write(order_db.Order)
+  - '[-1] (StructVariable UserType) product shopping_app.Product struct{ProductID
+    string, Description string, PricePerUnit int, Category string}'
+  - |-
+    [25] (inline) (Reference InterfaceType) ref <ProductCategory interface{}> @ AnalyticsService -->
+       w-tainted 2x: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories)
+       r-tainted 1x: read(analytics_queue.AnalyticsMessage.ProductCategory)
+  - |-
+    [-1] (inline) (BasicVariable BasicType) Category string -->
+       w-tainted 1x: write(analytics_queue.AnalyticsMessage.ProductCategory)
+       r-tainted 1x: read(analytics_queue.AnalyticsMessage.ProductCategory)
+  - '[-1] (inline) (FieldVariable FieldType) Category string'
+  - '[-1] (StructVariable UserType) product shopping_app.Product struct{ProductID
+    string, Description string, PricePerUnit int, Category string}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+  - |-
+    [25] (inline) (Reference InterfaceType) ref <ProductCategory interface{}> @ AnalyticsService -->
+       w-tainted 2x: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories)
+       r-tainted 1x: read(analytics_queue.AnalyticsMessage.ProductCategory)
+  - |-
+    [-1] (inline) (FieldVariable FieldType) ProductCategory string -->
+       w-tainted 1x: write(analytics_queue.AnalyticsMessage.ProductCategory)
+       r-tainted 1x: read(analytics_queue.AnalyticsMessage.ProductCategory)
+  - |-
+    [28] (inline) (Reference InterfaceType) ref <UserID interface{}> @ AnalyticsService -->
+       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [-1] (inline) (FieldVariable FieldType) UserID string -->
+       w-tainted 1x: write(analytics_queue.AnalyticsMessage.UserID)
+       r-tainted 1x: read(analytics_queue.AnalyticsMessage.UserID)
+  - |-
+    [17] (StructVariable UserType) analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} -->
+       w-tainted 1x: write(analytics_queue.AnalyticsMessage)
+       r-tainted 1x: read(analytics_queue.AnalyticsMessage)
+  - |-
+    [43] (inline) (Reference InterfaceType) ref <UserID interface{}> @ ShipmentService -->
+       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [-1] (inline) (FieldVariable FieldType) UserID string -->
+       w-tainted 1x: write(shipment_queue.ShipmentMessage.UserID)
+       r-tainted 1x: read(shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [40] (inline) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService -->
+       w-tainted 3x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID)
+       r-tainted 2x: read(shipment_queue.ShipmentMessage.OrderID, order_db.interface{})
+  - |-
+    [-1] (inline) (FieldVariable FieldType) OrderID string -->
+       w-tainted 1x: write(shipment_queue.ShipmentMessage.OrderID)
+       r-tainted 1x: read(shipment_queue.ShipmentMessage.OrderID)
+  - |-
+    [29] (StructVariable UserType) shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} -->
+       w-tainted 1x: write(shipment_queue.ShipmentMessage)
+       r-tainted 1x: read(shipment_queue.ShipmentMessage)
+(*shopping_app.OrderServiceImpl).ReadOrder(ctx context.Context, orderID string)
+  (shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64}, error):
+ block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
+    Queue'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) order_db NoSQLDatabase'
+  - '[-1] (inline) (ServiceVariable ServiceType) product_service shopping_app.ProductService'
+  - '[-1] (inline) (ServiceVariable ServiceType) billing_service shopping_app.BillingService'
+  - '[-1] (inline) (ServiceVariable ServiceType) stock_service shopping_app.StockService'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_queue
+    Queue'
+  - '[0] (inline) (StructVariable UserType) shopping_app.OrderServiceImpl struct{stock_service
+    shopping_app.StockService, billing_service shopping_app.BillingService, product_service
+    shopping_app.ProductService, order_db NoSQLDatabase, shipment_queue Queue, analytics_queue
+    Queue}'
+  - '[-1] (PointerVariable PointerType) c (*shopping_app.OrderServiceImpl struct{stock_service
+    shopping_app.StockService, billing_service shopping_app.BillingService, product_service
+    shopping_app.ProductService, order_db NoSQLDatabase, shipment_queue Queue, analytics_queue
+    Queue})'
+  - '[44] (inline) (Reference UserType) ref <ctx context.Context> @ Frontend'
+  - '[36] (inline) (Reference UserType) ref <ctx context.Context> @ ShipmentService'
+  - '[-1] (inline) (Reference UserType) ref <ctx context.Context> @ ShipmentService'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - |-
+    [45] (inline) (Reference BasicType) ref <orderID string> @ Frontend -->
+       r-tainted 1x: read(order_db.string)
+  - |-
+    [40] (inline) (InterfaceVariable InterfaceType) OrderID interface{} -->
+       w-tainted 3x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID)
+       r-tainted 2x: read(shipment_queue.ShipmentMessage.OrderID, order_db.interface{})
+  - |-
+    [39] (inline) (BasicVariable BasicType) OrderID string -->
+       w-tainted 1x: write(shipment_db.Shipment.OrderID)
+       r-tainted 1x: read(order_db.string)
+  - |-
+    [38] (inline) (Reference FieldType) ref <OrderID string> @ ShipmentService -->
+       w-tainted 1x: write(shipment_db.Shipment.OrderID)
+       r-tainted 1x: read(order_db.OrderID)
+  - |-
+    [0] (inline) (Reference BasicType) ref <OrderID string> @ ShipmentService -->
+       w-tainted 1x: write(shipment_db.Shipment.OrderID)
+       r-tainted 1x: read(order_db.string)
+  - |-
+    [-1] (BasicVariable BasicType) orderID string -->
+       r-tainted 1x: read(order_db.string)
+  - '[-1] (StructVariable UserType) order shopping_app.Order struct{OrderID string,
+    UserID string, ProductID string, Quantity int, Timestamp int64}'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+    {database = order_database, collection = order_collection}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+  - |-
+    [0] (inline) (FieldVariable FieldType) Value string -->
+       r-tainted 1x: read(order_db.Value)
+  - |-
+    [0] (inline) (BasicVariable BasicType) "orderID" string -->
+       r-tainted 1x: read(order_db."orderID" string)
+  - |-
+    [0] (inline) (FieldVariable FieldType) Key "orderID" string -->
+       r-tainted 1x: read(order_db.Key)
+  - |-
+    [0] (inline) (StructVariable StructType) struct{Key "orderID" string, Value string} -->
+       r-tainted 1x: read(order_db.struct{Key "orderID" string, Value string})
+  - |-
+    [-1] (SliceVariable UserType) query primitive.D -->
+       r-tainted 9x: read(order_db.document, order_db.D, order_db.struct{Key "orderID" string, Value string}, order_db.Key, order_db."orderID" string, order_db.Value, order_db.string, order_db.OrderID, order_db.interface{})
+  - |-
+    [-1] (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database = order_database, collection = order_collection} -->
+       r-tainted 1x: read(order_db.document)
+  - '[-1] (InterfaceVariable UserType) _ .error'
+(*shopping_app.ProductServiceImpl).CreateProduct(ctx context.Context, productID string, description string, pricePerUnit int, category string) (shopping_app.Product struct{ProductID string, Description string, PricePerUnit int, Category string}, error):
+ block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) product_db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) shopping_app.ProductServiceImpl struct{product_db
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*shopping_app.ProductServiceImpl struct{product_db
+    NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BasicVariable BasicType) productID string'
+  - '[-1] (BasicVariable BasicType) description string'
+  - '[-1] (BasicVariable BasicType) pricePerUnit int'
+  - '[-1] (BasicVariable BasicType) category string'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+    {database = product_database, collection = product_collection}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+  - '[0] (inline) (FieldVariable FieldType) Category string'
+  - '[0] (inline) (FieldVariable FieldType) PricePerUnit int'
+  - '[0] (inline) (FieldVariable FieldType) Description string'
+  - '[0] (inline) (FieldVariable FieldType) ProductID string'
+  - '[-1] (StructVariable UserType) product shopping_app.Product struct{ProductID
+    string, Description string, PricePerUnit int, Category string}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+(*shopping_app.ProductServiceImpl).GetProduct(ctx context.Context, productID string)
+  (shopping_app.Product struct{ProductID string, Description string, PricePerUnit int, Category string}, error):
+ block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) product_db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) shopping_app.ProductServiceImpl struct{product_db
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*shopping_app.ProductServiceImpl struct{product_db
+    NoSQLDatabase})'
+  - '[6] (inline) (Reference UserType) ref <ctx context.Context> @ Frontend'
+  - '[12] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
+  - '[1] (inline) (Reference UserType) ref <ctx context.Context> @ Frontend'
+  - '[4] (inline) (Reference UserType) ref <ctx context.Context> @ CartService'
+  - '[12] (InterfaceVariable UserType) ctx context.Context'
+  - |-
+    [9] (inline) (Reference BasicType) ref <productID string> @ Frontend -->
+       w-tainted 3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
+  - |-
+    [13] (inline) (Reference BasicType) ref <productID string> @ OrderService -->
+       w-tainted 3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
+  - '[3] (inline) (Reference BasicType) ref <productID string> @ Frontend'
+  - '[5] (inline) (Reference BasicType) ref <productID string> @ CartService'
+  - '[13] (BasicVariable BasicType) productID string'
+  - '[-1] (StructVariable UserType) product shopping_app.Product struct{ProductID
+    string, Description string, PricePerUnit int, Category string}'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+    {database = product_database, collection = product_collection}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+  - '[0] (inline) (BasicVariable BasicType) "productID" string'
+  - '[0] (inline) (FieldVariable FieldType) Key "productID" string'
+  - '[0] (inline) (FieldVariable FieldType) Value string'
+  - '[0] (inline) (StructVariable StructType) struct{Key "productID" string, Value
+    string}'
+  - '[-1] (SliceVariable UserType) query primitive.D'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database
+    = product_database, collection = product_collection}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+  - '[-1] (BasicVariable BasicType) _ bool'
+  - '[-1] (InterfaceVariable UserType) err .error'
+(*shopping_app.ShipmentServiceImpl).Run(ctx context.Context) error:
+  block 4 (ForPost):
+  - '[-1] (inline) (ServiceVariable ServiceType) order_service shopping_app.OrderService'
+  - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
+    Queue'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) shopping_app.ShipmentServiceImpl struct{order_service
+    shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers
+    int}'
+  - '[-1] (PointerVariable PointerType) n (*shopping_app.ShipmentServiceImpl struct{order_service
+    shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers
+    int})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (StructVariable UserType) wg sync.WaitGroup'
+  - '[-1] (BasicVariable BasicType) i 1 int'
+  - '[-1] (InterfaceVariable UserType) err .error'
+(*shopping_app.ShipmentServiceImpl).createPendingShipment(ctx context.Context, message shopping_app.ShipmentMessage struct{OrderID string, UserID string}) error:
+ block 0 (Body):
+  - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
+    Queue'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase'
+  - '[-1] (inline) (ServiceVariable ServiceType) order_service shopping_app.OrderService'
+  - '[0] (inline) (StructVariable UserType) shopping_app.ShipmentServiceImpl struct{order_service
+    shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers
+    int}'
+  - '[-1] (PointerVariable PointerType) s (*shopping_app.ShipmentServiceImpl struct{order_service
+    shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers
+    int})'
+  - '[36] (inline) (Reference UserType) ref <ctx context.Context> @ ShipmentService'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - |-
+    [43] (inline) (InterfaceVariable InterfaceType) UserID interface{} -->
+       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [42] (inline) (BasicVariable BasicType) UserID string -->
+       w-tainted 1x: write(shipment_db.Shipment.UserID)
+  - |-
+    [41] (inline) (Reference FieldType) ref <UserID string> @ ShipmentService -->
+       w-tainted 1x: write(shipment_db.Shipment.UserID)
+  - |-
+    [0] (inline) (BasicVariable BasicType) UserID string -->
+       w-tainted 1x: write(shipment_db.Shipment.UserID)
+  - |-
+    [41] (inline) (Reference FieldType) ref <UserID string> @ ShipmentService -->
+       w-tainted 1x: write(shipment_db.Shipment.UserID)
+  - '[0] (inline) (FieldVariable FieldType) UserID string'
+  - |-
+    [40] (inline) (InterfaceVariable InterfaceType) OrderID interface{} -->
+       w-tainted 3x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID)
+       r-tainted 2x: read(shipment_queue.ShipmentMessage.OrderID, order_db.interface{})
+  - |-
+    [39] (inline) (BasicVariable BasicType) OrderID string -->
+       w-tainted 1x: write(shipment_db.Shipment.OrderID)
+       r-tainted 1x: read(order_db.string)
+  - |-
+    [38] (inline) (Reference FieldType) ref <OrderID string> @ ShipmentService -->
+       w-tainted 1x: write(shipment_db.Shipment.OrderID)
+       r-tainted 1x: read(order_db.OrderID)
+  - |-
+    [0] (inline) (BasicVariable BasicType) OrderID string -->
+       w-tainted 1x: write(shipment_db.Shipment.OrderID)
+       r-tainted 1x: read(order_db.string)
+  - |-
+    [38] (inline) (Reference FieldType) ref <OrderID string> @ ShipmentService -->
+       w-tainted 1x: write(shipment_db.Shipment.OrderID)
+       r-tainted 1x: read(order_db.OrderID)
+  - '[0] (inline) (FieldVariable FieldType) OrderID string'
+  - |-
+    [41] (inline) (FieldVariable FieldType) UserID string -->
+       w-tainted 1x: write(shipment_db.Shipment.UserID)
+  - |-
+    [38] (inline) (FieldVariable FieldType) OrderID string -->
+       w-tainted 1x: write(shipment_db.Shipment.OrderID)
+       r-tainted 1x: read(order_db.OrderID)
+  - '[37] (inline) (Reference UserType) ref <workerMessage shopping_app.ShipmentMessage
+    struct{OrderID string, UserID string}> @ ShipmentService'
+  - '[-1] (StructVariable UserType) message shopping_app.ShipmentMessage struct{OrderID
+    string, UserID string}'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+    {database = shipment_database, collection = shipment_collection}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+  - |-
+    [0] (inline) (BasicVariable BasicType) "pending" string -->
+       w-tainted 1x: write(shipment_db.Shipment.Status)
+  - |-
+    [0] (inline) (FieldVariable FieldType) Status "pending" string -->
+       w-tainted 1x: write(shipment_db.Shipment.Status)
+  - |-
+    [0] (inline) (FieldVariable FieldType) UserID string -->
+       w-tainted 1x: write(shipment_db.Shipment.UserID)
+  - |-
+    [0] (inline) (FieldVariable FieldType) OrderID string -->
+       w-tainted 1x: write(shipment_db.Shipment.OrderID)
+  - |-
+    [-1] (StructVariable UserType) shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} -->
+       w-tainted 1x: write(shipment_db.Shipment)
+(*shopping_app.ShipmentServiceImpl).workerThread(ctx context.Context) error:
+  block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase'
+  - '[-1] (inline) (ServiceVariable ServiceType) order_service shopping_app.OrderService'
+  - '[-1] (inline) (BasicVariable BasicType) num_workers 4 int'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
+    Queue'
+  - '[0] (inline) (StructVariable UserType) shopping_app.ShipmentServiceImpl struct{order_service
+    shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers
+    int}'
+  - '[-1] (PointerVariable PointerType) s (*shopping_app.ShipmentServiceImpl struct{order_service
+    shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers
+    int})'
+  - '[36] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ChanVariable ChanType) forever chan struct{}'
+  - |-
+    [43] (inline) (InterfaceVariable InterfaceType) UserID interface{} -->
+       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [40] (inline) (InterfaceVariable InterfaceType) OrderID interface{} -->
+       w-tainted 3x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID)
+       r-tainted 2x: read(shipment_queue.ShipmentMessage.OrderID, order_db.interface{})
+  - |-
+    [40] (inline) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService -->
+       w-tainted 3x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID)
+       r-tainted 2x: read(shipment_queue.ShipmentMessage.OrderID, order_db.interface{})
+  - |-
+    [7] (inline) (Reference BasicType) ref <cartID string> @ Frontend -->
+       w-tainted 2x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID)
+       r-tainted 1x: read(shipment_queue.ShipmentMessage.OrderID)
+  - |-
+    [-1] (inline) (BasicVariable BasicType) cartID string -->
+       w-tainted 2x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID)
+       r-tainted 1x: read(shipment_queue.ShipmentMessage.OrderID)
+  - |-
+    [40] (inline) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService -->
+       w-tainted 3x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID)
+       r-tainted 2x: read(shipment_queue.ShipmentMessage.OrderID, order_db.interface{})
+  - |-
+    [-1] (inline) (FieldVariable FieldType) OrderID string -->
+       w-tainted 1x: write(shipment_queue.ShipmentMessage.OrderID)
+       r-tainted 1x: read(shipment_queue.ShipmentMessage.OrderID)
+  - |-
+    [43] (inline) (Reference InterfaceType) ref <UserID interface{}> @ ShipmentService -->
+       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [28] (inline) (Reference InterfaceType) ref <UserID interface{}> @ AnalyticsService -->
+       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [8] (inline) (Reference BasicType) ref <userID string> @ Frontend -->
+       w-tainted 4x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [-1] (inline) (BasicVariable BasicType) userID string -->
+       w-tainted 4x: write(order_db.Order.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, billing_db.Bill.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [43] (inline) (Reference InterfaceType) ref <UserID interface{}> @ ShipmentService -->
+       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [-1] (inline) (FieldVariable FieldType) UserID string -->
+       w-tainted 1x: write(shipment_queue.ShipmentMessage.UserID)
+       r-tainted 1x: read(shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [29] (inline) (Reference UserType) ref <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string}> @ ShipmentService -->
+       w-tainted 1x: write(shipment_queue.ShipmentMessage)
+       r-tainted 1x: read(shipment_queue.ShipmentMessage)
+  - |-
+    [29] (MapVariable MapType) event map[string]interface{} -->
+       r-tainted 1x: read(shipment_queue.ShipmentMessage)
+  - |-
+    [39] (BasicVariable BasicType) OrderID string -->
+       w-tainted 1x: write(shipment_db.Shipment.OrderID)
+       r-tainted 1x: read(order_db.string)
+  - |-
+    [42] (BasicVariable BasicType) UserID string -->
+       w-tainted 1x: write(shipment_db.Shipment.UserID)
+  - |-
+    [41] (inline) (FieldVariable FieldType) UserID string -->
+       w-tainted 1x: write(shipment_db.Shipment.UserID)
+  - |-
+    [38] (inline) (FieldVariable FieldType) OrderID string -->
+       w-tainted 1x: write(shipment_db.Shipment.OrderID)
+       r-tainted 1x: read(order_db.OrderID)
+  - '[37] (StructVariable UserType) workerMessage shopping_app.ShipmentMessage struct{OrderID
+    string, UserID string}'
+(*shopping_app.StockServiceImpl).ReserveStock(ctx context.Context, productID string, quantity int) error:
+  block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) stock_db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) shopping_app.StockServiceImpl struct{stock_db
+    NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*shopping_app.StockServiceImpl struct{stock_db
+    NoSQLDatabase})'
+  - '[6] (inline) (Reference UserType) ref <ctx context.Context> @ Frontend'
+  - '[12] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - |-
+    [9] (inline) (Reference BasicType) ref <productID string> @ Frontend -->
+       w-tainted 3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
+  - |-
+    [13] (inline) (Reference BasicType) ref <productID string> @ OrderService -->
+       w-tainted 3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
+  - |-
+    [-1] (BasicVariable BasicType) productID string -->
+       w-tainted 1x: write(stock_db.Stock.ProductID)
+  - |-
+    [10] (inline) (Reference BasicType) ref <quantity int> @ Frontend -->
+       w-tainted 3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.TotalCost)
+  - |-
+    [14] (inline) (Reference BasicType) ref <quantity int> @ OrderService -->
+       w-tainted 3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.TotalCost)
+  - |-
+    [-1] (BasicVariable BasicType) quantity int -->
+       w-tainted 1x: write(stock_db.Stock.Quantity)
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+    {database = stock_database, collection = stock_collection}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+  - |-
+    [0] (inline) (FieldVariable FieldType) ProductID string -->
+       w-tainted 1x: write(stock_db.Stock.ProductID)
+  - |-
+    [0] (inline) (FieldVariable FieldType) Quantity int -->
+       w-tainted 1x: write(stock_db.Stock.Quantity)
+  - |-
+    [-1] (StructVariable UserType) stock shopping_app.Stock struct{ProductID string, Quantity int} -->
+       w-tainted 1x: write(stock_db.Stock)
+shopping_app.NewAnalyticsServiceImpl(ctx context.Context, analytics_db NoSQLDatabase, analytics_queue Queue) (shopping_app.AnalyticsService, error):
+ block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) analytics_db NoSQLDatabase'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) analytics_queue Queue'
+shopping_app.NewBillingServiceImpl(ctx context.Context, bill_db NoSQLDatabase) (shopping_app.BillingService, error):
+  block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) bill_db NoSQLDatabase'
+shopping_app.NewCartServiceImpl(ctx context.Context, order_service shopping_app.OrderService, product_service shopping_app.ProductService, cart_db NoSQLDatabase) (shopping_app.CartService, error):
+ block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ServiceVariable ServiceType) order_service shopping_app.OrderService'
+  - '[-1] (ServiceVariable ServiceType) product_service shopping_app.ProductService'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) cart_db NoSQLDatabase'
+shopping_app.NewFrontendImpl(ctx context.Context, order_service shopping_app.OrderService, cart_service shopping_app.CartService) (shopping_app.Frontend, error):
+ block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ServiceVariable ServiceType) order_service shopping_app.OrderService'
+  - '[-1] (ServiceVariable ServiceType) cart_service shopping_app.CartService'
+shopping_app.NewOrderServiceImpl(ctx context.Context, stock_service shopping_app.StockService, billing_service shopping_app.BillingService, product_service shopping_app.ProductService, order_db NoSQLDatabase, shipment_queue Queue, analytics_queue Queue) (shopping_app.OrderService, error):
+ block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ServiceVariable ServiceType) stock_service shopping_app.StockService'
+  - '[-1] (ServiceVariable ServiceType) billing_service shopping_app.BillingService'
+  - '[-1] (ServiceVariable ServiceType) product_service shopping_app.ProductService'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) order_db NoSQLDatabase'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) shipment_queue Queue'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) analytics_queue Queue'
+shopping_app.NewProductServiceImpl(ctx context.Context, product_db NoSQLDatabase) (shopping_app.ProductService, error):
+  block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) product_db NoSQLDatabase'
+shopping_app.NewShipmentServiceImpl(ctx context.Context, order_service shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue) (shopping_app.ShipmentService, error):
+ block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ServiceVariable ServiceType) order_service shopping_app.OrderService'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) shipment_queue Queue'
+shopping_app.NewStockServiceImpl(ctx context.Context, stock_db NoSQLDatabase) (shopping_app.StockService, error):
+  block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) stock_db NoSQLDatabase'

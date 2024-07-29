@@ -18,7 +18,7 @@ func main() {
 	appName := flag.String("app", "", "The name of the application to be analyzed")
 	flag.Parse()
 	switch *appName {
-	case "postnotification", "foobar", "sockshop2", "trainticket", "threechain2", "dsb_hotel", "dsb_sn":
+	case "postnotification", "foobar", "sockshop2", "trainticket", "shopping_app", "dsb_hotel", "dsb_sn":
 	default:
 		logger.Logger.Fatal(fmt.Sprintf("invalid app name (%s) must provide an application name ('postnotification' or 'foobar') using the -app flag", *appName))
 	}

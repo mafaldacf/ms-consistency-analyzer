@@ -1,0 +1,92 @@
+(*FrontendImpl).AddProductToCart(ctx context.Context, cartID string, productID string):
+  block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) order_service shopping_app.OrderService'
+  - '[-1] (inline) (ServiceVariable ServiceType) cart_service shopping_app.CartService'
+  - '[0] (inline) (StructVariable UserType) shopping_app.FrontendImpl struct{cart_service
+    shopping_app.CartService, order_service shopping_app.OrderService}'
+  - '[-1] (PointerVariable PointerType) f (*shopping_app.FrontendImpl struct{cart_service
+    shopping_app.CartService, order_service shopping_app.OrderService})'
+  - '[1] (InterfaceVariable UserType) ctx context.Context'
+  - '[2] (BasicVariable BasicType) cartID string'
+  - '[3] (BasicVariable BasicType) productID string'
+(*FrontendImpl).Checkout(ctx context.Context, cartID string, userID string, productID string, quantity int, price int):
+  block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) cart_service shopping_app.CartService'
+  - '[-1] (inline) (ServiceVariable ServiceType) order_service shopping_app.OrderService'
+  - '[0] (inline) (StructVariable UserType) shopping_app.FrontendImpl struct{cart_service
+    shopping_app.CartService, order_service shopping_app.OrderService}'
+  - '[-1] (PointerVariable PointerType) f (*shopping_app.FrontendImpl struct{cart_service
+    shopping_app.CartService, order_service shopping_app.OrderService})'
+  - '[6] (InterfaceVariable UserType) ctx context.Context'
+  - |-
+    [7] (BasicVariable BasicType) cartID string -->
+       w-tainted 2x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID)
+       r-tainted 1x: read(shipment_queue.ShipmentMessage.OrderID)
+  - |-
+    [8] (BasicVariable BasicType) userID string -->
+       w-tainted 4x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+       r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [9] (BasicVariable BasicType) productID string -->
+       w-tainted 3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
+  - |-
+    [10] (BasicVariable BasicType) quantity int -->
+       w-tainted 3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.TotalCost)
+  - |-
+    [11] (BasicVariable BasicType) price int -->
+       w-tainted 1x: write(billing_db.Bill.PricePerUnit)
+(*FrontendImpl).ReadOrder(ctx context.Context, orderID string):
+  block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) order_service shopping_app.OrderService'
+  - '[-1] (inline) (ServiceVariable ServiceType) cart_service shopping_app.CartService'
+  - '[0] (inline) (StructVariable UserType) shopping_app.FrontendImpl struct{cart_service
+    shopping_app.CartService, order_service shopping_app.OrderService}'
+  - '[-1] (PointerVariable PointerType) f (*shopping_app.FrontendImpl struct{cart_service
+    shopping_app.CartService, order_service shopping_app.OrderService})'
+  - '[44] (InterfaceVariable UserType) ctx context.Context'
+  - |-
+    [45] (BasicVariable BasicType) orderID string -->
+       r-tainted 1x: read(order_db.string)
+.NewAnalyticsServiceImpl(ctx context.Context, analytics_db NoSQLDatabase, analytics_queue Queue):
+  block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) analytics_db NoSQLDatabase'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) analytics_queue Queue'
+.NewBillingServiceImpl(ctx context.Context, bill_db NoSQLDatabase):
+  block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) bill_db NoSQLDatabase'
+.NewCartServiceImpl(ctx context.Context, order_service shopping_app.OrderService, product_service shopping_app.ProductService, cart_db NoSQLDatabase):
+ block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ServiceVariable ServiceType) order_service shopping_app.OrderService'
+  - '[-1] (ServiceVariable ServiceType) product_service shopping_app.ProductService'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) cart_db NoSQLDatabase'
+.NewFrontendImpl(ctx context.Context, order_service shopping_app.OrderService, cart_service shopping_app.CartService):
+  block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ServiceVariable ServiceType) order_service shopping_app.OrderService'
+  - '[-1] (ServiceVariable ServiceType) cart_service shopping_app.CartService'
+.NewOrderServiceImpl(ctx context.Context, stock_service shopping_app.StockService, billing_service shopping_app.BillingService, product_service shopping_app.ProductService, order_db NoSQLDatabase, shipment_queue Queue, analytics_queue Queue):
+ block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ServiceVariable ServiceType) stock_service shopping_app.StockService'
+  - '[-1] (ServiceVariable ServiceType) billing_service shopping_app.BillingService'
+  - '[-1] (ServiceVariable ServiceType) product_service shopping_app.ProductService'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) order_db NoSQLDatabase'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) shipment_queue Queue'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) analytics_queue Queue'
+.NewProductServiceImpl(ctx context.Context, product_db NoSQLDatabase):
+  block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) product_db NoSQLDatabase'
+.NewShipmentServiceImpl(ctx context.Context, order_service shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue):
+ block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ServiceVariable ServiceType) order_service shopping_app.OrderService'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) shipment_queue Queue'
+.NewStockServiceImpl(ctx context.Context, stock_db NoSQLDatabase):
+  block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) stock_db NoSQLDatabase'

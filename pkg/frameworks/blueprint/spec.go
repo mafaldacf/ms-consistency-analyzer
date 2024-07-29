@@ -8,8 +8,8 @@ import (
 	dsb_sn "github.com/blueprint-uservices/blueprint/examples/dsb_sn/wiring/specs"
 	specs_foobar "github.com/blueprint-uservices/blueprint/examples/foobar/wiring/specs"
 	specs_postnotification "github.com/blueprint-uservices/blueprint/examples/postnotification/wiring/specs"
+	specs_shopping_app "github.com/blueprint-uservices/blueprint/examples/shopping_app/wiring/specs"
 	specs_sockshop2 "github.com/blueprint-uservices/blueprint/examples/sockshop2/wiring/specs"
-	specs_threechain2 "github.com/blueprint-uservices/blueprint/examples/threechain2/wiring/specs"
 	specs_trainticket "github.com/blueprint-uservices/blueprint/examples/train_ticket/wiring/specs"
 	"github.com/blueprint-uservices/blueprint/plugins/cmdbuilder"
 	"github.com/blueprint-uservices/blueprint/plugins/golang"
@@ -37,8 +37,8 @@ func BuildBlueprintAppInfo(appName string) ([]*frameworks.ServiceInfo, []datasto
 		spec = specs_sockshop2.Docker
 	case "trainticket":
 		spec = specs_trainticket.Docker
-	case "threechain2":
-		spec = specs_threechain2.Docker
+	case "shopping_app":
+		spec = specs_shopping_app.Docker
 	case "dsb_hotel":
 		spec = dsb_hotel.Original
 	case "dsb_sn":
@@ -52,7 +52,6 @@ func BuildBlueprintAppInfo(appName string) ([]*frameworks.ServiceInfo, []datasto
 	databasesInfo := buildDatabasesInstances(databasesNodes)
 	return servicesInfo, databasesInfo, frontends
 }
-
 
 func getUniqueName(name string) string {
 	// remove .client suffix (e.g. notification_queue.client)
@@ -68,7 +67,7 @@ func buildBlueprintServicesInfo(appSpecs map[*workflowspec.Service][]golang.Serv
 	for spec, serviceArgs := range appSpecs {
 		serviceInfo := &frameworks.ServiceInfo{
 			Name:            spec.Iface.Name,
-			Package:    	 spec.Iface.File.Package.ShortName,
+			Package:         spec.Iface.File.Package.ShortName,
 			PackagePath:     spec.Iface.File.Package.Name,
 			Filepath:        spec.Iface.File.Name,
 			ConstructorName: spec.Constructor.Name,

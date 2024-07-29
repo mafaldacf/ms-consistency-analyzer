@@ -128,16 +128,20 @@ def search_all_per_requests(app):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Visualize graphs based on the specified application and graph type")
-    parser.add_argument('--app', '-a', choices=['postnotification', 'foobar', 'sockshop', 'trainticket', 'threechain2'], help="The application for which to visualize the graph")
+    parser.add_argument('--app', '-a', choices=['postnotification', 'foobar', 'sockshop', 'trainticket', 'shopping_app'], help="The application for which to visualize the graph")
     parser.add_argument('--graph', '-g', choices=['app', 'call'], help="The type of graph to visualize")
     parser.add_argument('--labeled', '-l', action='store_true', help="Construct labeled digraph")
     parser.add_argument('--all', action='store_true', help="Construct all combinations of digraphs for all applications")
     args = parser.parse_args()
 
     if args.all:
-        apps = ['postnotification', 'trainticket', 'threechain2', 'sockshop2', 'sockshop2']
+        if args.app != None:
+            apps = [args.app]
+        else:
+            apps = ['postnotification', 'trainticket', 'shopping_app', 'sockshop2', 'sockshop2']
         graphs = ['app', 'call']
         for app in apps:
+            print(f"[INFO] saving graphs for {app} app...")
             for graph in graphs:
                 data = load(app, graph, False)
                 build_digraph(data, graph, False)
@@ -149,6 +153,7 @@ if __name__ == "__main__":
                 data = load(app, graph, True)
                 build_digraph(data, graph, True)
                 save(app, graph, True, True)
+            print()
 
     else:     
         data = load(args.app, args.graph, False)

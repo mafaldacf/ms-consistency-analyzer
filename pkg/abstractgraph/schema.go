@@ -159,7 +159,7 @@ func referenceTaintedDataflowForSingleValue(writtenVariable variables.Variable, 
 	deps := writtenVariable.GetNestedDependencies(false)
 	logger.Logger.Infof("[TENTATIVE REF TAINTED VAR] [%s] (%02d) %s", utils.GetType(writtenVariable), writtenVariable.GetId(), writtenVariable.LongString())
 	for _, dep := range deps {
-		for _, df := range dep.GetVariableInfo().GetAllWriteDataflows() {
+		for _, df := range dep.GetVariableInfo().GetAllDataflows() {
 			if df.Datastore != datastore.Name {
 				datastore.Schema.AddForeignReferenceToField(dbField, df.Field)
 				logger.Logger.Debugf("\t\t[REF TAINTED DEP] (%s -> %s) from %s [%s]", dbField.GetFullName(), df.Field.GetFullName(), dep.String(), utils.GetType(dep))
@@ -179,7 +179,7 @@ func referenceTaintedDataflowForNestedFields(writtenVariable variables.Variable,
 		deps := variable.GetNestedDependencies(false)
 		logger.Logger.Infof("[TENTATIVE REF TAINTED VAR] [%s] (%02d) %s", utils.GetType(variable), variable.GetId(), variable.LongString())
 		for _, dep := range deps {
-			for _, df := range dep.GetVariableInfo().GetAllWriteDataflows() {
+			for _, df := range dep.GetVariableInfo().GetAllDataflows() {
 				if df.Datastore != datastore.Name {
 					datastore.Schema.AddForeignReferenceToField(dbField, df.Field)
 					logger.Logger.Debugf("\t\t[REF TAINTED DEP] (%s -> %s) from %s [%s]", dbField.GetFullName(), df.Field.GetFullName(), dep.String(), utils.GetType(dep))
@@ -240,12 +240,6 @@ func BuildSchema(app *app.App, node AbstractNode) {
 			taintDataflowOp(app, doc, dbCall, datastore, "", true)
 			referenceTaintedDataflowForNestedFields(doc, datastore)
 
-		case datastores.SQL:
-			doc := params[1]
-			addUnfoldedEntriesToDatastore(doc, "document", datastore)
-			taintDataflowOp(app, doc, dbCall, datastore, "", true)
-			referenceTaintedDataflowForNestedFields(doc, datastore)
-
 		case datastores.Cache:
 			key := params[1]
 			value := params[2]
@@ -256,8 +250,12 @@ func BuildSchema(app *app.App, node AbstractNode) {
 			referenceTaintedDataflowForSingleValue(key, datastore, "key")
 			referenceTaintedDataflowForSingleValue(value, datastore, "value")
 		}
-
 	}
+
+	if dbCall, ok := node.(*AbstractDatabaseCall); ok && dbCall.ParsedCall.Method.IsUpdate() {
+		logger.Logger.Fatalf("TODO FOR DB CALL: %s", dbCall.String())
+	}
+
 	for _, child := range node.GetChildren() {
 		BuildSchema(app, child)
 	}

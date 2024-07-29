@@ -1,0 +1,20 @@
+mode: LINEAGES_IMPLICIT_EQUAL_DATASTORES
+number_inconsistencies: 1
+xcy_inconsistencies:
+- _id: 0
+  read: (2, 1) read(order_db, query, result) @ OrderService
+  write: (0, 0) write(order_db, order, order) @ OrderService
+xcy_lineages:
+- _id: 0
+  operations:
+  - (0, 0) write(order_db, order, order) @ OrderService
+  - (0, 1) write(stock_db, stock, stock) @ StockService
+  - (0, 2) write(billing_db, bill, bill) @ BillingService
+  - (0, 3) write(analytics_queue, analyticsMessage, analyticsMessage) @ OrderService
+  - (0, 4) write(shipment_queue, shipmentMessage, shipmentMessage) @ OrderService
+- _id: 1
+  operations:
+  - (1, 0) write(analytics_db, updatedAnalytics, updatedAnalytics) @ AnalyticsService
+- _id: 2
+  operations:
+  - (2, 0) write(shipment_db, shipment, shipment) @ ShipmentService

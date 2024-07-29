@@ -1,0 +1,1727 @@
+[
+  {
+    "method": "(*FrontendImpl).AddProductToCart(ctx context.Context, cartID string, productID string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "(*CartServiceImpl).AddProductToCart(ctx context.Context, cartID string, productID string)",
+        "depth": 1,
+        "caller": "Frontend",
+        "edges": [
+          {
+            "method": "(*ProductServiceImpl).GetProduct(ctx context.Context, productID string)",
+            "depth": 2,
+            "caller": "CartService",
+            "edges": [
+              {
+                "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+                "depth": 3,
+                "caller": "ProductService",
+                "params": [
+                  {
+                    "variable": {
+                      "name": "ctx",
+                      "type": "context.Context",
+                      "refs": [
+                        {
+                          "name": "ctx",
+                          "creator": "CartService"
+                        },
+                        {
+                          "name": "ctx",
+                          "creator": "OrderService"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "variable": {
+                      "name": "query",
+                      "type": "primitive.D"
+                    },
+                    "slice_variables": [
+                      {
+                        "variable": {
+                          "type": "struct{Key \"productID\" string, Value string}"
+                        },
+                        "struct_fields": {
+                          "Key": {
+                            "variable": {
+                              "name": "Key",
+                              "type": "\"productID\" string"
+                            },
+                            "wrapped_variable": {
+                              "variable": {
+                                "type": "\"productID\" string"
+                              }
+                            }
+                          },
+                          "Value": {
+                            "variable": {
+                              "name": "Value",
+                              "type": "string"
+                            },
+                            "wrapped_variable": {
+                              "variable": {
+                                "name": "productID",
+                                "type": "string",
+                                "refs": [
+                                  {
+                                    "name": "productID",
+                                    "creator": "CartService"
+                                  },
+                                  {
+                                    "name": "productID",
+                                    "creator": "OrderService"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "returns": [
+                  {
+                    "variable": {
+                      "name": "result",
+                      "type": "NoSQLCursor {database = product_database, collection = product_collection}"
+                    }
+                  },
+                  {
+                    "variable": {
+                      "name": "_",
+                      "type": ".error"
+                    }
+                  }
+                ],
+                "datastore": "product_db"
+              }
+            ],
+            "params": null,
+            "returns": [
+              {
+                "variable": {
+                  "name": "product",
+                  "type": "shopping_app.Product struct{ProductID string, Description string, PricePerUnit int, Category string}"
+                },
+                "struct_fields": {
+                  "PricePerUnit": {
+                    "variable": {
+                      "name": "PricePerUnit",
+                      "type": "int"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "PricePerUnit",
+                        "type": "int"
+                      }
+                    }
+                  },
+                  "ProductID": {
+                    "variable": {
+                      "name": "ProductID",
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "ProductID",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "variable": {
+                  "name": "_",
+                  "type": ".error"
+                }
+              }
+            ]
+          },
+          {
+            "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+            "depth": 2,
+            "caller": "CartService",
+            "params": [
+              {
+                "variable": {
+                  "name": "ctx",
+                  "type": "context.Context",
+                  "refs": [
+                    {
+                      "name": "ctx",
+                      "creator": "Frontend"
+                    }
+                  ]
+                }
+              },
+              {
+                "variable": {
+                  "name": "query",
+                  "type": "primitive.D"
+                },
+                "slice_variables": [
+                  {
+                    "variable": {
+                      "type": "struct{Key \"cartID\" string, Value string}"
+                    },
+                    "struct_fields": {
+                      "Key": {
+                        "variable": {
+                          "name": "Key",
+                          "type": "\"cartID\" string"
+                        },
+                        "wrapped_variable": {
+                          "variable": {
+                            "type": "\"cartID\" string"
+                          }
+                        }
+                      },
+                      "Value": {
+                        "variable": {
+                          "name": "Value",
+                          "type": "string"
+                        },
+                        "wrapped_variable": {
+                          "variable": {
+                            "name": "cartID",
+                            "type": "string",
+                            "refs": [
+                              {
+                                "name": "cartID",
+                                "creator": "Frontend"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ],
+            "returns": [
+              {
+                "variable": {
+                  "name": "result",
+                  "type": "NoSQLCursor {database = cart_database, collection = cart_collection}"
+                }
+              },
+              {
+                "variable": {
+                  "name": "_",
+                  "type": ".error"
+                }
+              }
+            ],
+            "datastore": "cart_db"
+          },
+          {
+            "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+            "depth": 2,
+            "caller": "CartService",
+            "params": [
+              {
+                "variable": {
+                  "name": "ctx",
+                  "type": "context.Context",
+                  "refs": [
+                    {
+                      "name": "ctx",
+                      "creator": "Frontend"
+                    }
+                  ]
+                }
+              },
+              {
+                "variable": {
+                  "name": "cart",
+                  "type": "shopping_app.Cart struct{CartID string, UserID string, ProductID string, Quantity int, PricePerUnit int, Status string}"
+                },
+                "struct_fields": {
+                  "PricePerUnit": {
+                    "variable": {
+                      "name": "PricePerUnit",
+                      "type": "int"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "PricePerUnit",
+                        "type": "int"
+                      }
+                    }
+                  },
+                  "ProductID": {
+                    "variable": {
+                      "name": "ProductID",
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "ProductID",
+                        "type": "string"
+                      }
+                    }
+                  },
+                  "Quantity": {
+                    "variable": {
+                      "name": "Quantity",
+                      "type": "int"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "type": "1 int"
+                      }
+                    }
+                  }
+                }
+              }
+            ],
+            "returns": [
+              {
+                "variable": {
+                  "type": ".error"
+                }
+              }
+            ],
+            "datastore": "cart_db"
+          }
+        ],
+        "params": null,
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ]
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "cartID",
+          "type": "string"
+        }
+      },
+      {
+        "variable": {
+          "name": "productID",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*FrontendImpl).Checkout(ctx context.Context, cartID string, userID string, productID string, quantity int, price int)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "(*OrderServiceImpl).CreateOrder(ctx context.Context, cartID string, userID string, productID string, quantity int, price int)",
+        "depth": 1,
+        "caller": "Frontend",
+        "edges": [
+          {
+            "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+            "depth": 2,
+            "caller": "OrderService",
+            "params": [
+              {
+                "variable": {
+                  "name": "ctx",
+                  "type": "context.Context",
+                  "refs": [
+                    {
+                      "name": "ctx",
+                      "creator": "Frontend"
+                    }
+                  ]
+                }
+              },
+              {
+                "variable": {
+                  "name": "order",
+                  "type": "shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64}"
+                },
+                "struct_fields": {
+                  "OrderID": {
+                    "variable": {
+                      "name": "OrderID",
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "cartID",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "cartID",
+                            "creator": "Frontend"
+                          },
+                          {
+                            "name": "OrderID",
+                            "creator": "ShipmentService"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "ProductID": {
+                    "variable": {
+                      "name": "ProductID",
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "productID",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "productID",
+                            "creator": "Frontend"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "Quantity": {
+                    "variable": {
+                      "name": "Quantity",
+                      "type": "int"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "quantity",
+                        "type": "int",
+                        "refs": [
+                          {
+                            "name": "quantity",
+                            "creator": "Frontend"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "Timestamp": {
+                    "variable": {
+                      "name": "Timestamp",
+                      "type": "1 int"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "type": "1 int"
+                      }
+                    }
+                  },
+                  "UserID": {
+                    "variable": {
+                      "name": "UserID",
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "userID",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "userID",
+                            "creator": "Frontend"
+                          },
+                          {
+                            "name": "UserID",
+                            "creator": "AnalyticsService"
+                          },
+                          {
+                            "name": "UserID",
+                            "creator": "ShipmentService"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            ],
+            "returns": [
+              {
+                "variable": {
+                  "type": ".error"
+                }
+              }
+            ],
+            "datastore": "order_db"
+          },
+          {
+            "method": "(*StockServiceImpl).ReserveStock(ctx context.Context, productID string, quantity int)",
+            "depth": 2,
+            "caller": "OrderService",
+            "edges": [
+              {
+                "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+                "depth": 3,
+                "caller": "StockService",
+                "params": [
+                  {
+                    "variable": {
+                      "name": "ctx",
+                      "type": "context.Context",
+                      "refs": [
+                        {
+                          "name": "ctx",
+                          "creator": "OrderService"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "variable": {
+                      "name": "stock",
+                      "type": "shopping_app.Stock struct{ProductID string, Quantity int}"
+                    },
+                    "struct_fields": {
+                      "ProductID": {
+                        "variable": {
+                          "name": "ProductID",
+                          "type": "string"
+                        },
+                        "wrapped_variable": {
+                          "variable": {
+                            "name": "productID",
+                            "type": "string",
+                            "refs": [
+                              {
+                                "name": "productID",
+                                "creator": "OrderService"
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "Quantity": {
+                        "variable": {
+                          "name": "Quantity",
+                          "type": "int"
+                        },
+                        "wrapped_variable": {
+                          "variable": {
+                            "name": "quantity",
+                            "type": "int",
+                            "refs": [
+                              {
+                                "name": "quantity",
+                                "creator": "OrderService"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                ],
+                "returns": [
+                  {
+                    "variable": {
+                      "type": ".error"
+                    }
+                  }
+                ],
+                "datastore": "stock_db"
+              }
+            ],
+            "params": null,
+            "returns": [
+              {
+                "variable": {
+                  "type": ".error"
+                }
+              }
+            ]
+          },
+          {
+            "method": "(*BillingServiceImpl).CreateBill(ctx context.Context, userID string, productID string, quantity int, pricePerUnit int)",
+            "depth": 2,
+            "caller": "OrderService",
+            "edges": [
+              {
+                "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+                "depth": 3,
+                "caller": "BillingService",
+                "params": [
+                  {
+                    "variable": {
+                      "name": "ctx",
+                      "type": "context.Context",
+                      "refs": [
+                        {
+                          "name": "ctx",
+                          "creator": "OrderService"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "variable": {
+                      "name": "bill",
+                      "type": "shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int}"
+                    },
+                    "struct_fields": {
+                      "PricePerUnit": {
+                        "variable": {
+                          "name": "PricePerUnit",
+                          "type": "int"
+                        },
+                        "wrapped_variable": {
+                          "variable": {
+                            "name": "pricePerUnit",
+                            "type": "int",
+                            "refs": [
+                              {
+                                "name": "price",
+                                "creator": "OrderService"
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "ProductID": {
+                        "variable": {
+                          "name": "ProductID",
+                          "type": "string"
+                        },
+                        "wrapped_variable": {
+                          "variable": {
+                            "name": "productID",
+                            "type": "string",
+                            "refs": [
+                              {
+                                "name": "productID",
+                                "creator": "OrderService"
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "Quantity": {
+                        "variable": {
+                          "name": "Quantity",
+                          "type": "int"
+                        },
+                        "wrapped_variable": {
+                          "variable": {
+                            "name": "quantity",
+                            "type": "int",
+                            "refs": [
+                              {
+                                "name": "quantity",
+                                "creator": "OrderService"
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "TotalCost": {
+                        "variable": {
+                          "name": "TotalCost",
+                          "type": "(\u0026int)"
+                        },
+                        "wrapped_variable": {
+                          "variable": {
+                            "name": "quantity",
+                            "type": "(\u0026int)"
+                          },
+                          "addr_of": {
+                            "variable": {
+                              "name": "quantity",
+                              "type": "int",
+                              "refs": [
+                                {
+                                  "name": "quantity",
+                                  "creator": "OrderService"
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      },
+                      "UserID": {
+                        "variable": {
+                          "name": "UserID",
+                          "type": "string"
+                        },
+                        "wrapped_variable": {
+                          "variable": {
+                            "name": "userID",
+                            "type": "string",
+                            "refs": [
+                              {
+                                "name": "userID",
+                                "creator": "OrderService"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                ],
+                "returns": [
+                  {
+                    "variable": {
+                      "type": ".error"
+                    }
+                  }
+                ],
+                "datastore": "billing_db"
+              }
+            ],
+            "params": null,
+            "returns": [
+              {
+                "variable": {
+                  "type": ".error"
+                }
+              }
+            ]
+          },
+          {
+            "method": "(*ProductServiceImpl).GetProduct(ctx context.Context, productID string)",
+            "depth": 2,
+            "caller": "OrderService",
+            "edges": [
+              {
+                "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+                "depth": 3,
+                "caller": "ProductService",
+                "params": [
+                  {
+                    "variable": {
+                      "name": "ctx",
+                      "type": "context.Context",
+                      "refs": [
+                        {
+                          "name": "ctx",
+                          "creator": "CartService"
+                        },
+                        {
+                          "name": "ctx",
+                          "creator": "OrderService"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "variable": {
+                      "name": "query",
+                      "type": "primitive.D"
+                    },
+                    "slice_variables": [
+                      {
+                        "variable": {
+                          "type": "struct{Key \"productID\" string, Value string}"
+                        },
+                        "struct_fields": {
+                          "Key": {
+                            "variable": {
+                              "name": "Key",
+                              "type": "\"productID\" string"
+                            },
+                            "wrapped_variable": {
+                              "variable": {
+                                "type": "\"productID\" string"
+                              }
+                            }
+                          },
+                          "Value": {
+                            "variable": {
+                              "name": "Value",
+                              "type": "string"
+                            },
+                            "wrapped_variable": {
+                              "variable": {
+                                "name": "productID",
+                                "type": "string",
+                                "refs": [
+                                  {
+                                    "name": "productID",
+                                    "creator": "CartService"
+                                  },
+                                  {
+                                    "name": "productID",
+                                    "creator": "OrderService"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "returns": [
+                  {
+                    "variable": {
+                      "name": "result",
+                      "type": "NoSQLCursor {database = product_database, collection = product_collection}"
+                    }
+                  },
+                  {
+                    "variable": {
+                      "name": "_",
+                      "type": ".error"
+                    }
+                  }
+                ],
+                "datastore": "product_db"
+              }
+            ],
+            "params": null,
+            "returns": [
+              {
+                "variable": {
+                  "name": "product",
+                  "type": "shopping_app.Product struct{ProductID string, Description string, PricePerUnit int, Category string}"
+                },
+                "struct_fields": {
+                  "Category": {
+                    "variable": {
+                      "name": "Category",
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "Category",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "ProductCategory",
+                            "creator": "AnalyticsService"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "variable": {
+                  "name": "_",
+                  "type": ".error"
+                }
+              }
+            ]
+          },
+          {
+            "method": "Queue.Push(ctx context.Context, item interface{})",
+            "depth": 2,
+            "caller": "OrderService",
+            "params": [
+              {
+                "variable": {
+                  "name": "ctx",
+                  "type": "context.Context",
+                  "refs": [
+                    {
+                      "name": "ctx",
+                      "creator": "Frontend"
+                    }
+                  ]
+                }
+              },
+              {
+                "variable": {
+                  "name": "analyticsMessage",
+                  "type": "shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string}"
+                },
+                "struct_fields": {
+                  "ProductCategory": {
+                    "variable": {
+                      "name": "ProductCategory",
+                      "type": "string",
+                      "refs": [
+                        {
+                          "name": "ProductCategory",
+                          "creator": "AnalyticsService"
+                        }
+                      ]
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "Category",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "ProductCategory",
+                            "creator": "AnalyticsService"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "UserID": {
+                    "variable": {
+                      "name": "UserID",
+                      "type": "string",
+                      "refs": [
+                        {
+                          "name": "UserID",
+                          "creator": "AnalyticsService"
+                        }
+                      ]
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "userID",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "userID",
+                            "creator": "Frontend"
+                          },
+                          {
+                            "name": "UserID",
+                            "creator": "AnalyticsService"
+                          },
+                          {
+                            "name": "UserID",
+                            "creator": "ShipmentService"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            ],
+            "returns": [
+              {
+                "variable": {
+                  "type": "bool"
+                }
+              },
+              {
+                "variable": {
+                  "type": ".error"
+                }
+              }
+            ],
+            "queue_handlers": [
+              {
+                "method": "(*AnalyticsServiceImpl).workerThread(ctx context.Context)",
+                "depth": 3,
+                "caller": "analytics_queue RabbitMQ",
+                "edges": [
+                  {
+                    "method": "Queue.Pop(ctx context.Context, item interface{})",
+                    "depth": 4,
+                    "caller": "AnalyticsService",
+                    "params": [
+                      {
+                        "variable": {
+                          "name": "ctx",
+                          "type": "context.Context"
+                        }
+                      },
+                      {
+                        "variable": {
+                          "name": "event",
+                          "type": "(\u0026map[string]interface{})"
+                        },
+                        "addr_of": {
+                          "variable": {
+                            "name": "event",
+                            "type": "map[string]interface{}",
+                            "refs": [
+                              {
+                                "name": "analyticsMessage",
+                                "creator": "AnalyticsService"
+                              }
+                            ]
+                          },
+                          "key_values": [
+                            {
+                              "Key": {
+                                "variable": {
+                                  "type": "\"UserID\" string"
+                                }
+                              },
+                              "Value": {
+                                "variable": {
+                                  "name": "UserID",
+                                  "type": "interface{}"
+                                }
+                              }
+                            },
+                            {
+                              "Key": {
+                                "variable": {
+                                  "type": "\"ProductCategory\" string"
+                                }
+                              },
+                              "Value": {
+                                "variable": {
+                                  "name": "ProductCategory",
+                                  "type": "interface{}"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ],
+                    "returns": [
+                      {
+                        "variable": {
+                          "type": "bool"
+                        }
+                      },
+                      {
+                        "variable": {
+                          "type": ".error"
+                        }
+                      }
+                    ],
+                    "datastore": "analytics_queue",
+                    "subscriber": true
+                  },
+                  {
+                    "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+                    "depth": 4,
+                    "caller": "AnalyticsService",
+                    "params": [
+                      {
+                        "variable": {
+                          "name": "ctx",
+                          "type": "context.Context",
+                          "refs": [
+                            {
+                              "name": "ctx",
+                              "creator": "AnalyticsService"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "variable": {
+                          "name": "query",
+                          "type": "primitive.D"
+                        },
+                        "slice_variables": [
+                          {
+                            "variable": {
+                              "type": "struct{Key \"userID\" string, Value string}"
+                            },
+                            "struct_fields": {
+                              "Key": {
+                                "variable": {
+                                  "name": "Key",
+                                  "type": "\"userID\" string"
+                                },
+                                "wrapped_variable": {
+                                  "variable": {
+                                    "type": "\"userID\" string"
+                                  }
+                                }
+                              },
+                              "Value": {
+                                "variable": {
+                                  "name": "Value",
+                                  "type": "string"
+                                },
+                                "wrapped_variable": {
+                                  "variable": {
+                                    "name": "UserID",
+                                    "type": "string",
+                                    "refs": [
+                                      {
+                                        "name": "UserID",
+                                        "creator": "AnalyticsService"
+                                      }
+                                    ]
+                                  }
+                                }
+                              }
+                            }
+                          }
+                        ]
+                      }
+                    ],
+                    "returns": [
+                      {
+                        "variable": {
+                          "name": "result",
+                          "type": "NoSQLCursor {database = analytics_database, collection = analytics_collection}"
+                        }
+                      },
+                      {
+                        "variable": {
+                          "name": "_",
+                          "type": ".error"
+                        }
+                      }
+                    ],
+                    "datastore": "analytics_db",
+                    "subscriber": true
+                  },
+                  {
+                    "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+                    "depth": 4,
+                    "caller": "AnalyticsService",
+                    "params": [
+                      {
+                        "variable": {
+                          "name": "ctx",
+                          "type": "context.Context",
+                          "refs": [
+                            {
+                              "name": "ctx",
+                              "creator": "AnalyticsService"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "variable": {
+                          "name": "updatedAnalytics",
+                          "type": "shopping_app.Analytics struct{UserID string, Categories []string}"
+                        },
+                        "struct_fields": {
+                          "Categories": {
+                            "variable": {
+                              "name": "Categories",
+                              "type": "[]string"
+                            },
+                            "wrapped_variable": {
+                              "variable": {
+                                "name": "Categories",
+                                "type": "[]string"
+                              },
+                              "slice_variables": [
+                                {
+                                  "variable": {
+                                    "name": "ProductCategory",
+                                    "type": "string",
+                                    "refs": [
+                                      {
+                                        "name": "ProductCategory",
+                                        "creator": "AnalyticsService"
+                                      }
+                                    ]
+                                  }
+                                }
+                              ]
+                            }
+                          },
+                          "UserID": {
+                            "variable": {
+                              "name": "UserID",
+                              "type": "string"
+                            },
+                            "wrapped_variable": {
+                              "variable": {
+                                "name": "UserID",
+                                "type": "string",
+                                "refs": [
+                                  {
+                                    "name": "UserID",
+                                    "creator": "AnalyticsService"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ],
+                    "returns": [
+                      {
+                        "variable": {
+                          "type": ".error"
+                        }
+                      }
+                    ],
+                    "datastore": "analytics_db",
+                    "subscriber": true
+                  }
+                ],
+                "params": [
+                  {
+                    "variable": {
+                      "name": "ctx",
+                      "type": "context.Context"
+                    }
+                  }
+                ]
+              }
+            ],
+            "datastore": "analytics_queue"
+          },
+          {
+            "method": "Queue.Push(ctx context.Context, item interface{})",
+            "depth": 2,
+            "caller": "OrderService",
+            "params": [
+              {
+                "variable": {
+                  "name": "ctx",
+                  "type": "context.Context",
+                  "refs": [
+                    {
+                      "name": "ctx",
+                      "creator": "Frontend"
+                    }
+                  ]
+                }
+              },
+              {
+                "variable": {
+                  "name": "shipmentMessage",
+                  "type": "shopping_app.ShipmentMessage struct{OrderID string, UserID string}"
+                },
+                "struct_fields": {
+                  "OrderID": {
+                    "variable": {
+                      "name": "OrderID",
+                      "type": "string",
+                      "refs": [
+                        {
+                          "name": "OrderID",
+                          "creator": "ShipmentService"
+                        }
+                      ]
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "cartID",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "cartID",
+                            "creator": "Frontend"
+                          },
+                          {
+                            "name": "OrderID",
+                            "creator": "ShipmentService"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "UserID": {
+                    "variable": {
+                      "name": "UserID",
+                      "type": "string",
+                      "refs": [
+                        {
+                          "name": "UserID",
+                          "creator": "ShipmentService"
+                        }
+                      ]
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "userID",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "userID",
+                            "creator": "Frontend"
+                          },
+                          {
+                            "name": "UserID",
+                            "creator": "AnalyticsService"
+                          },
+                          {
+                            "name": "UserID",
+                            "creator": "ShipmentService"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            ],
+            "returns": [
+              {
+                "variable": {
+                  "type": "bool"
+                }
+              },
+              {
+                "variable": {
+                  "type": ".error"
+                }
+              }
+            ],
+            "queue_handlers": [
+              {
+                "method": "(*ShipmentServiceImpl).workerThread(ctx context.Context)",
+                "depth": 3,
+                "caller": "shipment_queue RabbitMQ",
+                "edges": [
+                  {
+                    "method": "Queue.Pop(ctx context.Context, item interface{})",
+                    "depth": 4,
+                    "caller": "ShipmentService",
+                    "params": [
+                      {
+                        "variable": {
+                          "name": "ctx",
+                          "type": "context.Context"
+                        }
+                      },
+                      {
+                        "variable": {
+                          "name": "event",
+                          "type": "(\u0026map[string]interface{})"
+                        },
+                        "addr_of": {
+                          "variable": {
+                            "name": "event",
+                            "type": "map[string]interface{}",
+                            "refs": [
+                              {
+                                "name": "shipmentMessage",
+                                "creator": "ShipmentService"
+                              }
+                            ]
+                          },
+                          "key_values": [
+                            {
+                              "Key": {
+                                "variable": {
+                                  "type": "\"OrderID\" string"
+                                }
+                              },
+                              "Value": {
+                                "variable": {
+                                  "name": "OrderID",
+                                  "type": "interface{}"
+                                }
+                              }
+                            },
+                            {
+                              "Key": {
+                                "variable": {
+                                  "type": "\"UserID\" string"
+                                }
+                              },
+                              "Value": {
+                                "variable": {
+                                  "name": "UserID",
+                                  "type": "interface{}"
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ],
+                    "returns": [
+                      {
+                        "variable": {
+                          "type": "bool"
+                        }
+                      },
+                      {
+                        "variable": {
+                          "type": ".error"
+                        }
+                      }
+                    ],
+                    "datastore": "shipment_queue",
+                    "subscriber": true
+                  },
+                  {
+                    "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+                    "depth": 4,
+                    "caller": "ShipmentService",
+                    "params": [
+                      {
+                        "variable": {
+                          "name": "ctx",
+                          "type": "context.Context",
+                          "refs": [
+                            {
+                              "name": "ctx",
+                              "creator": "ShipmentService"
+                            }
+                          ]
+                        }
+                      },
+                      {
+                        "variable": {
+                          "name": "shipment",
+                          "type": "shopping_app.Shipment struct{OrderID string, UserID string, Status string}"
+                        },
+                        "struct_fields": {
+                          "OrderID": {
+                            "variable": {
+                              "name": "OrderID",
+                              "type": "string"
+                            },
+                            "wrapped_variable": {
+                              "variable": {
+                                "name": "OrderID",
+                                "type": "string",
+                                "refs": [
+                                  {
+                                    "name": "OrderID",
+                                    "creator": "ShipmentService"
+                                  }
+                                ]
+                              }
+                            }
+                          },
+                          "Status": {
+                            "variable": {
+                              "name": "Status",
+                              "type": "\"pending\" string"
+                            },
+                            "wrapped_variable": {
+                              "variable": {
+                                "type": "\"pending\" string"
+                              }
+                            }
+                          },
+                          "UserID": {
+                            "variable": {
+                              "name": "UserID",
+                              "type": "string"
+                            },
+                            "wrapped_variable": {
+                              "variable": {
+                                "name": "UserID",
+                                "type": "string",
+                                "refs": [
+                                  {
+                                    "name": "UserID",
+                                    "creator": "ShipmentService"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ],
+                    "returns": [
+                      {
+                        "variable": {
+                          "type": ".error"
+                        }
+                      }
+                    ],
+                    "datastore": "shipment_db",
+                    "subscriber": true
+                  },
+                  {
+                    "method": "(*OrderServiceImpl).ReadOrder(ctx context.Context, orderID string)",
+                    "depth": 4,
+                    "caller": "ShipmentService",
+                    "edges": [
+                      {
+                        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+                        "depth": 5,
+                        "caller": "OrderService",
+                        "params": [
+                          {
+                            "variable": {
+                              "name": "ctx",
+                              "type": "context.Context",
+                              "refs": [
+                                {
+                                  "name": "ctx",
+                                  "creator": "ShipmentService"
+                                },
+                                {
+                                  "name": "ctx",
+                                  "creator": "Frontend"
+                                }
+                              ]
+                            }
+                          },
+                          {
+                            "variable": {
+                              "name": "query",
+                              "type": "primitive.D"
+                            },
+                            "slice_variables": [
+                              {
+                                "variable": {
+                                  "type": "struct{Key \"orderID\" string, Value string}"
+                                },
+                                "struct_fields": {
+                                  "Key": {
+                                    "variable": {
+                                      "name": "Key",
+                                      "type": "\"orderID\" string"
+                                    },
+                                    "wrapped_variable": {
+                                      "variable": {
+                                        "type": "\"orderID\" string"
+                                      }
+                                    }
+                                  },
+                                  "Value": {
+                                    "variable": {
+                                      "name": "Value",
+                                      "type": "string"
+                                    },
+                                    "wrapped_variable": {
+                                      "variable": {
+                                        "name": "orderID",
+                                        "type": "string",
+                                        "refs": [
+                                          {
+                                            "name": "OrderID",
+                                            "creator": "ShipmentService"
+                                          },
+                                          {
+                                            "name": "orderID",
+                                            "creator": "Frontend"
+                                          }
+                                        ]
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            ]
+                          }
+                        ],
+                        "returns": [
+                          {
+                            "variable": {
+                              "name": "result",
+                              "type": "NoSQLCursor {database = order_database, collection = order_collection}"
+                            }
+                          },
+                          {
+                            "variable": {
+                              "name": "_",
+                              "type": ".error"
+                            }
+                          }
+                        ],
+                        "datastore": "order_db"
+                      }
+                    ],
+                    "params": null,
+                    "returns": [
+                      {
+                        "variable": {
+                          "type": "shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64}"
+                        }
+                      },
+                      {
+                        "variable": {
+                          "type": ".error"
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "params": [
+                  {
+                    "variable": {
+                      "name": "ctx",
+                      "type": "context.Context"
+                    }
+                  }
+                ]
+              }
+            ],
+            "datastore": "shipment_queue"
+          }
+        ],
+        "params": null,
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ]
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "cartID",
+          "type": "string"
+        }
+      },
+      {
+        "variable": {
+          "name": "userID",
+          "type": "string"
+        }
+      },
+      {
+        "variable": {
+          "name": "productID",
+          "type": "string"
+        }
+      },
+      {
+        "variable": {
+          "name": "quantity",
+          "type": "int"
+        }
+      },
+      {
+        "variable": {
+          "name": "price",
+          "type": "int"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*FrontendImpl).ReadOrder(ctx context.Context, orderID string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "(*OrderServiceImpl).ReadOrder(ctx context.Context, orderID string)",
+        "depth": 1,
+        "caller": "Frontend",
+        "edges": [
+          {
+            "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+            "depth": 2,
+            "caller": "OrderService",
+            "params": [
+              {
+                "variable": {
+                  "name": "ctx",
+                  "type": "context.Context",
+                  "refs": [
+                    {
+                      "name": "ctx",
+                      "creator": "ShipmentService"
+                    },
+                    {
+                      "name": "ctx",
+                      "creator": "Frontend"
+                    }
+                  ]
+                }
+              },
+              {
+                "variable": {
+                  "name": "query",
+                  "type": "primitive.D"
+                },
+                "slice_variables": [
+                  {
+                    "variable": {
+                      "type": "struct{Key \"orderID\" string, Value string}"
+                    },
+                    "struct_fields": {
+                      "Key": {
+                        "variable": {
+                          "name": "Key",
+                          "type": "\"orderID\" string"
+                        },
+                        "wrapped_variable": {
+                          "variable": {
+                            "type": "\"orderID\" string"
+                          }
+                        }
+                      },
+                      "Value": {
+                        "variable": {
+                          "name": "Value",
+                          "type": "string"
+                        },
+                        "wrapped_variable": {
+                          "variable": {
+                            "name": "orderID",
+                            "type": "string",
+                            "refs": [
+                              {
+                                "name": "OrderID",
+                                "creator": "ShipmentService"
+                              },
+                              {
+                                "name": "orderID",
+                                "creator": "Frontend"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ],
+            "returns": [
+              {
+                "variable": {
+                  "name": "result",
+                  "type": "NoSQLCursor {database = order_database, collection = order_collection}"
+                }
+              },
+              {
+                "variable": {
+                  "name": "_",
+                  "type": ".error"
+                }
+              }
+            ],
+            "datastore": "order_db"
+          }
+        ],
+        "params": null,
+        "returns": [
+          {
+            "variable": {
+              "type": "shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64}"
+            }
+          },
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ]
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "orderID",
+          "type": "string"
+        }
+      }
+    ]
+  }
+]

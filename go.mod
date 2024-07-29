@@ -16,9 +16,9 @@ require github.com/blueprint-uservices/blueprint/examples/postnotification/workf
 
 require github.com/blueprint-uservices/blueprint/examples/postnotification/wiring v0.0.0
 
-require github.com/blueprint-uservices/blueprint/examples/threechain2/workflow v0.0.0 // indirect
+require github.com/blueprint-uservices/blueprint/examples/shopping_app/workflow v0.0.0 // indirect
 
-require github.com/blueprint-uservices/blueprint/examples/threechain2/wiring v0.0.0
+require github.com/blueprint-uservices/blueprint/examples/shopping_app/wiring v0.0.0
 
 require github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow v0.0.0 // indirect
 
@@ -105,11 +105,11 @@ replace github.com/blueprint-uservices/blueprint/examples/postnotification/workf
 
 replace github.com/blueprint-uservices/blueprint/examples/postnotification/wiring => ./blueprint/examples/postnotification/wiring
 
-replace github.com/blueprint-uservices/blueprint/examples/threechain2 => ./blueprint/examples/threechain2
+replace github.com/blueprint-uservices/blueprint/examples/shopping_app => ./blueprint/examples/shopping_app
 
-replace github.com/blueprint-uservices/blueprint/examples/threechain2/workflow => ./blueprint/examples/threechain2/workflow
+replace github.com/blueprint-uservices/blueprint/examples/shopping_app/workflow => ./blueprint/examples/shopping_app/workflow
 
-replace github.com/blueprint-uservices/blueprint/examples/threechain2/wiring => ./blueprint/examples/threechain2/wiring
+replace github.com/blueprint-uservices/blueprint/examples/shopping_app/wiring => ./blueprint/examples/shopping_app/wiring
 
 replace github.com/blueprint-uservices/blueprint/examples/sockshop2 => ./blueprint/examples/sockshop2
 

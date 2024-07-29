@@ -1,0 +1,484 @@
+'"orderID" string': []
+ANALYTICS_DB.Analytics:
+- write <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+ANALYTICS_DB.Analytics.Categories:
+- write <Categories []string (SliceVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <ProductCategory string (BasicVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <ref <ProductCategory string> @ AnalyticsService (Reference)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <ProductCategory string (FieldVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <ProductCategory string (BasicVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <ProductCategory interface{} (InterfaceVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <Categories []string (FieldVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+ANALYTICS_DB.Analytics.UserID:
+- write <UserID string (BasicVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <ref <UserID string> @ AnalyticsService (Reference)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <UserID string (FieldVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <UserID string (BasicVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <UserID string (FieldVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+ANALYTICS_QUEUE.AnalyticsMessage:
+- write <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- read <event map[string]interface{} (MapVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string}> @ AnalyticsService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- write <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+ANALYTICS_QUEUE.AnalyticsMessage.ProductCategory:
+- write <Category string (BasicVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ref <ProductCategory interface{}> @ AnalyticsService (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ProductCategory interface{} (InterfaceVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- read <Category string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <ProductCategory interface{}> @ AnalyticsService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ProductCategory interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- write <ProductCategory string (FieldVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ref <ProductCategory interface{}> @ AnalyticsService (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- read <ProductCategory string (FieldVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <ProductCategory interface{}> @ AnalyticsService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+ANALYTICS_QUEUE.AnalyticsMessage.UserID:
+- write <userID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <userID string> @ Frontend (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <userID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <UserID interface{}> @ AnalyticsService (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <UserID interface{}> @ ShipmentService (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <userID string (BasicVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ref <userID string> @ Frontend (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <userID string (BasicVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ref <UserID interface{}> @ AnalyticsService (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ref <UserID interface{}> @ ShipmentService (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- read <userID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <userID string> @ Frontend (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <userID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ AnalyticsService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <UserID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <UserID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- write <userID string (BasicVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <ref <userID string> @ Frontend (Reference)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <userID string (BasicVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <ref <UserID interface{}> @ AnalyticsService (Reference)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <ref <UserID interface{}> @ ShipmentService (Reference)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- read <userID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <userID string> @ Frontend (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <userID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ AnalyticsService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <UserID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <UserID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- write <UserID string (FieldVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ref <UserID interface{}> @ AnalyticsService (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- read <UserID string (FieldVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ AnalyticsService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+ANALYTICS_QUEUE.message:
+- read <event (&map[string]interface{}) (AddressVariable)>
+BILLING_DB.Bill:
+- write <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+BILLING_DB.Bill.PricePerUnit:
+- write <pricePerUnit int (BasicVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <ref <price int> @ OrderService (Reference)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <price int (BasicVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <ref <price int> @ Frontend (Reference)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <price int (BasicVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <PricePerUnit int (FieldVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+BILLING_DB.Bill.ProductID:
+- write <productID string (BasicVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <ref <productID string> @ OrderService (Reference)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <productID string (BasicVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <ref <productID string> @ Frontend (Reference)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <productID string (BasicVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <productID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <productID string> @ Frontend (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <productID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <productID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <productID string> @ Frontend (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <productID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ProductID string (FieldVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+BILLING_DB.Bill.Quantity:
+- write <quantity int (BasicVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <Quantity int (FieldVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+BILLING_DB.Bill.TotalCost:
+- write <quantity (&int) (AddressVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <quantity int (BasicVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <ref <quantity int> @ OrderService (Reference)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <quantity int (BasicVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <ref <quantity int> @ Frontend (Reference)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <quantity int (BasicVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <quantity int (BasicVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <quantity int (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <quantity int> @ Frontend (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <quantity int (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <quantity int (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <quantity int> @ Frontend (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <quantity int (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <TotalCost (&int) (FieldVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+BILLING_DB.Bill.UserID:
+- write <userID string (BasicVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <ref <userID string> @ OrderService (Reference)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <userID string (BasicVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <ref <userID string> @ Frontend (Reference)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <userID string (BasicVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <ref <UserID interface{}> @ AnalyticsService (Reference)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <ref <UserID interface{}> @ ShipmentService (Reference)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+- write <userID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <userID string> @ Frontend (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <userID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <UserID interface{}> @ AnalyticsService (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <UserID interface{}> @ ShipmentService (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <userID string (BasicVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ref <userID string> @ Frontend (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <userID string (BasicVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ref <UserID interface{}> @ AnalyticsService (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ref <UserID interface{}> @ ShipmentService (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- read <userID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <userID string> @ Frontend (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <userID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ AnalyticsService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <UserID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <UserID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- write <userID string (BasicVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <ref <userID string> @ Frontend (Reference)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <userID string (BasicVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <ref <UserID interface{}> @ AnalyticsService (Reference)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <ref <UserID interface{}> @ ShipmentService (Reference)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- read <userID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <userID string> @ Frontend (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <userID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ AnalyticsService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <UserID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <UserID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- write <userID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <userID string> @ Frontend (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <userID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <UserID interface{}> @ AnalyticsService (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <UserID interface{}> @ ShipmentService (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <userID string (BasicVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ref <userID string> @ Frontend (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <userID string (BasicVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ref <UserID interface{}> @ AnalyticsService (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ref <UserID interface{}> @ ShipmentService (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- read <userID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <userID string> @ Frontend (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <userID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ AnalyticsService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <UserID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <UserID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- write <userID string (BasicVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <ref <userID string> @ Frontend (Reference)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <userID string (BasicVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <ref <UserID interface{}> @ AnalyticsService (Reference)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <ref <UserID interface{}> @ ShipmentService (Reference)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- read <userID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <userID string> @ Frontend (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <userID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ AnalyticsService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <UserID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <UserID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- write <UserID string (FieldVariable)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int} (StructVariable)>
+CART_DB.Cart:
+- write <cart shopping_app.Cart struct{CartID string, UserID string, ProductID string, Quantity int, PricePerUnit int, Status string} (StructVariable)>
+- write <cart shopping_app.Cart struct{CartID string, UserID string, ProductID string, Quantity int, PricePerUnit int, Status string} (StructVariable)> from <cart shopping_app.Cart struct{CartID string, UserID string, ProductID string, Quantity int, PricePerUnit int, Status string} (StructVariable)>
+CART_DB.Cart.PricePerUnit:
+- write <PricePerUnit int (BasicVariable)> from <cart shopping_app.Cart struct{CartID string, UserID string, ProductID string, Quantity int, PricePerUnit int, Status string} (StructVariable)>
+- write <PricePerUnit int (FieldVariable)> from <cart shopping_app.Cart struct{CartID string, UserID string, ProductID string, Quantity int, PricePerUnit int, Status string} (StructVariable)>
+CART_DB.Cart.ProductID:
+- write <ProductID string (BasicVariable)> from <cart shopping_app.Cart struct{CartID string, UserID string, ProductID string, Quantity int, PricePerUnit int, Status string} (StructVariable)>
+- write <ProductID string (FieldVariable)> from <cart shopping_app.Cart struct{CartID string, UserID string, ProductID string, Quantity int, PricePerUnit int, Status string} (StructVariable)>
+CART_DB.Cart.Quantity:
+- write <1 int (BasicVariable)> from <cart shopping_app.Cart struct{CartID string, UserID string, ProductID string, Quantity int, PricePerUnit int, Status string} (StructVariable)>
+- write <Quantity int (FieldVariable)> from <cart shopping_app.Cart struct{CartID string, UserID string, ProductID string, Quantity int, PricePerUnit int, Status string} (StructVariable)>
+D:
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{Key "orderID" string, Value string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <Key "orderID" string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <"orderID" string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <Value string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <orderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <OrderID string> @ ShipmentService (Reference)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <OrderID string> @ ShipmentService (Reference)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <OrderID interface{} (InterfaceVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <orderID string> @ Frontend (Reference)> from <query primitive.D (SliceVariable)>
+- read <orderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{Key "orderID" string, Value string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <Key "orderID" string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <"orderID" string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <Value string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <orderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <OrderID string> @ ShipmentService (Reference)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <OrderID string> @ ShipmentService (Reference)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <OrderID interface{} (InterfaceVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <orderID string> @ Frontend (Reference)> from <query primitive.D (SliceVariable)>
+- read <orderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+Key: []
+ORDER_DB.Order:
+- write <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+ORDER_DB.Order.OrderID:
+- write <cartID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <cartID string> @ Frontend (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <cartID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <OrderID interface{}> @ ShipmentService (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <OrderID interface{} (InterfaceVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <cartID string (BasicVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <ref <cartID string> @ Frontend (Reference)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <cartID string (BasicVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <ref <OrderID interface{}> @ ShipmentService (Reference)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <OrderID interface{} (InterfaceVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- read <cartID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <cartID string> @ Frontend (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <cartID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <OrderID interface{}> @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <OrderID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- write <OrderID string (FieldVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+ORDER_DB.Order.ProductID:
+- write <productID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <productID string> @ Frontend (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <productID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ProductID string (FieldVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+ORDER_DB.Order.Quantity:
+- write <quantity int (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <quantity int> @ Frontend (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <quantity int (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <Quantity int (FieldVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+ORDER_DB.Order.Timestamp:
+- write <1 int (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <Timestamp 1 int (FieldVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+ORDER_DB.Order.UserID:
+- write <userID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <userID string> @ Frontend (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <userID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <UserID interface{}> @ AnalyticsService (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <UserID interface{}> @ ShipmentService (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <userID string (BasicVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ref <userID string> @ Frontend (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <userID string (BasicVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ref <UserID interface{}> @ AnalyticsService (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ref <UserID interface{}> @ ShipmentService (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- read <userID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <userID string> @ Frontend (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <userID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ AnalyticsService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <UserID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <UserID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- write <userID string (BasicVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <ref <userID string> @ Frontend (Reference)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <userID string (BasicVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <ref <UserID interface{}> @ AnalyticsService (Reference)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <ref <UserID interface{}> @ ShipmentService (Reference)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- read <userID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <userID string> @ Frontend (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <userID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ AnalyticsService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <UserID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <UserID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- write <UserID string (FieldVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+ORDER_DB.document:
+- read <result NoSQLCursor {database = order_database, collection = order_collection} (BlueprintBackendVariable)>
+- read <result NoSQLCursor {database = order_database, collection = order_collection} (BlueprintBackendVariable)>
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{Key "orderID" string, Value string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <Key "orderID" string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <"orderID" string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <Value string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <orderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <OrderID string> @ ShipmentService (Reference)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <OrderID string> @ ShipmentService (Reference)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <OrderID interface{} (InterfaceVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <orderID string> @ Frontend (Reference)> from <query primitive.D (SliceVariable)>
+- read <orderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{Key "orderID" string, Value string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <Key "orderID" string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <"orderID" string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <Value string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <orderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <OrderID string> @ ShipmentService (Reference)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <OrderID string> @ ShipmentService (Reference)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <OrderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <OrderID interface{} (InterfaceVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <orderID string> @ Frontend (Reference)> from <query primitive.D (SliceVariable)>
+- read <orderID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+OrderID: []
+SHIPMENT_DB.Shipment:
+- write <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+SHIPMENT_DB.Shipment.OrderID:
+- write <OrderID string (BasicVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <ref <OrderID string> @ ShipmentService (Reference)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <OrderID string (FieldVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <OrderID string (BasicVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <OrderID interface{} (InterfaceVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <OrderID string (FieldVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+SHIPMENT_DB.Shipment.Status:
+- write <"pending" string (BasicVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <Status "pending" string (FieldVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+SHIPMENT_DB.Shipment.UserID:
+- write <UserID string (BasicVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <ref <UserID string> @ ShipmentService (Reference)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <UserID string (FieldVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <UserID string (BasicVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <UserID string (FieldVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+SHIPMENT_QUEUE.ShipmentMessage:
+- write <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- read <event map[string]interface{} (MapVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string}> @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- write <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+SHIPMENT_QUEUE.ShipmentMessage.OrderID:
+- write <cartID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <cartID string> @ Frontend (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <cartID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <OrderID interface{}> @ ShipmentService (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <OrderID interface{} (InterfaceVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <cartID string (BasicVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <ref <cartID string> @ Frontend (Reference)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <cartID string (BasicVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <ref <OrderID interface{}> @ ShipmentService (Reference)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <OrderID interface{} (InterfaceVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- read <cartID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <cartID string> @ Frontend (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <cartID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <OrderID interface{}> @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <OrderID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- write <OrderID string (FieldVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <ref <OrderID interface{}> @ ShipmentService (Reference)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- read <OrderID string (FieldVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <OrderID interface{}> @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+SHIPMENT_QUEUE.ShipmentMessage.UserID:
+- write <userID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <userID string> @ Frontend (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <userID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <UserID interface{}> @ AnalyticsService (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <UserID interface{}> @ ShipmentService (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <userID string (BasicVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ref <userID string> @ Frontend (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <userID string (BasicVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ref <UserID interface{}> @ AnalyticsService (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ref <UserID interface{}> @ ShipmentService (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- read <userID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <userID string> @ Frontend (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <userID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ AnalyticsService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <UserID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <UserID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- write <userID string (BasicVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <ref <userID string> @ Frontend (Reference)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <userID string (BasicVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <ref <UserID interface{}> @ AnalyticsService (Reference)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <ref <UserID interface{}> @ ShipmentService (Reference)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- read <userID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <userID string> @ Frontend (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <userID string (BasicVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ AnalyticsService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <UserID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <UserID interface{} (InterfaceVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- write <UserID string (FieldVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <ref <UserID interface{}> @ ShipmentService (Reference)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- read <UserID string (FieldVariable)> from <event (&map[string]interface{}) (AddressVariable)>
+- read <ref <UserID interface{}> @ ShipmentService (Reference)> from <event (&map[string]interface{}) (AddressVariable)>
+SHIPMENT_QUEUE.message:
+- read <event (&map[string]interface{}) (AddressVariable)>
+STOCK_DB.Stock:
+- write <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+  from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+STOCK_DB.Stock.ProductID:
+- write <productID string (BasicVariable)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <ref <productID string> @ OrderService (Reference)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <productID string (BasicVariable)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <ref <productID string> @ Frontend (Reference)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <productID string (BasicVariable)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <productID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <productID string> @ Frontend (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <productID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <productID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <productID string> @ Frontend (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <productID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ProductID string (FieldVariable)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+STOCK_DB.Stock.Quantity:
+- write <quantity int (BasicVariable)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <ref <quantity int> @ OrderService (Reference)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <quantity int (BasicVariable)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <ref <quantity int> @ Frontend (Reference)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <quantity int (BasicVariable)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <quantity int (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <quantity int> @ Frontend (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <quantity int (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <quantity int (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <quantity int> @ Frontend (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <quantity int (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <Quantity int (FieldVariable)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+Value: []
+interface{}: []
+string:
+- write <OrderID string (BasicVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <ref <OrderID string> @ ShipmentService (Reference)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <OrderID string (FieldVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <OrderID string (BasicVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <OrderID interface{} (InterfaceVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <OrderID string (BasicVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <ref <OrderID string> @ ShipmentService (Reference)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <OrderID string (FieldVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <OrderID string (BasicVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <OrderID interface{} (InterfaceVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+struct{Key "orderID" string, Value string}: []

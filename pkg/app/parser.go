@@ -25,7 +25,7 @@ const (
 	PACKAGE_PATH_FOOBAR            string = "github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar"
 	PACKAGE_PATH_SOCKSHOP2         string = "github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow"
 	PACKAGE_PATH_TRAIN_TICKET      string = "github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow"
-	PACKAGE_PATH_THREECHAIN2       string = "github.com/blueprint-uservices/blueprint/examples/threechain2/workflow"
+	PACKAGE_PATH_SHOPPING_APP      string = "github.com/blueprint-uservices/blueprint/examples/shopping_app/workflow"
 	PACKAGE_PATH_DSB_HOTEL         string = "github.com/blueprint-uservices/blueprint/examples/dsb_hotel/workflow/hotelreservation"
 	PACKAGE_PATH_DSB_SN            string = "github.com/blueprint-uservices/blueprint/examples/dsb_sn/workflow/socialnetwork"
 	PACKAGE_PATH_BLUEPRINT         string = "github.com/blueprint-uservices/blueprint/runtime/core/backend"
@@ -126,8 +126,8 @@ func (app *App) ParsePackages(servicesInfo []*frameworks.ServiceInfo) {
 		basePackagePath = PACKAGE_PATH_SOCKSHOP2
 	case "trainticket":
 		basePackagePath = PACKAGE_PATH_TRAIN_TICKET
-	case "threechain2":
-		basePackagePath = PACKAGE_PATH_THREECHAIN2
+	case "shopping_app":
+		basePackagePath = PACKAGE_PATH_SHOPPING_APP
 	case "dsb_hotel":
 		basePackagePath = PACKAGE_PATH_DSB_HOTEL
 	case "dsb_sn":

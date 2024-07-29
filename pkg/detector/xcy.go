@@ -291,7 +291,7 @@ func (request *Request) transverseOperations(node abstractgraph.AbstractNode) {
 	if dbCall, ok := node.(*abstractgraph.AbstractDatabaseCall); ok {
 		var operation *Operation
 		if backend, ok := dbCall.ParsedCall.Method.(*blueprint.BackendMethod); ok {
-			if backend.IsWrite() {
+			if backend.IsWrite() || backend.IsUpdate() {
 				operation = request.saveWriteOperation(dbCall, backend)
 				logger.Logger.Infof("[XCY] saved write %s", operation.String())
 			} else if backend.IsRead() {

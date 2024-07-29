@@ -1,0 +1,56 @@
+mode: LINEAGES_IMPLICIT_DEFAULT
+number_inconsistencies: 13
+xcy_inconsistencies:
+- _id: 0
+  read: (0, 3) read(product_db, query, result) @ ProductService
+  write: (0, 2) write(billing_db, bill, bill) @ BillingService
+- _id: 1
+  read: (0, 3) read(product_db, query, result) @ ProductService
+  write: (0, 1) write(stock_db, stock, stock) @ StockService
+- _id: 2
+  read: (0, 3) read(product_db, query, result) @ ProductService
+  write: (0, 0) write(order_db, order, order) @ OrderService
+- _id: 3
+  read: (1, 0) read(analytics_db, query, result) @ AnalyticsService
+  write: (0, 3) write(analytics_queue, analyticsMessage, analyticsMessage) @ OrderService
+- _id: 4
+  read: (1, 0) read(analytics_db, query, result) @ AnalyticsService
+  write: (0, 2) write(billing_db, bill, bill) @ BillingService
+- _id: 5
+  read: (1, 0) read(analytics_db, query, result) @ AnalyticsService
+  write: (0, 1) write(stock_db, stock, stock) @ StockService
+- _id: 6
+  read: (1, 0) read(analytics_db, query, result) @ AnalyticsService
+  write: (0, 0) write(order_db, order, order) @ OrderService
+- _id: 7
+  read: (2, 1) read(order_db, query, result) @ OrderService
+  write: (2, 0) write(shipment_db, shipment, shipment) @ ShipmentService
+- _id: 8
+  read: (2, 1) read(order_db, query, result) @ OrderService
+  write: (0, 4) write(shipment_queue, shipmentMessage, shipmentMessage) @ OrderService
+- _id: 9
+  read: (2, 1) read(order_db, query, result) @ OrderService
+  write: (0, 3) write(analytics_queue, analyticsMessage, analyticsMessage) @ OrderService
+- _id: 10
+  read: (2, 1) read(order_db, query, result) @ OrderService
+  write: (0, 2) write(billing_db, bill, bill) @ BillingService
+- _id: 11
+  read: (2, 1) read(order_db, query, result) @ OrderService
+  write: (0, 1) write(stock_db, stock, stock) @ StockService
+- _id: 12
+  read: (2, 1) read(order_db, query, result) @ OrderService
+  write: (0, 0) write(order_db, order, order) @ OrderService
+xcy_lineages:
+- _id: 0
+  operations:
+  - (0, 0) write(order_db, order, order) @ OrderService
+  - (0, 1) write(stock_db, stock, stock) @ StockService
+  - (0, 2) write(billing_db, bill, bill) @ BillingService
+  - (0, 3) write(analytics_queue, analyticsMessage, analyticsMessage) @ OrderService
+  - (0, 4) write(shipment_queue, shipmentMessage, shipmentMessage) @ OrderService
+- _id: 1
+  operations:
+  - (1, 0) write(analytics_db, updatedAnalytics, updatedAnalytics) @ AnalyticsService
+- _id: 2
+  operations:
+  - (2, 0) write(shipment_db, shipment, shipment) @ ShipmentService
