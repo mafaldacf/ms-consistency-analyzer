@@ -1,0 +1,8 @@
+STATION_DB.Station:
+- write <station station.Station struct{ID string, Name string, StayTime int64} (StructVariable)>
+- write <station station.Station struct{ID string, Name string, StayTime int64} (StructVariable)>
+  from <station station.Station struct{ID string, Name string, StayTime int64} (StructVariable)>
+
+STATION_DB.Station.ID:
+- write <ID string (BasicVariable)> from <station station.Station struct{ID string, Name string, StayTime int64} (StructVariable)>
+- write <ID string (FieldVariable)> from <station station.Station struct{ID string, Name string, StayTime int64} (StructVariable)>

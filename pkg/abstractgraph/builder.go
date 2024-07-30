@@ -13,12 +13,6 @@ import (
 	"analyzer/pkg/utils"
 )
 
-func (graph *AbstractGraph) getAndIncGIndex() int64 {
-	prev := graph.GIndex
-	graph.GIndex++
-	return prev
-}
-
 func Build(app *app.App, frontends []string) *AbstractGraph {
 	graph := &AbstractGraph{
 		AppName:  app.Name,
@@ -112,7 +106,7 @@ func (graph *AbstractGraph) recurseBuild(app *app.App, abstractNode AbstractNode
 			logger.Logger.Debugf("\t\t- call: %v", c.String())
 		}
 		fmt.Println("------------------------------------------------------------------------------------------------------------------------------------------------")
-		graph.appendAbstractEdges(node, node, targetMethod)
+		graph.appendAbstractEdges(node, targetMethod)
 		fmt.Println()
 	case *AbstractDatabaseCall:
 		if node.ParsedCall.Method.IsQueueWrite() {
@@ -133,7 +127,7 @@ func (graph *AbstractGraph) recurseBuild(app *app.App, abstractNode AbstractNode
 			logger.Logger.Debugf("\t\t- call: %v", c.String())
 		}
 		fmt.Println("------------------------------------------------------------------------------------------------------------------------------------------------")
-		graph.appendAbstractEdges(node, node, targetMethod)
+		graph.appendAbstractEdges(node, targetMethod)
 		fmt.Println()
 	default:
 		logger.Logger.Fatalf("Error recursing build for %s\nUnknown node type: %s", node, utils.GetType(node))
@@ -143,8 +137,8 @@ func (graph *AbstractGraph) recurseBuild(app *app.App, abstractNode AbstractNode
 	}
 }
 
-func getPushMethodIfPublisherChild(rootParent AbstractNode, child *AbstractDatabaseCall) *blueprint.BackendMethod {
-	if queueHandler, ok := rootParent.(*AbstractQueueHandler); ok && !queueHandler.IsEnabled() {
+func getPushMethodIfPublisherChild(parent AbstractNode, child *AbstractDatabaseCall) *blueprint.BackendMethod {
+	if queueHandler, ok := parent.(*AbstractQueueHandler); ok && !queueHandler.IsEnabled() {
 		if child.ParsedCall.Method.IsQueueRead() && queueHandler.Publisher.DbInstance == child.ParsedCall.DbInstance {
 			pushMethod, ok := queueHandler.Publisher.ParsedCall.Method.(*blueprint.BackendMethod)
 			if !ok {
@@ -207,9 +201,9 @@ func (graph *AbstractGraph) referenceQueuePopMethodBlockVars(queueHandler *Abstr
 	//logger.Logger.Fatal("EXIT!")
 }
 
-func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directParent AbstractNode, targetMethod *types.ParsedMethod) {
+func (graph *AbstractGraph) appendAbstractEdges(parent AbstractNode, targetMethod *types.ParsedMethod) {
 	for _, call := range targetMethod.Calls {
-		_, rootIsQueueHandler := rootParent.(*AbstractQueueHandler)
+		_, rootIsQueueHandler := parent.(*AbstractQueueHandler)
 		switch parsedCall := call.(type) {
 		case *types.ParsedDatabaseCall:
 			child := &AbstractDatabaseCall{
@@ -217,13 +211,13 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				Service:    parsedCall.CallerTypeName.GetName(),
 				DbInstance: parsedCall.DbInstance,
 				Subscriber: rootIsQueueHandler,
-				Depth:      rootParent.GetNextDepth(),
+				Depth:      parent.GetNextDepth(),
 			}
-			rootParent.AddChild(child)
+			parent.AddChild(child)
 			logger.Logger.Infof("[GRAPH] addding node for abstract database call with parent (%s): %s", child.GetCallerStr(), child.String())
 
 			// if root parent is a queue handler (e.g. workerThread) and child is queue pop call
-			if queueHandler, ok := rootParent.(*AbstractQueueHandler); ok && !queueHandler.IsEnabled() {
+			if queueHandler, ok := parent.(*AbstractQueueHandler); ok && !queueHandler.IsEnabled() {
 				graph.referenceQueuePopMethodBlockVars(queueHandler, child)
 				queueHandler.Enable()
 			}
@@ -234,9 +228,9 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 				ParsedCall: parsedCall.DeepCopy(),
 				Caller:     parsedCall.CallerTypeName.GetName(),
 				Callee:     parsedCall.CalleeTypeName.GetName(),
-				Depth:      rootParent.GetNextDepth(),
+				Depth:      parent.GetNextDepth(),
 			}
-			rootParent.AddChild(child)
+			parent.AddChild(child)
 			logger.Logger.Infof("[GRAPH] adding node for abstract service call: %s", child.String())
 			graph.referenceMethodBlockVars(parsedCall, child)
 			logger.Logger.Infof("[GRAPH] added node for abstract service call: %s", child.String())
@@ -245,11 +239,11 @@ func (graph *AbstractGraph) appendAbstractEdges(rootParent AbstractNode, directP
 			tempChild := &AbstractTempInternalCall{
 				ParsedCall: parsedCall,
 				Service:    parsedCall.ServiceTypeName.GetName(),
-				Depth:      rootParent.GetNextDepth(),
+				Depth:      parent.GetNextDepth(),
 			}
 
 			tempMethod := graph.Services[tempChild.Service].GetInternalOrPackageMethod(tempChild.ParsedCall.Name)
-			graph.appendAbstractEdges(rootParent, tempChild, tempMethod)
+			graph.appendAbstractEdges(parent, tempMethod)
 
 			logger.Logger.Infof("[GRAPH] adding temporary node for abstract service call: %s", tempChild.String())
 			graph.referenceMethodBlockVars(parsedCall, tempChild)

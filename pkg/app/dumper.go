@@ -17,17 +17,15 @@ import (
 func (app *App) Dump() {
 	app.dumpDiGraph()
 	app.dumpYamlPackages()
+	app.dumpYamlServices()
+	app.dumpYamlCalls()
 	app.dumpYamlDatastores()
 	app.dumpYamlDataflow()
-	app.dumpYamlServices()
-	app.dumpYamlControlflow()
-	app.dumpYamlCalls()
 }
 
 func (app *App) PreDump() {
 	app.dumpYamlPackages()
 	app.dumpYamlServices()
-	app.dumpYamlControlflow()
 	app.dumpYamlCalls()
 }
 
@@ -101,7 +99,7 @@ func (app *App) dumpDiGraph() {
 	sortNodes(nodes)
 	sortEdges(edges)
 	outputGraph := digraph{Nodes: nodes, Edges: edges}
-	utils.DumpToJSONFile(outputGraph, app.Name, "digraphs/app_graph")
+	utils.DumpToJSONFile(outputGraph, app.Name, "graphs/global/out/app_graph")
 }
 
 func (app *App) dumpYamlPackages() {
@@ -110,35 +108,64 @@ func (app *App) dumpYamlPackages() {
 	for _, p := range app.BlueprintPackages {
 		blueprintPackages[p.Name] = p.DumpBlueprintYaml()
 	}
-	utils.DumpToYamlFile(blueprintPackages, app.Name, "packages/blueprint")
+	utils.DumpToYamlFile(blueprintPackages, app.Name, "app/packages/blueprint")
 
 	// external
 	externalPackages := make(map[string]interface{})
 	for _, p := range app.ExternalPackages {
 		externalPackages[p.Name] = p.DumpExternalYaml()
 	}
-	utils.DumpToYamlFile(externalPackages, app.Name, "packages/external")
+	utils.DumpToYamlFile(externalPackages, app.Name, "app/packages/external")
 
 	// application
 	appPackages := make(map[string]interface{})
 	for _, p := range app.Packages {
 		appPackages[p.Name] = p.DumpYaml()
 	}
-	utils.DumpToYamlFile(appPackages, app.Name, "packages/app")
+	utils.DumpToYamlFile(appPackages, app.Name, "app/packages/app")
 }
 
 func (app *App) dumpYamlDataflow() {
-	data := make(map[string][]string)
+	data := make(map[string]map[string][]string)
+
 	for k, lst := range app.TaintedVariables {
 		var dataflow []string
+		var datastore string
 		for _, v := range lst {
 			for _, df := range v.GetVariableInfo().Dataflows {
 				dataflow = append(dataflow, df.ShortString())
+				if datastore == "" {
+					datastore = df.Datastore
+				}
 			}
 		}
-		data[k] = dataflow
+
+		if _, ok := data[datastore]; !ok {
+			data[datastore] = make(map[string][]string)
+		}
+		data[datastore][k] = append(data[datastore][k], dataflow...)
 	}
-	utils.DumpToYamlFile(data, app.Name, "dataflow/datastores")
+	for datastore, dataflow := range data {
+		utils.DumpToYamlFile(dataflow, app.Name, fmt.Sprintf("dataflow/datastores/%s", datastore))
+	}
+
+	for name, service := range app.Services {
+		data := service.Yaml()
+		utils.DumpToYamlFile(data, app.Name, fmt.Sprintf("dataflow/services/%s", strings.ToLower(name)))
+	}
+
+	for _, p := range app.Packages {
+		pkgData := make(map[string]interface{})
+		for _, m := range p.ParsedMethods {
+			data, blockVarsStr := m.Yaml()
+			pkgData[m.LongString()] = data
+			prefix := ""
+			if m.AttachedService != "" {
+				prefix = m.AttachedService + "_"
+			}
+			utils.DumpToDebugFile(blockVarsStr, app.Name, fmt.Sprintf("dataflow/methods/%s%s", prefix, m.Name))
+		}
+	}
 }
 
 func (app *App) dumpYamlDatastores() {
@@ -198,7 +225,7 @@ func (app *App) dumpYamlDatastores() {
 		props.AddOrderedProperty("schema", schema.Result())
 		data[strings.ToUpper(datastore.GetName())] = props.Result()
 	}
-	utils.DumpToYamlFile(data, app.Name, "schema")
+	utils.DumpToYamlFile(data, app.Name, "app/schema")
 }
 
 func (app *App) dumpYamlServices() {
@@ -223,28 +250,7 @@ func (app *App) dumpYamlServices() {
 		props.AddOrderedProperty("datastores", datastores)
 		data[service.Name] = props.Result()
 	}
-	utils.DumpToYamlFile(data, app.Name, "services")
-}
-
-func (app *App) dumpYamlControlflow() {
-	for name, service := range app.Services {
-		data := service.Yaml()
-		utils.DumpToYamlFile(data, app.Name, fmt.Sprintf("controlflow/services/%s", strings.ToLower(name)))
-	}
-
-	for _, p := range app.Packages {
-		pkgData := make(map[string]interface{})
-		for _, m := range p.ParsedMethods {
-			data, blockVarsStr := m.Yaml()
-			pkgData[m.LongString()] = data
-			prefix := ""
-			if m.AttachedService != "" {
-				prefix = m.AttachedService + "_"
-			}
-			utils.DumpDebugFile(blockVarsStr, app.Name, fmt.Sprintf("controlflow/methods/%s%s", prefix, m.Name))
-		}
-		utils.DumpToYamlFile(pkgData, app.Name, fmt.Sprintf("controlflow/packages/%s", strings.ToLower(p.Name)))
-	}
+	utils.DumpToYamlFile(data, app.Name, "app/services")
 }
 
 func (app *App) dumpYamlCalls() {

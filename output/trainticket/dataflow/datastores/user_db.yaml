@@ -1,0 +1,4 @@
+USER_DB.User:
+- write <user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string} (StructVariable)>
+- write <user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string} (StructVariable)> from
+  <user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string} (StructVariable)>

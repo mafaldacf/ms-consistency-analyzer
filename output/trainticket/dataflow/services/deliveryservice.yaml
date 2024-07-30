@@ -1,0 +1,23 @@
+(*DeliveryServiceImpl).Run(ctx context.Context):
+  block 14 (IfDone):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) delQ Queue'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) delivery.DeliveryServiceImpl struct{db
+    NoSQLDatabase, delQ Queue}'
+  - '[-1] (PointerVariable PointerType) d (*delivery.DeliveryServiceImpl struct{db
+    NoSQLDatabase, delQ Queue})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (StructVariable UserType) delivery delivery.Delivery struct{ID string, OrderID
+    string, FoodName string, StoreName string, StationName string}'
+  - '[-1] (BasicVariable BasicType) didpop bool'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
+    = delivery, collection = delivery}'
+  - '[-1] (InterfaceVariable UserType) err .error'
+  - '[-1] (InterfaceVariable UserType) err .error'
+
+.NewDeliveryServiceImpl(ctx context.Context, queue Queue, db NoSQLDatabase):
+  block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) queue Queue'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'

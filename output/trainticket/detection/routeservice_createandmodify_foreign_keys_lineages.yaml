@@ -1,0 +1,12 @@
+mode: FOREIGN_KEYS_LINEAGES
+
+number_inconsistencies: 0
+
+xcy_inconsistencies: []
+
+xcy_lineages:
+- _id: 0
+  _operations:
+  - (0, 0) write(route_db, , route) @ RouteService
+  - (0, 1) write(route_db, route, route) @ RouteService
+  - (0, 2) read(route_db, , res) @ RouteService

@@ -1,0 +1,9 @@
+mode: DEBUG_XCY_MINIMIZE_DEPENDENCIES
+
+number_inconsistencies: 0
+
+xcy_inconsistencies: []
+
+xcy_lineages:
+- _id: 0
+  _operations: []

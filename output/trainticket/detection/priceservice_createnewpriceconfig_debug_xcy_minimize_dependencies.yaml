@@ -1,0 +1,18 @@
+mode: DEBUG_XCY_MINIMIZE_DEPENDENCIES
+
+number_inconsistencies: 0
+
+xcy_inconsistencies: []
+
+xcy_lineages:
+- _id: 0
+  _operations:
+  - _operation: (0, 0) read(price_db, query, res) @ PriceService
+    visible_dependency_set: []
+  - _operation: (0, 1) write(price_db, pc, pc) @ PriceService
+    minimized_dependency_set (0 --> 0): []
+    visible_dependency_set: []
+  - _operation: (0, 2) write(price_db, query, pc) @ PriceService
+    minimized_dependency_set (1 --> 0): []
+    visible_dependency_set:
+    - (0, 1) write(price_db, pc, pc) @ PriceService

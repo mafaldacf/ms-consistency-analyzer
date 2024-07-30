@@ -1,0 +1,14 @@
+mode: DEBUG_LINEAGES
+
+number_inconsistencies: 0
+
+xcy_inconsistencies: []
+
+xcy_lineages:
+- _id: 0
+  _operations:
+  - _operation: (0, 0) write(cart_db, , cart) @ CartService
+    visible_dependency_set: []
+  lineage_dependencies:
+  - (0, 0) write(cart_db, , cart) @ CartService
+  missing_dependencies: []

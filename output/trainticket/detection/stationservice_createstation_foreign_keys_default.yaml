@@ -1,0 +1,11 @@
+mode: FOREIGN_KEYS_DEFAULT
+
+number_inconsistencies: 0
+
+xcy_inconsistencies: []
+
+xcy_lineages:
+- _id: 0
+  _operations:
+  - (0, 0) read(station_db, query, res) @ StationService
+  - (0, 1) write(station_db, station, station) @ StationService

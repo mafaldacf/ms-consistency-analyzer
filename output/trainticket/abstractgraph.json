@@ -1,0 +1,6317 @@
+[
+  {
+    "method": "(*UserServiceImpl).UpdateUser(ctx context.Context, user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string})",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{})",
+        "depth": 1,
+        "caller": "UserService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"userid\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "UserID",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "variable": {
+              "name": "user",
+              "type": "user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}"
+            },
+            "struct_fields": {
+              "UserID": {
+                "variable": {
+                  "name": "UserID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "UserID",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": "bool"
+            }
+          },
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "user_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "user",
+          "type": "user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*UserServiceImpl).FindByUsername(ctx context.Context, username string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "UserService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"username\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "username",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = user, collection = user}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "user_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "username",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*UserServiceImpl).FindByUserID(ctx context.Context, userID string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "UserService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"userid\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "userID",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = user, collection = user}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "user_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "userID",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*UserServiceImpl).DeleteUser(ctx context.Context, userID string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D)",
+        "depth": 1,
+        "caller": "UserService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"userid\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "userID",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "user_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "userID",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*UserServiceImpl).GetAllUsers(ctx context.Context)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "UserService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = user, collection = user}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "user_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*UserServiceImpl).SaveUser(ctx context.Context, user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string})",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+        "depth": 1,
+        "caller": "UserService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "user",
+              "type": "user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}"
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "user_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "user",
+          "type": "user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*ContactsServiceImpl).GetAllContacts(ctx context.Context)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "ContactsService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = contacts, collection = contacts}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "contacts_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*ContactsServiceImpl).Modify(ctx context.Context, contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string})",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{})",
+        "depth": 1,
+        "caller": "ContactsService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "ID",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "variable": {
+              "name": "contact",
+              "type": "contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}"
+            },
+            "struct_fields": {
+              "ID": {
+                "variable": {
+                  "name": "ID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "ID",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": "bool"
+            }
+          },
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "contacts_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "contact",
+          "type": "contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*ContactsServiceImpl).FindContactsById(ctx context.Context, id string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "ContactsService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "id",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = contacts, collection = contacts}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "contacts_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "id",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*ContactsServiceImpl).FindContactsByAccountId(ctx context.Context, id string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "ContactsService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"accountid\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "id",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = contacts, collection = contacts}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "contacts_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "id",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*ContactsServiceImpl).CreateContacts(ctx context.Context, contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string})",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "ContactsService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"accountid\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "AccountID",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "variable": {
+                  "type": "struct{ \"documentnumber\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "DocumentNumber",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "variable": {
+                  "type": "struct{ \"documenttype\" string,  int}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "int"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "DocumentType",
+                        "type": "int"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = contacts, collection = contacts}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "contacts_db"
+      },
+      {
+        "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+        "depth": 1,
+        "caller": "ContactsService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "contact",
+              "type": "contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}"
+            },
+            "struct_fields": {
+              "AccountID": {
+                "variable": {
+                  "name": "AccountID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "AccountID",
+                    "type": "string"
+                  }
+                }
+              },
+              "DocumentNumber": {
+                "variable": {
+                  "name": "DocumentNumber",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "DocumentNumber",
+                    "type": "string"
+                  }
+                }
+              },
+              "DocumentType": {
+                "variable": {
+                  "name": "DocumentType",
+                  "type": "int"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "DocumentType",
+                    "type": "int"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "contacts_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "contact",
+          "type": "contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*ContactsServiceImpl).Delete(ctx context.Context, contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string})",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D)",
+        "depth": 1,
+        "caller": "ContactsService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "ID",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "contacts_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "contact",
+          "type": "contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*PriceServiceImpl).UpdatePriceConfig(ctx context.Context, pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64})",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{})",
+        "depth": 1,
+        "caller": "PriceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "ID",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "variable": {
+              "name": "pc",
+              "type": "price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}"
+            },
+            "struct_fields": {
+              "ID": {
+                "variable": {
+                  "name": "ID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "ID",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": "bool"
+            }
+          },
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "price_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "pc",
+          "type": "price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*PriceServiceImpl).FindByID(ctx context.Context, id string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "PriceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context",
+              "refs": [
+                {
+                  "name": "ctx",
+                  "creator": "PriceService"
+                }
+              ]
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "id",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "ID",
+                            "creator": "PriceService"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = priceConfig, collection = priceConfig}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "price_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "id",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*PriceServiceImpl).CreateNewPriceConfig(ctx context.Context, pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64})",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "PriceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context",
+              "refs": [
+                {
+                  "name": "ctx",
+                  "creator": "PriceService"
+                }
+              ]
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "id",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "ID",
+                            "creator": "PriceService"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = priceConfig, collection = priceConfig}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "price_db"
+      },
+      {
+        "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+        "depth": 1,
+        "caller": "PriceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "pc",
+              "type": "price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}"
+            },
+            "struct_fields": {
+              "ID": {
+                "variable": {
+                  "name": "ID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "ID",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "price_db"
+      },
+      {
+        "method": "NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{})",
+        "depth": 1,
+        "caller": "PriceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "ID",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "variable": {
+              "name": "pc",
+              "type": "price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}"
+            },
+            "struct_fields": {
+              "ID": {
+                "variable": {
+                  "name": "ID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "ID",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "ok",
+              "type": "bool"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "price_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "pc",
+          "type": "price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*PriceServiceImpl).FindByRouteIDAndTrainType(ctx context.Context, routeID string, trainType string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "PriceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context",
+              "refs": [
+                {
+                  "name": "ctx",
+                  "creator": "PriceService"
+                }
+              ]
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"$and\" string,  primitive.A}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "primitive.A"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "type": "primitive.A"
+                      },
+                      "slice_variables": [
+                        {
+                          "variable": {
+                            "type": "primitive.D"
+                          },
+                          "slice_variables": [
+                            {
+                              "variable": {
+                                "type": "struct{ \"routeid\" string,  string}"
+                              },
+                              "struct_fields": {
+                                "": {
+                                  "variable": {
+                                    "type": "string"
+                                  },
+                                  "wrapped_variable": {
+                                    "variable": {
+                                      "name": "routeID",
+                                      "type": "string",
+                                      "refs": [
+                                        {
+                                          "name": "routeid",
+                                          "creator": "PriceService"
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "variable": {
+                            "type": "primitive.D"
+                          },
+                          "slice_variables": [
+                            {
+                              "variable": {
+                                "type": "struct{ \"traintype\" string,  string}"
+                              },
+                              "struct_fields": {
+                                "": {
+                                  "variable": {
+                                    "type": "string"
+                                  },
+                                  "wrapped_variable": {
+                                    "variable": {
+                                      "name": "trainType",
+                                      "type": "string",
+                                      "refs": [
+                                        {
+                                          "name": "trainType",
+                                          "creator": "PriceService"
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = priceConfig, collection = priceConfig}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "price_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "routeID",
+          "type": "string"
+        }
+      },
+      {
+        "variable": {
+          "name": "trainType",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*PriceServiceImpl).FindByRouteIDsAndTrainTypes(ctx context.Context, rtsAndTypes []string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "PriceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context",
+              "refs": [
+                {
+                  "name": "ctx",
+                  "creator": "PriceService"
+                }
+              ]
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"$and\" string,  primitive.A}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "primitive.A"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "type": "primitive.A"
+                      },
+                      "slice_variables": [
+                        {
+                          "variable": {
+                            "type": "primitive.D"
+                          },
+                          "slice_variables": [
+                            {
+                              "variable": {
+                                "type": "struct{ \"routeid\" string,  string}"
+                              },
+                              "struct_fields": {
+                                "": {
+                                  "variable": {
+                                    "type": "string"
+                                  },
+                                  "wrapped_variable": {
+                                    "variable": {
+                                      "name": "routeID",
+                                      "type": "string",
+                                      "refs": [
+                                        {
+                                          "name": "routeid",
+                                          "creator": "PriceService"
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "variable": {
+                            "type": "primitive.D"
+                          },
+                          "slice_variables": [
+                            {
+                              "variable": {
+                                "type": "struct{ \"traintype\" string,  string}"
+                              },
+                              "struct_fields": {
+                                "": {
+                                  "variable": {
+                                    "type": "string"
+                                  },
+                                  "wrapped_variable": {
+                                    "variable": {
+                                      "name": "trainType",
+                                      "type": "string",
+                                      "refs": [
+                                        {
+                                          "name": "trainType",
+                                          "creator": "PriceService"
+                                        }
+                                      ]
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = priceConfig, collection = priceConfig}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "price_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "rtsAndTypes",
+          "type": "[]string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*PriceServiceImpl).GetAllPriceConfig(ctx context.Context)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "PriceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = priceConfig, collection = priceConfig}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "price_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*PriceServiceImpl).DeletePriceConfig(ctx context.Context, id string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D)",
+        "depth": 1,
+        "caller": "PriceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "id",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "price_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "id",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*StationServiceImpl).UpdateStation(ctx context.Context, station station.Station struct{ID string, Name string, StayTime int64})",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{})",
+        "depth": 1,
+        "caller": "StationService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "ID",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "variable": {
+              "name": "station",
+              "type": "station.Station struct{ID string, Name string, StayTime int64}"
+            },
+            "struct_fields": {
+              "ID": {
+                "variable": {
+                  "name": "ID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "ID",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": "bool"
+            }
+          },
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "station_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "station",
+          "type": "station.Station struct{ID string, Name string, StayTime int64}"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*StationServiceImpl).DeleteStation(ctx context.Context, id string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D)",
+        "depth": 1,
+        "caller": "StationService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "id",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "station_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "id",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*StationServiceImpl).FindByID(ctx context.Context, id string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "StationService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context",
+              "refs": [
+                {
+                  "name": "ctx",
+                  "creator": "StationService"
+                }
+              ]
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "id",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "",
+                            "creator": "StationService"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = station, collection = station}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "station_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "id",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*StationServiceImpl).FindByIDs(ctx context.Context, ids []string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "StationService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context",
+              "refs": [
+                {
+                  "name": "ctx",
+                  "creator": "StationService"
+                }
+              ]
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "id",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "",
+                            "creator": "StationService"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = station, collection = station}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "station_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "ids",
+          "type": "[]string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*StationServiceImpl).FindID(ctx context.Context, name string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "StationService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context",
+              "refs": [
+                {
+                  "name": "ctx",
+                  "creator": "StationService"
+                }
+              ]
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"name\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "name",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "",
+                            "creator": "StationService"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = station, collection = station}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "station_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "name",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*StationServiceImpl).FindIDs(ctx context.Context, names []string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "StationService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context",
+              "refs": [
+                {
+                  "name": "ctx",
+                  "creator": "StationService"
+                }
+              ]
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"name\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "name",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "",
+                            "creator": "StationService"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = station, collection = station}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "station_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "names",
+          "type": "[]string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*StationServiceImpl).CreateStation(ctx context.Context, station station.Station struct{ID string, Name string, StayTime int64})",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "StationService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "ID",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = station, collection = station}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "station_db"
+      },
+      {
+        "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+        "depth": 1,
+        "caller": "StationService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "station",
+              "type": "station.Station struct{ID string, Name string, StayTime int64}"
+            },
+            "struct_fields": {
+              "ID": {
+                "variable": {
+                  "name": "ID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "ID",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "station_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "station",
+          "type": "station.Station struct{ID string, Name string, StayTime int64}"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*StationServiceImpl).Exists(ctx context.Context, name string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "StationService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"name\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "name",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = station, collection = station}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "station_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "name",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*NewsServiceImpl).Hello(ctx context.Context, val string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": null,
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "val",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*AssuranceServiceImpl).Create(ctx context.Context, typeindex int64, orderid string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+        "depth": 1,
+        "caller": "AssuranceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "assurance",
+              "type": "assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}"
+            },
+            "struct_fields": {
+              "AT": {
+                "variable": {
+                  "name": "AT",
+                  "type": "assurance.AssuranceType struct{Index int64, Name string, Price float64}"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "at",
+                    "type": "assurance.AssuranceType struct{Index int64, Name string, Price float64}"
+                  }
+                }
+              },
+              "ID": {
+                "variable": {
+                  "name": "ID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "id",
+                    "type": "string"
+                  }
+                }
+              },
+              "OrderID": {
+                "variable": {
+                  "name": "OrderID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "orderid",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "assurance_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "typeindex",
+          "type": "int64"
+        }
+      },
+      {
+        "variable": {
+          "name": "orderid",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*AssuranceServiceImpl).DeleteById(ctx context.Context, id string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D)",
+        "depth": 1,
+        "caller": "AssuranceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "id",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "assurance_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "id",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*AssuranceServiceImpl).DeleteByOrderId(ctx context.Context, order_id string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D)",
+        "depth": 1,
+        "caller": "AssuranceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"orderid\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "order_id",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "assurance_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "order_id",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*AssuranceServiceImpl).Modify(ctx context.Context, assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}})",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "AssuranceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context",
+              "refs": [
+                {
+                  "name": "ctx",
+                  "creator": "AssuranceService"
+                }
+              ]
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "id",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "ID",
+                            "creator": "AssuranceService"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = assurance, collection = assurance}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "assurance_db"
+      },
+      {
+        "method": "NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{})",
+        "depth": 1,
+        "caller": "AssuranceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "ID",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "variable": {
+              "name": "assurance",
+              "type": "assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}"
+            },
+            "struct_fields": {
+              "ID": {
+                "variable": {
+                  "name": "ID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "ID",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "ok",
+              "type": "bool"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "assurance_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "assurance",
+          "type": "assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*AssuranceServiceImpl).GetAllAssurances(ctx context.Context)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "AssuranceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = assurance, collection = assurance}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "assurance_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*AssuranceServiceImpl).GetAllAssuranceTypes(ctx context.Context)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": null,
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*AssuranceServiceImpl).FindAssuranceById(ctx context.Context, id string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "AssuranceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context",
+              "refs": [
+                {
+                  "name": "ctx",
+                  "creator": "AssuranceService"
+                }
+              ]
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "id",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "ID",
+                            "creator": "AssuranceService"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = assurance, collection = assurance}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "assurance_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "id",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*AssuranceServiceImpl).FindAssuranceByOrderId(ctx context.Context, order_id string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "AssuranceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"orderid\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "order_id",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = assurance, collection = assurance}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "assurance_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "order_id",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*ConfigServiceImpl).Update(ctx context.Context, conf config.Config struct{Name string, Value string, Description string})",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{})",
+        "depth": 1,
+        "caller": "ConfigService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"name\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "Name",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "variable": {
+              "name": "conf",
+              "type": "config.Config struct{Name string, Value string, Description string}"
+            },
+            "struct_fields": {
+              "Name": {
+                "variable": {
+                  "name": "Name",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "Name",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": "bool"
+            }
+          },
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "config_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "conf",
+          "type": "config.Config struct{Name string, Value string, Description string}"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*ConfigServiceImpl).Find(ctx context.Context, name string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "ConfigService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"name\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "name",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = config, collection = config}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "config_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "name",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*ConfigServiceImpl).Delete(ctx context.Context, name string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D)",
+        "depth": 1,
+        "caller": "ConfigService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"name\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "name",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "config_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "name",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*ConfigServiceImpl).FindAll(ctx context.Context)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "ConfigService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = config, collection = config}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "config_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*ConfigServiceImpl).Create(ctx context.Context, conf config.Config struct{Name string, Value string, Description string})",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "ConfigService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"name\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "Name",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = config, collection = config}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "config_db"
+      },
+      {
+        "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+        "depth": 1,
+        "caller": "ConfigService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "conf",
+              "type": "config.Config struct{Name string, Value string, Description string}"
+            },
+            "struct_fields": {
+              "Name": {
+                "variable": {
+                  "name": "Name",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "Name",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "config_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "conf",
+          "type": "config.Config struct{Name string, Value string, Description string}"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*ConsignPriceServiceImpl).GetPriceByWeightAndRegion(ctx context.Context, weight float64, isWithinRegion bool)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "ConsignPriceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context",
+              "refs": [
+                {
+                  "name": "ctx",
+                  "creator": "ConsignPriceService"
+                }
+              ]
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"index\" string,  0 int}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "0 int"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "type": "0 int"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = consign, collection = consign}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "consignprice_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "weight",
+          "type": "float64"
+        }
+      },
+      {
+        "variable": {
+          "name": "isWithinRegion",
+          "type": "bool"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*ConsignPriceServiceImpl).GetPriceInfo(ctx context.Context)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "ConsignPriceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"index\" string,  0 int}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "0 int"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "type": "0 int"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = consign, collection = consign}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "consignprice_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*ConsignPriceServiceImpl).GetPriceConfig(ctx context.Context)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "ConsignPriceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context",
+              "refs": [
+                {
+                  "name": "ctx",
+                  "creator": "ConsignPriceService"
+                }
+              ]
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"index\" string,  0 int}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "0 int"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "type": "0 int"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = consign, collection = consign}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "consignprice_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*ConsignPriceServiceImpl).CreateAndModifyPriceConfig(ctx context.Context, priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64})",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "ConsignPriceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"index\" string,  0 int}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "0 int"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "type": "0 int"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = consign, collection = consign}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "consignprice_db"
+      },
+      {
+        "method": "NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{})",
+        "depth": 1,
+        "caller": "ConsignPriceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"index\" string,  0 int}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "0 int"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "type": "0 int"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "variable": {
+              "name": "priceConfig",
+              "type": "consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64}"
+            },
+            "struct_fields": {
+              "Index": {
+                "variable": {
+                  "name": "Index",
+                  "type": "int64"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "type": "0 int"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "ok",
+              "type": "bool"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "consignprice_db"
+      },
+      {
+        "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+        "depth": 1,
+        "caller": "ConsignPriceService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "priceConfig",
+              "type": "consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64}"
+            },
+            "struct_fields": {
+              "Index": {
+                "variable": {
+                  "name": "Index",
+                  "type": "int64"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "type": "0 int"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "consignprice_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "priceConfig",
+          "type": "consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64}"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*TrainFoodServiceImpl).CreateTrainFood(ctx context.Context, tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}})",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "TrainFoodService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"tripid\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "TripID",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = trainfood, collection = trainfood}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "trainfood_db"
+      },
+      {
+        "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+        "depth": 1,
+        "caller": "TrainFoodService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "tf",
+              "type": "trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}}"
+            },
+            "struct_fields": {
+              "TripID": {
+                "variable": {
+                  "name": "TripID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "TripID",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "trainfood_db"
+      },
+      {
+        "method": "NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{})",
+        "depth": 1,
+        "caller": "TrainFoodService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"tripid\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "TripID",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "variable": {
+              "name": "tf",
+              "type": "trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}}"
+            },
+            "struct_fields": {
+              "TripID": {
+                "variable": {
+                  "name": "TripID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "TripID",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "ok",
+              "type": "bool"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "trainfood_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "tf",
+          "type": "trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}}"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*TrainFoodServiceImpl).ListTrainFood(ctx context.Context)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "TrainFoodService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = trainfood, collection = trainfood}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "trainfood_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*TrainFoodServiceImpl).ListTrainFoodByTripID(ctx context.Context, tripid string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "TrainFoodService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"tripid\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "tripid",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = trainfood, collection = trainfood}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "trainfood_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "tripid",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*TrainFoodServiceImpl).Cleanup(ctx context.Context)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)",
+        "depth": 1,
+        "caller": "TrainFoodService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "trainfood_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*TrainServiceImpl).Delete(ctx context.Context, id string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D)",
+        "depth": 1,
+        "caller": "TrainService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "id",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "train_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "id",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*TrainServiceImpl).AllTrains(ctx context.Context)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "TrainService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = train, collection = train}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "train_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*TrainServiceImpl).Create(ctx context.Context, tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64})",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "TrainService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"name\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "Name",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = train, collection = train}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "train_db"
+      },
+      {
+        "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+        "depth": 1,
+        "caller": "TrainService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "tt",
+              "type": "train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}"
+            },
+            "struct_fields": {
+              "Name": {
+                "variable": {
+                  "name": "Name",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "Name",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "train_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "tt",
+          "type": "train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*TrainServiceImpl).Retrieve(ctx context.Context, id string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "TrainService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "id",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = train, collection = train}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "train_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "id",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*TrainServiceImpl).RetrieveByName(ctx context.Context, name string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "TrainService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"name\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "name",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = train, collection = train}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "train_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "name",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*TrainServiceImpl).RetrieveByNames(ctx context.Context, names []string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": null,
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "names",
+          "type": "[]string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*TrainServiceImpl).Update(ctx context.Context, ttype train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64})",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{})",
+        "depth": 1,
+        "caller": "TrainService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "ID",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "variable": {
+              "name": "ttype",
+              "type": "train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}"
+            },
+            "struct_fields": {
+              "ID": {
+                "variable": {
+                  "name": "ID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "ID",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": "bool"
+            }
+          },
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "train_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "ttype",
+          "type": "train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*RouteServiceImpl).GetAllRoutes(ctx context.Context)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "RouteService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = route, collection = route}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "route_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*RouteServiceImpl).GetRouteById(ctx context.Context, id string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "RouteService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context",
+              "refs": [
+                {
+                  "name": "ctx",
+                  "creator": "RouteService"
+                }
+              ]
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "id",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "",
+                            "creator": "RouteService"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = route, collection = route}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "route_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "id",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*RouteServiceImpl).GetRouteByIds(ctx context.Context, ids []string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "RouteService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context",
+              "refs": [
+                {
+                  "name": "ctx",
+                  "creator": "RouteService"
+                }
+              ]
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "id",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "",
+                            "creator": "RouteService"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = route, collection = route}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "route_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "ids",
+          "type": "[]string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*RouteServiceImpl).DeleteRoute(ctx context.Context, id string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D)",
+        "depth": 1,
+        "caller": "RouteService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "id",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "route_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "id",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*RouteServiceImpl).CreateAndModify(ctx context.Context, info route.RouteInfo struct{ID string, StartStation string, EndStation string, StationList string, DistanceList string})",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{})",
+        "depth": 1,
+        "caller": "RouteService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "ID",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "variable": {
+              "name": "route",
+              "type": "route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}"
+            },
+            "struct_fields": {
+              "Distances": {
+                "variable": {
+                  "name": "Distances",
+                  "type": "[]int64"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "distances",
+                    "type": "[]int64"
+                  }
+                }
+              },
+              "EndStation": {
+                "variable": {
+                  "name": "EndStation",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "EndStation",
+                    "type": "string"
+                  }
+                }
+              },
+              "ID": {
+                "variable": {
+                  "name": "ID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "type": "string"
+                  }
+                }
+              },
+              "StartStation": {
+                "variable": {
+                  "name": "StartStation",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "StartStation",
+                    "type": "string"
+                  }
+                }
+              },
+              "Stations": {
+                "variable": {
+                  "name": "Stations",
+                  "type": "[]string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "stations",
+                    "type": "[]string"
+                  },
+                  "slice_variables": [
+                    {
+                      "variable": {
+                        "name": "StationList",
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "variable": {
+                        "type": "\",\" string"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "ok",
+              "type": "bool"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "route_db"
+      },
+      {
+        "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+        "depth": 1,
+        "caller": "RouteService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "route",
+              "type": "route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}"
+            },
+            "struct_fields": {
+              "Distances": {
+                "variable": {
+                  "name": "Distances",
+                  "type": "[]int64"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "distances",
+                    "type": "[]int64"
+                  }
+                }
+              },
+              "EndStation": {
+                "variable": {
+                  "name": "EndStation",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "EndStation",
+                    "type": "string"
+                  }
+                }
+              },
+              "ID": {
+                "variable": {
+                  "name": "ID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "type": "string"
+                  }
+                }
+              },
+              "StartStation": {
+                "variable": {
+                  "name": "StartStation",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "StartStation",
+                    "type": "string"
+                  }
+                }
+              },
+              "Stations": {
+                "variable": {
+                  "name": "Stations",
+                  "type": "[]string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "stations",
+                    "type": "[]string"
+                  },
+                  "slice_variables": [
+                    {
+                      "variable": {
+                        "name": "StationList",
+                        "type": "string"
+                      }
+                    },
+                    {
+                      "variable": {
+                        "type": "\",\" string"
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "route_db"
+      },
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "RouteService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "ID",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = route, collection = route}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "route_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "info",
+          "type": "route.RouteInfo struct{ID string, StartStation string, EndStation string, StationList string, DistanceList string}"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*RouteServiceImpl).GetRouteByStartAndEnd(ctx context.Context, start string, end string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "RouteService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"$and\" string,  primitive.A}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "primitive.A"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "type": "primitive.A"
+                      },
+                      "slice_variables": [
+                        {
+                          "variable": {
+                            "type": "primitive.D"
+                          },
+                          "slice_variables": [
+                            {
+                              "variable": {
+                                "type": "struct{ \"startstation\" string,  string}"
+                              },
+                              "struct_fields": {
+                                "": {
+                                  "variable": {
+                                    "type": "string"
+                                  },
+                                  "wrapped_variable": {
+                                    "variable": {
+                                      "name": "start",
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        },
+                        {
+                          "variable": {
+                            "type": "primitive.D"
+                          },
+                          "slice_variables": [
+                            {
+                              "variable": {
+                                "type": "struct{ \"endstation\" string,  string}"
+                              },
+                              "struct_fields": {
+                                "": {
+                                  "variable": {
+                                    "type": "string"
+                                  },
+                                  "wrapped_variable": {
+                                    "variable": {
+                                      "name": "end",
+                                      "type": "string"
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = route, collection = route}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "route_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "start",
+          "type": "string"
+        }
+      },
+      {
+        "variable": {
+          "name": "end",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*StationFoodServiceImpl).Cleanup(ctx context.Context)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)",
+        "depth": 1,
+        "caller": "StationFoodService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "stationfood_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*StationFoodServiceImpl).CreateFoodStore(ctx context.Context, store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}})",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "StationFoodService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "ID",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = stationfood, collection = stationfood}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "stationfood_db"
+      },
+      {
+        "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+        "depth": 1,
+        "caller": "StationFoodService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "store",
+              "type": "stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}"
+            },
+            "struct_fields": {
+              "ID": {
+                "variable": {
+                  "name": "ID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "ID",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "stationfood_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "store",
+          "type": "stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*StationFoodServiceImpl).ListFoodStores(ctx context.Context)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "StationFoodService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = stationfood, collection = stationfood}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "stationfood_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*StationFoodServiceImpl).ListFoodStoresByStationName(ctx context.Context, station string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "StationFoodService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"stationname\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "station",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = stationfood, collection = stationfood}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "stationfood_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "station",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*StationFoodServiceImpl).GetFoodStoresByStationNames(ctx context.Context, stations []string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "StationFoodService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "query",
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"stationname\" string,  primitive.D}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "primitive.D"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "type": "primitive.D"
+                      },
+                      "slice_variables": [
+                        {
+                          "variable": {
+                            "type": "struct{ \"$in\" string,  primitive.A}"
+                          },
+                          "struct_fields": {
+                            "": {
+                              "variable": {
+                                "type": "primitive.A"
+                              },
+                              "wrapped_variable": {
+                                "variable": {
+                                  "name": "doc",
+                                  "type": "primitive.A"
+                                }
+                              }
+                            }
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = stationfood, collection = stationfood}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "stationfood_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "stations",
+          "type": "[]string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*StationFoodServiceImpl).GetFoodStoreByID(ctx context.Context, id string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "StationFoodService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "id",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = stationfood, collection = stationfood}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "stationfood_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "id",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*PaymentServiceImpl).Pay(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string})",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{})",
+        "depth": 1,
+        "caller": "PaymentService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"orderid\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "OrderID",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          },
+          {
+            "variable": {
+              "name": "payment",
+              "type": "payment.Payment struct{ID string, OrderID string, UserID string, Price string}"
+            },
+            "struct_fields": {
+              "OrderID": {
+                "variable": {
+                  "name": "OrderID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "OrderID",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "ok",
+              "type": "bool"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "payments_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "payment",
+          "type": "payment.Payment struct{ID string, OrderID string, UserID string, Price string}"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*PaymentServiceImpl).AddMoney(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string})",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+        "depth": 1,
+        "caller": "PaymentService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "m",
+              "type": "payment.Money struct{ID string, UserID string, Price string}"
+            },
+            "struct_fields": {
+              "ID": {
+                "variable": {
+                  "name": "ID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "type": "string"
+                  }
+                }
+              },
+              "Price": {
+                "variable": {
+                  "name": "Price",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "Price",
+                    "type": "string"
+                  }
+                }
+              },
+              "UserID": {
+                "variable": {
+                  "name": "UserID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "UserID",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "money_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "payment",
+          "type": "payment.Payment struct{ID string, OrderID string, UserID string, Price string}"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*PaymentServiceImpl).Query(ctx context.Context)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "PaymentService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = payment, collection = payment}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "payments_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*PaymentServiceImpl).InitPayment(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string})",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+        "depth": 1,
+        "caller": "PaymentService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            },
+            "slice_variables": [
+              {
+                "variable": {
+                  "type": "struct{ \"id\" string,  string}"
+                },
+                "struct_fields": {
+                  "": {
+                    "variable": {
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "ID",
+                        "type": "string"
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "res",
+              "type": "NoSQLCursor {database = payment, collection = payment}"
+            }
+          },
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "payments_db"
+      },
+      {
+        "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+        "depth": 1,
+        "caller": "PaymentService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "name": "payment",
+              "type": "payment.Payment struct{ID string, OrderID string, UserID string, Price string}"
+            },
+            "struct_fields": {
+              "ID": {
+                "variable": {
+                  "name": "ID",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "variable": {
+                    "name": "ID",
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "payments_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "payment",
+          "type": "payment.Payment struct{ID string, OrderID string, UserID string, Price string}"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*PaymentServiceImpl).Cleanup(ctx context.Context)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)",
+        "depth": 1,
+        "caller": "PaymentService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "name": "err",
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "money_db"
+      },
+      {
+        "method": "NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)",
+        "depth": 1,
+        "caller": "PaymentService",
+        "params": [
+          {
+            "variable": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "variable": {
+              "type": "primitive.D"
+            }
+          }
+        ],
+        "returns": [
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ],
+        "datastore": "money_db"
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      }
+    ]
+  }
+]

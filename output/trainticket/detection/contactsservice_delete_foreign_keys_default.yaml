@@ -1,0 +1,9 @@
+mode: FOREIGN_KEYS_DEFAULT
+
+number_inconsistencies: 0
+
+xcy_inconsistencies: []
+
+xcy_lineages:
+- _id: 0
+  _operations: []

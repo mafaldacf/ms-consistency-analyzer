@@ -1,0 +1,20 @@
+ANALYTICS_DB.Analytics:
+- write <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+
+ANALYTICS_DB.Analytics.Categories:
+- write <Categories []string (SliceVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <ProductCategory string (BasicVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <ref <ProductCategory string> @ AnalyticsService (Reference)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <ProductCategory string (FieldVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <ProductCategory string (BasicVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <ProductCategory interface{} (InterfaceVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <Categories []string (FieldVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+
+ANALYTICS_DB.Analytics.UserID:
+- write <UserID string (BasicVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <ref <UserID string> @ AnalyticsService (Reference)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <UserID string (FieldVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <UserID string (BasicVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>
+- write <UserID string (FieldVariable)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructVariable)>

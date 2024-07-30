@@ -1,0 +1,11 @@
+mode: DEBUG_XCY_MINIMIZE_DEPENDENCIES
+
+number_inconsistencies: 0
+
+xcy_inconsistencies: []
+
+xcy_lineages:
+- _id: 0
+  _operations:
+  - _operation: (0, 0) read(config_db, query, res) @ ConfigService
+    visible_dependency_set: []

@@ -1,0 +1,89 @@
+mode: DEBUG_XCY_MINIMIZE_DEPENDENCIES
+
+number_inconsistencies: 1
+
+xcy_inconsistencies:
+- read: (2, 2) read(order_db, query, result) @ OrderService
+  write: (0, 0) write(order_db, order, order) @ OrderService
+
+xcy_lineages:
+- _id: 0
+  _operations:
+  - _operation: (0, 0) write(order_db, order, order) @ OrderService
+    minimized_dependency_set (0 --> 0): []
+    visible_dependency_set: []
+  - _operation: (0, 1) write(stock_db, stock, stock) @ StockService
+    minimized_dependency_set (1 --> 0): []
+    visible_dependency_set:
+    - (0, 0) write(order_db, order, order) @ OrderService
+  - _operation: (0, 2) write(billing_db, bill, bill) @ BillingService
+    minimized_dependency_set (2 --> 0): []
+    visible_dependency_set:
+    - (0, 0) write(order_db, order, order) @ OrderService
+    - (0, 1) write(stock_db, stock, stock) @ StockService
+  - _operation: (0, 3) read(product_db, query, result) @ ProductService
+    visible_dependency_set:
+    - (0, 0) write(order_db, order, order) @ OrderService
+    - (0, 1) write(stock_db, stock, stock) @ StockService
+    - (0, 2) write(billing_db, bill, bill) @ BillingService
+  - _operation: (0, 4) write(analytics_queue, analyticsMessage, analyticsMessage)
+      @ OrderService
+    minimized_dependency_set (3 --> 0): []
+    visible_dependency_set:
+    - (0, 0) write(order_db, order, order) @ OrderService
+    - (0, 1) write(stock_db, stock, stock) @ StockService
+    - (0, 2) write(billing_db, bill, bill) @ BillingService
+  - _operation: (0, 5) write(shipment_queue, shipmentMessage, shipmentMessage) @ OrderService
+    minimized_dependency_set (4 --> 1):
+    - (0, 0) write(order_db, order, order) @ OrderService
+    visible_dependency_set:
+    - (0, 0) write(order_db, order, order) @ OrderService
+    - (0, 1) write(stock_db, stock, stock) @ StockService
+    - (0, 2) write(billing_db, bill, bill) @ BillingService
+    - (0, 4) write(analytics_queue, analyticsMessage, analyticsMessage) @ OrderService
+- _id: 1
+  _operations:
+  - _operation: (1, 0) read(analytics_queue, event, event) @ AnalyticsService
+    visible_dependency_set:
+    - (0, 0) write(order_db, order, order) @ OrderService
+    - (0, 1) write(stock_db, stock, stock) @ StockService
+    - (0, 2) write(billing_db, bill, bill) @ BillingService
+    - (0, 4) write(analytics_queue, analyticsMessage, analyticsMessage) @ OrderService
+  - _operation: (1, 1) read(analytics_db, query, result) @ AnalyticsService
+    visible_dependency_set:
+    - (0, 0) write(order_db, order, order) @ OrderService
+    - (0, 1) write(stock_db, stock, stock) @ StockService
+    - (0, 2) write(billing_db, bill, bill) @ BillingService
+    - (0, 4) write(analytics_queue, analyticsMessage, analyticsMessage) @ OrderService
+  - _operation: (1, 2) write(analytics_db, updatedAnalytics, updatedAnalytics) @ AnalyticsService
+    minimized_dependency_set (4 --> 0): []
+    visible_dependency_set:
+    - (0, 0) write(order_db, order, order) @ OrderService
+    - (0, 1) write(stock_db, stock, stock) @ StockService
+    - (0, 2) write(billing_db, bill, bill) @ BillingService
+    - (0, 4) write(analytics_queue, analyticsMessage, analyticsMessage) @ OrderService
+- _id: 2
+  _operations:
+  - _operation: (2, 0) read(shipment_queue, event, event) @ ShipmentService
+    visible_dependency_set:
+    - (0, 0) write(order_db, order, order) @ OrderService
+    - (0, 1) write(stock_db, stock, stock) @ StockService
+    - (0, 2) write(billing_db, bill, bill) @ BillingService
+    - (0, 4) write(analytics_queue, analyticsMessage, analyticsMessage) @ OrderService
+    - (0, 5) write(shipment_queue, shipmentMessage, shipmentMessage) @ OrderService
+  - _operation: (2, 1) write(shipment_db, shipment, shipment) @ ShipmentService
+    minimized_dependency_set (5 --> 0): []
+    visible_dependency_set:
+    - (0, 0) write(order_db, order, order) @ OrderService
+    - (0, 1) write(stock_db, stock, stock) @ StockService
+    - (0, 2) write(billing_db, bill, bill) @ BillingService
+    - (0, 4) write(analytics_queue, analyticsMessage, analyticsMessage) @ OrderService
+    - (0, 5) write(shipment_queue, shipmentMessage, shipmentMessage) @ OrderService
+  - _operation: (2, 2) read(order_db, query, result) @ OrderService
+    visible_dependency_set:
+    - (0, 0) write(order_db, order, order) @ OrderService
+    - (0, 1) write(stock_db, stock, stock) @ StockService
+    - (0, 2) write(billing_db, bill, bill) @ BillingService
+    - (0, 4) write(analytics_queue, analyticsMessage, analyticsMessage) @ OrderService
+    - (0, 5) write(shipment_queue, shipmentMessage, shipmentMessage) @ OrderService
+    - (2, 1) write(shipment_db, shipment, shipment) @ ShipmentService

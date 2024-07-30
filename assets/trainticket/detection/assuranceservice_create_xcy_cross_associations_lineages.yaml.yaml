@@ -1,7 +1,0 @@
-mode: CROSS_ASSOCIATIONS_LINEAGES
-number_inconsistencies: 0
-xcy_inconsistencies: []
-xcy_lineages:
-- _id: 0
-  operations:
-  - (0, 0) write(assurance_db, assurance, assurance) @ AssuranceService

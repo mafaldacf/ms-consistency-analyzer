@@ -17,26 +17,26 @@ type DependencySet struct {
 	DependencyNames []string
 }
 
-func addEntryToDatastore(variable variables.Variable, entryName string, datastore *datastores.Datastore) {
+func saveFieldToDatastore(variable variables.Variable, entryName string, datastore *datastores.Datastore) {
 	objType := variable.GetType()
-	datastore.Schema.AddField(entryName, objType.GetName(), variable.GetId(), datastore.Name)
+	datastore.Schema.AddField(entryName, objType.GetName(), variable.GetId(), datastore)
 	logger.Logger.Infof("[SCHEMA] [%s] added entry (%s): %s", datastore.Name, entryName, objType.LongString())
 }
 
-func addUnfoldedEntriesToDatastore(variable variables.Variable, entryName string, datastore *datastores.Datastore) {
+func saveUnfoldedFieldsToDatastore(variable variables.Variable, entryName string, datastore *datastores.Datastore) {
 	objType := variable.GetType()
-	datastore.Schema.AddField(entryName, objType.LongString(), variable.GetId(), datastore.Name)
+	datastore.Schema.AddField(entryName, objType.LongString(), variable.GetId(), datastore)
 	logger.Logger.Infof("[SCHEMA] [%s] added entry (%s): %s", datastore.Name, entryName, objType.LongString())
 
-	datastore.Schema.AddUnfoldedFieldWithId(objType.GetName(), objType.LongString(), variable.GetId(), datastore.Name)
+	datastore.Schema.AddField(objType.GetName(), objType.LongString(), variable.GetId(), datastore)
 	logger.Logger.Infof("[SCHEMA] [%s] added field (%s): %s", datastore.Name, objType.GetName(), objType.LongString())
 
 	// add nested unfolded types
 	types, names := objType.GetNestedFieldTypes(objType.GetName())
 	for i, t := range types {
 		name := names[i]
-		datastore.Schema.AddUnfoldedField(name, t.LongString(), datastore.Name)
-		logger.Logger.Infof("[SCHEMA] [%s] added nested field (%s): %s", datastore.Name, name, t.LongString())
+		datastore.Schema.AddUnfoldedField(name, t.LongString(), 0, datastore)
+		logger.Logger.Infof("[SCHEMA] [%s] added nested field (%s): %s", datastore.GetName(), name, t.LongString())
 	}
 }
 
@@ -138,11 +138,9 @@ func taintDataflowReadOpUnnamed(app *app.App, variable variables.Variable, call 
 	logger.Logger.Infof("[TENTATIVE TAINT READ UNNAMED VAR] [%s] (%02d) (NUM DEPS = %d) %s", utils.GetType(variable), variable.GetId(), len(deps), variable.LongString())
 	for _, dep := range deps {
 		if !slices.Contains(taintedVariables, dep) {
-			variable.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, dep, variable, &datastores.Entry{
-				Name:      dep.GetType().GetName(),
-				Type:      dep.GetType().GetName(),
-				Datastore: datastore.Name,
-			}, false)
+			typeName := dep.GetType().GetName()
+			entry := datastores.CreateEntry(typeName, typeName, 0, datastore)
+			variable.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, dep, variable, entry, false)
 			logger.Logger.Debugf("\t\t[TAINT READ UNNAMED INDIRECT] <unnamed> ---> (%02d) %s [%s]", dep.GetId(), dep.String(), utils.GetType(dep))
 
 			taintedVariables = append(taintedVariables, dep)
@@ -190,9 +188,10 @@ func referenceTaintedDataflowForNestedFields(writtenVariable variables.Variable,
 	fmt.Println()
 }
 
-var writtenDatastores = make(map[string]bool, 0)
+var writtenDatastores map[string]bool
 
 func BuildSchema(app *app.App, node AbstractNode) {
+	writtenDatastores = make(map[string]bool, 0)
 	if dbCall, ok := node.(*AbstractDatabaseCall); ok && dbCall.ParsedCall.Method.IsRead() {
 		datastore := dbCall.DbInstance.GetDatastore()
 		if found := writtenDatastores[datastore.Name]; !found {
@@ -210,6 +209,12 @@ func BuildSchema(app *app.App, node AbstractNode) {
 			taintDataflowReadOpUnnamed(app, doc, dbCall, datastore, "document")
 			query := params[1]
 			taintDataflowReadOpUnnamed(app, query, dbCall, datastore, "document")
+		case datastores.Cache:
+			key := params[1]
+			taintDataflowReadOpUnnamed(app, key, dbCall, datastore, "key")
+			obj := returns[2]
+			taintDataflowReadOpUnnamed(app, obj, dbCall, datastore, "value")
+			logger.Logger.Fatal("EXIT!")
 		}
 
 	}
@@ -224,13 +229,13 @@ func BuildSchema(app *app.App, node AbstractNode) {
 		switch datastore.Type {
 		case datastores.Queue:
 			msg := params[1]
-			addUnfoldedEntriesToDatastore(msg, "message", datastore)
+			saveUnfoldedFieldsToDatastore(msg, "message", datastore)
 			taintDataflowOp(app, msg, dbCall, datastore, "", true)
 			referenceTaintedDataflowForNestedFields(msg, datastore)
 
 		case datastores.NoSQL:
 			doc := params[1]
-			addUnfoldedEntriesToDatastore(doc, "document", datastore)
+			saveUnfoldedFieldsToDatastore(doc, "document", datastore)
 			for i, param := range params {
 				logger.Logger.Debugf("BUILD SCHEMA!!! (%d) (%s)", i, utils.GetType(param))
 				if _, ok := param.(*variables.StructVariable); ok {
@@ -243,8 +248,8 @@ func BuildSchema(app *app.App, node AbstractNode) {
 		case datastores.Cache:
 			key := params[1]
 			value := params[2]
-			addEntryToDatastore(key, "key", datastore)
-			addEntryToDatastore(value, "value", datastore)
+			saveFieldToDatastore(key, "key", datastore)
+			saveFieldToDatastore(value, "value", datastore)
 			taintDataflowOp(app, value, dbCall, datastore, "key", false)
 			taintDataflowOp(app, value, dbCall, datastore, "value", false)
 			referenceTaintedDataflowForSingleValue(key, datastore, "key")
@@ -252,9 +257,9 @@ func BuildSchema(app *app.App, node AbstractNode) {
 		}
 	}
 
-	if dbCall, ok := node.(*AbstractDatabaseCall); ok && dbCall.ParsedCall.Method.IsUpdate() {
+	/* if dbCall, ok := node.(*AbstractDatabaseCall); ok && dbCall.ParsedCall.Method.IsUpdate() {
 		logger.Logger.Fatalf("TODO FOR DB CALL: %s", dbCall.String())
-	}
+	} */
 
 	for _, child := range node.GetChildren() {
 		BuildSchema(app, child)

@@ -1,0 +1,16 @@
+mode: DEBUG_LINEAGES
+
+number_inconsistencies: 0
+
+xcy_inconsistencies: []
+
+xcy_lineages:
+- _id: 0
+  _operations:
+  - _operation: (0, 0) read(payments_db, , res) @ PaymentService
+    visible_dependency_set: []
+  - _operation: (0, 1) write(payments_db, payment, payment) @ PaymentService
+    visible_dependency_set: []
+  lineage_dependencies:
+  - (0, 1) write(payments_db, payment, payment) @ PaymentService
+  missing_dependencies: []

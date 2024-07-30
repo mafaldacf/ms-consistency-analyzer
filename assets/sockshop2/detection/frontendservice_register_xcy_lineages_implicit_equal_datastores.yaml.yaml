@@ -1,7 +1,0 @@
-mode: LINEAGES_IMPLICIT_EQUAL_DATASTORES
-number_inconsistencies: 0
-xcy_inconsistencies: []
-xcy_lineages:
-- _id: 0
-  operations:
-  - (0, 0) write(user_db, u, u) @ UserService

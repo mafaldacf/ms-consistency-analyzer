@@ -1,0 +1,79 @@
+AnalyticsService:
+- fields:
+    analytics_db: NoSQLDatabase
+    analytics_queue: Queue
+    num_workers: 4 int
+- services: {}
+- datastores:
+    analytics_db: NoSQLDatabase
+    analytics_queue: Queue
+
+BillingService:
+- fields:
+    bill_db: NoSQLDatabase
+- services: {}
+- datastores:
+    billing_db: NoSQLDatabase
+
+CartService:
+- fields:
+    cart_db: NoSQLDatabase
+    order_service: OrderService
+    product_service: ProductService
+- services:
+    OrderService: shopping_app.OrderService
+    ProductService: shopping_app.ProductService
+- datastores:
+    cart_db: NoSQLDatabase
+
+Frontend:
+- fields:
+    cart_service: CartService
+    order_service: OrderService
+- services:
+    CartService: shopping_app.CartService
+    OrderService: shopping_app.OrderService
+- datastores: {}
+
+OrderService:
+- fields:
+    analytics_queue: Queue
+    billing_service: BillingService
+    order_db: NoSQLDatabase
+    product_service: ProductService
+    shipment_queue: Queue
+    stock_service: StockService
+- services:
+    BillingService: shopping_app.BillingService
+    ProductService: shopping_app.ProductService
+    StockService: shopping_app.StockService
+- datastores:
+    analytics_queue: Queue
+    order_db: NoSQLDatabase
+    shipment_queue: Queue
+
+ProductService:
+- fields:
+    product_db: NoSQLDatabase
+- services: {}
+- datastores:
+    product_db: NoSQLDatabase
+
+ShipmentService:
+- fields:
+    num_workers: 4 int
+    order_service: OrderService
+    shipment_db: NoSQLDatabase
+    shipment_queue: Queue
+- services:
+    OrderService: shopping_app.OrderService
+- datastores:
+    shipment_db: NoSQLDatabase
+    shipment_queue: Queue
+
+StockService:
+- fields:
+    stock_db: NoSQLDatabase
+- services: {}
+- datastores:
+    stock_db: NoSQLDatabase

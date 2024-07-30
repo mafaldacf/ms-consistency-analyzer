@@ -1,0 +1,6 @@
+(*queueMasterImpl).Run(ctx context.Context):
+- Queue.Pop(ctx context.Context, item interface{}) (err, interface{})
+- (*shipping.shippingImpl).UpdateStatus(ctx context.Context, id string, status string)
+  error
+
+.NewQueueMaster(ctx context.Context, queue Queue, shipping shipping.ShippingService): []

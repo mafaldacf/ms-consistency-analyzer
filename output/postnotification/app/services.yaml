@@ -1,0 +1,54 @@
+AnalyticsService:
+- fields:
+    analytics_db: NoSQLDatabase
+    analytics_queue: Queue
+    num_workers: 4 int
+- services: {}
+- datastores:
+    analytics_db: NoSQLDatabase
+    analytics_queue: Queue
+
+MediaService:
+- fields:
+    media_db: NoSQLDatabase
+- services: {}
+- datastores:
+    media_db: NoSQLDatabase
+
+NotifyService:
+- fields:
+    notifications_queue: Queue
+    num_workers: 4 int
+    storage_service: StorageService
+- services:
+    StorageService: postnotification.StorageService
+- datastores:
+    notifications_queue: Queue
+
+StorageService:
+- fields:
+    analytics_queue: Queue
+    analytics_service: AnalyticsService
+    media_service: MediaService
+    posts_cache: Cache
+    posts_db: NoSQLDatabase
+- services:
+    AnalyticsService: postnotification.AnalyticsService
+    MediaService: postnotification.MediaService
+- datastores:
+    analytics_queue: Queue
+    posts_cache: Cache
+    posts_db: NoSQLDatabase
+
+UploadService:
+- fields:
+    media_service: MediaService
+    notifications_queue: Queue
+    storage_service: StorageService
+    timeline_cache: Cache
+- services:
+    MediaService: postnotification.MediaService
+    StorageService: postnotification.StorageService
+- datastores:
+    notifications_queue: Queue
+    timeline_cache: Cache

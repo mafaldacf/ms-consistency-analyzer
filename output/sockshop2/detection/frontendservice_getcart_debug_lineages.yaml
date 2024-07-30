@@ -1,0 +1,11 @@
+mode: DEBUG_LINEAGES
+
+number_inconsistencies: 0
+
+xcy_inconsistencies: []
+
+xcy_lineages:
+- _id: 0
+  _operations: []
+  lineage_dependencies: []
+  missing_dependencies: []

@@ -56,6 +56,36 @@ func (vinfo *VariableInfo) GetAllDataflowsForDatastore(datastore string) []*Data
 	return dataflows
 }
 
+func (vinfo *VariableInfo) GetAllReadDataflowsForDatastore(datastore string) []*Dataflow {
+	var dataflows []*Dataflow
+	for _, df := range vinfo.Dataflows {
+		if df.IsOpInDatastore(datastore) && !df.IsWriteOp() {
+			dataflows = append(dataflows, df)
+		}
+	}
+	for _, df := range vinfo.IndirectDataflows {
+		if df.IsOpInDatastore(datastore) && !df.IsWriteOp() {
+			dataflows = append(dataflows, df)
+		}
+	}
+	return dataflows
+}
+
+func (vinfo *VariableInfo) GetAllWriteDataflowsForDatastore(datastore string) []*Dataflow {
+	var dataflows []*Dataflow
+	for _, df := range vinfo.Dataflows {
+		if df.IsOpInDatastore(datastore) && df.IsWriteOp() {
+			dataflows = append(dataflows, df)
+		}
+	}
+	for _, df := range vinfo.IndirectDataflows {
+		if df.IsOpInDatastore(datastore) && df.IsWriteOp() {
+			dataflows = append(dataflows, df)
+		}
+	}
+	return dataflows
+}
+
 func (vinfo *VariableInfo) GetAllWriteDataflows() []*Dataflow {
 	var dataflows []*Dataflow
 	for _, df := range vinfo.Dataflows {

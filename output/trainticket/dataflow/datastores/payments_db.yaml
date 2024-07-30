@@ -1,0 +1,7 @@
+PAYMENTS_DB.Payment:
+- write <payment payment.Payment struct{ID string, OrderID string, UserID string, Price string} (StructVariable)>
+- write <payment payment.Payment struct{ID string, OrderID string, UserID string, Price string} (StructVariable)> from <payment payment.Payment struct{ID string, OrderID string, UserID string, Price string} (StructVariable)>
+
+PAYMENTS_DB.Payment.ID:
+- write <ID string (BasicVariable)> from <payment payment.Payment struct{ID string, OrderID string, UserID string, Price string} (StructVariable)>
+- write <ID string (FieldVariable)> from <payment payment.Payment struct{ID string, OrderID string, UserID string, Price string} (StructVariable)>

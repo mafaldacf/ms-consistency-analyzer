@@ -1,0 +1,10 @@
+ANALYTICS_QUEUE.AnalyticsMessage:
+- write <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+
+ANALYTICS_QUEUE.AnalyticsMessage.ProductCategory:
+- write <Category string (BasicVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ref <ProductCategory interface{}> @ AnalyticsService (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ProductCategory interface{} (InterfaceVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ProductCategory string (FieldVariable)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>
+- write <ref <ProductCategory interface{}> @ AnalyticsService (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructVariable)>

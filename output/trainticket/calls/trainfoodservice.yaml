@@ -1,0 +1,17 @@
+(*TrainFoodServiceImpl).Cleanup(ctx context.Context):
+- NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D) interface{}
+
+(*TrainFoodServiceImpl).CreateTrainFood(ctx context.Context, tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}})
+:
+	- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = priceConfig, collection = priceConfig}, interface{})
+  - NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
+  - NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{})
+    (err, interface{})
+
+(*TrainFoodServiceImpl).ListTrainFood(ctx context.Context):
+- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = priceConfig, collection = priceConfig}, interface{})
+
+(*TrainFoodServiceImpl).ListTrainFoodByTripID(ctx context.Context, tripid string):
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = priceConfig, collection = priceConfig}, interface{})
+
+.NewTrainFoodServiceImpl(ctx context.Context, db NoSQLDatabase): []

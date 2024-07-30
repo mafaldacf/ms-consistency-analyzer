@@ -1,0 +1,25 @@
+ROUTE_DB.Route:
+- write <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+- write <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+
+ROUTE_DB.Route.Distances:
+- write <distances []int64 (ArrayVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+- write <Distances []int64 (FieldVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+
+ROUTE_DB.Route.EndStation:
+- write <EndStation string (BasicVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+- write <EndStation string (FieldVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+
+ROUTE_DB.Route.ID:
+- write <string (BasicVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+- write <ID string (FieldVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+
+ROUTE_DB.Route.StartStation:
+- write <StartStation string (BasicVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+- write <StartStation string (FieldVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+
+ROUTE_DB.Route.Stations:
+- write <stations []string (SliceVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+- write <StationList string (BasicVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+- write <"," string (BasicVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>
+- write <Stations []string (FieldVariable)> from <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} (StructVariable)>

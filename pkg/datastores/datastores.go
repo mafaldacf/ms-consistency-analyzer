@@ -69,6 +69,9 @@ func (ds *Datastore) MarshalJSON() ([]byte, error) {
 	})
 }
 
+func (ds *Datastore) GetName() string {
+	return ds.Name
+}
 func (ds *Datastore) IsSQL() bool {
 	return ds.GetTypeString() == "SQL"
 }

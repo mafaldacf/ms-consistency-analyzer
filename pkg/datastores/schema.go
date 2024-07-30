@@ -13,33 +13,27 @@ type Schema struct {
 	ForeignKeys    []*ForeignEntry `json:"foreign_keys"`
 }
 
-func (s *Schema) AddField(name string, t string, id int64, datastore string) Field {
-	e := &Entry{
+func CreateEntry(name string, t string, id int64, datastore *Datastore) *Entry {
+	return &Entry{
 		Name:      name,
 		Type:      t,
 		Id:        id,
 		Datastore: datastore,
 	}
+}
+
+func (s *Schema) AddField(name string, t string, id int64, datastore *Datastore) Field {
+	e := CreateEntry(name, t, id, datastore)
 	s.Fields = append(s.Fields, e)
 	return e
 }
-func (s *Schema) AddUnfoldedFieldWithId(name string, t string, id int64, datastore string) Field {
-	e := &Entry{
-		Name:      name,
-		Type:      t,
-		Id:        id,
-		Datastore: datastore,
-	}
+
+func (s *Schema) AddUnfoldedField(name string, t string, id int64, datastore *Datastore) Field {
+	e := CreateEntry(name, t, id, datastore)
 	s.UnfoldedFields = append(s.UnfoldedFields, e)
 	return e
 }
-func (s *Schema) AddUnfoldedField(name string, t string, datastore string) {
-	s.UnfoldedFields = append(s.UnfoldedFields, &Entry{
-		Datastore: datastore,
-		Name:      name,
-		Type:      t,
-	})
-}
+
 func (s *Schema) AddForeignReferenceToField(current Field, reference Field) {
 	if !slices.Contains(current.(*Entry).References, reference) {
 		current.(*Entry).References = append(current.(*Entry).References, reference)
@@ -61,43 +55,6 @@ func (s *Schema) String() string {
 		}
 	}
 	return str + "}"
-}
-
-func (s *Schema) AddKey(name string, t string, id int64) Field {
-	k := &Key{
-		Name: name,
-		Type: t,
-		Id:   id,
-	}
-	s.Fields = append(s.Fields, k)
-	return k
-}
-func (s *Schema) AddFKReference(name string, t string, reference Field, datastore string) {
-	for _, fk := range s.ForeignKeys {
-		if fk.Name == name && fk.Datastore == datastore && fk.Reference.GetName() == reference.GetName() {
-			logger.Logger.Debugf("[SCHEMA] found existing foreign key for name %s, type %s and datastore %s with reference %s", name, t, datastore, reference.String())
-			return
-		}
-	}
-
-	entry := &ForeignEntry{
-		Name:      name,
-		Type:      t,
-		Reference: reference,
-		Datastore: datastore,
-	}
-	s.ForeignKeys = append(s.ForeignKeys, entry)
-	logger.Logger.Infof("added foreign reference (%s, %s)", name, entry.GetReferenceName())
-}
-func (s *Schema) AddEntry(name string, t string, id int64, datastore string) Field {
-	e := &Entry{
-		Name:      name,
-		Type:      t,
-		Id:        id,
-		Datastore: datastore,
-	}
-	s.Fields = append(s.Fields, e)
-	return e
 }
 
 func (s *Schema) GetRootUnfoldedField() Field {
@@ -154,26 +111,26 @@ type Field interface {
 	GetDatastore() string
 }
 type Key struct {
-	Field     `json:"-"`
-	Name      string `json:"name"`
-	Type      string `json:"type"`
-	Datastore string `json:"datastore"`
+	Field
+	Name      string
+	Type      string
+	Datastore *Datastore
 	Id        int64
 }
 type Entry struct {
-	Field      `json:"-"`
-	Name       string  `json:"name"`
-	Type       string  `json:"type"`
-	Datastore  string  `json:"datastore"`
-	References []Field `json:"references"`
+	Field
+	Name       string
+	Type       string
+	Datastore  *Datastore
+	References []Field
 	Id         int64
 }
 type ForeignEntry struct {
-	Field     `json:"-"`
-	Name      string `json:"name"`
-	Type      string `json:"type"`
-	Reference Field  `json:"reference"`
-	Datastore string `json:"datastore"`
+	Field
+	Name      string
+	Type      string
+	Reference Field
+	Datastore *Datastore
 	Id        int64
 }
 
@@ -182,10 +139,10 @@ func (f *Key) GetName() string {
 	return f.Name
 }
 func (f *Key) GetDatastore() string {
-	return f.Datastore
+	return f.Datastore.GetName()
 }
 func (f *Key) GetFullName() string {
-	return strings.ToUpper(f.Datastore) + "." + f.Name
+	return strings.ToUpper(f.Datastore.GetName()) + "." + f.Name
 }
 func (f *Key) GetType() string {
 	return f.Type
@@ -202,10 +159,10 @@ func (f *Entry) GetName() string {
 	return f.Name
 }
 func (f *Entry) GetDatastore() string {
-	return f.Datastore
+	return f.Datastore.GetName()
 }
 func (f *Entry) GetFullName() string {
-	return strings.ToUpper(f.Datastore) + "." + f.Name
+	return strings.ToUpper(f.Datastore.GetName()) + "." + f.Name
 }
 func (f *Entry) GetType() string {
 	return f.Type
@@ -222,10 +179,10 @@ func (f *ForeignEntry) GetName() string {
 	return f.Name
 }
 func (f *ForeignEntry) GetDatastore() string {
-	return f.Datastore
+	return f.Datastore.GetName()
 }
 func (f *ForeignEntry) GetFullName() string {
-	return strings.ToUpper(f.Datastore) + "." + f.Name
+	return strings.ToUpper(f.Datastore.GetName()) + "." + f.Name
 }
 func (f *ForeignEntry) GetType() string {
 	return f.Type
@@ -237,5 +194,5 @@ func (f *ForeignEntry) HasId(id int64) bool {
 	return f.Id == id
 }
 func (f *ForeignEntry) GetReferenceName() string {
-	return f.Datastore + "." + f.GetName()
+	return f.Datastore.GetName() + "." + f.GetName()
 }

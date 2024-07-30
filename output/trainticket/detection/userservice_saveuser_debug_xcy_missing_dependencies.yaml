@@ -1,0 +1,10 @@
+mode: DEBUG_XCY_MISSING_DEPENDENCIES
+
+number_inconsistencies: 0
+
+xcy_inconsistencies: []
+
+xcy_lineages:
+- _id: 0
+  _operations:
+  - (0, 0) write(user_db, user, user) @ UserService

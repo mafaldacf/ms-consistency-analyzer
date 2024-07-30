@@ -1,0 +1,25 @@
+(*UploadServiceImpl).ReadPostMedia(ctx context.Context, reqID int64, postID int64):
+- (*postnotification.StorageServiceImpl).ReadMedia(ctx context.Context, reqID int64, postID int64) (postnotification.Media struct{MediaID int64, PostID int64, Content string}, error)
+
+(*UploadServiceImpl).UploadPost(ctx context.Context, username string, text string):
+- (*postnotification.MediaServiceImpl).StoreMedia(ctx context.Context, media postnotification.Media struct{MediaID int64, PostID int64, Content string}) error
+- (*postnotification.StorageServiceImpl).StorePostCache(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}) error
+- (*postnotification.StorageServiceImpl).StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}) error
+- Queue.Push(ctx context.Context, item interface{}) (err, interface{})
+- Cache.Put(ctx context.Context, key string, value interface{}) interface{}
+
+.NewAnalyticsServiceImpl(ctx context.Context, analytics_db NoSQLDatabase, analytics_queue Queue): []
+
+.NewMediaServiceImpl(ctx context.Context, media_db NoSQLDatabase): []
+
+.NewNotifyServiceImpl(ctx context.Context, storage_service postnotification.StorageService, notifications_queue Queue): []
+
+.NewStorageServiceImpl(ctx context.Context, analytics_service postnotification.AnalyticsService, media_service postnotification.MediaService, posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue)
+:
+ []
+
+.NewTimelineServiceImpl(ctx context.Context, storage_service postnotification.StorageService, timeline_cache Cache): []
+
+.NewUploadServiceImpl(ctx context.Context, storage_service postnotification.StorageService, media_service postnotification.MediaService, notifications_queue Queue, timeline_cache Cache)
+:
+ []

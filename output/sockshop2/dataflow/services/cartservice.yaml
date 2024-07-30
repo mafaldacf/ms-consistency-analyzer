@@ -1,0 +1,157 @@
+(*cartImpl).AddItem(ctx context.Context, customerID string, item cart.Item struct{ID string, Quantity int, UnitPrice float32}):
+  block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) cart.cartImpl struct{db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*cart.cartImpl struct{db NoSQLDatabase})'
+  - '[15] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[15] (InterfaceVariable UserType) ctx context.Context'
+  - '[17] (inline) (Reference BasicType) ref <sessionID string> @ FrontendService'
+  - '[-1] (BasicVariable BasicType) customerID string'
+  - '[20] (inline) (BasicVariable BasicType) Price float32'
+  - '[19] (inline) (FieldVariable FieldType) UnitPrice float32'
+  - '[24] (inline) (BasicVariable BasicType) 1 int'
+  - '[23] (inline) (FieldVariable FieldType) Quantity 1 int'
+  - '[22] (inline) (BasicVariable BasicType) ID string'
+  - '[21] (inline) (FieldVariable FieldType) ID string'
+  - '[18] (inline) (Reference UserType) ref <cart.Item struct{ID string, Quantity
+    int, UnitPrice float32}> @ FrontendService'
+  - '[0] (StructVariable UserType) item cart.Item struct{ID string, Quantity int,
+    UnitPrice float32}'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+    {database = cart, collection = carts}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+  - '[0] (inline) (FieldVariable FieldType) ID string'
+  - '[0] (inline) (StructVariable UserType) cart.cart struct{ID string, Items []cart.Item
+    struct{ID string, Quantity int, UnitPrice float32}}'
+  - '[-1] (AddressVariable AddressType) cart (&cart.cart struct{ID string, Items []cart.Item
+    struct{ID string, Quantity int, UnitPrice float32}})'
+
+(*cartImpl).DeleteCart(ctx context.Context, customerID string):
+  block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) cart.cartImpl struct{db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*cart.cartImpl struct{db NoSQLDatabase})'
+  - '[64] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[25] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[30] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[65] (inline) (Reference BasicType) ref <sessionID string> @ FrontendService'
+  - |-
+    [26] (inline) (Reference BasicType) ref <userID string> @ FrontendService -->
+       w-tainted 3x: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.CustomerID)
+  - |-
+    [32] (inline) (Reference BasicType) ref <customerID string> @ OrderService -->
+       w-tainted 3x: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.CustomerID)
+  - '[-1] (BasicVariable BasicType) customerID string'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+    {database = cart, collection = carts}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+
+(*cartImpl).GetCart(ctx context.Context, customerID string):
+  block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) cart.cartImpl struct{db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*cart.cartImpl struct{db NoSQLDatabase})'
+  - '[25] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[30] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
+  - '[10] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[29] (inline) (Reference BasicType) ref <cartID string> @ FrontendService'
+  - '[31] (inline) (Reference BasicType) ref <cartID string> @ OrderService'
+  - '[11] (inline) (Reference BasicType) ref <sessionID string> @ FrontendService'
+  - '[-1] (BasicVariable BasicType) customerID string'
+  - '[0] (inline) (FieldVariable FieldType) ID string'
+  - '[0] (inline) (StructVariable UserType) cart.cart struct{ID string, Items []cart.Item
+    struct{ID string, Quantity int, UnitPrice float32}}'
+  - '[-1] (AddressVariable AddressType) cart (&cart.cart struct{ID string, Items []cart.Item
+    struct{ID string, Quantity int, UnitPrice float32}})'
+
+(*cartImpl).GetItem(ctx context.Context, customerID string, itemID string):
+  block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) cart.cartImpl struct{db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*cart.cartImpl struct{db NoSQLDatabase})'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BasicVariable BasicType) customerID string'
+  - '[-1] (BasicVariable BasicType) itemID string'
+
+(*cartImpl).MergeCarts(ctx context.Context, customerID string, sessionID string):
+  block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) cart.cartImpl struct{db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*cart.cartImpl struct{db NoSQLDatabase})'
+  - '[71] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[44] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[71] (InterfaceVariable UserType) ctx context.Context'
+  - '[77] (inline) (Reference BasicType) ref <userID string> @ FrontendService'
+  - '[47] (inline) (Reference BasicType) ref <UserID string> @ FrontendService'
+  - '[-1] (BasicVariable BasicType) customerID string'
+  - '[78] (inline) (Reference BasicType) ref <sessionID string> @ FrontendService'
+  - '[48] (inline) (Reference BasicType) ref <sessionID string> @ FrontendService'
+  - '[-1] (BasicVariable BasicType) sessionID string'
+  - '[0] (inline) (FieldVariable FieldType) ID string'
+  - '[0] (inline) (StructVariable UserType) cart.cart struct{ID string, Items []cart.Item
+    struct{ID string, Quantity int, UnitPrice float32}}'
+  - '[-1] (AddressVariable AddressType) cart (&cart.cart struct{ID string, Items []cart.Item
+    struct{ID string, Quantity int, UnitPrice float32}})'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+    {database = cart, collection = carts}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+
+(*cartImpl).RemoveItem(ctx context.Context, customerID string, itemID string):
+  block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) cart.cartImpl struct{db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*cart.cartImpl struct{db NoSQLDatabase})'
+  - '[12] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[13] (inline) (Reference BasicType) ref <sessionID string> @ FrontendService'
+  - '[-1] (BasicVariable BasicType) customerID string'
+  - '[14] (inline) (Reference BasicType) ref <itemID string> @ FrontendService'
+  - '[-1] (BasicVariable BasicType) itemID string'
+  - '[0] (inline) (FieldVariable FieldType) ID string'
+  - '[0] (inline) (StructVariable UserType) cart.cart struct{ID string, Items []cart.Item
+    struct{ID string, Quantity int, UnitPrice float32}}'
+  - '[-1] (AddressVariable AddressType) cart (&cart.cart struct{ID string, Items []cart.Item
+    struct{ID string, Quantity int, UnitPrice float32}})'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+    {database = cart, collection = carts}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+
+(*cartImpl).UpdateItem(ctx context.Context, customerID string, item cart.Item struct{ID string, Quantity int, UnitPrice float32})
+:
+ block 0 (Body):
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[0] (inline) (StructVariable UserType) cart.cartImpl struct{db NoSQLDatabase}'
+  - '[-1] (PointerVariable PointerType) s (*cart.cartImpl struct{db NoSQLDatabase})'
+  - '[49] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[49] (InterfaceVariable UserType) ctx context.Context'
+  - '[51] (inline) (Reference BasicType) ref <sessionID string> @ FrontendService'
+  - '[-1] (BasicVariable BasicType) customerID string'
+  - '[58] (inline) (BasicVariable BasicType) Price float32'
+  - '[57] (inline) (FieldVariable FieldType) UnitPrice float32'
+  - '[56] (inline) (BasicVariable BasicType) quantity int'
+  - '[55] (inline) (FieldVariable FieldType) Quantity int'
+  - '[54] (inline) (BasicVariable BasicType) ID string'
+  - '[53] (inline) (FieldVariable FieldType) ID string'
+  - '[52] (inline) (Reference UserType) ref <cart.Item struct{ID string, Quantity
+    int, UnitPrice float32}> @ FrontendService'
+  - '[0] (StructVariable UserType) item cart.Item struct{ID string, Quantity int,
+    UnitPrice float32}'
+  - '[0] (inline) (FieldVariable FieldType) ID string'
+  - '[0] (inline) (ArrayVariable ArrayType) []cart.Item struct{ID string, Quantity
+    int, UnitPrice float32}'
+  - '[0] (inline) (FieldVariable FieldType) Items []cart.Item struct{ID string, Quantity
+    int, UnitPrice float32}'
+  - '[0] (inline) (StructVariable UserType) cart.cart struct{ID string, Items []cart.Item
+    struct{ID string, Quantity int, UnitPrice float32}}'
+  - '[-1] (AddressVariable AddressType) cart (&cart.cart struct{ID string, Items []cart.Item
+    struct{ID string, Quantity int, UnitPrice float32}})'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+    {database = cart, collection = carts}'
+  - '[-1] (InterfaceVariable UserType) _ .error'
+
+.NewCartService(ctx context.Context, db NoSQLDatabase):
+  block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'

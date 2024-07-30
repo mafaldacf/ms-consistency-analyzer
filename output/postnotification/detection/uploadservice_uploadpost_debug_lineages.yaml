@@ -1,0 +1,100 @@
+mode: DEBUG_LINEAGES
+
+number_inconsistencies: 0
+
+xcy_inconsistencies: []
+
+xcy_lineages:
+- _id: 0
+  _operations:
+  - _operation: (0, 0) write(media_db, media, media) @ MediaService
+    visible_dependency_set: []
+  - _operation: (0, 1) write(posts_cache, postIDStr, post) @ StorageService
+    visible_dependency_set:
+    - (0, 0) write(media_db, media, media) @ MediaService
+  - _operation: (0, 2) write(posts_db, post, post) @ StorageService
+    visible_dependency_set:
+    - (0, 0) write(media_db, media, media) @ MediaService
+    - (0, 1) write(posts_cache, postIDStr, post) @ StorageService
+  - _operation: (0, 3) write(analytics_queue, message, message) @ StorageService
+    visible_dependency_set:
+    - (0, 0) write(media_db, media, media) @ MediaService
+    - (0, 1) write(posts_cache, postIDStr, post) @ StorageService
+    - (0, 2) write(posts_db, post, post) @ StorageService
+  - _operation: (0, 4) write(notifications_queue, message, message) @ UploadService
+    visible_dependency_set:
+    - (0, 0) write(media_db, media, media) @ MediaService
+    - (0, 1) write(posts_cache, postIDStr, post) @ StorageService
+    - (0, 2) write(posts_db, post, post) @ StorageService
+    - (0, 3) write(analytics_queue, message, message) @ StorageService
+  - _operation: (0, 5) write(timeline_cache, reqIDStr, timeline) @ UploadService
+    visible_dependency_set:
+    - (0, 0) write(media_db, media, media) @ MediaService
+    - (0, 1) write(posts_cache, postIDStr, post) @ StorageService
+    - (0, 2) write(posts_db, post, post) @ StorageService
+    - (0, 3) write(analytics_queue, message, message) @ StorageService
+    - (0, 4) write(notifications_queue, message, message) @ UploadService
+  lineage_dependencies:
+  - (0, 5) write(timeline_cache, reqIDStr, timeline) @ UploadService
+  - (0, 4) write(notifications_queue, message, message) @ UploadService
+  - (0, 3) write(analytics_queue, message, message) @ StorageService
+  - (0, 2) write(posts_db, post, post) @ StorageService
+  - (0, 1) write(posts_cache, postIDStr, post) @ StorageService
+  - (0, 0) write(media_db, media, media) @ MediaService
+  missing_dependencies: []
+- _id: 1
+  _operations:
+  - _operation: (1, 0) read(analytics_queue, event, event) @ AnalyticsService
+    visible_dependency_set:
+    - (0, 0) write(media_db, media, media) @ MediaService
+    - (0, 1) write(posts_cache, postIDStr, post) @ StorageService
+    - (0, 2) write(posts_db, post, post) @ StorageService
+    - (0, 3) write(analytics_queue, message, message) @ StorageService
+  - _operation: (1, 1) write(analytics_db, analytics, analytics) @ AnalyticsService
+    visible_dependency_set:
+    - (0, 0) write(media_db, media, media) @ MediaService
+    - (0, 1) write(posts_cache, postIDStr, post) @ StorageService
+    - (0, 2) write(posts_db, post, post) @ StorageService
+    - (0, 3) write(analytics_queue, message, message) @ StorageService
+  lineage_dependencies:
+  - (1, 1) write(analytics_db, analytics, analytics) @ AnalyticsService
+  - (0, 5) write(timeline_cache, reqIDStr, timeline) @ UploadService
+  - (0, 4) write(notifications_queue, message, message) @ UploadService
+  - (0, 3) write(analytics_queue, message, message) @ StorageService
+  - (0, 2) write(posts_db, post, post) @ StorageService
+  - (0, 1) write(posts_cache, postIDStr, post) @ StorageService
+  - (0, 0) write(media_db, media, media) @ MediaService
+  missing_dependencies: []
+- _id: 2
+  _operations:
+  - _operation: (2, 0) read(notifications_queue, event, event) @ NotifyService
+    visible_dependency_set:
+    - (0, 0) write(media_db, media, media) @ MediaService
+    - (0, 1) write(posts_cache, postIDStr, post) @ StorageService
+    - (0, 2) write(posts_db, post, post) @ StorageService
+    - (0, 3) write(analytics_queue, message, message) @ StorageService
+    - (0, 4) write(notifications_queue, message, message) @ UploadService
+  - _operation: (2, 1) read(posts_db, query, result) @ StorageService
+    visible_dependency_set:
+    - (0, 0) write(media_db, media, media) @ MediaService
+    - (0, 1) write(posts_cache, postIDStr, post) @ StorageService
+    - (0, 2) write(posts_db, post, post) @ StorageService
+    - (0, 3) write(analytics_queue, message, message) @ StorageService
+    - (0, 4) write(notifications_queue, message, message) @ UploadService
+  - _operation: (2, 2) read(analytics_db, query, result) @ AnalyticsService
+    visible_dependency_set:
+    - (0, 0) write(media_db, media, media) @ MediaService
+    - (0, 1) write(posts_cache, postIDStr, post) @ StorageService
+    - (0, 2) write(posts_db, post, post) @ StorageService
+    - (0, 3) write(analytics_queue, message, message) @ StorageService
+    - (0, 4) write(notifications_queue, message, message) @ UploadService
+  lineage_dependencies:
+  - (0, 5) write(timeline_cache, reqIDStr, timeline) @ UploadService
+  - (0, 4) write(notifications_queue, message, message) @ UploadService
+  - (0, 3) write(analytics_queue, message, message) @ StorageService
+  - (0, 2) write(posts_db, post, post) @ StorageService
+  - (0, 1) write(posts_cache, postIDStr, post) @ StorageService
+  - (0, 0) write(media_db, media, media) @ MediaService
+  missing_dependencies:
+  - (1, 0) read(analytics_queue, event, event) @ AnalyticsService
+  - (1, 1) write(analytics_db, analytics, analytics) @ AnalyticsService

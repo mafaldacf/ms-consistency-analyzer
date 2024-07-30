@@ -1,0 +1,22 @@
+(*MediaServiceImpl).ReadMedia(ctx context.Context, mediaID int64):
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = analytics_db, collection = analytics_collection}, interface{})
+
+(*MediaServiceImpl).StoreMedia(ctx context.Context, media postnotification.Media struct{MediaID int64, PostID int64, Content string})
+:
+	- NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
+
+.NewAnalyticsServiceImpl(ctx context.Context, analytics_db NoSQLDatabase, analytics_queue Queue): []
+
+.NewMediaServiceImpl(ctx context.Context, media_db NoSQLDatabase): []
+
+.NewNotifyServiceImpl(ctx context.Context, storage_service postnotification.StorageService, notifications_queue Queue): []
+
+.NewStorageServiceImpl(ctx context.Context, analytics_service postnotification.AnalyticsService, media_service postnotification.MediaService, posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue)
+:
+ []
+
+.NewTimelineServiceImpl(ctx context.Context, storage_service postnotification.StorageService, timeline_cache Cache): []
+
+.NewUploadServiceImpl(ctx context.Context, storage_service postnotification.StorageService, media_service postnotification.MediaService, notifications_queue Queue, timeline_cache Cache)
+:
+ []

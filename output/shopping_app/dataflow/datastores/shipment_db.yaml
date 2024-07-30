@@ -1,0 +1,23 @@
+SHIPMENT_DB.Shipment:
+- write <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+
+SHIPMENT_DB.Shipment.OrderID:
+- write <OrderID string (BasicVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <ref <OrderID string> @ ShipmentService (Reference)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <OrderID string (FieldVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <OrderID string (BasicVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <OrderID interface{} (InterfaceVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <OrderID string (FieldVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+
+SHIPMENT_DB.Shipment.Status:
+- write <"pending" string (BasicVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <Status "pending" string (FieldVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+
+SHIPMENT_DB.Shipment.UserID:
+- write <UserID string (BasicVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <ref <UserID string> @ ShipmentService (Reference)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <UserID string (FieldVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <UserID string (BasicVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <UserID interface{} (InterfaceVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>
+- write <UserID string (FieldVariable)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} (StructVariable)>

@@ -111,12 +111,12 @@ func (graph *AbstractGraph) dumpDiGraph() {
 		sortEdges(edges)
 		sortNodes(nodes)
 		outputGraph := digraph{Nodes: nodes, Edges: edges}
-		utils.DumpToJSONFile(outputGraph, graph.AppName, fmt.Sprintf("digraphs/per_requests/trace_%s_%s", strings.ToLower(n.GetCallee()), strings.ToLower(n.GetName())))
+		utils.DumpToJSONFile(outputGraph, graph.AppName, fmt.Sprintf("graphs/per_requests/out/trace_%s_%s", strings.ToLower(n.GetCallee()), strings.ToLower(n.GetName())))
 	}
 	
 	sortEdges(global_edges)
 	sortNodes(global_nodes)
 	outputGraph := digraph{Nodes: global_nodes, Edges: global_edges}
-	utils.DumpToJSONFile(outputGraph, graph.AppName, "digraphs/call_graph")
+	utils.DumpToJSONFile(outputGraph, graph.AppName, "graphs/global/out/call_graph")
 
 }

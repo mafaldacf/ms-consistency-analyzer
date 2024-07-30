@@ -1,0 +1,3 @@
+SHIPMENT_QUEUE.ShipmentMessage:
+- write <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>
+- write <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)> from <shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} (StructVariable)>

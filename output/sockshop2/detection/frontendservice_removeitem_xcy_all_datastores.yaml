@@ -1,0 +1,10 @@
+mode: XCY_ALL_DATASTORES
+
+number_inconsistencies: 0
+
+xcy_inconsistencies: []
+
+xcy_lineages:
+- _id: 0
+  _operations:
+  - (0, 0) write(cart_db, , cart) @ CartService

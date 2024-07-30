@@ -3,12 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
-
-	"gopkg.in/yaml.v2"
+	"time"
 
 	"analyzer/pkg/abstractgraph"
 	"analyzer/pkg/app"
-	"analyzer/pkg/detector"
+	"analyzer/pkg/detection"
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 )
@@ -16,16 +15,31 @@ import (
 func main() {
 
 	appName := flag.String("app", "", "The name of the application to be analyzed")
+	allFlag := flag.String("all", "", "Run analyzer for all applications ('postnotification', 'shopping_app', 'sockshop2', 'trainticket')")
 	flag.Parse()
-	switch *appName {
-	case "postnotification", "foobar", "sockshop2", "trainticket", "shopping_app", "dsb_hotel", "dsb_sn":
-	default:
-		logger.Logger.Fatal(fmt.Sprintf("invalid app name (%s) must provide an application name ('postnotification' or 'foobar') using the -app flag", *appName))
+	if *allFlag == "true" || *allFlag == "True" || *allFlag == "1" {
+		var apps = []string{"trainticket", "postnotification", "shopping_app", "sockshop2"}
+		for _, app := range apps {
+			logger.Logger.Infof(fmt.Sprintf("running analyzer for '%s'...", app))
+			time.Sleep(1500 * time.Millisecond)
+			initAnalyzer(app)
+			fmt.Println()
+			fmt.Println()
+		}
+		return
 	}
+	switch *appName {
+	case "postnotification", "trainticket", "shopping_app", "sockshop2", "foobar", "dsb_hotel", "dsb_sn":
+	default:
+		logger.Logger.Fatal(fmt.Sprintf("invalid app name (%s) must provide an application name ('postnotification', 'trainticket', 'shopping_app', 'sockshop2', 'foobar', 'dsb_hotel', 'dsb_sn') using the -app flag", *appName))
+	}
+	initAnalyzer(*appName)
+}
 
-	servicesInfo, databaseInstances, frontends := blueprint.BuildBlueprintAppInfo(*appName)
+func initAnalyzer(appName string) {
+	servicesInfo, databaseInstances, frontends := blueprint.BuildBlueprintAppInfo(appName)
 
-	app, err := app.Init(*appName, fmt.Sprintf("examples/%s/workflow/%s", *appName, *appName))
+	app, err := app.Init(appName, fmt.Sprintf("examples/%s/workflow/%s", appName, appName))
 	if err != nil {
 		return
 	}
@@ -62,20 +76,33 @@ func main() {
 	fmt.Println(" -------------------------------------------------------------------------------------------------------------- ")
 	fmt.Println()
 
-	var requests []*detector.Request
-	detectionModes := detector.GetAllDetectioModes()
+	var detectors []*detection.Detector
+	allDatastoresOps := detection.NewDatastoreOps()
+
+	detectionModes := detection.GetAllDetectioModes()
 	for _, entryNode := range abstractGraph.Nodes {
 		for i, detectionMode := range detectionModes {
-			request := detector.InitRequest(entryNode, detectionMode)
-			fmt.Printf("\n\n------------------------- ENTRY NODE = %s -------------------------\n", entryNode.String())
-			fmt.Printf("------------------------- (%d/%d) XCY DETECTOR MODE = %s -------------------------\n\n", i+1, len(detectionModes), request.DetectionModeName())
-			request.InitTransversal()
-			requests = append(requests, request)
+			detector := detection.InitDetector(allDatastoresOps, detectionMode)
+			request := detector.InitRequest(entryNode)
+			fmt.Printf("\n\n-------------------- ENTRY NODE = %s.%s --------------------\n", entryNode.GetCallee(), entryNode.GetName())
+			fmt.Printf("-------------------- (%d/%d) XCY DETECTOR MODE = %s --------------------\n\n", i+1, len(detectionModes), detector.DetectionModeName())
+			detector.InitXCYRequestTransversal(request)
+			allDatastoresOps = detector.GetDatastoreOps()
+			detectors = append(detectors, detector)
+		}
+	}
+	fmt.Println()
+
+	for _, detector := range detectors {
+		detector.UpdateDatastoreOps(allDatastoresOps)
+		logger.Logger.Infof("MINIMIZING FOR DETECTOR %v", detector.Requests)
+		for _, request := range detector.GetRequests() {
+			detector.MinimizeDependecySets(request)
 		}
 	}
 
-	for _, request := range requests {
-		request.DumpToYAMLFile(app.Name)
+	for _, detector := range detectors {
+		detector.DumpYaml(app.Name)
 	}
 
 	/* fmt.Println()
@@ -95,11 +122,5 @@ func main() {
 	fmt.Println("-----------------------------------------------------------------------------------------------------------------")
 	fmt.Println()
 
-	for _, request := range requests {
-		if len(request.Inconsistencies) > 0 {
-			data, _ := yaml.Marshal(request.DumpYaml(false))
-			fmt.Println(string(data))
-			fmt.Println("----------------------------------------------------------")
-		}
-	}
+	//detector.PrintResults()
 }

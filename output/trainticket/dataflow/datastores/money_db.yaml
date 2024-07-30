@@ -1,0 +1,16 @@
+MONEY_DB.Money:
+- write <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>
+- write <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>
+  from <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>
+
+MONEY_DB.Money.ID:
+- write <string (BasicVariable)> from <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>
+- write <ID string (FieldVariable)> from <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>
+
+MONEY_DB.Money.Price:
+- write <Price string (BasicVariable)> from <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>
+- write <Price string (FieldVariable)> from <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>
+
+MONEY_DB.Money.UserID:
+- write <UserID string (BasicVariable)> from <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>
+- write <UserID string (FieldVariable)> from <m payment.Money struct{ID string, UserID string, Price string} (StructVariable)>

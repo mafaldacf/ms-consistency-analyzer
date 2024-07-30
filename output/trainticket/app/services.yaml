@@ -1,0 +1,99 @@
+AssuranceService:
+- fields:
+    db: NoSQLDatabase
+- services: {}
+- datastores:
+    assurance_db: NoSQLDatabase
+
+ConfigService:
+- fields:
+    db: NoSQLDatabase
+- services: {}
+- datastores:
+    config_db: NoSQLDatabase
+
+ConsignPriceService:
+- fields:
+    db: NoSQLDatabase
+- services: {}
+- datastores:
+    consignprice_db: NoSQLDatabase
+
+ContactsService:
+- fields:
+    contactsDB: NoSQLDatabase
+- services: {}
+- datastores:
+    contacts_db: NoSQLDatabase
+
+DeliveryService:
+- fields:
+    db: NoSQLDatabase
+    delQ: Queue
+- services: {}
+- datastores:
+    delivery_db: NoSQLDatabase
+    delivery_q: Queue
+
+NewsService:
+- fields: {}
+- services: {}
+- datastores: {}
+
+PaymentService:
+- fields:
+    moneyDB: NoSQLDatabase
+    paymentDB: NoSQLDatabase
+- services: {}
+- datastores:
+    money_db: NoSQLDatabase
+    payments_db: NoSQLDatabase
+
+PriceService:
+- fields:
+    priceDB: NoSQLDatabase
+- services: {}
+- datastores:
+    price_db: NoSQLDatabase
+
+RouteService:
+- fields:
+    db: NoSQLDatabase
+- services: {}
+- datastores:
+    route_db: NoSQLDatabase
+
+StationFoodService:
+- fields:
+    db: NoSQLDatabase
+- services: {}
+- datastores:
+    stationfood_db: NoSQLDatabase
+
+StationService:
+- fields:
+    stationDB: NoSQLDatabase
+- services: {}
+- datastores:
+    station_db: NoSQLDatabase
+
+TrainFoodService:
+- fields:
+    db: NoSQLDatabase
+- services: {}
+- datastores:
+    trainfood_db: NoSQLDatabase
+
+TrainService:
+- fields:
+    db: NoSQLDatabase
+- services: {}
+- datastores:
+    train_db: NoSQLDatabase
+
+UserService:
+- fields:
+    userDB: NoSQLDatabase
+- services: {}
+- datastores:
+    user_db: NoSQLDatabase

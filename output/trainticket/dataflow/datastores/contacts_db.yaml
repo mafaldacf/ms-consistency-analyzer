@@ -1,0 +1,16 @@
+CONTACTS_DB.Contact:
+- write <contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} (StructVariable)>
+- write <contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} (StructVariable)> from
+  <contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} (StructVariable)>
+
+CONTACTS_DB.Contact.AccountID:
+- write <AccountID string (BasicVariable)> from <contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} (StructVariable)>
+- write <AccountID string (FieldVariable)> from <contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} (StructVariable)>
+
+CONTACTS_DB.Contact.DocumentNumber:
+- write <DocumentNumber string (BasicVariable)> from <contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} (StructVariable)>
+- write <DocumentNumber string (FieldVariable)> from <contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} (StructVariable)>
+
+CONTACTS_DB.Contact.DocumentType:
+- write <DocumentType int (BasicVariable)> from <contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} (StructVariable)>
+- write <DocumentType int (FieldVariable)> from <contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} (StructVariable)>

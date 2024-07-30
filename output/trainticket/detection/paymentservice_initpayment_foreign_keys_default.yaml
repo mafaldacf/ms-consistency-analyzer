@@ -1,0 +1,11 @@
+mode: FOREIGN_KEYS_DEFAULT
+
+number_inconsistencies: 0
+
+xcy_inconsistencies: []
+
+xcy_lineages:
+- _id: 0
+  _operations:
+  - (0, 0) read(payments_db, , res) @ PaymentService
+  - (0, 1) write(payments_db, payment, payment) @ PaymentService

@@ -26,6 +26,22 @@ func (df *Dataflow) GetOpString() string {
 	return "read"
 }
 
+func (df *Dataflow) HasVariable(variable Variable) bool {
+	return df.Variable == variable
+}
+
+func (df *Dataflow) HasAnyVariable(variables []Variable) bool {
+	for _, v := range variables {
+		if df.Variable == v {
+			return true
+		}
+		if df.IndirectSource == v {
+			return true
+		}
+	}
+	return false
+}
+
 func (df *Dataflow) IsWriteOp() bool {
 	return df.Write
 }

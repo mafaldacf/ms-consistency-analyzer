@@ -1,0 +1,14 @@
+mode: DEBUG_LINEAGES
+
+number_inconsistencies: 0
+
+xcy_inconsistencies: []
+
+xcy_lineages:
+- _id: 0
+  _operations:
+  - _operation: (0, 0) write(price_db, query, pc) @ PriceService
+    visible_dependency_set: []
+  lineage_dependencies:
+  - (0, 0) write(price_db, query, pc) @ PriceService
+  missing_dependencies: []

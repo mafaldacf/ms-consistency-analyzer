@@ -1,0 +1,14 @@
+mode: DEBUG_XCY_MINIMIZE_DEPENDENCIES
+
+number_inconsistencies: 0
+
+xcy_inconsistencies: []
+
+xcy_lineages:
+- _id: 0
+  _operations:
+  - _operation: (0, 0) read(station_db, query, res) @ StationService
+    visible_dependency_set: []
+  - _operation: (0, 1) write(station_db, station, station) @ StationService
+    minimized_dependency_set (0 --> 0): []
+    visible_dependency_set: []

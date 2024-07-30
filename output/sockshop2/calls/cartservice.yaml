@@ -1,0 +1,23 @@
+(*cartImpl).AddItem(ctx context.Context, customerID string, item cart.Item struct{ID string, Quantity int, UnitPrice float32}):
+- NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}) (err, interface{})
+
+(*cartImpl).DeleteCart(ctx context.Context, customerID string):
+- NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D) interface{}
+
+(*cartImpl).GetCart(ctx context.Context, customerID string): []
+
+(*cartImpl).GetItem(ctx context.Context, customerID string, itemID string): []
+
+(*cartImpl).MergeCarts(ctx context.Context, customerID string, sessionID string):
+- NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}) (err, interface{})
+- NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D) interface{}
+
+(*cartImpl).RemoveItem(ctx context.Context, customerID string, itemID string):
+- NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}) (int, interface{})
+
+(*cartImpl).UpdateItem(ctx context.Context, customerID string, item cart.Item struct{ID string, Quantity int, UnitPrice float32})
+:
+	- NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{})
+    (err, interface{})
+
+.NewCartService(ctx context.Context, db NoSQLDatabase): []

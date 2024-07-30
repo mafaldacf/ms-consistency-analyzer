@@ -13,6 +13,8 @@ import (
 	"analyzer/pkg/logger"
 )
 
+const BASE_FOLDER = "output"
+
 // -----------------------
 // Yaml Formatting Helpers
 // -----------------------
@@ -41,8 +43,8 @@ func (lst *OrderedPropertyList) AddOrderedProperty(name string, prop interface{}
 // Dumpers
 // -------
 
-func DumpDebugFile(data string, appname string, filename string) {
-	path := fmt.Sprintf("assets/%s/%s.cpp", appname, filename)
+func DumpToDebugFile(data string, appname string, filename string) {
+	path := fmt.Sprintf("%s/%s/%s.cpp", BASE_FOLDER, appname, filename)
 	// ensure the directory exists
 	dir := filepath.Dir(path)
 	err := os.MkdirAll(dir, 0755)
@@ -57,7 +59,7 @@ func DumpDebugFile(data string, appname string, filename string) {
 }
 
 func DumpToJSONFile(data interface{}, appname string, filename string) {
-	path := fmt.Sprintf("assets/%s/%s.json", appname, filename)
+	path := fmt.Sprintf("%s/%s/%s.json", BASE_FOLDER, appname, filename)
 	// ensure the directory exists
 	dir := filepath.Dir(path)
 	err := os.MkdirAll(dir, 0755)
@@ -77,15 +79,38 @@ func DumpToJSONFile(data interface{}, appname string, filename string) {
 	logger.Logger.Tracef("[JSON] saved file %s", path)
 }
 
+func DeleteFolder(appname string, foldername string) {
+	path := fmt.Sprintf("%s/%s/%s", BASE_FOLDER, appname, foldername)
+	err := os.RemoveAll(path)
+	if err != nil {
+		logger.Logger.Fatalf("error deleting folder %s: %s", path, err.Error())
+	}
+	logger.Logger.Tracef("[UTILS] deleted folder %s", path)
+}
+
+func addNewLinesToYaml(input []byte) []byte {
+    lines := strings.Split(string(input), "\n")
+    
+    var result []string
+    for i, line := range lines {
+        if i > 0 && line != "" && !strings.HasPrefix(line, " ") && !strings.HasPrefix(line, "-") {
+            result = append(result, "")
+        }
+        result = append(result, line)
+    }
+    
+    return []byte(strings.Join(result, "\n"))
+}
+
 func DumpToYamlFile(data interface{}, appname string, filename string) {
 	yamlData, err := yaml.Marshal(data)
 	if err != nil {
 		logger.Logger.Fatalf("error marshalling yaml data")
 	}
 
-	yamlStr := fixYamlStrings(string(yamlData))
+	yamlStr := fixYamlStrings(string(addNewLinesToYaml(yamlData)))
 	//yamlStr := string(yamlData)
-	path := fmt.Sprintf("assets/%s/%s.yaml", appname, filename)
+	path := fmt.Sprintf("%s/%s/%s.yaml", BASE_FOLDER, appname, filename)
 
 	// ensure the directory exists
 	dir := filepath.Dir(path)

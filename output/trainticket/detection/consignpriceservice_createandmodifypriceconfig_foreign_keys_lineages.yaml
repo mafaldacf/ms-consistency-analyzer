@@ -1,0 +1,12 @@
+mode: FOREIGN_KEYS_LINEAGES
+
+number_inconsistencies: 0
+
+xcy_inconsistencies: []
+
+xcy_lineages:
+- _id: 0
+  _operations:
+  - (0, 0) read(consignprice_db, query, res) @ ConsignPriceService
+  - (0, 1) write(consignprice_db, , priceConfig) @ ConsignPriceService
+  - (0, 2) write(consignprice_db, priceConfig, priceConfig) @ ConsignPriceService

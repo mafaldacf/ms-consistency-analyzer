@@ -1,0 +1,32 @@
+STOCK_DB.Stock:
+- write <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+  from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+
+STOCK_DB.Stock.ProductID:
+- write <productID string (BasicVariable)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <ref <productID string> @ OrderService (Reference)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <productID string (BasicVariable)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <ref <productID string> @ Frontend (Reference)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <productID string (BasicVariable)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <productID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <productID string> @ Frontend (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <productID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <productID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <productID string> @ Frontend (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <productID string (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ProductID string (FieldVariable)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+
+STOCK_DB.Stock.Quantity:
+- write <quantity int (BasicVariable)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <ref <quantity int> @ OrderService (Reference)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <quantity int (BasicVariable)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <ref <quantity int> @ Frontend (Reference)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <quantity int (BasicVariable)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>
+- write <quantity int (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <quantity int> @ Frontend (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <quantity int (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <quantity int (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <ref <quantity int> @ Frontend (Reference)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <quantity int (BasicVariable)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructVariable)>
+- write <Quantity int (FieldVariable)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructVariable)>

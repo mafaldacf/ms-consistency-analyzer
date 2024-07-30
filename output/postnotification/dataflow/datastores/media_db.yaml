@@ -1,0 +1,31 @@
+MEDIA_DB.Media:
+- write <media postnotification.Media struct{MediaID int64, PostID int64, Content string} (StructVariable)>
+- write <media postnotification.Media struct{MediaID int64, PostID int64, Content string} (StructVariable)> from <media postnotification.Media struct{MediaID int64, PostID int64, Content string} (StructVariable)>
+- write <ref <media postnotification.Media struct{MediaID int64, PostID int64, Content string}> @ UploadService (Reference)> from <media postnotification.Media struct{MediaID int64, PostID int64, Content string} (StructVariable)>
+- write <media postnotification.Media struct{MediaID int64, PostID int64, Content string} (StructVariable)> from <media postnotification.Media struct{MediaID int64, PostID int64, Content string} (StructVariable)>
+
+MEDIA_DB.Media.Content:
+- write <"a nice content" string (BasicVariable)> from <media postnotification.Media struct{MediaID int64, PostID int64, Content string} (StructVariable)>
+- write <Content "a nice content" string (FieldVariable)> from <media postnotification.Media struct{MediaID int64, PostID int64, Content string} (StructVariable)>
+
+MEDIA_DB.Media.MediaID:
+- write <mediaID int64 (BasicVariable)> from <media postnotification.Media struct{MediaID int64, PostID int64, Content string} (StructVariable)>
+- write <MediaID int64 (FieldVariable)> from <media postnotification.Media struct{MediaID int64, PostID int64, Content string} (StructVariable)>
+
+MEDIA_DB.Media.PostID:
+- write <postID int64 (BasicVariable)> from <media postnotification.Media struct{MediaID int64, PostID int64, Content string} (StructVariable)>
+- write <ref <PostID interface{}> @ NotifyService (Reference)> from <media postnotification.Media struct{MediaID int64, PostID int64, Content string} (StructVariable)>
+- write <PostID interface{} (InterfaceVariable)> from <media postnotification.Media struct{MediaID int64, PostID int64, Content string} (StructVariable)>
+- write <postID int64 (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <ref <PostID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <PostID interface{} (InterfaceVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <PostID int64 (FieldVariable)> from <media postnotification.Media struct{MediaID int64, PostID int64, Content string} (StructVariable)>
+
+POSTS_DB.Post.PostID:
+- write <postID int64 (BasicVariable)> from <media postnotification.Media struct{MediaID int64, PostID int64, Content string} (StructVariable)>
+- write <ref <PostID interface{}> @ NotifyService (Reference)> from <media postnotification.Media struct{MediaID int64, PostID int64, Content string} (StructVariable)>
+- write <PostID interface{} (InterfaceVariable)> from <media postnotification.Media struct{MediaID int64, PostID int64, Content string} (StructVariable)>
+- write <postID int64 (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <ref <PostID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <PostID interface{} (InterfaceVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <PostID int64 (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>

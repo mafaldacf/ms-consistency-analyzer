@@ -1,0 +1,22 @@
+ANALYTICS_QUEUE.TriggerAnalyticsMessage:
+- write <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructVariable)>
+- write <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructVariable)>
+  from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructVariable)>
+
+ANALYTICS_QUEUE.TriggerAnalyticsMessage.PostID:
+- write <string (BasicVariable)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructVariable)>
+- write <PostID int64 (BasicVariable)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructVariable)>
+- write <ref <PostID int64> @ UploadService (Reference)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructVariable)>
+- write <PostID int64 (FieldVariable)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructVariable)>
+- write <postID int64 (BasicVariable)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructVariable)>
+- write <ref <PostID interface{}> @ NotifyService (Reference)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructVariable)>
+- write <PostID interface{} (InterfaceVariable)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructVariable)>
+- write <PostID int64 (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <PostID int64 (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <postID int64 (BasicVariable)> from <media postnotification.Media struct{MediaID int64, PostID int64, Content string} (StructVariable)>
+- write <ref <PostID interface{}> @ NotifyService (Reference)> from <media postnotification.Media struct{MediaID int64, PostID int64, Content string} (StructVariable)>
+- write <PostID interface{} (InterfaceVariable)> from <media postnotification.Media struct{MediaID int64, PostID int64, Content string} (StructVariable)>
+- write <postID int64 (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <ref <PostID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <PostID interface{} (InterfaceVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructVariable)>
+- write <PostID string (FieldVariable)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructVariable)>

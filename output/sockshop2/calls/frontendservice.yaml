@@ -1,0 +1,70 @@
+(*FrontendImpl).AddItem(ctx context.Context, sessionID string, itemID string):
+- (*catalogue.catalogueImpl).Get(ctx context.Context, id string) (catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}, error)
+- (*cart.cartImpl).AddItem(ctx context.Context, customerID string, item cart.Item struct{ID string, Quantity int, UnitPrice float32}) (cart.Item struct{ID string, Quantity int, UnitPrice float32}, error)
+
+(*FrontendImpl).DeleteCart(ctx context.Context, sessionID string):
+- (*cart.cartImpl).DeleteCart(ctx context.Context, customerID string) error
+
+(*FrontendImpl).GetAddress(ctx context.Context, addressID string):
+- (*user.userServiceImpl).GetAddresses(ctx context.Context, addressid string) ([]user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, error)
+
+(*FrontendImpl).GetCard(ctx context.Context, cardID string):
+- (*user.userServiceImpl).GetCards(ctx context.Context, cardid string) ([]user.Card struct{LongNum string, Expires string, CCV string, ID string}, error)
+
+(*FrontendImpl).GetCart(ctx context.Context, sessionID string):
+- (*cart.cartImpl).GetCart(ctx context.Context, customerID string) ([]cart.Item struct{ID string, Quantity int, UnitPrice float32}, error)
+
+(*FrontendImpl).GetOrder(ctx context.Context, orderID string):
+- (*order.orderImpl).GetOrder(ctx context.Context, orderID string) (order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status string}, Date string, Total float32}, error)
+
+(*FrontendImpl).GetOrders(ctx context.Context, userID string):
+- (*order.orderImpl).GetOrders(ctx context.Context, customerID string) ([]order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status string}, Date string, Total float32}, error)
+
+(*FrontendImpl).GetSock(ctx context.Context, itemID string):
+- (*catalogue.catalogueImpl).Get(ctx context.Context, id string) (catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}, error)
+
+(*FrontendImpl).GetUser(ctx context.Context, userID string):
+- (*user.userServiceImpl).GetUsers(ctx context.Context, userid string) ([]user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, error)
+
+(*FrontendImpl).ListItems(ctx context.Context, tags []string, order string, pageNum int, pageSize int):
+- (*catalogue.catalogueImpl).List(ctx context.Context, tags []string, order string, pageNum int, pageSize int) ([]catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}, error)
+
+(*FrontendImpl).ListTags(ctx context.Context):
+- (*catalogue.catalogueImpl).Tags(ctx context.Context) ([]string, error)
+
+(*FrontendImpl).LoadCatalogue(ctx context.Context):
+- (*catalogue.catalogueImpl).AddSock(ctx context.Context, sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}) (string, error)
+
+(*FrontendImpl).Login(ctx context.Context, sessionID string, username string, password string):
+- (*user.userServiceImpl).Login(ctx context.Context, username string, password string)
+  (user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, error)
+- (*cart.cartImpl).MergeCarts(ctx context.Context, customerID string, sessionID string)
+  error
+
+(*FrontendImpl).NewOrder(ctx context.Context, userID string, addressID string, cardID string, cartID string):
+- (*order.orderImpl).NewOrder(ctx context.Context, customerID string, addressID string, cardID string, cartID string) (order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status string}, Date string, Total float32}, error)
+
+(*FrontendImpl).PostAddress(ctx context.Context, userID string, address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string})
+:
+	- (*user.userServiceImpl).PostAddress(ctx context.Context, userid string, address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}) (string, error)
+
+(*FrontendImpl).PostCard(ctx context.Context, userID string, card user.Card struct{LongNum string, Expires string, CCV string, ID string})
+:
+	- (*user.userServiceImpl).PostCard(ctx context.Context, userid string, card user.Card struct{LongNum string, Expires string, CCV string, ID string}) (string, error)
+
+(*FrontendImpl).Register(ctx context.Context, sessionID string, username string, password string, email string, first string, last string)
+:
+	- (*user.userServiceImpl).Register(ctx context.Context, username string, password string, email string, first string, last string) (string, error)
+  - (*cart.cartImpl).MergeCarts(ctx context.Context, customerID string, sessionID string) error
+
+(*FrontendImpl).RemoveItem(ctx context.Context, sessionID string, itemID string):
+- (*cart.cartImpl).RemoveItem(ctx context.Context, customerID string, itemID string)
+  error
+
+(*FrontendImpl).UpdateItem(ctx context.Context, sessionID string, itemID string, quantity int):
+- (*catalogue.catalogueImpl).Get(ctx context.Context, id string) (catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}, error)
+- (*cart.cartImpl).UpdateItem(ctx context.Context, customerID string, item cart.Item struct{ID string, Quantity int, UnitPrice float32}) error
+
+.NewFrontend(ctx context.Context, user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService)
+:
+ []

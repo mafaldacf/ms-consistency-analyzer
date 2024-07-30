@@ -1,0 +1,7 @@
+PRICE_DB.PriceConfig:
+- write <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructVariable)>
+- write <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructVariable)> from <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructVariable)>
+
+PRICE_DB.PriceConfig.ID:
+- write <ID string (BasicVariable)> from <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructVariable)>
+- write <ID string (FieldVariable)> from <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructVariable)>
