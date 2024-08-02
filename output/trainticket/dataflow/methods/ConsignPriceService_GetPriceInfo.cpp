@@ -18,14 +18,14 @@
 [] (-1) (InterfaceVariable UserType) err .error 
 
 [] (-1) (StructVariable UserType) cp consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64} 
+[_] (-1) (FieldVariable FieldType) InitialWeight float64 
+[__] (-1) (BasicVariable BasicType) InitialWeight float64 
 [_] (-1) (FieldVariable FieldType) InitialPrice float64 
 [__] (-1) (BasicVariable BasicType) InitialPrice float64 
 [_] (-1) (FieldVariable FieldType) WithinPrice float64 
 [__] (-1) (BasicVariable BasicType) WithinPrice float64 
 [_] (-1) (FieldVariable FieldType) BeyondPrice float64 
 [__] (-1) (BasicVariable BasicType) BeyondPrice float64 
-[_] (-1) (FieldVariable FieldType) InitialWeight float64 
-[__] (-1) (BasicVariable BasicType) InitialWeight float64 
 
 [] (-1) (BasicVariable BasicType) exists bool 
 

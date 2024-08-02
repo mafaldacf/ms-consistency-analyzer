@@ -36,6 +36,7 @@ type Package struct {
 
 	TypesInfo         *golangtypes.Info
 	DeclaredVariables map[string]variables.Variable
+	DeclaredConstants map[string]variables.Variable
 	DeclaredTypes     map[string]gotypes.Type
 	ServiceTypes      map[string]*gotypes.ServiceType
 	ParsedMethods     []*ParsedMethod
@@ -46,7 +47,9 @@ type Package struct {
 
 	// contains all imported types, including blueprint backend types for datastores
 	// key: package_path.type_name, where package_path is the real package name
-	ImportedTypes map[string]gotypes.Type
+	ImportedTypes     map[string]gotypes.Type
+	ImportedConstants map[string]variables.Variable
+	ImportedVariables map[string]variables.Variable
 }
 
 func (p *Package) IsAppPackage() bool {
@@ -69,16 +72,30 @@ func (p *Package) GetPackagePath() string {
 	return p.PackagePath
 }
 
-func (p *Package) GetDeclaredVariable(typeNameIdent *ast.Ident) variables.Variable {
+func (p *Package) GetDeclaredVariableOrConst(typeNameIdent *ast.Ident) variables.Variable {
 	if v, ok := p.DeclaredVariables[typeNameIdent.Name]; ok {
 		return v
 	}
-	logger.Logger.Fatalf("unknown declared variable (%s) in package (%s) -- declared variables: %v", typeNameIdent.Name, p.Name, p.DeclaredVariables)
+	if v, ok := p.DeclaredConstants[typeNameIdent.Name]; ok {
+		return v
+	}
+	logger.Logger.Fatalf("unknown declared variable or const (%s) in package (%s) -- declared variables: %v", typeNameIdent.Name, p.Name, p.DeclaredVariables)
 	return nil
 }
 
-func (p *Package) GetDeclaredVariableIfExists(name string) variables.Variable {
+func (p *Package) GetDeclaredConstant(typeNameIdent *ast.Ident) variables.Variable {
+	if v, ok := p.DeclaredConstants[typeNameIdent.Name]; ok {
+		return v
+	}
+	logger.Logger.Fatalf("unknown declared constant (%s) in package (%s) -- constant variables: %v", typeNameIdent.Name, p.Name, p.DeclaredConstants)
+	return nil
+}
+
+func (p *Package) GetDeclaredVariableOrConstIfExists(name string) variables.Variable {
 	if v, ok := p.DeclaredVariables[name]; ok {
+		return v
+	}
+	if v, ok := p.DeclaredConstants[name]; ok {
 		return v
 	}
 	return nil
@@ -88,7 +105,7 @@ func (p *Package) RegisterMethodToParse(method *ParsedMethod) {
 	p.ParsedMethods = append(p.ParsedMethods, method)
 }
 
-func (p *Package) GetAllParsedMethods() []*ParsedMethod{
+func (p *Package) GetAllParsedMethods() []*ParsedMethod {
 	return p.ParsedMethods
 }
 
@@ -168,6 +185,13 @@ func ImportedTypeKey(packagePath string, typeName string) string {
 	return packagePath + "." + typeName
 }
 
+func (p *Package) AddConstant(v variables.Variable) {
+	if _, exists := p.DeclaredConstants[v.GetVariableInfo().GetName()]; exists {
+		logger.Logger.Fatalf("package %s already constains declared type %s", v.GetVariableInfo().GetName(), v.String())
+	}
+	p.DeclaredConstants[v.GetVariableInfo().GetName()] = v
+}
+
 func (p *Package) AddDeclaredType(e gotypes.Type) {
 	if _, exists := p.DeclaredTypes[e.GetName()]; exists {
 		logger.Logger.Fatalf("package %s already constains declared type %s", p.Name, e.String())
@@ -181,6 +205,14 @@ func (p *Package) AddImportedType(e gotypes.Type) {
 		logger.Logger.Fatalf("package %s already constains imported type %s", p.Name, e.String())
 	}
 	p.ImportedTypes[key] = e
+}
+
+func (p *Package) AddImportedConstant(v variables.Variable, packagePath string) {
+	key := ImportedTypeKey(packagePath, v.GetVariableInfo().GetName())
+	if _, exists := p.ImportedConstants[key]; exists {
+		logger.Logger.Fatalf("package %s already constains imported constant %s", v.GetVariableInfo().GetName(), v.String())
+	}
+	p.ImportedConstants[key] = v
 }
 
 func (p *Package) AddServiceType(e *gotypes.ServiceType) {

@@ -1,0 +1,3 @@
+(*BarServiceImpl).Bar(ctx context.Context, text string): []
+
+.NewBarServiceImpl(ctx context.Context): []

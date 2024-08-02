@@ -5,11 +5,11 @@
     float32}'
   - '[-1] (PointerVariable PointerType) s (*payment.paymentImpl struct{declineOverAmount
     float32})'
-  - '[25] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
-  - '[30] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
-  - '[30] (InterfaceVariable UserType) ctx context.Context'
+  - '[17] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[22] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
+  - '[22] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    [35] (inline) (Reference BasicType) ref <amount 10 float32> @ OrderService -->
+    [27] (inline) (Reference BasicType) ref <amount 10 float32> @ OrderService -->
        w-tainted 1x: write(order_db.Order.Total)
   - '[-1] (BasicVariable BasicType) amount float32'
   - '[0] (inline) (BasicVariable BasicType) "Payment declined: amount exceeds" string'

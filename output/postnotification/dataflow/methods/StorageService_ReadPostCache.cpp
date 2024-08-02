@@ -1,10 +1,10 @@
 [] (-1) (PointerVariable PointerType) s (*postnotification.StorageServiceImpl struct{analytics_service postnotification.AnalyticsService, media_service postnotification.MediaService, posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue}) 
 [_] (0) (StructVariable UserType) postnotification.StorageServiceImpl struct{analytics_service postnotification.AnalyticsService, media_service postnotification.MediaService, posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue} 
+[__] (-1) (BlueprintBackendVariable BlueprintBackendType) analytics_queue Queue 
+[__] (-1) (ServiceVariable ServiceType) analytics_service postnotification.AnalyticsService 
 [__] (-1) (ServiceVariable ServiceType) media_service postnotification.MediaService 
 [__] (-1) (BlueprintBackendVariable BlueprintBackendType) posts_cache Cache 
 [__] (-1) (BlueprintBackendVariable BlueprintBackendType) posts_db NoSQLDatabase 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) analytics_queue Queue 
-[__] (-1) (ServiceVariable ServiceType) analytics_service postnotification.AnalyticsService 
 
 [] (-1) (InterfaceVariable UserType) ctx context.Context 
 

@@ -1,8 +1,8 @@
-[] (-1) (PointerVariable PointerType) n (*postnotification.AnalyticsServiceImpl struct{analytics_queue Queue, analytics_db NoSQLDatabase, num_workers int}) 
-[_] (0) (StructVariable UserType) postnotification.AnalyticsServiceImpl struct{analytics_queue Queue, analytics_db NoSQLDatabase, num_workers int} 
-[__] (-1) (BasicVariable BasicType) num_workers 4 int 
+[] (-1) (PointerVariable PointerType) n (*postnotification.AnalyticsServiceImpl struct{analytics_queue Queue, analytics_db NoSQLDatabase, num_workers 4 int}) 
+[_] (0) (StructVariable UserType) postnotification.AnalyticsServiceImpl struct{analytics_queue Queue, analytics_db NoSQLDatabase, num_workers 4 int} 
 [__] (-1) (BlueprintBackendVariable BlueprintBackendType) analytics_queue Queue 
 [__] (-1) (BlueprintBackendVariable BlueprintBackendType) analytics_db NoSQLDatabase 
+[__] (-1) (BasicVariable BasicType) num_workers 4 int 
 
 [] (-1) (InterfaceVariable UserType) ctx context.Context 
 

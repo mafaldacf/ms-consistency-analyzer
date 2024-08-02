@@ -9,14 +9,14 @@
 [] (-1) (BasicVariable BasicType) cartID string 
 
 [] (-1) (StructVariable UserType) cart shopping_app.Cart struct{CartID string, UserID string, ProductID string, Quantity int, PricePerUnit int, Status string} 
-[_] (-1) (FieldVariable FieldType) PricePerUnit int 
-[__] (-1) (BasicVariable BasicType) PricePerUnit int 
 [_] (-1) (FieldVariable FieldType) UserID string 
 [__] (-1) (BasicVariable BasicType) UserID string 
 [_] (-1) (FieldVariable FieldType) ProductID string 
 [__] (-1) (BasicVariable BasicType) ProductID string 
 [_] (-1) (FieldVariable FieldType) Quantity int 
 [__] (-1) (BasicVariable BasicType) Quantity int 
+[_] (-1) (FieldVariable FieldType) PricePerUnit int 
+[__] (-1) (BasicVariable BasicType) PricePerUnit int 
 
 [] (-1) (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = cart_database, collection = cart_collection} 
 

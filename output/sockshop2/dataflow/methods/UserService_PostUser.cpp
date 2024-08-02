@@ -1,5 +1,6 @@
 [] (-1) (PointerVariable PointerType) s (*user.userServiceImpl struct{UserService user.UserService, db NoSQLDatabase}) 
 [_] (0) (StructVariable UserType) user.userServiceImpl struct{UserService user.UserService, db NoSQLDatabase} 
+[__] (-1) (ServiceVariable ServiceType) UserService user.UserService 
 [__] (-1) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
 
 [] (-1) (InterfaceVariable UserType) ctx context.Context 

@@ -4,8 +4,8 @@
 
 [] (-1) (BlueprintBackendVariable BlueprintBackendType) analytics_queue Queue 
 
-[] (-1) (AddressVariable AddressType) n (&postnotification.AnalyticsServiceImpl struct{analytics_queue Queue, analytics_db NoSQLDatabase, num_workers int}) 
-[_] (0) (StructVariable UserType) postnotification.AnalyticsServiceImpl struct{analytics_queue Queue, analytics_db NoSQLDatabase, num_workers int} 
+[] (-1) (AddressVariable AddressType) n (&postnotification.AnalyticsServiceImpl struct{analytics_queue Queue, analytics_db NoSQLDatabase, num_workers 4 int}) 
+[_] (0) (StructVariable UserType) postnotification.AnalyticsServiceImpl struct{analytics_queue Queue, analytics_db NoSQLDatabase, num_workers 4 int} 
 [__] (0) (FieldVariable FieldType) analytics_db NoSQLDatabase 
 [___] (-1) (BlueprintBackendVariable BlueprintBackendType) analytics_db NoSQLDatabase 
 [__] (0) (FieldVariable FieldType) analytics_queue Queue 

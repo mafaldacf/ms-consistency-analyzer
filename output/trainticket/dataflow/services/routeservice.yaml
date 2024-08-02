@@ -34,6 +34,18 @@
     [-1] (SliceVariable SliceType) stations []string -->
        w-tainted 1x: write(route_db.Route.Stations)
   - |-
+    [-1] (inline) (BasicVariable BasicType) EndStation string -->
+       w-tainted 1x: write(route_db.Route.EndStation)
+  - |-
+    [-1] (inline) (FieldVariable FieldType) EndStation string -->
+       w-tainted 1x: write(route_db.Route.EndStation)
+  - |-
+    [-1] (inline) (BasicVariable BasicType) StartStation string -->
+       w-tainted 1x: write(route_db.Route.StartStation)
+  - |-
+    [-1] (inline) (FieldVariable FieldType) StartStation string -->
+       w-tainted 1x: write(route_db.Route.StartStation)
+  - |-
     [-1] (inline) (ArrayVariable SliceType) distances []int64 -->
        w-tainted 1x: write(route_db.Route.Distances)
   - |-
@@ -55,18 +67,6 @@
   - |-
     [-1] (inline) (FieldVariable FieldType) ID string -->
        w-tainted 1x: write(route_db.Route.ID)
-  - |-
-    [-1] (inline) (BasicVariable BasicType) EndStation string -->
-       w-tainted 1x: write(route_db.Route.EndStation)
-  - |-
-    [-1] (inline) (FieldVariable FieldType) EndStation string -->
-       w-tainted 1x: write(route_db.Route.EndStation)
-  - |-
-    [-1] (inline) (BasicVariable BasicType) StartStation string -->
-       w-tainted 1x: write(route_db.Route.StartStation)
-  - |-
-    [-1] (inline) (FieldVariable FieldType) StartStation string -->
-       w-tainted 1x: write(route_db.Route.StartStation)
   - |-
     [-1] (StructVariable UserType) route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} -->
        w-tainted 1x: write(route_db.Route)

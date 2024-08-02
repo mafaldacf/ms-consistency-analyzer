@@ -64,7 +64,7 @@ func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 			}
 
 			logger.Logger.Warnf("[LOOKUP AST SELECTOR] ------------ !!! DID NOT FIND IMPORTED TYPE NAMED (%s) FROM PACKAGE (%s)", e.Sel.Name, impt.Alias)
-			t := FindDefTypesAndAddToPackage(file.Package, goType, nil, nil, nil)
+			t := FindDefTypesAndAddToPackage(file.Package, nil, goType, nil, nil, nil)
 			logger.Logger.Warnf("[LOOKUP AST SELECTOR] ------------  !!! FOUND AND ADDED NEW TYPE (%s) TO IMPORTS OF PACKAGE (%s)", t.String(), file.Package.Name)
 			return t
 		}
@@ -126,7 +126,6 @@ func ComputeFuncDeclFields(file *types.File, funcDecl *ast.FuncDecl) ([]*types.M
 			if len(field.Names) == 0 {
 				param := &types.MethodField{
 					FieldInfo: types.FieldInfo{
-						Ast:  field,
 						Type: paramType,
 					},
 				}
@@ -135,7 +134,6 @@ func ComputeFuncDeclFields(file *types.File, funcDecl *ast.FuncDecl) ([]*types.M
 			for _, ident := range field.Names {
 				param := &types.MethodField{
 					FieldInfo: types.FieldInfo{
-						Ast:  field,
 						Type: paramType,
 						Name: ident.Name,
 					},

@@ -1,22 +1,22 @@
 (*StorageServiceImpl).ReadMedia(ctx context.Context, reqID int64, postID int64):
   block 0 (Body):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) posts_cache Cache'
-  - '[-1] (inline) (ServiceVariable ServiceType) media_service postnotification.MediaService'
   - '[-1] (inline) (ServiceVariable ServiceType) analytics_service postnotification.AnalyticsService'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_queue
     Queue'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) posts_db NoSQLDatabase'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) posts_cache Cache'
+  - '[-1] (inline) (ServiceVariable ServiceType) media_service postnotification.MediaService'
   - '[0] (inline) (StructVariable UserType) postnotification.StorageServiceImpl struct{analytics_service
     postnotification.AnalyticsService, media_service postnotification.MediaService,
     posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue}'
   - '[-1] (PointerVariable PointerType) s (*postnotification.StorageServiceImpl struct{analytics_service
     postnotification.AnalyticsService, media_service postnotification.MediaService,
     posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue})'
-  - '[53] (inline) (Reference UserType) ref <ctx context.Context> @ UploadService'
-  - '[56] (InterfaceVariable UserType) ctx context.Context'
-  - '[54] (inline) (Reference BasicType) ref <reqID int64> @ UploadService'
+  - '[1] (inline) (Reference UserType) ref <ctx context.Context> @ UploadService'
+  - '[4] (InterfaceVariable UserType) ctx context.Context'
+  - '[2] (inline) (Reference BasicType) ref <reqID int64> @ UploadService'
   - '[-1] (BasicVariable BasicType) reqID int64'
-  - '[55] (inline) (Reference BasicType) ref <postID int64> @ UploadService'
+  - '[3] (inline) (Reference BasicType) ref <postID int64> @ UploadService'
   - '[-1] (BasicVariable BasicType) postID int64'
   - '[-1] (inline) (BasicVariable BasicType) PostID int64'
   - '[-1] (inline) (FieldVariable FieldType) PostID int64'
@@ -27,8 +27,8 @@
   - '[-1] (BasicVariable BasicType) postIDStr string'
   - '[-1] (StructVariable UserType) media postnotification.Media struct{MediaID int64,
     PostID int64, Content string}'
-  - '[58] (inline) (BasicVariable BasicType) PostID int64'
-  - '[57] (FieldVariable FieldType) mediaID int64'
+  - '[6] (inline) (BasicVariable BasicType) PostID int64'
+  - '[5] (FieldVariable FieldType) mediaID int64'
   - '[-1] (StructVariable UserType) media postnotification.Media struct{MediaID int64,
     PostID int64, Content string}'
   - '[-1] (InterfaceVariable UserType) _ .error'
@@ -60,37 +60,37 @@
 
 (*StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID int64):
   block 8 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_queue
-    Queue'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) posts_db NoSQLDatabase'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) posts_cache Cache'
   - '[-1] (inline) (ServiceVariable ServiceType) media_service postnotification.MediaService'
   - '[-1] (inline) (ServiceVariable ServiceType) analytics_service postnotification.AnalyticsService'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_queue
+    Queue'
   - '[0] (inline) (StructVariable UserType) postnotification.StorageServiceImpl struct{analytics_service
     postnotification.AnalyticsService, media_service postnotification.MediaService,
     posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue}'
   - '[-1] (PointerVariable PointerType) s (*postnotification.StorageServiceImpl struct{analytics_service
     postnotification.AnalyticsService, media_service postnotification.MediaService,
     posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue})'
-  - '[39] (inline) (Reference UserType) ref <ctx context.Context> @ NotifyService'
+  - '[45] (inline) (Reference UserType) ref <ctx context.Context> @ NotifyService'
   - '[-1] (inline) (Reference UserType) ref <ctx context.Context> @ NotifyService'
-  - '[50] (InterfaceVariable UserType) ctx context.Context'
+  - '[56] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    [46] (inline) (InterfaceVariable InterfaceType) ReqID interface{} -->
+    [49] (inline) (InterfaceVariable InterfaceType) ReqID interface{} -->
        w-tainted 6x: write(posts_cache.key, posts_cache.value, posts_db.Post.ReqID, notifications_queue.Message.ReqID, timeline_cache.key, timeline_cache.value)
-  - '[45] (inline) (BasicVariable BasicType) ReqID string'
-  - '[44] (inline) (Reference FieldType) ref <ReqID string> @ NotifyService'
+  - '[48] (inline) (BasicVariable BasicType) ReqID string'
+  - '[47] (inline) (Reference FieldType) ref <ReqID string> @ NotifyService'
   - '[0] (inline) (BasicVariable BasicType) ReqID string'
-  - '[35] (inline) (Reference BasicType) ref <reqID int64> @ NotifyService'
+  - '[41] (inline) (Reference BasicType) ref <reqID int64> @ NotifyService'
   - '[-1] (BasicVariable BasicType) reqID int64'
   - |-
-    [49] (inline) (InterfaceVariable InterfaceType) PostID interface{} -->
+    [52] (inline) (InterfaceVariable InterfaceType) PostID interface{} -->
        w-tainted 9x: write(media_db.Media.PostID, posts_cache.key, posts_cache.value, posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
-  - '[48] (inline) (BasicVariable BasicType) PostID string'
-  - '[47] (inline) (Reference FieldType) ref <PostID string> @ NotifyService'
-  - '[52] (inline) (BasicVariable BasicType) PostID string'
-  - '[37] (inline) (Reference BasicType) ref <postID int64> @ NotifyService'
-  - '[51] (BasicVariable BasicType) postID int64'
+  - '[51] (inline) (BasicVariable BasicType) PostID string'
+  - '[50] (inline) (Reference FieldType) ref <PostID string> @ NotifyService'
+  - '[58] (inline) (BasicVariable BasicType) PostID string'
+  - '[43] (inline) (Reference BasicType) ref <postID int64> @ NotifyService'
+  - '[57] (BasicVariable BasicType) postID int64'
   - '[-1] (StructVariable UserType) post postnotification.Post struct{ReqID int64,
     PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64,
     Creator postnotification.Creator struct{Username string}}'
@@ -116,92 +116,92 @@
 (*StorageServiceImpl).StorePostCache(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}})
 :
  block 0 (Body):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) posts_db NoSQLDatabase'
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) posts_cache Cache'
-  - '[-1] (inline) (ServiceVariable ServiceType) media_service postnotification.MediaService'
   - '[-1] (inline) (ServiceVariable ServiceType) analytics_service postnotification.AnalyticsService'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_queue
     Queue'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) posts_db NoSQLDatabase'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) posts_cache Cache'
+  - '[-1] (inline) (ServiceVariable ServiceType) media_service postnotification.MediaService'
   - '[0] (inline) (StructVariable UserType) postnotification.StorageServiceImpl struct{analytics_service
     postnotification.AnalyticsService, media_service postnotification.MediaService,
     posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue}'
   - '[-1] (PointerVariable PointerType) s (*postnotification.StorageServiceImpl struct{analytics_service
     postnotification.AnalyticsService, media_service postnotification.MediaService,
     posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue})'
-  - '[1] (inline) (Reference UserType) ref <ctx context.Context> @ UploadService'
-  - '[1] (InterfaceVariable UserType) ctx context.Context'
+  - '[7] (inline) (Reference UserType) ref <ctx context.Context> @ UploadService'
+  - '[7] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    [46] (inline) (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService -->
+    [49] (inline) (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService -->
        w-tainted 6x: write(posts_cache.key, posts_cache.value, posts_db.Post.ReqID, notifications_queue.Message.ReqID, timeline_cache.key, timeline_cache.value)
   - |-
     [-1] (inline) (Reference BasicType) ref <reqID int64> @ UploadService -->
        w-tainted 6x: write(posts_db.Post.ReqID, posts_cache.key, posts_cache.value, notifications_queue.Message.ReqID, timeline_cache.key, timeline_cache.value)
   - '[-1] (BasicVariable BasicType) reqID int64'
   - |-
-    [49] (inline) (Reference InterfaceType) ref <PostID interface{}> @ NotifyService -->
+    [52] (inline) (Reference InterfaceType) ref <PostID interface{}> @ NotifyService -->
        w-tainted 9x: write(media_db.Media.PostID, posts_cache.key, posts_cache.value, posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
   - |-
     [-1] (inline) (BasicVariable BasicType) postID int64 -->
        w-tainted 9x: write(media_db.Media.PostID, posts_db.Post.PostID, posts_cache.key, posts_cache.value, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
   - |-
-    [16] (inline) (Reference FieldType) ref <PostID int64> @ UploadService -->
+    [24] (inline) (Reference FieldType) ref <PostID int64> @ UploadService -->
        w-tainted 5x: write(posts_db.Post.PostID, posts_cache.key, posts_cache.value, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID)
   - |-
     [0] (inline) (BasicVariable BasicType) PostID int64 -->
        w-tainted 2x: write(posts_cache.key, posts_cache.value)
   - |-
-    [16] (inline) (Reference FieldType) ref <PostID int64> @ UploadService -->
+    [24] (inline) (Reference FieldType) ref <PostID int64> @ UploadService -->
        w-tainted 5x: write(posts_db.Post.PostID, posts_cache.key, posts_cache.value, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID)
   - |-
     [0] (inline) (FieldVariable FieldType) PostID int64 -->
        w-tainted 2x: write(posts_cache.key, posts_cache.value)
   - |-
-    [22] (inline) (BasicVariable BasicType) "bob" string -->
-       w-tainted 3x: write(posts_cache.key, posts_cache.value, posts_db.Post.Mentions)
-  - |-
-    [21] (inline) (BasicVariable BasicType) "alice" string -->
-       w-tainted 3x: write(posts_cache.key, posts_cache.value, posts_db.Post.Mentions)
-  - |-
-    [20] (inline) (ArrayVariable ArrayType) mentions []string -->
-       w-tainted 3x: write(posts_db.Post.Mentions, posts_cache.key, posts_cache.value)
-  - |-
-    [19] (inline) (FieldVariable FieldType) Mentions []string -->
-       w-tainted 3x: write(posts_db.Post.Mentions, posts_cache.key, posts_cache.value)
-  - |-
-    [18] (inline) (BasicVariable BasicType) text string -->
-       w-tainted 3x: write(posts_db.Post.Text, posts_cache.key, posts_cache.value)
-  - |-
-    [17] (inline) (FieldVariable FieldType) Text string -->
-       w-tainted 3x: write(posts_db.Post.Text, posts_cache.key, posts_cache.value)
-  - |-
-    [16] (inline) (FieldVariable FieldType) PostID int64 -->
-       w-tainted 5x: write(posts_db.Post.PostID, posts_cache.key, posts_cache.value, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID)
-  - |-
     [-1] (inline) (BasicVariable BasicType) reqID int64 -->
        w-tainted 6x: write(posts_db.Post.ReqID, posts_cache.key, posts_cache.value, notifications_queue.Message.ReqID, timeline_cache.key, timeline_cache.value)
   - |-
-    [15] (inline) (FieldVariable FieldType) ReqID int64 -->
+    [23] (inline) (FieldVariable FieldType) ReqID int64 -->
        w-tainted 3x: write(posts_db.Post.ReqID, posts_cache.key, posts_cache.value)
   - |-
-    [14] (inline) (BasicVariable BasicType) "some username" string -->
+    [22] (inline) (BasicVariable BasicType) "some username" string -->
        w-tainted 3x: write(posts_db.Post.Creator.Username, posts_cache.key, posts_cache.value)
   - |-
-    [13] (inline) (FieldVariable FieldType) Username "some username" string -->
+    [21] (inline) (FieldVariable FieldType) Username "some username" string -->
        w-tainted 3x: write(posts_db.Post.Creator.Username, posts_cache.key, posts_cache.value)
   - |-
-    [12] (inline) (StructVariable UserType) postnotification.Creator struct{Username string} -->
+    [20] (inline) (StructVariable UserType) postnotification.Creator struct{Username string} -->
        w-tainted 3x: write(posts_cache.key, posts_cache.value, posts_db.Post.Creator)
   - |-
-    [11] (inline) (FieldVariable FieldType) Creator postnotification.Creator struct{Username string} -->
+    [19] (inline) (FieldVariable FieldType) Creator postnotification.Creator struct{Username string} -->
        w-tainted 3x: write(posts_db.Post.Creator, posts_cache.key, posts_cache.value)
   - |-
-    [24] (inline) (BasicVariable BasicType) timestamp int64 -->
+    [18] (inline) (BasicVariable BasicType) timestamp int64 -->
        w-tainted 3x: write(posts_db.Post.Timestamp, posts_cache.key, posts_cache.value)
   - |-
-    [23] (inline) (FieldVariable FieldType) Timestamp int64 -->
+    [17] (inline) (FieldVariable FieldType) Timestamp int64 -->
        w-tainted 3x: write(posts_db.Post.Timestamp, posts_cache.key, posts_cache.value)
   - |-
-    [10] (inline) (Reference UserType) ref <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}> @ UploadService -->
+    [30] (inline) (BasicVariable BasicType) "bob" string -->
+       w-tainted 3x: write(posts_cache.key, posts_cache.value, posts_db.Post.Mentions)
+  - |-
+    [29] (inline) (BasicVariable BasicType) "alice" string -->
+       w-tainted 3x: write(posts_cache.key, posts_cache.value, posts_db.Post.Mentions)
+  - |-
+    [28] (inline) (ArrayVariable ArrayType) mentions []string -->
+       w-tainted 3x: write(posts_db.Post.Mentions, posts_cache.key, posts_cache.value)
+  - |-
+    [27] (inline) (FieldVariable FieldType) Mentions []string -->
+       w-tainted 3x: write(posts_db.Post.Mentions, posts_cache.key, posts_cache.value)
+  - |-
+    [26] (inline) (BasicVariable BasicType) text string -->
+       w-tainted 3x: write(posts_db.Post.Text, posts_cache.key, posts_cache.value)
+  - |-
+    [25] (inline) (FieldVariable FieldType) Text string -->
+       w-tainted 3x: write(posts_db.Post.Text, posts_cache.key, posts_cache.value)
+  - |-
+    [24] (inline) (FieldVariable FieldType) PostID int64 -->
+       w-tainted 5x: write(posts_db.Post.PostID, posts_cache.key, posts_cache.value, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID)
+  - |-
+    [16] (inline) (Reference UserType) ref <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}> @ UploadService -->
        w-tainted 3x: write(posts_cache.key, posts_cache.value, posts_db.Post)
   - |-
     [-1] (StructVariable UserType) post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} -->
@@ -224,94 +224,94 @@
   - '[-1] (PointerVariable PointerType) s (*postnotification.StorageServiceImpl struct{analytics_service
     postnotification.AnalyticsService, media_service postnotification.MediaService,
     posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue})'
-  - '[1] (inline) (Reference UserType) ref <ctx context.Context> @ UploadService'
-  - '[1] (InterfaceVariable UserType) ctx context.Context'
+  - '[7] (inline) (Reference UserType) ref <ctx context.Context> @ UploadService'
+  - '[7] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    [46] (inline) (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService -->
+    [49] (inline) (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService -->
        w-tainted 6x: write(posts_cache.key, posts_cache.value, posts_db.Post.ReqID, notifications_queue.Message.ReqID, timeline_cache.key, timeline_cache.value)
   - |-
     [-1] (inline) (Reference BasicType) ref <reqID int64> @ UploadService -->
        w-tainted 6x: write(posts_db.Post.ReqID, posts_cache.key, posts_cache.value, notifications_queue.Message.ReqID, timeline_cache.key, timeline_cache.value)
-  - '[9] (BasicVariable BasicType) reqID int64'
+  - '[15] (BasicVariable BasicType) reqID int64'
   - |-
-    [49] (inline) (Reference InterfaceType) ref <PostID interface{}> @ NotifyService -->
+    [52] (inline) (Reference InterfaceType) ref <PostID interface{}> @ NotifyService -->
        w-tainted 9x: write(media_db.Media.PostID, posts_cache.key, posts_cache.value, posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
   - |-
     [-1] (inline) (BasicVariable BasicType) postID int64 -->
        w-tainted 9x: write(media_db.Media.PostID, posts_db.Post.PostID, posts_cache.key, posts_cache.value, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
   - |-
-    [16] (inline) (Reference FieldType) ref <PostID int64> @ UploadService -->
+    [24] (inline) (Reference FieldType) ref <PostID int64> @ UploadService -->
        w-tainted 5x: write(posts_db.Post.PostID, posts_cache.key, posts_cache.value, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID)
   - |-
-    [16] (inline) (BasicVariable BasicType) PostID int64 -->
+    [24] (inline) (BasicVariable BasicType) PostID int64 -->
        w-tainted 2x: write(analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID)
   - |-
-    [16] (inline) (Reference FieldType) ref <PostID int64> @ UploadService -->
+    [24] (inline) (Reference FieldType) ref <PostID int64> @ UploadService -->
        w-tainted 5x: write(posts_db.Post.PostID, posts_cache.key, posts_cache.value, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID)
-  - '[16] (inline) (FieldVariable FieldType) PostID int64'
+  - '[24] (inline) (FieldVariable FieldType) PostID int64'
   - |-
-    [24] (inline) (BasicVariable BasicType) timestamp int64 -->
+    [18] (inline) (BasicVariable BasicType) timestamp int64 -->
        w-tainted 3x: write(posts_db.Post.Timestamp, posts_cache.key, posts_cache.value)
   - |-
-    [23] (inline) (FieldVariable FieldType) Timestamp int64 -->
+    [17] (inline) (FieldVariable FieldType) Timestamp int64 -->
        w-tainted 3x: write(posts_db.Post.Timestamp, posts_cache.key, posts_cache.value)
   - |-
-    [22] (inline) (BasicVariable BasicType) "bob" string -->
+    [30] (inline) (BasicVariable BasicType) "bob" string -->
        w-tainted 3x: write(posts_cache.key, posts_cache.value, posts_db.Post.Mentions)
   - |-
-    [21] (inline) (BasicVariable BasicType) "alice" string -->
+    [29] (inline) (BasicVariable BasicType) "alice" string -->
        w-tainted 3x: write(posts_cache.key, posts_cache.value, posts_db.Post.Mentions)
   - |-
-    [20] (inline) (ArrayVariable ArrayType) mentions []string -->
+    [28] (inline) (ArrayVariable ArrayType) mentions []string -->
        w-tainted 3x: write(posts_db.Post.Mentions, posts_cache.key, posts_cache.value)
   - |-
-    [19] (inline) (FieldVariable FieldType) Mentions []string -->
+    [27] (inline) (FieldVariable FieldType) Mentions []string -->
        w-tainted 3x: write(posts_db.Post.Mentions, posts_cache.key, posts_cache.value)
   - |-
-    [18] (inline) (BasicVariable BasicType) text string -->
+    [26] (inline) (BasicVariable BasicType) text string -->
        w-tainted 3x: write(posts_db.Post.Text, posts_cache.key, posts_cache.value)
   - |-
-    [17] (inline) (FieldVariable FieldType) Text string -->
+    [25] (inline) (FieldVariable FieldType) Text string -->
        w-tainted 3x: write(posts_db.Post.Text, posts_cache.key, posts_cache.value)
   - |-
-    [16] (inline) (FieldVariable FieldType) PostID int64 -->
+    [24] (inline) (FieldVariable FieldType) PostID int64 -->
        w-tainted 5x: write(posts_db.Post.PostID, posts_cache.key, posts_cache.value, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID)
   - |-
     [-1] (inline) (BasicVariable BasicType) reqID int64 -->
        w-tainted 6x: write(posts_db.Post.ReqID, posts_cache.key, posts_cache.value, notifications_queue.Message.ReqID, timeline_cache.key, timeline_cache.value)
   - |-
-    [15] (inline) (FieldVariable FieldType) ReqID int64 -->
+    [23] (inline) (FieldVariable FieldType) ReqID int64 -->
        w-tainted 3x: write(posts_db.Post.ReqID, posts_cache.key, posts_cache.value)
   - |-
-    [14] (inline) (BasicVariable BasicType) "some username" string -->
+    [22] (inline) (BasicVariable BasicType) "some username" string -->
        w-tainted 3x: write(posts_db.Post.Creator.Username, posts_cache.key, posts_cache.value)
   - |-
-    [13] (inline) (FieldVariable FieldType) Username "some username" string -->
+    [21] (inline) (FieldVariable FieldType) Username "some username" string -->
        w-tainted 3x: write(posts_db.Post.Creator.Username, posts_cache.key, posts_cache.value)
   - |-
-    [12] (inline) (StructVariable UserType) postnotification.Creator struct{Username string} -->
+    [20] (inline) (StructVariable UserType) postnotification.Creator struct{Username string} -->
        w-tainted 3x: write(posts_cache.key, posts_cache.value, posts_db.Post.Creator)
   - |-
-    [11] (inline) (FieldVariable FieldType) Creator postnotification.Creator struct{Username string} -->
+    [19] (inline) (FieldVariable FieldType) Creator postnotification.Creator struct{Username string} -->
        w-tainted 3x: write(posts_db.Post.Creator, posts_cache.key, posts_cache.value)
   - |-
-    [10] (inline) (Reference UserType) ref <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}> @ UploadService -->
+    [16] (inline) (Reference UserType) ref <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}> @ UploadService -->
        w-tainted 3x: write(posts_cache.key, posts_cache.value, posts_db.Post)
   - |-
-    [10] (StructVariable UserType) post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} -->
+    [16] (StructVariable UserType) post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} -->
        w-tainted 1x: write(posts_db.Post)
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
     {database = post, collection = post}'
   - '[-1] (InterfaceVariable UserType) err .error'
   - '[-1] (InterfaceVariable UserType) err .error'
   - |-
-    [27] (inline) (BasicVariable BasicType) string -->
+    [33] (inline) (BasicVariable BasicType) string -->
        w-tainted 2x: write(analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID)
   - |-
-    [26] (inline) (FieldVariable FieldType) PostID string -->
+    [32] (inline) (FieldVariable FieldType) PostID string -->
        w-tainted 2x: write(analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID)
   - |-
-    [25] (StructVariable UserType) message postnotification.TriggerAnalyticsMessage struct{PostID string} -->
+    [31] (StructVariable UserType) message postnotification.TriggerAnalyticsMessage struct{PostID string} -->
        w-tainted 1x: write(analytics_queue.TriggerAnalyticsMessage)
   - '[-1] (BasicVariable BasicType) _ bool'
   - '[-1] (InterfaceVariable UserType) err .error'
@@ -326,9 +326,9 @@
   - '[0] (inline) (FieldVariable FieldType) analytics_queue Queue'
   - '[0] (inline) (FieldVariable FieldType) analytics_db NoSQLDatabase'
   - '[0] (inline) (StructVariable UserType) postnotification.AnalyticsServiceImpl
-    struct{analytics_queue Queue, analytics_db NoSQLDatabase, num_workers int}'
+    struct{analytics_queue Queue, analytics_db NoSQLDatabase, num_workers 4 int}'
   - '[-1] (AddressVariable AddressType) n (&postnotification.AnalyticsServiceImpl
-    struct{analytics_queue Queue, analytics_db NoSQLDatabase, num_workers int})'
+    struct{analytics_queue Queue, analytics_db NoSQLDatabase, num_workers 4 int})'
 
 .NewMediaServiceImpl(ctx context.Context, media_db NoSQLDatabase):
   block 0 (Body):
@@ -345,14 +345,14 @@
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - '[-1] (ServiceVariable ServiceType) storage_service postnotification.StorageService'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) notifications_queue Queue'
-  - '[0] (inline) (FieldVariable FieldType) notifications_queue Queue'
-  - '[0] (inline) (FieldVariable FieldType) storage_service postnotification.StorageService'
   - '[0] (inline) (BasicVariable BasicType) 4 int'
   - '[0] (inline) (FieldVariable FieldType) num_workers 4 int'
+  - '[0] (inline) (FieldVariable FieldType) notifications_queue Queue'
+  - '[0] (inline) (FieldVariable FieldType) storage_service postnotification.StorageService'
   - '[0] (inline) (StructVariable UserType) postnotification.NotifyServiceImpl struct{storage_service
-    postnotification.StorageService, notifications_queue Queue, num_workers int}'
+    postnotification.StorageService, notifications_queue Queue, num_workers 4 int}'
   - '[-1] (AddressVariable AddressType) n (&postnotification.NotifyServiceImpl struct{storage_service
-    postnotification.StorageService, notifications_queue Queue, num_workers int})'
+    postnotification.StorageService, notifications_queue Queue, num_workers 4 int})'
 
 .NewStorageServiceImpl(ctx context.Context, analytics_service postnotification.AnalyticsService, media_service postnotification.MediaService, posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue)
 :

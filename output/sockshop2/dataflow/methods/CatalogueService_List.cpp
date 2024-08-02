@@ -3,19 +3,19 @@
 [__] (-1) (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase 
 
 [] (-1) (InterfaceVariable UserType) ctx context.Context 
-[_] (66) (Reference UserType) ref <ctx context.Context> @ FrontendService 
+[_] (11) (Reference UserType) ref <ctx context.Context> @ FrontendService 
 
 [] (-1) (ArrayVariable ArrayType) tags []string 
-[_] (67) (Reference ArrayType) ref <tags []string> @ FrontendService 
+[_] (12) (Reference ArrayType) ref <tags []string> @ FrontendService 
 
 [] (-1) (BasicVariable BasicType) order string 
-[_] (68) (Reference BasicType) ref <order string> @ FrontendService 
+[_] (13) (Reference BasicType) ref <order string> @ FrontendService 
 
 [] (-1) (BasicVariable BasicType) pageNum int 
-[_] (69) (Reference BasicType) ref <pageNum int> @ FrontendService 
+[_] (14) (Reference BasicType) ref <pageNum int> @ FrontendService 
 
 [] (-1) (BasicVariable BasicType) pageSize int 
-[_] (70) (Reference BasicType) ref <pageSize int> @ FrontendService 
+[_] (15) (Reference BasicType) ref <pageSize int> @ FrontendService 
 
 [] (-1) (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = catalogue, collection = catalogue} 
 

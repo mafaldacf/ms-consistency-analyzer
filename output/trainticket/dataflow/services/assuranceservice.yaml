@@ -5,8 +5,8 @@
     NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) a (*assurance.AssuranceServiceImpl struct{db
     NoSQLDatabase})'
-  - '[14] (InterfaceVariable UserType) ctx context.Context'
-  - '[15] (BasicVariable BasicType) typeindex int64'
+  - '[16] (InterfaceVariable UserType) ctx context.Context'
+  - '[17] (BasicVariable BasicType) typeindex int64'
   - |-
     [-1] (BasicVariable BasicType) orderid string -->
        w-tainted 1x: write(assurance_db.Assurance.OrderID)
@@ -81,9 +81,9 @@
     NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) a (*assurance.AssuranceServiceImpl struct{db
     NoSQLDatabase})'
-  - '[16] (inline) (Reference UserType) ref <ctx context.Context> @ AssuranceService'
+  - '[14] (inline) (Reference UserType) ref <ctx context.Context> @ AssuranceService'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[17] (inline) (Reference BasicType) ref <ID string> @ AssuranceService'
+  - '[15] (inline) (Reference BasicType) ref <ID string> @ AssuranceService'
   - '[-1] (BasicVariable BasicType) id string'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
     = assurance, collection = assurance}'
@@ -158,8 +158,8 @@
     NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) a (*assurance.AssuranceServiceImpl struct{db
     NoSQLDatabase})'
-  - '[16] (InterfaceVariable UserType) ctx context.Context'
-  - '[17] (inline) (BasicVariable BasicType) ID string'
+  - '[14] (InterfaceVariable UserType) ctx context.Context'
+  - '[15] (inline) (BasicVariable BasicType) ID string'
   - '[-1] (inline) (FieldVariable FieldType) ID string'
   - '[-1] (StructVariable UserType) assurance assurance.Assurance struct{ID string,
     OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price
@@ -183,7 +183,7 @@
 
 .getAssuranceType(ctx context.Context, index int64):
   block 2 (IfDone):
-  - '[14] (inline) (Reference UserType) ref <ctx context.Context> @ AssuranceService'
+  - '[16] (inline) (Reference UserType) ref <ctx context.Context> @ AssuranceService'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[15] (inline) (Reference BasicType) ref <typeindex int64> @ AssuranceService'
+  - '[17] (inline) (Reference BasicType) ref <typeindex int64> @ AssuranceService'
   - '[-1] (BasicVariable BasicType) index int64'

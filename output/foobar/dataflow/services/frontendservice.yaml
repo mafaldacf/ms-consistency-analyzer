@@ -1,0 +1,25 @@
+(*FrontendServiceImpl).Frontend(ctx context.Context):
+  block 5 (IfDone):
+  - '[-1] (inline) (ServiceVariable ServiceType) fooService foo.FooService'
+  - '[-1] (inline) (ServiceVariable ServiceType) barService bar.BarService'
+  - '[0] (inline) (StructVariable UserType) foobar.FrontendServiceImpl struct{barService
+    bar.BarService, fooService foo.FooService}'
+  - '[-1] (PointerVariable PointerType) d (*foobar.FrontendServiceImpl struct{barService
+    bar.BarService, fooService foo.FooService})'
+  - '[1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (BasicVariable BasicType) f string'
+  - '[-1] (InterfaceVariable UserType) err1 .error'
+  - '[-1] (BasicVariable BasicType) b string'
+  - '[-1] (InterfaceVariable UserType) err2 .error'
+
+.NewFrontendServiceImpl(ctx context.Context, fooService foo.FooService, barService bar.BarService):
+  block 0 (Body):
+  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[-1] (ServiceVariable ServiceType) fooService foo.FooService'
+  - '[-1] (ServiceVariable ServiceType) barService bar.BarService'
+  - '[0] (inline) (FieldVariable FieldType) barService bar.BarService'
+  - '[0] (inline) (FieldVariable FieldType) fooService foo.FooService'
+  - '[0] (inline) (StructVariable UserType) foobar.FrontendServiceImpl struct{barService
+    bar.BarService, fooService foo.FooService}'
+  - '[-1] (AddressVariable AddressType) d (&foobar.FrontendServiceImpl struct{barService
+    bar.BarService, fooService foo.FooService})'

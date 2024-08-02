@@ -5,23 +5,23 @@
     NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) s (*shopping_app.StockServiceImpl struct{stock_db
     NoSQLDatabase})'
-  - '[8] (inline) (Reference UserType) ref <ctx context.Context> @ Frontend'
-  - '[14] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
+  - '[6] (inline) (Reference UserType) ref <ctx context.Context> @ Frontend'
+  - '[12] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    [11] (inline) (Reference BasicType) ref <productID string> @ Frontend -->
+    [9] (inline) (Reference BasicType) ref <productID string> @ Frontend -->
        w-tainted 3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
   - |-
-    [15] (inline) (Reference BasicType) ref <productID string> @ OrderService -->
+    [13] (inline) (Reference BasicType) ref <productID string> @ OrderService -->
        w-tainted 3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
   - |-
     [-1] (BasicVariable BasicType) productID string -->
        w-tainted 1x: write(stock_db.Stock.ProductID)
   - |-
-    [12] (inline) (Reference BasicType) ref <quantity int> @ Frontend -->
+    [10] (inline) (Reference BasicType) ref <quantity int> @ Frontend -->
        w-tainted 3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.Quantity)
   - |-
-    [16] (inline) (Reference BasicType) ref <quantity int> @ OrderService -->
+    [14] (inline) (Reference BasicType) ref <quantity int> @ OrderService -->
        w-tainted 3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.Quantity)
   - |-
     [-1] (BasicVariable BasicType) quantity int -->

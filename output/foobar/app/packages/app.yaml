@@ -1,0 +1,98 @@
+"":
+- package: ""
+- package path: github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/...
+- module: ""
+- files: []
+- imports: []
+- imported types: []
+- imported constants: []
+- imported variables: []
+- declared types: []
+- declared variables: []
+- declared constants: []
+- service types: []
+- datastore types: []
+- parsed methods: []
+
+bar:
+- package: bar
+- package path: github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/bar
+- module: github.com/blueprint-uservices/blueprint/examples/foobar/workflow
+- files:
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/foobar/workflow/foobar/bar/BarService.go
+- imports:
+  - context
+- imported types:
+  - context.Context
+- imported constants: []
+- imported variables: []
+- declared types:
+  - bar.BarService
+  - bar.BarServiceImpl struct{}
+- declared variables: []
+- declared constants:
+  - HELLO_BAR_CONST "Hello Bar (CONST)!" untyped string
+- service types:
+  - bar.BarService
+- datastore types: []
+- parsed methods:
+  - (*bar.BarServiceImpl).Bar(ctx context.Context, text string) (string, error)
+  - bar.NewBarServiceImpl(ctx context.Context) (bar.BarService, error)
+
+foo:
+- package: foo
+- package path: github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/foo
+- module: github.com/blueprint-uservices/blueprint/examples/foobar/workflow
+- files:
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/foobar/workflow/foobar/foo/FooService.go
+- imports:
+  - context
+- imported types:
+  - context.Context
+- imported constants: []
+- imported variables: []
+- declared types:
+  - foo.FooService
+  - foo.FooServiceImpl struct{}
+  - foo.FooStruct struct{Value string}
+- declared variables: []
+- declared constants:
+  - HELLO_FOO_CONST "Hello Foo (CONST)!" untyped string
+- service types:
+  - foo.FooService
+- datastore types: []
+- parsed methods:
+  - (*foo.FooServiceImpl).Foo(ctx context.Context, text string) (string, error)
+  - foo.NewFooServiceImpl(ctx context.Context) (foo.FooService, error)
+
+foobar:
+- package: foobar
+- package path: github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar
+- module: github.com/blueprint-uservices/blueprint/examples/foobar/workflow
+- files:
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/foobar/workflow/foobar/FrontendService.go
+- imports:
+  - context
+  - github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/bar
+  - github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/foo
+- imported types:
+  - .error
+  - bar.BarService
+  - context.Context
+  - foo.FooService
+- imported constants: []
+- imported variables: []
+- declared types:
+  - foobar.FrontendService
+  - foobar.FrontendServiceImpl struct{barService bar.BarService, fooService foo.FooService}
+- declared variables: []
+- declared constants:
+  - HELLO_WORLD_CONST "Hello World (CONST)!" untyped string
+- service types:
+  - bar.BarService
+  - foo.FooService
+  - foobar.FrontendService
+- datastore types: []
+- parsed methods:
+  - (*foobar.FrontendServiceImpl).Frontend(ctx context.Context) (string, error)
+  - foobar.NewFrontendServiceImpl(ctx context.Context, fooService foo.FooService, barService bar.BarService) (foobar.FrontendService, error)

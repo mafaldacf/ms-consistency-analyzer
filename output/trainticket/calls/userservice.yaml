@@ -2,13 +2,13 @@
 - NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D) interface{}
 
 (*UserServiceImpl).FindByUserID(ctx context.Context, userID string):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = priceConfig, collection = priceConfig}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = contacts, collection = contacts}, interface{})
 
 (*UserServiceImpl).FindByUsername(ctx context.Context, username string):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = priceConfig, collection = priceConfig}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = contacts, collection = contacts}, interface{})
 
 (*UserServiceImpl).GetAllUsers(ctx context.Context):
-- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = priceConfig, collection = priceConfig}, interface{})
+- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = contacts, collection = contacts}, interface{})
 
 (*UserServiceImpl).SaveUser(ctx context.Context, user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string})
 :

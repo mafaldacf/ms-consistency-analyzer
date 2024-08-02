@@ -49,7 +49,7 @@ PaymentService:
 QueueMaster:
 - fields:
     exitOnError: bool
-    processed: 0 int32
+    processed: int32
     q: Queue
     shipping: ShippingService
 - services:
@@ -68,6 +68,7 @@ ShippingService:
 
 UserService:
 - fields:
+    UserService: UserService
     db: NoSQLDatabase
 - services: {}
 - datastores:

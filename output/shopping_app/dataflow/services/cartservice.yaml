@@ -1,20 +1,20 @@
 (*CartServiceImpl).AddProductToCart(ctx context.Context, cartID string, productID string):
   block 2 (IfDone):
+  - '[-1] (inline) (ServiceVariable ServiceType) order_service shopping_app.OrderService'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) cart_db NoSQLDatabase'
   - '[-1] (inline) (ServiceVariable ServiceType) product_service shopping_app.ProductService'
-  - '[-1] (inline) (ServiceVariable ServiceType) order_service shopping_app.OrderService'
   - '[0] (inline) (StructVariable UserType) shopping_app.CartServiceImpl struct{order_service
     shopping_app.OrderService, product_service shopping_app.ProductService, cart_db
     NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) c (*shopping_app.CartServiceImpl struct{order_service
     shopping_app.OrderService, product_service shopping_app.ProductService, cart_db
     NoSQLDatabase})'
-  - '[3] (inline) (Reference UserType) ref <ctx context.Context> @ Frontend'
-  - '[6] (InterfaceVariable UserType) ctx context.Context'
-  - '[4] (inline) (Reference BasicType) ref <cartID string> @ Frontend'
+  - '[1] (inline) (Reference UserType) ref <ctx context.Context> @ Frontend'
+  - '[4] (InterfaceVariable UserType) ctx context.Context'
+  - '[2] (inline) (Reference BasicType) ref <cartID string> @ Frontend'
   - '[-1] (BasicVariable BasicType) cartID string'
-  - '[5] (inline) (Reference BasicType) ref <productID string> @ Frontend'
-  - '[7] (BasicVariable BasicType) productID string'
+  - '[3] (inline) (Reference BasicType) ref <productID string> @ Frontend'
+  - '[5] (BasicVariable BasicType) productID string'
   - '[-1] (StructVariable UserType) product shopping_app.Product struct{ProductID
     string, Description string, PricePerUnit int, Category string}'
   - |-
@@ -87,17 +87,17 @@
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
     {database = cart_database, collection = cart_collection}'
   - '[-1] (InterfaceVariable UserType) _ .error'
-  - '[0] (inline) (FieldVariable FieldType) Value string'
   - '[0] (inline) (BasicVariable BasicType) "cartID" string'
   - '[0] (inline) (FieldVariable FieldType) Key "cartID" string'
+  - '[0] (inline) (FieldVariable FieldType) Value string'
   - '[0] (inline) (StructVariable StructType) struct{Key "cartID" string, Value string}'
   - '[-1] (SliceVariable UserType) query primitive.D'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database
     = cart_database, collection = cart_collection}'
   - '[-1] (InterfaceVariable UserType) _ .error'
+  - '[0] (inline) (FieldVariable FieldType) Value string'
   - '[0] (inline) (BasicVariable BasicType) "cartID" string'
   - '[0] (inline) (FieldVariable FieldType) Key "cartID" string'
-  - '[0] (inline) (FieldVariable FieldType) Value string'
   - '[0] (inline) (StructVariable StructType) struct{Key "cartID" string, Value string}'
   - '[-1] (SliceVariable UserType) filter primitive.D'
   - '[0] (inline) (BasicVariable BasicType) "completed" string'

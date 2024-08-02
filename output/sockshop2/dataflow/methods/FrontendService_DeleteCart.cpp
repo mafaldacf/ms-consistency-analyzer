@@ -5,7 +5,7 @@
 [__] (-1) (ServiceVariable ServiceType) cart cart.CartService 
 [__] (-1) (ServiceVariable ServiceType) order order.OrderService 
 
-[] (64) (InterfaceVariable UserType) ctx context.Context 
+[] (61) (InterfaceVariable UserType) ctx context.Context 
 
-[] (65) (BasicVariable BasicType) sessionID string 
+[] (62) (BasicVariable BasicType) sessionID string 
 

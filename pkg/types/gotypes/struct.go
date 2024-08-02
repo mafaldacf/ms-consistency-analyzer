@@ -19,6 +19,10 @@ func (t *StructType) AddNewFieldType(newType *FieldType) {
 	t.FieldTypes = append(t.FieldTypes, newType)
 }
 
+func (t *StructType) GetFieldTypes() []*FieldType {
+	return t.FieldTypes
+}
+
 func (t *StructType) IsSameType(other Type) bool {
 	_, ok := other.(*StructType)
 	return ok

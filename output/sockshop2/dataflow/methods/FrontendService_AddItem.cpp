@@ -5,19 +5,19 @@
 [__] (-1) (ServiceVariable ServiceType) cart cart.CartService 
 [__] (-1) (ServiceVariable ServiceType) order order.OrderService 
 
-[] (15) (InterfaceVariable UserType) ctx context.Context 
+[] (1) (InterfaceVariable UserType) ctx context.Context 
 
 [] (-1) (BasicVariable BasicType) sessionID string 
 
-[] (16) (BasicVariable BasicType) itemID string 
+[] (2) (BasicVariable BasicType) itemID string 
 
-[] (17) (BasicVariable BasicType) sessionID string 
+[] (3) (BasicVariable BasicType) sessionID string 
 
 [] (-1) (StructVariable UserType) sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} 
 [_] (-1) (FieldVariable FieldType) ID string 
-[__] (22) (BasicVariable BasicType) ID string 
+[__] (6) (BasicVariable BasicType) ID string 
 [_] (-1) (FieldVariable FieldType) Price float32 
-[__] (20) (BasicVariable BasicType) Price float32 
+[__] (10) (BasicVariable BasicType) Price float32 
 
 [] (-1) (InterfaceVariable UserType) err .error 
 

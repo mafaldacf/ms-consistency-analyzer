@@ -1,5 +1,5 @@
-[] (-1) (PointerVariable PointerType) q (*queuemaster.queueMasterImpl struct{q Queue, shipping shipping.ShippingService, exitOnError bool, processed int32}) 
-[_] (0) (StructVariable UserType) queuemaster.queueMasterImpl struct{q Queue, shipping shipping.ShippingService, exitOnError bool, processed int32} 
+[] (-1) (PointerVariable PointerType) q (*queuemaster.queueMasterImpl struct{q Queue, shipping shipping.ShippingService, exitOnError bool, processed 0 int32}) 
+[_] (0) (StructVariable UserType) queuemaster.queueMasterImpl struct{q Queue, shipping shipping.ShippingService, exitOnError bool, processed 0 int32} 
 [__] (-1) (BlueprintBackendVariable BlueprintBackendType) q Queue 
 [__] (-1) (ServiceVariable ServiceType) shipping shipping.ShippingService 
 [__] (-1) (BasicVariable BasicType) exitOnError bool 

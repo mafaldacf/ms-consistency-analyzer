@@ -5,7 +5,7 @@
 [__] (-1) (ServiceVariable ServiceType) cart cart.CartService 
 [__] (-1) (ServiceVariable ServiceType) order order.OrderService 
 
-[] (8) (InterfaceVariable UserType) ctx context.Context 
+[] (48) (InterfaceVariable UserType) ctx context.Context 
 
-[] (9) (StructVariable UserType) sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} // write(catalogue_db), 
+[] (49) (StructVariable UserType) sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} // write(catalogue_db), 
 

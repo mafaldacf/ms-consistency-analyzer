@@ -1,0 +1,18 @@
+BarService:
+- fields: {}
+- services: {}
+- datastores: {}
+
+FooService:
+- fields: {}
+- services: {}
+- datastores: {}
+
+FrontendService:
+- fields:
+    barService: BarService
+    fooService: FooService
+- services:
+    BarService: bar.BarService
+    FooService: foo.FooService
+- datastores: {}

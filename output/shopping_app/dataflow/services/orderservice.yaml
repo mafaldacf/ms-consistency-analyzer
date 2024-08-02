@@ -16,56 +16,50 @@
     shopping_app.StockService, billing_service shopping_app.BillingService, product_service
     shopping_app.ProductService, order_db NoSQLDatabase, shipment_queue Queue, analytics_queue
     Queue})'
-  - '[8] (inline) (Reference UserType) ref <ctx context.Context> @ Frontend'
-  - '[14] (InterfaceVariable UserType) ctx context.Context'
+  - '[6] (inline) (Reference UserType) ref <ctx context.Context> @ Frontend'
+  - '[12] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    [42] (inline) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService -->
+    [40] (inline) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService -->
        w-tainted 3x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID)
   - |-
-    [9] (inline) (Reference BasicType) ref <cartID string> @ Frontend -->
+    [7] (inline) (Reference BasicType) ref <cartID string> @ Frontend -->
        w-tainted 2x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID)
   - |-
     [-1] (BasicVariable BasicType) cartID string -->
        w-tainted 2x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID)
   - |-
-    [45] (inline) (Reference InterfaceType) ref <UserID interface{}> @ ShipmentService -->
+    [43] (inline) (Reference InterfaceType) ref <UserID interface{}> @ ShipmentService -->
        w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID)
   - |-
-    [30] (inline) (Reference InterfaceType) ref <UserID interface{}> @ AnalyticsService -->
+    [25] (inline) (Reference InterfaceType) ref <UserID interface{}> @ AnalyticsService -->
        w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID)
   - |-
-    [10] (inline) (Reference BasicType) ref <userID string> @ Frontend -->
+    [8] (inline) (Reference BasicType) ref <userID string> @ Frontend -->
        w-tainted 4x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
   - |-
     [-1] (BasicVariable BasicType) userID string -->
        w-tainted 4x: write(order_db.Order.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, billing_db.Bill.UserID)
   - |-
-    [11] (inline) (Reference BasicType) ref <productID string> @ Frontend -->
+    [9] (inline) (Reference BasicType) ref <productID string> @ Frontend -->
        w-tainted 3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
   - |-
-    [15] (BasicVariable BasicType) productID string -->
+    [13] (BasicVariable BasicType) productID string -->
        w-tainted 3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
   - |-
-    [12] (inline) (Reference BasicType) ref <quantity int> @ Frontend -->
+    [10] (inline) (Reference BasicType) ref <quantity int> @ Frontend -->
        w-tainted 3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.Quantity)
   - |-
-    [16] (BasicVariable BasicType) quantity int -->
+    [14] (BasicVariable BasicType) quantity int -->
        w-tainted 3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.Quantity)
   - |-
-    [13] (inline) (Reference BasicType) ref <price int> @ Frontend -->
+    [11] (inline) (Reference BasicType) ref <price int> @ Frontend -->
        w-tainted 1x: write(billing_db.Bill.PricePerUnit)
   - |-
-    [18] (BasicVariable BasicType) price int -->
+    [16] (BasicVariable BasicType) price int -->
        w-tainted 1x: write(billing_db.Bill.PricePerUnit)
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
     {database = order_database, collection = order_collection}'
   - '[-1] (InterfaceVariable UserType) _ .error'
-  - |-
-    [0] (inline) (BasicVariable BasicType) 1 int -->
-       w-tainted 1x: write(order_db.Order.Timestamp)
-  - |-
-    [0] (inline) (FieldVariable FieldType) Timestamp 1 int -->
-       w-tainted 1x: write(order_db.Order.Timestamp)
   - |-
     [0] (inline) (FieldVariable FieldType) Quantity int -->
        w-tainted 1x: write(order_db.Order.Quantity)
@@ -79,12 +73,18 @@
     [0] (inline) (FieldVariable FieldType) OrderID string -->
        w-tainted 1x: write(order_db.Order.OrderID)
   - |-
+    [0] (inline) (BasicVariable BasicType) 1 int -->
+       w-tainted 1x: write(order_db.Order.Timestamp)
+  - |-
+    [0] (inline) (FieldVariable FieldType) Timestamp 1 int -->
+       w-tainted 1x: write(order_db.Order.Timestamp)
+  - |-
     [-1] (StructVariable UserType) order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} -->
        w-tainted 1x: write(order_db.Order)
   - '[-1] (StructVariable UserType) product shopping_app.Product struct{ProductID
     string, Description string, PricePerUnit int, Category string}'
   - |-
-    [27] (inline) (Reference InterfaceType) ref <ProductCategory interface{}> @ AnalyticsService -->
+    [28] (inline) (Reference InterfaceType) ref <ProductCategory interface{}> @ AnalyticsService -->
        w-tainted 2x: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories)
   - |-
     [-1] (inline) (BasicVariable BasicType) Category string -->
@@ -94,38 +94,39 @@
     string, Description string, PricePerUnit int, Category string}'
   - '[-1] (InterfaceVariable UserType) _ .error'
   - |-
-    [30] (inline) (Reference InterfaceType) ref <UserID interface{}> @ AnalyticsService -->
-       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID)
-  - |-
-    [-1] (inline) (FieldVariable FieldType) UserID string -->
-       w-tainted 1x: write(analytics_queue.AnalyticsMessage.UserID)
-  - |-
-    [27] (inline) (Reference InterfaceType) ref <ProductCategory interface{}> @ AnalyticsService -->
+    [28] (inline) (Reference InterfaceType) ref <ProductCategory interface{}> @ AnalyticsService -->
        w-tainted 2x: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories)
   - |-
     [-1] (inline) (FieldVariable FieldType) ProductCategory string -->
        w-tainted 1x: write(analytics_queue.AnalyticsMessage.ProductCategory)
   - |-
-    [19] (StructVariable UserType) analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} -->
+    [25] (inline) (Reference InterfaceType) ref <UserID interface{}> @ AnalyticsService -->
+       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID)
+  - |-
+    [-1] (inline) (FieldVariable FieldType) UserID string -->
+       w-tainted 1x: write(analytics_queue.AnalyticsMessage.UserID)
+  - |-
+    [17] (StructVariable UserType) analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} -->
        w-tainted 1x: write(analytics_queue.AnalyticsMessage)
   - |-
-    [42] (inline) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService -->
-       w-tainted 3x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID)
-  - |-
-    [-1] (inline) (FieldVariable FieldType) OrderID string -->
-       w-tainted 1x: write(shipment_queue.ShipmentMessage.OrderID)
-  - |-
-    [45] (inline) (Reference InterfaceType) ref <UserID interface{}> @ ShipmentService -->
+    [43] (inline) (Reference InterfaceType) ref <UserID interface{}> @ ShipmentService -->
        w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID)
   - |-
     [-1] (inline) (FieldVariable FieldType) UserID string -->
        w-tainted 1x: write(shipment_queue.ShipmentMessage.UserID)
   - |-
-    [31] (StructVariable UserType) shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} -->
+    [40] (inline) (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService -->
+       w-tainted 3x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID)
+  - |-
+    [-1] (inline) (FieldVariable FieldType) OrderID string -->
+       w-tainted 1x: write(shipment_queue.ShipmentMessage.OrderID)
+  - |-
+    [29] (StructVariable UserType) shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string} -->
        w-tainted 1x: write(shipment_queue.ShipmentMessage)
 
 (*OrderServiceImpl).ReadOrder(ctx context.Context, orderID string):
   block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) stock_service shopping_app.StockService'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) analytics_queue
     Queue'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) shipment_queue
@@ -133,7 +134,6 @@
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) order_db NoSQLDatabase'
   - '[-1] (inline) (ServiceVariable ServiceType) product_service shopping_app.ProductService'
   - '[-1] (inline) (ServiceVariable ServiceType) billing_service shopping_app.BillingService'
-  - '[-1] (inline) (ServiceVariable ServiceType) stock_service shopping_app.StockService'
   - '[0] (inline) (StructVariable UserType) shopping_app.OrderServiceImpl struct{stock_service
     shopping_app.StockService, billing_service shopping_app.BillingService, product_service
     shopping_app.ProductService, order_db NoSQLDatabase, shipment_queue Queue, analytics_queue
@@ -142,23 +142,23 @@
     shopping_app.StockService, billing_service shopping_app.BillingService, product_service
     shopping_app.ProductService, order_db NoSQLDatabase, shipment_queue Queue, analytics_queue
     Queue})'
-  - '[38] (inline) (Reference UserType) ref <ctx context.Context> @ ShipmentService'
+  - '[44] (inline) (Reference UserType) ref <ctx context.Context> @ Frontend'
+  - '[36] (inline) (Reference UserType) ref <ctx context.Context> @ ShipmentService'
   - '[-1] (inline) (Reference UserType) ref <ctx context.Context> @ ShipmentService'
-  - '[1] (inline) (Reference UserType) ref <ctx context.Context> @ Frontend'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - '[45] (inline) (Reference BasicType) ref <orderID string> @ Frontend'
   - |-
-    [42] (inline) (InterfaceVariable InterfaceType) OrderID interface{} -->
+    [40] (inline) (InterfaceVariable InterfaceType) OrderID interface{} -->
        w-tainted 3x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID)
   - |-
-    [41] (inline) (BasicVariable BasicType) OrderID string -->
+    [39] (inline) (BasicVariable BasicType) OrderID string -->
        w-tainted 1x: write(shipment_db.Shipment.OrderID)
   - |-
-    [40] (inline) (Reference FieldType) ref <OrderID string> @ ShipmentService -->
+    [38] (inline) (Reference FieldType) ref <OrderID string> @ ShipmentService -->
        w-tainted 1x: write(shipment_db.Shipment.OrderID)
   - |-
     [0] (inline) (Reference BasicType) ref <OrderID string> @ ShipmentService -->
        w-tainted 1x: write(shipment_db.Shipment.OrderID)
-  - '[2] (inline) (Reference BasicType) ref <orderID string> @ Frontend'
   - '[-1] (BasicVariable BasicType) orderID string'
   - '[-1] (StructVariable UserType) order shopping_app.Order struct{OrderID string,
     UserID string, ProductID string, Quantity int, Timestamp int64}'

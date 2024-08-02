@@ -3,7 +3,7 @@
 [__] (-1) (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase 
 
 [] (-1) (InterfaceVariable UserType) ctx context.Context 
-[_] (59) (Reference UserType) ref <ctx context.Context> @ FrontendService 
+[_] (16) (Reference UserType) ref <ctx context.Context> @ FrontendService 
 
 [] (-1) (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = catalogue, collection = catalogue} 
 

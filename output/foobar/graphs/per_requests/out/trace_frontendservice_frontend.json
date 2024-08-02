@@ -1,0 +1,40 @@
+{
+  "nodes": [
+    {
+      "id": "Client",
+      "type": "client"
+    },
+    {
+      "id": "BarService",
+      "type": "service"
+    },
+    {
+      "id": "FooService",
+      "type": "service"
+    },
+    {
+      "id": "FrontendService",
+      "type": "service"
+    }
+  ],
+  "edges": [
+    {
+      "caller": "Client",
+      "callee": "FrontendService",
+      "call": "Frontend",
+      "depth": 0
+    },
+    {
+      "caller": "FrontendService",
+      "callee": "BarService",
+      "call": "Bar",
+      "depth": 1
+    },
+    {
+      "caller": "FrontendService",
+      "callee": "FooService",
+      "call": "Foo",
+      "depth": 1
+    }
+  ]
+}

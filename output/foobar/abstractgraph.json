@@ -1,0 +1,59 @@
+[
+  {
+    "method": "(*FrontendServiceImpl).Frontend(ctx context.Context)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "(*FooServiceImpl).Foo(ctx context.Context, text string)",
+        "depth": 1,
+        "caller": "FrontendService",
+        "edges": null,
+        "params": null,
+        "returns": [
+          {
+            "variable": {
+              "name": "f",
+              "type": "string"
+            }
+          },
+          {
+            "variable": {
+              "name": "err1",
+              "type": ".error"
+            }
+          }
+        ]
+      },
+      {
+        "method": "(*BarServiceImpl).Bar(ctx context.Context, text string)",
+        "depth": 1,
+        "caller": "FrontendService",
+        "edges": null,
+        "params": null,
+        "returns": [
+          {
+            "variable": {
+              "name": "b",
+              "type": "string"
+            }
+          },
+          {
+            "variable": {
+              "name": "err2",
+              "type": ".error"
+            }
+          }
+        ]
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      }
+    ]
+  }
+]

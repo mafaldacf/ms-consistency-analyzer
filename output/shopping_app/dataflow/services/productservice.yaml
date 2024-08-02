@@ -29,28 +29,28 @@
     NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) s (*shopping_app.ProductServiceImpl struct{product_db
     NoSQLDatabase})'
-  - '[8] (inline) (Reference UserType) ref <ctx context.Context> @ Frontend'
-  - '[14] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
-  - '[3] (inline) (Reference UserType) ref <ctx context.Context> @ Frontend'
-  - '[6] (inline) (Reference UserType) ref <ctx context.Context> @ CartService'
-  - '[14] (InterfaceVariable UserType) ctx context.Context'
+  - '[6] (inline) (Reference UserType) ref <ctx context.Context> @ Frontend'
+  - '[12] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
+  - '[1] (inline) (Reference UserType) ref <ctx context.Context> @ Frontend'
+  - '[4] (inline) (Reference UserType) ref <ctx context.Context> @ CartService'
+  - '[12] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    [11] (inline) (Reference BasicType) ref <productID string> @ Frontend -->
+    [9] (inline) (Reference BasicType) ref <productID string> @ Frontend -->
        w-tainted 3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
   - |-
-    [15] (inline) (Reference BasicType) ref <productID string> @ OrderService -->
+    [13] (inline) (Reference BasicType) ref <productID string> @ OrderService -->
        w-tainted 3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
-  - '[5] (inline) (Reference BasicType) ref <productID string> @ Frontend'
-  - '[7] (inline) (Reference BasicType) ref <productID string> @ CartService'
-  - '[15] (BasicVariable BasicType) productID string'
+  - '[3] (inline) (Reference BasicType) ref <productID string> @ Frontend'
+  - '[5] (inline) (Reference BasicType) ref <productID string> @ CartService'
+  - '[13] (BasicVariable BasicType) productID string'
   - '[-1] (StructVariable UserType) product shopping_app.Product struct{ProductID
     string, Description string, PricePerUnit int, Category string}'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
     {database = product_database, collection = product_collection}'
   - '[-1] (InterfaceVariable UserType) _ .error'
+  - '[0] (inline) (FieldVariable FieldType) Value string'
   - '[0] (inline) (BasicVariable BasicType) "productID" string'
   - '[0] (inline) (FieldVariable FieldType) Key "productID" string'
-  - '[0] (inline) (FieldVariable FieldType) Value string'
   - '[0] (inline) (StructVariable StructType) struct{Key "productID" string, Value
     string}'
   - '[-1] (SliceVariable UserType) query primitive.D'

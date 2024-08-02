@@ -2,7 +2,6 @@ package types
 
 import (
 	"fmt"
-	"go/ast"
 
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/types/gotypes"
@@ -21,7 +20,6 @@ type Field interface {
 }
 
 type FieldInfo struct {
-	Ast  *ast.Field
 	Name string
 	Type gotypes.Type
 }

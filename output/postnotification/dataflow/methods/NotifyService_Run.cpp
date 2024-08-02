@@ -1,5 +1,5 @@
-[] (-1) (PointerVariable PointerType) n (*postnotification.NotifyServiceImpl struct{storage_service postnotification.StorageService, notifications_queue Queue, num_workers int}) 
-[_] (0) (StructVariable UserType) postnotification.NotifyServiceImpl struct{storage_service postnotification.StorageService, notifications_queue Queue, num_workers int} 
+[] (-1) (PointerVariable PointerType) n (*postnotification.NotifyServiceImpl struct{storage_service postnotification.StorageService, notifications_queue Queue, num_workers 4 int}) 
+[_] (0) (StructVariable UserType) postnotification.NotifyServiceImpl struct{storage_service postnotification.StorageService, notifications_queue Queue, num_workers 4 int} 
 [__] (-1) (ServiceVariable ServiceType) storage_service postnotification.StorageService 
 [__] (-1) (BlueprintBackendVariable BlueprintBackendType) notifications_queue Queue 
 [__] (-1) (BasicVariable BasicType) num_workers 4 int 

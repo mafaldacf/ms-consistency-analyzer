@@ -21,35 +21,22 @@ func isBlueprintPackagePath(name string) bool {
 	return name == PACKAGE_PATH_BLUEPRINT
 }
 
-func getEmbeddedGolangNamedTypeIfExists(goType golangtypes.Type) (*golangtypes.Named, bool) {
-	namedGoType, ok := goType.(*golangtypes.Named)
-	stop := false
-	for !stop {
-		switch e := goType.(type) {
-		case *golangtypes.Slice:
-			goType = e.Elem()
-		case *golangtypes.Pointer:
-			goType = e.Elem()
-		case *golangtypes.Array:
-			goType = e.Elem()
-		case *golangtypes.Chan:
-			goType = e.Elem()
-		case *golangtypes.Named:
-			namedGoType = e
-			ok = true
-			stop = true
-		case *golangtypes.Signature, *golangtypes.Struct, *golangtypes.Basic, *golangtypes.Map, *golangtypes.Interface:
-			// ignore
-			stop = true
-		default:
-			logger.Logger.Fatalf("unknown go type (%s) for (%v)", utils.GetType(goType), goType)
+func FindDefTypesAndAddToPackage(pkg *types.Package, object golangtypes.Object, goType golangtypes.Type, visitedNamedTypes map[*golangtypes.Named]bool, typeNameToFuncs map[string][]*golangtypes.Func, serviceTypes map[string]*gotypes.ServiceType) gotypes.Type {
+	if object != nil {
+		if constObject, ok := object.(*golangtypes.Const); ok {
+			t := LookupAndComputeTypesForGoTypes(pkg, constObject.Type())
+			t.(*gotypes.BasicType).Value = constObject.Val().String()
+			v := CreateVariableFromType(object.Id(), t)
+			if pkg.HasPath(object.Pkg().Path()) {
+				pkg.AddConstant(v)
+			} else {
+				pkg.AddImportedConstant(v, object.Pkg().Path())
+			}
+			return t
 		}
 	}
-	return namedGoType, ok
-}
 
-func FindDefTypesAndAddToPackage(pkg *types.Package, goType golangtypes.Type, visitedNamedTypes map[*golangtypes.Named]bool, typeNameToFuncs map[string][]*golangtypes.Func, servicesPkgPath map[string]string) gotypes.Type {
-	namedGoType, ok := getEmbeddedGolangNamedTypeIfExists(goType)
+	namedGoType, ok := goType.(*golangtypes.Named)
 	if !ok {
 		logger.Logger.Tracef("[APP GOTYPES] skipping %v with type %s", goType, utils.GetType(goType))
 		return nil
@@ -84,11 +71,7 @@ func FindDefTypesAndAddToPackage(pkg *types.Package, goType golangtypes.Type, vi
 
 				logger.Logger.Infof("[APP GOTYPES] added imported blueprint type (%s)", declaredType.String())
 				return declaredType
-			} else if servicePkgPath, ok := servicesPkgPath[typeName]; ok && servicePkgPath == objectPackagePath {
-				serviceType := &gotypes.ServiceType{
-					Name:    typeName,
-					Package: objectPackagePath,
-				}
+			} else if serviceType, ok := serviceTypes[typeName]; ok && serviceType.HasPackagePath(objectPackagePath) {
 				pkg.AddImportedType(serviceType)
 				pkg.AddServiceType(serviceType)
 
@@ -96,21 +79,17 @@ func FindDefTypesAndAddToPackage(pkg *types.Package, goType golangtypes.Type, vi
 				return serviceType
 			} else {
 				userType := &gotypes.UserType{
-					Name:    typeName,
-					Package: objectPackagePath, // this is the real package name
+					Name:        typeName,
+					PackagePath: objectPackagePath, // this is the real package name
 				}
 				pkg.AddImportedType(userType)
 
-				userType.UserType = ComputeTypesForGoTypes(pkg, namedGoType.Underlying(), true, visitedNamedTypes, typeNameToFuncs, servicesPkgPath)
+				userType.UserType = ComputeTypesForGoTypes(pkg, namedGoType.Underlying(), true, visitedNamedTypes, typeNameToFuncs, serviceTypes)
 				addMethodsIfStructOrInterface(userType, namedGoType)
 				logger.Logger.Infof("[APP GOTYPES] added imported user type (%s)", userType.String())
 				return userType
 			}
-		} else if servicePkgPath, ok := servicesPkgPath[typeName]; ok && servicePkgPath == objectPackagePath {
-			serviceType := &gotypes.ServiceType{
-				Name:    typeName,
-				Package: objectPackagePath,
-			}
+		} else if serviceType, ok := serviceTypes[typeName]; ok && serviceType.HasPackagePath(objectPackagePath) {
 			pkg.AddDeclaredType(serviceType)
 			pkg.AddServiceType(serviceType)
 			logger.Logger.Infof("[APP GOTYPES] added declared service type (%s)", serviceType.String())
@@ -118,14 +97,14 @@ func FindDefTypesAndAddToPackage(pkg *types.Package, goType golangtypes.Type, vi
 		} else {
 			// new type defined in the current package
 			userType := &gotypes.UserType{
-				Name:    typeName,
-				Package: pkg.Name,
+				Name:        typeName,
+				PackagePath: pkg.Name,
 			}
 			// since we can have nested structures with definitions out of order
 			// there, here we only add an entry and latter we generate the subtypes
 			pkg.AddDeclaredType(userType)
 
-			userType.UserType = ComputeTypesForGoTypes(pkg, namedGoType.Underlying(), true, visitedNamedTypes, typeNameToFuncs, servicesPkgPath)
+			userType.UserType = ComputeTypesForGoTypes(pkg, namedGoType.Underlying(), true, visitedNamedTypes, typeNameToFuncs, serviceTypes)
 			addMethodsIfStructOrInterface(userType, namedGoType)
 			logger.Logger.Infof("[APP GOTYPES] added declared named type (%s)", userType.String())
 			return userType
@@ -133,14 +112,14 @@ func FindDefTypesAndAddToPackage(pkg *types.Package, goType golangtypes.Type, vi
 	} else if pkg.HasPath(objectPackagePath) {
 		// new type defined in the current package
 		userType := &gotypes.UserType{
-			Name:    typeName,
-			Package: pkg.Name,
+			Name:        typeName,
+			PackagePath: pkg.Name,
 		}
 		// since we can have nested structures with definitions out of order
 		// there, here we only add an entry and latter we generate the subtypes
 		pkg.AddDeclaredType(userType)
 
-		userType.UserType = ComputeTypesForGoTypes(pkg, namedGoType.Underlying(), true, visitedNamedTypes, typeNameToFuncs, servicesPkgPath)
+		userType.UserType = ComputeTypesForGoTypes(pkg, namedGoType.Underlying(), true, visitedNamedTypes, typeNameToFuncs, serviceTypes)
 		addMethodsIfStructOrInterface(userType, namedGoType)
 		logger.Logger.Infof("[APP GOTYPES] added declared named type %s", userType.String())
 		return userType
@@ -190,8 +169,8 @@ func LookupAndComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type) 
 }
 
 // + Compute
-func ComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type, computeIfNotFound bool, visitedNamedTypes map[*golangtypes.Named]bool, typeNameToFuncs map[string][]*golangtypes.Func, servicesPkgPath map[string]string) gotypes.Type {
-	logger.Logger.Tracef("[LOOKUP GOTYPES] [%s] %v", utils.GetType(goType), goType)
+func ComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type, computeIfNotFound bool, visitedNamedTypes map[*golangtypes.Named]bool, typeNameToFuncs map[string][]*golangtypes.Func, serviceTypes map[string]*gotypes.ServiceType) gotypes.Type {
+	logger.Logger.Debugf("[LOOKUP GOTYPES] [%s] %v", utils.GetType(goType), goType)
 	switch e := goType.(type) {
 	case *golangtypes.Named:
 		name := e.Obj().Name()
@@ -213,7 +192,7 @@ func ComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type, computeIf
 		}
 
 		if true {
-			return FindDefTypesAndAddToPackage(p, e, visitedNamedTypes, typeNameToFuncs, servicesPkgPath)
+			return FindDefTypesAndAddToPackage(p, e.Obj(), e, visitedNamedTypes, typeNameToFuncs, serviceTypes)
 		}
 	case *golangtypes.Struct:
 		structType := &gotypes.StructType{Methods: make(map[string]string)}
@@ -222,7 +201,7 @@ func ComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type, computeIf
 			name := f.Name()
 			fieldType := &gotypes.FieldType{
 				Origin:      structType,
-				WrappedType: ComputeTypesForGoTypes(p, f.Type(), computeIfNotFound, visitedNamedTypes, typeNameToFuncs, servicesPkgPath),
+				WrappedType: ComputeTypesForGoTypes(p, f.Type(), computeIfNotFound, visitedNamedTypes, typeNameToFuncs, serviceTypes),
 				StructField: true,
 				Embedded:    f.Embedded(),
 				FieldName:   name,
@@ -244,32 +223,32 @@ func ComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type, computeIf
 		signatureType := &gotypes.SignatureType{}
 		for i := 0; i < e.Results().Len(); i++ {
 			var v *golangtypes.Var = e.Results().At(i)
-			signatureType.ReturnTypes = append(signatureType.ReturnTypes, ComputeTypesForGoTypes(p, v.Type(), computeIfNotFound, visitedNamedTypes, typeNameToFuncs, servicesPkgPath))
+			signatureType.ReturnTypes = append(signatureType.ReturnTypes, ComputeTypesForGoTypes(p, v.Type(), computeIfNotFound, visitedNamedTypes, typeNameToFuncs, serviceTypes))
 		}
 		return signatureType
 	case *golangtypes.Tuple:
 		tupleType := &gotypes.TupleType{}
 		for i := 0; i < e.Len(); i++ {
 			var v *golangtypes.Var = e.At(i)
-			tupleType.Types = append(tupleType.Types, ComputeTypesForGoTypes(p, v.Type(), computeIfNotFound, visitedNamedTypes, typeNameToFuncs, servicesPkgPath))
+			tupleType.Types = append(tupleType.Types, ComputeTypesForGoTypes(p, v.Type(), computeIfNotFound, visitedNamedTypes, typeNameToFuncs, serviceTypes))
 		}
 		return tupleType
 	case *golangtypes.Slice:
 		sliceType := &gotypes.SliceType{}
-		sliceType.UnderlyingType = ComputeTypesForGoTypes(p, e.Elem(), computeIfNotFound, visitedNamedTypes, typeNameToFuncs, servicesPkgPath)
+		sliceType.UnderlyingType = ComputeTypesForGoTypes(p, e.Elem(), computeIfNotFound, visitedNamedTypes, typeNameToFuncs, serviceTypes)
 		return sliceType
 	case *golangtypes.Pointer:
 		pointerType := &gotypes.PointerType{}
-		pointerType.PointerTo = ComputeTypesForGoTypes(p, e.Elem(), computeIfNotFound, visitedNamedTypes, typeNameToFuncs, servicesPkgPath)
+		pointerType.PointerTo = ComputeTypesForGoTypes(p, e.Elem(), computeIfNotFound, visitedNamedTypes, typeNameToFuncs, serviceTypes)
 		return pointerType
 	case *golangtypes.Chan:
 		chanType := &gotypes.ChanType{}
-		chanType.ChanType = ComputeTypesForGoTypes(p, e.Elem(), computeIfNotFound, visitedNamedTypes, typeNameToFuncs, servicesPkgPath)
+		chanType.ChanType = ComputeTypesForGoTypes(p, e.Elem(), computeIfNotFound, visitedNamedTypes, typeNameToFuncs, serviceTypes)
 		return chanType
 	case *golangtypes.Map:
 		chanType := &gotypes.MapType{}
-		chanType.KeyType = ComputeTypesForGoTypes(p, e.Key(), computeIfNotFound, visitedNamedTypes, typeNameToFuncs, servicesPkgPath)
-		chanType.ValueType = ComputeTypesForGoTypes(p, e.Elem(), computeIfNotFound, visitedNamedTypes, typeNameToFuncs, servicesPkgPath)
+		chanType.KeyType = ComputeTypesForGoTypes(p, e.Key(), computeIfNotFound, visitedNamedTypes, typeNameToFuncs, serviceTypes)
+		chanType.ValueType = ComputeTypesForGoTypes(p, e.Elem(), computeIfNotFound, visitedNamedTypes, typeNameToFuncs, serviceTypes)
 		return chanType
 	default:
 		if goType != nil {

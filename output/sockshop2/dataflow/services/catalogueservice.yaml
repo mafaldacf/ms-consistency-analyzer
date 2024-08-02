@@ -6,10 +6,10 @@
     NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db
     NoSQLDatabase})'
-  - '[8] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[48] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    [9] (inline) (Reference UserType) ref <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}> @ FrontendService -->
+    [49] (inline) (Reference UserType) ref <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}> @ FrontendService -->
        w-tainted 1x: write(catalogue_db.Sock)
   - |-
     [-1] (StructVariable UserType) sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} -->
@@ -69,9 +69,9 @@
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
     {database = catalogue, collection = catalogue}'
   - '[-1] (InterfaceVariable UserType) _ .error'
+  - '[0] (inline) (FieldVariable FieldType) Value string'
   - '[0] (inline) (BasicVariable BasicType) "id" string'
   - '[0] (inline) (FieldVariable FieldType) Key "id" string'
-  - '[0] (inline) (FieldVariable FieldType) Value string'
   - '[0] (inline) (StructVariable StructType) struct{Key "id" string, Value string}'
   - '[-1] (SliceVariable UserType) query primitive.D'
 
@@ -82,12 +82,12 @@
     NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db
     NoSQLDatabase})'
-  - '[49] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
-  - '[15] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[63] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[53] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
   - '[1] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[50] (inline) (Reference BasicType) ref <itemID string> @ FrontendService'
-  - '[16] (inline) (Reference BasicType) ref <itemID string> @ FrontendService'
+  - '[64] (inline) (Reference BasicType) ref <itemID string> @ FrontendService'
+  - '[54] (inline) (Reference BasicType) ref <itemID string> @ FrontendService'
   - '[2] (inline) (Reference BasicType) ref <itemID string> @ FrontendService'
   - '[-1] (BasicVariable BasicType) id string'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
@@ -98,6 +98,12 @@
   - '[0] (inline) (FieldVariable FieldType) Key "id" string'
   - '[0] (inline) (StructVariable StructType) struct{Key "id" string, Value string}'
   - '[-1] (SliceVariable UserType) query primitive.D'
+  - '[0] (inline) (BasicVariable BasicType) "," string'
+  - '[-1] (inline) (BasicVariable BasicType) TagString string'
+  - '[0] (inline) (SliceVariable SliceType) []string'
+  - '[-1] (inline) (FieldVariable FieldType) Tags []string'
+  - '[-1] (inline) (BasicVariable BasicType) TagString string'
+  - '[-1] (inline) (FieldVariable FieldType) TagString string'
   - '[-1] (inline) (BasicVariable BasicType) ImageURL_2 string'
   - '[-1] (inline) (BasicVariable BasicType) ImageURL_1 string'
   - '[0] (inline) (ArrayVariable SliceType) []string'
@@ -106,12 +112,6 @@
   - '[-1] (inline) (FieldVariable FieldType) ImageURL_2 string'
   - '[-1] (inline) (BasicVariable BasicType) ImageURL_1 string'
   - '[-1] (inline) (FieldVariable FieldType) ImageURL_1 string'
-  - '[0] (inline) (BasicVariable BasicType) "," string'
-  - '[-1] (inline) (BasicVariable BasicType) TagString string'
-  - '[0] (inline) (SliceVariable SliceType) []string'
-  - '[-1] (inline) (FieldVariable FieldType) Tags []string'
-  - '[-1] (inline) (BasicVariable BasicType) TagString string'
-  - '[-1] (inline) (FieldVariable FieldType) TagString string'
   - '[-1] (StructVariable UserType) sock catalogue.Sock struct{ID string, Name string,
     Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price
     float32, Quantity int, Tags []string, TagString string}'
@@ -126,15 +126,15 @@
     NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db
     NoSQLDatabase})'
-  - '[66] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[11] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[67] (inline) (Reference ArrayType) ref <tags []string> @ FrontendService'
+  - '[12] (inline) (Reference ArrayType) ref <tags []string> @ FrontendService'
   - '[-1] (ArrayVariable ArrayType) tags []string'
-  - '[68] (inline) (Reference BasicType) ref <order string> @ FrontendService'
+  - '[13] (inline) (Reference BasicType) ref <order string> @ FrontendService'
   - '[-1] (BasicVariable BasicType) order string'
-  - '[69] (inline) (Reference BasicType) ref <pageNum int> @ FrontendService'
+  - '[14] (inline) (Reference BasicType) ref <pageNum int> @ FrontendService'
   - '[-1] (BasicVariable BasicType) pageNum int'
-  - '[70] (inline) (Reference BasicType) ref <pageSize int> @ FrontendService'
+  - '[15] (inline) (Reference BasicType) ref <pageSize int> @ FrontendService'
   - '[-1] (BasicVariable BasicType) pageSize int'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
     {database = catalogue, collection = catalogue}'
@@ -157,7 +157,7 @@
     NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db
     NoSQLDatabase})'
-  - '[59] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[16] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
     {database = catalogue, collection = catalogue}'

@@ -5,10 +5,13 @@
 - files: []
 - imports: []
 - imported types: []
+- imported constants: []
+- imported variables: []
 - declared types: []
+- declared variables: []
+- declared constants: []
 - service types: []
 - datastore types: []
-- declared variables: []
 - parsed methods: []
 
 shopping_app:
@@ -46,13 +49,15 @@ shopping_app:
   - primitive.E
   - sync.WaitGroup
   - sync.noCopy
+- imported constants: []
+- imported variables: []
 - declared types:
   - shopping_app.Analytics struct{UserID string, Categories []string}
   - shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string}
   - shopping_app.AnalyticsService
   - shopping_app.AnalyticsServiceImpl struct{analytics_db {instance = analytics_db}
     interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, analytics_queue  {instance = analytics_queue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})},
-    num_workers int}
+    num_workers 4 int}
   - shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int}
   - shopping_app.BillingService
   - shopping_app.BillingServiceImpl struct{bill_db {instance = billing_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
@@ -72,10 +77,12 @@ shopping_app:
   - shopping_app.ShipmentMessage struct{OrderID string, UserID string}
   - shopping_app.ShipmentService
   - shopping_app.ShipmentServiceImpl struct{order_service shopping_app.OrderService, shipment_db {instance = shipment_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, shipment_queue  {instance = shipment_queue} interface{Queue.Push(ctx context.Context, item interface{}),
-    Queue.Pop(ctx context.Context, item interface{})}, num_workers int}
+    Queue.Pop(ctx context.Context, item interface{})}, num_workers 4 int}
   - shopping_app.Stock struct{ProductID string, Quantity int}
   - shopping_app.StockService
   - shopping_app.StockServiceImpl struct{stock_db {instance = stock_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+- declared variables: []
+- declared constants: []
 - service types:
   - shopping_app.AnalyticsService
   - shopping_app.BillingService
@@ -92,7 +99,6 @@ shopping_app:
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
   - Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}
-- declared variables: []
 - parsed methods:
   - (*shopping_app.AnalyticsServiceImpl).Run(ctx context.Context) error
   - (*shopping_app.AnalyticsServiceImpl).updateAnalytics(ctx context.Context, message shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string}) error

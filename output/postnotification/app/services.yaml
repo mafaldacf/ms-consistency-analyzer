@@ -2,7 +2,7 @@ AnalyticsService:
 - fields:
     analytics_db: NoSQLDatabase
     analytics_queue: Queue
-    num_workers: 4 int
+    num_workers: int
 - services: {}
 - datastores:
     analytics_db: NoSQLDatabase
@@ -18,7 +18,7 @@ MediaService:
 NotifyService:
 - fields:
     notifications_queue: Queue
-    num_workers: 4 int
+    num_workers: int
     storage_service: StorageService
 - services:
     StorageService: postnotification.StorageService

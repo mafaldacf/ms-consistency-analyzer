@@ -1,0 +1,26 @@
+{
+  "nodes": [
+    {
+      "id": "BarService",
+      "type": "service"
+    },
+    {
+      "id": "FooService",
+      "type": "service"
+    },
+    {
+      "id": "FrontendService",
+      "type": "service"
+    }
+  ],
+  "edges": [
+    {
+      "caller": "FrontendService",
+      "callee": "BarService"
+    },
+    {
+      "caller": "FrontendService",
+      "callee": "FooService"
+    }
+  ]
+}

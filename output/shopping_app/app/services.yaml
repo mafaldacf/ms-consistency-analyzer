@@ -2,7 +2,7 @@ AnalyticsService:
 - fields:
     analytics_db: NoSQLDatabase
     analytics_queue: Queue
-    num_workers: 4 int
+    num_workers: int
 - services: {}
 - datastores:
     analytics_db: NoSQLDatabase
@@ -61,7 +61,7 @@ ProductService:
 
 ShipmentService:
 - fields:
-    num_workers: 4 int
+    num_workers: int
     order_service: OrderService
     shipment_db: NoSQLDatabase
     shipment_queue: Queue

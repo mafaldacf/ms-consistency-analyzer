@@ -262,6 +262,22 @@ func (p *Package) DumpYaml() utils.OrderedProperties {
 	sort.Strings(importedTypes)
 	propsData.AddOrderedProperty("imported types", importedTypes)
 
+	// imported constants
+	importedConstants := []string{}
+	for _, e := range p.ImportedConstants {
+		importedConstants = append(importedConstants, e.LongString())
+	}
+	sort.Strings(importedConstants)
+	propsData.AddOrderedProperty("imported constants", importedConstants)
+
+	// imported types
+	importedVariables := []string{}
+	for _, e := range p.ImportedVariables {
+		importedVariables = append(importedVariables, e.LongString())
+	}
+	sort.Strings(importedVariables)
+	propsData.AddOrderedProperty("imported variables", importedVariables)
+
 	// declared types
 	declaredTypes := []string{}
 	for _, e := range p.DeclaredTypes {
@@ -269,6 +285,22 @@ func (p *Package) DumpYaml() utils.OrderedProperties {
 	}
 	sort.Strings(declaredTypes)
 	propsData.AddOrderedProperty("declared types", declaredTypes)
+
+	// declared variables
+	declaredVariables := []string{}
+	for _, v := range p.DeclaredVariables {
+		declaredVariables = append(declaredVariables, v.String())
+	}
+	sort.Strings(declaredVariables)
+	propsData.AddOrderedProperty("declared variables", declaredVariables)
+
+	// declared constants
+	declaredConstants := []string{}
+	for _, v := range p.DeclaredConstants {
+		declaredConstants = append(declaredConstants, v.String())
+	}
+	sort.Strings(declaredConstants)
+	propsData.AddOrderedProperty("declared constants", declaredConstants)
 
 	// service types
 	serviceTypes := []string{}
@@ -285,14 +317,6 @@ func (p *Package) DumpYaml() utils.OrderedProperties {
 	}
 	sort.Strings(datastoreTypes)
 	propsData.AddOrderedProperty("datastore types", datastoreTypes)
-
-	// declared variables
-	declaredVariables := []string{}
-	for _, v := range p.DeclaredVariables {
-		declaredVariables = append(declaredVariables, v.String())
-	}
-	sort.Strings(declaredVariables)
-	propsData.AddOrderedProperty("declared variables", declaredVariables)
 
 	// parsed methods
 	parsedMethods := []string{}

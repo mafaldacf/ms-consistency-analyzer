@@ -7,40 +7,10 @@ import (
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
-	"analyzer/pkg/lookup"
 	"analyzer/pkg/types"
 	"analyzer/pkg/types/gotypes"
 	"analyzer/pkg/utils"
 )
-
-func (service *Service) methodImplementsService(n ast.Node) (bool, *ast.FuncDecl) {
-	// check if service is a function declaration
-	if funcDecl, ok := n.(*ast.FuncDecl); ok {
-		// check if the function has any receivers (i.e. structure(s) implemented by the function)
-		if funcDecl.Recv != nil && len(funcDecl.Recv.List) > 0 {
-			// get the function's receiver (i.e. i.e. structure(s) implemented by the function)
-			if recv, ok := funcDecl.Recv.List[0].Type.(*ast.StarExpr); ok {
-				// check if the data type (e.g. StorageService) of the receiver (i.e. structure(s) implemented by the function)
-				// matches the one we are looking for (i.e. StorageService)
-				if ident, ok := recv.X.(*ast.Ident); ok && ident.Name == service.ImplName {
-					return true, funcDecl
-				}
-			}
-		}
-	}
-	return false, nil
-}
-
-func (service *Service) methodHasReceiver(n ast.Node) (ok bool, funcDecl *ast.FuncDecl) {
-	// check if service is a function declaration
-	if funcDecl, ok = n.(*ast.FuncDecl); ok {
-		// check if the function has any receivers (i.e. structure(s) implemented by the function)
-		if funcDecl.Recv != nil && len(funcDecl.Recv.List) > 0 {
-			return true, funcDecl
-		}
-	}
-	return false, funcDecl
-}
 
 func (service *Service) isMethodExposedByService(methodName string) bool {
 	// check if the function declaration being implemented by the Service structure
@@ -104,40 +74,32 @@ func (service *Service) AttachAllPackageMethods() {
 	}
 }
 
-func (service *Service) ParseFields() {
-	logger.Logger.Tracef("[PARSER] [%s] inspecting fields\n", service.Name)
+// RegisterFields parses the service's fields from the previously parsed impl user type declared in the package
+func (service *Service) RegisterFields() {
+	logger.Logger.Tracef("[PARSER] [%s] inspecting fields...\n", service.Name)
 
-	ast.Inspect(service.File.Ast, func(n ast.Node) bool {
-		// a struct type is first a spec type
-		// we want to make sure that we found the service type
-		// otherwise, we return true to keep recursition to next ast service
-		if ts, ok := n.(*ast.TypeSpec); ok {
-			if ts.Name.Name != service.ImplName {
-				return true
-			}
-		}
-		//FIXME: should only be service fields
-		if str, ok := n.(*ast.StructType); ok {
-			for idx, field := range str.Fields.List {
-				if len(field.Names) > 0 {
-					name := field.Names[0].Name
-					field := service.computeFieldFromType(field, name, idx)
-					service.Fields[name] = field
-					logger.Logger.Debugf("[PARSER] [%s] saved field (%s)\n", service.Name, service.Fields[name])
-				}
-			}
-		}
-		return true
-	})
+	serviceImplType := service.GetPackage().GetDeclaredType(service.ImplName)
+	userType, ok := serviceImplType.(*gotypes.UserType)
+	if !ok {
+		logger.Logger.Fatalf("[PARSER] [%s] service impl is not user type: (%s) %s", service.GetName(), utils.GetType(serviceImplType), serviceImplType.String())
+	}
+
+	structType, ok := userType.UserType.(*gotypes.StructType)
+	if !ok {
+		logger.Logger.Fatalf("[PARSER] [%s] service impl underlying user type is not struct or interface type: (%s) %s", service.GetName(), utils.GetType(userType.UserType), userType.UserType.String())
+	}
+
+	for i, fieldType := range structType.GetFieldTypes() {
+		service.Fields[fieldType.GetName()] = service.computeServiceFieldFromFieldWrappedType(fieldType.GetWrappedType(), fieldType.GetName(), i)
+	}
+	logger.Logger.Infof("[PARSER] [%s] registered %d fields: %v", service.GetName(), len(service.Fields), service.Fields)
 }
 
-func (service *Service) computeFieldFromType(field *ast.Field, paramName string, idx int) types.Field {
-	fieldType := lookup.ComputeTypeForAstExpr(service.File, field.Type)
-	switch t := fieldType.(type) {
+func (service *Service) computeServiceFieldFromFieldWrappedType(wrappedType gotypes.Type, paramName string, idx int) types.Field {
+	switch t := wrappedType.(type) {
 	case *blueprint.BlueprintBackendType:
 		dbField := &types.DatabaseField{
 			FieldInfo: types.FieldInfo{
-				Ast:  field,
 				Name: paramName,
 				Type: t.Copy(true),
 			},
@@ -151,48 +113,37 @@ func (service *Service) computeFieldFromType(field *ast.Field, paramName string,
 	case *gotypes.ServiceType:
 		return &types.ServiceField{
 			FieldInfo: types.FieldInfo{
-				Ast:  field,
 				Name: paramName,
-				Type: t,
+				Type: wrappedType,
 			},
 		}
 	}
 	return &types.GenericField{
 		FieldInfo: types.FieldInfo{
-			Ast:  field,
 			Name: paramName,
-			Type: fieldType,
+			Type: wrappedType,
 		},
 	}
 }
 
 func (service *Service) RegisterConstructor() {
-	ast.Inspect(service.File.Ast, func(n ast.Node) bool {
-		hasReceiver, funcDecl := service.methodHasReceiver(n)
-		if !hasReceiver && funcDecl != nil && funcDecl.Name.Name == service.ConstructorName {
-			service.Constructor = &types.ParsedMethod{
-				Ast:             funcDecl,
-				Name:            funcDecl.Name.Name,
-				AttachedService: service.Name,
-			}
-			service.Constructor.SetConstructor()
-			logger.Logger.Infof("[PARSER] registered constructor %s for service %s", service.ConstructorName, service.Name)
-		}
-		return true
-	})
+	method := service.GetPackage().GetParsedMethod(service.ConstructorName, "")
+	method.SetConstructor()
+	service.Constructor = method
+	logger.Logger.Infof("[PARSER] [%s] registered constructor (%s)", service.GetName(), service.ConstructorName)
 }
 
-func (service *Service) RegisterImplStructure() {
-	var ExportedMethodsNames []string
+func (service *Service) FindAndRegisterImplStructure() {
+	var exportedMethods []string
 	for name := range service.ExposedMethods {
-		ExportedMethodsNames = append(ExportedMethodsNames, name)
+		exportedMethods = append(exportedMethods, name)
 	}
 	// get impl name
 	ast.Inspect(service.File.Ast, func(n ast.Node) bool {
 		if service.ImplName != "" {
 			return false
 		}
-		if funcDecl, ok := n.(*ast.FuncDecl); ok && slices.Contains(ExportedMethodsNames, funcDecl.Name.Name) {
+		if funcDecl, ok := n.(*ast.FuncDecl); ok && slices.Contains(exportedMethods, funcDecl.Name.Name) {
 			if funcDecl.Recv != nil && len(funcDecl.Recv.List) > 0 {
 				if recv, ok := funcDecl.Recv.List[0].Type.(*ast.StarExpr); ok {
 					if ident, ok := recv.X.(*ast.Ident); ok {
@@ -229,27 +180,6 @@ func (service *Service) getQueueInstanceIfMethodHandlesQueue(parsedMethod *types
 	return dbInstance
 }
 
-func (service *Service) funcImplementsQueue(funcDecl *ast.FuncDecl) (implements bool, dbInstance datastores.DatabaseInstance) {
-	// inspect methods
-	ast.Inspect(funcDecl, func(n ast.Node) bool {
-		ok, methodIdent, fieldIdent := getFuncCallIfSelectedServiceField(n, funcDecl.Recv.List[0].Names[0])
-		if !ok || fieldIdent == nil {
-			return true
-		}
-		if field, isField := service.Fields[fieldIdent.Name]; isField {
-			if dbField, isDbField := field.(*types.DatabaseField); isDbField {
-				if dbField.IsQueue && methodIdent.Name == "Pop" {
-					implements = true
-					dbInstance = dbField.DbInstance
-					return false
-				}
-			}
-		}
-		return true
-	})
-	return implements, dbInstance
-}
-
 func getFuncCallIfSelectedServiceField(service ast.Node, expectedRecvIdent *ast.Ident) (ok bool, methodIdent *ast.Ident, fieldIdent *ast.Ident) {
 	hasCurrentServiceRecvIdent := func(selectorExpr *ast.SelectorExpr, expectedRecvIdent *ast.Ident) bool {
 		if serviceRecvIdent, ok := selectorExpr.X.(*ast.Ident); ok {
@@ -277,40 +207,11 @@ func getFuncCallIfSelectedServiceField(service ast.Node, expectedRecvIdent *ast.
 	return false, nil, nil
 }
 
-func (service *Service) buildAndAddQueueHandlerMethod(funcDecl *ast.FuncDecl, dbInstance datastores.DatabaseInstance) {
-	params, returns, receiver := lookup.ComputeFuncDeclFields(service.File, funcDecl)
-	parsedMethod := &types.ParsedMethod{
-		Ast:             funcDecl,
-		Name:            funcDecl.Name.Name,
-		Receiver:        receiver,
-		Params:          params,
-		Returns:         returns,
-		AttachedService: service.Name,
-	}
-	parsedMethod.DbInstances = append(parsedMethod.DbInstances, dbInstance)
-	service.QueueHandlerMethods[parsedMethod.Name] = parsedMethod
-	logger.Logger.Tracef("[PARSER] added worker method %s for service %s: %v (field=%s)", parsedMethod.String(), service.Name, parsedMethod.DbInstances, dbInstance)
-}
-
 func (service *Service) attachQueueHandlerMethod(parsedMethod *types.ParsedMethod, dbInstance datastores.DatabaseInstance) {
 	parsedMethod.DbInstances = append(parsedMethod.DbInstances, dbInstance)
 	service.QueueHandlerMethods[parsedMethod.Name] = parsedMethod
 	logger.Logger.Infof("[PARSER] [%s] attached queue handler method method for instance (%s): %s", service.Name, dbInstance.String(), parsedMethod.String())
 	//logger.Logger.Warnf("[PARSER] [%s] queue handler methods list: %v", service.Name, service.QueueHandlerMethods)
-}
-
-func (service *Service) buildAndAddInternalMethod(funcDecl *ast.FuncDecl) {
-	params, returns, receiver := lookup.ComputeFuncDeclFields(service.File, funcDecl)
-	parsedMethod := &types.ParsedMethod{
-		Ast:             funcDecl,
-		Name:            funcDecl.Name.Name,
-		Params:          params,
-		Returns:         returns,
-		Receiver:        receiver,
-		AttachedService: service.Name,
-	}
-	service.InternalMethods[parsedMethod.Name] = parsedMethod
-	logger.Logger.Infof("[PARSER] added internal method %s to service %s", parsedMethod.String(), service.Name)
 }
 
 func (service *Service) attachInternalMethod(parsedMethod *types.ParsedMethod) {
@@ -320,20 +221,6 @@ func (service *Service) attachInternalMethod(parsedMethod *types.ParsedMethod) {
 	//logger.Logger.Warnf("[PARSER] [%s] internal methods list: %v", service.Name, service.InternalMethods)
 }
 
-func (service *Service) buildAndAddExportedMethod(funcDecl *ast.FuncDecl) {
-	params, returns, receiver := lookup.ComputeFuncDeclFields(service.File, funcDecl)
-	parsedMethod := &types.ParsedMethod{
-		Ast:             funcDecl,
-		Name:            funcDecl.Name.Name,
-		Receiver:        receiver,
-		Params:          params,
-		Returns:         returns,
-		AttachedService: service.Name,
-	}
-	service.ExposedMethods[parsedMethod.Name] = parsedMethod
-	logger.Logger.Tracef("[PARSER] added exposed method %s to service %s", parsedMethod.String(), service.Name)
-}
-
 func (service *Service) attachExportedMethod(parsedMethod *types.ParsedMethod) {
 	service.ExposedMethods[parsedMethod.Name] = parsedMethod
 	parsedMethod.AttachService(service.GetName())
@@ -341,7 +228,8 @@ func (service *Service) attachExportedMethod(parsedMethod *types.ParsedMethod) {
 	//logger.Logger.Warnf("[PARSER] [%s] exposed methods list: %v", service.Name, service.ExposedMethods)
 }
 
-func (service *Service) AttachDatastoreInstances(paramDBs map[string]datastores.DatabaseInstance) {
+// LoadServiceFieldsValues loads generic fields and datastore instances
+func (service *Service) LoadServiceFieldsValues(paramDBs map[string]datastores.DatabaseInstance) {
 	logger.Logger.Infof("[PARSER] [%s] attaching datastore instances to service fields...", service.Name)
 
 	ast.Inspect(service.Constructor.GetBody(), func(n ast.Node) bool {
@@ -386,7 +274,7 @@ func (service *Service) AttachDatastoreInstances(paramDBs map[string]datastores.
 						} else if _, ok := kv.Value.(*ast.Ident); ok {
 							logger.Logger.Warnf("[PARSER - TODOOOOOOO!!!!] [%s] ignoring value (%s) (%v)", service.Name, utils.GetType(kv.Value), kv.Value)
 						} else {
-							logger.Logger.Fatalf("[PARSER] [%s] ignoring value (%s) (%v)", service.Name, utils.GetType(kv.Value), kv.Value)
+							logger.Logger.Warnf("[PARSER] [%s] ignoring value (%s) (%v)", service.Name, utils.GetType(kv.Value), kv.Value)
 						}
 					} else {
 						logger.Logger.Fatalf("[PARSER] [%s] ignoring composite element (%s, %s)", service.Name, keyIdent.Name, utils.GetType(kv.Value))

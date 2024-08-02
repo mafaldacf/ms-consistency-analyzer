@@ -1,7 +1,7 @@
 [] (-1) (PointerVariable PointerType) s (*shipping.shippingImpl struct{q Queue, db NoSQLDatabase}) 
 [_] (0) (StructVariable UserType) shipping.shippingImpl struct{q Queue, db NoSQLDatabase} 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
 [__] (-1) (BlueprintBackendVariable BlueprintBackendType) q Queue 
+[__] (-1) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
 
 [] (-1) (InterfaceVariable UserType) ctx context.Context 
 

@@ -25,8 +25,6 @@
 [_] (0) (BasicVariable BasicType) "," string // write(route_db), 
 
 [] (-1) (StructVariable UserType) route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string} // write(route_db), 
-[_] (-1) (FieldVariable FieldType) StartStation string // write(route_db), 
-[__] (-1) (BasicVariable BasicType) StartStation string // write(route_db), 
 [_] (-1) (FieldVariable FieldType) EndStation string // write(route_db), 
 [__] (-1) (BasicVariable BasicType) EndStation string // write(route_db), 
 [_] (-1) (FieldVariable FieldType) ID string // write(route_db), 
@@ -37,6 +35,8 @@
 [___] (0) (BasicVariable BasicType) "," string // write(route_db), 
 [_] (-1) (FieldVariable FieldType) Distances []int64 // write(route_db), 
 [__] (-1) (ArrayVariable SliceType) distances []int64 // write(route_db), 
+[_] (-1) (FieldVariable FieldType) StartStation string // write(route_db), 
+[__] (-1) (BasicVariable BasicType) StartStation string // write(route_db), 
 
 [] (-1) (BasicVariable BasicType) old_exists false bool 
 

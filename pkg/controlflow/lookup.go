@@ -59,7 +59,7 @@ func lookupVariableFromIdentIfExists(service *service.Service, block *types.Bloc
 	// if its not a variable in the block then it can be either
 	// 1. a declared variable in the package
 	// 2. a ident from a import (which is dealt with in the switch case for the selectorExpr)
-	variable = service.GetPackage().GetDeclaredVariableIfExists(ident.Name)
+	variable = service.GetPackage().GetDeclaredVariableOrConstIfExists(ident.Name)
 	if variable != nil {
 		return variable
 	}
@@ -152,7 +152,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 				return variable, nil
 			}
 
-			variable = importedPkg.GetDeclaredVariable(e.Sel)
+			variable = importedPkg.GetDeclaredVariableOrConst(e.Sel)
 			return variable, nil
 		}
 		if tupleVariable, ok := variable.(*variables.TupleVariable); ok {

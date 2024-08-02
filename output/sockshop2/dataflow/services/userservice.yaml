@@ -1,6 +1,7 @@
 (*userServiceImpl).Delete(ctx context.Context, entity string, id string):
   block 0 (Body):
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[-1] (inline) (ServiceVariable ServiceType) UserService user.UserService'
   - '[0] (inline) (StructVariable UserType) user.userServiceImpl struct{UserService
     user.UserService, db NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) s (*user.userServiceImpl struct{UserService
@@ -20,17 +21,18 @@
 (*userServiceImpl).GetAddresses(ctx context.Context, addressid string):
   block 0 (Body):
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[-1] (inline) (ServiceVariable ServiceType) UserService user.UserService'
   - '[0] (inline) (StructVariable UserType) user.userServiceImpl struct{UserService
     user.UserService, db NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) s (*user.userServiceImpl struct{UserService
     user.UserService, db NoSQLDatabase})'
-  - '[60] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
-  - '[25] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
-  - '[30] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
+  - '[80] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[17] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[22] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[61] (inline) (Reference BasicType) ref <addressID string> @ FrontendService'
-  - '[27] (inline) (Reference BasicType) ref <addressID string> @ FrontendService'
-  - '[33] (inline) (Reference BasicType) ref <addressID string> @ OrderService'
+  - '[81] (inline) (Reference BasicType) ref <addressID string> @ FrontendService'
+  - '[19] (inline) (Reference BasicType) ref <addressID string> @ FrontendService'
+  - '[25] (inline) (Reference BasicType) ref <addressID string> @ OrderService'
   - '[-1] (BasicVariable BasicType) addressid string'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
     {database = users, collection = users}'
@@ -57,26 +59,27 @@
 (*userServiceImpl).GetCards(ctx context.Context, cardid string):
   block 0 (Body):
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[-1] (inline) (ServiceVariable ServiceType) UserService user.UserService'
   - '[0] (inline) (StructVariable UserType) user.userServiceImpl struct{UserService
     user.UserService, db NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) s (*user.userServiceImpl struct{UserService
     user.UserService, db NoSQLDatabase})'
-  - '[62] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
-  - '[25] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
-  - '[30] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
+  - '[82] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[17] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[22] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[63] (inline) (Reference BasicType) ref <cardID string> @ FrontendService'
-  - '[28] (inline) (Reference BasicType) ref <cardID string> @ FrontendService'
-  - '[34] (inline) (Reference BasicType) ref <cardID string> @ OrderService'
+  - '[83] (inline) (Reference BasicType) ref <cardID string> @ FrontendService'
+  - '[20] (inline) (Reference BasicType) ref <cardID string> @ FrontendService'
+  - '[26] (inline) (Reference BasicType) ref <cardID string> @ OrderService'
   - '[-1] (BasicVariable BasicType) cardid string'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
     {database = users, collection = users}'
   - '[-1] (InterfaceVariable UserType) _ .error'
   - '[-1] (ArrayVariable ArrayType) cards []user.Card struct{LongNum string, Expires
     string, CCV string, ID string}'
+  - '[0] (inline) (FieldVariable FieldType) Value string'
   - '[0] (inline) (BasicVariable BasicType) "addressid" string'
   - '[0] (inline) (FieldVariable FieldType) Key "addressid" string'
-  - '[0] (inline) (FieldVariable FieldType) Value string'
   - '[0] (inline) (StructVariable StructType) struct{Key "addressid" string, Value
     string}'
   - '[-1] (SliceVariable UserType) filter primitive.D'
@@ -94,20 +97,21 @@
 (*userServiceImpl).GetUsers(ctx context.Context, userid string):
   block 0 (Body):
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[-1] (inline) (ServiceVariable ServiceType) UserService user.UserService'
   - '[0] (inline) (StructVariable UserType) user.userServiceImpl struct{UserService
     user.UserService, db NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) s (*user.userServiceImpl struct{UserService
     user.UserService, db NoSQLDatabase})'
-  - '[79] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
-  - '[25] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
-  - '[30] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
+  - '[57] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[17] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[22] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[80] (inline) (Reference BasicType) ref <userID string> @ FrontendService'
+  - '[58] (inline) (Reference BasicType) ref <userID string> @ FrontendService'
   - |-
-    [26] (inline) (Reference BasicType) ref <userID string> @ FrontendService -->
+    [18] (inline) (Reference BasicType) ref <userID string> @ FrontendService -->
        w-tainted 3x: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.CustomerID)
   - |-
-    [32] (inline) (Reference BasicType) ref <customerID string> @ OrderService -->
+    [24] (inline) (Reference BasicType) ref <customerID string> @ OrderService -->
        w-tainted 3x: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.CustomerID)
   - '[-1] (BasicVariable BasicType) userid string'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
@@ -130,15 +134,16 @@
 (*userServiceImpl).Login(ctx context.Context, username string, password string):
   block 2 (IfDone):
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[-1] (inline) (ServiceVariable ServiceType) UserService user.UserService'
   - '[0] (inline) (StructVariable UserType) user.userServiceImpl struct{UserService
     user.UserService, db NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) s (*user.userServiceImpl struct{UserService
     user.UserService, db NoSQLDatabase})'
-  - '[44] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[75] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[45] (inline) (Reference BasicType) ref <username string> @ FrontendService'
+  - '[76] (inline) (Reference BasicType) ref <username string> @ FrontendService'
   - '[-1] (BasicVariable BasicType) username string'
-  - '[46] (inline) (Reference BasicType) ref <password string> @ FrontendService'
+  - '[77] (inline) (Reference BasicType) ref <password string> @ FrontendService'
   - '[-1] (BasicVariable BasicType) password string'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
     {database = users, collection = users}'
@@ -169,24 +174,25 @@
 :
  block 0 (Body):
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[-1] (inline) (ServiceVariable ServiceType) UserService user.UserService'
   - '[0] (inline) (StructVariable UserType) user.userServiceImpl struct{UserService
     user.UserService, db NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) s (*user.userServiceImpl struct{UserService
     user.UserService, db NoSQLDatabase})'
-  - '[81] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[42] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[82] (inline) (Reference BasicType) ref <userID string> @ FrontendService'
+  - '[43] (inline) (Reference BasicType) ref <userID string> @ FrontendService'
   - '[-1] (BasicVariable BasicType) userid string'
-  - '[83] (inline) (Reference UserType) ref <address user.Address struct{Street string,
+  - '[44] (inline) (Reference UserType) ref <address user.Address struct{Street string,
     Number string, Country string, City string, PostCode string, ID string}> @ FrontendService'
   - '[-1] (StructVariable UserType) address user.Address struct{Street string, Number
     string, Country string, City string, PostCode string, ID string}'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
     {database = users, collection = users}'
   - '[-1] (InterfaceVariable UserType) _ .error'
+  - '[0] (inline) (FieldVariable FieldType) Value string'
   - '[0] (inline) (BasicVariable BasicType) "userid" string'
   - '[0] (inline) (FieldVariable FieldType) Key "userid" string'
-  - '[0] (inline) (FieldVariable FieldType) Value string'
   - '[0] (inline) (StructVariable StructType) struct{Key "userid" string, Value string}'
   - '[-1] (SliceVariable UserType) filter primitive.D'
   - '[0] (inline) (FieldVariable FieldType) Value user.Address struct{Street string,
@@ -202,24 +208,25 @@
 :
  block 0 (Body):
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[-1] (inline) (ServiceVariable ServiceType) UserService user.UserService'
   - '[0] (inline) (StructVariable UserType) user.userServiceImpl struct{UserService
     user.UserService, db NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) s (*user.userServiceImpl struct{UserService
     user.UserService, db NoSQLDatabase})'
-  - '[5] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[45] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[6] (inline) (Reference BasicType) ref <userID string> @ FrontendService'
+  - '[46] (inline) (Reference BasicType) ref <userID string> @ FrontendService'
   - '[-1] (BasicVariable BasicType) userid string'
-  - '[7] (inline) (Reference UserType) ref <card user.Card struct{LongNum string,
+  - '[47] (inline) (Reference UserType) ref <card user.Card struct{LongNum string,
     Expires string, CCV string, ID string}> @ FrontendService'
   - '[-1] (StructVariable UserType) card user.Card struct{LongNum string, Expires
     string, CCV string, ID string}'
   - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
     {database = users, collection = users}'
   - '[-1] (InterfaceVariable UserType) _ .error'
+  - '[0] (inline) (FieldVariable FieldType) Value string'
   - '[0] (inline) (BasicVariable BasicType) "userid" string'
   - '[0] (inline) (FieldVariable FieldType) Key "userid" string'
-  - '[0] (inline) (FieldVariable FieldType) Value string'
   - '[0] (inline) (StructVariable StructType) struct{Key "userid" string, Value string}'
   - '[-1] (SliceVariable UserType) filter primitive.D'
   - '[0] (inline) (FieldVariable FieldType) Value user.Card struct{LongNum string,
@@ -234,6 +241,7 @@
 :
  block 0 (Body):
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[-1] (inline) (ServiceVariable ServiceType) UserService user.UserService'
   - '[0] (inline) (StructVariable UserType) user.userServiceImpl struct{UserService
     user.UserService, db NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) s (*user.userServiceImpl struct{UserService
@@ -251,42 +259,49 @@
 (*userServiceImpl).Register(ctx context.Context, username string, password string, email string, first string, last string):
   block 0 (Body):
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - '[-1] (inline) (ServiceVariable ServiceType) UserService user.UserService'
   - '[0] (inline) (StructVariable UserType) user.userServiceImpl struct{UserService
     user.UserService, db NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) s (*user.userServiceImpl struct{UserService
     user.UserService, db NoSQLDatabase})'
-  - '[71] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[34] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    [72] (inline) (Reference BasicType) ref <username string> @ FrontendService -->
+    [35] (inline) (Reference BasicType) ref <username string> @ FrontendService -->
        w-tainted 1x: write(user_db.User.Username)
   - |-
     [-1] (BasicVariable BasicType) username string -->
        w-tainted 1x: write(user_db.User.Username)
   - |-
-    [73] (inline) (Reference BasicType) ref <password string> @ FrontendService -->
+    [36] (inline) (Reference BasicType) ref <password string> @ FrontendService -->
        w-tainted 1x: write(user_db.User.Password)
   - |-
     [-1] (BasicVariable BasicType) password string -->
        w-tainted 1x: write(user_db.User.Password)
   - |-
-    [74] (inline) (Reference BasicType) ref <email string> @ FrontendService -->
+    [37] (inline) (Reference BasicType) ref <email string> @ FrontendService -->
        w-tainted 1x: write(user_db.User.Email)
   - |-
     [-1] (BasicVariable BasicType) email string -->
        w-tainted 1x: write(user_db.User.Email)
   - |-
-    [75] (inline) (Reference BasicType) ref <first string> @ FrontendService -->
+    [38] (inline) (Reference BasicType) ref <first string> @ FrontendService -->
        w-tainted 1x: write(user_db.User.FirstName)
   - |-
     [-1] (BasicVariable BasicType) first string -->
        w-tainted 1x: write(user_db.User.FirstName)
   - |-
-    [76] (inline) (Reference BasicType) ref <last string> @ FrontendService -->
+    [39] (inline) (Reference BasicType) ref <last string> @ FrontendService -->
        w-tainted 1x: write(user_db.User.LastName)
   - |-
     [-1] (BasicVariable BasicType) last string -->
        w-tainted 1x: write(user_db.User.LastName)
+  - |-
+    [-1] (inline) (BasicVariable BasicType) first string -->
+       w-tainted 1x: write(user_db.User.FirstName)
+  - |-
+    [-1] (inline) (FieldVariable FieldType) FirstName string -->
+       w-tainted 1x: write(user_db.User.FirstName)
   - |-
     [-1] (inline) (BasicVariable BasicType) email string -->
        w-tainted 1x: write(user_db.User.Email)
@@ -323,12 +338,6 @@
   - |-
     [-1] (inline) (FieldVariable FieldType) LastName string -->
        w-tainted 1x: write(user_db.User.LastName)
-  - |-
-    [-1] (inline) (BasicVariable BasicType) first string -->
-       w-tainted 1x: write(user_db.User.FirstName)
-  - |-
-    [-1] (inline) (FieldVariable FieldType) FirstName string -->
-       w-tainted 1x: write(user_db.User.FirstName)
   - |-
     [-1] (StructVariable UserType) u user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string} -->
        w-tainted 1x: write(user_db.User)

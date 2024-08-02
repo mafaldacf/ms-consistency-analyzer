@@ -1,5 +1,5 @@
 (*shippingImpl).GetShipment(ctx context.Context, id string):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = catalogue, collection = catalogue}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = shipping_service, collection = shipments}, interface{})
 
 (*shippingImpl).PostShipping(ctx context.Context, shipment shipping.Shipment struct{ID string, Name string, Status string}):
 - Queue.Push(ctx context.Context, item interface{}) (err, interface{})

@@ -1,8 +1,8 @@
 (*orderImpl).GetOrder(ctx context.Context, orderID string):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = catalogue, collection = catalogue}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = shipping_service, collection = shipments}, interface{})
 
 (*orderImpl).GetOrders(ctx context.Context, customerID string):
-- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = catalogue, collection = catalogue}, interface{})
+- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = shipping_service, collection = shipments}, interface{})
 
 (*orderImpl).NewOrder(ctx context.Context, customerID string, addressID string, cardID string, cartID string):
 - (*cart.cartImpl).GetCart(ctx context.Context, customerID string) ([]cart.Item struct{ID string, Quantity int, UnitPrice float32}, error)

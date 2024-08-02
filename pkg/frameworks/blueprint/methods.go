@@ -362,9 +362,9 @@ var ctxParam = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Name: "ctx",
 		Type: &gotypes.UserType{
-			Name:     "Context",
-			Package:  "context",
-			UserType: nil,
+			Name:        "Context",
+			PackagePath: "context",
+			UserType:    nil,
 		},
 	},
 }
@@ -404,8 +404,8 @@ var filterParam = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Name: "filter",
 		Type: &gotypes.UserType{
-			Name:    "D",
-			Package: "bson",
+			Name:        "D",
+			PackagePath: "bson",
 		},
 	},
 }
@@ -413,8 +413,8 @@ var updateParam = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Name: "update",
 		Type: &gotypes.UserType{
-			Name:    "D",
-			Package: "bson",
+			Name:        "D",
+			PackagePath: "bson",
 		},
 	},
 }
@@ -422,8 +422,8 @@ var projectionParam = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Name: "projection",
 		Type: &gotypes.UserType{
-			Name:    "D",
-			Package: "bson",
+			Name:        "D",
+			PackagePath: "bson",
 		},
 	},
 }

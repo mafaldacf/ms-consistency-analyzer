@@ -382,7 +382,7 @@ func saveCallToStructOrInterface(service *service.Service, method *types.ParsedM
 				Name:   parsedMethod.Name,
 				Method: parsedMethod,
 			},
-			ServiceTypeName: &gotypes.ServiceType{Name: service.Name, Package: service.GetPackageName()},
+			ServiceTypeName: &gotypes.ServiceType{Name: service.Name, PackagePath: service.GetPackageName()},
 		}
 		saveParsedFuncCallParams(service, method, block, parsedCall, callExpr.Args)
 		method.Calls = append(method.Calls, parsedCall)
@@ -497,7 +497,7 @@ func parseCallToVariableInBlock(service *service.Service, method *types.ParsedMe
 				Pos:     callExpr.Pos(),
 				Method:  targetMethod,
 			},
-			CallerTypeName: &gotypes.ServiceType{Name: service.Name, Package: service.GetPackageName()},
+			CallerTypeName: &gotypes.ServiceType{Name: service.Name, PackagePath: service.GetPackageName()},
 			CalleeTypeName: serviceVar.GetType(),
 		}
 		saveParsedFuncCallParams(service, method, block, parsedCall, callExpr.Args)
@@ -517,7 +517,7 @@ func parseCallToVariableInBlock(service *service.Service, method *types.ParsedMe
 				Pos:     callExpr.Pos(),
 				Method:  blueprintMethod,
 			},
-			CallerTypeName: &gotypes.ServiceType{Name: service.Name, Package: service.GetPackageName()},
+			CallerTypeName: &gotypes.ServiceType{Name: service.Name, PackagePath: service.GetPackageName()},
 			DbInstance:     blueprintBackendType.DbInstance,
 		}
 
@@ -625,7 +625,7 @@ func parseCallToMethodInImportedOrCurrentPackage(service *service.Service, metho
 				Name:    funcIdent.Name,
 				Method:  parsedMethod,
 			},
-			ServiceTypeName: &gotypes.ServiceType{Name: service.Name, Package: service.GetPackageName()},
+			ServiceTypeName: &gotypes.ServiceType{Name: service.Name, PackagePath: service.GetPackageName()},
 		}
 		saveParsedFuncCallParams(service, method, block, parsedCall, callExpr.Args)
 		tupleVar := computeInternalFuncCallReturns(service, callExpr, parsedCall)

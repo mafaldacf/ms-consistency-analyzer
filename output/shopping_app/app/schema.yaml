@@ -128,9 +128,9 @@ SHIPMENT_DB:
 - kind: MongoDB
 - dependencies:
   - order_db
+  - shipment_queue
   - billing_db
   - analytics_queue
-  - shipment_queue
 - schema:
   - fields:
     - document: shopping_app.Shipment struct{OrderID string, UserID string, Status string}

@@ -6,18 +6,18 @@
 - NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}) (err, interface{})
 
 (*catalogueImpl).Count(ctx context.Context, tags []string):
-- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = catalogue, collection = catalogue}, interface{})
+- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = shipping_service, collection = shipments}, interface{})
 
 (*catalogueImpl).DeleteSock(ctx context.Context, id string):
 - NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D) interface{}
 
 (*catalogueImpl).Get(ctx context.Context, id string):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = catalogue, collection = catalogue}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = shipping_service, collection = shipments}, interface{})
 
 (*catalogueImpl).List(ctx context.Context, tags []string, order string, pageNum int, pageSize int):
-- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = catalogue, collection = catalogue}, interface{})
+- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = shipping_service, collection = shipments}, interface{})
 
 (*catalogueImpl).Tags(ctx context.Context):
-- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = catalogue, collection = catalogue}, interface{})
+- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = shipping_service, collection = shipments}, interface{})
 
 .NewCatalogueService(ctx context.Context, catalogue_db NoSQLDatabase): []

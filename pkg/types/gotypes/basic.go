@@ -29,7 +29,7 @@ func (t *BasicType) LongString() string {
 	return t.String()
 }
 func (t *BasicType) GetName() string {
-	return t.String()
+	return t.Name
 }
 func (t *BasicType) GetBasicValue() string {
 	// remove double quotes " " if they exist
@@ -41,7 +41,11 @@ func (t *BasicType) GetBasicValue() string {
 }
 
 func (t *BasicType) AddValue(value string) {
-	t.Value += value
+	if t.Value == "" {
+		t.Value = value
+	} else {
+		t.Value += value
+	}
 }
 func (t *BasicType) GetNestedFieldTypes(prefix string) ([]Type, []string) {
 	return nil, nil

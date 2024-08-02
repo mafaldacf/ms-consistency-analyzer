@@ -4,13 +4,13 @@
 
 [] (-1) (InterfaceVariable UserType) ctx context.Context 
 [_] (1) (Reference UserType) ref <ctx context.Context> @ FrontendService 
-[_] (15) (Reference UserType) ref <ctx context.Context> @ FrontendService 
-[_] (49) (Reference UserType) ref <ctx context.Context> @ FrontendService 
+[_] (53) (Reference UserType) ref <ctx context.Context> @ FrontendService 
+[_] (63) (Reference UserType) ref <ctx context.Context> @ FrontendService 
 
 [] (-1) (BasicVariable BasicType) id string 
 [_] (2) (Reference BasicType) ref <itemID string> @ FrontendService 
-[_] (16) (Reference BasicType) ref <itemID string> @ FrontendService 
-[_] (50) (Reference BasicType) ref <itemID string> @ FrontendService 
+[_] (54) (Reference BasicType) ref <itemID string> @ FrontendService 
+[_] (64) (Reference BasicType) ref <itemID string> @ FrontendService 
 
 [] (-1) (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = catalogue, collection = catalogue} 
 
@@ -23,8 +23,8 @@
 [__] (0) (FieldVariable FieldType) Value string 
 [___] (-1) (BasicVariable BasicType) id string 
 [____] (2) (Reference BasicType) ref <itemID string> @ FrontendService 
-[____] (16) (Reference BasicType) ref <itemID string> @ FrontendService 
-[____] (50) (Reference BasicType) ref <itemID string> @ FrontendService 
+[____] (54) (Reference BasicType) ref <itemID string> @ FrontendService 
+[____] (64) (Reference BasicType) ref <itemID string> @ FrontendService 
 
 [] (-1) (StructVariable UserType) sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} 
 [_] (-1) (FieldVariable FieldType) ImageURL_1 string 

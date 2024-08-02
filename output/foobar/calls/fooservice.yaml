@@ -1,0 +1,3 @@
+(*FooServiceImpl).Foo(ctx context.Context, text string): []
+
+.NewFooServiceImpl(ctx context.Context): []

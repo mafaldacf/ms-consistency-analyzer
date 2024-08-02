@@ -153,7 +153,7 @@ if __name__ == "__main__":
         if args.app != None:
             apps = [args.app]
         else:
-            apps = ['postnotification', 'trainticket', 'shopping_app', 'sockshop2']
+            apps = ['postnotification', 'trainticket', 'shopping_app', 'sockshop2', 'foobar']
         graphs = ['app', 'call']
         for app in apps:
             print(f"[INFO] saving graphs for {app} app...")

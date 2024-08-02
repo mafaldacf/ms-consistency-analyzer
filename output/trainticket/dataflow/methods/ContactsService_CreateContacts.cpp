@@ -5,12 +5,12 @@
 [] (-1) (InterfaceVariable UserType) ctx context.Context 
 
 [] (-1) (StructVariable UserType) contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} // write(contacts_db), 
+[_] (-1) (FieldVariable FieldType) DocumentType int // write(contacts_db), 
+[__] (-1) (BasicVariable BasicType) DocumentType int // write(contacts_db), 
 [_] (-1) (FieldVariable FieldType) AccountID string // write(contacts_db), 
 [__] (-1) (BasicVariable BasicType) AccountID string // write(contacts_db), 
 [_] (-1) (FieldVariable FieldType) DocumentNumber string // write(contacts_db), 
 [__] (-1) (BasicVariable BasicType) DocumentNumber string // write(contacts_db), 
-[_] (-1) (FieldVariable FieldType) DocumentType int // write(contacts_db), 
-[__] (-1) (BasicVariable BasicType) DocumentType int // write(contacts_db), 
 
 [] (-1) (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = contacts, collection = contacts} 
 

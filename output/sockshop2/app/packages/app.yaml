@@ -5,10 +5,13 @@
 - files: []
 - imports: []
 - imported types: []
+- imported constants: []
+- imported variables: []
 - declared types: []
+- declared variables: []
+- declared constants: []
 - service types: []
 - datastore types: []
-- declared variables: []
 - parsed methods: []
 
 cart:
@@ -30,18 +33,21 @@ cart:
   - context.Context
   - primitive.D
   - primitive.E
+- imported constants: []
+- imported variables: []
 - declared types:
   - cart.CartService
   - cart.Item struct{ID string, Quantity int, UnitPrice float32}
   - cart.cart struct{ID string, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}}
   - cart.cartImpl struct{db {instance = cart_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+- declared variables: []
+- declared constants: []
 - service types:
   - cart.CartService
 - datastore types:
   - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
     NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
-- declared variables: []
 - parsed methods:
   - (*cart.cartImpl).AddItem(ctx context.Context, customerID string, item cart.Item struct{ID string, Quantity int, UnitPrice float32}) (cart.Item struct{ID string, Quantity int, UnitPrice float32}, error)
   - (*cart.cartImpl).DeleteCart(ctx context.Context, customerID string) error
@@ -76,11 +82,15 @@ catalogue:
   - context.Context
   - primitive.D
   - primitive.E
+- imported constants: []
+- imported variables: []
 - declared types:
   - catalogue.CatalogueService
   - catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
   - catalogue.catalogueImpl struct{catalogue_db {instance = catalogue_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
   - catalogue.tag struct{ID int, Name string}
+- declared variables: []
+- declared constants: []
 - service types:
   - catalogue.CatalogueService
 - datastore types:
@@ -89,7 +99,6 @@ catalogue:
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
-- declared variables: []
 - parsed methods:
   - (*catalogue.catalogueImpl).AddSock(ctx context.Context, sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string})
     (string, error)
@@ -133,9 +142,13 @@ frontend:
   - user.Card struct{LongNum string, Expires string, CCV string, ID string}
   - user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}
   - user.UserService
+- imported constants: []
+- imported variables: []
 - declared types:
   - frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
   - frontend.FrontendService
+- declared variables: []
+- declared constants: []
 - service types:
   - cart.CartService
   - catalogue.CatalogueService
@@ -143,7 +156,6 @@ frontend:
   - order.OrderService
   - user.UserService
 - datastore types: []
-- declared variables: []
 - parsed methods:
   - (*frontend.FrontendImpl).AddItem(ctx context.Context, sessionID string, itemID string) (string, error)
   - (*frontend.FrontendImpl).DeleteCart(ctx context.Context, sessionID string) error
@@ -209,6 +221,8 @@ order:
   - user.Card struct{LongNum string, Expires string, CCV string, ID string}
   - user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}
   - user.UserService
+- imported constants: []
+- imported variables: []
 - declared types:
   - order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string},
     Card user.Card struct{LongNum string, Expires string, CCV string, ID string},
@@ -218,6 +232,8 @@ order:
   - order.OrderService
   - order.orderImpl struct{users user.UserService, carts cart.CartService, payments payment.PaymentService, shipping shipping.ShippingService, db {instance = order_db}
     interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+- declared variables: []
+- declared constants: []
 - service types:
   - cart.CartService
   - order.OrderService
@@ -230,7 +246,6 @@ order:
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
-- declared variables: []
 - parsed methods:
   - (*order.orderImpl).GetOrder(ctx context.Context, orderID string) (order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status string}, Date string, Total float32}, error)
   - (*order.orderImpl).GetOrders(ctx context.Context, customerID string) ([]order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status string}, Date string, Total float32}, error)
@@ -248,14 +263,17 @@ payment:
   - context
 - imported types:
   - context.Context
+- imported constants: []
+- imported variables: []
 - declared types:
   - payment.Authorisation struct{Authorised bool, Message string}
   - payment.PaymentService
   - payment.paymentImpl struct{declineOverAmount float32}
+- declared variables: []
+- declared constants: []
 - service types:
   - payment.PaymentService
 - datastore types: []
-- declared variables: []
 - parsed methods:
   - (*payment.paymentImpl).Authorise(ctx context.Context, amount float32) (payment.Authorisation struct{Authorised bool, Message string}, error)
   - payment.NewPaymentService(ctx context.Context, declineOverAmount string) (payment.PaymentService, error)
@@ -276,16 +294,19 @@ queuemaster:
   - context.Context
   - shipping.Shipment struct{ID string, Name string, Status string}
   - shipping.ShippingService
+- imported constants: []
+- imported variables: []
 - declared types:
   - queuemaster.QueueMaster
   - queuemaster.queueMasterImpl struct{q {instance = shipqueue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})},
-    shipping shipping.ShippingService, exitOnError bool, processed int32}
+    shipping shipping.ShippingService, exitOnError bool, processed 0 int32}
+- declared variables: []
+- declared constants: []
 - service types:
   - queuemaster.QueueMaster
   - shipping.ShippingService
 - datastore types:
   - Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}
-- declared variables: []
 - parsed methods:
   - (*queuemaster.queueMasterImpl).Run(ctx context.Context) error
   - queuemaster.NewQueueMaster(ctx context.Context, queue Queue, shipping shipping.ShippingService)
@@ -313,11 +334,15 @@ shipping:
   - context.Context
   - primitive.D
   - primitive.E
+- imported constants: []
+- imported variables: []
 - declared types:
   - shipping.Shipment struct{ID string, Name string, Status string}
   - shipping.ShippingService
   - shipping.shippingImpl struct{q {instance = shipqueue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})},
     db  {instance = shipdb} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+- declared variables: []
+- declared constants: []
 - service types:
   - shipping.ShippingService
 - datastore types:
@@ -327,7 +352,6 @@ shipping:
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
   - Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}
-- declared variables: []
 - parsed methods:
   - (*shipping.shippingImpl).GetShipment(ctx context.Context, id string) (shipping.Shipment struct{ID string, Name string, Status string}, error)
   - (*shipping.shippingImpl).PostShipping(ctx context.Context, shipment shipping.Shipment struct{ID string, Name string, Status string}) (shipping.Shipment struct{ID string, Name string, Status string}, error)
@@ -358,6 +382,8 @@ user:
   - context.Context
   - primitive.D
   - primitive.E
+- imported constants: []
+- imported variables: []
 - declared types:
   - user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}
   - user.Card struct{LongNum string, Expires string, CCV string, ID string}
@@ -365,6 +391,8 @@ user:
   - user.UserService
   - user.userServiceImpl struct{UserService user.UserService, db {instance = user_db}
     interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+- declared variables: []
+- declared constants: []
 - service types:
   - user.UserService
 - datastore types:
@@ -373,7 +401,6 @@ user:
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
-- declared variables: []
 - parsed methods:
   - (*user.userServiceImpl).Delete(ctx context.Context, entity string, id string)
     error

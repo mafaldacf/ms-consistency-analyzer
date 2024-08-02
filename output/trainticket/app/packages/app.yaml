@@ -5,10 +5,13 @@
 - files: []
 - imports: []
 - imported types: []
+- imported constants: []
+- imported variables: []
 - declared types: []
+- declared variables: []
+- declared constants: []
 - service types: []
 - datastore types: []
-- declared variables: []
 - parsed methods: []
 
 assurance:
@@ -34,11 +37,15 @@ assurance:
   - context.Context
   - primitive.D
   - primitive.E
+- imported constants: []
+- imported variables: []
 - declared types:
   - assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
   - assurance.AssuranceService
   - assurance.AssuranceServiceImpl struct{db {instance = assurance_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
   - assurance.AssuranceType struct{Index int64, Name string, Price float64}
+- declared variables: []
+- declared constants: []
 - service types:
   - assurance.AssuranceService
 - datastore types:
@@ -47,7 +54,6 @@ assurance:
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
-- declared variables: []
 - parsed methods:
   - (*assurance.AssuranceServiceImpl).Create(ctx context.Context, typeindex int64, orderid string) (assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}, error)
   - (*assurance.AssuranceServiceImpl).DeleteById(ctx context.Context, id string) error
@@ -83,10 +89,14 @@ config:
   - context.Context
   - primitive.D
   - primitive.E
+- imported constants: []
+- imported variables: []
 - declared types:
   - config.Config struct{Name string, Value string, Description string}
   - config.ConfigService
   - config.ConfigServiceImpl struct{db {instance = config_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+- declared variables: []
+- declared constants: []
 - service types:
   - config.ConfigService
 - datastore types:
@@ -95,7 +105,6 @@ config:
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
-- declared variables: []
 - parsed methods:
   - (*config.ConfigServiceImpl).Create(ctx context.Context, conf config.Config struct{Name string, Value string, Description string}) error
   - (*config.ConfigServiceImpl).Delete(ctx context.Context, name string) error
@@ -127,10 +136,14 @@ consignprice:
   - context.Context
   - primitive.D
   - primitive.E
+- imported constants: []
+- imported variables: []
 - declared types:
   - consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64}
   - consignprice.ConsignPriceService
   - consignprice.ConsignPriceServiceImpl struct{db {instance = consignprice_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+- declared variables: []
+- declared constants: []
 - service types:
   - consignprice.ConsignPriceService
 - datastore types:
@@ -139,7 +152,6 @@ consignprice:
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
-- declared variables: []
 - parsed methods:
   - (*consignprice.ConsignPriceServiceImpl).CreateAndModifyPriceConfig(ctx context.Context, priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64}) (consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64}, error)
   - (*consignprice.ConsignPriceServiceImpl).GetPriceByWeightAndRegion(ctx context.Context, weight float64, isWithinRegion bool) (float64, error)
@@ -170,10 +182,18 @@ contacts:
   - context.Context
   - primitive.D
   - primitive.E
+- imported constants: []
+- imported variables: []
 - declared types:
   - contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
   - contacts.ContactsService
   - contacts.ContactsServiceImpl struct{contactsDB {instance = contacts_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+- declared variables: []
+- declared constants:
+  - ID_CARD 1 int64
+  - NULL 0 int64
+  - OTHER 3 int64
+  - PASSPORT 2 int64
 - service types:
   - contacts.ContactsService
 - datastore types:
@@ -182,7 +202,6 @@ contacts:
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
-- declared variables: []
 - parsed methods:
   - (*contacts.ContactsServiceImpl).CreateContacts(ctx context.Context, contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}) error
   - (*contacts.ContactsServiceImpl).Delete(ctx context.Context, contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}) error
@@ -212,11 +231,15 @@ delivery:
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
   - Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}
   - context.Context
+- imported constants: []
+- imported variables: []
 - declared types:
   - delivery.Delivery struct{ID string, OrderID string, FoodName string, StoreName string, StationName string}
   - delivery.DeliveryService
   - delivery.DeliveryServiceImpl struct{db {instance = delivery_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, delQ  {instance = delivery_q}
     interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}}
+- declared variables: []
+- declared constants: []
 - service types:
   - delivery.DeliveryService
 - datastore types:
@@ -224,7 +247,6 @@ delivery:
     NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
   - Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}
-- declared variables: []
 - parsed methods:
   - (*delivery.DeliveryServiceImpl).Run(ctx context.Context) error
   - delivery.NewDeliveryServiceImpl(ctx context.Context, queue Queue, db NoSQLDatabase)
@@ -238,12 +260,15 @@ food:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/food/data.go
 - imports: []
 - imported types: []
+- imported constants: []
+- imported variables: []
 - declared types:
   - food.Food struct{Name string, Price float64}
   - food.FoodOrder struct{ID string, OrderID string, FoodType int64, StationName string, StoreName string, FoodName string, Price float64}
+- declared variables: []
+- declared constants: []
 - service types: []
 - datastore types: []
-- declared variables: []
 - parsed methods: []
 
 news:
@@ -257,14 +282,17 @@ news:
   - context
 - imported types:
   - context.Context
+- imported constants: []
+- imported variables: []
 - declared types:
   - news.News struct{Title string, Content string}
   - news.NewsService
   - news.NewsServiceImpl struct{}
+- declared variables: []
+- declared constants: []
 - service types:
   - news.NewsService
 - datastore types: []
-- declared variables: []
 - parsed methods:
   - (*news.NewsServiceImpl).Hello(ctx context.Context, val string) (string, error)
   - news.NewNewsServiceImpl(ctx context.Context) ((*news.NewsServiceImpl struct{}),
@@ -293,11 +321,15 @@ payment:
   - context.Context
   - primitive.D
   - primitive.E
+- imported constants: []
+- imported variables: []
 - declared types:
   - payment.Money struct{ID string, UserID string, Price string}
   - payment.Payment struct{ID string, OrderID string, UserID string, Price string}
   - payment.PaymentService
   - payment.PaymentServiceImpl struct{paymentDB {instance = payments_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, moneyDB  {instance = money_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+- declared variables: []
+- declared constants: []
 - service types:
   - payment.PaymentService
 - datastore types:
@@ -306,7 +338,6 @@ payment:
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
-- declared variables: []
 - parsed methods:
   - (*payment.PaymentServiceImpl).AddMoney(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string}) error
   - (*payment.PaymentServiceImpl).Cleanup(ctx context.Context) error
@@ -339,10 +370,14 @@ price:
   - primitive.A
   - primitive.D
   - primitive.E
+- imported constants: []
+- imported variables: []
 - declared types:
   - price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
   - price.PriceService
   - price.PriceServiceImpl struct{priceDB {instance = price_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+- declared variables: []
+- declared constants: []
 - service types:
   - price.PriceService
 - datastore types:
@@ -351,7 +386,6 @@ price:
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
-- declared variables: []
 - parsed methods:
   - (*price.PriceServiceImpl).CreateNewPriceConfig(ctx context.Context, pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}) error
   - (*price.PriceServiceImpl).DeletePriceConfig(ctx context.Context, id string) error
@@ -387,11 +421,16 @@ route:
   - primitive.A
   - primitive.D
   - primitive.E
+- imported constants: []
+- imported variables: []
 - declared types:
   - route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
   - route.RouteInfo struct{ID string, StartStation string, EndStation string, StationList string, DistanceList string}
   - route.RouteService
   - route.RouteServiceImpl struct{db {instance = route_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+- declared variables: []
+- declared constants:
+  - MAXIDLEN 32 untyped int
 - service types:
   - route.RouteService
 - datastore types:
@@ -400,7 +439,6 @@ route:
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
-- declared variables: []
 - parsed methods:
   - (*route.RouteServiceImpl).CreateAndModify(ctx context.Context, info route.RouteInfo struct{ID string, StartStation string, EndStation string, StationList string, DistanceList string}) (route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}, error)
   - (*route.RouteServiceImpl).DeleteRoute(ctx context.Context, id string) error
@@ -432,10 +470,14 @@ station:
   - context.Context
   - primitive.D
   - primitive.E
+- imported constants: []
+- imported variables: []
 - declared types:
   - station.Station struct{ID string, Name string, StayTime int64}
   - station.StationService
   - station.StationServiceImpl struct{stationDB {instance = station_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+- declared variables: []
+- declared constants: []
 - service types:
   - station.StationService
 - datastore types:
@@ -444,7 +486,6 @@ station:
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
-- declared variables: []
 - parsed methods:
   - (*station.StationServiceImpl).CreateStation(ctx context.Context, station station.Station struct{ID string, Name string, StayTime int64}) error
   - (*station.StationServiceImpl).DeleteStation(ctx context.Context, id string) error
@@ -481,10 +522,14 @@ stationfood:
   - primitive.A
   - primitive.D
   - primitive.E
+- imported constants: []
+- imported variables: []
 - declared types:
   - stationfood.StationFoodService
   - stationfood.StationFoodServiceImpl struct{db {instance = stationfood_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
   - stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
+- declared variables: []
+- declared constants: []
 - service types:
   - stationfood.StationFoodService
 - datastore types:
@@ -493,7 +538,6 @@ stationfood:
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
-- declared variables: []
 - parsed methods:
   - (*stationfood.StationFoodServiceImpl).Cleanup(ctx context.Context) error
   - (*stationfood.StationFoodServiceImpl).CreateFoodStore(ctx context.Context, store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}) error
@@ -525,10 +569,14 @@ train:
   - context.Context
   - primitive.D
   - primitive.E
+- imported constants: []
+- imported variables: []
 - declared types:
   - train.TrainService
   - train.TrainServiceImpl struct{db {instance = train_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
   - train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}
+- declared variables: []
+- declared constants: []
 - service types:
   - train.TrainService
 - datastore types:
@@ -537,7 +585,6 @@ train:
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
-- declared variables: []
 - parsed methods:
   - (*train.TrainServiceImpl).AllTrains(ctx context.Context) ([]train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}, error)
   - (*train.TrainServiceImpl).Create(ctx context.Context, tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64})
@@ -575,10 +622,14 @@ trainfood:
   - food.Food struct{Name string, Price float64}
   - primitive.D
   - primitive.E
+- imported constants: []
+- imported variables: []
 - declared types:
   - trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}}
   - trainfood.TrainFoodService
   - trainfood.TrainFoodServiceImpl struct{db {instance = trainfood_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+- declared variables: []
+- declared constants: []
 - service types:
   - trainfood.TrainFoodService
 - datastore types:
@@ -587,7 +638,6 @@ trainfood:
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
-- declared variables: []
 - parsed methods:
   - (*trainfood.TrainFoodServiceImpl).Cleanup(ctx context.Context) error
   - (*trainfood.TrainFoodServiceImpl).CreateTrainFood(ctx context.Context, tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}})
@@ -618,10 +668,14 @@ user:
   - context.Context
   - primitive.D
   - primitive.E
+- imported constants: []
+- imported variables: []
 - declared types:
   - user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}
   - user.UserService
   - user.UserServiceImpl struct{userDB {instance = user_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+- declared variables: []
+- declared constants: []
 - service types:
   - user.UserService
 - datastore types:
@@ -630,7 +684,6 @@ user:
   - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
-- declared variables: []
 - parsed methods:
   - (*user.UserServiceImpl).DeleteUser(ctx context.Context, userID string) error
   - (*user.UserServiceImpl).FindByUserID(ctx context.Context, userID string) (user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}, error)

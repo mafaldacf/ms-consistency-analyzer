@@ -8,7 +8,7 @@
 
 (*PaymentServiceImpl).InitPayment(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string})
 :
-	- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = priceConfig, collection = priceConfig}, interface{})
+	- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = contacts, collection = contacts}, interface{})
   - NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
 
 (*PaymentServiceImpl).Pay(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string})
@@ -17,6 +17,6 @@
     (err, interface{})
 
 (*PaymentServiceImpl).Query(ctx context.Context):
-- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = priceConfig, collection = priceConfig}, interface{})
+- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = contacts, collection = contacts}, interface{})
 
 .NewPaymentServiceImpl(ctx context.Context, payDB NoSQLDatabase, moneyDB NoSQLDatabase): []

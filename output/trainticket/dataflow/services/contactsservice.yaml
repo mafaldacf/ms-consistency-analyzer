@@ -8,6 +8,12 @@
     NoSQLDatabase})'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - |-
+    [-1] (inline) (BasicVariable BasicType) DocumentType int -->
+       w-tainted 1x: write(contacts_db.Contact.DocumentType)
+  - |-
+    [-1] (inline) (FieldVariable FieldType) DocumentType int -->
+       w-tainted 1x: write(contacts_db.Contact.DocumentType)
+  - |-
     [-1] (inline) (BasicVariable BasicType) DocumentNumber string -->
        w-tainted 1x: write(contacts_db.Contact.DocumentNumber)
   - |-
@@ -19,12 +25,6 @@
   - |-
     [-1] (inline) (FieldVariable FieldType) AccountID string -->
        w-tainted 1x: write(contacts_db.Contact.AccountID)
-  - |-
-    [-1] (inline) (BasicVariable BasicType) DocumentType int -->
-       w-tainted 1x: write(contacts_db.Contact.DocumentType)
-  - |-
-    [-1] (inline) (FieldVariable FieldType) DocumentType int -->
-       w-tainted 1x: write(contacts_db.Contact.DocumentType)
   - |-
     [-1] (StructVariable UserType) contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} -->
        w-tainted 1x: write(contacts_db.Contact)

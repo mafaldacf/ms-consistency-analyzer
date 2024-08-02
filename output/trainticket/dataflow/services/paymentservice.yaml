@@ -9,13 +9,13 @@
     NoSQLDatabase, moneyDB NoSQLDatabase})'
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    [-1] (inline) (BasicVariable BasicType) Price string -->
-       w-tainted 1x: write(money_db.Money.Price)
-  - '[-1] (inline) (FieldVariable FieldType) Price string'
-  - |-
     [-1] (inline) (BasicVariable BasicType) UserID string -->
        w-tainted 1x: write(money_db.Money.UserID)
   - '[-1] (inline) (FieldVariable FieldType) UserID string'
+  - |-
+    [-1] (inline) (BasicVariable BasicType) Price string -->
+       w-tainted 1x: write(money_db.Money.Price)
+  - '[-1] (inline) (FieldVariable FieldType) Price string'
   - '[-1] (StructVariable UserType) payment payment.Payment struct{ID string, OrderID
     string, UserID string, Price string}'
   - |-
@@ -112,8 +112,8 @@
 
 (*PaymentServiceImpl).Query(ctx context.Context):
   block 5 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) paymentDB NoSQLDatabase'
   - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) moneyDB NoSQLDatabase'
+  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) paymentDB NoSQLDatabase'
   - '[0] (inline) (StructVariable UserType) payment.PaymentServiceImpl struct{paymentDB
     NoSQLDatabase, moneyDB NoSQLDatabase}'
   - '[-1] (PointerVariable PointerType) p (*payment.PaymentServiceImpl struct{paymentDB

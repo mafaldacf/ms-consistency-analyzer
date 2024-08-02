@@ -26,7 +26,7 @@ func (app *App) Dump() {
 func (app *App) PreDump() {
 	app.dumpYamlPackages()
 	app.dumpYamlServices()
-	app.dumpYamlCalls()
+	//app.dumpYamlCalls()
 }
 
 func (app *App) dumpDiGraph() {
@@ -119,7 +119,7 @@ func (app *App) dumpYamlPackages() {
 
 	// application
 	appPackages := make(map[string]interface{})
-	for _, p := range app.Packages {
+	for _, p := range app.AppPackages {
 		appPackages[p.Name] = p.DumpYaml()
 	}
 	utils.DumpToYamlFile(appPackages, app.Name, "app/packages/app")
@@ -154,7 +154,7 @@ func (app *App) dumpYamlDataflow() {
 		utils.DumpToYamlFile(data, app.Name, fmt.Sprintf("dataflow/services/%s", strings.ToLower(name)))
 	}
 
-	for _, p := range app.Packages {
+	for _, p := range app.AppPackages {
 		pkgData := make(map[string]interface{})
 		for _, m := range p.ParsedMethods {
 			data, blockVarsStr := m.Yaml()

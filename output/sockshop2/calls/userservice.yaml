@@ -2,16 +2,16 @@
 - NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D) interface{}
 
 (*userServiceImpl).GetAddresses(ctx context.Context, addressid string):
-- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = catalogue, collection = catalogue}, interface{})
+- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = shipping_service, collection = shipments}, interface{})
 
 (*userServiceImpl).GetCards(ctx context.Context, cardid string):
-- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = catalogue, collection = catalogue}, interface{})
+- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = shipping_service, collection = shipments}, interface{})
 
 (*userServiceImpl).GetUsers(ctx context.Context, userid string):
-- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = catalogue, collection = catalogue}, interface{})
+- NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = shipping_service, collection = shipments}, interface{})
 
 (*userServiceImpl).Login(ctx context.Context, username string, password string):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = catalogue, collection = catalogue}, interface{})
+- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = shipping_service, collection = shipments}, interface{})
 
 (*userServiceImpl).PostAddress(ctx context.Context, userid string, address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string})
 :

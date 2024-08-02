@@ -5,10 +5,13 @@
 - files: []
 - imports: []
 - imported types: []
+- imported constants: []
+- imported variables: []
 - declared types: []
+- declared variables: []
+- declared constants: []
 - service types: []
 - datastore types: []
-- declared variables: []
 - parsed methods: []
 
 common:
@@ -21,10 +24,14 @@ common:
   - strconv
 - imported types:
   - .error
+- imported constants: []
+- imported variables: []
 - declared types: []
+- declared variables: []
+- declared constants:
+  - HELLO_WORLD_CONST "HELLO WORLD!" untyped string
 - service types: []
 - datastore types: []
-- declared variables: []
 - parsed methods:
   - common.Int64ToString(i int64) string
   - common.StringToInt64(s string) (int64, error)
@@ -67,11 +74,13 @@ postnotification:
   - primitive.E
   - sync.WaitGroup
   - sync.noCopy
+- imported constants: []
+- imported variables: []
 - declared types:
   - postnotification.Analytics struct{PostID int64}
   - postnotification.AnalyticsService
   - postnotification.AnalyticsServiceImpl struct{analytics_queue {instance = analytics_queue}
-    interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}, analytics_db  {instance = analytics_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, num_workers int}
+    interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}, analytics_db  {instance = analytics_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, num_workers 4 int}
   - postnotification.Creator struct{Username string}
   - postnotification.Media struct{MediaID int64, PostID int64, Content string}
   - postnotification.MediaService
@@ -79,7 +88,7 @@ postnotification:
   - postnotification.Message struct{ReqID string, PostID string, Timestamp string}
   - postnotification.NotifyService
   - postnotification.NotifyServiceImpl struct{storage_service postnotification.StorageService, notifications_queue {instance = notifications_queue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})},
-    num_workers int}
+    num_workers 4 int}
   - postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}
   - postnotification.StorageService
   - postnotification.StorageServiceImpl struct{analytics_service postnotification.AnalyticsService, media_service postnotification.MediaService, posts_cache {instance = posts_cache}
@@ -93,6 +102,8 @@ postnotification:
   - postnotification.UploadServiceImpl struct{storage_service postnotification.StorageService, media_service postnotification.MediaService, notifications_queue {instance = notifications_queue} interface{Queue.Push(ctx context.Context, item interface{}),
     Queue.Pop(ctx context.Context, item interface{})}, timeline_cache  {instance = timeline_cache} interface{Cache.Put(ctx context.Context, key string, value interface{}),
     Cache.Get(ctx context.Context, key string, value interface{})}}
+- declared variables: []
+- declared constants: []
 - service types:
   - postnotification.AnalyticsService
   - postnotification.MediaService
@@ -108,7 +119,6 @@ postnotification:
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
   - Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}
-- declared variables: []
 - parsed methods:
   - (*postnotification.AnalyticsServiceImpl).ReadAnalytics(ctx context.Context, postID int64) (postnotification.Analytics struct{PostID int64}, error)
   - (*postnotification.AnalyticsServiceImpl).Run(ctx context.Context) error

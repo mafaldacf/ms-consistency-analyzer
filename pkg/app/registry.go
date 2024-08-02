@@ -16,7 +16,7 @@ import (
 	"analyzer/pkg/types/gotypes"
 )
 
-func (app *App) RegisterDatabaseInstances(instances []datastores.DatabaseInstance) {
+func (app *App) RegisterDatastoreInstances(instances []datastores.DatabaseInstance) {
 	for _, instance := range instances {
 		app.Databases[instance.GetName()] = instance
 		logger.Logger.Infof("[APP] registered database instance %s", instance.String())
@@ -49,8 +49,8 @@ func (app *App) createServiceNodes(servicesInfo []*frameworks.ServiceInfo) {
 			PackageMethods:      make(map[string]*types.ParsedMethod),
 			ConstructorName:     info.ConstructorName,
 			Type: &gotypes.ServiceType{
-				Package: pkg.GetName(),
-				Name:    info.Name,
+				PackagePath: pkg.GetName(),
+				Name:        info.Name,
 			},
 			Contexts: stack.New(),
 		}
@@ -80,8 +80,8 @@ func (app *App) buildServiceInfo() {
 	for _, node := range app.Services {
 		lookup.ParseImports(node.File)
 		node.RegisterConstructor()
-		node.RegisterImplStructure()
-		node.ParseFields()
+		node.FindAndRegisterImplStructure()
+		node.RegisterFields()
 	}
 }
 
@@ -132,7 +132,7 @@ func (app *App) loadFieldsFromServicesConstructor(servicesInfo []*frameworks.Ser
 			service.Databases[dbInstance.GetName()] = dbInstance
 			logger.Logger.Debugf("[%s] added db new instance named (%s) for field key (%s) in list: %v", service.GetName(), dbInstance.GetName(), param, paramsDBs)
 		}
-		service.AttachDatastoreInstances(paramsDBs)
+		service.LoadServiceFieldsValues(paramsDBs)
 		logger.Logger.Tracef("[APP] registered service node %s with %d service(s) and %d database(s)", service.Name, len(service.Services), len(service.Databases))
 	}
 }

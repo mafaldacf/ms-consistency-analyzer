@@ -18,7 +18,7 @@ func main() {
 	allFlag := flag.String("all", "", "Run analyzer for all applications ('postnotification', 'shopping_app', 'sockshop2', 'trainticket')")
 	flag.Parse()
 	if *allFlag == "true" || *allFlag == "True" || *allFlag == "1" {
-		var apps = []string{"trainticket", "postnotification", "shopping_app", "sockshop2"}
+		var apps = []string{"trainticket", "postnotification", "shopping_app", "sockshop2", "foobar"}
 		for _, app := range apps {
 			logger.Logger.Infof(fmt.Sprintf("running analyzer for '%s'...", app))
 			time.Sleep(1500 * time.Millisecond)
@@ -39,16 +39,15 @@ func main() {
 func initAnalyzer(appName string) {
 	servicesInfo, databaseInstances, frontends := blueprint.BuildBlueprintAppInfo(appName)
 
-	app, err := app.Init(appName, fmt.Sprintf("examples/%s/workflow/%s", appName, appName))
+	app, err := app.InitApp(appName, servicesInfo)
 	if err != nil {
 		return
 	}
-	app.ParsePackages(servicesInfo)
-	app.RegisterDatabaseInstances(databaseInstances)
+	app.RegisterPackages()
+	app.RegisterDatastoreInstances(databaseInstances)
 	app.RegisterServiceNodes(servicesInfo)
 	app.BuildServiceNodes()
-	//app.PreDump()
-	//logger.Logger.Fatal("EXIT!")
+	app.PreDump()
 
 	fmt.Println()
 	fmt.Println(" -------------------------------------------------------------------------------------------------------------- ")
