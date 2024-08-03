@@ -18,7 +18,7 @@ func main() {
 	allFlag := flag.String("all", "", "Run analyzer for all applications ('postnotification', 'shopping_app', 'sockshop2', 'trainticket')")
 	flag.Parse()
 	if *allFlag == "true" || *allFlag == "True" || *allFlag == "1" {
-		var apps = []string{"trainticket", "postnotification", "shopping_app", "sockshop2", "foobar"}
+		var apps = []string{"trainticket", "postnotification", "shopping_app", "sockshop2", "foobar", "postnotification_simple"}
 		for _, app := range apps {
 			logger.Logger.Infof(fmt.Sprintf("running analyzer for '%s'...", app))
 			time.Sleep(1500 * time.Millisecond)
@@ -29,7 +29,7 @@ func main() {
 		return
 	}
 	switch *appName {
-	case "postnotification", "trainticket", "shopping_app", "sockshop2", "foobar", "dsb_hotel", "dsb_sn":
+	case "postnotification", "trainticket", "shopping_app", "sockshop2", "foobar", "dsb_hotel", "dsb_sn", "postnotification_simple":
 	default:
 		logger.Logger.Fatal(fmt.Sprintf("invalid app name (%s) must provide an application name ('postnotification', 'trainticket', 'shopping_app', 'sockshop2', 'foobar', 'dsb_hotel', 'dsb_sn') using the -app flag", *appName))
 	}
@@ -56,9 +56,9 @@ func initAnalyzer(appName string) {
 	fmt.Println()
 
 	abstractGraph := abstractgraph.Build(app, frontends)
-
 	//logger.Logger.Fatal("EXIT")
 
+	
 	fmt.Println()
 	fmt.Println(" ----------------------------------------------------------------------------------------------------------------- ")
 	fmt.Println(" -------------------------------------------- BUILD DATASTORES SCHEMA -------------------------------------------- ")
@@ -100,10 +100,6 @@ func initAnalyzer(appName string) {
 		}
 	}
 
-	for _, detector := range detectors {
-		detector.DumpYaml(app.Name)
-	}
-
 	/* fmt.Println()
 	fmt.Println(" ----------------------------------------------------------------------------------------------------------------- ")
 	fmt.Println(" --------------------------------------------------- DUMPERS ----------------------------------------------------- ")
@@ -121,5 +117,8 @@ func initAnalyzer(appName string) {
 	fmt.Println("-----------------------------------------------------------------------------------------------------------------")
 	fmt.Println()
 
-	//detector.PrintResults()
+	for _, detector := range detectors {
+		detector.DumpYaml(app.Name)
+		detector.PrintResults()
+	}
 }

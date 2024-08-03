@@ -107,32 +107,13 @@ func (b *BackendMethod) FullName() string {
 func (b *BackendMethod) SetNoSQLDatabaseCollection(databaseName string, collectionName string, dbInstance datastores.DatabaseInstance) {
 	if len(b.Returns) > 0 {
 		collection := b.Returns[0]
-		collection.GetType().(*BlueprintBackendType).DbInstance = dbInstance
+		collection.GetType().(*BlueprintBackendType).DatastoreInstance = dbInstance
 		collection.GetType().(*BlueprintBackendType).NoSQLComponent = &NoSQLComponent{
 			Database:   databaseName,
 			Collection: collectionName,
 			Type:       NoSQLCollectionType,
 		}
 		logger.Logger.Warnf("[BLUEPRINT] setting NoSQL collection for (%s, %s)", databaseName, collectionName)
-	}
-}
-
-// FIXME: this is messing up with previous assignments!
-func (b *BackendMethod) SetNoSQLDatabaseCursor(databaseName string, collectionName string, dbInstance datastores.DatabaseInstance) {
-	if len(b.Returns) > 0 {
-		collection := b.Returns[0]
-		if backendType, ok := collection.GetType().(*BlueprintBackendType); ok {
-			backendType.DbInstance = dbInstance
-			backendType.NoSQLComponent = &NoSQLComponent{
-				Database:   databaseName,
-				Collection: collectionName,
-				// upgrade type
-				Type: NoSQLCursorType,
-			}
-			logger.Logger.Warnf("[BLUEPRINT] setting NoSQL cursor for (%s, %s) ", databaseName, collectionName)
-		} else {
-			logger.Logger.Fatalf("[BLUEPRINT] cannot set NoSQL cursor for (%s, %s)", databaseName, collectionName)
-		}
 	}
 }
 

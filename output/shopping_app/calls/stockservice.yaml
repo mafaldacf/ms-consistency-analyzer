@@ -1,5 +1,5 @@
 (*StockServiceImpl).ReserveStock(ctx context.Context, productID string, quantity int):
-- NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
+- DATASTORE CALL @ stock_db >> NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
 
 .NewAnalyticsServiceImpl(ctx context.Context, analytics_db NoSQLDatabase, analytics_queue Queue): []
 

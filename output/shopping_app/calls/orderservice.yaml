@@ -1,14 +1,15 @@
 (*OrderServiceImpl).CreateOrder(ctx context.Context, cartID string, userID string, productID string, quantity int, price int):
-- NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
-- (*shopping_app.StockServiceImpl).ReserveStock(ctx context.Context, productID string, quantity int) error
-- (*shopping_app.BillingServiceImpl).CreateBill(ctx context.Context, userID string, productID string, quantity int, pricePerUnit int) error
-- (*shopping_app.ProductServiceImpl).GetProduct(ctx context.Context, productID string)
-  (shopping_app.Product struct{ProductID string, Description string, PricePerUnit int, Category string}, error)
-- Queue.Push(ctx context.Context, item interface{}) (err, interface{})
-- Queue.Push(ctx context.Context, item interface{}) (err, interface{})
+- DATASTORE CALL @ order_db >> NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
+- SERVICE CALL @ ReserveStock >> (*shopping_app.StockServiceImpl).ReserveStock(ctx context.Context, productID string, quantity int) error
+- SERVICE CALL @ CreateBill >> (*shopping_app.BillingServiceImpl).CreateBill(ctx context.Context, userID string, productID string, quantity int, pricePerUnit int) error
+- SERVICE CALL @ GetProduct >> (*shopping_app.ProductServiceImpl).GetProduct(ctx context.Context, productID string) (shopping_app.Product struct{ProductID string, Description string, PricePerUnit int, Category string}, error)
+- DATASTORE CALL @ analytics_queue >> Queue.Push(ctx context.Context, item interface{})
+  (err, interface{})
+- DATASTORE CALL @ shipment_queue >> Queue.Push(ctx context.Context, item interface{})
+  (err, interface{})
 
 (*OrderServiceImpl).ReadOrder(ctx context.Context, orderID string):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = analytics_database, collection = analytics_collection}, interface{})
+- DATASTORE CALL @ order_db >> NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor, interface{})
 
 .NewAnalyticsServiceImpl(ctx context.Context, analytics_db NoSQLDatabase, analytics_queue Queue): []
 

@@ -25,9 +25,18 @@ func (f *ParsedMethod) Yaml() (interface{}, string) {
 func (f *ParsedMethod) YamlCalls() []string {
 	logger.Logger.Tracef("[YAML CALLS] dumping yaml calls for method (%s)", f.Name)
 	var lst []string
-	for _, c := range f.Calls {
-		logger.Logger.Tracef("\t\t\t - call: %s, method: %v", c.GetName(), c.GetMethod())
-		lst = append(lst, c.GetMethod().LongString())
+	for _, call := range f.Calls {
+		logger.Logger.Tracef("\t\t\t - call: %s, method: %v", call.GetName(), call.GetMethod())
+		var callStr string
+		if dbCall, ok := call.(*ParsedDatabaseCall); ok {
+			callStr = "DATASTORE CALL @ " + dbCall.DbInstance.GetName() + " >> "
+		} else if svcCall, ok := call.(*ParsedServiceCall); ok {
+			callStr = "SERVICE CALL @ " + svcCall.Name + " >> "
+		} else {
+			callStr = "INTERNAL CALL >> "
+		}
+		callStr += call.GetMethod().LongString()
+		lst = append(lst, callStr)
 	}
 	return lst
 }

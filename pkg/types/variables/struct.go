@@ -21,7 +21,7 @@ func (v *StructVariable) String() string {
 }
 
 func (v *StructVariable) LongString() string {
-	s := v.VariableInfo.LongString() + " = {"
+	s := v.VariableInfo.LongString() + " \n\t\t\t\t\t\t = {"
 	i := len(v.Fields)
 	for name, f := range v.Fields {
 		s += fmt.Sprintf("%s: %s", name, f.LongString())
@@ -38,6 +38,14 @@ func (v *StructVariable) GetElementAt(index int) Variable {
 		logger.Logger.Fatalf("[VARS STRUCT] element at index (%d) does not exist in array variable with len (%d): %s", index, len(v.FieldsLst), v.String())
 	}
 	return v.FieldsLst[index]
+}
+
+func (v *StructVariable) GetFieldVariablesLst() []*FieldVariable {
+	var fields []*FieldVariable
+	for _, f := range v.Fields {
+		fields = append(fields, f.(*FieldVariable))
+	}
+	return fields
 }
 
 func (v *StructVariable) GetFieldVariables() map[string]*FieldVariable {
@@ -58,18 +66,19 @@ func (v *StructVariable) attachFieldVariable(fieldVariable *FieldVariable) {
 }
 
 func (v *StructVariable) AddFieldVariable(fieldVariable *FieldVariable) {
-	logger.Logger.Warnf("[VARS STRUCT] adding field named (%s) for variable (%s) to struct variable (%s)", fieldVariable.GetFieldType().GetFieldName(), fieldVariable.String(), v.String())
+	logger.Logger.Warnf("[VARS STRUCT] adding field named (%s) to struct variable (%s): \n\t\t\t\t\t - (%s) %s", fieldVariable.GetFieldType().GetFieldName(), v.String(), VariableTypeName(fieldVariable.WrappedVariable), fieldVariable.WrappedVariable.LongString())
 	if fieldVariable.GetFieldType().GetFieldName() != "" {
 		v.Fields[fieldVariable.GetFieldType().GetFieldName()] = fieldVariable
 	} else {
 		logger.Logger.Warnf("[VARS STRUCT] FIXME! SOMETIMES WE CAN HAVE UNKEYED FIELDS ")
 	}
+	
 	v.Fields[fieldVariable.GetFieldType().GetFieldName()] = fieldVariable
 	v.FieldsLst = append(v.FieldsLst, fieldVariable)
 	v.attachFieldVariable(fieldVariable)
-	logger.Logger.Debugf("HERE: %s", v.GetVariableInfo().String())
-	logger.Logger.Debugf("HERE: %s", fieldVariable.GetVariableInfo().String())
 	fieldVariable.GetVariableInfo().SetParent(fieldVariable, v)
+
+	v.GetStructType().UpdateFieldAtIfExists(len(v.FieldsLst)-1, fieldVariable.GetFieldType())
 }
 
 func (v *StructVariable) AddFieldVariableAndType(fieldVariable *FieldVariable) {
@@ -83,6 +92,9 @@ func (v *StructVariable) GetId() int64 {
 }
 
 func (v *StructVariable) GetType() gotypes.Type {
+	if v.VariableInfo.GetType() == nil {
+		logger.Logger.Fatalf("[VARS ADDRESS] unexpected nil type for struct variable: %s", v.String())
+	}
 	return v.VariableInfo.GetType()
 }
 
@@ -169,7 +181,7 @@ func (v *StructVariable) AddFieldKeyVariableIfNotExists(name string, field Varia
 
 func (v *StructVariable) attachReferenceToFields(target Variable, creator string) {
 	if targetField, ok := target.(*FieldVariable); ok {
-		logger.Logger.Warnf("FOUND FIELD THAT IS ALSO A STRUCT!!!!")
+		logger.Logger.Warnf("------- FOUND FIELD THAT IS ALSO A STRUCT!!!!")
 		target = targetField.WrappedVariable
 	}
 

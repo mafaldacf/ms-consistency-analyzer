@@ -23,6 +23,9 @@ func (v *ChanVariable) GetId() int64 {
 }
 
 func (v *ChanVariable) GetType() gotypes.Type {
+	if v.VariableInfo.GetType() == nil {
+		logger.Logger.Fatalf("[VARS ADDRESS] unexpected nil type for chan variable: %s", v.String())
+	}
 	return v.VariableInfo.GetType()
 }
 

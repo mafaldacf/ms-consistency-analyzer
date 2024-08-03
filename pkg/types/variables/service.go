@@ -6,8 +6,9 @@ import (
 )
 
 type ServiceVariable struct {
-	Variable     `json:"-"`
-	VariableInfo *VariableInfo `json:"variable"`
+	Variable           `json:"-"`
+	VariableInfo       *VariableInfo `json:"variable"`
+	UnderlyingVariable Variable      `json:"underlying_variable"`
 }
 
 func (v *ServiceVariable) String() string {
@@ -23,6 +24,9 @@ func (v *ServiceVariable) GetId() int64 {
 }
 
 func (v *ServiceVariable) GetType() gotypes.Type {
+	if v.VariableInfo.GetType() == nil {
+		logger.Logger.Fatalf("[VARS ADDRESS] unexpected nil type for service variable: %s", v.String())
+	}
 	return v.VariableInfo.GetType()
 }
 

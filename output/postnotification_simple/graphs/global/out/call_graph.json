@@ -1,0 +1,78 @@
+{
+  "nodes": [
+    {
+      "id": "Client",
+      "type": "client"
+    },
+    {
+      "id": "NotifyService",
+      "type": "service"
+    },
+    {
+      "id": "StorageService",
+      "type": "service"
+    },
+    {
+      "id": "UploadService",
+      "type": "service"
+    },
+    {
+      "id": "notifications_queue RabbitMQ",
+      "type": "datastore"
+    },
+    {
+      "id": "posts_db MongoDB",
+      "type": "datastore"
+    }
+  ],
+  "edges": [
+    {
+      "caller": "Client",
+      "callee": "UploadService",
+      "call": "UploadPost",
+      "depth": 0
+    },
+    {
+      "caller": "NotifyService",
+      "callee": "StorageService",
+      "call": "ReadPost",
+      "depth": 3
+    },
+    {
+      "caller": "NotifyService",
+      "callee": "notifications_queue RabbitMQ",
+      "call": "Pop",
+      "depth": 3
+    },
+    {
+      "caller": "StorageService",
+      "callee": "posts_db MongoDB",
+      "call": "InsertOne",
+      "depth": 2
+    },
+    {
+      "caller": "StorageService",
+      "callee": "posts_db MongoDB",
+      "call": "FindOne",
+      "depth": 4
+    },
+    {
+      "caller": "UploadService",
+      "callee": "StorageService",
+      "call": "StorePost",
+      "depth": 1
+    },
+    {
+      "caller": "UploadService",
+      "callee": "notifications_queue RabbitMQ",
+      "call": "Push",
+      "depth": 1
+    },
+    {
+      "caller": "notifications_queue RabbitMQ",
+      "callee": "NotifyService",
+      "call": "workerThread",
+      "depth": 2
+    }
+  ]
+}

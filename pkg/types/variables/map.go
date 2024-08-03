@@ -50,6 +50,9 @@ func (v *MapVariable) GetId() int64 {
 }
 
 func (v *MapVariable) GetType() gotypes.Type {
+	if v.VariableInfo.GetType() == nil {
+		logger.Logger.Fatalf("[VARS ADDRESS] unexpected nil type for map variable: %s", v.String())
+	}
 	return v.VariableInfo.GetType()
 }
 

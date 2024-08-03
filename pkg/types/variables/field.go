@@ -25,11 +25,18 @@ func (v *FieldVariable) GetId() int64 {
 }
 
 func (v *FieldVariable) GetType() gotypes.Type {
+	if v.VariableInfo.GetType() == nil {
+		logger.Logger.Fatalf("[VARS ADDRESS] unexpected nil type for field variable: %s", v.String())
+	}
 	return v.VariableInfo.GetType()
 }
 
 func (v *FieldVariable) GetFieldType() *gotypes.FieldType {
 	return v.VariableInfo.GetType().(*gotypes.FieldType)
+}
+
+func (v *FieldVariable) GetWrappedVariable() Variable {
+	return v.WrappedVariable
 }
 
 func (v *FieldVariable) FieldTypeIsDirectStructType() bool {

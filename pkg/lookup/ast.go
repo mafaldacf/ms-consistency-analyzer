@@ -63,9 +63,9 @@ func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 				return importedType
 			}
 
-			logger.Logger.Warnf("[LOOKUP AST SELECTOR] ------------ !!! DID NOT FIND IMPORTED TYPE NAMED (%s) FROM PACKAGE (%s)", e.Sel.Name, impt.Alias)
+			logger.Logger.Warnf("------------ !!! DID NOT FIND IMPORTED TYPE NAMED (%s) FROM PACKAGE (%s)", e.Sel.Name, impt.Alias)
 			t := FindDefTypesAndAddToPackage(file.Package, nil, goType, nil, nil, nil)
-			logger.Logger.Warnf("[LOOKUP AST SELECTOR] ------------  !!! FOUND AND ADDED NEW TYPE (%s) TO IMPORTS OF PACKAGE (%s)", t.String(), file.Package.Name)
+			logger.Logger.Warnf("------------  !!! FOUND AND ADDED NEW TYPE (%s) TO IMPORTS OF PACKAGE (%s)", t.String(), file.Package.Name)
 			return t
 		}
 

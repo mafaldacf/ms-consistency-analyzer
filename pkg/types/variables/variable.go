@@ -41,6 +41,13 @@ func GetDependenciesStringLst(deps ...Variable) string {
 	return out
 }
 
+func UnwrapTupleIfSingleElement(variable Variable) Variable {
+	if tupleVar, ok := variable.(*TupleVariable); ok && len(tupleVar.Variables) == 1 {
+		return tupleVar.Variables[0]
+	}
+	return variable
+}
+
 func WrapToFieldVariable(variable Variable, structVariable *StructVariable, addTypeToStruct bool) {
 	fieldVariable, ok := variable.(*FieldVariable)
 	if !ok {

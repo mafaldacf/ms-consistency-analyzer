@@ -40,25 +40,20 @@ func GenerateMethodCFG(parsedMethod *types.ParsedMethod) {
 }
 
 func InitServiceReceiverFieldsForParsedCFG(service *service.Service, parsedMethod *types.ParsedMethod) {
-	parsedCfg := parsedMethod.GetParsedCfg()
-	receiver := parsedCfg.GetEntryParsedBlock().GetFirstVariable()
-	logger.Logger.Debugf("[CFG] [%s] init service receiver (%v) fields for parsed cfg of method (%s)", service.GetName(), receiver, parsedMethod.String())
+	logger.Logger.Debugf("[CFG] [%s] updating service receiver for method: %s", service.GetName(), parsedMethod.String())
 
-	variable := receiver
-	if pointerVar, ok := variable.(*variables.PointerVariable); ok {
-		variable = pointerVar.PointerTo
+	parsedCfg := parsedMethod.GetParsedCfg()
+	receiver := parsedCfg.GetEntryParsedBlock().GetReceiver()
+	implVariable := service.GetImplVariable()
+
+	if ptrReceiver, ok := receiver.(*variables.PointerVariable); ok {
+		ptrReceiver.PointerTo = implVariable
 	} else {
-		logger.Logger.Fatalf("[CFG] unsupported receiver (%s) type (%s) for service (%s)", receiver.String(), utils.GetType(variable), service.GetName())
+		logger.Logger.Fatalf("[CFG] TODO!!!!")
 	}
-	if structVar, ok := variable.(*variables.StructVariable); ok {
-		for name, f := range service.Fields {
-			structVar.Fields[name] = lookup.CreateVariableFromType(name, f.GetType())
-		}
-	} else {
-		logger.Logger.Fatalf("[CFG] unsupported receiver type (%s) for service (%s)", utils.GetType(variable), service.GetName())
-	}
-	logger.Logger.Tracef("[CFG] initialized service (%s) fields for receiver (%s)", service.GetName(), receiver.String())
-	
+
+	logger.Logger.Warnf("[CFG] [%s] updated service receiver for method (%s):\n\t\t\t\t\t - %s", service.GetName(), parsedMethod.GetName(), implVariable.LongString())
+
 }
 
 func GenerateMethodCFGForService(service *service.Service, parsedMethod *types.ParsedMethod) {

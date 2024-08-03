@@ -3,7 +3,6 @@ package variables
 import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
-	"analyzer/pkg/utils"
 )
 
 type PointerVariable struct {
@@ -17,7 +16,7 @@ func (v *PointerVariable) String() string {
 }
 
 func (v *PointerVariable) LongString() string {
-	return v.VariableInfo.LongString() + " = " + "*" + v.PointerTo.LongString()
+	return v.VariableInfo.LongString() + " \n\t\t\t\t\t\t = " + "*" + v.GetPointerTo().LongString()
 }
 
 func (v *PointerVariable) GetId() int64 {
@@ -25,7 +24,17 @@ func (v *PointerVariable) GetId() int64 {
 }
 
 func (v *PointerVariable) GetType() gotypes.Type {
+	if v.VariableInfo.GetType() == nil {
+		logger.Logger.Fatalf("[VARS ADDRESS] unexpected nil type for pointer variable: %s", v.String())
+	}
 	return v.VariableInfo.GetType()
+}
+
+func (v *PointerVariable) GetPointerType() *gotypes.PointerType {
+	if userType, ok := v.VariableInfo.GetType().(*gotypes.UserType); ok {
+		return userType.UserType.(*gotypes.PointerType)
+	}
+	return v.VariableInfo.GetType().(*gotypes.PointerType)
 }
 
 func (v *PointerVariable) GetVariableInfo() *VariableInfo {
@@ -46,6 +55,7 @@ func (v *PointerVariable) GetNestedDependencies(nearestFields bool) []Variable {
 }
 
 func (v *PointerVariable) GetPointerTo() Variable {
+	logger.Logger.Debugf("[VARS POINTER] getting pointerTo variable for pointer: %s", v.String())
 	if v.PointerTo == nil {
 		logger.Logger.Fatalf("[VARS POINTER] unexpected nil pointer to variable in pointer variable (%s)", v.String())
 	}
@@ -56,7 +66,7 @@ func (v *PointerVariable) AddReferenceWithID(target Variable, creator string) {
 	if targetPointerTo, ok := target.(*PointerVariable); ok {
 		v.PointerTo.AddReferenceWithID(targetPointerTo.PointerTo, creator)
 	} else {
-		logger.Logger.Warnf("referenced variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
+		logger.Logger.Fatalf("ignoring referencing of variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), VariableTypeName(v), VariableTypeName(target))
 	}
 }
 

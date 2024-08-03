@@ -186,7 +186,8 @@ func (graph *AbstractGraph) referenceQueuePopMethodBlockVars(queueHandler *Abstr
 		pushParam := queueHandler.Publisher.GetParam(pushParamIdx)
 		popParam := queuePopCall.GetParam(popParamIdx)
 
-		popParam = variables.UnwrapAddressVariable(popParam)
+		// FIXME: do we really need this?
+		popParam = variables.UnwrapPointerVariable(popParam)
 
 		logger.Logger.Warnf("FIXMEEEEEEEEEE! IDK IF IT IS WORKING IN NOTIFY BECAUSE OF ASSIGNMENTS AND ASSERTS AFTERWARDS")
 		for _, dep := range pushParam.GetNestedDependencies(false) {

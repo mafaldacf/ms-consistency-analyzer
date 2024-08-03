@@ -43,6 +43,14 @@ func (app *App) String() string {
 	return string(str)
 }
 
+func (app *App) GetDatastoreInstance(name string) datastores.DatabaseInstance {
+	if instance, ok := app.Databases[name]; ok {
+		return instance
+	}
+	logger.Logger.Fatalf("[APP] could not find datastore instance for name (%s)", name)
+	return nil
+}
+
 func (app *App) GetAllAppPackages() []*types.Package {
 	var allPkgs []*types.Package
 	for _, pkg := range app.AppPackages {

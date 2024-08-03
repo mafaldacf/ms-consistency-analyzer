@@ -68,6 +68,9 @@ func (v *SliceVariable) NumVariables() int {
 }
 
 func (v *SliceVariable) GetType() gotypes.Type {
+	if v.VariableInfo.GetType() == nil {
+		logger.Logger.Fatalf("[VARS ADDRESS] unexpected nil type for slice variable: %s", v.String())
+	}
 	return v.VariableInfo.GetType()
 }
 

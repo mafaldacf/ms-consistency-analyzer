@@ -25,6 +25,9 @@ func (t *TupleType) String() string {
 	}
 	return s + ")"
 }
+func (t *TupleType) AddType(newType Type) {
+	t.Types = append(t.Types, newType)
+}
 func (t *TupleType) LongString() string {
 	return t.String()
 }
@@ -43,9 +46,6 @@ func (t *TupleType) GetBasicValue() string {
 }
 func (t *TupleType) AddValue(value string) {
 	logger.Logger.Fatalf("unable to add value for tuple type %s", t.String())
-}
-func (t *TupleType) AddType(newType Type) {
-	t.Types = append(t.Types, newType)
 }
 
 // -------------

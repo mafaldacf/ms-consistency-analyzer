@@ -13,3 +13,7 @@ xcy_lineages:
   - (0, 3) write(shipqueue, shipment, shipment) @ ShippingService
   - (0, 4) write(shipdb, shipment, shipment) @ ShippingService
   - (0, 5) write(order_db, order, order) @ OrderService
+- _id: 1
+  _operations:
+  - (1, 0) read(shipqueue, shipment, shipment) @ QueueMaster
+  - (1, 1) write(shipdb, , ) @ ShippingService

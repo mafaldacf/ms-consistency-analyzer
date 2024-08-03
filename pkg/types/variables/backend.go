@@ -20,6 +20,9 @@ func (v *BackendVariable) GetId() int64 {
 }
 
 func (v *BackendVariable) GetType() gotypes.Type {
+	if v.VariableInfo.GetType() == nil {
+		logger.Logger.Fatalf("[VARS ADDRESS] unexpected nil type for backend variable: %s", v.String())
+	}
 	return v.VariableInfo.GetType()
 }
 

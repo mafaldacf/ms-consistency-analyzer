@@ -16,6 +16,10 @@ require github.com/blueprint-uservices/blueprint/examples/postnotification/workf
 
 require github.com/blueprint-uservices/blueprint/examples/postnotification/wiring v0.0.0
 
+require github.com/blueprint-uservices/blueprint/examples/postnotification_simple/workflow v0.0.0 // indirect
+
+require github.com/blueprint-uservices/blueprint/examples/postnotification_simple/wiring v0.0.0
+
 require github.com/blueprint-uservices/blueprint/examples/shopping_app/workflow v0.0.0 // indirect
 
 require github.com/blueprint-uservices/blueprint/examples/shopping_app/wiring v0.0.0
@@ -104,6 +108,12 @@ replace github.com/blueprint-uservices/blueprint/examples/postnotification => ./
 replace github.com/blueprint-uservices/blueprint/examples/postnotification/workflow => ./blueprint/examples/postnotification/workflow
 
 replace github.com/blueprint-uservices/blueprint/examples/postnotification/wiring => ./blueprint/examples/postnotification/wiring
+
+replace github.com/blueprint-uservices/blueprint/examples/postnotification_simple => ./blueprint/examples/postnotification_simple
+
+replace github.com/blueprint-uservices/blueprint/examples/postnotification_simple/workflow => ./blueprint/examples/postnotification_simple/workflow
+
+replace github.com/blueprint-uservices/blueprint/examples/postnotification_simple/wiring => ./blueprint/examples/postnotification_simple/wiring
 
 replace github.com/blueprint-uservices/blueprint/examples/shopping_app => ./blueprint/examples/shopping_app
 

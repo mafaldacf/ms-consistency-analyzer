@@ -25,3 +25,12 @@ xcy_lineages:
     visible_dependency_set:
     - (0, 3) write(shipqueue, shipment, shipment) @ ShippingService
     - (0, 4) write(shipdb, shipment, shipment) @ ShippingService
+- _id: 1
+  _operations:
+  - _operation: (1, 0) read(shipqueue, shipment, shipment) @ QueueMaster
+    visible_dependency_set:
+    - (0, 3) write(shipqueue, shipment, shipment) @ ShippingService
+  - _operation: (1, 1) write(shipdb, , ) @ ShippingService
+    minimized_dependency_set (1 --> 0): []
+    visible_dependency_set:
+    - (0, 3) write(shipqueue, shipment, shipment) @ ShippingService

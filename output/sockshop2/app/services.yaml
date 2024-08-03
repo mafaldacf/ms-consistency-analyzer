@@ -3,14 +3,14 @@ CartService:
     db: NoSQLDatabase
 - services: {}
 - datastores:
-    cart_db: NoSQLDatabase
+    cart_db: cart_db MongoDB (NoSQLDatabase)
 
 CatalogueService:
 - fields:
     catalogue_db: NoSQLDatabase
 - services: {}
 - datastores:
-    catalogue_db: NoSQLDatabase
+    catalogue_db: catalogue_db MongoDB (NoSQLDatabase)
 
 FrontendService:
 - fields:
@@ -38,7 +38,7 @@ OrderService:
     ShippingService: shipping.ShippingService
     UserService: user.UserService
 - datastores:
-    order_db: NoSQLDatabase
+    order_db: order_db MongoDB (NoSQLDatabase)
 
 PaymentService:
 - fields:
@@ -49,13 +49,13 @@ PaymentService:
 QueueMaster:
 - fields:
     exitOnError: bool
-    processed: int32
+    processed: int
     q: Queue
     shipping: ShippingService
 - services:
     ShippingService: shipping.ShippingService
 - datastores:
-    shipqueue: Queue
+    shipqueue: shipqueue RabbitMQ (Queue)
 
 ShippingService:
 - fields:
@@ -63,13 +63,12 @@ ShippingService:
     q: Queue
 - services: {}
 - datastores:
-    shipdb: NoSQLDatabase
-    shipqueue: Queue
+    shipdb: shipdb MongoDB (NoSQLDatabase)
+    shipqueue: shipqueue RabbitMQ (Queue)
 
 UserService:
 - fields:
-    UserService: UserService
     db: NoSQLDatabase
 - services: {}
 - datastores:
-    user_db: NoSQLDatabase
+    user_db: user_db MongoDB (NoSQLDatabase)

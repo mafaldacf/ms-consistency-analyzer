@@ -1,22 +1,27 @@
 [] (-1) (PointerVariable PointerType) s (*order.orderImpl struct{users user.UserService, carts cart.CartService, payments payment.PaymentService, shipping shipping.ShippingService, db NoSQLDatabase}) 
 [_] (0) (StructVariable UserType) order.orderImpl struct{users user.UserService, carts cart.CartService, payments payment.PaymentService, shipping shipping.ShippingService, db NoSQLDatabase} 
-[__] (-1) (ServiceVariable ServiceType) carts cart.CartService 
-[__] (-1) (ServiceVariable ServiceType) payments payment.PaymentService 
-[__] (-1) (ServiceVariable ServiceType) shipping shipping.ShippingService 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
-[__] (-1) (ServiceVariable ServiceType) users user.UserService 
+[__] (0) (FieldVariable FieldType) users user.UserService 
+[___] (-1) (ServiceVariable ServiceType) userService user.UserService 
+[__] (0) (FieldVariable FieldType) carts cart.CartService 
+[___] (-1) (ServiceVariable ServiceType) cartService cart.CartService 
+[__] (0) (FieldVariable FieldType) payments payment.PaymentService 
+[___] (-1) (ServiceVariable ServiceType) payments payment.PaymentService 
+[__] (0) (FieldVariable FieldType) shipping shipping.ShippingService 
+[___] (-1) (ServiceVariable ServiceType) shipping shipping.ShippingService 
+[__] (0) (FieldVariable FieldType) db NoSQLDatabase 
+[___] (-1) (BlueprintBackendVariable BlueprintBackendType) orderDB NoSQLDatabase 
 
 [] (-1) (InterfaceVariable UserType) ctx context.Context 
-[_] (55) (Reference UserType) ref <ctx context.Context> @ FrontendService 
+[_] (68) (Reference UserType) ref <ctx context.Context> @ FrontendService 
 
 [] (-1) (BasicVariable BasicType) customerID string 
-[_] (56) (Reference BasicType) ref <userID string> @ FrontendService 
+[_] (69) (Reference BasicType) ref <userID string> @ FrontendService 
 
 [] (-1) (SliceVariable UserType) filter primitive.D 
 [_] (0) (StructVariable StructType) struct{ "customerid" string,  string} 
 [__] (0) (FieldVariable FieldType) string 
 [___] (-1) (BasicVariable BasicType) customerID string 
-[____] (56) (Reference BasicType) ref <userID string> @ FrontendService 
+[____] (69) (Reference BasicType) ref <userID string> @ FrontendService 
 
 [] (-1) (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = order_service, collection = orders} 
 
@@ -26,7 +31,7 @@
 
 [] (-1) (InterfaceVariable UserType) err .error 
 
-[] (-1) (ArrayVariable ArrayType) orders []order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status string}, Date string, Total float32} 
+[] (-1) (ArrayVariable ArrayType) orders []order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card []user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32} 
 
 [] (-1) (InterfaceVariable UserType) err .error 
 

@@ -5,15 +5,15 @@ AnalyticsService:
     num_workers: int
 - services: {}
 - datastores:
-    analytics_db: NoSQLDatabase
-    analytics_queue: Queue
+    analytics_db: analytics_db MongoDB (NoSQLDatabase)
+    analytics_queue: analytics_queue RabbitMQ (Queue)
 
 BillingService:
 - fields:
     bill_db: NoSQLDatabase
 - services: {}
 - datastores:
-    billing_db: NoSQLDatabase
+    billing_db: billing_db MongoDB (NoSQLDatabase)
 
 CartService:
 - fields:
@@ -24,7 +24,7 @@ CartService:
     OrderService: shopping_app.OrderService
     ProductService: shopping_app.ProductService
 - datastores:
-    cart_db: NoSQLDatabase
+    cart_db: cart_db MongoDB (NoSQLDatabase)
 
 Frontend:
 - fields:
@@ -48,16 +48,16 @@ OrderService:
     ProductService: shopping_app.ProductService
     StockService: shopping_app.StockService
 - datastores:
-    analytics_queue: Queue
-    order_db: NoSQLDatabase
-    shipment_queue: Queue
+    analytics_queue: analytics_queue RabbitMQ (Queue)
+    order_db: order_db MongoDB (NoSQLDatabase)
+    shipment_queue: shipment_queue RabbitMQ (Queue)
 
 ProductService:
 - fields:
     product_db: NoSQLDatabase
 - services: {}
 - datastores:
-    product_db: NoSQLDatabase
+    product_db: product_db MongoDB (NoSQLDatabase)
 
 ShipmentService:
 - fields:
@@ -68,12 +68,12 @@ ShipmentService:
 - services:
     OrderService: shopping_app.OrderService
 - datastores:
-    shipment_db: NoSQLDatabase
-    shipment_queue: Queue
+    shipment_db: shipment_db MongoDB (NoSQLDatabase)
+    shipment_queue: shipment_queue RabbitMQ (Queue)
 
 StockService:
 - fields:
     stock_db: NoSQLDatabase
 - services: {}
 - datastores:
-    stock_db: NoSQLDatabase
+    stock_db: stock_db MongoDB (NoSQLDatabase)

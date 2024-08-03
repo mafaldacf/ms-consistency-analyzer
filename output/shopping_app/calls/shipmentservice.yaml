@@ -1,15 +1,16 @@
 (*ShipmentServiceImpl).Run(ctx context.Context):
-- (*shopping_app.ShipmentServiceImpl).workerThread(ctx context.Context) error
+- INTERNAL CALL >> (*shopping_app.ShipmentServiceImpl).workerThread(ctx context.Context)
+  error
 
 (*ShipmentServiceImpl).createPendingShipment(ctx context.Context, message shopping_app.ShipmentMessage struct{OrderID string, UserID string})
 :
-	- NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
-  - (*shopping_app.OrderServiceImpl).ReadOrder(ctx context.Context, orderID string)
-    (shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64}, error)
+	- DATASTORE CALL @ shipment_db >> NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
+  - SERVICE CALL @ ReadOrder >> (*shopping_app.OrderServiceImpl).ReadOrder(ctx context.Context, orderID string) (shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp 1 int}, error)
 
 (*ShipmentServiceImpl).workerThread(ctx context.Context):
-- Queue.Pop(ctx context.Context, item interface{}) (err, interface{})
-- (*shopping_app.ShipmentServiceImpl).createPendingShipment(ctx context.Context, message shopping_app.ShipmentMessage struct{OrderID string, UserID string}) error
+- DATASTORE CALL @ shipment_queue >> Queue.Pop(ctx context.Context, item interface{})
+  (err, interface{})
+- INTERNAL CALL >> (*shopping_app.ShipmentServiceImpl).createPendingShipment(ctx context.Context, message shopping_app.ShipmentMessage struct{OrderID string, UserID string}) error
 
 .NewAnalyticsServiceImpl(ctx context.Context, analytics_db NoSQLDatabase, analytics_queue Queue): []
 

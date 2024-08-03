@@ -1,6 +1,10 @@
 package gotypes
 
-import "fmt"
+import (
+	"fmt"
+
+	"analyzer/pkg/logger"
+)
 
 type PointerType struct {
 	Type      `json:"-"`
@@ -32,6 +36,13 @@ func (t *PointerType) GetBasicValue() string {
 }
 func (t *PointerType) AddValue(value string) {
 	t.PointerTo.AddValue(value)
+}
+func (t *PointerType) GetPointerTo() Type {
+	logger.Logger.Debugf("[TYPES POINTER] getting pointerTo type for pointer: %s", t.String())
+	if t.PointerTo == nil {
+		logger.Logger.Fatalf("[TYPES POINTER] unexpected nil pointer to type in pointer type (%s)", t.String())
+	}
+	return t.PointerTo
 }
 
 // ---------------

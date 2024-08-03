@@ -79,28 +79,28 @@ postnotification:
 - declared types:
   - postnotification.Analytics struct{PostID int64}
   - postnotification.AnalyticsService
-  - postnotification.AnalyticsServiceImpl struct{analytics_queue {instance = analytics_queue}
-    interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}, analytics_db  {instance = analytics_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, num_workers 4 int}
-  - postnotification.Creator struct{Username string}
-  - postnotification.Media struct{MediaID int64, PostID int64, Content string}
+  - postnotification.AnalyticsServiceImpl struct{analyticsDb NoSQLDatabase {instance = analytics_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, analyticsQueue Queue {instance = analytics_queue}
+    interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}, numWorkers 4 int}
+  - postnotification.Creator struct{Username "some username" string}
+  - postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string}
   - postnotification.MediaService
-  - postnotification.MediaServiceImpl struct{media_db {instance = media_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase {instance = media_db}
+    interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
   - postnotification.Message struct{ReqID string, PostID string, Timestamp string}
   - postnotification.NotifyService
-  - postnotification.NotifyServiceImpl struct{storage_service postnotification.StorageService, notifications_queue {instance = notifications_queue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})},
+  - postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, notificationsQueue Queue {instance = notifications_queue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})},
     num_workers 4 int}
-  - postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}
+  - postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some
+    username" string}, Creator postnotification.Creator struct{Username "some username" string}}
   - postnotification.StorageService
-  - postnotification.StorageServiceImpl struct{analytics_service postnotification.AnalyticsService, media_service postnotification.MediaService, posts_cache {instance = posts_cache}
-    interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{})}, posts_db  {instance = posts_db}
-    interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, analytics_queue  {instance = analytics_queue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}}
+  - postnotification.StorageServiceImpl struct{analyticsService postnotification.AnalyticsService, mediaService postnotification.MediaService, posts_cache Cache {instance = posts_cache}
+    interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{})}, postsDb NoSQLDatabase {instance = posts_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, analyticsQueue Queue {instance = analytics_queue}
+    interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}}
   - postnotification.Timeline struct{ReqID int64, PostID int64}
-  - postnotification.TimelineService interface{}
-  - postnotification.TimelineServiceImpl struct{storage_service postnotification.StorageService, timeline_cache Cache interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{})}}
   - postnotification.TriggerAnalyticsMessage struct{PostID string}
   - postnotification.UploadService
-  - postnotification.UploadServiceImpl struct{storage_service postnotification.StorageService, media_service postnotification.MediaService, notifications_queue {instance = notifications_queue} interface{Queue.Push(ctx context.Context, item interface{}),
-    Queue.Pop(ctx context.Context, item interface{})}, timeline_cache  {instance = timeline_cache} interface{Cache.Put(ctx context.Context, key string, value interface{}),
+  - postnotification.UploadServiceImpl struct{storageService postnotification.StorageService, mediaService postnotification.MediaService, notificationsQueue Queue {instance = notifications_queue} interface{Queue.Push(ctx context.Context, item interface{}),
+    Queue.Pop(ctx context.Context, item interface{})}, timelineCache Cache {instance = timeline_cache} interface{Cache.Put(ctx context.Context, key string, value interface{}),
     Cache.Get(ctx context.Context, key string, value interface{})}}
 - declared variables: []
 - declared constants: []
@@ -125,23 +125,24 @@ postnotification:
   - (*postnotification.AnalyticsServiceImpl).handleMessage(ctx context.Context, message postnotification.TriggerAnalyticsMessage struct{PostID string}) error
   - (*postnotification.AnalyticsServiceImpl).workerThread(ctx context.Context) error
   - (*postnotification.MediaServiceImpl).ReadMedia(ctx context.Context, mediaID int64)
-    (postnotification.Media struct{MediaID int64, PostID int64, Content string}, error)
-  - (*postnotification.MediaServiceImpl).StoreMedia(ctx context.Context, media postnotification.Media struct{MediaID int64, PostID int64, Content string}) error
+    (postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string}, error)
+  - (*postnotification.MediaServiceImpl).StoreMedia(ctx context.Context, media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string}) error
   - (*postnotification.NotifyServiceImpl).Run(ctx context.Context) error
   - (*postnotification.NotifyServiceImpl).handleMessage(ctx context.Context, message postnotification.Message struct{ReqID string, PostID string, Timestamp string})
     error
   - (*postnotification.NotifyServiceImpl).workerThread(ctx context.Context, workerID int) error
-  - (*postnotification.StorageServiceImpl).ReadMedia(ctx context.Context, reqID int64, postID int64) (postnotification.Media struct{MediaID int64, PostID int64, Content string}, error)
-  - (*postnotification.StorageServiceImpl).ReadPostCache(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}, error)
-  - (*postnotification.StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}, postnotification.Analytics struct{PostID int64}, error)
-  - (*postnotification.StorageServiceImpl).StorePostCache(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}) error
-  - (*postnotification.StorageServiceImpl).StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}) error
-  - (*postnotification.UploadServiceImpl).ReadPostMedia(ctx context.Context, reqID int64, postID int64) (postnotification.Media struct{MediaID int64, PostID int64, Content string}, error)
+  - (*postnotification.StorageServiceImpl).ReadMedia(ctx context.Context, reqID int64, postID int64) (postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string}, error)
+  - (*postnotification.StorageServiceImpl).ReadPostCache(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}}, error)
+  - (*postnotification.StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}}, postnotification.Analytics struct{PostID int64}, error)
+  - (*postnotification.StorageServiceImpl).StorePostCache(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some
+    username" string}}) error
+  - (*postnotification.StorageServiceImpl).StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some
+    username" string}}) error
+  - (*postnotification.UploadServiceImpl).ReadPostMedia(ctx context.Context, reqID int64, postID int64) (postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string}, error)
   - (*postnotification.UploadServiceImpl).UploadPost(ctx context.Context, username string, text string) (int64, error)
-  - postnotification.NewAnalyticsServiceImpl(ctx context.Context, analytics_db NoSQLDatabase, analytics_queue Queue) (postnotification.AnalyticsService, error)
-  - postnotification.NewMediaServiceImpl(ctx context.Context, media_db NoSQLDatabase)
+  - postnotification.NewAnalyticsServiceImpl(ctx context.Context, analyticsDb NoSQLDatabase, analyticsQueue Queue) (postnotification.AnalyticsService, error)
+  - postnotification.NewMediaServiceImpl(ctx context.Context, mediaDb NoSQLDatabase)
     (postnotification.MediaService, error)
-  - postnotification.NewNotifyServiceImpl(ctx context.Context, storage_service postnotification.StorageService, notifications_queue Queue) (postnotification.NotifyService, error)
-  - postnotification.NewStorageServiceImpl(ctx context.Context, analytics_service postnotification.AnalyticsService, media_service postnotification.MediaService, posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue) (postnotification.StorageService, error)
-  - postnotification.NewTimelineServiceImpl(ctx context.Context, storage_service postnotification.StorageService, timeline_cache Cache) (postnotification.TimelineService interface{ interface{} }, error)
-  - postnotification.NewUploadServiceImpl(ctx context.Context, storage_service postnotification.StorageService, media_service postnotification.MediaService, notifications_queue Queue, timeline_cache Cache) (postnotification.UploadService, error)
+  - postnotification.NewNotifyServiceImpl(ctx context.Context, storageService postnotification.StorageService, notificationsQueue Queue) (postnotification.NotifyService, error)
+  - postnotification.NewStorageServiceImpl(ctx context.Context, analyticsService postnotification.AnalyticsService, mediaService postnotification.MediaService, posts_cache Cache, postsDb NoSQLDatabase, analyticsQueue Queue) (postnotification.StorageService, error)
+  - postnotification.NewUploadServiceImpl(ctx context.Context, storageService postnotification.StorageService, mediaService postnotification.MediaService, notificationsQueue Queue, timelineCache Cache) (postnotification.UploadService, error)

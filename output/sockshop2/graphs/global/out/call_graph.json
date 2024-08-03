@@ -225,6 +225,10 @@
       "type": "service"
     },
     {
+      "id": "QueueMaster",
+      "type": "service"
+    },
+    {
       "id": "ShippingService",
       "type": "service"
     },
@@ -769,10 +773,28 @@
       "depth": 2
     },
     {
+      "caller": "QueueMaster",
+      "callee": "ShippingService",
+      "call": "UpdateStatus",
+      "depth": 5
+    },
+    {
+      "caller": "QueueMaster",
+      "callee": "shipqueue RabbitMQ",
+      "call": "Pop",
+      "depth": 5
+    },
+    {
       "caller": "ShippingService",
       "callee": "shipdb MongoDB",
       "call": "InsertOne",
       "depth": 3
+    },
+    {
+      "caller": "ShippingService",
+      "callee": "shipdb MongoDB",
+      "call": "UpdateOne",
+      "depth": 6
     },
     {
       "caller": "ShippingService",
@@ -839,6 +861,12 @@
       "callee": "user_db MongoDB",
       "call": "FindMany",
       "depth": 3
+    },
+    {
+      "caller": "shipqueue RabbitMQ",
+      "callee": "QueueMaster",
+      "call": "Run",
+      "depth": 4
     }
   ]
 }

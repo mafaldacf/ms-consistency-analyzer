@@ -15,8 +15,13 @@ import (
 type Block struct {
 	Block *cfg.Block
 	// blocks can contain inline go routines
-	Vars []variables.Variable
-	Info *BlockInfo
+	Vars    []variables.Variable
+	Results []variables.Variable
+	Info    *BlockInfo
+}
+
+func (block *Block) GetVars() []variables.Variable {
+	return block.Vars
 }
 
 func (block *Block) VarsString() string {
@@ -41,6 +46,11 @@ func (block *Block) DeepCopy() *Block {
 		Vars:  copyVars,
 		Info:  block.Info,
 	}
+}
+
+func (block *Block) AddResult(variable variables.Variable) {
+	logger.Logger.Debugf("[BLOCK (%d)] added new result: \n\t\t\t\t\t\t - (%s) %s", block.Block.Index, variables.VariableTypeName(variable), variable.LongString())
+	block.Results = append(block.Results, variable)
 }
 
 func (block *Block) GetVariableAt(index int) variables.Variable {
@@ -73,11 +83,29 @@ func (block *Block) GetVariables() []variables.Variable {
 	return block.Vars
 }
 
-func (block *Block) GetFirstVariable() variables.Variable {
+func (block *Block) GetResults() []variables.Variable {
+	return block.Results
+}
+
+func (block *Block) GetFirstResult() variables.Variable {
+	if len(block.Results) == 0 {
+		logger.Logger.Fatalf("[BLOCKS] block has no results: %s", block.String())
+	}
+	return block.Results[0]
+}
+
+func (block *Block) GetReceiver() variables.Variable {
 	if len(block.Vars) == 0 {
 		logger.Logger.Fatalf("[BLOCKS] unexpected empty CFG block (%v)", block)
 	}
 	return block.Vars[0]
+}
+
+func (block *Block) UpdateReceiver(v variables.Variable) {
+	if len(block.Vars) == 0 {
+		logger.Logger.Fatalf("[BLOCKS] unexpected empty CFG block (%v)", block)
+	}
+	block.Vars[0] = v
 }
 
 func (block *Block) IsReceiverVariable(v variables.Variable) bool {
@@ -105,6 +133,7 @@ func (block *Block) GetLastestVariableIfExists(name string) variables.Variable {
 			return v
 		}
 	}
+	logger.Logger.Debugf("[BLOCK] variable (%s) does not exist in block with vars lst: %v", name, block.Vars)
 	return nil
 }
 
@@ -119,7 +148,7 @@ func (block *Block) AddVariable(variable variables.Variable) {
 		return
 	}
 
-	logger.Logger.Debugf("[BLOCK (%d)] added %s (%s) to block", block.Block.Index, variable.String(), utils.GetType(variable))
+	logger.Logger.Debugf("[BLOCK (%d)] added new variable: \n\t\t\t\t\t\t - (%s) %s", block.Block.Index, variables.VariableTypeName(variable), variable.LongString())
 	block.Vars = append(block.Vars, variable)
 }
 

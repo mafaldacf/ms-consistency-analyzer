@@ -1,0 +1,15 @@
+mode: FOREIGN_KEYS_DEFAULT
+
+number_inconsistencies: 1
+
+xcy_inconsistencies:
+- read: (0, 3) read(posts_db, query, result) @ StorageService
+  write: (0, 0) write(posts_db, post, post) @ StorageService
+
+xcy_lineages:
+- _id: 0
+  _operations:
+  - (0, 0) write(posts_db, post, post) @ StorageService
+  - (0, 1) write(notifications_queue, message, message) @ UploadService
+  - (0, 2) read(notifications_queue, event, event) @ NotifyService
+  - (0, 3) read(posts_db, query, result) @ StorageService

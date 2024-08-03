@@ -11,4 +11,4 @@
   block 0 (Body):
   - '[-1] (InterfaceVariable UserType) ctx context.Context'
   - '[0] (inline) (StructVariable UserType) foo.FooServiceImpl struct{}'
-  - '[-1] (AddressVariable AddressType) d (&foo.FooServiceImpl struct{})'
+  - '[-1] (PointerVariable PointerType) d (*foo.FooServiceImpl struct{})'

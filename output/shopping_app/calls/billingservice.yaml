@@ -1,5 +1,5 @@
 (*BillingServiceImpl).CreateBill(ctx context.Context, userID string, productID string, quantity int, pricePerUnit int):
-- NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
+- DATASTORE CALL @ billing_db >> NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
 
 .NewAnalyticsServiceImpl(ctx context.Context, analytics_db NoSQLDatabase, analytics_queue Queue): []
 

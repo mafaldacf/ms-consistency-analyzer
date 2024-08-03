@@ -1,12 +1,11 @@
 (*FrontendImpl).AddProductToCart(ctx context.Context, cartID string, productID string):
-- (*shopping_app.CartServiceImpl).AddProductToCart(ctx context.Context, cartID string, productID string) error
+- SERVICE CALL @ AddProductToCart >> (*shopping_app.CartServiceImpl).AddProductToCart(ctx context.Context, cartID string, productID string) error
 
 (*FrontendImpl).Checkout(ctx context.Context, cartID string, userID string, productID string, quantity int, price int):
-- (*shopping_app.OrderServiceImpl).CreateOrder(ctx context.Context, cartID string, userID string, productID string, quantity int, price int) error
+- SERVICE CALL @ CreateOrder >> (*shopping_app.OrderServiceImpl).CreateOrder(ctx context.Context, cartID string, userID string, productID string, quantity int, price int) error
 
 (*FrontendImpl).ReadOrder(ctx context.Context, orderID string):
-- (*shopping_app.OrderServiceImpl).ReadOrder(ctx context.Context, orderID string)
-  (shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64}, error)
+- SERVICE CALL @ ReadOrder >> (*shopping_app.OrderServiceImpl).ReadOrder(ctx context.Context, orderID string) (shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp 1 int}, error)
 
 .NewAnalyticsServiceImpl(ctx context.Context, analytics_db NoSQLDatabase, analytics_queue Queue): []
 

@@ -1,21 +1,22 @@
 [] (-1) (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}) 
 [_] (0) (StructVariable UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase} 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase 
+[__] (0) (FieldVariable FieldType) catalogue_db NoSQLDatabase 
+[___] (-1) (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase 
 
 [] (-1) (InterfaceVariable UserType) ctx context.Context 
-[_] (11) (Reference UserType) ref <ctx context.Context> @ FrontendService 
+[_] (21) (Reference UserType) ref <ctx context.Context> @ FrontendService 
 
 [] (-1) (ArrayVariable ArrayType) tags []string 
-[_] (12) (Reference ArrayType) ref <tags []string> @ FrontendService 
+[_] (22) (Reference ArrayType) ref <tags []string> @ FrontendService 
 
 [] (-1) (BasicVariable BasicType) order string 
-[_] (13) (Reference BasicType) ref <order string> @ FrontendService 
+[_] (23) (Reference BasicType) ref <order string> @ FrontendService 
 
 [] (-1) (BasicVariable BasicType) pageNum int 
-[_] (14) (Reference BasicType) ref <pageNum int> @ FrontendService 
+[_] (24) (Reference BasicType) ref <pageNum int> @ FrontendService 
 
 [] (-1) (BasicVariable BasicType) pageSize int 
-[_] (15) (Reference BasicType) ref <pageSize int> @ FrontendService 
+[_] (25) (Reference BasicType) ref <pageSize int> @ FrontendService 
 
 [] (-1) (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = catalogue, collection = catalogue} 
 

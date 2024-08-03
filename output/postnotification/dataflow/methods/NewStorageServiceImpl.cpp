@@ -1,25 +1,25 @@
 [] (-1) (InterfaceVariable UserType) ctx context.Context 
 
-[] (-1) (ServiceVariable ServiceType) analytics_service postnotification.AnalyticsService 
+[] (-1) (ServiceVariable ServiceType) analyticsService postnotification.AnalyticsService 
 
-[] (-1) (ServiceVariable ServiceType) media_service postnotification.MediaService 
+[] (-1) (ServiceVariable ServiceType) mediaService postnotification.MediaService 
 
 [] (-1) (BlueprintBackendVariable BlueprintBackendType) posts_cache Cache 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) posts_db NoSQLDatabase 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) postsDb NoSQLDatabase 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) analytics_queue Queue 
+[] (-1) (BlueprintBackendVariable BlueprintBackendType) analyticsQueue Queue 
 
-[] (-1) (AddressVariable AddressType) s (&postnotification.StorageServiceImpl struct{analytics_service postnotification.AnalyticsService, media_service postnotification.MediaService, posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue}) 
-[_] (0) (StructVariable UserType) postnotification.StorageServiceImpl struct{analytics_service postnotification.AnalyticsService, media_service postnotification.MediaService, posts_cache Cache, posts_db NoSQLDatabase, analytics_queue Queue} 
+[] (-1) (PointerVariable PointerType) s (*postnotification.StorageServiceImpl struct{analyticsService postnotification.AnalyticsService, mediaService postnotification.MediaService, posts_cache Cache, postsDb NoSQLDatabase, analyticsQueue Queue}) 
+[_] (0) (StructVariable UserType) postnotification.StorageServiceImpl struct{analyticsService postnotification.AnalyticsService, mediaService postnotification.MediaService, posts_cache Cache, postsDb NoSQLDatabase, analyticsQueue Queue} 
 [__] (0) (FieldVariable FieldType) posts_cache Cache 
 [___] (-1) (BlueprintBackendVariable BlueprintBackendType) posts_cache Cache 
-[__] (0) (FieldVariable FieldType) posts_db NoSQLDatabase 
-[___] (-1) (BlueprintBackendVariable BlueprintBackendType) posts_db NoSQLDatabase 
-[__] (0) (FieldVariable FieldType) analytics_queue Queue 
-[___] (-1) (BlueprintBackendVariable BlueprintBackendType) analytics_queue Queue 
-[__] (0) (FieldVariable FieldType) analytics_service postnotification.AnalyticsService 
-[___] (-1) (ServiceVariable ServiceType) analytics_service postnotification.AnalyticsService 
-[__] (0) (FieldVariable FieldType) media_service postnotification.MediaService 
-[___] (-1) (ServiceVariable ServiceType) media_service postnotification.MediaService 
+[__] (0) (FieldVariable FieldType) postsDb NoSQLDatabase 
+[___] (-1) (BlueprintBackendVariable BlueprintBackendType) postsDb NoSQLDatabase 
+[__] (0) (FieldVariable FieldType) analyticsQueue Queue 
+[___] (-1) (BlueprintBackendVariable BlueprintBackendType) analyticsQueue Queue 
+[__] (0) (FieldVariable FieldType) analyticsService postnotification.AnalyticsService 
+[___] (-1) (ServiceVariable ServiceType) analyticsService postnotification.AnalyticsService 
+[__] (0) (FieldVariable FieldType) mediaService postnotification.MediaService 
+[___] (-1) (ServiceVariable ServiceType) mediaService postnotification.MediaService 
 

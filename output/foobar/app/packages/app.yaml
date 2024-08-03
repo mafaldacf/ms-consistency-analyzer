@@ -84,7 +84,7 @@ foobar:
 - imported variables: []
 - declared types:
   - foobar.FrontendService
-  - foobar.FrontendServiceImpl struct{barService bar.BarService, fooService foo.FooService}
+  - foobar.FrontendServiceImpl struct{fooService foo.FooService, barService bar.BarService}
 - declared variables: []
 - declared constants:
   - HELLO_WORLD_CONST "Hello World (CONST)!" untyped string

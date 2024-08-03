@@ -68,7 +68,11 @@ func (v *ArrayVariable) GetId() int64 {
 	return v.VariableInfo.GetId()
 }
 
+
 func (v *ArrayVariable) GetType() gotypes.Type {
+	if v.VariableInfo.GetType() == nil {
+		logger.Logger.Fatalf("[VARS ADDRESS] unexpected nil type for array variable: %s", v.String())
+	}
 	return v.VariableInfo.GetType()
 }
 

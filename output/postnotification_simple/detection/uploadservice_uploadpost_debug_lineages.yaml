@@ -1,0 +1,32 @@
+mode: DEBUG_LINEAGES
+
+number_inconsistencies: 0
+
+xcy_inconsistencies: []
+
+xcy_lineages:
+- _id: 0
+  _operations:
+  - _operation: (0, 0) write(posts_db, post, post) @ StorageService
+    visible_dependency_set: []
+  - _operation: (0, 1) write(notifications_queue, message, message) @ UploadService
+    visible_dependency_set:
+    - (0, 0) write(posts_db, post, post) @ StorageService
+  lineage_dependencies:
+  - (0, 1) write(notifications_queue, message, message) @ UploadService
+  - (0, 0) write(posts_db, post, post) @ StorageService
+  missing_dependencies: []
+- _id: 1
+  _operations:
+  - _operation: (1, 0) read(notifications_queue, event, event) @ NotifyService
+    visible_dependency_set:
+    - (0, 0) write(posts_db, post, post) @ StorageService
+    - (0, 1) write(notifications_queue, message, message) @ UploadService
+  - _operation: (1, 1) read(posts_db, query, result) @ StorageService
+    visible_dependency_set:
+    - (0, 0) write(posts_db, post, post) @ StorageService
+    - (0, 1) write(notifications_queue, message, message) @ UploadService
+  lineage_dependencies:
+  - (0, 1) write(notifications_queue, message, message) @ UploadService
+  - (0, 0) write(posts_db, post, post) @ StorageService
+  missing_dependencies: []

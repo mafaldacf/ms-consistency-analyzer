@@ -27,3 +27,20 @@ xcy_lineages:
   - (0, 4) write(shipdb, shipment, shipment) @ ShippingService
   - (0, 3) write(shipqueue, shipment, shipment) @ ShippingService
   missing_dependencies: []
+- _id: 1
+  _operations:
+  - _operation: (1, 0) read(shipqueue, shipment, shipment) @ QueueMaster
+    visible_dependency_set:
+    - (0, 3) write(shipqueue, shipment, shipment) @ ShippingService
+  - _operation: (1, 1) write(shipdb, , ) @ ShippingService
+    visible_dependency_set:
+    - (0, 3) write(shipqueue, shipment, shipment) @ ShippingService
+  lineage_dependencies:
+  - (1, 1) write(shipdb, , ) @ ShippingService
+  - (0, 5) write(order_db, order, order) @ OrderService
+  - (0, 4) write(shipdb, shipment, shipment) @ ShippingService
+  - (0, 3) write(shipqueue, shipment, shipment) @ ShippingService
+  missing_dependencies:
+  - (0, 0) read(user_db, filter, result) @ UserService
+  - (0, 1) read(user_db, filter, result) @ UserService
+  - (0, 2) read(user_db, filter, result) @ UserService

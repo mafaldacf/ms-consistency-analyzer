@@ -175,7 +175,7 @@ func referenceTaintedDataflowForNestedFields(writtenVariable variables.Variable,
 	for i, variable := range vars {
 		dbField := datastore.Schema.GetField(names[i])
 		deps := variable.GetNestedDependencies(false)
-		logger.Logger.Infof("[TENTATIVE REF TAINTED VAR] [%s] (%02d) %s", utils.GetType(variable), variable.GetId(), variable.LongString())
+		logger.Logger.Infof("[TENTATIVE REF TAINTED VAR] [%s] (%02d) %s", variables.VariableTypeName(variable), variable.GetId(), variable.LongString())
 		for _, dep := range deps {
 			for _, df := range dep.GetVariableInfo().GetAllDataflows() {
 				if df.Datastore != datastore.Name {

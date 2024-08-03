@@ -8,6 +8,7 @@ import (
 	dsb_sn "github.com/blueprint-uservices/blueprint/examples/dsb_sn/wiring/specs"
 	specs_foobar "github.com/blueprint-uservices/blueprint/examples/foobar/wiring/specs"
 	specs_postnotification "github.com/blueprint-uservices/blueprint/examples/postnotification/wiring/specs"
+	specs_postnotification_simple "github.com/blueprint-uservices/blueprint/examples/postnotification_simple/wiring/specs"
 	specs_shopping_app "github.com/blueprint-uservices/blueprint/examples/shopping_app/wiring/specs"
 	specs_sockshop2 "github.com/blueprint-uservices/blueprint/examples/sockshop2/wiring/specs"
 	specs_trainticket "github.com/blueprint-uservices/blueprint/examples/train_ticket/wiring/specs"
@@ -31,6 +32,8 @@ func BuildBlueprintAppInfo(appName string) ([]*frameworks.ServiceInfo, []datasto
 	switch appName {
 	case "postnotification":
 		spec = specs_postnotification.Docker
+	case "postnotification_simple":
+		spec = specs_postnotification_simple.Docker
 	case "foobar":
 		spec = specs_foobar.Docker
 	case "sockshop2":
@@ -71,23 +74,16 @@ func buildBlueprintServicesInfo(appSpecs map[*workflowspec.Service][]golang.Serv
 			PackagePath:     spec.Iface.File.Package.Name,
 			Filepath:        spec.Iface.File.Name,
 			ConstructorName: spec.Constructor.Name,
-			ConstructorDBs:  make(map[string]string),
+			ServiceArgs:     []string{"context"}, // args in spec do not count with the context at index 0 so we insert a dummy value now
 		}
 		for _, method := range spec.Iface.Ast.Methods.List {
 			serviceInfo.Methods = append(serviceInfo.Methods, method.Names[0].Name)
-		}
-		constructorArgs := spec.Constructor.Func.GetArguments()
-		for idx, serviceArg := range serviceArgs {
-			if _, isServiceIR := serviceArg.(*workflow.WorkflowClient); !isServiceIR {
-				// service spec args does not count with context at index 0
-				constructorArg := constructorArgs[idx+1]
-				serviceInfo.ConstructorDBs[constructorArg.GetName()] = getUniqueName(serviceArg.Name())
-			}
 		}
 		for _, arg := range serviceArgs {
 			if workflowClient, ok := arg.(*workflow.WorkflowClient); ok {
 				serviceInfo.Edges = append(serviceInfo.Edges, getUniqueName(workflowClient.ServiceType))
 			}
+			serviceInfo.ServiceArgs = append(serviceInfo.ServiceArgs, getUniqueName(arg.Name()))
 		}
 		services = append(services, serviceInfo)
 	}

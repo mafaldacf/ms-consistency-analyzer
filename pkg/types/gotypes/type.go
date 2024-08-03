@@ -28,6 +28,14 @@ func UnwrapUserAndFieldTypes(t Type) (Type, Type) {
 
 }
 
+// UnwrapUserTypeUnderlying returns the most inner unwrapped type
+func UnwrapUserTypeUnderlying(t Type) Type {
+	if userType, ok := t.(*UserType); ok {
+		return UnwrapUserTypeUnderlying(userType.UserType)
+	}
+	return t
+}
+
 // UnwrapUserType returns the most inner unwrapped type along with the most inner user type
 // if no user type is found, then it returns the current type twice
 func UnwrapUserType(t Type) (Type, Type) {

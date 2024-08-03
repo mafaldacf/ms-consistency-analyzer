@@ -39,7 +39,7 @@ cart:
   - cart.CartService
   - cart.Item struct{ID string, Quantity int, UnitPrice float32}
   - cart.cart struct{ID string, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}}
-  - cart.cartImpl struct{db {instance = cart_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - cart.cartImpl struct{db NoSQLDatabase {instance = cart_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
 - declared variables: []
 - declared constants: []
 - service types:
@@ -87,7 +87,8 @@ catalogue:
 - declared types:
   - catalogue.CatalogueService
   - catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
-  - catalogue.catalogueImpl struct{catalogue_db {instance = catalogue_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase {instance = catalogue_db}
+    interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
   - catalogue.tag struct{ID int, Name string}
 - declared variables: []
 - declared constants: []
@@ -127,13 +128,13 @@ frontend:
 - imported types:
   - .error
   - cart.CartService
-  - cart.Item struct{ID string, Quantity int, UnitPrice float32}
+  - cart.Item struct{ID string, Quantity 1 int, UnitPrice float32}
   - catalogue.CatalogueService
   - catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
   - context.Context
   - order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string},
     Card user.Card struct{LongNum string, Expires string, CCV string, ID string},
-    Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment
+    Items []cart.Item struct{ID string, Quantity 1 int, UnitPrice float32}, Shipment
     shipping.Shipment struct{ID string, Name string, Status string}, Date string,
     Total float32}
   - order.OrderService
@@ -161,16 +162,16 @@ frontend:
   - (*frontend.FrontendImpl).DeleteCart(ctx context.Context, sessionID string) error
   - (*frontend.FrontendImpl).GetAddress(ctx context.Context, addressID string) (user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, error)
   - (*frontend.FrontendImpl).GetCard(ctx context.Context, cardID string) (user.Card struct{LongNum string, Expires string, CCV string, ID string}, error)
-  - (*frontend.FrontendImpl).GetCart(ctx context.Context, sessionID string) ([]cart.Item struct{ID string, Quantity int, UnitPrice float32}, error)
-  - (*frontend.FrontendImpl).GetOrder(ctx context.Context, orderID string) (order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status string}, Date string, Total float32}, error)
-  - (*frontend.FrontendImpl).GetOrders(ctx context.Context, userID string) ([]order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status string}, Date string, Total float32}, error)
+  - (*frontend.FrontendImpl).GetCart(ctx context.Context, sessionID string) ([]cart.Item struct{ID string, Quantity 1 int, UnitPrice float32}, error)
+  - (*frontend.FrontendImpl).GetOrder(ctx context.Context, orderID string) (order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity 1 int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status string}, Date string, Total float32}, error)
+  - (*frontend.FrontendImpl).GetOrders(ctx context.Context, userID string) ([]order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity 1 int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status string}, Date string, Total float32}, error)
   - (*frontend.FrontendImpl).GetSock(ctx context.Context, itemID string) (catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}, error)
   - (*frontend.FrontendImpl).GetUser(ctx context.Context, userID string) (user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, error)
   - (*frontend.FrontendImpl).ListItems(ctx context.Context, tags []string, order string, pageNum int, pageSize int) ([]catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}, error)
   - (*frontend.FrontendImpl).ListTags(ctx context.Context) ([]string, error)
   - (*frontend.FrontendImpl).LoadCatalogue(ctx context.Context) (string, error)
   - (*frontend.FrontendImpl).Login(ctx context.Context, sessionID string, username string, password string) (string, user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, error)
-  - (*frontend.FrontendImpl).NewOrder(ctx context.Context, userID string, addressID string, cardID string, cartID string) (order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status string}, Date string, Total float32}, error)
+  - (*frontend.FrontendImpl).NewOrder(ctx context.Context, userID string, addressID string, cardID string, cartID string) (order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity 1 int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status string}, Date string, Total float32}, error)
   - (*frontend.FrontendImpl).PostAddress(ctx context.Context, userID string, address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}) (string, error)
   - (*frontend.FrontendImpl).PostCard(ctx context.Context, userID string, card user.Card struct{LongNum string, Expires string, CCV string, ID string}) (string, error)
   - (*frontend.FrontendImpl).Register(ctx context.Context, sessionID string, username string, password string, email string, first string, last string) (string, error)
@@ -213,7 +214,7 @@ order:
   - payment.PaymentService
   - primitive.D
   - primitive.E
-  - shipping.Shipment struct{ID string, Name string, Status string}
+  - shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}
   - shipping.ShippingService
   - sync.WaitGroup
   - sync.noCopy
@@ -224,14 +225,13 @@ order:
 - imported constants: []
 - imported variables: []
 - declared types:
-  - order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string},
-    Card user.Card struct{LongNum string, Expires string, CCV string, ID string},
+  - order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string},
+    Card []user.Card struct{LongNum string, Expires string, CCV string, ID string},
     Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment
-    shipping.Shipment struct{ID string, Name string, Status string}, Date string,
-    Total float32}
+    shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string},
+    Date string, Total 10 float32, Total float32}
   - order.OrderService
-  - order.orderImpl struct{users user.UserService, carts cart.CartService, payments payment.PaymentService, shipping shipping.ShippingService, db {instance = order_db}
-    interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - order.orderImpl struct{users user.UserService, carts cart.CartService, payments payment.PaymentService, shipping shipping.ShippingService, db NoSQLDatabase {instance = order_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
 - declared variables: []
 - declared constants: []
 - service types:
@@ -247,9 +247,9 @@ order:
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
 - parsed methods:
-  - (*order.orderImpl).GetOrder(ctx context.Context, orderID string) (order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status string}, Date string, Total float32}, error)
-  - (*order.orderImpl).GetOrders(ctx context.Context, customerID string) ([]order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status string}, Date string, Total float32}, error)
-  - (*order.orderImpl).NewOrder(ctx context.Context, customerID string, addressID string, cardID string, cartID string) (order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status string}, Date string, Total float32}, error)
+  - (*order.orderImpl).GetOrder(ctx context.Context, orderID string) (order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card []user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}, error)
+  - (*order.orderImpl).GetOrders(ctx context.Context, customerID string) ([]order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card []user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}, error)
+  - (*order.orderImpl).NewOrder(ctx context.Context, customerID string, addressID string, cardID string, cartID string) (order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card []user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}, error)
   - order.NewOrderService(ctx context.Context, userService user.UserService, cartService cart.CartService, payments payment.PaymentService, shipping shipping.ShippingService, orderDB NoSQLDatabase) (order.OrderService, error)
 
 payment:
@@ -266,16 +266,19 @@ payment:
 - imported constants: []
 - imported variables: []
 - declared types:
-  - payment.Authorisation struct{Authorised bool, Message string}
+  - 'payment.Authorisation struct{Authorised false bool, Message "Payment declined:
+    amount exceeds" string}'
   - payment.PaymentService
-  - payment.paymentImpl struct{declineOverAmount float32}
+  - payment.paymentImpl struct{declineOverAmount 50 float32}
 - declared variables: []
 - declared constants: []
 - service types:
   - payment.PaymentService
 - datastore types: []
 - parsed methods:
-  - (*payment.paymentImpl).Authorise(ctx context.Context, amount float32) (payment.Authorisation struct{Authorised bool, Message string}, error)
+  - '(*payment.paymentImpl).Authorise(ctx context.Context, amount float32) (payment.Authorisation
+    struct{Authorised false bool, Message "Payment declined: amount exceeds" string},
+    error)'
   - payment.NewPaymentService(ctx context.Context, declineOverAmount string) (payment.PaymentService, error)
 
 queuemaster:
@@ -298,8 +301,8 @@ queuemaster:
 - imported variables: []
 - declared types:
   - queuemaster.QueueMaster
-  - queuemaster.queueMasterImpl struct{q {instance = shipqueue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})},
-    shipping shipping.ShippingService, exitOnError bool, processed 0 int32}
+  - queuemaster.queueMasterImpl struct{q Queue {instance = shipqueue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})},
+    shipping shipping.ShippingService, exitOnError false bool, processed 0 int}
 - declared variables: []
 - declared constants: []
 - service types:
@@ -339,8 +342,8 @@ shipping:
 - declared types:
   - shipping.Shipment struct{ID string, Name string, Status string}
   - shipping.ShippingService
-  - shipping.shippingImpl struct{q {instance = shipqueue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})},
-    db  {instance = shipdb} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - shipping.shippingImpl struct{q Queue {instance = shipqueue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})},
+    db NoSQLDatabase {instance = shipdb} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
 - declared variables: []
 - declared constants: []
 - service types:
@@ -389,8 +392,7 @@ user:
   - user.Card struct{LongNum string, Expires string, CCV string, ID string}
   - user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}
   - user.UserService
-  - user.userServiceImpl struct{UserService user.UserService, db {instance = user_db}
-    interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - user.userServiceImpl struct{db NoSQLDatabase {instance = user_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, db NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
 - declared variables: []
 - declared constants: []
 - service types:

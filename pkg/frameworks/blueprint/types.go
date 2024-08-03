@@ -64,17 +64,21 @@ func (t *NoSQLComponent) LongString() string {
 }
 
 type BlueprintBackendType struct {
-	gotypes.Type   `json:"-"`
-	Name           string
-	Package        string
-	Methods        []*BackendMethod
-	DbInstance     datastores.DatabaseInstance
-	NoSQLComponent *NoSQLComponent
+	gotypes.Type      `json:"-"`
+	Name              string
+	Package           string
+	Methods           []*BackendMethod
+	DatastoreInstance datastores.DatabaseInstance
+	NoSQLComponent    *NoSQLComponent
 }
 
 func (t *BlueprintBackendType) IsSameType(other gotypes.Type) bool {
 	_, ok := other.(*BlueprintBackendType)
 	return ok
+}
+
+func (t *BlueprintBackendType) SetInstance(instance datastores.DatabaseInstance) {
+	t.DatastoreInstance = instance
 }
 
 func (t *BlueprintBackendType) String() string {
@@ -89,8 +93,8 @@ func (t *BlueprintBackendType) StringWithInstance() string {
 		return t.NoSQLComponent.String()
 	}
 	instance := "<nil>"
-	if t.DbInstance != nil {
-		instance = t.DbInstance.GetName()
+	if t.DatastoreInstance != nil {
+		instance = t.DatastoreInstance.GetName()
 	}
 	return fmt.Sprintf("%s {instance = %s}", t.Name, instance)
 }
@@ -100,8 +104,8 @@ func (t *BlueprintBackendType) LongString() string {
 		return t.NoSQLComponent.LongString()
 	}
 	s := t.Name
-	if t.DbInstance != nil {
-		s = fmt.Sprintf(" {instance = %s}", t.DbInstance.GetName())
+	if t.DatastoreInstance != nil {
+		s += fmt.Sprintf(" {instance = %s}", t.DatastoreInstance.GetName())
 	}
 	if len(t.Methods) == 0 {
 		return s + " interface{}"
@@ -198,7 +202,7 @@ func (t *BlueprintBackendType) SetNoSQLDatabaseCollection(databaseName string, c
 		Database:   databaseName,
 		Collection: collectionName,
 	}
-	t.DbInstance = dbInstance
+	t.DatastoreInstance = dbInstance
 }
 
 func (t *BlueprintBackendType) SetNoSQLDatabaseCursor(databaseName string, collectionName string, dbInstance datastores.DatabaseInstance) {
@@ -207,7 +211,7 @@ func (t *BlueprintBackendType) SetNoSQLDatabaseCursor(databaseName string, colle
 		Database:   databaseName,
 		Collection: collectionName,
 	}
-	t.DbInstance = dbInstance
+	t.DatastoreInstance = dbInstance
 }
 
 func (t *BlueprintBackendType) Copy(force bool) *BlueprintBackendType {
@@ -220,10 +224,10 @@ func (t *BlueprintBackendType) Copy(force bool) *BlueprintBackendType {
 		noSQLComponent = t.NoSQLComponent.Copy()
 	}
 	return &BlueprintBackendType{
-		Name:           t.Name,
-		Package:        t.Package,
-		Methods:        methods,
-		DbInstance:     t.DbInstance,
-		NoSQLComponent: noSQLComponent,
+		Name:              t.Name,
+		Package:           t.Package,
+		Methods:           methods,
+		DatastoreInstance: t.DatastoreInstance,
+		NoSQLComponent:    noSQLComponent,
 	}
 }

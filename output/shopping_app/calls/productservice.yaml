@@ -1,9 +1,9 @@
 ? (*ProductServiceImpl).CreateProduct(ctx context.Context, productID string, description string, pricePerUnit int, category string)
 :
-	- NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
+	- DATASTORE CALL @ product_db >> NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
 
 (*ProductServiceImpl).GetProduct(ctx context.Context, productID string):
-- NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor {database = analytics_database, collection = analytics_collection}, interface{})
+- DATASTORE CALL @ product_db >> NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor, interface{})
 
 .NewAnalyticsServiceImpl(ctx context.Context, analytics_db NoSQLDatabase, analytics_queue Queue): []
 

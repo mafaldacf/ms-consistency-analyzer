@@ -26,7 +26,7 @@ func (app *App) Dump() {
 func (app *App) PreDump() {
 	app.dumpYamlPackages()
 	app.dumpYamlServices()
-	//app.dumpYamlCalls()
+	app.dumpYamlCalls()
 }
 
 func (app *App) dumpDiGraph() {
@@ -87,7 +87,7 @@ func (app *App) dumpDiGraph() {
 	// datastores
 	datastores := make(map[string]bool)
 	for _, service := range app.Services {
-		for _, ds := range service.Databases {
+		for _, ds := range service.Datastores {
 			if _, exists := datastores[ds.String()]; !exists {
 				nodes = append(nodes, node{Id: ds.String(), Type: "datastore"})
 				datastores[ds.String()] = true
@@ -240,8 +240,8 @@ func (app *App) dumpYamlServices() {
 			services[childService.Name] = childService.ServiceShortPath()
 		}
 		datastores := make(map[string]string)
-		for _, datastore := range service.Databases {
-			datastores[datastore.GetName()] = datastore.GetTypeName()
+		for _, datastore := range service.Datastores {
+			datastores[datastore.GetName()] = datastore.GetDatastore().GetName() + " " + datastore.GetTypeLongName()
 		}
 
 		props := utils.NewOrderedPropertyList()

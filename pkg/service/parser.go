@@ -9,6 +9,7 @@ import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
 	"analyzer/pkg/types/gotypes"
+	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
 )
 
@@ -24,7 +25,7 @@ func (service *Service) methodReceiverImplementsService(parsedMethod *types.Pars
 	if methodReceiver == nil {
 		return false
 	}
-	return service.Type.IsCurrentServiceType(methodReceiver.GetType())
+	return service.ImplType.IsCurrentServiceType(methodReceiver.GetType())
 }
 
 func (service *Service) methodIsServiceConstructor(parsedMethod *types.ParsedMethod) bool {
@@ -43,16 +44,14 @@ func (service *Service) AttachParsedMethods() []*types.ParsedMethod {
 		if service.methodReceiverImplementsService(parsedMethod) {
 			if service.isMethodExposedByService(parsedMethod.Name) {
 				service.attachExportedMethod(parsedMethod)
-			} else if service.ImplementsQueue {
-				if instance := service.getQueueInstanceIfMethodHandlesQueue(parsedMethod); instance != nil {
-					//logger.Logger.Fatalf("FOUND: METHOD (%s) HANDLES QUEUE? INSTANCE = %v", parsedMethod.Name, instance.GetName())
-					service.attachQueueHandlerMethod(parsedMethod, instance)
-					service.attachInternalMethod(parsedMethod)
-				} else {
-					service.attachInternalMethod(parsedMethod)
-				}
 			} else {
 				service.attachInternalMethod(parsedMethod)
+			}
+			if service.HasQueueField() {
+				if instance := service.getQueueInstanceIfMethodHandlesQueue(parsedMethod); instance != nil {
+					logger.Logger.Tracef("FOUND: METHOD (%s) HANDLES QUEUE? INSTANCE = %v", parsedMethod.Name, instance.GetName())
+					service.attachQueueHandlerMethod(parsedMethod, instance)
+				}
 			}
 			serviceImplementedMethods = append(serviceImplementedMethods, parsedMethod)
 		} else if service.methodIsServiceConstructor(parsedMethod) {
@@ -76,64 +75,66 @@ func (service *Service) AttachAllPackageMethods() {
 
 // RegisterFields parses the service's fields from the previously parsed impl user type declared in the package
 func (service *Service) RegisterFields() {
-	logger.Logger.Tracef("[PARSER] [%s] inspecting fields...\n", service.Name)
+	logger.Logger.Tracef("[PARSER] [%s] registering fields...\n", service.Name)
 
-	serviceImplType := service.GetPackage().GetDeclaredType(service.ImplName)
-	userType, ok := serviceImplType.(*gotypes.UserType)
-	if !ok {
-		logger.Logger.Fatalf("[PARSER] [%s] service impl is not user type: (%s) %s", service.GetName(), utils.GetType(serviceImplType), serviceImplType.String())
+	if structVar, ok := service.GetImplVariable().(*variables.StructVariable); ok {
+		for idx, fieldVariable := range structVar.GetFieldVariablesLst() {
+			fieldName := fieldVariable.GetFieldType().GetFieldName()
+			field := service.computeServiceFieldFromVariable(fieldVariable, fieldName, idx)
+			service.AddField(fieldName, field)
+		}
 	}
 
-	structType, ok := userType.UserType.(*gotypes.StructType)
-	if !ok {
-		logger.Logger.Fatalf("[PARSER] [%s] service impl underlying user type is not struct or interface type: (%s) %s", service.GetName(), utils.GetType(userType.UserType), userType.UserType.String())
+	var fieldsStr string
+	i := 0
+	for _, field := range service.Fields {
+		fieldsStr += "\t\t\t\t\t - " + field.LongString()
+		if i < len(service.Fields)-1 {
+			fieldsStr += "\n"
+		}
+		i++
 	}
-
-	for i, fieldType := range structType.GetFieldTypes() {
-		service.Fields[fieldType.GetName()] = service.computeServiceFieldFromFieldWrappedType(fieldType.GetWrappedType(), fieldType.GetName(), i)
-	}
-	logger.Logger.Infof("[PARSER] [%s] registered %d fields: %v", service.GetName(), len(service.Fields), service.Fields)
+	logger.Logger.Infof("[PARSER] [%s] registered %d fields:\n%s", service.GetName(), len(service.Fields), fieldsStr)
 }
 
-func (service *Service) computeServiceFieldFromFieldWrappedType(wrappedType gotypes.Type, paramName string, idx int) types.Field {
+func (service *Service) computeServiceFieldFromVariable(fieldVariable *variables.FieldVariable, paramName string, idx int) types.Field {
+	wrappedType := fieldVariable.GetFieldType().GetWrappedType()
+	wrappedVariable := fieldVariable.GetWrappedVariable()
+	fieldInfo := types.FieldInfo{
+		Name:     paramName,
+		Idx:      idx,
+		Variable: wrappedVariable,
+		Type:     wrappedType,
+	}
 	switch t := wrappedType.(type) {
 	case *blueprint.BlueprintBackendType:
 		dbField := &types.DatabaseField{
-			FieldInfo: types.FieldInfo{
-				Name: paramName,
-				Type: t.Copy(true),
-			},
-			IsQueue: t.IsQueue(),
-			Idx:     idx,
+			FieldInfo:         fieldInfo,
+			Queue:             t.IsQueue(),
+			DatastoreInstance: t.DatastoreInstance,
 		}
-		if dbField.IsQueue {
-			service.ImplementsQueue = true
+		if t.IsQueue() {
+			service.EnableQueueField()
 		}
 		return dbField
 	case *gotypes.ServiceType:
 		return &types.ServiceField{
-			FieldInfo: types.FieldInfo{
-				Name: paramName,
-				Type: wrappedType,
-			},
+			FieldInfo: fieldInfo,
 		}
 	}
 	return &types.GenericField{
-		FieldInfo: types.FieldInfo{
-			Name: paramName,
-			Type: wrappedType,
-		},
+		FieldInfo: fieldInfo,
 	}
 }
 
 func (service *Service) RegisterConstructor() {
 	method := service.GetPackage().GetParsedMethod(service.ConstructorName, "")
-	method.SetConstructor()
+	method.EnableConstructorFlag()
 	service.Constructor = method
 	logger.Logger.Infof("[PARSER] [%s] registered constructor (%s)", service.GetName(), service.ConstructorName)
 }
 
-func (service *Service) FindAndRegisterImplStructure() {
+func (service *Service) RegisterImplName() {
 	var exportedMethods []string
 	for name := range service.ExposedMethods {
 		exportedMethods = append(exportedMethods, name)
@@ -148,7 +149,7 @@ func (service *Service) FindAndRegisterImplStructure() {
 				if recv, ok := funcDecl.Recv.List[0].Type.(*ast.StarExpr); ok {
 					if ident, ok := recv.X.(*ast.Ident); ok {
 						service.ImplName = ident.Name
-						service.Type.ImplName = ident.Name
+						service.ImplType.ImplName = ident.Name
 						return false
 					}
 				}
@@ -159,7 +160,7 @@ func (service *Service) FindAndRegisterImplStructure() {
 }
 
 func (service *Service) getQueueInstanceIfMethodHandlesQueue(parsedMethod *types.ParsedMethod) datastores.DatabaseInstance {
-	var dbInstance datastores.DatabaseInstance
+	var instance datastores.DatabaseInstance
 
 	// inspect methods
 	ast.Inspect(parsedMethod.Ast, func(n ast.Node) bool {
@@ -167,17 +168,16 @@ func (service *Service) getQueueInstanceIfMethodHandlesQueue(parsedMethod *types
 		if !ok || fieldIdent == nil {
 			return true
 		}
-		if field, isField := service.Fields[fieldIdent.Name]; isField {
-			if dbField, isDbField := field.(*types.DatabaseField); isDbField {
-				if dbField.IsQueue && methodIdent.Name == "Pop" {
-					dbInstance = dbField.DbInstance
-					return false
-				}
+		if datastoreField := service.GetDatastoreFieldIfExists(fieldIdent.Name); datastoreField != nil {
+			if datastoreField.IsQueue() && methodIdent.Name == "Pop" {
+				instance = datastoreField.GetDatastoreInstance()
+				logger.Logger.Tracef("[%s.%s] GOT FIELD (%s): %s // INSTANCE = %v", service.GetName(), parsedMethod.GetName(), utils.GetType(datastoreField), datastoreField.LongString(), instance)
+				return false
 			}
 		}
 		return true
 	})
-	return dbInstance
+	return instance
 }
 
 func getFuncCallIfSelectedServiceField(service ast.Node, expectedRecvIdent *ast.Ident) (ok bool, methodIdent *ast.Ident, fieldIdent *ast.Ident) {
@@ -210,7 +210,7 @@ func getFuncCallIfSelectedServiceField(service ast.Node, expectedRecvIdent *ast.
 func (service *Service) attachQueueHandlerMethod(parsedMethod *types.ParsedMethod, dbInstance datastores.DatabaseInstance) {
 	parsedMethod.DbInstances = append(parsedMethod.DbInstances, dbInstance)
 	service.QueueHandlerMethods[parsedMethod.Name] = parsedMethod
-	logger.Logger.Infof("[PARSER] [%s] attached queue handler method method for instance (%s): %s", service.Name, dbInstance.String(), parsedMethod.String())
+	logger.Logger.Infof("[PARSER] [%s] attached queue handler method for instance (%s): %s", service.Name, dbInstance.String(), parsedMethod.String())
 	//logger.Logger.Warnf("[PARSER] [%s] queue handler methods list: %v", service.Name, service.QueueHandlerMethods)
 }
 
@@ -226,76 +226,4 @@ func (service *Service) attachExportedMethod(parsedMethod *types.ParsedMethod) {
 	parsedMethod.AttachService(service.GetName())
 	logger.Logger.Infof("[PARSER] [%s] attached exposed method: %s", service.Name, parsedMethod.String())
 	//logger.Logger.Warnf("[PARSER] [%s] exposed methods list: %v", service.Name, service.ExposedMethods)
-}
-
-// LoadServiceFieldsValues loads generic fields and datastore instances
-func (service *Service) LoadServiceFieldsValues(paramDBs map[string]datastores.DatabaseInstance) {
-	logger.Logger.Infof("[PARSER] [%s] attaching datastore instances to service fields...", service.Name)
-
-	ast.Inspect(service.Constructor.GetBody(), func(n ast.Node) bool {
-		compositeLit, ok := n.(*ast.CompositeLit)
-		if !ok {
-			return true
-		}
-		if ident, ok := compositeLit.Type.(*ast.Ident); ok && ident.Name == service.ImplName {
-			// iterate all key value pairs passed during the service definition
-			for _, elt := range compositeLit.Elts {
-				if kv, ok := elt.(*ast.KeyValueExpr); ok {
-					keyIdent := kv.Key.(*ast.Ident)
-					if keyIdent == nil {
-						logger.Logger.Fatalf("[PARSER] [%s] unexpected key type (%s)", service.Name, utils.GetType(kv.Key))
-					}
-					field := service.Fields[keyIdent.Name]
-					if field == nil {
-						logger.Logger.Fatalf("[PARSER] [%s] field (%s) unexpectedly not found for fields list: %v", service.Name, keyIdent.Name, service.Fields)
-					}
-					if dbField, ok := field.(*types.DatabaseField); ok {
-						valueIdent := kv.Value.(*ast.Ident)
-						if valueIdent == nil {
-							logger.Logger.Fatalf("[PARSER] [%s] unexpected ident type (%s)", service.Name, utils.GetType(kv.Value))
-						}
-						dbInstance := paramDBs[valueIdent.Name]
-						if dbInstance == nil {
-							logger.Logger.Fatalf("[PARSER] [%s] could not find database instance for constructor parameter (%s) for paramDBs list: %v", service.Name, valueIdent.Name, paramDBs)
-						}
-						dbField.DbInstance = dbInstance
-						dbField.GetType().(*blueprint.BlueprintBackendType).DbInstance = dbInstance
-						logger.Logger.Debugf("[PARSER] [%s] linked datastore instance (%s) to service field (%s)", service.Name, dbField.DbInstance.GetName(), dbField.String())
-					} else if _, ok := field.(*types.ServiceField); ok {
-						// ignore service
-						continue
-					} else if field, ok := field.(*types.GenericField); ok {
-						if basicLit, ok := kv.Value.(*ast.BasicLit); ok {
-							field.GetType().AddValue(basicLit.Value)
-						} else if _, ok := kv.Value.(*ast.CallExpr); ok {
-							logger.Logger.Warnf("[PARSER - TODOOOOOOO!!!!] [%s] ignoring value (%s) (%v)", service.Name, utils.GetType(kv.Value), kv.Value)
-						} else if _, ok := kv.Value.(*ast.UnaryExpr); ok {
-							logger.Logger.Warnf("[PARSER - TODOOOOOOO!!!!] [%s] ignoring value (%s) (%v)", service.Name, utils.GetType(kv.Value), kv.Value)
-						} else if _, ok := kv.Value.(*ast.Ident); ok {
-							logger.Logger.Warnf("[PARSER - TODOOOOOOO!!!!] [%s] ignoring value (%s) (%v)", service.Name, utils.GetType(kv.Value), kv.Value)
-						} else {
-							logger.Logger.Warnf("[PARSER] [%s] ignoring value (%s) (%v)", service.Name, utils.GetType(kv.Value), kv.Value)
-						}
-					} else {
-						logger.Logger.Fatalf("[PARSER] [%s] ignoring composite element (%s, %s)", service.Name, keyIdent.Name, utils.GetType(kv.Value))
-					}
-				}
-			}
-		}
-		return true
-	})
-
-	logger.Logger.Infof("[PARSER] [%s] updating datastore instances in declared service impl user type: FIELDS = %v", service.Name, service.Fields)
-	impl := service.GetPackage().GetDeclaredType(service.ImplName).(*gotypes.UserType).UserType.(*gotypes.StructType)
-	for name, field := range service.Fields {
-		logger.Logger.Debugf("[PARSER] [%s] updating datastore instances in declared service impl user type: %s // %s", service.Name, name, field)
-		if implFieldType, ok := impl.GetFieldTypeByName(name).WrappedType.(*blueprint.BlueprintBackendType); ok {
-			if serviceFieldType, ok := field.GetType().(*blueprint.BlueprintBackendType); ok {
-				impl.UpdateFieldSubTypeByName(name, serviceFieldType)
-				logger.Logger.Debugf("[PARSER] [%s] loaded impl type (%s)", service.Name, serviceFieldType.StringWithInstance())
-			} else {
-				logger.Logger.Fatalf("[PARSER] [%s] impl type (%s) does not match service field type (%s) for BlueprintBackendType", service.Name, serviceFieldType.StringWithInstance(), implFieldType.StringWithInstance())
-			}
-		}
-	}
 }

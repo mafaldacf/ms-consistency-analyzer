@@ -5,6 +5,7 @@ import (
 
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/types/gotypes"
+	"analyzer/pkg/types/variables"
 )
 
 type Field interface {
@@ -20,8 +21,10 @@ type Field interface {
 }
 
 type FieldInfo struct {
-	Name string
-	Type gotypes.Type
+	Name     string
+	Type     gotypes.Type
+	Variable variables.Variable
+	Idx      int
 }
 
 type MethodField struct {
@@ -30,20 +33,17 @@ type MethodField struct {
 }
 type GenericField struct {
 	Field
-	Idx       int
 	FieldInfo FieldInfo
 }
 type ServiceField struct {
 	Field
 	FieldInfo FieldInfo
-	Idx       int
 }
 type DatabaseField struct {
 	Field
-	FieldInfo  FieldInfo
-	IsQueue    bool
-	DbInstance datastores.DatabaseInstance
-	Idx        int
+	FieldInfo         FieldInfo
+	Queue             bool
+	DatastoreInstance datastores.DatabaseInstance // instance is the same as getting FieldInfo.Type
 }
 
 // -------------
@@ -59,7 +59,7 @@ func (f *GenericField) GetTypeString() string {
 	return f.FieldInfo.Type.String()
 }
 func (f *GenericField) GetIndex() int {
-	return f.Idx
+	return f.FieldInfo.Idx
 }
 func (f *GenericField) GetName() string {
 	return f.FieldInfo.Name
@@ -96,7 +96,7 @@ func (f *ServiceField) GetTypeLongName() string {
 	return f.FieldInfo.Type.GetLongName()
 }
 func (f *ServiceField) GetIndex() int {
-	return f.Idx
+	return f.FieldInfo.Idx
 }
 func (f *ServiceField) GetName() string {
 	return f.FieldInfo.Name
@@ -127,7 +127,7 @@ func (f *DatabaseField) GetTypeLongName() string {
 	return f.FieldInfo.Type.GetLongName()
 }
 func (f *DatabaseField) GetIndex() int {
-	return f.Idx
+	return f.FieldInfo.Idx
 }
 func (f *DatabaseField) GetName() string {
 	return f.FieldInfo.Name
@@ -137,6 +137,12 @@ func (f *DatabaseField) GetType() gotypes.Type {
 }
 func (f *DatabaseField) SetType(t gotypes.Type) {
 	f.FieldInfo.Type = t
+}
+func (f *DatabaseField) IsQueue() bool {
+	return f.Queue
+}
+func (f *DatabaseField) GetDatastoreInstance() datastores.DatabaseInstance {
+	return f.DatastoreInstance
 }
 
 // ------------------

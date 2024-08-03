@@ -1,224 +1,11 @@
 [
   {
-    "method": "(*UploadServiceImpl).ReadPostMedia(ctx context.Context, reqID int64, postID int64)",
-    "depth": 0,
-    "caller": "Client",
-    "edges": [
-      {
-        "method": "(*StorageServiceImpl).ReadMedia(ctx context.Context, reqID int64, postID int64)",
-        "depth": 1,
-        "caller": "UploadService",
-        "edges": [
-          {
-            "method": "Cache.Get(ctx context.Context, key string, value interface{})",
-            "depth": 2,
-            "caller": "StorageService",
-            "params": [
-              {
-                "variable": {
-                  "name": "ctx",
-                  "type": "context.Context",
-                  "refs": [
-                    {
-                      "name": "ctx",
-                      "creator": "UploadService"
-                    }
-                  ]
-                }
-              },
-              {
-                "variable": {
-                  "name": "postIDStr",
-                  "type": "string"
-                }
-              },
-              {
-                "variable": {
-                  "name": "post",
-                  "type": "(\u0026postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}})"
-                },
-                "addr_of": {
-                  "variable": {
-                    "name": "post",
-                    "type": "postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}"
-                  },
-                  "struct_fields": {
-                    "PostID": {
-                      "variable": {
-                        "name": "PostID",
-                        "type": "int64"
-                      },
-                      "wrapped_variable": {
-                        "variable": {
-                          "name": "PostID",
-                          "type": "int64"
-                        }
-                      }
-                    }
-                  }
-                }
-              }
-            ],
-            "returns": [
-              {
-                "variable": {
-                  "type": "bool"
-                }
-              },
-              {
-                "variable": {
-                  "type": ".error"
-                }
-              }
-            ],
-            "datastore": "posts_cache"
-          },
-          {
-            "method": "(*MediaServiceImpl).ReadMedia(ctx context.Context, mediaID int64)",
-            "depth": 2,
-            "caller": "StorageService",
-            "edges": [
-              {
-                "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
-                "depth": 3,
-                "caller": "MediaService",
-                "params": [
-                  {
-                    "variable": {
-                      "name": "ctx",
-                      "type": "context.Context",
-                      "refs": [
-                        {
-                          "name": "ctx",
-                          "creator": "StorageService"
-                        }
-                      ]
-                    }
-                  },
-                  {
-                    "variable": {
-                      "name": "query",
-                      "type": "primitive.D"
-                    },
-                    "slice_variables": [
-                      {
-                        "variable": {
-                          "type": "struct{Key \"mediaid\" string, Value int64}"
-                        },
-                        "struct_fields": {
-                          "Key": {
-                            "variable": {
-                              "name": "Key",
-                              "type": "\"mediaid\" string"
-                            },
-                            "wrapped_variable": {
-                              "variable": {
-                                "type": "\"mediaid\" string"
-                              }
-                            }
-                          },
-                          "Value": {
-                            "variable": {
-                              "name": "Value",
-                              "type": "int64"
-                            },
-                            "wrapped_variable": {
-                              "variable": {
-                                "name": "mediaID",
-                                "type": "int64",
-                                "refs": [
-                                  {
-                                    "name": "mediaID",
-                                    "creator": "StorageService"
-                                  }
-                                ]
-                              }
-                            }
-                          }
-                        }
-                      }
-                    ]
-                  }
-                ],
-                "returns": [
-                  {
-                    "variable": {
-                      "name": "result",
-                      "type": "NoSQLCursor {database = media, collection = media}"
-                    }
-                  },
-                  {
-                    "variable": {
-                      "name": "err",
-                      "type": ".error"
-                    }
-                  }
-                ],
-                "datastore": "media_db"
-              }
-            ],
-            "params": null,
-            "returns": [
-              {
-                "variable": {
-                  "name": "media",
-                  "type": "postnotification.Media struct{MediaID int64, PostID int64, Content string}"
-                }
-              },
-              {
-                "variable": {
-                  "name": "_",
-                  "type": ".error"
-                }
-              }
-            ]
-          }
-        ],
-        "params": null,
-        "returns": [
-          {
-            "variable": {
-              "name": "media",
-              "type": "postnotification.Media struct{MediaID int64, PostID int64, Content string}"
-            }
-          },
-          {
-            "variable": {
-              "name": "_",
-              "type": ".error"
-            }
-          }
-        ]
-      }
-    ],
-    "params": [
-      {
-        "variable": {
-          "name": "ctx",
-          "type": "context.Context"
-        }
-      },
-      {
-        "variable": {
-          "name": "reqID",
-          "type": "int64"
-        }
-      },
-      {
-        "variable": {
-          "name": "postID",
-          "type": "int64"
-        }
-      }
-    ]
-  },
-  {
     "method": "(*UploadServiceImpl).UploadPost(ctx context.Context, username string, text string)",
     "depth": 0,
     "caller": "Client",
     "edges": [
       {
-        "method": "(*MediaServiceImpl).StoreMedia(ctx context.Context, media postnotification.Media struct{MediaID int64, PostID int64, Content string})",
+        "method": "(*MediaServiceImpl).StoreMedia(ctx context.Context, media postnotification.Media struct{PostID int64, MediaID int64, Content \"HELLO WORLD!\" untyped string})",
         "depth": 1,
         "caller": "UploadService",
         "edges": [
@@ -242,7 +29,7 @@
               {
                 "variable": {
                   "name": "media",
-                  "type": "postnotification.Media struct{MediaID int64, PostID int64, Content string}",
+                  "type": "postnotification.Media struct{PostID int64, MediaID int64, Content \"HELLO WORLD!\" untyped string}",
                   "refs": [
                     {
                       "name": "media",
@@ -272,7 +59,7 @@
         ]
       },
       {
-        "method": "(*StorageServiceImpl).StorePostCache(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}})",
+        "method": "(*StorageServiceImpl).StorePostCache(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username \"some username\" string}, Creator postnotification.Creator struct{Username \"some username\" string}})",
         "depth": 1,
         "caller": "UploadService",
         "edges": [
@@ -302,7 +89,7 @@
               {
                 "variable": {
                   "name": "post",
-                  "type": "postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}",
+                  "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username \"some username\" string}, Creator postnotification.Creator struct{Username \"some username\" string}}",
                   "refs": [
                     {
                       "name": "post",
@@ -358,7 +145,7 @@
         ]
       },
       {
-        "method": "(*StorageServiceImpl).StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}})",
+        "method": "(*StorageServiceImpl).StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username \"some username\" string}, Creator postnotification.Creator struct{Username \"some username\" string}})",
         "depth": 1,
         "caller": "UploadService",
         "edges": [
@@ -382,7 +169,7 @@
               {
                 "variable": {
                   "name": "post",
-                  "type": "postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}",
+                  "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username \"some username\" string}, Creator postnotification.Creator struct{Username \"some username\" string}}",
                   "refs": [
                     {
                       "name": "post",
@@ -473,9 +260,9 @@
                       {
                         "variable": {
                           "name": "event",
-                          "type": "(\u0026postnotification.TriggerAnalyticsMessage struct{PostID string})"
+                          "type": "(*postnotification.TriggerAnalyticsMessage struct{PostID string})"
                         },
-                        "addr_of": {
+                        "ptr_to": {
                           "variable": {
                             "name": "event",
                             "type": "postnotification.TriggerAnalyticsMessage struct{PostID string}",
@@ -675,9 +462,9 @@
                   {
                     "variable": {
                       "name": "event",
-                      "type": "(\u0026map[string]interface{})"
+                      "type": "(*map[string]interface{})"
                     },
-                    "addr_of": {
+                    "ptr_to": {
                       "variable": {
                         "name": "event",
                         "type": "map[string]interface{}",
@@ -901,7 +688,7 @@
                           {
                             "variable": {
                               "name": "result",
-                              "type": "NoSQLCursor {database = analytics_db, collection = analytics_collection}"
+                              "type": "NoSQLCursor {database = analyticsDb, collection = analytics_collection}"
                             }
                           },
                           {
@@ -936,7 +723,7 @@
                   {
                     "variable": {
                       "name": "_",
-                      "type": "postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}"
+                      "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username \"some username\" string}, Creator postnotification.Creator struct{Username \"some username\" string}}"
                     }
                   },
                   {
@@ -1061,6 +848,219 @@
         "variable": {
           "name": "text",
           "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*UploadServiceImpl).ReadPostMedia(ctx context.Context, reqID int64, postID int64)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "(*StorageServiceImpl).ReadMedia(ctx context.Context, reqID int64, postID int64)",
+        "depth": 1,
+        "caller": "UploadService",
+        "edges": [
+          {
+            "method": "Cache.Get(ctx context.Context, key string, value interface{})",
+            "depth": 2,
+            "caller": "StorageService",
+            "params": [
+              {
+                "variable": {
+                  "name": "ctx",
+                  "type": "context.Context",
+                  "refs": [
+                    {
+                      "name": "ctx",
+                      "creator": "UploadService"
+                    }
+                  ]
+                }
+              },
+              {
+                "variable": {
+                  "name": "postIDStr",
+                  "type": "string"
+                }
+              },
+              {
+                "variable": {
+                  "name": "post",
+                  "type": "(*postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username \"some username\" string}, Creator postnotification.Creator struct{Username \"some username\" string}})"
+                },
+                "ptr_to": {
+                  "variable": {
+                    "name": "post",
+                    "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username \"some username\" string}, Creator postnotification.Creator struct{Username \"some username\" string}}"
+                  },
+                  "struct_fields": {
+                    "PostID": {
+                      "variable": {
+                        "name": "PostID",
+                        "type": "int64"
+                      },
+                      "wrapped_variable": {
+                        "variable": {
+                          "name": "PostID",
+                          "type": "int64"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ],
+            "returns": [
+              {
+                "variable": {
+                  "type": "bool"
+                }
+              },
+              {
+                "variable": {
+                  "type": ".error"
+                }
+              }
+            ],
+            "datastore": "posts_cache"
+          },
+          {
+            "method": "(*MediaServiceImpl).ReadMedia(ctx context.Context, mediaID int64)",
+            "depth": 2,
+            "caller": "StorageService",
+            "edges": [
+              {
+                "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+                "depth": 3,
+                "caller": "MediaService",
+                "params": [
+                  {
+                    "variable": {
+                      "name": "ctx",
+                      "type": "context.Context",
+                      "refs": [
+                        {
+                          "name": "ctx",
+                          "creator": "StorageService"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "variable": {
+                      "name": "query",
+                      "type": "primitive.D"
+                    },
+                    "slice_variables": [
+                      {
+                        "variable": {
+                          "type": "struct{Key \"mediaid\" string, Value int64}"
+                        },
+                        "struct_fields": {
+                          "Key": {
+                            "variable": {
+                              "name": "Key",
+                              "type": "\"mediaid\" string"
+                            },
+                            "wrapped_variable": {
+                              "variable": {
+                                "type": "\"mediaid\" string"
+                              }
+                            }
+                          },
+                          "Value": {
+                            "variable": {
+                              "name": "Value",
+                              "type": "int64"
+                            },
+                            "wrapped_variable": {
+                              "variable": {
+                                "name": "mediaID",
+                                "type": "int64",
+                                "refs": [
+                                  {
+                                    "name": "mediaID",
+                                    "creator": "StorageService"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "returns": [
+                  {
+                    "variable": {
+                      "name": "result",
+                      "type": "NoSQLCursor {database = media, collection = media}"
+                    }
+                  },
+                  {
+                    "variable": {
+                      "name": "err",
+                      "type": ".error"
+                    }
+                  }
+                ],
+                "datastore": "media_db"
+              }
+            ],
+            "params": null,
+            "returns": [
+              {
+                "variable": {
+                  "name": "media",
+                  "type": "postnotification.Media struct{PostID int64, MediaID int64, Content \"HELLO WORLD!\" untyped string}"
+                }
+              },
+              {
+                "variable": {
+                  "name": "_",
+                  "type": ".error"
+                }
+              }
+            ]
+          }
+        ],
+        "params": null,
+        "returns": [
+          {
+            "variable": {
+              "name": "media",
+              "type": "postnotification.Media struct{PostID int64, MediaID int64, Content \"HELLO WORLD!\" untyped string}"
+            }
+          },
+          {
+            "variable": {
+              "name": "_",
+              "type": ".error"
+            }
+          }
+        ]
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "reqID",
+          "type": "int64"
+        }
+      },
+      {
+        "variable": {
+          "name": "postID",
+          "type": "int64"
         }
       }
     ]

@@ -75,7 +75,7 @@ func (f *ParsedMethod) SetParsed() {
 func (f *ParsedMethod) IsParsed() bool {
 	return f.Parsed
 }
-func (f *ParsedMethod) SetConstructor() {
+func (f *ParsedMethod) EnableConstructorFlag() {
 	f.Constructor = true
 }
 func (f *ParsedMethod) IsConstructor() bool {

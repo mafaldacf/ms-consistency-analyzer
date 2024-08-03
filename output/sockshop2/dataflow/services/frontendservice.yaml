@@ -1,9 +1,13 @@
 (*FrontendImpl).AddItem(ctx context.Context, sessionID string, itemID string):
   block 4 (IfDone):
-  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
-  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
-  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
   - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
+  - '[0] (inline) (FieldVariable FieldType) order order.OrderService'
+  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
+  - '[0] (inline) (FieldVariable FieldType) cart cart.CartService'
+  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
+  - '[0] (inline) (FieldVariable FieldType) catalogue catalogue.CatalogueService'
+  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
+  - '[0] (inline) (FieldVariable FieldType) user user.UserService'
   - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
     catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
   - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
@@ -12,180 +16,228 @@
   - '[-1] (BasicVariable BasicType) sessionID string'
   - '[2] (BasicVariable BasicType) itemID string'
   - '[3] (BasicVariable BasicType) sessionID string'
-  - '[10] (inline) (BasicVariable BasicType) Price float32'
+  - '[8] (inline) (BasicVariable BasicType) Price float32'
   - '[-1] (inline) (FieldVariable FieldType) Price float32'
-  - '[6] (inline) (BasicVariable BasicType) ID string'
+  - '[10] (inline) (BasicVariable BasicType) ID string'
   - '[-1] (inline) (FieldVariable FieldType) ID string'
   - '[-1] (StructVariable UserType) sock catalogue.Sock struct{ID string, Name string,
     Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price
     float32, Quantity int, Tags []string, TagString string}'
   - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (StructVariable UserType) _ cart.Item struct{ID string, Quantity int, UnitPrice
-    float32}'
+  - '[-1] (StructVariable UserType) _ cart.Item struct{ID string, Quantity 1 int,
+    UnitPrice float32}'
   - '[-1] (InterfaceVariable UserType) err .error'
 
 (*FrontendImpl).DeleteCart(ctx context.Context, sessionID string):
   block 2 (IfDone):
-  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
-  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
-  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
   - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
+  - '[0] (inline) (FieldVariable FieldType) order order.OrderService'
+  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
+  - '[0] (inline) (FieldVariable FieldType) cart cart.CartService'
+  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
+  - '[0] (inline) (FieldVariable FieldType) catalogue catalogue.CatalogueService'
+  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
+  - '[0] (inline) (FieldVariable FieldType) user user.UserService'
+  - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
+    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
+  - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
+    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
+  - '[63] (InterfaceVariable UserType) ctx context.Context'
+  - '[64] (BasicVariable BasicType) sessionID string'
+
+(*FrontendImpl).GetAddress(ctx context.Context, addressID string):
+  block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
+  - '[0] (inline) (FieldVariable FieldType) order order.OrderService'
+  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
+  - '[0] (inline) (FieldVariable FieldType) cart cart.CartService'
+  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
+  - '[0] (inline) (FieldVariable FieldType) catalogue catalogue.CatalogueService'
+  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
+  - '[0] (inline) (FieldVariable FieldType) user user.UserService'
+  - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
+    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
+  - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
+    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
+  - '[85] (InterfaceVariable UserType) ctx context.Context'
+  - '[86] (BasicVariable BasicType) addressID string'
+
+(*FrontendImpl).GetCard(ctx context.Context, cardID string):
+  block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
+  - '[0] (inline) (FieldVariable FieldType) order order.OrderService'
+  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
+  - '[0] (inline) (FieldVariable FieldType) cart cart.CartService'
+  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
+  - '[0] (inline) (FieldVariable FieldType) catalogue catalogue.CatalogueService'
+  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
+  - '[0] (inline) (FieldVariable FieldType) user user.UserService'
+  - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
+    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
+  - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
+    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
+  - '[30] (InterfaceVariable UserType) ctx context.Context'
+  - '[31] (BasicVariable BasicType) cardID string'
+
+(*FrontendImpl).GetCart(ctx context.Context, sessionID string):
+  block 2 (IfDone):
+  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
+  - '[0] (inline) (FieldVariable FieldType) order order.OrderService'
+  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
+  - '[0] (inline) (FieldVariable FieldType) cart cart.CartService'
+  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
+  - '[0] (inline) (FieldVariable FieldType) catalogue catalogue.CatalogueService'
+  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
+  - '[0] (inline) (FieldVariable FieldType) user user.UserService'
+  - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
+    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
+  - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
+    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
+  - '[32] (InterfaceVariable UserType) ctx context.Context'
+  - '[33] (BasicVariable BasicType) sessionID string'
+
+(*FrontendImpl).GetOrder(ctx context.Context, orderID string):
+  block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
+  - '[0] (inline) (FieldVariable FieldType) order order.OrderService'
+  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
+  - '[0] (inline) (FieldVariable FieldType) cart cart.CartService'
+  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
+  - '[0] (inline) (FieldVariable FieldType) catalogue catalogue.CatalogueService'
+  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
+  - '[0] (inline) (FieldVariable FieldType) user user.UserService'
+  - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
+    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
+  - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
+    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
+  - '[28] (InterfaceVariable UserType) ctx context.Context'
+  - '[29] (BasicVariable BasicType) orderID string'
+
+(*FrontendImpl).GetOrders(ctx context.Context, userID string):
+  block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
+  - '[0] (inline) (FieldVariable FieldType) order order.OrderService'
+  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
+  - '[0] (inline) (FieldVariable FieldType) cart cart.CartService'
+  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
+  - '[0] (inline) (FieldVariable FieldType) catalogue catalogue.CatalogueService'
+  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
+  - '[0] (inline) (FieldVariable FieldType) user user.UserService'
+  - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
+    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
+  - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
+    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
+  - '[68] (InterfaceVariable UserType) ctx context.Context'
+  - '[69] (BasicVariable BasicType) userID string'
+
+(*FrontendImpl).GetSock(ctx context.Context, itemID string):
+  block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
+  - '[0] (inline) (FieldVariable FieldType) order order.OrderService'
+  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
+  - '[0] (inline) (FieldVariable FieldType) cart cart.CartService'
+  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
+  - '[0] (inline) (FieldVariable FieldType) catalogue catalogue.CatalogueService'
+  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
+  - '[0] (inline) (FieldVariable FieldType) user user.UserService'
+  - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
+    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
+  - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
+    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
+  - '[26] (InterfaceVariable UserType) ctx context.Context'
+  - '[27] (BasicVariable BasicType) itemID string'
+
+(*FrontendImpl).GetUser(ctx context.Context, userID string):
+  block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
+  - '[0] (inline) (FieldVariable FieldType) order order.OrderService'
+  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
+  - '[0] (inline) (FieldVariable FieldType) cart cart.CartService'
+  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
+  - '[0] (inline) (FieldVariable FieldType) catalogue catalogue.CatalogueService'
+  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
+  - '[0] (inline) (FieldVariable FieldType) user user.UserService'
+  - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
+    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
+  - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
+    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
+  - '[83] (InterfaceVariable UserType) ctx context.Context'
+  - '[84] (BasicVariable BasicType) userID string'
+
+(*FrontendImpl).ListItems(ctx context.Context, tags []string, order string, pageNum int, pageSize int):
+  block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
+  - '[0] (inline) (FieldVariable FieldType) user user.UserService'
+  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
+  - '[0] (inline) (FieldVariable FieldType) order order.OrderService'
+  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
+  - '[0] (inline) (FieldVariable FieldType) cart cart.CartService'
+  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
+  - '[0] (inline) (FieldVariable FieldType) catalogue catalogue.CatalogueService'
+  - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
+    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
+  - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
+    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
+  - '[21] (InterfaceVariable UserType) ctx context.Context'
+  - '[22] (ArrayVariable ArrayType) tags []string'
+  - '[23] (BasicVariable BasicType) order string'
+  - '[24] (BasicVariable BasicType) pageNum int'
+  - '[25] (BasicVariable BasicType) pageSize int'
+
+(*FrontendImpl).ListTags(ctx context.Context):
+  block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
+  - '[0] (inline) (FieldVariable FieldType) cart cart.CartService'
+  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
+  - '[0] (inline) (FieldVariable FieldType) catalogue catalogue.CatalogueService'
+  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
+  - '[0] (inline) (FieldVariable FieldType) user user.UserService'
+  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
+  - '[0] (inline) (FieldVariable FieldType) order order.OrderService'
+  - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
+    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
+  - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
+    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
+  - '[34] (InterfaceVariable UserType) ctx context.Context'
+
+(*FrontendImpl).LoadCatalogue(ctx context.Context):
+  block 0 (Body):
+  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
+  - '[0] (inline) (FieldVariable FieldType) order order.OrderService'
+  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
+  - '[0] (inline) (FieldVariable FieldType) cart cart.CartService'
+  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
+  - '[0] (inline) (FieldVariable FieldType) catalogue catalogue.CatalogueService'
+  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
+  - '[0] (inline) (FieldVariable FieldType) user user.UserService'
   - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
     catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
   - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
     catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
   - '[61] (InterfaceVariable UserType) ctx context.Context'
-  - '[62] (BasicVariable BasicType) sessionID string'
-
-(*FrontendImpl).GetAddress(ctx context.Context, addressID string):
-  block 0 (Body):
-  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
-  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
-  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
-  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
-  - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
-  - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - '[80] (InterfaceVariable UserType) ctx context.Context'
-  - '[81] (BasicVariable BasicType) addressID string'
-
-(*FrontendImpl).GetCard(ctx context.Context, cardID string):
-  block 0 (Body):
-  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
-  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
-  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
-  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
-  - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
-  - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - '[82] (InterfaceVariable UserType) ctx context.Context'
-  - '[83] (BasicVariable BasicType) cardID string'
-
-(*FrontendImpl).GetCart(ctx context.Context, sessionID string):
-  block 2 (IfDone):
-  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
-  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
-  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
-  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
-  - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
-  - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - '[59] (InterfaceVariable UserType) ctx context.Context'
-  - '[60] (BasicVariable BasicType) sessionID string'
-
-(*FrontendImpl).GetOrder(ctx context.Context, orderID string):
-  block 0 (Body):
-  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
-  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
-  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
-  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
-  - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
-  - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - '[73] (InterfaceVariable UserType) ctx context.Context'
-  - '[74] (BasicVariable BasicType) orderID string'
-
-(*FrontendImpl).GetOrders(ctx context.Context, userID string):
-  block 0 (Body):
-  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
-  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
-  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
-  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
-  - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
-  - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - '[55] (InterfaceVariable UserType) ctx context.Context'
-  - '[56] (BasicVariable BasicType) userID string'
-
-(*FrontendImpl).GetSock(ctx context.Context, itemID string):
-  block 0 (Body):
-  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
-  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
-  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
-  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
-  - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
-  - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - '[53] (InterfaceVariable UserType) ctx context.Context'
-  - '[54] (BasicVariable BasicType) itemID string'
-
-(*FrontendImpl).GetUser(ctx context.Context, userID string):
-  block 0 (Body):
-  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
-  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
-  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
-  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
-  - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
-  - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - '[57] (InterfaceVariable UserType) ctx context.Context'
-  - '[58] (BasicVariable BasicType) userID string'
-
-(*FrontendImpl).ListItems(ctx context.Context, tags []string, order string, pageNum int, pageSize int):
-  block 0 (Body):
-  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
-  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
-  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
-  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
-  - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
-  - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - '[11] (InterfaceVariable UserType) ctx context.Context'
-  - '[12] (ArrayVariable ArrayType) tags []string'
-  - '[13] (BasicVariable BasicType) order string'
-  - '[14] (BasicVariable BasicType) pageNum int'
-  - '[15] (BasicVariable BasicType) pageSize int'
-
-(*FrontendImpl).ListTags(ctx context.Context):
-  block 0 (Body):
-  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
-  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
-  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
-  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
-  - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
-  - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - '[16] (InterfaceVariable UserType) ctx context.Context'
-
-(*FrontendImpl).LoadCatalogue(ctx context.Context):
-  block 0 (Body):
-  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
-  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
-  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
-  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
-  - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
-  - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - '[48] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    [49] (StructVariable UserType) sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} -->
+    [62] (StructVariable UserType) sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} -->
        w-tainted 1x: write(catalogue_db.Sock)
 
 (*FrontendImpl).Login(ctx context.Context, sessionID string, username string, password string):
   block 7 (IfDone):
   - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
+  - '[0] (inline) (FieldVariable FieldType) order order.OrderService'
   - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
+  - '[0] (inline) (FieldVariable FieldType) cart cart.CartService'
   - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
+  - '[0] (inline) (FieldVariable FieldType) catalogue catalogue.CatalogueService'
   - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
+  - '[0] (inline) (FieldVariable FieldType) user user.UserService'
   - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
     catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
   - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
     catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - '[75] (InterfaceVariable UserType) ctx context.Context'
-  - '[79] (BasicVariable BasicType) sessionID string'
-  - '[76] (BasicVariable BasicType) username string'
-  - '[77] (BasicVariable BasicType) password string'
-  - '[78] (inline) (BasicVariable BasicType) UserID string'
+  - '[70] (InterfaceVariable UserType) ctx context.Context'
+  - '[74] (BasicVariable BasicType) sessionID string'
+  - '[71] (BasicVariable BasicType) username string'
+  - '[72] (BasicVariable BasicType) password string'
+  - '[73] (inline) (BasicVariable BasicType) UserID string'
   - '[-1] (inline) (FieldVariable FieldType) UserID string'
   - '[-1] (StructVariable UserType) u user.User struct{FirstName string, LastName
     string, Email string, Username string, Password string, Addresses user.Address
@@ -198,115 +250,139 @@
 (*FrontendImpl).NewOrder(ctx context.Context, userID string, addressID string, cardID string, cartID string):
   block 0 (Body):
   - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
+  - '[0] (inline) (FieldVariable FieldType) order order.OrderService'
   - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
+  - '[0] (inline) (FieldVariable FieldType) cart cart.CartService'
   - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
+  - '[0] (inline) (FieldVariable FieldType) catalogue catalogue.CatalogueService'
   - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
+  - '[0] (inline) (FieldVariable FieldType) user user.UserService'
   - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
     catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
   - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
     catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - '[17] (InterfaceVariable UserType) ctx context.Context'
+  - '[35] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    [18] (BasicVariable BasicType) userID string -->
+    [36] (BasicVariable BasicType) userID string -->
        w-tainted 3x: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.CustomerID)
-  - '[19] (BasicVariable BasicType) addressID string'
-  - '[20] (BasicVariable BasicType) cardID string'
-  - '[21] (BasicVariable BasicType) cartID string'
+  - '[37] (BasicVariable BasicType) addressID string'
+  - '[38] (BasicVariable BasicType) cardID string'
+  - '[39] (BasicVariable BasicType) cartID string'
 
 (*FrontendImpl).PostAddress(ctx context.Context, userID string, address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string})
 :
  block 0 (Body):
-  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
-  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
-  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
   - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
+  - '[0] (inline) (FieldVariable FieldType) user user.UserService'
+  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
+  - '[0] (inline) (FieldVariable FieldType) order order.OrderService'
+  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
+  - '[0] (inline) (FieldVariable FieldType) cart cart.CartService'
+  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
+  - '[0] (inline) (FieldVariable FieldType) catalogue catalogue.CatalogueService'
   - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
     catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
   - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
     catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - '[42] (InterfaceVariable UserType) ctx context.Context'
-  - '[43] (BasicVariable BasicType) userID string'
-  - '[44] (StructVariable UserType) address user.Address struct{Street string, Number
+  - '[55] (InterfaceVariable UserType) ctx context.Context'
+  - '[56] (BasicVariable BasicType) userID string'
+  - '[57] (StructVariable UserType) address user.Address struct{Street string, Number
     string, Country string, City string, PostCode string, ID string}'
 
 (*FrontendImpl).PostCard(ctx context.Context, userID string, card user.Card struct{LongNum string, Expires string, CCV string, ID string})
 :
  block 0 (Body):
   - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
+  - '[0] (inline) (FieldVariable FieldType) catalogue catalogue.CatalogueService'
   - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
+  - '[0] (inline) (FieldVariable FieldType) user user.UserService'
   - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
+  - '[0] (inline) (FieldVariable FieldType) order order.OrderService'
   - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
+  - '[0] (inline) (FieldVariable FieldType) cart cart.CartService'
   - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
     catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
   - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
     catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - '[45] (InterfaceVariable UserType) ctx context.Context'
-  - '[46] (BasicVariable BasicType) userID string'
-  - '[47] (StructVariable UserType) card user.Card struct{LongNum string, Expires
+  - '[58] (InterfaceVariable UserType) ctx context.Context'
+  - '[59] (BasicVariable BasicType) userID string'
+  - '[60] (StructVariable UserType) card user.Card struct{LongNum string, Expires
     string, CCV string, ID string}'
 
 (*FrontendImpl).Register(ctx context.Context, sessionID string, username string, password string, email string, first string, last string)
 :
  block 6 (IfElse):
-  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
-  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
   - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
+  - '[0] (inline) (FieldVariable FieldType) cart cart.CartService'
   - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
+  - '[0] (inline) (FieldVariable FieldType) catalogue catalogue.CatalogueService'
+  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
+  - '[0] (inline) (FieldVariable FieldType) user user.UserService'
+  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
+  - '[0] (inline) (FieldVariable FieldType) order order.OrderService'
   - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
     catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
   - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
     catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - '[34] (InterfaceVariable UserType) ctx context.Context'
-  - '[41] (BasicVariable BasicType) sessionID string'
+  - '[75] (InterfaceVariable UserType) ctx context.Context'
+  - '[82] (BasicVariable BasicType) sessionID string'
   - |-
-    [35] (BasicVariable BasicType) username string -->
+    [76] (BasicVariable BasicType) username string -->
        w-tainted 1x: write(user_db.User.Username)
   - |-
-    [36] (BasicVariable BasicType) password string -->
+    [77] (BasicVariable BasicType) password string -->
        w-tainted 1x: write(user_db.User.Password)
   - |-
-    [37] (BasicVariable BasicType) email string -->
+    [78] (BasicVariable BasicType) email string -->
        w-tainted 1x: write(user_db.User.Email)
   - |-
-    [38] (BasicVariable BasicType) first string -->
+    [79] (BasicVariable BasicType) first string -->
        w-tainted 1x: write(user_db.User.FirstName)
   - |-
-    [39] (BasicVariable BasicType) last string -->
+    [80] (BasicVariable BasicType) last string -->
        w-tainted 1x: write(user_db.User.LastName)
-  - '[40] (BasicVariable BasicType) userID string'
+  - '[81] (BasicVariable BasicType) userID string'
   - '[-1] (InterfaceVariable UserType) err .error'
 
 (*FrontendImpl).RemoveItem(ctx context.Context, sessionID string, itemID string):
   block 2 (IfDone):
-  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
-  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
-  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
   - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
+  - '[0] (inline) (FieldVariable FieldType) order order.OrderService'
+  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
+  - '[0] (inline) (FieldVariable FieldType) cart cart.CartService'
+  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
+  - '[0] (inline) (FieldVariable FieldType) catalogue catalogue.CatalogueService'
+  - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
+  - '[0] (inline) (FieldVariable FieldType) user user.UserService'
   - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
     catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
   - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
     catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - '[50] (InterfaceVariable UserType) ctx context.Context'
-  - '[51] (BasicVariable BasicType) sessionID string'
-  - '[52] (BasicVariable BasicType) itemID string'
+  - '[65] (InterfaceVariable UserType) ctx context.Context'
+  - '[66] (BasicVariable BasicType) sessionID string'
+  - '[67] (BasicVariable BasicType) itemID string'
 
 (*FrontendImpl).UpdateItem(ctx context.Context, sessionID string, itemID string, quantity int):
   block 2 (IfDone):
-  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
-  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
-  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
   - '[-1] (inline) (ServiceVariable ServiceType) user user.UserService'
+  - '[0] (inline) (FieldVariable FieldType) user user.UserService'
+  - '[-1] (inline) (ServiceVariable ServiceType) order order.OrderService'
+  - '[0] (inline) (FieldVariable FieldType) order order.OrderService'
+  - '[-1] (inline) (ServiceVariable ServiceType) cart cart.CartService'
+  - '[0] (inline) (FieldVariable FieldType) cart cart.CartService'
+  - '[-1] (inline) (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
+  - '[0] (inline) (FieldVariable FieldType) catalogue catalogue.CatalogueService'
   - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
     catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
   - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
     catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - '[63] (InterfaceVariable UserType) ctx context.Context'
-  - '[65] (BasicVariable BasicType) sessionID string'
-  - '[64] (BasicVariable BasicType) itemID string'
-  - '[70] (BasicVariable BasicType) quantity int'
-  - '[72] (inline) (BasicVariable BasicType) Price float32'
+  - '[11] (InterfaceVariable UserType) ctx context.Context'
+  - '[13] (BasicVariable BasicType) sessionID string'
+  - '[12] (BasicVariable BasicType) itemID string'
+  - '[16] (BasicVariable BasicType) quantity int'
+  - '[18] (inline) (BasicVariable BasicType) Price float32'
   - '[-1] (inline) (FieldVariable FieldType) Price float32'
-  - '[68] (inline) (BasicVariable BasicType) ID string'
+  - '[20] (inline) (BasicVariable BasicType) ID string'
   - '[-1] (inline) (FieldVariable FieldType) ID string'
   - '[-1] (StructVariable UserType) item catalogue.Sock struct{ID string, Name string,
     Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price
@@ -321,11 +397,11 @@
   - '[-1] (ServiceVariable ServiceType) catalogue catalogue.CatalogueService'
   - '[-1] (ServiceVariable ServiceType) cart cart.CartService'
   - '[-1] (ServiceVariable ServiceType) order order.OrderService'
-  - '[0] (inline) (FieldVariable FieldType) user user.UserService'
   - '[0] (inline) (FieldVariable FieldType) order order.OrderService'
   - '[0] (inline) (FieldVariable FieldType) cart cart.CartService'
   - '[0] (inline) (FieldVariable FieldType) catalogue catalogue.CatalogueService'
+  - '[0] (inline) (FieldVariable FieldType) user user.UserService'
   - '[0] (inline) (StructVariable UserType) frontend.FrontendImpl struct{user user.UserService,
     catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}'
-  - '[-1] (AddressVariable AddressType) f (&frontend.FrontendImpl struct{user user.UserService,
+  - '[-1] (PointerVariable PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
     catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'

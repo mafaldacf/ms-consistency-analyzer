@@ -55,32 +55,37 @@ shopping_app:
   - shopping_app.Analytics struct{UserID string, Categories []string}
   - shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string}
   - shopping_app.AnalyticsService
-  - shopping_app.AnalyticsServiceImpl struct{analytics_db {instance = analytics_db}
-    interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, analytics_queue  {instance = analytics_queue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})},
-    num_workers 4 int}
-  - shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int}
+  - shopping_app.AnalyticsServiceImpl struct{analytics_db NoSQLDatabase {instance = analytics_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, analytics_queue Queue {instance = analytics_queue}
+    interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}, num_workers 4 int}
+  - shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)}
   - shopping_app.BillingService
-  - shopping_app.BillingServiceImpl struct{bill_db {instance = billing_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - shopping_app.BillingServiceImpl struct{bill_db NoSQLDatabase {instance = billing_db}
+    interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
   - shopping_app.Cart struct{CartID string, UserID string, ProductID string, Quantity int, PricePerUnit int, Status string}
   - shopping_app.CartService
-  - shopping_app.CartServiceImpl struct{order_service shopping_app.OrderService, product_service shopping_app.ProductService, cart_db {instance = cart_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - shopping_app.CartServiceImpl struct{order_service shopping_app.OrderService, product_service shopping_app.ProductService, cart_db NoSQLDatabase {instance = cart_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
   - shopping_app.Frontend
-  - shopping_app.FrontendImpl struct{cart_service shopping_app.CartService, order_service shopping_app.OrderService}
-  - shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64}
+  - shopping_app.FrontendImpl struct{order_service shopping_app.OrderService, cart_service shopping_app.CartService}
+  - shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp 1 int}
   - shopping_app.OrderService
-  - shopping_app.OrderServiceImpl struct{stock_service shopping_app.StockService, billing_service shopping_app.BillingService, product_service shopping_app.ProductService, order_db {instance = order_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, shipment_queue  {instance = shipment_queue}
-    interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}, analytics_queue  {instance = analytics_queue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}}
+  - shopping_app.OrderServiceImpl struct{stock_service shopping_app.StockService, billing_service shopping_app.BillingService, product_service shopping_app.ProductService, order_db NoSQLDatabase {instance = order_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, shipment_queue Queue
+    {instance = shipment_queue} interface{Queue.Push(ctx context.Context, item interface{}),
+    Queue.Pop(ctx context.Context, item interface{})}, analytics_queue Queue {instance = analytics_queue} interface{Queue.Push(ctx context.Context, item interface{}),
+    Queue.Pop(ctx context.Context, item interface{})}}
   - shopping_app.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
   - shopping_app.ProductService
-  - shopping_app.ProductServiceImpl struct{product_db {instance = product_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
-  - shopping_app.Shipment struct{OrderID string, UserID string, Status string}
+  - shopping_app.ProductServiceImpl struct{product_db NoSQLDatabase {instance = product_db}
+    interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string}
   - shopping_app.ShipmentMessage struct{OrderID string, UserID string}
   - shopping_app.ShipmentService
-  - shopping_app.ShipmentServiceImpl struct{order_service shopping_app.OrderService, shipment_db {instance = shipment_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, shipment_queue  {instance = shipment_queue} interface{Queue.Push(ctx context.Context, item interface{}),
+  - shopping_app.ShipmentServiceImpl struct{order_service shopping_app.OrderService, shipment_db NoSQLDatabase {instance = shipment_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, shipment_queue Queue
+    {instance = shipment_queue} interface{Queue.Push(ctx context.Context, item interface{}),
     Queue.Pop(ctx context.Context, item interface{})}, num_workers 4 int}
   - shopping_app.Stock struct{ProductID string, Quantity int}
   - shopping_app.StockService
-  - shopping_app.StockServiceImpl struct{stock_db {instance = stock_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - shopping_app.StockServiceImpl struct{stock_db NoSQLDatabase {instance = stock_db}
+    interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
 - declared variables: []
 - declared constants: []
 - service types:
@@ -108,10 +113,10 @@ shopping_app:
   - (*shopping_app.CartServiceImpl).Checkout(ctx context.Context, cartID string) error
   - (*shopping_app.FrontendImpl).AddProductToCart(ctx context.Context, cartID string, productID string) error
   - (*shopping_app.FrontendImpl).Checkout(ctx context.Context, cartID string, userID string, productID string, quantity int, price int) error
-  - (*shopping_app.FrontendImpl).ReadOrder(ctx context.Context, orderID string) (shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64}, error)
+  - (*shopping_app.FrontendImpl).ReadOrder(ctx context.Context, orderID string) (shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp 1 int}, error)
   - (*shopping_app.OrderServiceImpl).CreateOrder(ctx context.Context, cartID string, userID string, productID string, quantity int, price int) error
   - (*shopping_app.OrderServiceImpl).ReadOrder(ctx context.Context, orderID string)
-    (shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64}, error)
+    (shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp 1 int}, error)
   - (*shopping_app.ProductServiceImpl).CreateProduct(ctx context.Context, productID string, description string, pricePerUnit int, category string) (shopping_app.Product struct{ProductID string, Description string, PricePerUnit int, Category string}, error)
   - (*shopping_app.ProductServiceImpl).GetProduct(ctx context.Context, productID string)
     (shopping_app.Product struct{ProductID string, Description string, PricePerUnit int, Category string}, error)

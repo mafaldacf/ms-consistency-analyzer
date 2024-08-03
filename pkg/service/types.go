@@ -12,6 +12,7 @@ import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
 	"analyzer/pkg/types/gotypes"
+	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
 )
 
@@ -33,19 +34,20 @@ func (context *Context) GetPackage() *types.Package {
 
 type Service struct {
 	Name            string
-	ImplName        string
 	ConstructorName string
 	File            *types.File
 	Contexts        *stack.Stack
 
-	//TODO maybe use variable instead of Type + Fields
+	//TODO maybe use variable instead of ImplType + Fields
 	//Impl   variables.Variable
-	Type   *gotypes.ServiceType
-	Fields map[string]types.Field
+	ImplName     string
+	ImplVariable variables.Variable   // variable is either StructVariable or InterfaceVariable, and its type is UserType whose underlying type is the following ImplType:
+	ImplType     *gotypes.ServiceType // type is either StructType or InterfaceType
+	Fields       map[string]types.Field
 
 	// the map key is the service type (e.g. StorageService in 'storageService StorageService')
-	Services  map[string]*Service
-	Databases map[string]datastores.DatabaseInstance
+	Services   map[string]*Service
+	Datastores map[string]datastores.DatabaseInstance
 	// safe because methods are unique since Golang does not allow overloading
 	// also this captures all exposed methods because they must be defined within the service struct file
 	ExposedMethods      map[string]*types.ParsedMethod
@@ -54,7 +56,41 @@ type Service struct {
 	PackageMethods      map[string]*types.ParsedMethod
 	Constructor         *types.ParsedMethod
 
-	ImplementsQueue bool
+	QueueField bool
+}
+
+func (node *Service) GetDatastoreFieldIfExists(name string) *types.DatabaseField {
+	if field, ok := node.Fields[name]; ok {
+		if datastoreField, isDbField := field.(*types.DatabaseField); isDbField {
+			return datastoreField
+		}
+	}
+	logger.Logger.Warnf("[SERVICE] [%s] datastore field not found for name (%s) in service fields map: %v", node.GetName(), name, node.Fields)
+	return nil
+}
+
+func (node *Service) GetFieldIfExists(name string) types.Field {
+	if field, ok := node.Fields[name]; ok {
+		return field
+	}
+	logger.Logger.Warnf("[SERVICE] [%s] field not found for name (%s) in service fields map: %v", node.GetName(), name, node.Fields)
+	return nil
+}
+
+func (node *Service) AddField(name string, field types.Field) {
+	node.Fields[name] = field
+}
+
+func (node *Service) AddDatastore(datastore datastores.DatabaseInstance) {
+	node.Datastores[datastore.GetName()] = datastore
+}
+
+func (node *Service) EnableQueueField() {
+	node.QueueField = true
+}
+
+func (node *Service) HasQueueField() bool {
+	return node.QueueField
 }
 
 func (node *Service) NewContext() *Context {
@@ -67,6 +103,51 @@ func (node *Service) GetContext() *Context {
 	return node.Contexts.Peek().(*Context)
 }
 
+func (node *Service) GetConstructor() *types.ParsedMethod {
+	return node.Constructor
+}
+
+func (node *Service) GetImplType() *gotypes.ServiceType {
+	if node.ImplType == nil {
+		logger.Logger.Fatalf("[SERVICE] [%s] unexpected nil impl type", node.GetName())
+	}
+	return node.ImplType
+}
+
+func (node *Service) GetImplVariable() variables.Variable {
+	if node.ImplVariable == nil {
+		logger.Logger.Fatalf("[SERVICE] [%s] unexpected nil impl variable", node.GetName())
+	}
+	return node.ImplVariable
+}
+
+func (node *Service) SetImplVariableWithType(v variables.Variable) {
+	v = variables.UnwrapAddressVariable(v)
+	t := v.GetType()
+
+	if ptrVariable, ok := v.(*variables.PointerVariable); ok {
+		node.ImplVariable = ptrVariable.GetPointerTo()
+		t = ptrVariable.GetPointerType().GetPointerTo()
+	} else {
+		logger.Logger.Fatalf("[SERVICE] [%s] unexpected type for impl (%s): %s", node.GetName(), utils.GetType(t), t.String())
+	}
+
+	if userType, ok := t.(*gotypes.UserType); ok {
+		t = userType.UserType
+	} else {
+		logger.Logger.Fatalf("[SERVICE] [%s] unexpected type for pointerTo (%s): %s", node.GetName(), utils.GetType(t), t.String())
+	}
+
+	if structType, ok := t.(*gotypes.StructType); ok {
+		node.ImplType.StructType = structType
+	} else if interfaceType, ok := t.(*gotypes.InterfaceType); ok {
+		node.ImplType.InterfaceType = interfaceType
+	} else {
+		logger.Logger.Fatalf("[SERVICE] [%s] unexpected type for underlying userType (%s): %s", node.GetName(), utils.GetType(t), t.String())
+	}
+	logger.Logger.Debugf("[SERVICE] [%s] set up impl variable: %s", node.GetName(), v.LongString())
+}
+
 func (node *Service) PopContext() *Context {
 	return node.Contexts.Pop().(*Context)
 }
@@ -77,7 +158,7 @@ func (node *Service) MarshalJSON() ([]byte, error) {
 		serviceKeys = append(serviceKeys, k)
 	}
 	var databaseKeys []string
-	for k := range node.Databases {
+	for k := range node.Datastores {
 		databaseKeys = append(databaseKeys, k)
 	}
 	fieldTypes := make(map[string]string)
@@ -127,7 +208,8 @@ func (node *Service) GetPackageName() string {
 }
 
 func (node *Service) GetQueueHandlersForDatabase(database datastores.DatabaseInstance) []*types.ParsedMethod {
-	if _, ok := node.Databases[database.GetName()]; !ok {
+	logger.Logger.Warnf("[SERVICE] [%s] getting queue handlers for datastore (%s): %v", node.GetName(), database.GetName(), node.QueueHandlerMethods)
+	if _, ok := node.Datastores[database.GetName()]; !ok {
 		return nil
 	}
 

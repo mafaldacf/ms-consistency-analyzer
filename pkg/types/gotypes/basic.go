@@ -15,6 +15,9 @@ type BasicType struct {
 // Type Methods
 // ------------
 
+func (t* BasicType) IsNil() bool {
+	return t.Name == "nil"
+}
 func (t *BasicType) IsSameType(other Type) bool {
 	_, ok := other.(*BasicType)
 	return ok

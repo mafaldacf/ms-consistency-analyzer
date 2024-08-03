@@ -15,7 +15,7 @@ func (v *TupleVariable) GetVariableInfo() *VariableInfo {
 	return nil
 }
 
-func (v *TupleVariable) AddVariable(variable Variable) {
+func (v *TupleVariable) AddVariableAndType(variable Variable) {
 	logger.Logger.Warnf("[VARS TUPLE] adding variable (%s) to tuple variable (%s)", variable.String(), v.String())
 	v.Variables = append(v.Variables, variable)
 	v.GetTupleType().AddType(variable.GetType())
@@ -54,6 +54,9 @@ func (v *TupleVariable) NumVariables() int {
 }
 
 func (v *TupleVariable) GetType() gotypes.Type {
+	if v.VariableInfo.GetType() == nil {
+		logger.Logger.Fatalf("[VARS ADDRESS] unexpected nil type for tuple variable: %s", v.String())
+	}
 	return v.VariableInfo.GetType()
 }
 

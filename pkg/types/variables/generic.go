@@ -24,6 +24,9 @@ func (v *GenericVariable) GetId() int64 {
 }
 
 func (v *GenericVariable) GetType() gotypes.Type {
+	if v.VariableInfo.GetType() == nil {
+		logger.Logger.Fatalf("[VARS ADDRESS] unexpected nil type for generic variable: %s", v.String())
+	}
 	return v.VariableInfo.GetType()
 }
 

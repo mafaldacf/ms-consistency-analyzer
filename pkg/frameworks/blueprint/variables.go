@@ -33,7 +33,7 @@ func (v *BlueprintBackendVariable) String() string {
 }
 
 func (v *BlueprintBackendVariable) LongString() string {
-	return v.VariableInfo.String()
+	return v.VariableInfo.LongString()
 }
 
 func (v *BlueprintBackendVariable) GetId() int64 {

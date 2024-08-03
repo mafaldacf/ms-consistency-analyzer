@@ -1,0 +1,107 @@
+"":
+- package: ""
+- package path: github.com/blueprint-uservices/blueprint/examples/postnotification_simple/workflow/postnotification_simple/...
+- module: ""
+- files: []
+- imports: []
+- imported types: []
+- imported constants: []
+- imported variables: []
+- declared types: []
+- declared variables: []
+- declared constants: []
+- service types: []
+- datastore types: []
+- parsed methods: []
+
+common:
+- package: common
+- package path: github.com/blueprint-uservices/blueprint/examples/postnotification_simple/workflow/postnotification_simple/common
+- module: github.com/blueprint-uservices/blueprint/examples/postnotification_simple/workflow
+- files:
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification_simple/workflow/postnotification_simple/common/utils.go
+- imports:
+  - strconv
+- imported types:
+  - .error
+- imported constants: []
+- imported variables: []
+- declared types: []
+- declared variables: []
+- declared constants:
+  - HELLO_WORLD_CONST "HELLO WORLD!" untyped string
+- service types: []
+- datastore types: []
+- parsed methods:
+  - common.Int64ToString(i int64) string
+  - common.StringToInt64(s string) (int64, error)
+
+postnotification_simple:
+- package: postnotification_simple
+- package path: github.com/blueprint-uservices/blueprint/examples/postnotification_simple/workflow/postnotification_simple
+- module: github.com/blueprint-uservices/blueprint/examples/postnotification_simple/workflow
+- files:
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification_simple/workflow/postnotification_simple/NotifyService.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification_simple/workflow/postnotification_simple/StorageService.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification_simple/workflow/postnotification_simple/UploadService.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification_simple/workflow/postnotification_simple/models.go
+- imports:
+  - context
+  - github.com/blueprint-uservices/blueprint/examples/postnotification_simple/workflow/postnotification_simple/common
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+  - math/rand
+  - sync
+- imported types:
+  - .error
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.All(ctx context.Context, obj interface{})}
+  - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
+  - Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}
+  - atomic.Uint64
+  - atomic.align64
+  - atomic.noCopy
+  - context.Context
+  - primitive.D
+  - primitive.E
+  - sync.WaitGroup
+  - sync.noCopy
+- imported constants: []
+- imported variables: []
+- declared types:
+  - postnotification_simple.Creator struct{Username "some username" string}
+  - postnotification_simple.Message struct{ReqID string, PostID string, Timestamp string}
+  - postnotification_simple.NotifyService
+  - postnotification_simple.NotifyServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue {instance = notifications_queue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})},
+    num_workers 4 int}
+  - postnotification_simple.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username "some username" string}, Creator postnotification_simple.Creator struct{Username "some username" string}}
+  - postnotification_simple.StorageService
+  - postnotification_simple.StorageServiceImpl struct{postsDb NoSQLDatabase {instance = posts_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - postnotification_simple.UploadService
+  - postnotification_simple.UploadServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue {instance = notifications_queue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}}
+- declared variables: []
+- declared constants: []
+- service types:
+  - postnotification_simple.NotifyService
+  - postnotification_simple.StorageService
+  - postnotification_simple.UploadService
+- datastore types:
+  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
+    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.All(ctx context.Context, obj interface{})}
+  - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
+  - Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}
+- parsed methods:
+  - (*postnotification_simple.NotifyServiceImpl).Run(ctx context.Context) error
+  - (*postnotification_simple.NotifyServiceImpl).handleMessage(ctx context.Context, message postnotification_simple.Message struct{ReqID string, PostID string, Timestamp string}) error
+  - (*postnotification_simple.NotifyServiceImpl).workerThread(ctx context.Context, workerID int) error
+  - (*postnotification_simple.StorageServiceImpl).ReadPost(ctx context.Context, reqID int64, postID int64) (postnotification_simple.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username "some username" string}, Creator postnotification_simple.Creator struct{Username "some username" string}}, error)
+  - (*postnotification_simple.StorageServiceImpl).StorePost(ctx context.Context, reqID int64, post postnotification_simple.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username "some username" string}, Creator postnotification_simple.Creator struct{Username "some username" string}}) error
+  - (*postnotification_simple.UploadServiceImpl).UploadPost(ctx context.Context, username string, text string) (int64, error)
+  - postnotification_simple.NewNotifyServiceImpl(ctx context.Context, storageService postnotification_simple.StorageService, notificationsQueue Queue) (postnotification_simple.NotifyService, error)
+  - postnotification_simple.NewStorageServiceImpl(ctx context.Context, postsDb NoSQLDatabase)
+    (postnotification_simple.StorageService, error)
+  - postnotification_simple.NewUploadServiceImpl(ctx context.Context, storageService postnotification_simple.StorageService, notificationsQueue Queue) (postnotification_simple.UploadService, error)

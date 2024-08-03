@@ -9,6 +9,7 @@ import (
 	"analyzer/pkg/controlflow"
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/frameworks"
+	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/lookup"
 	"analyzer/pkg/service"
@@ -27,7 +28,7 @@ func (app *App) RegisterServiceNodes(servicesInfo []*frameworks.ServiceInfo) {
 	app.createServiceNodes(servicesInfo)
 	app.matchServiceEdges()
 	app.buildServiceInfo()
-	app.loadFieldsFromServicesConstructor(servicesInfo)
+	app.loadFields(servicesInfo)
 }
 
 func (app *App) createServiceNodes(servicesInfo []*frameworks.ServiceInfo) {
@@ -42,13 +43,13 @@ func (app *App) createServiceNodes(servicesInfo []*frameworks.ServiceInfo) {
 			File:                file,
 			Fields:              make(map[string]types.Field),
 			Services:            make(map[string]*service.Service),
-			Databases:           make(map[string]datastores.DatabaseInstance),
+			Datastores:           make(map[string]datastores.DatabaseInstance),
 			ExposedMethods:      make(map[string]*types.ParsedMethod),
 			QueueHandlerMethods: make(map[string]*types.ParsedMethod),
 			InternalMethods:     make(map[string]*types.ParsedMethod),
 			PackageMethods:      make(map[string]*types.ParsedMethod),
 			ConstructorName:     info.ConstructorName,
-			Type: &gotypes.ServiceType{
+			ImplType: &gotypes.ServiceType{
 				PackagePath: pkg.GetName(),
 				Name:        info.Name,
 			},
@@ -79,9 +80,8 @@ func (app *App) matchServiceEdges() {
 func (app *App) buildServiceInfo() {
 	for _, node := range app.Services {
 		lookup.ParseImports(node.File)
+		node.RegisterImplName()
 		node.RegisterConstructor()
-		node.FindAndRegisterImplStructure()
-		node.RegisterFields()
 	}
 }
 
@@ -100,11 +100,14 @@ func (app *App) BuildServiceNodes() {
 
 	var parser = func(node *service.Service, methods map[string]*types.ParsedMethod, visibility string) {
 		for _, method := range methods {
-			fmt.Println("----------------------------------------------------------------------------------------------------------------------------------")
-			fmt.Println("----------------------------------------------------------------------------------------------------------------------------------")
-			logger.Logger.Infof("[PARSER - %s] [%s] %s", strings.ToUpper(visibility), node.GetName(), method)
-			fmt.Println("----------------------------------------------------------------------------------------------------------------------------------")
-			controlflow.ParseServiceMethodCFG(node, method)
+			// constructors are already parsed
+			if !method.IsConstructor() {
+				fmt.Println("----------------------------------------------------------------------------------------------------------------------------------")
+				fmt.Println("----------------------------------------------------------------------------------------------------------------------------------")
+				logger.Logger.Infof("[PARSER - %s] [%s] %s", strings.ToUpper(visibility), node.GetName(), method)
+				fmt.Println("----------------------------------------------------------------------------------------------------------------------------------")
+				controlflow.ParseServiceMethodCFG(node, method)
+			}
 			fmt.Println()
 		}
 	}
@@ -117,22 +120,28 @@ func (app *App) BuildServiceNodes() {
 	}
 }
 
-func (app *App) loadFieldsFromServicesConstructor(servicesInfo []*frameworks.ServiceInfo) {
+func (app *App) loadFields(servicesInfo []*frameworks.ServiceInfo) {
 	logger.Logger.Infof("[APP] loading fields for services constructors")
 	for _, info := range servicesInfo {
 		service := app.Services[info.Name]
-		paramsDBs := make(map[string]datastores.DatabaseInstance, 0)
-		logger.Logger.Debugf("[%s] searching instances for constructor dbs: %v", service.GetName(), info.ConstructorDBs)
-		for param, instanceName := range info.ConstructorDBs {
-			dbInstance := app.Databases[instanceName]
-			if dbInstance == nil {
-				logger.Logger.Fatalf("[APP] [%s] could not find instance named (%s) in app with database list: %v", service.GetName(), instanceName, app.Databases)
+
+		entryBlock := service.GetConstructor().GetParsedCfg().GetEntryParsedBlock()
+
+		for idx, v := range entryBlock.GetVariables() {
+			if backendType, ok := v.GetType().(*blueprint.BlueprintBackendType); ok {
+				serviceArg := info.GetArgumentAt(idx)
+				instance := app.GetDatastoreInstance(serviceArg)
+				backendType.SetInstance(instance)
+				service.AddDatastore(instance)
 			}
-			paramsDBs[param] = dbInstance
-			service.Databases[dbInstance.GetName()] = dbInstance
-			logger.Logger.Debugf("[%s] added db new instance named (%s) for field key (%s) in list: %v", service.GetName(), dbInstance.GetName(), param, paramsDBs)
 		}
-		service.LoadServiceFieldsValues(paramsDBs)
-		logger.Logger.Tracef("[APP] registered service node %s with %d service(s) and %d database(s)", service.Name, len(service.Services), len(service.Databases))
+
+		controlflow.ParseServiceMethodCFG(service, service.GetConstructor())
+
+		serviceImplVar := entryBlock.GetFirstResult()
+		service.SetImplVariableWithType(serviceImplVar)
+		service.RegisterFields()
+
+		logger.Logger.Tracef("[APP] registered service node %s with %d service(s) and %d database(s)", service.Name, len(service.Services), len(service.Datastores))
 	}
 }

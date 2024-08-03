@@ -1,0 +1,43 @@
+NOTIFICATIONS_QUEUE:
+- type: Queue
+- kind: RabbitMQ
+- dependencies:
+  - posts_db
+- schema:
+  - fields:
+    - message: postnotification_simple.Message struct{ReqID string, PostID string, Timestamp string}
+    - Message: postnotification_simple.Message struct{ReqID string, PostID string, Timestamp string}
+  - unfolded_fields:
+    - Message.ReqID: string
+    - Message.PostID: string
+    - Message.Timestamp: string
+  - foreign_fields:
+    - Message:
+      - POSTS_DB.Post.PostID
+      - POSTS_DB.Post.ReqID
+    - Message.ReqID:
+      - POSTS_DB.Post.ReqID
+    - Message.PostID:
+      - POSTS_DB.Post.PostID
+
+POSTS_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- dependencies: []
+- schema:
+  - fields:
+    - document: postnotification_simple.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username "some username" string}, Creator postnotification_simple.Creator
+        struct{Username "some username" string}}
+    - Post: postnotification_simple.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username "some username" string}, Creator postnotification_simple.Creator
+        struct{Username "some username" string}}
+  - unfolded_fields:
+    - Post.ReqID: int64
+    - Post.PostID: int64
+    - Post.Text: string
+    - Post.Mentions: '[]string'
+    - Post.Timestamp: int64
+    - Post.Creator: postnotification_simple.Creator struct{Username "some username" string}
+    - Post.Creator.Username: '"some username" string'
+    - Post.Creator: postnotification_simple.Creator struct{Username "some username" string}
+    - Post.Creator.Username: '"some username" string'
+  - foreign_fields: []

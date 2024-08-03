@@ -40,6 +40,11 @@ func (t *ArrayType) GetBasicValue() string {
 func (t *ArrayType) AddValue(value string) {
 	logger.Logger.Fatalf("unable to add value for array type %s", t.String())
 }
+func (t *ArrayType) GetNestedFieldTypes(prefix string) ([]Type, []string) {
+	logger.Logger.Warnf("[TYPES ARRAY] attempted to get nested fields and variables: %s", t.String())
+	return nil, nil
+}
+
 
 // -------------
 // Array Methods

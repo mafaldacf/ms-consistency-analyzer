@@ -205,7 +205,7 @@ func (vinfo *VariableInfo) String() string {
 func (vinfo *VariableInfo) LongString() string {
 	if vinfo.Type != nil {
 		if vinfo.Name != "" {
-			return fmt.Sprintf("%s %s", vinfo.Name, vinfo.Type.String())
+			return fmt.Sprintf("%s %s", vinfo.Name, vinfo.Type.LongString())
 		}
 		return vinfo.Type.LongString()
 	}

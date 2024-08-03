@@ -1,24 +1,25 @@
 (*paymentImpl).Authorise(ctx context.Context, amount float32):
   block 0 (Body):
-  - '[-1] (inline) (BasicVariable BasicType) declineOverAmount float32'
+  - '[-1] (inline) (BasicVariable BasicType) 50 float32'
+  - '[0] (inline) (FieldVariable FieldType) declineOverAmount 50 float32'
   - '[0] (inline) (StructVariable UserType) payment.paymentImpl struct{declineOverAmount
-    float32}'
+    50 float32}'
   - '[-1] (PointerVariable PointerType) s (*payment.paymentImpl struct{declineOverAmount
-    float32})'
-  - '[17] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
-  - '[22] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
-  - '[22] (InterfaceVariable UserType) ctx context.Context'
+    50 float32})'
+  - '[35] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
+  - '[40] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
+  - '[40] (InterfaceVariable UserType) ctx context.Context'
   - |-
-    [27] (inline) (Reference BasicType) ref <amount 10 float32> @ OrderService -->
+    [45] (inline) (Reference BasicType) ref <amount 10 float32> @ OrderService -->
        w-tainted 1x: write(order_db.Order.Total)
   - '[-1] (BasicVariable BasicType) amount float32'
+  - '[0] (inline) (BasicVariable BasicType) false bool'
+  - '[0] (inline) (FieldVariable FieldType) Authorised false bool'
   - '[0] (inline) (BasicVariable BasicType) "Payment declined: amount exceeds" string'
   - '[0] (inline) (FieldVariable FieldType) Message "Payment declined: amount exceeds"
     string'
-  - '[0] (inline) (BasicVariable BasicType) false bool'
-  - '[0] (inline) (FieldVariable FieldType) Authorised false bool'
   - '[-1] (StructVariable UserType) authorization payment.Authorisation struct{Authorised
-    bool, Message string}'
+    false bool, Message "Payment declined: amount exceeds" string}'
 
 .NewPaymentService(ctx context.Context, declineOverAmount string):
   block 0 (Body):

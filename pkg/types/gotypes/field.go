@@ -77,19 +77,10 @@ func (t *FieldType) AddValue(value string) {
 	t.WrappedType.AddValue(value)
 }
 func (t *FieldType) GetNestedFieldTypes(prefix string) ([]Type, []string) {
-	if t.WrappedType == nil {
-		logger.Logger.Fatalf("[TYPES FIELD] unexpected nil underlying type for Field Type %s", t.FieldName)
-	}
-
-	/* if tag := t.GetTagJSON(); tag != "" {
-		prefix = prefix + "." + tag
-	} else {
-		prefix = prefix + "." + t.FieldName
-	} */
 	prefix = prefix + "." + t.FieldName
 	nestedTypes := []Type{t}
 	nestedNames := []string{prefix}
-	nestedFieldTypes, nestedFieldNames := t.WrappedType.GetNestedFieldTypes(prefix)
+	nestedFieldTypes, nestedFieldNames := t.GetWrappedType().GetNestedFieldTypes(prefix)
 	nestedTypes = append(nestedTypes, nestedFieldTypes...)
 	nestedNames = append(nestedNames, nestedFieldNames...)
 	return nestedTypes, nestedNames

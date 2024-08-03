@@ -17,7 +17,7 @@ func (v *AddressVariable) String() string {
 }
 
 func (v *AddressVariable) LongString() string {
-	return v.VariableInfo.String() + " = " + "*" + v.AddressOf.LongString()
+	return v.VariableInfo.String() + " = " + "*" + v.GetAddressOf().LongString()
 }
 
 func (v *AddressVariable) GetId() int64 {
@@ -25,11 +25,22 @@ func (v *AddressVariable) GetId() int64 {
 }
 
 func (v *AddressVariable) GetType() gotypes.Type {
+	if v.VariableInfo.GetType() == nil {
+		logger.Logger.Fatalf("[VARS ADDRESS] unexpected nil type for address variable: %s", v.String())
+	}
 	return v.VariableInfo.GetType()
 }
 
 func (v *AddressVariable) GetVariableInfo() *VariableInfo {
 	return v.VariableInfo
+}
+
+func (v *AddressVariable) GetAddressOf() Variable {
+	logger.Logger.Debugf("[VARS ADDRESS] getting addressOf variable for pointer: %s", v.String())
+	if v.AddressOf == nil {
+		logger.Logger.Fatalf("[VARS ADDRESS] unexpected nil address to variable in address variable (%s)", v.String())
+	}
+	return v.AddressOf
 }
 
 func (v *AddressVariable) GetDependencies() []Variable {
@@ -43,10 +54,6 @@ func (v *AddressVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	}
 	deps = append(deps, v.AddressOf.GetNestedDependencies(nearestFields)...)
 	return deps
-}
-
-func (v *AddressVariable) GetAddressOf() Variable {
-	return v.AddressOf
 }
 
 func (v *AddressVariable) AddReferenceWithID(target Variable, creator string) {

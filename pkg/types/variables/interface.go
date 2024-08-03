@@ -24,6 +24,9 @@ func (v *InterfaceVariable) GetId() int64 {
 }
 
 func (v *InterfaceVariable) GetType() gotypes.Type {
+	if v.VariableInfo.GetType() == nil {
+		logger.Logger.Fatalf("[VARS ADDRESS] unexpected nil type for interface variable: %s", v.String())
+	}
 	return v.VariableInfo.GetType()
 }
 

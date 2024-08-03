@@ -1,0 +1,25 @@
+NotifyService:
+- fields:
+    notificationsQueue: Queue
+    num_workers: int
+    storageService: StorageService
+- services:
+    StorageService: postnotification_simple.StorageService
+- datastores:
+    notifications_queue: notifications_queue RabbitMQ (Queue)
+
+StorageService:
+- fields:
+    postsDb: NoSQLDatabase
+- services: {}
+- datastores:
+    posts_db: posts_db MongoDB (NoSQLDatabase)
+
+UploadService:
+- fields:
+    notificationsQueue: Queue
+    storageService: StorageService
+- services:
+    StorageService: postnotification_simple.StorageService
+- datastores:
+    notifications_queue: notifications_queue RabbitMQ (Queue)

@@ -1,6 +1,10 @@
 package gotypes
 
-import "fmt"
+import (
+	"fmt"
+
+	"analyzer/pkg/logger"
+)
 
 type AddressType struct {
 	Type      `json:"-"`
@@ -32,6 +36,16 @@ func (t *AddressType) GetBasicValue() string {
 }
 func (t *AddressType) AddValue(value string) {
 	t.AddressOf.AddValue(value)
+}
+func (t *AddressType) GetAddressOf() Type {
+	return t.AddressOf
+}
+func (t *AddressType) GetPointerTo() Type {
+	logger.Logger.Debugf("[TYPES ADDRESS] getting addressOf type for address: %s", t.String())
+	if t.AddressOf == nil {
+		logger.Logger.Fatalf("[TYPES ADDRESS] unexpected nil address to type in address type (%s)", t.String())
+	}
+	return t.AddressOf
 }
 
 // ---------------

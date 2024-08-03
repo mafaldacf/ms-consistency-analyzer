@@ -17,6 +17,7 @@ import (
 )
 
 func ParseServiceMethodCFG(service *service.Service, method *types.ParsedMethod) {
+	logger.Logger.Debugf("[CFG] [%s] parsing service method cfg for (%s)", service.GetName(), method.String())
 	if method.IsParsed() {
 		logger.Logger.Warnf("[CFG] [%s] ignoring parsing for already parsed method (%s)", service.GetName(), method.String())
 		return
@@ -47,7 +48,7 @@ func visitBasicBlock(service *service.Service, method *types.ParsedMethod, block
 func getAssignmentRightVariables(service *service.Service, method *types.ParsedMethod, block *types.Block, assignStmt *ast.AssignStmt) []variables.Variable {
 	var rvariables []variables.Variable
 	for _, rvalue := range assignStmt.Rhs {
-		variable, _ := lookupVariableFromAstExpr(service, method, block, rvalue, true)
+		variable, _ := lookupVariableFromAstExpr(service, method, block, rvalue, nil, true)
 		if tupleVariable, ok := variable.(*variables.TupleVariable); ok {
 			rvariables = append(rvariables, tupleVariable.Variables...)
 		} else {
@@ -58,11 +59,11 @@ func getAssignmentRightVariables(service *service.Service, method *types.ParsedM
 }
 
 func assignLeftValues(service *service.Service, method *types.ParsedMethod, block *types.Block, assignStmt *ast.AssignStmt) {
-	logger.Logger.Debugf("[CFG ASSIGN LEFT] [%s] visiting stmt (%s): %v", service.GetName(), utils.GetType(assignStmt), assignStmt)
+	logger.Logger.Debugf("[CFG - ASSIGN LEFT] [%s] visiting stmt (%s): %v", service.GetName(), utils.GetType(assignStmt), assignStmt)
 	rvariables := getAssignmentRightVariables(service, method, block, assignStmt)
 	for i, rvariable := range rvariables {
 		lvalue := assignStmt.Lhs[i]
-		logger.Logger.Debugf("[CFG ASSIGN LEFT] [%s] got rvariable type (%s) for lvalue type (%s): %v", service.GetName(), utils.GetType(rvariable), utils.GetType(lvalue), rvariable.String())
+		logger.Logger.Debugf("[CFG - ASSIGN LEFT] [%s] assigning left values: \n\t\t\t\t\t\t - (lvalue) (%s) %v \n\t\t\t\t\t\t - (rvalue) (%s) %s", service.GetName(), utils.GetType(lvalue), lvalue, variables.VariableTypeName(rvariable), rvariable.LongString())
 		switch e := lvalue.(type) {
 		case *ast.Ident:
 			if assignStmt.Tok == token.DEFINE || assignStmt.Tok == token.ASSIGN { // := OR =
@@ -87,46 +88,46 @@ func assignLeftValues(service *service.Service, method *types.ParsedMethod, bloc
 						logger.Logger.Fatalf("[BLOCK (%d)] HERE FOR QUERY (%s): %s", block.Block.Index, utils.GetType(rvariable), rvariable.LongString())
 					} */
 				} else {
-					logger.Logger.Warnf("[CFG] FIX ME!!!! WE SHOULD SEARCH FOR THE LEFT VARIABLE THAT ALREADY EXISTS IN THE BLOCK")
+					logger.Logger.Warnf("[CFG - ASSIGN LEFT] FIX ME!!!! WE SHOULD SEARCH FOR THE LEFT VARIABLE THAT ALREADY EXISTS IN THE BLOCK")
 					lvariable := rvariable.Copy(true)
 					lvariable.GetVariableInfo().SetName(e.Name)
 					lvariable.GetVariableInfo().SetUnassigned()
 					block.AddVariable(lvariable)
 					if e.Name == "workerMessage" {
-						logger.Logger.Fatal("2 HERE!")
+						logger.Logger.Fatal("[CFG - ASSIGN LEFT] 2 HERE!")
 					}
 				}
 			} else if assignStmt.Tok == token.ADD_ASSIGN {
 				lvariable := block.GetLastestVariable(e.Name)
 				lvariable.GetType().AddValue(rvariable.GetType().GetBasicValue())
 			} else {
-				logger.Logger.Fatalf("[CFG ASSIGN LEFT] [%s] unexpected token (%v) for assignment: %v", service.GetName(), assignStmt.Tok, assignStmt)
+				logger.Logger.Fatalf("[CFG - ASSIGN LEFT] [%s] unexpected token (%v) for assignment: %v", service.GetName(), assignStmt.Tok, assignStmt)
 			}
 		case *ast.SelectorExpr:
-			lvariable, _ := lookupVariableFromAstExpr(service, method, block, e, true)
+			lvariable, _ := lookupVariableFromAstExpr(service, method, block, e, nil, true)
 			switch ee := lvariable.(type) {
 			case *variables.FieldVariable:
 				lvariable.AssignVariable(rvariable)
 			default:
-				logger.Logger.Fatalf("[CFG ASSIGN LEFT] [%s] unsupported left variable type (%s): %v", service.GetName(), utils.GetType(ee), lvariable.String())
+				logger.Logger.Fatalf("[CFG - ASSIGN LEFT] [%s] unsupported left variable type (%s): %v", service.GetName(), utils.GetType(ee), lvariable.String())
 			}
 		case *ast.IndexExpr: // e.g. res[rt] = pc
-			lvariable, _ := lookupVariableFromAstExpr(service, method, block, e.X, true)
+			lvariable, _ := lookupVariableFromAstExpr(service, method, block, e.X, nil, true)
 			switch ee := lvariable.(type) {
 			case *variables.MapVariable:
-				idxVariable, _ := lookupVariableFromAstExpr(service, method, block, e.Index, true)
+				idxVariable, _ := lookupVariableFromAstExpr(service, method, block, e.Index, nil, true)
 				ee.AddKeyValue(idxVariable, rvariable)
 			default:
-				logger.Logger.Fatalf("[CFG ASSIGN LEFT] [%s] unsupported left variable type (%s): %v", service.GetName(), utils.GetType(ee), lvariable.String())
+				logger.Logger.Fatalf("[CFG - ASSIGN LEFT] [%s] unsupported left variable type (%s): %v", service.GetName(), utils.GetType(ee), lvariable.String())
 			}
 		default:
-			logger.Logger.Fatalf("[CFG ASSIGN LEFT] [%s] unexpected type (%s) for left value (%v) in assignment with token (%v): %v", method.Name, utils.GetType(lvalue), lvalue, assignStmt.Tok, assignStmt)
+			logger.Logger.Fatalf("[CFG - ASSIGN LEFT] [%s] unexpected type (%s) for left value (%v) in assignment with token (%v): %v", method.Name, utils.GetType(lvalue), lvalue, assignStmt.Tok, assignStmt)
 		}
 	}
 }
 
 func parseExpressions(service *service.Service, method *types.ParsedMethod, block *types.Block, node ast.Node) {
-	logger.Logger.Debugf("[CFG PARSER EXPR] (%s) visiting node (%v)", utils.GetType(node), node)
+	logger.Logger.Debugf("[CFG - PARSE EXPR] (%s) visiting node (%v)", utils.GetType(node), node)
 	switch e := node.(type) {
 	// ------------
 	// Go Routines
@@ -150,27 +151,27 @@ func parseExpressions(service *service.Service, method *types.ParsedMethod, bloc
 		// OR
 		// e.g. var str = []byte(...)
 
-		logger.Logger.Warnf("[CFG PARSER EXPR] parsing value spec with names = (%v) and values = (%v)", e.Names, e.Values)
+		logger.Logger.Warnf("[CFG - PARSE EXPR] parsing value spec with names = (%v) and values = (%v)", e.Names, e.Values)
 		// FIXME
 
 		var vars []variables.Variable
 		for i, v := range e.Values {
-			logger.Logger.Warnf("[CFG PARSER EXPR] (%d) COMPUTING VALUESPEC VALUE: %v", i, v)
+			logger.Logger.Warnf("[CFG - PARSE EXPR] (%d) COMPUTING VALUESPEC VALUE: %v", i, v)
 			variable := saveCalls(service, method, block, v)
 			vars = append(vars, variable)
-			logger.Logger.Warnf("[CFG PARSER EXPR] (%d) GOT TUPLE VAR: %s", i, variable.String())
+			logger.Logger.Warnf("[CFG - PARSE EXPR] (%d) GOT TUPLE VAR: %s", i, variable.String())
 		}
 		for i, ident := range e.Names {
 			// variable is being declared and assigned
 			if len(vars) > 0 && i < len(vars) {
 				assignedVariable := vars[i]
 				assignedVariable.GetVariableInfo().SetName(ident.Name)
-				logger.Logger.Warnf("[CFG PARSER EXPR] VARIABLE IS ASSIGNED: %s", assignedVariable.String())
+				logger.Logger.Warnf("[CFG - PARSE EXPR] VARIABLE IS ASSIGNED: %s", assignedVariable.String())
 				block.AddVariable(assignedVariable)
 			} else { // variable is being just declared
 				t := lookup.ComputeTypeForAstExpr(service.File, e.Type)
 				declaredVariable := lookup.CreateVariableFromType(ident.Name, t)
-				logger.Logger.Warnf("[CFG PARSER EXPR] VARIABLE IS DECLARED: %s", declaredVariable.String())
+				logger.Logger.Warnf("[CFG - PARSE EXPR] VARIABLE IS DECLARED: %s", declaredVariable.String())
 				block.AddVariable(declaredVariable)
 			}
 		}
@@ -186,7 +187,7 @@ func parseExpressions(service *service.Service, method *types.ParsedMethod, bloc
 		parseExpressions(service, method, block, e.X)
 	case *ast.CompositeLit:
 		// e.g. creating a structure where a field is obtained from a function call
-		logger.Logger.Debugf("[CFG EXPR] FFFOOOOUNNDDD COMPOSITE LITE %v", e.Elts)
+		logger.Logger.Debugf("----- FOUND COMPOSITE LITE!! %v", e.Elts)
 		for _, elt := range e.Elts {
 			parseExpressions(service, method, block, elt)
 		}
@@ -206,7 +207,7 @@ func parseExpressions(service *service.Service, method *types.ParsedMethod, bloc
 	// -----------------
 	case *ast.ExprStmt:
 		parseExpressions(service, method, block, e.X)
-	case *ast.UnaryExpr: // e.g. <-forever
+	case *ast.UnaryExpr: // e.g. <-forever, &cart
 		parseExpressions(service, method, block, e.X)
 	case *ast.BinaryExpr: // e.g. if err != nil
 		parseExpressions(service, method, block, e.X)
@@ -216,19 +217,27 @@ func parseExpressions(service *service.Service, method *types.ParsedMethod, bloc
 	// ----------------
 	case *ast.IncDecStmt: // e.g. decrement in loop
 		parseExpressions(service, method, block, e.X)
-	case *ast.ReturnStmt:
-		for _, r := range e.Results {
-			parseExpressions(service, method, block, r)
-		}
 	case *ast.DeferStmt:
 		parseExpressions(service, method, block, e.Call.Fun)
+	// ----------------
+	// Require Lookups
+	// ----------------
+	case *ast.Ident: // e.g. err in err != nil
+		lookupVariableFromAstExpr(service, method, block, e, nil, false)
+	case *ast.BasicLit: // e.g. integers (1), strings ("foo"), etc
+		lookupVariableFromAstExpr(service, method, block, e, nil, false)
+	case *ast.TypeAssertExpr:
+		lookupVariableFromAstExpr(service, method, block, e, nil, false)
+	case *ast.ReturnStmt:
+		for _, resultExpr := range e.Results {
+			v, _ := lookupVariableFromAstExpr(service, method, block, resultExpr, nil, false)
+			block.AddResult(v)
+		}
+
 	// ----------------
 	// Ignore Remaining
 	// ----------------
 	// following types can only happen within "loose" expressions with no assignments
-	case *ast.Ident: // e.g. err in err != nil
-	case *ast.TypeAssertExpr:
-	case *ast.BasicLit: // e.g. integers (1), strings ("foo"), etc
 	case *ast.IfStmt:
 
 	default:
@@ -271,12 +280,12 @@ func saveCalls(service *service.Service, method *types.ParsedMethod, block *type
 }
 
 func saveParsedFuncCallParams(service *service.Service, method *types.ParsedMethod, block *types.Block, parsedCall types.Call, args []ast.Expr) {
-	/* if parsedCall.GetName() == "StorePostNoSQL" {
-		logger.Logger.Debugf("(1) FOUND CALL TO SERVICE VAR %s", parsedCall.GetName())
-	} */
+	if parsedCall.GetName() == "StorePost" {
+		logger.Logger.Tracef("(1) FOUND CALL TO SERVICE VAR %s", parsedCall.GetName())
+	}
 	for i, arg := range args {
 		logger.Logger.Tracef("[CFG] inside save func call params")
-		param, _ := lookupVariableFromAstExpr(service, method, block, arg, false)
+		param, _ := lookupVariableFromAstExpr(service, method, block, arg, nil, false)
 
 		// upgrade variable with known type from function method
 		if _, ok := param.GetType().(*gotypes.GenericType); ok {
@@ -284,6 +293,10 @@ func saveParsedFuncCallParams(service *service.Service, method *types.ParsedMeth
 			logger.Logger.Warnf("[CFG] upgrading variable %s with new type %s", param.GetVariableInfo().Name, param.GetType().String())
 		}
 		parsedCall.AddParam(param)
+		logger.Logger.Tracef("ADDED PARAM: %s", param.LongString())
+	}
+	if parsedCall.GetName() == "StorePost" {
+		logger.Logger.Tracef("(1) FOUND CALL TO SERVICE VAR %s", parsedCall.GetName())
 	}
 }
 
@@ -291,7 +304,7 @@ func getFuncCallDeps(service *service.Service, method *types.ParsedMethod, block
 	var deps []variables.Variable
 	for _, expr := range callExpr.Args {
 		logger.Logger.Warnf("[CFG] [%s] searching for function call deps in expression %v", service.GetName(), expr)
-		if v, _ := lookupVariableFromAstExpr(service, method, block, expr, false); v != nil {
+		if v, _ := lookupVariableFromAstExpr(service, method, block, expr, nil, false); v != nil {
 			deps = append(deps, v)
 		}
 	}
@@ -299,10 +312,9 @@ func getFuncCallDeps(service *service.Service, method *types.ParsedMethod, block
 }
 
 func computeInternalFuncCallReturns(service *service.Service, callExpr *ast.CallExpr, call types.Call) *variables.TupleVariable {
-	tupleType := &gotypes.TupleType{}
 	tupleVar := &variables.TupleVariable{
 		VariableInfo: &variables.VariableInfo{
-			Type: tupleType,
+			Type: &gotypes.TupleType{},
 			Id:   variables.VARIABLE_INLINE_ID,
 		},
 	}
@@ -312,9 +324,8 @@ func computeInternalFuncCallReturns(service *service.Service, callExpr *ast.Call
 			signatureResults := lookup.LookupTypesForGoTypes(service.GetPackage(), signatureGoType.Results())
 			for _, t := range signatureResults.(*gotypes.TupleType).Types {
 				newVar := lookup.CreateVariableFromType("", t)
-				tupleVar.Variables = append(tupleVar.Variables, newVar)
+				tupleVar.AddVariableAndType(newVar)
 				newVar.GetVariableInfo().SetParent(newVar, tupleVar)
-				tupleType.Types = append(tupleType.Types, newVar.GetType())
 				call.AddReturn(newVar)
 			}
 		}
@@ -402,71 +413,65 @@ func parseCallToVariableInBlock(service *service.Service, method *types.ParsedMe
 
 	logger.Logger.Tracef("[CFG CALLS] (1) call to variable: %s", variable.LongString())
 	leftVariableTypeName := variable.GetType().GetName()
-	if pointerVar, ok := variable.(*variables.PointerVariable); ok {
-		//logger.Logger.Debugf("[CFG CALLS] (0) got pointer var (to %s): %s", utils.GetType(pointerVar.PointerTo.GetType()), pointerVar.String())
-		variable = pointerVar.PointerTo
-	}
+	variable = variables.UnwrapPointerVariable(variable)
+	logger.Logger.Debugf("START ITERATING for variable: %s", variable)
 	for i := 1; i < len(idents); i++ {
+		logger.Logger.Debugf("ITERATING (%d) for variable: %s", i, variable)
 		ident := idents[i]
-		if pointerVar, ok := variable.(*variables.PointerVariable); ok {
-			//logger.Logger.Debugf("[CFG CALLS] (1) got pointer var (to %s): %s", utils.GetType(pointerVar.PointerTo.GetType()), pointerVar.String())
-			variable = pointerVar.GetPointerTo()
-		}
+		variable = variables.UnwrapPointerVariable(variable)
 
-		if _, ok := variable.GetType().(*gotypes.UserType); ok {
-			if structVar, ok := variable.(*variables.StructVariable); ok {
-				fieldName := ident.Name
-				variable = structVar.GetFieldVariableIfExists(fieldName)
+		if structVar, ok := variable.(*variables.StructVariable); ok {
+			fieldName := ident.Name
+			variable = structVar.GetFieldVariableIfExists(fieldName)
 
-				if variable == nil {
-					fieldType := structVar.GetStructType().GetFieldTypeByNameIfExists(fieldName)
-					if fieldType != nil {
-						fieldVar := lookup.CreateVariableFromType(fieldName, fieldType)
-						structVar.AddFieldKeyVariable(fieldName, fieldVar)
-					} else {
-						methodName := ident.Name
-						pkgPath := structVar.GetStructType().GetMethodPackagePath(methodName)
+			if variable == nil {
+				fieldType := structVar.GetStructType().GetFieldTypeByNameIfExists(fieldName)
+				if fieldType != nil {
+					fieldVar := lookup.CreateVariableFromType(fieldName, fieldType)
+					structVar.AddFieldKeyVariable(fieldName, fieldVar)
+				} else {
+					methodName := ident.Name
+					pkgPath := structVar.GetStructType().GetMethodPackagePath(methodName)
 
-						var externalCallTupleVar *variables.TupleVariable
-						_, variable, externalCallTupleVar = saveCallToStructOrInterface(service, method, block, callExpr, leftVariableTypeName, methodName, pkgPath)
-						if externalCallTupleVar != nil {
-							return externalCallTupleVar
-						}
+					var externalCallTupleVar *variables.TupleVariable
+					_, variable, externalCallTupleVar = saveCallToStructOrInterface(service, method, block, callExpr, leftVariableTypeName, methodName, pkgPath)
+					if externalCallTupleVar != nil {
+						return externalCallTupleVar
 					}
 				}
-			} else if genericVar, ok := variable.(*variables.GenericVariable); ok {
-				logger.Logger.Warnf("[CFG CALLS] ignoring generic var %s", genericVar.LongString())
-				if deps := getFuncCallDeps(service, method, block, callExpr); deps != nil {
-					tupleVar := computeExternalFuncCallReturns(service, callExpr, deps)
-					return tupleVar
-				}
-				parsedCall := &types.ParsedInternalCall{
-					ParsedCall: types.ParsedCall{
-						Ast:     callExpr,
-						CallStr: identsStr,
-						Name:    funcIdent.Name,
-						Pos:     callExpr.Pos(),
-					},
-				}
-				tupleVar := computeInternalFuncCallReturns(service, callExpr, parsedCall)
-				return tupleVar
-			} else if interfaceVar, ok := variable.(*variables.InterfaceVariable); ok {
-				methodName := ident.Name
-				pkgPath := interfaceVar.GetInterfaceType().GetMethodPackagePath(methodName)
-
-				var externalCallTupleVar *variables.TupleVariable
-				_, variable, externalCallTupleVar = saveCallToStructOrInterface(service, method, block, callExpr, leftVariableTypeName, methodName, pkgPath)
-				if externalCallTupleVar != nil {
-					logger.Logger.Warnf("[CFG CALLS] EXTERNAL TUPLE VAR: %s (%s)", externalCallTupleVar.String(), utils.GetType(externalCallTupleVar.Variables[0]))
-					return externalCallTupleVar
-				}
-
-				logger.Logger.Fatalf("[CFG CALLS] call to interface variable (%s) for method (%s) in package path (%s)", interfaceVar.LongString(), methodName, pkgPath)
-				return nil
-			} else {
-				logger.Logger.Fatalf("[CFG CALLS] (5) call to variable (type = %s): %s", utils.GetType(variable), variable.LongString())
-				return nil
 			}
+		} else if genericVar, ok := variable.(*variables.GenericVariable); ok {
+			logger.Logger.Warnf("[CFG CALLS] ignoring generic var %s", genericVar.LongString())
+			if deps := getFuncCallDeps(service, method, block, callExpr); deps != nil {
+				tupleVar := computeExternalFuncCallReturns(service, callExpr, deps)
+				return tupleVar
+			}
+			parsedCall := &types.ParsedInternalCall{
+				ParsedCall: types.ParsedCall{
+					Ast:     callExpr,
+					CallStr: identsStr,
+					Name:    funcIdent.Name,
+					Pos:     callExpr.Pos(),
+				},
+			}
+			tupleVar := computeInternalFuncCallReturns(service, callExpr, parsedCall)
+			return tupleVar
+		} else if interfaceVar, ok := variable.(*variables.InterfaceVariable); ok {
+			methodName := ident.Name
+			pkgPath := interfaceVar.GetInterfaceType().GetMethodPackagePath(methodName)
+
+			var externalCallTupleVar *variables.TupleVariable
+			_, variable, externalCallTupleVar = saveCallToStructOrInterface(service, method, block, callExpr, leftVariableTypeName, methodName, pkgPath)
+			if externalCallTupleVar != nil {
+				logger.Logger.Warnf("[CFG CALLS] EXTERNAL TUPLE VAR: %s (%s)", externalCallTupleVar.String(), utils.GetType(externalCallTupleVar.Variables[0]))
+				return externalCallTupleVar
+			}
+
+			logger.Logger.Fatalf("[CFG CALLS] call to interface variable (%s) for method (%s) in package path (%s)", interfaceVar.LongString(), methodName, pkgPath)
+			return nil
+		} else if fieldVariable, ok := variable.(*variables.FieldVariable); ok {
+			variable = fieldVariable.GetWrappedVariable()
+			logger.Logger.Warnf("GOT VAR: %s", variable.String())
 		} else if _, ok := variable.(*variables.ServiceVariable); ok {
 			break
 		} else if _, ok := variable.(*blueprint.BlueprintBackendVariable); ok {
@@ -507,6 +512,7 @@ func parseCallToVariableInBlock(service *service.Service, method *types.ParsedMe
 		return tupleVar
 	}
 	if blueprintBackendVar, ok := variable.(*blueprint.BlueprintBackendVariable); ok {
+		logger.Logger.Warnf("GOT BLUEPRINT BACKEND VAR: %s", blueprintBackendVar.String())
 		blueprintBackendType := blueprintBackendVar.GetBlueprintBackendType()
 		blueprintMethod := blueprintBackendType.GetMethod(funcIdent.Name)
 		parsedCall := &types.ParsedDatabaseCall{
@@ -518,10 +524,10 @@ func parseCallToVariableInBlock(service *service.Service, method *types.ParsedMe
 				Method:  blueprintMethod,
 			},
 			CallerTypeName: &gotypes.ServiceType{Name: service.Name, PackagePath: service.GetPackageName()},
-			DbInstance:     blueprintBackendType.DbInstance,
+			DbInstance:     blueprintBackendType.DatastoreInstance,
 		}
 
-		if blueprintBackendType.DbInstance == nil {
+		if blueprintBackendType.DatastoreInstance == nil {
 			logger.Logger.Fatalf("[CFG CALLS] unexpected nil db instance for backend type (%s)", blueprintBackendType.String())
 		}
 
@@ -534,9 +540,9 @@ func parseCallToVariableInBlock(service *service.Service, method *types.ParsedMe
 				databaseName := parsedCall.Params[1].GetType().GetBasicValue()
 				collectionName := parsedCall.Params[2].GetType().GetBasicValue()
 
-				blueprintMethod.SetNoSQLDatabaseCollection(databaseName, collectionName, blueprintBackendType.DbInstance)
+				blueprintMethod.SetNoSQLDatabaseCollection(databaseName, collectionName, blueprintBackendType.DatastoreInstance)
 				collectionType := tupleVar.GetVariableAt(index).(*blueprint.BlueprintBackendVariable).GetBlueprintBackendType()
-				collectionType.SetNoSQLDatabaseCollection(databaseName, collectionName, blueprintBackendType.DbInstance)
+				collectionType.SetNoSQLDatabaseCollection(databaseName, collectionName, blueprintBackendType.DatastoreInstance)
 				logger.Logger.Infof("[CFG CALLS] found NoSQLDatabase call (%s) to instance (%s) -- returned tuple: %s", parsedCall.Name, parsedCall.DbInstance.String(), tupleVar.String())
 				return tupleVar
 			} else {
@@ -548,9 +554,9 @@ func parseCallToVariableInBlock(service *service.Service, method *types.ParsedMe
 			collectionName := blueprintBackendType.NoSQLComponent.Collection
 
 			if ok, index := blueprintMethod.ReturnsNoSQLCursor(); ok {
-				blueprintMethod.SetNoSQLDatabaseCursor(databaseName, collectionName, blueprintBackendType.DbInstance)
+				fmt.Printf("[%s] HERE: %s (DATABASE = %s, COLLECTION = %s)", service.GetName(), blueprintMethod.String(), databaseName, collectionName)
 				collectionType := tupleVar.GetVariableAt(index).(*blueprint.BlueprintBackendVariable).GetBlueprintBackendType()
-				collectionType.SetNoSQLDatabaseCursor(databaseName, collectionName, blueprintBackendType.DbInstance)
+				collectionType.SetNoSQLDatabaseCursor(databaseName, collectionName, blueprintBackendType.DatastoreInstance)
 
 				method.Calls = append(method.Calls, parsedCall)
 				logger.Logger.Infof("[CFG CALLS] found (NoSQLDatabase.NoSQLCollection -> NoSQLCursor) call (%s) to instance (%s) -- returned tuple: %s", parsedCall.Name, parsedCall.DbInstance.String(), tupleVar.String())
@@ -761,7 +767,7 @@ func parseAndSaveCall(service *service.Service, method *types.ParsedMethod, bloc
 
 	var varsStr = ""
 	for i, expr := range callExpr.Args {
-		v, _ := lookupVariableFromAstExpr(service, method, block, expr, false)
+		v, _ := lookupVariableFromAstExpr(service, method, block, expr, nil, false)
 		varsStr += fmt.Sprintf("\t\t\t\t\t\t\t - argument %d: (%s)\n", i, v.String())
 	}
 
@@ -813,14 +819,6 @@ func parseAndSaveCall(service *service.Service, method *types.ParsedMethod, bloc
 			return tupleVar
 		}
 	}
-
-	// can be a type declaration e.g. []byte()
-	//FIXME
-	/* v, t := lookupVariableFromAstExpr(service, method, block, callExpr.Fun, false)
-	if v != nil && t != nil {
-		logger.Logger.Warnf("FIXME: ADD CONTENT TO VAR!!!!")
-		return v
-	} */
 
 	logger.Logger.Fatalf("[TODO] unexpected call: %v (call in package = %t, call pkg = %s) -- idents types = %v", callExpr.Fun, callInPackage, callPkg, idents)
 	return nil

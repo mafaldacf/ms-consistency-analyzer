@@ -1,5 +1,7 @@
 (*FrontendServiceImpl).Frontend(ctx context.Context):
-- (*foo.FooServiceImpl).Foo(ctx context.Context, text string) (string, error)
-- (*bar.BarServiceImpl).Bar(ctx context.Context, text string) (string, error)
+- SERVICE CALL @ Foo >> (*foo.FooServiceImpl).Foo(ctx context.Context, text string)
+  (string, error)
+- SERVICE CALL @ Bar >> (*bar.BarServiceImpl).Bar(ctx context.Context, text string)
+  (string, error)
 
 .NewFrontendServiceImpl(ctx context.Context, fooService foo.FooService, barService bar.BarService): []

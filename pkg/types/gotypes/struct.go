@@ -153,6 +153,14 @@ func (t *StructType) GetFieldTypeAt(index int) *FieldType {
 	return t.FieldTypes[index]
 }
 
+func (t *StructType) UpdateFieldAtIfExists(index int, fieldType *FieldType) {
+	if index > len(t.FieldTypes)-1 {
+		return
+	}
+	logger.Logger.Warnf("[TYPES STRUCT] updated field type at index %d for struct type (%s): %s", index, t.String(), fieldType.LongString())
+	t.FieldTypes[index] = fieldType
+}
+
 func (t *StructType) AddFieldType(field *FieldType) {
 	t.FieldTypes = append(t.FieldTypes, field)
 }
