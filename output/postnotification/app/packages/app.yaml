@@ -27,7 +27,8 @@ common:
 - imported constants: []
 - imported variables: []
 - declared types: []
-- declared variables: []
+- declared variables:
+  - HelloWorld_Variable string
 - declared constants:
   - HELLO_WORLD_CONST "HELLO WORLD!" untyped string
 - service types: []

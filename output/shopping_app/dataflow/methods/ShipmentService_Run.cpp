@@ -1,15 +1,19 @@
-[] (-1) (PointerVariable PointerType) n (*shopping_app.ShipmentServiceImpl struct{order_service shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers 4 int}) 
-[_] (0) (StructVariable UserType) shopping_app.ShipmentServiceImpl struct{order_service shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers 4 int} 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) shipment_queue Queue 
-[__] (-1) (BasicVariable BasicType) num_workers 4 int 
-[__] (-1) (ServiceVariable ServiceType) order_service shopping_app.OrderService 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase 
+[] (PointerVariable PointerType) n (*shopping_app.ShipmentServiceImpl struct{order_service shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers 4 int}) 
+[_] (StructVariable UserType) shopping_app.ShipmentServiceImpl struct{order_service shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers 4 int} 
+[__] (FieldVariable FieldType) num_workers 4 int 
+[___] (BasicVariable BasicType) 4 int 
+[__] (FieldVariable FieldType) order_service shopping_app.OrderService 
+[___] (ServiceVariable ServiceType) order_service shopping_app.OrderService 
+[__] (FieldVariable FieldType) shipment_db NoSQLDatabase 
+[___] (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase 
+[__] (FieldVariable FieldType) shipment_queue Queue 
+[___] (BlueprintBackendVariable BlueprintBackendType) shipment_queue Queue 
 
-[] (-1) (InterfaceVariable UserType) ctx context.Context 
+[] (InterfaceVariable UserType) ctx context.Context 
 
-[] (-1) (StructVariable UserType) wg sync.WaitGroup 
+[] (StructVariable UserType) wg sync.WaitGroup 
 
-[] (-1) (BasicVariable BasicType) i 1 int 
+[] (BasicVariable BasicType) i 1 int 
 
-[] (-1) (InterfaceVariable UserType) err .error 
+[] (InterfaceVariable UserType) err .error 
 

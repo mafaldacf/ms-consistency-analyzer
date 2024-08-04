@@ -1,9 +1,9 @@
-[] (-1) (InterfaceVariable UserType) ctx context.Context 
+[] (InterfaceVariable UserType) ctx context.Context 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) postsDb NoSQLDatabase 
+[] (BlueprintBackendVariable BlueprintBackendType) postsDb NoSQLDatabase 
 
-[] (-1) (PointerVariable PointerType) s (*postnotification_simple.StorageServiceImpl struct{postsDb NoSQLDatabase}) 
-[_] (0) (StructVariable UserType) postnotification_simple.StorageServiceImpl struct{postsDb NoSQLDatabase} 
-[__] (0) (FieldVariable FieldType) postsDb NoSQLDatabase 
-[___] (-1) (BlueprintBackendVariable BlueprintBackendType) postsDb NoSQLDatabase 
+[] (PointerVariable PointerType) s (*postnotification_simple.StorageServiceImpl struct{postsDb NoSQLDatabase}) 
+[_] (StructVariable UserType) postnotification_simple.StorageServiceImpl struct{postsDb NoSQLDatabase} 
+[__] (FieldVariable FieldType) postsDb NoSQLDatabase 
+[___] (BlueprintBackendVariable BlueprintBackendType) postsDb NoSQLDatabase 
 

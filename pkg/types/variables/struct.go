@@ -2,6 +2,7 @@ package variables
 
 import (
 	"fmt"
+	"slices"
 
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
@@ -66,13 +67,13 @@ func (v *StructVariable) attachFieldVariable(fieldVariable *FieldVariable) {
 }
 
 func (v *StructVariable) AddFieldVariable(fieldVariable *FieldVariable) {
-	logger.Logger.Warnf("[VARS STRUCT] adding field named (%s) to struct variable (%s): \n\t\t\t\t\t - (%s) %s", fieldVariable.GetFieldType().GetFieldName(), v.String(), VariableTypeName(fieldVariable.WrappedVariable), fieldVariable.WrappedVariable.LongString())
+	logger.Logger.Warnf("[VARS STRUCT] adding field named (%s) to struct variable (%s): (%s) %s", fieldVariable.GetFieldType().GetFieldName(), v.String(), VariableTypeName(fieldVariable.WrappedVariable), fieldVariable.WrappedVariable.String())
 	if fieldVariable.GetFieldType().GetFieldName() != "" {
 		v.Fields[fieldVariable.GetFieldType().GetFieldName()] = fieldVariable
 	} else {
 		logger.Logger.Warnf("[VARS STRUCT] FIXME! SOMETIMES WE CAN HAVE UNKEYED FIELDS ")
 	}
-	
+
 	v.Fields[fieldVariable.GetFieldType().GetFieldName()] = fieldVariable
 	v.FieldsLst = append(v.FieldsLst, fieldVariable)
 	v.attachFieldVariable(fieldVariable)
@@ -109,12 +110,22 @@ func (v *StructVariable) GetVariableInfo() *VariableInfo {
 	return v.VariableInfo
 }
 
-func (v *StructVariable) GetDependencies() []Variable {
-	var deps []Variable
-	for _, field := range v.Fields {
-		deps = append(deps, field)
+func (v *StructVariable) GetOrderedFields() []Variable {
+	var orderedKeys []string
+	for k := range v.Fields {
+		orderedKeys = append(orderedKeys, k)
 	}
-	return deps
+	slices.Sort(orderedKeys)
+
+	var orderedFields []Variable
+	for _, k := range orderedKeys {
+		orderedFields = append(orderedFields, v.Fields[k])
+	}
+	return orderedFields
+}
+
+func (v *StructVariable) GetDependencies() []Variable {
+	return v.GetOrderedFields()
 }
 
 func (v *StructVariable) GetNestedDependencies(nearestFields bool) []Variable {
@@ -122,7 +133,7 @@ func (v *StructVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	if v.GetVariableInfo().HasReferences() {
 		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
 	}
-	for _, elem := range v.Fields {
+	for _, elem := range v.GetOrderedFields() {
 		deps = append(deps, elem.GetNestedDependencies(nearestFields)...)
 	}
 	return deps

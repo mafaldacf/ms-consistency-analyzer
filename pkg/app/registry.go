@@ -43,7 +43,7 @@ func (app *App) createServiceNodes(servicesInfo []*frameworks.ServiceInfo) {
 			File:                file,
 			Fields:              make(map[string]types.Field),
 			Services:            make(map[string]*service.Service),
-			Datastores:           make(map[string]datastores.DatabaseInstance),
+			Datastores:          make(map[string]datastores.DatabaseInstance),
 			ExposedMethods:      make(map[string]*types.ParsedMethod),
 			QueueHandlerMethods: make(map[string]*types.ParsedMethod),
 			InternalMethods:     make(map[string]*types.ParsedMethod),
@@ -79,7 +79,7 @@ func (app *App) matchServiceEdges() {
 
 func (app *App) buildServiceInfo() {
 	for _, node := range app.Services {
-		lookup.ParseImports(node.File)
+		lookup.ParseFileImports(node.File)
 		node.RegisterImplName()
 		node.RegisterConstructor()
 	}

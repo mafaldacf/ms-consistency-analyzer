@@ -24,6 +24,7 @@ type Package struct {
 	Module      string
 	PackagePath string
 	Files       []*File
+	Block       *Block
 
 	// app packages are fully parsed
 	// blueprint packages only contain declared types and package metadata (above)
@@ -187,9 +188,16 @@ func ImportedTypeKey(packagePath string, typeName string) string {
 
 func (p *Package) AddConstant(v variables.Variable) {
 	if _, exists := p.DeclaredConstants[v.GetVariableInfo().GetName()]; exists {
-		logger.Logger.Fatalf("package %s already constains declared type %s", v.GetVariableInfo().GetName(), v.String())
+		logger.Logger.Fatalf("package %s already constains declared constant %s", v.GetVariableInfo().GetName(), v.String())
 	}
 	p.DeclaredConstants[v.GetVariableInfo().GetName()] = v
+}
+
+func (p *Package) AddVariable(v variables.Variable) {
+	if _, exists := p.DeclaredVariables[v.GetVariableInfo().GetName()]; exists {
+		logger.Logger.Fatalf("package %s already constains declared variable %s", v.GetVariableInfo().GetName(), v.String())
+	}
+	p.DeclaredVariables[v.GetVariableInfo().GetName()] = v
 }
 
 func (p *Package) AddDeclaredType(e gotypes.Type) {
@@ -213,6 +221,14 @@ func (p *Package) AddImportedConstant(v variables.Variable, packagePath string) 
 		logger.Logger.Fatalf("package %s already constains imported constant %s", v.GetVariableInfo().GetName(), v.String())
 	}
 	p.ImportedConstants[key] = v
+}
+
+func (p *Package) AddImportedVariable(v variables.Variable, packagePath string) {
+	key := ImportedTypeKey(packagePath, v.GetVariableInfo().GetName())
+	if _, exists := p.ImportedVariables[key]; exists {
+		logger.Logger.Fatalf("package %s already constains imported variable %s", v.GetVariableInfo().GetName(), v.String())
+	}
+	p.ImportedVariables[key] = v
 }
 
 func (p *Package) AddServiceType(e *gotypes.ServiceType) {

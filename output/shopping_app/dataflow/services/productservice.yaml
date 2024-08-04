@@ -1,115 +1,107 @@
 ? (*ProductServiceImpl).CreateProduct(ctx context.Context, productID string, description string, pricePerUnit int, category string)
 :
  block 0 (Body):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) product_db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) shopping_app.ProductServiceImpl struct{product_db
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) s (*shopping_app.ProductServiceImpl struct{product_db
-    NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BasicVariable BasicType) productID string'
-  - '[-1] (BasicVariable BasicType) description string'
-  - '[-1] (BasicVariable BasicType) pricePerUnit int'
-  - '[-1] (BasicVariable BasicType) category string'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
-    {database = product_database, collection = product_collection}'
-  - '[-1] (InterfaceVariable UserType) _ .error'
-  - '[0] (inline) (FieldVariable FieldType) Category string'
-  - '[0] (inline) (FieldVariable FieldType) PricePerUnit int'
-  - '[0] (inline) (FieldVariable FieldType) Description string'
-  - '[0] (inline) (FieldVariable FieldType) ProductID string'
-  - '[-1] (StructVariable UserType) product shopping_app.Product struct{ProductID
-    string, Description string, PricePerUnit int, Category string}'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) product_db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) product_db NoSQLDatabase
+  - (inline) (StructVariable UserType) shopping_app.ProductServiceImpl struct{product_db NoSQLDatabase}
+  - (PointerVariable PointerType) s (*shopping_app.ProductServiceImpl struct{product_db NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BasicVariable BasicType) productID string
+  - (BasicVariable BasicType) description string
+  - (BasicVariable BasicType) pricePerUnit int
+  - (BasicVariable BasicType) category string
+  - (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = product_database, collection = product_collection}
+  - (InterfaceVariable UserType) _ .error
+  - (inline) (FieldVariable FieldType) ProductID string
+  - (inline) (FieldVariable FieldType) PricePerUnit int
+  - (inline) (FieldVariable FieldType) Description string
+  - (inline) (FieldVariable FieldType) Category string
+  - (StructVariable UserType) product shopping_app.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
+  - (InterfaceVariable UserType) err .error
 
 (*ProductServiceImpl).GetProduct(ctx context.Context, productID string):
   block 0 (Body):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) product_db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) shopping_app.ProductServiceImpl struct{product_db
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) s (*shopping_app.ProductServiceImpl struct{product_db
-    NoSQLDatabase})'
-  - '[6] (inline) (Reference UserType) ref <ctx context.Context> @ Frontend'
-  - '[12] (inline) (Reference UserType) ref <ctx context.Context> @ OrderService'
-  - '[1] (inline) (Reference UserType) ref <ctx context.Context> @ Frontend'
-  - '[4] (inline) (Reference UserType) ref <ctx context.Context> @ CartService'
-  - '[12] (InterfaceVariable UserType) ctx context.Context'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) product_db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) product_db NoSQLDatabase
+  - (inline) (StructVariable UserType) shopping_app.ProductServiceImpl struct{product_db NoSQLDatabase}
+  - (PointerVariable PointerType) s (*shopping_app.ProductServiceImpl struct{product_db NoSQLDatabase})
+  - (inline) (Reference UserType) ref <ctx context.Context> @ Frontend
+  - (inline) (Reference UserType) ref <ctx context.Context> @ OrderService
+  - (inline) (Reference UserType) ref <ctx context.Context> @ Frontend
+  - (inline) (Reference UserType) ref <ctx context.Context> @ CartService
+  - (InterfaceVariable UserType) ctx context.Context
   - |-
-    [9] (inline) (Reference BasicType) ref <productID string> @ Frontend -->
+    (inline) (Reference BasicType) ref <productID string> @ Frontend -->
        w-tainted 3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
   - |-
-    [13] (inline) (Reference BasicType) ref <productID string> @ OrderService -->
+    (inline) (Reference BasicType) ref <productID string> @ OrderService -->
        w-tainted 3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
-  - '[3] (inline) (Reference BasicType) ref <productID string> @ Frontend'
-  - '[5] (inline) (Reference BasicType) ref <productID string> @ CartService'
-  - '[13] (BasicVariable BasicType) productID string'
-  - '[-1] (StructVariable UserType) product shopping_app.Product struct{ProductID
-    string, Description string, PricePerUnit int, Category string}'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
-    {database = product_database, collection = product_collection}'
-  - '[-1] (InterfaceVariable UserType) _ .error'
-  - '[0] (inline) (FieldVariable FieldType) Value string'
-  - '[0] (inline) (BasicVariable BasicType) "productID" string'
-  - '[0] (inline) (FieldVariable FieldType) Key "productID" string'
-  - '[0] (inline) (StructVariable StructType) struct{Key "productID" string, Value
-    string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database
-    = product_database, collection = product_collection}'
-  - '[-1] (InterfaceVariable UserType) _ .error'
-  - '[-1] (BasicVariable BasicType) _ bool'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (inline) (Reference BasicType) ref <productID string> @ Frontend
+  - (inline) (Reference BasicType) ref <productID string> @ CartService
+  - (BasicVariable BasicType) productID string
+  - (StructVariable UserType) product shopping_app.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
+  - (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = product_database, collection = product_collection}
+  - (InterfaceVariable UserType) _ .error
+  - (inline) (FieldVariable FieldType) Value string
+  - (inline) (BasicVariable BasicType) "productID" string
+  - (inline) (FieldVariable FieldType) Key "productID" string
+  - (inline) (StructVariable StructType) struct{Key "productID" string, Value string}
+  - (SliceVariable UserType) query primitive.D
+  - (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database = product_database, collection = product_collection}
+  - (InterfaceVariable UserType) _ .error
+  - (BasicVariable BasicType) _ bool
+  - (InterfaceVariable UserType) err .error
 
 .NewAnalyticsServiceImpl(ctx context.Context, analytics_db NoSQLDatabase, analytics_queue Queue):
   block 0 (Body):
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) analytics_db NoSQLDatabase'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) analytics_queue Queue'
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BlueprintBackendVariable BlueprintBackendType) analytics_db NoSQLDatabase
+  - (BlueprintBackendVariable BlueprintBackendType) analytics_queue Queue
 
 .NewBillingServiceImpl(ctx context.Context, bill_db NoSQLDatabase):
   block 0 (Body):
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) bill_db NoSQLDatabase'
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BlueprintBackendVariable BlueprintBackendType) bill_db NoSQLDatabase
 
 .NewCartServiceImpl(ctx context.Context, order_service shopping_app.OrderService, product_service shopping_app.ProductService, cart_db NoSQLDatabase)
 :
  block 0 (Body):
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (ServiceVariable ServiceType) order_service shopping_app.OrderService'
-  - '[-1] (ServiceVariable ServiceType) product_service shopping_app.ProductService'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) cart_db NoSQLDatabase'
+  - (InterfaceVariable UserType) ctx context.Context
+  - (ServiceVariable ServiceType) order_service shopping_app.OrderService
+  - (ServiceVariable ServiceType) product_service shopping_app.ProductService
+  - (BlueprintBackendVariable BlueprintBackendType) cart_db NoSQLDatabase
 
 .NewFrontendImpl(ctx context.Context, order_service shopping_app.OrderService, cart_service shopping_app.CartService):
   block 0 (Body):
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (ServiceVariable ServiceType) order_service shopping_app.OrderService'
-  - '[-1] (ServiceVariable ServiceType) cart_service shopping_app.CartService'
+  - (InterfaceVariable UserType) ctx context.Context
+  - (ServiceVariable ServiceType) order_service shopping_app.OrderService
+  - (ServiceVariable ServiceType) cart_service shopping_app.CartService
 
 .NewOrderServiceImpl(ctx context.Context, stock_service shopping_app.StockService, billing_service shopping_app.BillingService, product_service shopping_app.ProductService, order_db NoSQLDatabase, shipment_queue Queue, analytics_queue Queue)
 :
  block 0 (Body):
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (ServiceVariable ServiceType) stock_service shopping_app.StockService'
-  - '[-1] (ServiceVariable ServiceType) billing_service shopping_app.BillingService'
-  - '[-1] (ServiceVariable ServiceType) product_service shopping_app.ProductService'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) order_db NoSQLDatabase'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) shipment_queue Queue'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) analytics_queue Queue'
+  - (InterfaceVariable UserType) ctx context.Context
+  - (ServiceVariable ServiceType) stock_service shopping_app.StockService
+  - (ServiceVariable ServiceType) billing_service shopping_app.BillingService
+  - (ServiceVariable ServiceType) product_service shopping_app.ProductService
+  - (BlueprintBackendVariable BlueprintBackendType) order_db NoSQLDatabase
+  - (BlueprintBackendVariable BlueprintBackendType) shipment_queue Queue
+  - (BlueprintBackendVariable BlueprintBackendType) analytics_queue Queue
 
 .NewProductServiceImpl(ctx context.Context, product_db NoSQLDatabase):
   block 0 (Body):
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) product_db NoSQLDatabase'
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BlueprintBackendVariable BlueprintBackendType) product_db NoSQLDatabase
 
 .NewShipmentServiceImpl(ctx context.Context, order_service shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue)
 :
  block 0 (Body):
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (ServiceVariable ServiceType) order_service shopping_app.OrderService'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) shipment_queue Queue'
+  - (InterfaceVariable UserType) ctx context.Context
+  - (ServiceVariable ServiceType) order_service shopping_app.OrderService
+  - (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase
+  - (BlueprintBackendVariable BlueprintBackendType) shipment_queue Queue
 
 .NewStockServiceImpl(ctx context.Context, stock_db NoSQLDatabase):
   block 0 (Body):
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) stock_db NoSQLDatabase'
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BlueprintBackendVariable BlueprintBackendType) stock_db NoSQLDatabase

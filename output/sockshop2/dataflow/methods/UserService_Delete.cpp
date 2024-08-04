@@ -1,22 +1,22 @@
-[] (-1) (PointerVariable PointerType) s (*user.userServiceImpl struct{db NoSQLDatabase, db NoSQLDatabase}) 
-[_] (0) (StructVariable UserType) user.userServiceImpl struct{db NoSQLDatabase, db NoSQLDatabase} 
-[__] (0) (FieldVariable FieldType) db NoSQLDatabase 
-[___] (-1) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
+[] (PointerVariable PointerType) s (*user.userServiceImpl struct{db NoSQLDatabase, db NoSQLDatabase}) 
+[_] (StructVariable UserType) user.userServiceImpl struct{db NoSQLDatabase, db NoSQLDatabase} 
+[__] (FieldVariable FieldType) db NoSQLDatabase 
+[___] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
 
-[] (-1) (InterfaceVariable UserType) ctx context.Context 
+[] (InterfaceVariable UserType) ctx context.Context 
 
-[] (-1) (BasicVariable BasicType) entity string 
+[] (BasicVariable BasicType) entity string 
 
-[] (-1) (BasicVariable BasicType) id string 
+[] (BasicVariable BasicType) id string 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = users, collection = users} 
+[] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = users, collection = users} 
 
-[] (-1) (InterfaceVariable UserType) _ .error 
+[] (InterfaceVariable UserType) _ .error 
 
-[] (-1) (SliceVariable UserType) query primitive.D 
-[_] (0) (StructVariable StructType) struct{Key "id" string, Value string} 
-[__] (0) (FieldVariable FieldType) Key "id" string 
-[___] (0) (BasicVariable BasicType) "id" string 
-[__] (0) (FieldVariable FieldType) Value string 
-[___] (-1) (BasicVariable BasicType) id string 
+[] (SliceVariable UserType) query primitive.D 
+[_] (StructVariable StructType) struct{Key "id" string, Value string} 
+[__] (FieldVariable FieldType) Key "id" string 
+[___] (BasicVariable BasicType) "id" string 
+[__] (FieldVariable FieldType) Value string 
+[___] (BasicVariable BasicType) id string 
 

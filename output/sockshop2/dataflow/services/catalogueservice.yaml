@@ -1,198 +1,160 @@
 ? (*catalogueImpl).AddSock(ctx context.Context, sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string})
 :
  block 0 (Body):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase'
-  - '[0] (inline) (FieldVariable FieldType) catalogue_db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase})'
-  - '[61] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (inline) (BasicVariable BasicType) ID string'
-  - '[-1] (inline) (FieldVariable FieldType) ID string'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) catalogue_db NoSQLDatabase
+  - (inline) (StructVariable UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
+  - (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase})
+  - (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService
+  - (InterfaceVariable UserType) ctx context.Context
+  - (inline) (BasicVariable BasicType) ID string
+  - (inline) (FieldVariable FieldType) ID string
   - |-
-    [62] (inline) (Reference UserType) ref <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}> @ FrontendService -->
+    (inline) (Reference UserType) ref <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}> @ FrontendService -->
        w-tainted 1x: write(catalogue_db.Sock)
   - |-
-    [-1] (StructVariable UserType) sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} -->
+    (StructVariable UserType) sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} -->
        w-tainted 1x: write(catalogue_db.Sock)
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
-    {database = catalogue, collection = catalogue}'
-  - '[-1] (InterfaceVariable UserType) _ .error'
+  - (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = catalogue, collection = catalogue}
+  - (InterfaceVariable UserType) _ .error
 
 (*catalogueImpl).AddTags(ctx context.Context, tags []string):
   block 0 (Body):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase'
-  - '[0] (inline) (FieldVariable FieldType) catalogue_db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (ArrayVariable ArrayType) tags []string'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
-    {database = catalogue, collection = catalogue}'
-  - '[-1] (InterfaceVariable UserType) _ .error'
-  - '[0] (inline) (FieldVariable FieldType) Value []string'
-  - '[0] (inline) (BasicVariable BasicType) "tags" string'
-  - '[0] (inline) (FieldVariable FieldType) Key "tags" string'
-  - '[0] (inline) (StructVariable StructType) struct{Key "tags" string, Value []string}'
-  - '[-1] (SliceVariable UserType) update primitive.D'
-  - '[-1] (SliceVariable UserType) filter primitive.D'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) catalogue_db NoSQLDatabase
+  - (inline) (StructVariable UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
+  - (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (ArrayVariable ArrayType) tags []string
+  - (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = catalogue, collection = catalogue}
+  - (InterfaceVariable UserType) _ .error
+  - (inline) (FieldVariable FieldType) Value []string
+  - (inline) (BasicVariable BasicType) "tags" string
+  - (inline) (FieldVariable FieldType) Key "tags" string
+  - (inline) (StructVariable StructType) struct{Key "tags" string, Value []string}
+  - (SliceVariable UserType) update primitive.D
+  - (SliceVariable UserType) filter primitive.D
 
 (*catalogueImpl).Count(ctx context.Context, tags []string):
   block 0 (Body):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase'
-  - '[0] (inline) (FieldVariable FieldType) catalogue_db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (ArrayVariable ArrayType) tags []string'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
-    {database = catalogue, collection = catalogue}'
-  - '[-1] (InterfaceVariable UserType) _ .error'
-  - '[-1] (ArrayVariable ArrayType) socks []catalogue.Sock struct{ID string, Name
-    string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string,
-    Price float32, Quantity int, Tags []string, TagString string}'
-  - '[-1] (SliceVariable UserType) filter primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database
-    = catalogue, collection = catalogue}'
-  - '[-1] (InterfaceVariable UserType) _ .error'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) catalogue_db NoSQLDatabase
+  - (inline) (StructVariable UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
+  - (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (ArrayVariable ArrayType) tags []string
+  - (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = catalogue, collection = catalogue}
+  - (InterfaceVariable UserType) _ .error
+  - (ArrayVariable ArrayType) socks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
+  - (SliceVariable UserType) filter primitive.D
+  - (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database = catalogue, collection = catalogue}
+  - (InterfaceVariable UserType) _ .error
 
 (*catalogueImpl).DeleteSock(ctx context.Context, id string):
   block 0 (Body):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase'
-  - '[0] (inline) (FieldVariable FieldType) catalogue_db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BasicVariable BasicType) id string'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
-    {database = catalogue, collection = catalogue}'
-  - '[-1] (InterfaceVariable UserType) _ .error'
-  - '[0] (inline) (BasicVariable BasicType) "id" string'
-  - '[0] (inline) (FieldVariable FieldType) Key "id" string'
-  - '[0] (inline) (FieldVariable FieldType) Value string'
-  - '[0] (inline) (StructVariable StructType) struct{Key "id" string, Value string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) catalogue_db NoSQLDatabase
+  - (inline) (StructVariable UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
+  - (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BasicVariable BasicType) id string
+  - (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = catalogue, collection = catalogue}
+  - (InterfaceVariable UserType) _ .error
+  - (inline) (FieldVariable FieldType) Value string
+  - (inline) (BasicVariable BasicType) "id" string
+  - (inline) (FieldVariable FieldType) Key "id" string
+  - (inline) (StructVariable StructType) struct{Key "id" string, Value string}
+  - (SliceVariable UserType) query primitive.D
 
 (*catalogueImpl).Get(ctx context.Context, id string):
   block 0 (Body):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase'
-  - '[0] (inline) (FieldVariable FieldType) catalogue_db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase})'
-  - '[26] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
-  - '[11] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
-  - '[1] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[27] (inline) (Reference BasicType) ref <itemID string> @ FrontendService'
-  - '[12] (inline) (Reference BasicType) ref <itemID string> @ FrontendService'
-  - '[2] (inline) (Reference BasicType) ref <itemID string> @ FrontendService'
-  - '[-1] (BasicVariable BasicType) id string'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
-    {database = catalogue, collection = catalogue}'
-  - '[-1] (InterfaceVariable UserType) _ .error'
-  - '[0] (inline) (FieldVariable FieldType) Value string'
-  - '[0] (inline) (BasicVariable BasicType) "id" string'
-  - '[0] (inline) (FieldVariable FieldType) Key "id" string'
-  - '[0] (inline) (StructVariable StructType) struct{Key "id" string, Value string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
-  - '[-1] (inline) (BasicVariable BasicType) ImageURL_2 string'
-  - '[-1] (inline) (FieldVariable FieldType) ImageURL_2 string'
-  - '[-1] (inline) (BasicVariable BasicType) ImageURL_1 string'
-  - '[-1] (inline) (FieldVariable FieldType) ImageURL_1 string'
-  - '[0] (inline) (BasicVariable BasicType) "," string'
-  - '[-1] (inline) (BasicVariable BasicType) TagString string'
-  - '[0] (inline) (SliceVariable SliceType) []string'
-  - '[-1] (inline) (FieldVariable FieldType) Tags []string'
-  - '[-1] (inline) (BasicVariable BasicType) TagString string'
-  - '[-1] (inline) (FieldVariable FieldType) TagString string'
-  - '[-1] (inline) (BasicVariable BasicType) ImageURL_2 string'
-  - '[-1] (inline) (BasicVariable BasicType) ImageURL_1 string'
-  - '[0] (inline) (ArrayVariable SliceType) []string'
-  - '[-1] (inline) (FieldVariable FieldType) ImageURL []string'
-  - '[-1] (StructVariable UserType) sock catalogue.Sock struct{ID string, Name string,
-    Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price
-    float32, Quantity int, Tags []string, TagString string}'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database
-    = catalogue, collection = catalogue}'
-  - '[-1] (InterfaceVariable UserType) _ .error'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) catalogue_db NoSQLDatabase
+  - (inline) (StructVariable UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
+  - (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase})
+  - (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService
+  - (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService
+  - (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService
+  - (InterfaceVariable UserType) ctx context.Context
+  - (inline) (Reference BasicType) ref <itemID string> @ FrontendService
+  - (inline) (Reference BasicType) ref <itemID string> @ FrontendService
+  - (inline) (Reference BasicType) ref <itemID string> @ FrontendService
+  - (BasicVariable BasicType) id string
+  - (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = catalogue, collection = catalogue}
+  - (InterfaceVariable UserType) _ .error
+  - (inline) (FieldVariable FieldType) Value string
+  - (inline) (BasicVariable BasicType) "id" string
+  - (inline) (FieldVariable FieldType) Key "id" string
+  - (inline) (StructVariable StructType) struct{Key "id" string, Value string}
+  - (SliceVariable UserType) query primitive.D
+  - (inline) (BasicVariable BasicType) "," string
+  - (inline) (BasicVariable BasicType) TagString string
+  - (inline) (SliceVariable SliceType) []string
+  - (inline) (FieldVariable FieldType) Tags []string
+  - (inline) (BasicVariable BasicType) TagString string
+  - (inline) (FieldVariable FieldType) TagString string
+  - (inline) (BasicVariable BasicType) ImageURL_2 string
+  - (inline) (FieldVariable FieldType) ImageURL_2 string
+  - (inline) (BasicVariable BasicType) ImageURL_1 string
+  - (inline) (FieldVariable FieldType) ImageURL_1 string
+  - (inline) (BasicVariable BasicType) ImageURL_2 string
+  - (inline) (BasicVariable BasicType) ImageURL_1 string
+  - (inline) (ArrayVariable SliceType) []string
+  - (inline) (FieldVariable FieldType) ImageURL []string
+  - (StructVariable UserType) sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
+  - (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database = catalogue, collection = catalogue}
+  - (InterfaceVariable UserType) _ .error
 
 (*catalogueImpl).List(ctx context.Context, tags []string, order string, pageNum int, pageSize int):
   block 0 (Body):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase'
-  - '[0] (inline) (FieldVariable FieldType) catalogue_db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase})'
-  - '[21] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[22] (inline) (Reference ArrayType) ref <tags []string> @ FrontendService'
-  - '[-1] (ArrayVariable ArrayType) tags []string'
-  - '[23] (inline) (Reference BasicType) ref <order string> @ FrontendService'
-  - '[-1] (BasicVariable BasicType) order string'
-  - '[24] (inline) (Reference BasicType) ref <pageNum int> @ FrontendService'
-  - '[-1] (BasicVariable BasicType) pageNum int'
-  - '[25] (inline) (Reference BasicType) ref <pageSize int> @ FrontendService'
-  - '[-1] (BasicVariable BasicType) pageSize int'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
-    {database = catalogue, collection = catalogue}'
-  - '[-1] (InterfaceVariable UserType) _ .error'
-  - '[-1] (ArrayVariable ArrayType) allSocks []catalogue.Sock struct{ID string, Name
-    string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string,
-    Price float32, Quantity int, Tags []string, TagString string}'
-  - '[-1] (ArrayVariable ArrayType) socks []catalogue.Sock struct{ID string, Name
-    string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string,
-    Price float32, Quantity int, Tags []string, TagString string}'
-  - '[-1] (SliceVariable UserType) filter primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database
-    = catalogue, collection = catalogue}'
-  - '[-1] (InterfaceVariable UserType) _ .error'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) catalogue_db NoSQLDatabase
+  - (inline) (StructVariable UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
+  - (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase})
+  - (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService
+  - (InterfaceVariable UserType) ctx context.Context
+  - (inline) (Reference ArrayType) ref <tags []string> @ FrontendService
+  - (ArrayVariable ArrayType) tags []string
+  - (inline) (Reference BasicType) ref <order string> @ FrontendService
+  - (BasicVariable BasicType) order string
+  - (inline) (Reference BasicType) ref <pageNum int> @ FrontendService
+  - (BasicVariable BasicType) pageNum int
+  - (inline) (Reference BasicType) ref <pageSize int> @ FrontendService
+  - (BasicVariable BasicType) pageSize int
+  - (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = catalogue, collection = catalogue}
+  - (InterfaceVariable UserType) _ .error
+  - (ArrayVariable ArrayType) allSocks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
+  - (ArrayVariable ArrayType) socks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
+  - (SliceVariable UserType) filter primitive.D
+  - (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database = catalogue, collection = catalogue}
+  - (InterfaceVariable UserType) _ .error
 
 (*catalogueImpl).Tags(ctx context.Context):
   block 0 (Body):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase'
-  - '[0] (inline) (FieldVariable FieldType) catalogue_db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase})'
-  - '[34] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
-    {database = catalogue, collection = catalogue}'
-  - '[-1] (InterfaceVariable UserType) _ .error'
-  - '[-1] (ArrayVariable ArrayType) socks []catalogue.Sock struct{ID string, Name
-    string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string,
-    Price float32, Quantity int, Tags []string, TagString string}'
-  - '[0] (inline) (BasicVariable BasicType) true bool'
-  - '[0] (inline) (FieldVariable FieldType) Value true bool'
-  - '[0] (inline) (BasicVariable BasicType) "tags" string'
-  - '[0] (inline) (FieldVariable FieldType) Key "tags" string'
-  - '[0] (inline) (StructVariable StructType) struct{Key "tags" string, Value true
-    bool}'
-  - '[-1] (SliceVariable UserType) projection primitive.D'
-  - '[-1] (SliceVariable UserType) filter primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database
-    = catalogue, collection = catalogue}'
-  - '[-1] (InterfaceVariable UserType) _ .error'
-  - '[-1] (ArrayVariable ArrayType) tags []string'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) catalogue_db NoSQLDatabase
+  - (inline) (StructVariable UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
+  - (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase})
+  - (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = catalogue, collection = catalogue}
+  - (InterfaceVariable UserType) _ .error
+  - (ArrayVariable ArrayType) socks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
+  - (inline) (BasicVariable BasicType) true bool
+  - (inline) (FieldVariable FieldType) Value true bool
+  - (inline) (BasicVariable BasicType) "tags" string
+  - (inline) (FieldVariable FieldType) Key "tags" string
+  - (inline) (StructVariable StructType) struct{Key "tags" string, Value true bool}
+  - (SliceVariable UserType) projection primitive.D
+  - (SliceVariable UserType) filter primitive.D
+  - (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database = catalogue, collection = catalogue}
+  - (InterfaceVariable UserType) _ .error
+  - (ArrayVariable ArrayType) tags []string
 
 .NewCatalogueService(ctx context.Context, catalogue_db NoSQLDatabase):
   block 0 (Body):
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase'
-  - '[0] (inline) (FieldVariable FieldType) catalogue_db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) c (*catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase})'
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) catalogue_db NoSQLDatabase
+  - (inline) (StructVariable UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
+  - (PointerVariable PointerType) c (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase})

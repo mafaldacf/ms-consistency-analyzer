@@ -27,27 +27,34 @@ func ParseServiceMethodCFG(service *service.Service, method *types.ParsedMethod)
 	for _, block := range method.ParsedCfg.GetParsedBlocks() {
 		visitBasicBlock(service, method, block, visited)
 	}
+	/* if method.GetName() == "StorePost" {
+		logger.Logger.Fatal("EXIT!")
+	} */
 }
 
 func visitBasicBlock(service *service.Service, method *types.ParsedMethod, block *types.Block, visited map[int32]bool) {
 	if visited[block.GetIndex()] {
 		return
 	}
+	logger.Logger.Infof("\n\n-----------------------\nVISITING BLOCK: %s \n-----------------------", block.String())
 	visited[block.GetIndex()] = true
 	for _, blockNode := range block.GetNodes() { //FIXME????
-		parseExpressions(service, method, block, blockNode)
+		logger.Logger.Warnf("\n\n-----------------------\nVISITING BLOCK NODE: %s \n-----------------------", blockNode)
+		parseNode(service, method, block, blockNode)
 	}
 
 	for _, succ := range block.GetSuccs() {
 		parsedSucc := method.ParsedCfg.GetParsedBlockAtIndex(succ.Index)
 		parsedSucc.AppendVarsFromPredecessor(block)
+		logger.Logger.Debugf("\n\n-----------------------\nVISITING BLOCK SUCC: %s \n-----------------------", parsedSucc.String())
+		
 		visitBasicBlock(service, method, parsedSucc, visited)
 	}
 }
 
-func getAssignmentRightVariables(service *service.Service, method *types.ParsedMethod, block *types.Block, assignStmt *ast.AssignStmt) []variables.Variable {
+func getAssignmentRightVariables(service *service.Service, method *types.ParsedMethod, block *types.Block, rightExprs []ast.Expr) []variables.Variable {
 	var rvariables []variables.Variable
-	for _, rvalue := range assignStmt.Rhs {
+	for _, rvalue := range rightExprs {
 		variable, _ := lookupVariableFromAstExpr(service, method, block, rvalue, nil, true)
 		if tupleVariable, ok := variable.(*variables.TupleVariable); ok {
 			rvariables = append(rvariables, tupleVariable.Variables...)
@@ -58,36 +65,39 @@ func getAssignmentRightVariables(service *service.Service, method *types.ParsedM
 	return rvariables
 }
 
+func declareLeftIdents(service *service.Service, block *types.Block, leftIdents []*ast.Ident, t ast.Expr) {
+	for _, ident := range leftIdents {
+		t := lookup.ComputeTypeForAstExpr(service.File, t)
+		declaredVariable := lookup.CreateVariableFromType(ident.Name, t)
+		logger.Logger.Warnf("[CFG - PARSE EXPR] VARIABLE IS DECLARED: %s", declaredVariable.String())
+		block.AddVariable(declaredVariable)
+	}
+}
+
+func assignLeftIdents(service *service.Service, method *types.ParsedMethod, block *types.Block, leftIdents []*ast.Ident, rightExprs []ast.Expr) {
+	rvariables := getAssignmentRightVariables(service, method, block, rightExprs)
+	for i, rvariable := range rvariables {
+		leftIdent := leftIdents[i]
+		rvariable.GetVariableInfo().SetUnassigned()
+		rvariable.GetVariableInfo().SetName(leftIdent.Name)
+		block.AddVariable(rvariable)
+	}
+}
+
 func assignLeftValues(service *service.Service, method *types.ParsedMethod, block *types.Block, assignStmt *ast.AssignStmt) {
 	logger.Logger.Debugf("[CFG - ASSIGN LEFT] [%s] visiting stmt (%s): %v", service.GetName(), utils.GetType(assignStmt), assignStmt)
-	rvariables := getAssignmentRightVariables(service, method, block, assignStmt)
+	rvariables := getAssignmentRightVariables(service, method, block, assignStmt.Rhs)
 	for i, rvariable := range rvariables {
 		lvalue := assignStmt.Lhs[i]
 		logger.Logger.Debugf("[CFG - ASSIGN LEFT] [%s] assigning left values: \n\t\t\t\t\t\t - (lvalue) (%s) %v \n\t\t\t\t\t\t - (rvalue) (%s) %s", service.GetName(), utils.GetType(lvalue), lvalue, variables.VariableTypeName(rvariable), rvariable.LongString())
 		switch e := lvalue.(type) {
 		case *ast.Ident:
 			if assignStmt.Tok == token.DEFINE || assignStmt.Tok == token.ASSIGN { // := OR =
-				if rvariable.GetVariableInfo().GetName() == "" {
+				if rvariable.GetVariableInfo().GetName() == "" { // defining for the first time (token.DEFINE)
 					rvariable.GetVariableInfo().SetUnassigned()
 					rvariable.GetVariableInfo().SetName(e.Name)
 					block.AddVariable(rvariable)
-					/* for _, d := range rvariable.GetNestedDependencies(false) {
-						logger.Logger.Debugf("\t\t\t- (%s) %s", variables.VariableTypeName(d), d.String())
-					} */
-					/* if e.Name == "workerMessage" {
-						logger.Logger.Fatal("1 HERE!")
-					} */
-					// HERE FOR QUERY (SliceVariable): query primitive.D = (struct{Key "postid" string, Value int64})
-					/* if rvariable.GetVariableInfo().GetName() == "query" {
-						for _, b := range method.ParsedCfg.Cfg.Blocks {
-							logger.Logger.Debugf("BLOCK: index = %d, kind = %v, nodes = %v", b.Index, b.Kind, b.Live)
-							for _, n := range b.Nodes {
-								logger.Logger.Debugf("\t\t - Node: %v", utils.GetType(n))
-							}
-						}
-						logger.Logger.Fatalf("[BLOCK (%d)] HERE FOR QUERY (%s): %s", block.Block.Index, utils.GetType(rvariable), rvariable.LongString())
-					} */
-				} else {
+				} else { // already exists (token.ASSIGN)
 					logger.Logger.Warnf("[CFG - ASSIGN LEFT] FIX ME!!!! WE SHOULD SEARCH FOR THE LEFT VARIABLE THAT ALREADY EXISTS IN THE BLOCK")
 					lvariable := rvariable.Copy(true)
 					lvariable.GetVariableInfo().SetName(e.Name)
@@ -126,54 +136,34 @@ func assignLeftValues(service *service.Service, method *types.ParsedMethod, bloc
 	}
 }
 
-func parseExpressions(service *service.Service, method *types.ParsedMethod, block *types.Block, node ast.Node) {
+func parseNode(service *service.Service, method *types.ParsedMethod, block *types.Block, node ast.Node) {
 	logger.Logger.Debugf("[CFG - PARSE EXPR] (%s) visiting node (%v)", utils.GetType(node), node)
 	switch e := node.(type) {
 	// ------------
 	// Go Routines
 	// ------------
 	case *ast.GoStmt:
-		parseExpressions(service, method, block, e.Call.Fun)
+		parseNode(service, method, block, e.Call.Fun)
 	case *ast.FuncLit:
 		for _, stmt := range e.Body.List {
-			parseExpressions(service, method, block, stmt)
+			parseNode(service, method, block, stmt)
 		}
 	// ----------------------------
 	// Declarations and Assignments
 	// ----------------------------
 	case *ast.DeclStmt:
 		for _, spec := range e.Decl.(*ast.GenDecl).Specs {
-			parseExpressions(service, method, block, spec)
+			parseNode(service, method, block, spec)
 		}
-
 	case *ast.ValueSpec:
 		// e.g. var str []byte
 		// OR
 		// e.g. var str = []byte(...)
-
 		logger.Logger.Warnf("[CFG - PARSE EXPR] parsing value spec with names = (%v) and values = (%v)", e.Names, e.Values)
-		// FIXME
-
-		var vars []variables.Variable
-		for i, v := range e.Values {
-			logger.Logger.Warnf("[CFG - PARSE EXPR] (%d) COMPUTING VALUESPEC VALUE: %v", i, v)
-			variable := saveCalls(service, method, block, v)
-			vars = append(vars, variable)
-			logger.Logger.Warnf("[CFG - PARSE EXPR] (%d) GOT TUPLE VAR: %s", i, variable.String())
-		}
-		for i, ident := range e.Names {
-			// variable is being declared and assigned
-			if len(vars) > 0 && i < len(vars) {
-				assignedVariable := vars[i]
-				assignedVariable.GetVariableInfo().SetName(ident.Name)
-				logger.Logger.Warnf("[CFG - PARSE EXPR] VARIABLE IS ASSIGNED: %s", assignedVariable.String())
-				block.AddVariable(assignedVariable)
-			} else { // variable is being just declared
-				t := lookup.ComputeTypeForAstExpr(service.File, e.Type)
-				declaredVariable := lookup.CreateVariableFromType(ident.Name, t)
-				logger.Logger.Warnf("[CFG - PARSE EXPR] VARIABLE IS DECLARED: %s", declaredVariable.String())
-				block.AddVariable(declaredVariable)
-			}
+		if len(e.Values) > 0 { // variables are being declared and assigned
+			assignLeftIdents(service, method, block, e.Names, e.Values)
+		} else { // variables are being declared with types
+			declareLeftIdents(service, block, e.Names, e.Type)
 		}
 	case *ast.AssignStmt:
 		assignLeftValues(service, method, block, e)
@@ -181,15 +171,15 @@ func parseExpressions(service *service.Service, method *types.ParsedMethod, bloc
 	// Expressions for new Variables
 	// -----------------------------
 	case *ast.KeyValueExpr: // e.g. from structure declarations
-		parseExpressions(service, method, block, e.Key)
-		parseExpressions(service, method, block, e.Value)
+		parseNode(service, method, block, e.Key)
+		parseNode(service, method, block, e.Value)
 	case *ast.SelectorExpr:
-		parseExpressions(service, method, block, e.X)
+		parseNode(service, method, block, e.X)
 	case *ast.CompositeLit:
 		// e.g. creating a structure where a field is obtained from a function call
 		logger.Logger.Debugf("----- FOUND COMPOSITE LITE!! %v", e.Elts)
 		for _, elt := range e.Elts {
-			parseExpressions(service, method, block, elt)
+			parseNode(service, method, block, elt)
 		}
 	// -----------------------------------
 	// Calls and Parenthesized Expressions
@@ -201,29 +191,29 @@ func parseExpressions(service *service.Service, method *types.ParsedMethod, bloc
 	case *ast.ParenExpr:
 		// e.g. when used as a bool value in an if statement (assumes it is inside a parentheses)
 		// in this case, the unfolded service from ParenExpr is a CallExpr
-		parseExpressions(service, method, block, e.X)
+		parseNode(service, method, block, e.X)
 	// -----------------
 	// Other Expressions
 	// -----------------
 	case *ast.ExprStmt:
-		parseExpressions(service, method, block, e.X)
+		parseNode(service, method, block, e.X)
 	case *ast.UnaryExpr: // e.g. <-forever, &cart
-		parseExpressions(service, method, block, e.X)
+		parseNode(service, method, block, e.X)
 	case *ast.BinaryExpr: // e.g. if err != nil
-		parseExpressions(service, method, block, e.X)
-		parseExpressions(service, method, block, e.Y)
+		parseNode(service, method, block, e.X)
+		parseNode(service, method, block, e.Y)
+	case *ast.Ident: // e.g. err in err != nil
+		lookupVariableFromAstExpr(service, method, block, e, nil, false)
 	// ----------------
 	// Other Statements
 	// ----------------
 	case *ast.IncDecStmt: // e.g. decrement in loop
-		parseExpressions(service, method, block, e.X)
+		parseNode(service, method, block, e.X)
 	case *ast.DeferStmt:
-		parseExpressions(service, method, block, e.Call.Fun)
+		parseNode(service, method, block, e.Call.Fun)
 	// ----------------
 	// Require Lookups
 	// ----------------
-	case *ast.Ident: // e.g. err in err != nil
-		lookupVariableFromAstExpr(service, method, block, e, nil, false)
 	case *ast.BasicLit: // e.g. integers (1), strings ("foo"), etc
 		lookupVariableFromAstExpr(service, method, block, e, nil, false)
 	case *ast.TypeAssertExpr:
@@ -239,44 +229,11 @@ func parseExpressions(service *service.Service, method *types.ParsedMethod, bloc
 	// ----------------
 	// following types can only happen within "loose" expressions with no assignments
 	case *ast.IfStmt:
+		logger.Logger.Warnf("[CFG - PARSE EXPR] [%s.%s] ignoring type in parseExpressions: %s", service.GetName(), method.GetName(), utils.GetType(node))
 
 	default:
-		logger.Logger.Fatalf("unknown type in parseExpressions for type %s: %v", utils.GetType(service), service)
+		logger.Logger.Fatalf("[CFG - PARSE EXPR] [%s.%s] unknown type in parseExpressions: %s", service.GetName(), method.GetName(), utils.GetType(node))
 	}
-}
-
-func saveCalls(service *service.Service, method *types.ParsedMethod, block *types.Block, node ast.Node) variables.Variable {
-	logger.Logger.Debugf("[CFG SAVE CALLS] (%s) visiting node (%v)", utils.GetType(node), node)
-
-	switch e := node.(type) {
-	case *ast.CallExpr:
-		return parseAndSaveCall(service, method, block, e)
-	case *ast.CompositeLit:
-		// e.g. creating a structure where a field is obtained from a function call
-		//FIXME: is this even correct????
-		var composedTupleVar *variables.TupleVariable
-		for _, elt := range e.Elts {
-			tupleVar := saveCalls(service, method, block, elt)
-			if composedTupleVar == nil {
-				composedTupleVar = tupleVar.(*variables.TupleVariable)
-			} else {
-				composedTupleVar.MergeTupleVariable(tupleVar.(*variables.TupleVariable))
-			}
-
-		}
-	case *ast.KeyValueExpr:
-		//FIXME: is this even correct????
-		composedTupleVar := saveCalls(service, method, block, e.Key)
-		tupleVar := saveCalls(service, method, block, e.Value)
-		composedTupleVar.(*variables.TupleVariable).MergeTupleVariable(tupleVar.(*variables.TupleVariable))
-		return tupleVar
-	case *ast.SelectorExpr:
-		return saveCalls(service, method, block, e.X)
-	case *ast.Ident, *ast.TypeAssertExpr, *ast.BasicLit: // basic lit e.g. integers (1), strings ("foo"), etc
-	default:
-		logger.Logger.Fatalf("unknown type in saveCalls for type %s: %v", utils.GetType(e), e)
-	}
-	return nil
 }
 
 func saveParsedFuncCallParams(service *service.Service, method *types.ParsedMethod, block *types.Block, parsedCall types.Call, args []ast.Expr) {

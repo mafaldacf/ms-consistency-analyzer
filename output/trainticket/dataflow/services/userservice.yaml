@@ -1,113 +1,102 @@
 (*UserServiceImpl).DeleteUser(ctx context.Context, userID string):
   block 5 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) userDB NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) user.UserServiceImpl struct{userDB NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) u (*user.UserServiceImpl struct{userDB NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BasicVariable BasicType) userID string'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = user, collection = user}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "userid" string,  string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) userDB NoSQLDatabase
+  - (inline) (StructVariable UserType) user.UserServiceImpl struct{userDB NoSQLDatabase}
+  - (PointerVariable PointerType) u (*user.UserServiceImpl struct{userDB NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BasicVariable BasicType) userID string
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = user, collection = user}
+  - (InterfaceVariable UserType) err .error
+  - (inline) (FieldVariable FieldType) string
+  - (inline) (StructVariable StructType) struct{ "userid" string, string}
+  - (SliceVariable UserType) query primitive.D
+  - (InterfaceVariable UserType) err .error
 
 (*UserServiceImpl).FindByUserID(ctx context.Context, userID string):
   block 11 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) userDB NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) user.UserServiceImpl struct{userDB NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) u (*user.UserServiceImpl struct{userDB NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BasicVariable BasicType) userID string'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = user, collection = user}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "userid" string,  string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = user, collection = user}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (StructVariable UserType) user user.User struct{UserID string, Username
-    string, Password string, Gender int64, DocumentType int64, DocumentNum string,
-    Email string}'
-  - '[-1] (BasicVariable BasicType) exists bool'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) userDB NoSQLDatabase
+  - (inline) (StructVariable UserType) user.UserServiceImpl struct{userDB NoSQLDatabase}
+  - (PointerVariable PointerType) u (*user.UserServiceImpl struct{userDB NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BasicVariable BasicType) userID string
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = user, collection = user}
+  - (InterfaceVariable UserType) err .error
+  - (inline) (FieldVariable FieldType) string
+  - (inline) (StructVariable StructType) struct{ "userid" string, string}
+  - (SliceVariable UserType) query primitive.D
+  - (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = user, collection = user}
+  - (InterfaceVariable UserType) err .error
+  - (StructVariable UserType) user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}
+  - (BasicVariable BasicType) exists bool
+  - (InterfaceVariable UserType) err .error
 
 (*UserServiceImpl).FindByUsername(ctx context.Context, username string):
   block 11 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) userDB NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) user.UserServiceImpl struct{userDB NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) u (*user.UserServiceImpl struct{userDB NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BasicVariable BasicType) username string'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = user, collection = user}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "username" string,  string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = user, collection = user}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (StructVariable UserType) user user.User struct{UserID string, Username
-    string, Password string, Gender int64, DocumentType int64, DocumentNum string,
-    Email string}'
-  - '[-1] (BasicVariable BasicType) exists bool'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) userDB NoSQLDatabase
+  - (inline) (StructVariable UserType) user.UserServiceImpl struct{userDB NoSQLDatabase}
+  - (PointerVariable PointerType) u (*user.UserServiceImpl struct{userDB NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BasicVariable BasicType) username string
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = user, collection = user}
+  - (InterfaceVariable UserType) err .error
+  - (inline) (FieldVariable FieldType) string
+  - (inline) (StructVariable StructType) struct{ "username" string, string}
+  - (SliceVariable UserType) query primitive.D
+  - (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = user, collection = user}
+  - (InterfaceVariable UserType) err .error
+  - (StructVariable UserType) user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}
+  - (BasicVariable BasicType) exists bool
+  - (InterfaceVariable UserType) err .error
 
 (*UserServiceImpl).GetAllUsers(ctx context.Context):
   block 8 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) userDB NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) user.UserServiceImpl struct{userDB NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) u (*user.UserServiceImpl struct{userDB NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = user, collection = user}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = user, collection = user}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (ArrayVariable ArrayType) users []user.User struct{UserID string, Username
-    string, Password string, Gender int64, DocumentType int64, DocumentNum string,
-    Email string}'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) userDB NoSQLDatabase
+  - (inline) (StructVariable UserType) user.UserServiceImpl struct{userDB NoSQLDatabase}
+  - (PointerVariable PointerType) u (*user.UserServiceImpl struct{userDB NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = user, collection = user}
+  - (InterfaceVariable UserType) err .error
+  - (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = user, collection = user}
+  - (InterfaceVariable UserType) err .error
+  - (ArrayVariable ArrayType) users []user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}
+  - (InterfaceVariable UserType) err .error
 
 (*UserServiceImpl).SaveUser(ctx context.Context, user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string})
 :
  block 2 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) userDB NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) user.UserServiceImpl struct{userDB NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) u (*user.UserServiceImpl struct{userDB NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) userDB NoSQLDatabase
+  - (inline) (StructVariable UserType) user.UserServiceImpl struct{userDB NoSQLDatabase}
+  - (PointerVariable PointerType) u (*user.UserServiceImpl struct{userDB NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
   - |-
-    [-1] (StructVariable UserType) user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string} -->
+    (StructVariable UserType) user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string} -->
        w-tainted 1x: write(user_db.User)
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = user, collection = user}'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = user, collection = user}
+  - (InterfaceVariable UserType) err .error
 
 (*UserServiceImpl).UpdateUser(ctx context.Context, user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string})
 :
  block 2 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) userDB NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) user.UserServiceImpl struct{userDB NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) u (*user.UserServiceImpl struct{userDB NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (inline) (BasicVariable BasicType) UserID string'
-  - '[-1] (inline) (FieldVariable FieldType) UserID string'
-  - '[-1] (StructVariable UserType) user user.User struct{UserID string, Username
-    string, Password string, Gender int64, DocumentType int64, DocumentNum string,
-    Email string}'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = user, collection = user}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "userid" string,  string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) userDB NoSQLDatabase
+  - (inline) (StructVariable UserType) user.UserServiceImpl struct{userDB NoSQLDatabase}
+  - (PointerVariable PointerType) u (*user.UserServiceImpl struct{userDB NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (inline) (BasicVariable BasicType) UserID string
+  - (inline) (FieldVariable FieldType) UserID string
+  - (StructVariable UserType) user user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = user, collection = user}
+  - (InterfaceVariable UserType) err .error
+  - (inline) (FieldVariable FieldType) string
+  - (inline) (StructVariable StructType) struct{ "userid" string, string}
+  - (SliceVariable UserType) query primitive.D
 
 .NewUserServiceImpl(ctx context.Context, db NoSQLDatabase):
   block 0 (Body):
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase

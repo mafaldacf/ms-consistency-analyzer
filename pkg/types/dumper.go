@@ -108,16 +108,7 @@ func getIndirectDependencies(v variables.Variable, i int) ([]variables.Variable,
 		opStr = "// " + opStr
 	}
 
-	/* parentStr := ""
-	for _, parent := range v.GetVariableInfo().Parents {
-		parentStr += parent.String() + ", "
-	}
-	if parentStr != "" {
-		blockVarsStr += fmt.Sprintf("[%s] (%d) (%s) %s (parents = %s) %s\n", padding, v.GetId(), variables.VariableTypeName(v), v.String(), parentStr, opStr)
-	} else {
-		blockVarsStr += fmt.Sprintf("[%s] (%d) (%s) %s (parents = <>) %s\n", padding, v.GetId(), variables.VariableTypeName(v), v.String(), opStr)
-	} */
-	blockVarsStr += fmt.Sprintf("[%s] (%d) (%s) %s %s\n", padding, v.GetId(), variables.VariableTypeName(v), v.String(), opStr)
+	blockVarsStr += fmt.Sprintf("[%s] (%s) %s %s\n", padding, variables.VariableTypeName(v), v.String(), opStr)
 
 	var deps = []variables.Variable{v}
 	// indirect dependencies from reference
@@ -170,9 +161,9 @@ func (block *Block) Yaml() ([]string, string) {
 			if i != lastIndex {
 				// last index corresponds to the original variabl from where we got the parameters
 				// note that it is the last since the deps slice was reversed
-				variableString = fmt.Sprintf("[%d] (inline) (%s) %s", v.GetId(), variables.VariableTypeName(v), variableString)
+				variableString = fmt.Sprintf("(inline) (%s) %s", variables.VariableTypeName(v), variableString)
 			} else {
-				variableString = fmt.Sprintf("[%d] (%s) %s", v.GetId(), variables.VariableTypeName(v), variableString)
+				variableString = fmt.Sprintf("(%s) %s", variables.VariableTypeName(v), variableString)
 			}
 			dfsWriteOps := v.GetVariableInfo().GetAllWriteDataflows()
 			dfsReadOps := v.GetVariableInfo().GetAllReadDataflows()

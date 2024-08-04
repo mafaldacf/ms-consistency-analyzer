@@ -1,29 +1,29 @@
-[] (-1) (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}) 
-[_] (0) (StructVariable UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase} 
-[__] (0) (FieldVariable FieldType) catalogue_db NoSQLDatabase 
-[___] (-1) (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase 
+[] (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}) 
+[_] (StructVariable UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase} 
+[__] (FieldVariable FieldType) catalogue_db NoSQLDatabase 
+[___] (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase 
 
-[] (-1) (InterfaceVariable UserType) ctx context.Context 
-[_] (34) (Reference UserType) ref <ctx context.Context> @ FrontendService 
+[] (InterfaceVariable UserType) ctx context.Context 
+[_] (Reference UserType) ref <ctx context.Context> @ FrontendService 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = catalogue, collection = catalogue} 
+[] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = catalogue, collection = catalogue} 
 
-[] (-1) (InterfaceVariable UserType) _ .error 
+[] (InterfaceVariable UserType) _ .error 
 
-[] (-1) (ArrayVariable ArrayType) socks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} 
+[] (ArrayVariable ArrayType) socks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} 
 
-[] (-1) (SliceVariable UserType) projection primitive.D 
-[_] (0) (StructVariable StructType) struct{Key "tags" string, Value true bool} 
-[__] (0) (FieldVariable FieldType) Key "tags" string 
-[___] (0) (BasicVariable BasicType) "tags" string 
-[__] (0) (FieldVariable FieldType) Value true bool 
-[___] (0) (BasicVariable BasicType) true bool 
+[] (SliceVariable UserType) projection primitive.D 
+[_] (StructVariable StructType) struct{Key "tags" string, Value true bool} 
+[__] (FieldVariable FieldType) Key "tags" string 
+[___] (BasicVariable BasicType) "tags" string 
+[__] (FieldVariable FieldType) Value true bool 
+[___] (BasicVariable BasicType) true bool 
 
-[] (-1) (SliceVariable UserType) filter primitive.D 
+[] (SliceVariable UserType) filter primitive.D 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database = catalogue, collection = catalogue} 
+[] (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database = catalogue, collection = catalogue} 
 
-[] (-1) (InterfaceVariable UserType) _ .error 
+[] (InterfaceVariable UserType) _ .error 
 
-[] (-1) (ArrayVariable ArrayType) tags []string 
+[] (ArrayVariable ArrayType) tags []string 
 

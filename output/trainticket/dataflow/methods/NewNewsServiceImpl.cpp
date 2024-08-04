@@ -1,2 +1,2 @@
-[] (-1) (InterfaceVariable UserType) ctx context.Context 
+[] (InterfaceVariable UserType) ctx context.Context 
 

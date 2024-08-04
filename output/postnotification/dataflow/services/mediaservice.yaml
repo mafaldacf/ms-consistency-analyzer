@@ -1,139 +1,121 @@
 (*MediaServiceImpl).ReadMedia(ctx context.Context, mediaID int64):
   block 5 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) mediaDb NoSQLDatabase'
-  - '[0] (inline) (FieldVariable FieldType) mediaDb NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) postnotification.MediaServiceImpl struct{mediaDb
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) s (*postnotification.MediaServiceImpl struct{mediaDb
-    NoSQLDatabase})'
-  - '[53] (inline) (Reference UserType) ref <ctx context.Context> @ UploadService'
-  - '[56] (inline) (Reference UserType) ref <ctx context.Context> @ StorageService'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[58] (inline) (BasicVariable BasicType) PostID int64'
-  - '[57] (inline) (Reference FieldType) ref <mediaID int64> @ StorageService'
-  - '[-1] (BasicVariable BasicType) mediaID int64'
-  - '[-1] (StructVariable UserType) media postnotification.Media struct{PostID int64,
-    MediaID int64, Content "HELLO WORLD!" untyped string}'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
-    {database = media, collection = media}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (FieldVariable FieldType) Value int64'
-  - '[0] (inline) (BasicVariable BasicType) "mediaid" string'
-  - '[0] (inline) (FieldVariable FieldType) Key "mediaid" string'
-  - '[0] (inline) (StructVariable StructType) struct{Key "mediaid" string, Value int64}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database
-    = media, collection = media}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (BasicVariable BasicType) _ bool'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) mediaDb NoSQLDatabase
+  - (inline) (FieldVariable FieldType) mediaDb NoSQLDatabase
+  - (inline) (StructVariable UserType) postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase}
+  - (PointerVariable PointerType) s (*postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase})
+  - (inline) (Reference UserType) ref <ctx context.Context> @ UploadService
+  - (inline) (Reference UserType) ref <ctx context.Context> @ StorageService
+  - (InterfaceVariable UserType) ctx context.Context
+  - (inline) (BasicVariable BasicType) PostID int64
+  - (inline) (Reference FieldType) ref <mediaID int64> @ StorageService
+  - (BasicVariable BasicType) mediaID int64
+  - (StructVariable UserType) media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string}
+  - (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = media, collection = media}
+  - (InterfaceVariable UserType) err .error
+  - (inline) (FieldVariable FieldType) Value int64
+  - (inline) (BasicVariable BasicType) "mediaid" string
+  - (inline) (FieldVariable FieldType) Key "mediaid" string
+  - (inline) (StructVariable StructType) struct{Key "mediaid" string, Value int64}
+  - (SliceVariable UserType) query primitive.D
+  - (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database = media, collection = media}
+  - (InterfaceVariable UserType) err .error
+  - (BasicVariable BasicType) _ bool
+  - (InterfaceVariable UserType) err .error
 
 (*MediaServiceImpl).StoreMedia(ctx context.Context, media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string})
 :
  block 2 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) mediaDb NoSQLDatabase'
-  - '[0] (inline) (FieldVariable FieldType) mediaDb NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) postnotification.MediaServiceImpl struct{mediaDb
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) s (*postnotification.MediaServiceImpl struct{mediaDb
-    NoSQLDatabase})'
-  - '[1] (inline) (Reference UserType) ref <ctx context.Context> @ UploadService'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) mediaDb NoSQLDatabase
+  - (inline) (FieldVariable FieldType) mediaDb NoSQLDatabase
+  - (inline) (StructVariable UserType) postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase}
+  - (PointerVariable PointerType) s (*postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase})
+  - (inline) (Reference UserType) ref <ctx context.Context> @ UploadService
+  - (InterfaceVariable UserType) ctx context.Context
   - |-
-    [8] (inline) (BasicVariable BasicType) HELLO_WORLD_CONST "HELLO WORLD!" untyped string -->
-       w-tainted 1x: write(media_db.Media.Content)
-  - |-
-    [7] (inline) (FieldVariable FieldType) Content "HELLO WORLD!" untyped string -->
-       w-tainted 1x: write(media_db.Media.Content)
-  - |-
-    [6] (inline) (BasicVariable BasicType) mediaID int64 -->
-       w-tainted 1x: write(media_db.Media.MediaID)
-  - |-
-    [5] (inline) (FieldVariable FieldType) MediaID int64 -->
-       w-tainted 1x: write(media_db.Media.MediaID)
-  - |-
-    [46] (inline) (Reference InterfaceType) ref <PostID interface{}> @ NotifyService -->
+    (inline) (Reference InterfaceType) ref <PostID interface{}> @ NotifyService -->
        w-tainted 9x: write(media_db.Media.PostID, posts_cache.key, posts_cache.value, posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
   - |-
-    [-1] (inline) (BasicVariable BasicType) postID int64 -->
+    (inline) (BasicVariable BasicType) postID int64 -->
        w-tainted 9x: write(media_db.Media.PostID, posts_db.Post.PostID, posts_cache.key, posts_cache.value, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
   - |-
-    [3] (inline) (FieldVariable FieldType) PostID int64 -->
+    (inline) (FieldVariable FieldType) PostID int64 -->
        w-tainted 1x: write(media_db.Media.PostID)
   - |-
-    [2] (inline) (Reference UserType) ref <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string}> @ UploadService -->
+    (inline) (BasicVariable BasicType) mediaID int64 -->
+       w-tainted 1x: write(media_db.Media.MediaID)
+  - |-
+    (inline) (FieldVariable FieldType) MediaID int64 -->
+       w-tainted 1x: write(media_db.Media.MediaID)
+  - |-
+    (inline) (BasicVariable BasicType) HELLO_WORLD_CONST "HELLO WORLD!" untyped string -->
+       w-tainted 1x: write(media_db.Media.Content)
+  - |-
+    (inline) (FieldVariable FieldType) Content "HELLO WORLD!" untyped string -->
+       w-tainted 1x: write(media_db.Media.Content)
+  - |-
+    (inline) (Reference UserType) ref <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string}> @ UploadService -->
        w-tainted 1x: write(media_db.Media)
   - |-
-    [-1] (StructVariable UserType) media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} -->
+    (StructVariable UserType) media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} -->
        w-tainted 1x: write(media_db.Media)
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
-    {database = media, collection = media}'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = media, collection = media}
+  - (InterfaceVariable UserType) err .error
 
 .NewAnalyticsServiceImpl(ctx context.Context, analyticsDb NoSQLDatabase, analyticsQueue Queue):
   block 0 (Body):
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) analyticsDb NoSQLDatabase'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) analyticsQueue Queue'
-  - '[0] (inline) (BasicVariable BasicType) 4 int'
-  - '[0] (inline) (FieldVariable FieldType) numWorkers 4 int'
-  - '[0] (inline) (FieldVariable FieldType) analyticsQueue Queue'
-  - '[0] (inline) (FieldVariable FieldType) analyticsDb NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) postnotification.AnalyticsServiceImpl
-    struct{analyticsDb NoSQLDatabase, analyticsQueue Queue, numWorkers 4 int}'
-  - '[-1] (PointerVariable PointerType) n (*postnotification.AnalyticsServiceImpl
-    struct{analyticsDb NoSQLDatabase, analyticsQueue Queue, numWorkers 4 int})'
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BlueprintBackendVariable BlueprintBackendType) analyticsDb NoSQLDatabase
+  - (BlueprintBackendVariable BlueprintBackendType) analyticsQueue Queue
+  - (inline) (BasicVariable BasicType) 4 int
+  - (inline) (FieldVariable FieldType) numWorkers 4 int
+  - (inline) (FieldVariable FieldType) analyticsQueue Queue
+  - (inline) (FieldVariable FieldType) analyticsDb NoSQLDatabase
+  - (inline) (StructVariable UserType) postnotification.AnalyticsServiceImpl struct{analyticsDb NoSQLDatabase, analyticsQueue Queue, numWorkers 4 int}
+  - (PointerVariable PointerType) n (*postnotification.AnalyticsServiceImpl struct{analyticsDb NoSQLDatabase, analyticsQueue Queue, numWorkers 4 int})
 
 .NewMediaServiceImpl(ctx context.Context, mediaDb NoSQLDatabase):
   block 0 (Body):
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) mediaDb NoSQLDatabase'
-  - '[0] (inline) (FieldVariable FieldType) mediaDb NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) postnotification.MediaServiceImpl struct{mediaDb
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) s (*postnotification.MediaServiceImpl struct{mediaDb
-    NoSQLDatabase})'
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BlueprintBackendVariable BlueprintBackendType) mediaDb NoSQLDatabase
+  - (inline) (FieldVariable FieldType) mediaDb NoSQLDatabase
+  - (inline) (StructVariable UserType) postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase}
+  - (PointerVariable PointerType) s (*postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase})
 
 .NewNotifyServiceImpl(ctx context.Context, storageService postnotification.StorageService, notificationsQueue Queue):
   block 0 (Body):
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (ServiceVariable ServiceType) storageService postnotification.StorageService'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) notificationsQueue Queue'
-  - '[0] (inline) (FieldVariable FieldType) notificationsQueue Queue'
-  - '[0] (inline) (FieldVariable FieldType) storageService postnotification.StorageService'
-  - '[0] (inline) (BasicVariable BasicType) 4 int'
-  - '[0] (inline) (FieldVariable FieldType) num_workers 4 int'
-  - '[0] (inline) (StructVariable UserType) postnotification.NotifyServiceImpl struct{storageService
-    postnotification.StorageService, notificationsQueue Queue, num_workers 4 int}'
-  - '[-1] (PointerVariable PointerType) n (*postnotification.NotifyServiceImpl struct{storageService
-    postnotification.StorageService, notificationsQueue Queue, num_workers 4 int})'
+  - (InterfaceVariable UserType) ctx context.Context
+  - (ServiceVariable ServiceType) storageService postnotification.StorageService
+  - (BlueprintBackendVariable BlueprintBackendType) notificationsQueue Queue
+  - (inline) (FieldVariable FieldType) storageService postnotification.StorageService
+  - (inline) (BasicVariable BasicType) 4 int
+  - (inline) (FieldVariable FieldType) num_workers 4 int
+  - (inline) (FieldVariable FieldType) notificationsQueue Queue
+  - (inline) (StructVariable UserType) postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, notificationsQueue Queue, num_workers 4 int}
+  - (PointerVariable PointerType) n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, notificationsQueue Queue, num_workers 4 int})
 
 .NewStorageServiceImpl(ctx context.Context, analyticsService postnotification.AnalyticsService, mediaService postnotification.MediaService, posts_cache Cache, postsDb NoSQLDatabase, analyticsQueue Queue)
 :
  block 0 (Body):
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (ServiceVariable ServiceType) analyticsService postnotification.AnalyticsService'
-  - '[-1] (ServiceVariable ServiceType) mediaService postnotification.MediaService'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) posts_cache Cache'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) postsDb NoSQLDatabase'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) analyticsQueue Queue'
-  - '[0] (inline) (FieldVariable FieldType) posts_cache Cache'
-  - '[0] (inline) (FieldVariable FieldType) mediaService postnotification.MediaService'
-  - '[0] (inline) (FieldVariable FieldType) analyticsService postnotification.AnalyticsService'
-  - '[0] (inline) (FieldVariable FieldType) analyticsQueue Queue'
-  - '[0] (inline) (FieldVariable FieldType) postsDb NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) postnotification.StorageServiceImpl struct{analyticsService
-    postnotification.AnalyticsService, mediaService postnotification.MediaService,
-    posts_cache Cache, postsDb NoSQLDatabase, analyticsQueue Queue}'
-  - '[-1] (PointerVariable PointerType) s (*postnotification.StorageServiceImpl struct{analyticsService
-    postnotification.AnalyticsService, mediaService postnotification.MediaService,
-    posts_cache Cache, postsDb NoSQLDatabase, analyticsQueue Queue})'
+  - (InterfaceVariable UserType) ctx context.Context
+  - (ServiceVariable ServiceType) analyticsService postnotification.AnalyticsService
+  - (ServiceVariable ServiceType) mediaService postnotification.MediaService
+  - (BlueprintBackendVariable BlueprintBackendType) posts_cache Cache
+  - (BlueprintBackendVariable BlueprintBackendType) postsDb NoSQLDatabase
+  - (BlueprintBackendVariable BlueprintBackendType) analyticsQueue Queue
+  - (inline) (FieldVariable FieldType) posts_cache Cache
+  - (inline) (FieldVariable FieldType) postsDb NoSQLDatabase
+  - (inline) (FieldVariable FieldType) mediaService postnotification.MediaService
+  - (inline) (FieldVariable FieldType) analyticsService postnotification.AnalyticsService
+  - (inline) (FieldVariable FieldType) analyticsQueue Queue
+  - (inline) (StructVariable UserType) postnotification.StorageServiceImpl struct{analyticsService postnotification.AnalyticsService, mediaService postnotification.MediaService, posts_cache Cache, postsDb NoSQLDatabase, analyticsQueue Queue}
+  - (PointerVariable PointerType) s (*postnotification.StorageServiceImpl struct{analyticsService postnotification.AnalyticsService, mediaService postnotification.MediaService, posts_cache Cache, postsDb NoSQLDatabase, analyticsQueue Queue})
 
 .NewUploadServiceImpl(ctx context.Context, storageService postnotification.StorageService, mediaService postnotification.MediaService, notificationsQueue Queue, timelineCache Cache)
 :
  block 0 (Body):
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (ServiceVariable ServiceType) storageService postnotification.StorageService'
-  - '[-1] (ServiceVariable ServiceType) mediaService postnotification.MediaService'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) notificationsQueue Queue'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) timelineCache Cache'
+  - (InterfaceVariable UserType) ctx context.Context
+  - (ServiceVariable ServiceType) storageService postnotification.StorageService
+  - (ServiceVariable ServiceType) mediaService postnotification.MediaService
+  - (BlueprintBackendVariable BlueprintBackendType) notificationsQueue Queue
+  - (BlueprintBackendVariable BlueprintBackendType) timelineCache Cache

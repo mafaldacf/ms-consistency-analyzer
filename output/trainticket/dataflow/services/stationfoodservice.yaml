@@ -1,139 +1,112 @@
 (*StationFoodServiceImpl).Cleanup(ctx context.Context):
   block 2 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) stationfood.StationFoodServiceImpl struct{db
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db
-    NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = stationfood, collection = stationfood}'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) db NoSQLDatabase
+  - (inline) (StructVariable UserType) stationfood.StationFoodServiceImpl struct{db NoSQLDatabase}
+  - (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = stationfood, collection = stationfood}
+  - (InterfaceVariable UserType) err .error
 
 (*StationFoodServiceImpl).CreateFoodStore(ctx context.Context, store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}})
 :
  block 8 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) stationfood.StationFoodServiceImpl struct{db
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db
-    NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) db NoSQLDatabase
+  - (inline) (StructVariable UserType) stationfood.StationFoodServiceImpl struct{db NoSQLDatabase}
+  - (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
   - |-
-    [-1] (inline) (BasicVariable BasicType) ID string -->
+    (inline) (BasicVariable BasicType) ID string -->
        w-tainted 1x: write(stationfood_db.StationFoodStore.ID)
   - |-
-    [-1] (inline) (FieldVariable FieldType) ID string -->
+    (inline) (FieldVariable FieldType) ID string -->
        w-tainted 1x: write(stationfood_db.StationFoodStore.ID)
   - |-
-    [-1] (StructVariable UserType) store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}} -->
+    (StructVariable UserType) store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}} -->
        w-tainted 1x: write(stationfood_db.StationFoodStore)
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = stationfood, collection = stationfood}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "id" string,  string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = stationfood, collection = stationfood}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (StructVariable UserType) st stationfood.StationFoodStore struct{ID string,
-    StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee
-    float64, Foods []food.Food struct{Name string, Price float64}}'
-  - '[-1] (BasicVariable BasicType) exists bool'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = stationfood, collection = stationfood}
+  - (InterfaceVariable UserType) err .error
+  - (inline) (FieldVariable FieldType) string
+  - (inline) (StructVariable StructType) struct{ "id" string, string}
+  - (SliceVariable UserType) query primitive.D
+  - (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = stationfood, collection = stationfood}
+  - (InterfaceVariable UserType) err .error
+  - (StructVariable UserType) st stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
+  - (BasicVariable BasicType) exists bool
+  - (InterfaceVariable UserType) err .error
 
 (*StationFoodServiceImpl).GetFoodStoreByID(ctx context.Context, id string):
   block 14 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) stationfood.StationFoodServiceImpl struct{db
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db
-    NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BasicVariable BasicType) id string'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = stationfood, collection = stationfood}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = stationfood, collection = stationfood}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (StructVariable UserType) store stationfood.StationFoodStore struct{ID string,
-    StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee
-    float64, Foods []food.Food struct{Name string, Price float64}}'
-  - '[-1] (BasicVariable BasicType) exists bool'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) db NoSQLDatabase
+  - (inline) (StructVariable UserType) stationfood.StationFoodServiceImpl struct{db NoSQLDatabase}
+  - (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BasicVariable BasicType) id string
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = stationfood, collection = stationfood}
+  - (InterfaceVariable UserType) err .error
+  - (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = stationfood, collection = stationfood}
+  - (InterfaceVariable UserType) err .error
+  - (StructVariable UserType) store stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
+  - (BasicVariable BasicType) exists bool
+  - (InterfaceVariable UserType) err .error
 
 (*StationFoodServiceImpl).GetFoodStoresByStationNames(ctx context.Context, stations []string):
   block 8 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) stationfood.StationFoodServiceImpl struct{db
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db
-    NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (ArrayVariable ArrayType) stations []string'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = stationfood, collection = stationfood}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (SliceVariable UserType) doc primitive.A'
-  - '[0] (inline) (FieldVariable FieldType) primitive.A'
-  - '[0] (inline) (StructVariable StructType) struct{ "$in" string,  primitive.A}'
-  - '[0] (inline) (SliceVariable UserType) primitive.D'
-  - '[0] (inline) (FieldVariable FieldType) primitive.D'
-  - '[0] (inline) (StructVariable StructType) struct{ "stationname" string,  primitive.D}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = stationfood, collection = stationfood}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (ArrayVariable ArrayType) stores []stationfood.StationFoodStore struct{ID
-    string, StationName string, StoreName string, Telephone string, BusinessTime string,
-    DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) db NoSQLDatabase
+  - (inline) (StructVariable UserType) stationfood.StationFoodServiceImpl struct{db NoSQLDatabase}
+  - (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (ArrayVariable ArrayType) stations []string
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = stationfood, collection = stationfood}
+  - (InterfaceVariable UserType) err .error
+  - (SliceVariable UserType) doc primitive.A
+  - (inline) (FieldVariable FieldType) primitive.A
+  - (inline) (StructVariable StructType) struct{ "$in" string, primitive.A}
+  - (inline) (SliceVariable UserType) primitive.D
+  - (inline) (FieldVariable FieldType) primitive.D
+  - (inline) (StructVariable StructType) struct{ "stationname" string, primitive.D}
+  - (SliceVariable UserType) query primitive.D
+  - (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = stationfood, collection = stationfood}
+  - (InterfaceVariable UserType) err .error
+  - (ArrayVariable ArrayType) stores []stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
+  - (InterfaceVariable UserType) err .error
 
 (*StationFoodServiceImpl).ListFoodStores(ctx context.Context):
   block 8 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) stationfood.StationFoodServiceImpl struct{db
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db
-    NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = stationfood, collection = stationfood}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = stationfood, collection = stationfood}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (ArrayVariable ArrayType) stores []stationfood.StationFoodStore struct{ID
-    string, StationName string, StoreName string, Telephone string, BusinessTime string,
-    DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) db NoSQLDatabase
+  - (inline) (StructVariable UserType) stationfood.StationFoodServiceImpl struct{db NoSQLDatabase}
+  - (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = stationfood, collection = stationfood}
+  - (InterfaceVariable UserType) err .error
+  - (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = stationfood, collection = stationfood}
+  - (InterfaceVariable UserType) err .error
+  - (ArrayVariable ArrayType) stores []stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
+  - (InterfaceVariable UserType) err .error
 
 (*StationFoodServiceImpl).ListFoodStoresByStationName(ctx context.Context, station string):
   block 8 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) stationfood.StationFoodServiceImpl struct{db
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db
-    NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BasicVariable BasicType) station string'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = stationfood, collection = stationfood}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "stationname" string,  string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = stationfood, collection = stationfood}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (ArrayVariable ArrayType) stores []stationfood.StationFoodStore struct{ID
-    string, StationName string, StoreName string, Telephone string, BusinessTime string,
-    DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) db NoSQLDatabase
+  - (inline) (StructVariable UserType) stationfood.StationFoodServiceImpl struct{db NoSQLDatabase}
+  - (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BasicVariable BasicType) station string
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = stationfood, collection = stationfood}
+  - (InterfaceVariable UserType) err .error
+  - (inline) (FieldVariable FieldType) string
+  - (inline) (StructVariable StructType) struct{ "stationname" string, string}
+  - (SliceVariable UserType) query primitive.D
+  - (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = stationfood, collection = stationfood}
+  - (InterfaceVariable UserType) err .error
+  - (ArrayVariable ArrayType) stores []stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
+  - (InterfaceVariable UserType) err .error
 
 .NewStationFoodServiceImpl(ctx context.Context, db NoSQLDatabase):
   block 0 (Body):
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase

@@ -1,14 +1,14 @@
 (*FooServiceImpl).Foo(ctx context.Context, text string):
   block 0 (Body):
-  - '[0] (inline) (StructVariable UserType) foo.FooServiceImpl struct{}'
-  - '[-1] (PointerVariable PointerType) d (*foo.FooServiceImpl struct{})'
-  - '[1] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[2] (inline) (Reference BasicType) ref <"Frontend" string> @ FrontendService'
-  - '[0] (BasicVariable BasicType) text string'
+  - (inline) (StructVariable UserType) foo.FooServiceImpl struct{}
+  - (PointerVariable PointerType) d (*foo.FooServiceImpl struct{})
+  - (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService
+  - (InterfaceVariable UserType) ctx context.Context
+  - (inline) (Reference BasicType) ref <"Frontend" string> @ FrontendService
+  - (BasicVariable BasicType) text string
 
 .NewFooServiceImpl(ctx context.Context):
   block 0 (Body):
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[0] (inline) (StructVariable UserType) foo.FooServiceImpl struct{}'
-  - '[-1] (PointerVariable PointerType) d (*foo.FooServiceImpl struct{})'
+  - (InterfaceVariable UserType) ctx context.Context
+  - (inline) (StructVariable UserType) foo.FooServiceImpl struct{}
+  - (PointerVariable PointerType) d (*foo.FooServiceImpl struct{})

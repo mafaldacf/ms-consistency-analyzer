@@ -1,61 +1,58 @@
 (*queueMasterImpl).Run(ctx context.Context):
   block 5 (SelectAfterCase):
-  - '[0] (inline) (BasicVariable BasicType) 0 int'
-  - '[0] (inline) (FieldVariable FieldType) processed 0 int'
-  - '[0] (inline) (BasicVariable BasicType) false bool'
-  - '[0] (inline) (FieldVariable FieldType) exitOnError false bool'
-  - '[-1] (inline) (ServiceVariable ServiceType) shipping shipping.ShippingService'
-  - '[0] (inline) (FieldVariable FieldType) shipping shipping.ShippingService'
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) queue Queue'
-  - '[0] (inline) (FieldVariable FieldType) q Queue'
-  - '[0] (inline) (StructVariable UserType) queuemaster.queueMasterImpl struct{q Queue,
-    shipping shipping.ShippingService, exitOnError false bool, processed 0 int}'
-  - '[-1] (PointerVariable PointerType) q (*queuemaster.queueMasterImpl struct{q Queue,
-    shipping shipping.ShippingService, exitOnError false bool, processed 0 int})'
-  - '[53] (InterfaceVariable UserType) ctx context.Context'
+  - (inline) (ServiceVariable ServiceType) shipping shipping.ShippingService
+  - (inline) (FieldVariable FieldType) shipping shipping.ShippingService
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) queue Queue
+  - (inline) (FieldVariable FieldType) q Queue
+  - (inline) (BasicVariable BasicType) 0 int
+  - (inline) (FieldVariable FieldType) processed 0 int
+  - (inline) (BasicVariable BasicType) false bool
+  - (inline) (FieldVariable FieldType) exitOnError false bool
+  - (inline) (StructVariable UserType) queuemaster.queueMasterImpl struct{q Queue, shipping shipping.ShippingService, exitOnError false bool, processed 0 int}
+  - (PointerVariable PointerType) q (*queuemaster.queueMasterImpl struct{q Queue, shipping shipping.ShippingService, exitOnError false bool, processed 0 int})
+  - (InterfaceVariable UserType) ctx context.Context
   - |-
-    [51] (inline) (BasicVariable BasicType) string -->
+    (inline) (BasicVariable BasicType) string -->
        w-tainted 2x: write(shipqueue.Shipment.ID, shipdb.Shipment.ID)
   - |-
-    [50] (inline) (Reference FieldType) ref <ID string> @ OrderService -->
+    (inline) (Reference FieldType) ref <ID string> @ OrderService -->
        w-tainted 2x: write(shipqueue.Shipment.ID, shipdb.Shipment.ID)
-  - '[50] (inline) (BasicVariable BasicType) ID string'
+  - (inline) (BasicVariable BasicType) ID string
   - |-
-    [50] (inline) (Reference FieldType) ref <ID string> @ OrderService -->
+    (inline) (Reference FieldType) ref <ID string> @ OrderService -->
        w-tainted 2x: write(shipqueue.Shipment.ID, shipdb.Shipment.ID)
-  - '[50] (inline) (FieldVariable FieldType) ID string'
+  - (inline) (FieldVariable FieldType) ID string
   - |-
-    [49] (inline) (BasicVariable BasicType) "awaiting shipment" string -->
+    (inline) (BasicVariable BasicType) "awaiting shipment" string -->
        w-tainted 2x: write(shipqueue.Shipment.Status, shipdb.Shipment.Status)
   - |-
-    [48] (inline) (FieldVariable FieldType) Status "awaiting shipment" string -->
+    (inline) (FieldVariable FieldType) Status "awaiting shipment" string -->
        w-tainted 2x: write(shipqueue.Shipment.Status, shipdb.Shipment.Status)
   - |-
-    [36] (inline) (Reference BasicType) ref <userID string> @ FrontendService -->
+    (inline) (Reference BasicType) ref <userID string> @ FrontendService -->
        w-tainted 3x: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.CustomerID)
   - |-
-    [42] (inline) (BasicVariable BasicType) customerID string -->
+    (inline) (BasicVariable BasicType) customerID string -->
        w-tainted 3x: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.CustomerID)
   - |-
-    [47] (inline) (FieldVariable FieldType) Name string -->
+    (inline) (FieldVariable FieldType) Name string -->
        w-tainted 2x: write(shipqueue.Shipment.Name, shipdb.Shipment.Name)
   - |-
-    [50] (inline) (FieldVariable FieldType) ID string -->
+    (inline) (FieldVariable FieldType) ID string -->
        w-tainted 2x: write(shipqueue.Shipment.ID, shipdb.Shipment.ID)
   - |-
-    [46] (inline) (Reference UserType) ref <shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}> @ OrderService -->
+    (inline) (Reference UserType) ref <shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}> @ OrderService -->
        w-tainted 2x: write(shipqueue.Shipment, shipdb.Shipment)
   - |-
-    [46] (inline) (Reference UserType) ref <shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}> @ OrderService -->
+    (inline) (Reference UserType) ref <shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}> @ OrderService -->
        w-tainted 2x: write(shipqueue.Shipment, shipdb.Shipment)
   - |-
-    [52] (inline) (Reference UserType) ref <shipment shipping.Shipment struct{ID string, Name string, Status string}> @ QueueMaster -->
+    (inline) (Reference UserType) ref <shipment shipping.Shipment struct{ID string, Name string, Status string}> @ QueueMaster -->
        w-tainted 2x: write(shipqueue.Shipment, shipdb.Shipment)
-  - '[46] (StructVariable UserType) shipment shipping.Shipment struct{ID string, Name
-    string, Status string}'
+  - (StructVariable UserType) shipment shipping.Shipment struct{ID string, Name string, Status string}
 
 .NewQueueMaster(ctx context.Context, queue Queue, shipping shipping.ShippingService):
   block 0 (Body):
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) queue Queue'
-  - '[-1] (ServiceVariable ServiceType) shipping shipping.ShippingService'
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BlueprintBackendVariable BlueprintBackendType) queue Queue
+  - (ServiceVariable ServiceType) shipping shipping.ShippingService

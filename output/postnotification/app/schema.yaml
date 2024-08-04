@@ -70,9 +70,9 @@ NOTIFICATIONS_QUEUE:
 - type: Queue
 - kind: RabbitMQ
 - dependencies:
+  - media_db
   - posts_cache
   - posts_db
-  - media_db
   - analytics_queue
   - analytics_db
 - schema:

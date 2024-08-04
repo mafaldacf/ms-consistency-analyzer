@@ -1,17 +1,19 @@
-[] (-1) (PointerVariable PointerType) p (*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase}) 
-[_] (0) (StructVariable UserType) payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase} 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) paymentDB NoSQLDatabase 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) moneyDB NoSQLDatabase 
+[] (PointerVariable PointerType) p (*payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase}) 
+[_] (StructVariable UserType) payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase} 
+[__] (FieldVariable FieldType) moneyDB NoSQLDatabase 
+[___] (BlueprintBackendVariable BlueprintBackendType) moneyDB NoSQLDatabase 
+[__] (FieldVariable FieldType) paymentDB NoSQLDatabase 
+[___] (BlueprintBackendVariable BlueprintBackendType) payDB NoSQLDatabase 
 
-[] (-1) (InterfaceVariable UserType) ctx context.Context 
+[] (InterfaceVariable UserType) ctx context.Context 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) pay_coll NoSQLCollection {database = payment, collection = payment} 
+[] (BlueprintBackendVariable BlueprintBackendType) pay_coll NoSQLCollection {database = payment, collection = payment} 
 
-[] (-1) (InterfaceVariable UserType) err .error 
+[] (InterfaceVariable UserType) err .error 
 
-[] (-1) (InterfaceVariable UserType) err .error 
+[] (InterfaceVariable UserType) err .error 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) money_coll NoSQLCollection {database = payment, collection = money} 
+[] (BlueprintBackendVariable BlueprintBackendType) money_coll NoSQLCollection {database = payment, collection = money} 
 
-[] (-1) (InterfaceVariable UserType) err .error 
+[] (InterfaceVariable UserType) err .error 
 

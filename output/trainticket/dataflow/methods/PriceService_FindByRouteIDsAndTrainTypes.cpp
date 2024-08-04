@@ -1,29 +1,30 @@
-[] (-1) (PointerVariable PointerType) p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase}) 
-[_] (0) (StructVariable UserType) price.PriceServiceImpl struct{priceDB NoSQLDatabase} 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) priceDB NoSQLDatabase 
+[] (PointerVariable PointerType) p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase}) 
+[_] (StructVariable UserType) price.PriceServiceImpl struct{priceDB NoSQLDatabase} 
+[__] (FieldVariable FieldType) priceDB NoSQLDatabase 
+[___] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
 
-[] (3) (InterfaceVariable UserType) ctx context.Context 
+[] (InterfaceVariable UserType) ctx context.Context 
 
-[] (-1) (ArrayVariable ArrayType) rtsAndTypes []string 
+[] (ArrayVariable ArrayType) rtsAndTypes []string 
 
-[] (-1) (MapVariable MapType) res map[string]price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} 
-[_] (-1) (StructVariable UserType) pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} 
+[] (MapVariable MapType) res map[string]price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} 
+[_] (StructVariable UserType) pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} 
 
-[] (-1) (BasicVariable BasicType) rt string 
+[] (BasicVariable BasicType) rt string 
 
-[] (-1) (SliceVariable SliceType) pieces []string 
-[_] (-1) (BasicVariable BasicType) rt string 
-[_] (0) (BasicVariable BasicType) ":" string 
+[] (SliceVariable SliceType) pieces []string 
+[_] (BasicVariable BasicType) rt string 
+[_] (BasicVariable BasicType) ":" string 
 
-[] (4) (SliceVariable SliceType) routeid []string 
-[_] (5) (BasicVariable BasicType) rt string 
-[_] (6) (BasicVariable BasicType) ":" string 
+[] (SliceVariable SliceType) routeid []string 
+[_] (BasicVariable BasicType) rt string 
+[_] (BasicVariable BasicType) ":" string 
 
-[] (7) (SliceVariable SliceType) trainType []string 
-[_] (8) (BasicVariable BasicType) rt string 
-[_] (9) (BasicVariable BasicType) ":" string 
+[] (SliceVariable SliceType) trainType []string 
+[_] (BasicVariable BasicType) rt string 
+[_] (BasicVariable BasicType) ":" string 
 
-[] (-1) (StructVariable UserType) pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} 
+[] (StructVariable UserType) pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} 
 
-[] (-1) (InterfaceVariable UserType) _ .error 
+[] (InterfaceVariable UserType) _ .error 
 

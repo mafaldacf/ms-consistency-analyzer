@@ -1,6 +1,6 @@
-[] (-1) (InterfaceVariable UserType) ctx context.Context 
+[] (InterfaceVariable UserType) ctx context.Context 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) payDB NoSQLDatabase 
+[] (BlueprintBackendVariable BlueprintBackendType) payDB NoSQLDatabase 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) moneyDB NoSQLDatabase 
+[] (BlueprintBackendVariable BlueprintBackendType) moneyDB NoSQLDatabase 
 

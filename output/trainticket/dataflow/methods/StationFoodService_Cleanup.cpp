@@ -1,10 +1,11 @@
-[] (-1) (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase}) 
-[_] (0) (StructVariable UserType) stationfood.StationFoodServiceImpl struct{db NoSQLDatabase} 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
+[] (PointerVariable PointerType) s (*stationfood.StationFoodServiceImpl struct{db NoSQLDatabase}) 
+[_] (StructVariable UserType) stationfood.StationFoodServiceImpl struct{db NoSQLDatabase} 
+[__] (FieldVariable FieldType) db NoSQLDatabase 
+[___] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
 
-[] (-1) (InterfaceVariable UserType) ctx context.Context 
+[] (InterfaceVariable UserType) ctx context.Context 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = stationfood, collection = stationfood} 
+[] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = stationfood, collection = stationfood} 
 
-[] (-1) (InterfaceVariable UserType) err .error 
+[] (InterfaceVariable UserType) err .error 
 

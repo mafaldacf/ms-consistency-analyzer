@@ -1,30 +1,31 @@
-[] (-1) (PointerVariable PointerType) p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase}) 
-[_] (0) (StructVariable UserType) price.PriceServiceImpl struct{priceDB NoSQLDatabase} 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) priceDB NoSQLDatabase 
+[] (PointerVariable PointerType) p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase}) 
+[_] (StructVariable UserType) price.PriceServiceImpl struct{priceDB NoSQLDatabase} 
+[__] (FieldVariable FieldType) priceDB NoSQLDatabase 
+[___] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
 
-[] (-1) (InterfaceVariable UserType) ctx context.Context 
-[_] (1) (Reference UserType) ref <ctx context.Context> @ PriceService 
+[] (InterfaceVariable UserType) ctx context.Context 
+[_] (Reference UserType) ref <ctx context.Context> @ PriceService 
 
-[] (-1) (BasicVariable BasicType) id string 
-[_] (2) (Reference BasicType) ref <ID string> @ PriceService // write(price_db), 
+[] (BasicVariable BasicType) id string 
+[_] (Reference BasicType) ref <ID string> @ PriceService // write(price_db), 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = priceConfig, collection = priceConfig} 
+[] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = priceConfig, collection = priceConfig} 
 
-[] (-1) (InterfaceVariable UserType) err .error 
+[] (InterfaceVariable UserType) err .error 
 
-[] (-1) (SliceVariable UserType) query primitive.D 
-[_] (0) (StructVariable StructType) struct{ "id" string,  string} 
-[__] (0) (FieldVariable FieldType) string 
-[___] (-1) (BasicVariable BasicType) id string 
-[____] (2) (Reference BasicType) ref <ID string> @ PriceService // write(price_db), 
+[] (SliceVariable UserType) query primitive.D 
+[_] (StructVariable StructType) struct{ "id" string,  string} 
+[__] (FieldVariable FieldType) string 
+[___] (BasicVariable BasicType) id string 
+[____] (Reference BasicType) ref <ID string> @ PriceService // write(price_db), 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = priceConfig, collection = priceConfig} 
+[] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = priceConfig, collection = priceConfig} 
 
-[] (-1) (InterfaceVariable UserType) err .error 
+[] (InterfaceVariable UserType) err .error 
 
-[] (-1) (StructVariable UserType) pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} 
+[] (StructVariable UserType) pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} 
 
-[] (-1) (BasicVariable BasicType) exists bool 
+[] (BasicVariable BasicType) exists bool 
 
-[] (-1) (InterfaceVariable UserType) err .error 
+[] (InterfaceVariable UserType) err .error 
 

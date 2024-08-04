@@ -21,24 +21,41 @@ func isBlueprintPackagePath(name string) bool {
 	return name == PACKAGE_PATH_BLUEPRINT
 }
 
+func SaveObjectToPackage(pkg *types.Package, obj golangtypes.Object) gotypes.Type {
+	if constObj, ok := obj.(*golangtypes.Const); ok {
+		t := LookupAndComputeTypesForGoTypes(pkg, obj.Type())
+		t.(*gotypes.BasicType).Value = constObj.Val().String()
+		v := CreateVariableFromType(obj.Id(), t)
+		if pkg.HasPath(obj.Pkg().Path()) {
+			pkg.AddConstant(v)
+		} else {
+			pkg.AddImportedConstant(v, obj.Pkg().Path())
+		}
+		return t
+	} else if _, ok := obj.(*golangtypes.Var); ok {
+		t := LookupAndComputeTypesForGoTypes(pkg, obj.Type())
+		v := CreateVariableFromType(obj.Id(), t)
+		if pkg.HasPath(obj.Pkg().Path()) {
+			pkg.AddVariable(v)
+		} else {
+			pkg.AddImportedConstant(v, obj.Pkg().Path())
+		}
+		return t
+	}
+	return nil
+}
+
 func FindDefTypesAndAddToPackage(pkg *types.Package, object golangtypes.Object, goType golangtypes.Type, visitedNamedTypes map[*golangtypes.Named]bool, typeNameToFuncs map[string][]*golangtypes.Func, serviceTypes map[string]*gotypes.ServiceType) gotypes.Type {
-	if object != nil {
-		if constObject, ok := object.(*golangtypes.Const); ok {
-			t := LookupAndComputeTypesForGoTypes(pkg, constObject.Type())
-			t.(*gotypes.BasicType).Value = constObject.Val().String()
-			v := CreateVariableFromType(object.Id(), t)
-			if pkg.HasPath(object.Pkg().Path()) {
-				pkg.AddConstant(v)
-			} else {
-				pkg.AddImportedConstant(v, object.Pkg().Path())
-			}
+	/* if object != nil {
+		t := SaveObjectToPackage(pkg, object)
+		if t != nil {
 			return t
 		}
-	}
+	} */
 
 	namedGoType, ok := goType.(*golangtypes.Named)
 	if !ok {
-		logger.Logger.Tracef("[APP GOTYPES] skipping %v with type %s", goType, utils.GetType(goType))
+		logger.Logger.Warnf("[APP GOTYPES] skipping %v with type %s", goType, utils.GetType(goType))
 		return nil
 	}
 

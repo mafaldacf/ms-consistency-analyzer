@@ -44,6 +44,9 @@ func (t *PointerType) GetPointerTo() Type {
 	}
 	return t.PointerTo
 }
+func (t *PointerType) GetNestedFieldTypes(prefix string) ([]Type, []string) {
+	return t.PointerTo.GetNestedFieldTypes(prefix)
+}
 
 // ---------------
 // Pointer Methods

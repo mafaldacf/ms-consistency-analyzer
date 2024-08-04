@@ -1,203 +1,173 @@
 (*orderImpl).GetOrder(ctx context.Context, orderID string):
   block 2 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) orderDB NoSQLDatabase'
-  - '[0] (inline) (FieldVariable FieldType) db NoSQLDatabase'
-  - '[-1] (inline) (ServiceVariable ServiceType) shipping shipping.ShippingService'
-  - '[0] (inline) (FieldVariable FieldType) shipping shipping.ShippingService'
-  - '[-1] (inline) (ServiceVariable ServiceType) payments payment.PaymentService'
-  - '[0] (inline) (FieldVariable FieldType) payments payment.PaymentService'
-  - '[-1] (inline) (ServiceVariable ServiceType) cartService cart.CartService'
-  - '[0] (inline) (FieldVariable FieldType) carts cart.CartService'
-  - '[-1] (inline) (ServiceVariable ServiceType) userService user.UserService'
-  - '[0] (inline) (FieldVariable FieldType) users user.UserService'
-  - '[0] (inline) (StructVariable UserType) order.orderImpl struct{users user.UserService,
-    carts cart.CartService, payments payment.PaymentService, shipping shipping.ShippingService,
-    db NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) s (*order.orderImpl struct{users user.UserService,
-    carts cart.CartService, payments payment.PaymentService, shipping shipping.ShippingService,
-    db NoSQLDatabase})'
-  - '[28] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[29] (inline) (Reference BasicType) ref <orderID string> @ FrontendService'
-  - '[-1] (BasicVariable BasicType) orderID string'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "id" string,  string}'
-  - '[-1] (SliceVariable UserType) filter primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
-    {database = order_service, collection = orders}'
-  - '[-1] (InterfaceVariable UserType) _ .error'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) cursor NoSQLCursor {database
-    = order_service, collection = orders}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (StructVariable UserType) order order.Order struct{ID string, CustomerID
-    string, Address []user.Address struct{Street string, Number string, Country string,
-    City string, PostCode string, ID string}, Card []user.Card struct{LongNum string,
-    Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity
-    int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string,
-    Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}'
+  - (inline) (ServiceVariable ServiceType) userService user.UserService
+  - (inline) (FieldVariable FieldType) users user.UserService
+  - (inline) (ServiceVariable ServiceType) shipping shipping.ShippingService
+  - (inline) (FieldVariable FieldType) shipping shipping.ShippingService
+  - (inline) (ServiceVariable ServiceType) payments payment.PaymentService
+  - (inline) (FieldVariable FieldType) payments payment.PaymentService
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) orderDB NoSQLDatabase
+  - (inline) (FieldVariable FieldType) db NoSQLDatabase
+  - (inline) (ServiceVariable ServiceType) cartService cart.CartService
+  - (inline) (FieldVariable FieldType) carts cart.CartService
+  - (inline) (StructVariable UserType) order.orderImpl struct{users user.UserService, carts cart.CartService, payments payment.PaymentService, shipping shipping.ShippingService, db NoSQLDatabase}
+  - (PointerVariable PointerType) s (*order.orderImpl struct{users user.UserService, carts cart.CartService, payments payment.PaymentService, shipping shipping.ShippingService, db NoSQLDatabase})
+  - (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService
+  - (InterfaceVariable UserType) ctx context.Context
+  - (inline) (Reference BasicType) ref <orderID string> @ FrontendService
+  - (BasicVariable BasicType) orderID string
+  - (inline) (FieldVariable FieldType) string
+  - (inline) (StructVariable StructType) struct{ "id" string, string}
+  - (SliceVariable UserType) filter primitive.D
+  - (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = order_service, collection = orders}
+  - (InterfaceVariable UserType) _ .error
+  - (BlueprintBackendVariable BlueprintBackendType) cursor NoSQLCursor {database = order_service, collection = orders}
+  - (InterfaceVariable UserType) err .error
+  - (StructVariable UserType) order order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card []user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}
 
 (*orderImpl).GetOrders(ctx context.Context, customerID string):
   block 5 (IfDone):
-  - '[-1] (inline) (ServiceVariable ServiceType) cartService cart.CartService'
-  - '[0] (inline) (FieldVariable FieldType) carts cart.CartService'
-  - '[-1] (inline) (ServiceVariable ServiceType) userService user.UserService'
-  - '[0] (inline) (FieldVariable FieldType) users user.UserService'
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) orderDB NoSQLDatabase'
-  - '[0] (inline) (FieldVariable FieldType) db NoSQLDatabase'
-  - '[-1] (inline) (ServiceVariable ServiceType) shipping shipping.ShippingService'
-  - '[0] (inline) (FieldVariable FieldType) shipping shipping.ShippingService'
-  - '[-1] (inline) (ServiceVariable ServiceType) payments payment.PaymentService'
-  - '[0] (inline) (FieldVariable FieldType) payments payment.PaymentService'
-  - '[0] (inline) (StructVariable UserType) order.orderImpl struct{users user.UserService,
-    carts cart.CartService, payments payment.PaymentService, shipping shipping.ShippingService,
-    db NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) s (*order.orderImpl struct{users user.UserService,
-    carts cart.CartService, payments payment.PaymentService, shipping shipping.ShippingService,
-    db NoSQLDatabase})'
-  - '[68] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[69] (inline) (Reference BasicType) ref <userID string> @ FrontendService'
-  - '[-1] (BasicVariable BasicType) customerID string'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "customerid" string,  string}'
-  - '[-1] (SliceVariable UserType) filter primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
-    {database = order_service, collection = orders}'
-  - '[-1] (InterfaceVariable UserType) _ .error'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) cursor NoSQLCursor {database
-    = order_service, collection = orders}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (ArrayVariable ArrayType) orders []order.Order struct{ID string, CustomerID
-    string, Address []user.Address struct{Street string, Number string, Country string,
-    City string, PostCode string, ID string}, Card []user.Card struct{LongNum string,
-    Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity
-    int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string,
-    Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (inline) (ServiceVariable ServiceType) userService user.UserService
+  - (inline) (FieldVariable FieldType) users user.UserService
+  - (inline) (ServiceVariable ServiceType) shipping shipping.ShippingService
+  - (inline) (FieldVariable FieldType) shipping shipping.ShippingService
+  - (inline) (ServiceVariable ServiceType) payments payment.PaymentService
+  - (inline) (FieldVariable FieldType) payments payment.PaymentService
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) orderDB NoSQLDatabase
+  - (inline) (FieldVariable FieldType) db NoSQLDatabase
+  - (inline) (ServiceVariable ServiceType) cartService cart.CartService
+  - (inline) (FieldVariable FieldType) carts cart.CartService
+  - (inline) (StructVariable UserType) order.orderImpl struct{users user.UserService, carts cart.CartService, payments payment.PaymentService, shipping shipping.ShippingService, db NoSQLDatabase}
+  - (PointerVariable PointerType) s (*order.orderImpl struct{users user.UserService, carts cart.CartService, payments payment.PaymentService, shipping shipping.ShippingService, db NoSQLDatabase})
+  - (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService
+  - (InterfaceVariable UserType) ctx context.Context
+  - (inline) (Reference BasicType) ref <userID string> @ FrontendService
+  - (BasicVariable BasicType) customerID string
+  - (inline) (FieldVariable FieldType) string
+  - (inline) (StructVariable StructType) struct{ "customerid" string, string}
+  - (SliceVariable UserType) filter primitive.D
+  - (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = order_service, collection = orders}
+  - (InterfaceVariable UserType) _ .error
+  - (BlueprintBackendVariable BlueprintBackendType) cursor NoSQLCursor {database = order_service, collection = orders}
+  - (InterfaceVariable UserType) err .error
+  - (ArrayVariable ArrayType) orders []order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card []user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}
+  - (InterfaceVariable UserType) err .error
 
 (*orderImpl).NewOrder(ctx context.Context, customerID string, addressID string, cardID string, cartID string):
   block 5 (IfDone):
-  - '[-1] (inline) (ServiceVariable ServiceType) shipping shipping.ShippingService'
-  - '[0] (inline) (FieldVariable FieldType) shipping shipping.ShippingService'
-  - '[-1] (inline) (ServiceVariable ServiceType) payments payment.PaymentService'
-  - '[0] (inline) (FieldVariable FieldType) payments payment.PaymentService'
-  - '[-1] (inline) (ServiceVariable ServiceType) cartService cart.CartService'
-  - '[0] (inline) (FieldVariable FieldType) carts cart.CartService'
-  - '[-1] (inline) (ServiceVariable ServiceType) userService user.UserService'
-  - '[0] (inline) (FieldVariable FieldType) users user.UserService'
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) orderDB NoSQLDatabase'
-  - '[0] (inline) (FieldVariable FieldType) db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) order.orderImpl struct{users user.UserService,
-    carts cart.CartService, payments payment.PaymentService, shipping shipping.ShippingService,
-    db NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) s (*order.orderImpl struct{users user.UserService,
-    carts cart.CartService, payments payment.PaymentService, shipping shipping.ShippingService,
-    db NoSQLDatabase})'
-  - '[35] (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService'
-  - '[40] (InterfaceVariable UserType) ctx context.Context'
+  - (inline) (ServiceVariable ServiceType) userService user.UserService
+  - (inline) (FieldVariable FieldType) users user.UserService
+  - (inline) (ServiceVariable ServiceType) shipping shipping.ShippingService
+  - (inline) (FieldVariable FieldType) shipping shipping.ShippingService
+  - (inline) (ServiceVariable ServiceType) payments payment.PaymentService
+  - (inline) (FieldVariable FieldType) payments payment.PaymentService
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) orderDB NoSQLDatabase
+  - (inline) (FieldVariable FieldType) db NoSQLDatabase
+  - (inline) (ServiceVariable ServiceType) cartService cart.CartService
+  - (inline) (FieldVariable FieldType) carts cart.CartService
+  - (inline) (StructVariable UserType) order.orderImpl struct{users user.UserService, carts cart.CartService, payments payment.PaymentService, shipping shipping.ShippingService, db NoSQLDatabase}
+  - (PointerVariable PointerType) s (*order.orderImpl struct{users user.UserService, carts cart.CartService, payments payment.PaymentService, shipping shipping.ShippingService, db NoSQLDatabase})
+  - (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService
+  - (InterfaceVariable UserType) ctx context.Context
   - |-
-    [36] (inline) (Reference BasicType) ref <userID string> @ FrontendService -->
+    (inline) (Reference BasicType) ref <userID string> @ FrontendService -->
        w-tainted 3x: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.CustomerID)
   - |-
-    [42] (BasicVariable BasicType) customerID string -->
+    (BasicVariable BasicType) customerID string -->
        w-tainted 3x: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.CustomerID)
-  - '[37] (inline) (Reference BasicType) ref <addressID string> @ FrontendService'
-  - '[43] (BasicVariable BasicType) addressID string'
-  - '[38] (inline) (Reference BasicType) ref <cardID string> @ FrontendService'
-  - '[44] (BasicVariable BasicType) cardID string'
-  - '[39] (inline) (Reference BasicType) ref <cartID string> @ FrontendService'
-  - '[41] (BasicVariable BasicType) cartID string'
-  - '[-1] (StructVariable UserType) wg sync.WaitGroup'
-  - '[-1] (ArrayVariable ArrayType) items []cart.Item struct{ID string, Quantity int,
-    UnitPrice float32}'
-  - '[-1] (ArrayVariable ArrayType) addresses []user.Address struct{Street string,
-    Number string, Country string, City string, PostCode string, ID string}'
-  - '[-1] (ArrayVariable ArrayType) cards []user.Card struct{LongNum string, Expires
-    string, CCV string, ID string}'
+  - (inline) (Reference BasicType) ref <addressID string> @ FrontendService
+  - (BasicVariable BasicType) addressID string
+  - (inline) (Reference BasicType) ref <cardID string> @ FrontendService
+  - (BasicVariable BasicType) cardID string
+  - (inline) (Reference BasicType) ref <cartID string> @ FrontendService
+  - (BasicVariable BasicType) cartID string
+  - (StructVariable UserType) wg sync.WaitGroup
+  - (ArrayVariable ArrayType) items []cart.Item struct{ID string, Quantity int, UnitPrice float32}
+  - (ArrayVariable ArrayType) addresses []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}
+  - (ArrayVariable ArrayType) cards []user.Card struct{LongNum string, Expires string, CCV string, ID string}
   - |-
-    [-1] (SliceVariable SliceType) items []cart.Item struct{ID string, Quantity int, UnitPrice float32} -->
+    (SliceVariable SliceType) items []cart.Item struct{ID string, Quantity int, UnitPrice float32} -->
        w-tainted 1x: write(order_db.Order.Items)
-  - '[-1] (InterfaceVariable UserType) _ .error'
+  - (InterfaceVariable UserType) _ .error
   - |-
-    [-1] (SliceVariable SliceType) addresses []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string} -->
+    (SliceVariable SliceType) addresses []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string} -->
        w-tainted 1x: write(order_db.Order.Address)
-  - '[-1] (InterfaceVariable UserType) _ .error'
+  - (InterfaceVariable UserType) _ .error
   - |-
-    [-1] (SliceVariable SliceType) cards []user.Card struct{LongNum string, Expires string, CCV string, ID string} -->
+    (SliceVariable SliceType) cards []user.Card struct{LongNum string, Expires string, CCV string, ID string} -->
        w-tainted 1x: write(order_db.Order.Card)
-  - '[-1] (InterfaceVariable UserType) _ .error'
+  - (InterfaceVariable UserType) _ .error
   - |-
-    [45] (BasicVariable BasicType) amount 10 float32 -->
+    (BasicVariable BasicType) amount 10 float32 -->
        w-tainted 1x: write(order_db.Order.Total)
   - |-
-    [51] (inline) (BasicVariable BasicType) string -->
-       w-tainted 2x: write(shipqueue.Shipment.ID, shipdb.Shipment.ID)
-  - |-
-    [50] (inline) (FieldVariable FieldType) ID string -->
-       w-tainted 2x: write(shipqueue.Shipment.ID, shipdb.Shipment.ID)
-  - |-
-    [49] (inline) (BasicVariable BasicType) "awaiting shipment" string -->
+    (inline) (BasicVariable BasicType) "awaiting shipment" string -->
        w-tainted 2x: write(shipqueue.Shipment.Status, shipdb.Shipment.Status)
   - |-
-    [48] (inline) (FieldVariable FieldType) Status "awaiting shipment" string -->
+    (inline) (FieldVariable FieldType) Status "awaiting shipment" string -->
        w-tainted 2x: write(shipqueue.Shipment.Status, shipdb.Shipment.Status)
   - |-
-    [47] (inline) (FieldVariable FieldType) Name string -->
+    (inline) (FieldVariable FieldType) Name string -->
        w-tainted 2x: write(shipqueue.Shipment.Name, shipdb.Shipment.Name)
   - |-
-    [46] (StructVariable UserType) shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string} -->
+    (inline) (BasicVariable BasicType) string -->
+       w-tainted 2x: write(shipqueue.Shipment.ID, shipdb.Shipment.ID)
+  - |-
+    (inline) (FieldVariable FieldType) ID string -->
+       w-tainted 2x: write(shipqueue.Shipment.ID, shipdb.Shipment.ID)
+  - |-
+    (StructVariable UserType) shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string} -->
        w-tainted 2x: write(shipqueue.Shipment, shipdb.Shipment)
   - |-
-    [-1] (inline) (BasicVariable BasicType) ID string -->
+    (inline) (BasicVariable BasicType) ID string -->
        w-tainted 2x: write(order_db.Order.ID, order_db.Order.Shipment.ID)
   - |-
-    [-1] (inline) (FieldVariable FieldType) ID string -->
+    (inline) (FieldVariable FieldType) ID string -->
        w-tainted 1x: write(order_db.Order.Shipment.ID)
   - |-
-    [-1] (StructVariable UserType) shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string} -->
+    (StructVariable UserType) shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string} -->
        w-tainted 1x: write(order_db.Order.Shipment)
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (InterfaceVariable UserType) err .error
   - |-
-    [0] (inline) (FieldVariable FieldType) Card []user.Card struct{LongNum string, Expires string, CCV string, ID string} -->
-       w-tainted 1x: write(order_db.Order.Card)
-  - |-
-    [0] (inline) (FieldVariable FieldType) Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string} -->
-       w-tainted 1x: write(order_db.Order.Address)
-  - |-
-    [0] (inline) (FieldVariable FieldType) CustomerID string -->
-       w-tainted 1x: write(order_db.Order.CustomerID)
-  - |-
-    [0] (inline) (FieldVariable FieldType) ID string -->
-       w-tainted 1x: write(order_db.Order.ID)
-  - |-
-    [0] (inline) (FieldVariable FieldType) Total 10 float32 -->
+    (inline) (FieldVariable FieldType) Total 10 float32 -->
        w-tainted 1x: write(order_db.Order.Total)
   - |-
-    [0] (inline) (BasicVariable BasicType) string -->
-       w-tainted 1x: write(order_db.Order.Date)
-  - |-
-    [0] (inline) (FieldVariable FieldType) Date string -->
-       w-tainted 1x: write(order_db.Order.Date)
-  - |-
-    [0] (inline) (FieldVariable FieldType) Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string} -->
+    (inline) (FieldVariable FieldType) Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string} -->
        w-tainted 1x: write(order_db.Order.Shipment)
   - |-
-    [0] (inline) (FieldVariable FieldType) Items []cart.Item struct{ID string, Quantity int, UnitPrice float32} -->
+    (inline) (FieldVariable FieldType) Items []cart.Item struct{ID string, Quantity int, UnitPrice float32} -->
        w-tainted 1x: write(order_db.Order.Items)
   - |-
-    [-1] (StructVariable UserType) order order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card []user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32} -->
+    (inline) (FieldVariable FieldType) ID string -->
+       w-tainted 1x: write(order_db.Order.ID)
+  - |-
+    (inline) (BasicVariable BasicType) string -->
+       w-tainted 1x: write(order_db.Order.Date)
+  - |-
+    (inline) (FieldVariable FieldType) Date string -->
+       w-tainted 1x: write(order_db.Order.Date)
+  - |-
+    (inline) (FieldVariable FieldType) CustomerID string -->
+       w-tainted 1x: write(order_db.Order.CustomerID)
+  - |-
+    (inline) (FieldVariable FieldType) Card []user.Card struct{LongNum string, Expires string, CCV string, ID string} -->
+       w-tainted 1x: write(order_db.Order.Card)
+  - |-
+    (inline) (FieldVariable FieldType) Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string} -->
+       w-tainted 1x: write(order_db.Order.Address)
+  - |-
+    (StructVariable UserType) order order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card []user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32} -->
        w-tainted 1x: write(order_db.Order)
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
-    {database = order_service, collection = orders}'
-  - '[-1] (InterfaceVariable UserType) _ .error'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = order_service, collection = orders}
+  - (InterfaceVariable UserType) _ .error
+  - (InterfaceVariable UserType) err .error
 
 .NewOrderService(ctx context.Context, userService user.UserService, cartService cart.CartService, payments payment.PaymentService, shipping shipping.ShippingService, orderDB NoSQLDatabase)
 :
  block 0 (Body):
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (ServiceVariable ServiceType) userService user.UserService'
-  - '[-1] (ServiceVariable ServiceType) cartService cart.CartService'
-  - '[-1] (ServiceVariable ServiceType) payments payment.PaymentService'
-  - '[-1] (ServiceVariable ServiceType) shipping shipping.ShippingService'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) orderDB NoSQLDatabase'
+  - (InterfaceVariable UserType) ctx context.Context
+  - (ServiceVariable ServiceType) userService user.UserService
+  - (ServiceVariable ServiceType) cartService cart.CartService
+  - (ServiceVariable ServiceType) payments payment.PaymentService
+  - (ServiceVariable ServiceType) shipping shipping.ShippingService
+  - (BlueprintBackendVariable BlueprintBackendType) orderDB NoSQLDatabase

@@ -29,7 +29,8 @@ bar:
 - declared types:
   - bar.BarService
   - bar.BarServiceImpl struct{}
-- declared variables: []
+- declared variables:
+  - HelloBarVariable string
 - declared constants:
   - HELLO_BAR_CONST "Hello Bar (CONST)!" untyped string
 - service types:
@@ -55,7 +56,8 @@ foo:
   - foo.FooService
   - foo.FooServiceImpl struct{}
   - foo.FooStruct struct{Value string}
-- declared variables: []
+- declared variables:
+  - HelloFooVariable string
 - declared constants:
   - HELLO_FOO_CONST "Hello Foo (CONST)!" untyped string
 - service types:
@@ -85,7 +87,8 @@ foobar:
 - declared types:
   - foobar.FrontendService
   - foobar.FrontendServiceImpl struct{fooService foo.FooService, barService bar.BarService}
-- declared variables: []
+- declared variables:
+  - HelloWorldVariable string
 - declared constants:
   - HELLO_WORLD_CONST "Hello World (CONST)!" untyped string
 - service types:

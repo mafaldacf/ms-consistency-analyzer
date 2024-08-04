@@ -1,17 +1,17 @@
-[] (-1) (PointerVariable PointerType) n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, notificationsQueue Queue, num_workers 4 int}) 
-[_] (0) (StructVariable UserType) postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, notificationsQueue Queue, num_workers 4 int} 
-[__] (0) (FieldVariable FieldType) storageService postnotification.StorageService 
-[___] (-1) (ServiceVariable ServiceType) storageService postnotification.StorageService 
-[__] (0) (FieldVariable FieldType) notificationsQueue Queue 
-[___] (-1) (BlueprintBackendVariable BlueprintBackendType) notificationsQueue Queue 
-[__] (0) (FieldVariable FieldType) num_workers 4 int 
-[___] (0) (BasicVariable BasicType) 4 int 
+[] (PointerVariable PointerType) n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, notificationsQueue Queue, num_workers 4 int}) 
+[_] (StructVariable UserType) postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, notificationsQueue Queue, num_workers 4 int} 
+[__] (FieldVariable FieldType) notificationsQueue Queue 
+[___] (BlueprintBackendVariable BlueprintBackendType) notificationsQueue Queue 
+[__] (FieldVariable FieldType) num_workers 4 int 
+[___] (BasicVariable BasicType) 4 int 
+[__] (FieldVariable FieldType) storageService postnotification.StorageService 
+[___] (ServiceVariable ServiceType) storageService postnotification.StorageService 
 
-[] (-1) (InterfaceVariable UserType) ctx context.Context 
+[] (InterfaceVariable UserType) ctx context.Context 
 
-[] (-1) (StructVariable UserType) wg sync.WaitGroup 
+[] (StructVariable UserType) wg sync.WaitGroup 
 
-[] (-1) (BasicVariable BasicType) i 1 int 
+[] (BasicVariable BasicType) i 1 int 
 
-[] (-1) (InterfaceVariable UserType) err .error 
+[] (InterfaceVariable UserType) err .error 
 

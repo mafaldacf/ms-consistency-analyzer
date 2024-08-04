@@ -1,157 +1,133 @@
 ? (*ContactsServiceImpl).CreateContacts(ctx context.Context, contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string})
 :
  block 11 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) contactsDB NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) contacts.ContactsServiceImpl struct{contactsDB
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) c (*contacts.ContactsServiceImpl struct{contactsDB
-    NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) contactsDB NoSQLDatabase
+  - (inline) (StructVariable UserType) contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase}
+  - (PointerVariable PointerType) c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
   - |-
-    [-1] (inline) (BasicVariable BasicType) DocumentType int -->
+    (inline) (BasicVariable BasicType) DocumentType int -->
        w-tainted 1x: write(contacts_db.Contact.DocumentType)
   - |-
-    [-1] (inline) (FieldVariable FieldType) DocumentType int -->
+    (inline) (FieldVariable FieldType) DocumentType int -->
        w-tainted 1x: write(contacts_db.Contact.DocumentType)
   - |-
-    [-1] (inline) (BasicVariable BasicType) DocumentNumber string -->
+    (inline) (BasicVariable BasicType) DocumentNumber string -->
        w-tainted 1x: write(contacts_db.Contact.DocumentNumber)
   - |-
-    [-1] (inline) (FieldVariable FieldType) DocumentNumber string -->
+    (inline) (FieldVariable FieldType) DocumentNumber string -->
        w-tainted 1x: write(contacts_db.Contact.DocumentNumber)
   - |-
-    [-1] (inline) (BasicVariable BasicType) AccountID string -->
+    (inline) (BasicVariable BasicType) AccountID string -->
        w-tainted 1x: write(contacts_db.Contact.AccountID)
   - |-
-    [-1] (inline) (FieldVariable FieldType) AccountID string -->
+    (inline) (FieldVariable FieldType) AccountID string -->
        w-tainted 1x: write(contacts_db.Contact.AccountID)
   - |-
-    [-1] (StructVariable UserType) contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} -->
+    (StructVariable UserType) contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string} -->
        w-tainted 1x: write(contacts_db.Contact)
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = contacts, collection = contacts}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (FieldVariable FieldType) int'
-  - '[0] (inline) (StructVariable StructType) struct{ "documenttype" string,  int}'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "documentnumber" string,  string}'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "accountid" string,  string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = contacts, collection = contacts}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (StructVariable UserType) existing contacts.Contact struct{ID string, AccountID
-    string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}'
-  - '[-1] (BasicVariable BasicType) exists bool'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = contacts, collection = contacts}
+  - (InterfaceVariable UserType) err .error
+  - (inline) (FieldVariable FieldType) int
+  - (inline) (StructVariable StructType) struct{ "documenttype" string, int}
+  - (inline) (FieldVariable FieldType) string
+  - (inline) (StructVariable StructType) struct{ "documentnumber" string, string}
+  - (inline) (FieldVariable FieldType) string
+  - (inline) (StructVariable StructType) struct{ "accountid" string, string}
+  - (SliceVariable UserType) query primitive.D
+  - (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = contacts, collection = contacts}
+  - (InterfaceVariable UserType) err .error
+  - (StructVariable UserType) existing contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
+  - (BasicVariable BasicType) exists bool
+  - (InterfaceVariable UserType) err .error
 
 (*ContactsServiceImpl).Delete(ctx context.Context, contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string})
 :
  block 2 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) contactsDB NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) contacts.ContactsServiceImpl struct{contactsDB
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) c (*contacts.ContactsServiceImpl struct{contactsDB
-    NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (inline) (BasicVariable BasicType) ID string'
-  - '[-1] (inline) (FieldVariable FieldType) ID string'
-  - '[-1] (StructVariable UserType) contact contacts.Contact struct{ID string, AccountID
-    string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = contacts, collection = contacts}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "id" string,  string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) contactsDB NoSQLDatabase
+  - (inline) (StructVariable UserType) contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase}
+  - (PointerVariable PointerType) c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (inline) (BasicVariable BasicType) ID string
+  - (inline) (FieldVariable FieldType) ID string
+  - (StructVariable UserType) contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = contacts, collection = contacts}
+  - (InterfaceVariable UserType) err .error
+  - (inline) (FieldVariable FieldType) string
+  - (inline) (StructVariable StructType) struct{ "id" string, string}
+  - (SliceVariable UserType) query primitive.D
 
 (*ContactsServiceImpl).FindContactsByAccountId(ctx context.Context, id string):
   block 8 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) contactsDB NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) contacts.ContactsServiceImpl struct{contactsDB
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) c (*contacts.ContactsServiceImpl struct{contactsDB
-    NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BasicVariable BasicType) id string'
-  - '[-1] (ArrayVariable ArrayType) account_contacts []contacts.Contact struct{ID
-    string, AccountID string, Name string, DocumentType int, DocumentNumber string,
-    PhoneNumber string}'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = contacts, collection = contacts}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "accountid" string,  string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = contacts, collection = contacts}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) contactsDB NoSQLDatabase
+  - (inline) (StructVariable UserType) contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase}
+  - (PointerVariable PointerType) c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BasicVariable BasicType) id string
+  - (ArrayVariable ArrayType) account_contacts []contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = contacts, collection = contacts}
+  - (InterfaceVariable UserType) err .error
+  - (inline) (FieldVariable FieldType) string
+  - (inline) (StructVariable StructType) struct{ "accountid" string, string}
+  - (SliceVariable UserType) query primitive.D
+  - (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = contacts, collection = contacts}
+  - (InterfaceVariable UserType) err .error
+  - (InterfaceVariable UserType) err .error
 
 (*ContactsServiceImpl).FindContactsById(ctx context.Context, id string):
   block 11 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) contactsDB NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) contacts.ContactsServiceImpl struct{contactsDB
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) c (*contacts.ContactsServiceImpl struct{contactsDB
-    NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BasicVariable BasicType) id string'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = contacts, collection = contacts}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "id" string,  string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = contacts, collection = contacts}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (StructVariable UserType) contact contacts.Contact struct{ID string, AccountID
-    string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}'
-  - '[-1] (BasicVariable BasicType) exists bool'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) contactsDB NoSQLDatabase
+  - (inline) (StructVariable UserType) contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase}
+  - (PointerVariable PointerType) c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BasicVariable BasicType) id string
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = contacts, collection = contacts}
+  - (InterfaceVariable UserType) err .error
+  - (inline) (FieldVariable FieldType) string
+  - (inline) (StructVariable StructType) struct{ "id" string, string}
+  - (SliceVariable UserType) query primitive.D
+  - (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = contacts, collection = contacts}
+  - (InterfaceVariable UserType) err .error
+  - (StructVariable UserType) contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
+  - (BasicVariable BasicType) exists bool
+  - (InterfaceVariable UserType) err .error
 
 (*ContactsServiceImpl).GetAllContacts(ctx context.Context):
   block 8 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) contactsDB NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) contacts.ContactsServiceImpl struct{contactsDB
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) c (*contacts.ContactsServiceImpl struct{contactsDB
-    NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (ArrayVariable ArrayType) all_contacts []contacts.Contact struct{ID string,
-    AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber
-    string}'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = contacts, collection = contacts}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = contacts, collection = contacts}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) contactsDB NoSQLDatabase
+  - (inline) (StructVariable UserType) contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase}
+  - (PointerVariable PointerType) c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (ArrayVariable ArrayType) all_contacts []contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = contacts, collection = contacts}
+  - (InterfaceVariable UserType) err .error
+  - (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = contacts, collection = contacts}
+  - (InterfaceVariable UserType) err .error
+  - (InterfaceVariable UserType) err .error
 
 (*ContactsServiceImpl).Modify(ctx context.Context, contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string})
 :
  block 2 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) contactsDB NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) contacts.ContactsServiceImpl struct{contactsDB
-    NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) c (*contacts.ContactsServiceImpl struct{contactsDB
-    NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (inline) (BasicVariable BasicType) ID string'
-  - '[-1] (inline) (FieldVariable FieldType) ID string'
-  - '[-1] (StructVariable UserType) contact contacts.Contact struct{ID string, AccountID
-    string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = contacts, collection = contacts}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "id" string,  string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) contactsDB NoSQLDatabase
+  - (inline) (StructVariable UserType) contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase}
+  - (PointerVariable PointerType) c (*contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (inline) (BasicVariable BasicType) ID string
+  - (inline) (FieldVariable FieldType) ID string
+  - (StructVariable UserType) contact contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = contacts, collection = contacts}
+  - (InterfaceVariable UserType) err .error
+  - (inline) (FieldVariable FieldType) string
+  - (inline) (StructVariable StructType) struct{ "id" string, string}
+  - (SliceVariable UserType) query primitive.D
 
 .NewContactsServiceImpl(ctx context.Context, db NoSQLDatabase):
   block 0 (Body):
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase

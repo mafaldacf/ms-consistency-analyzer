@@ -1,53 +1,57 @@
-[] (-1) (PointerVariable PointerType) s (*shopping_app.ShipmentServiceImpl struct{order_service shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers 4 int}) 
-[_] (0) (StructVariable UserType) shopping_app.ShipmentServiceImpl struct{order_service shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers 4 int} 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) shipment_queue Queue 
-[__] (-1) (BasicVariable BasicType) num_workers 4 int 
-[__] (-1) (ServiceVariable ServiceType) order_service shopping_app.OrderService 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase 
+[] (PointerVariable PointerType) s (*shopping_app.ShipmentServiceImpl struct{order_service shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers 4 int}) 
+[_] (StructVariable UserType) shopping_app.ShipmentServiceImpl struct{order_service shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers 4 int} 
+[__] (FieldVariable FieldType) num_workers 4 int 
+[___] (BasicVariable BasicType) 4 int 
+[__] (FieldVariable FieldType) order_service shopping_app.OrderService 
+[___] (ServiceVariable ServiceType) order_service shopping_app.OrderService 
+[__] (FieldVariable FieldType) shipment_db NoSQLDatabase 
+[___] (BlueprintBackendVariable BlueprintBackendType) shipment_db NoSQLDatabase 
+[__] (FieldVariable FieldType) shipment_queue Queue 
+[___] (BlueprintBackendVariable BlueprintBackendType) shipment_queue Queue 
 
-[] (-1) (InterfaceVariable UserType) ctx context.Context 
-[_] (36) (Reference UserType) ref <ctx context.Context> @ ShipmentService 
+[] (InterfaceVariable UserType) ctx context.Context 
+[_] (Reference UserType) ref <ctx context.Context> @ ShipmentService 
 
-[] (-1) (StructVariable UserType) message shopping_app.ShipmentMessage struct{OrderID string, UserID string} 
-[_] (37) (Reference UserType) ref <workerMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string}> @ ShipmentService 
-[__] (38) (FieldVariable FieldType) OrderID string // write(shipment_db), 
-[___] (39) (BasicVariable BasicType) OrderID string // write(shipment_db), 
-[____] (40) (InterfaceVariable InterfaceType) OrderID interface{} // write(order_db), write(shipment_queue), write(shipment_db), 
-[__] (41) (FieldVariable FieldType) UserID string // write(shipment_db), 
-[___] (42) (BasicVariable BasicType) UserID string // write(shipment_db), 
-[____] (43) (InterfaceVariable InterfaceType) UserID interface{} // write(order_db), write(billing_db), write(analytics_queue), write(shipment_queue), write(shipment_db), 
-[_] (0) (FieldVariable FieldType) OrderID string 
-[__] (38) (Reference FieldType) ref <OrderID string> @ ShipmentService // write(shipment_db), 
-[___] (39) (BasicVariable BasicType) OrderID string // write(shipment_db), 
-[____] (40) (InterfaceVariable InterfaceType) OrderID interface{} // write(order_db), write(shipment_queue), write(shipment_db), 
-[__] (0) (BasicVariable BasicType) OrderID string // write(shipment_db), 
-[___] (38) (Reference FieldType) ref <OrderID string> @ ShipmentService // write(shipment_db), 
-[____] (39) (BasicVariable BasicType) OrderID string // write(shipment_db), 
-[_____] (40) (InterfaceVariable InterfaceType) OrderID interface{} // write(order_db), write(shipment_queue), write(shipment_db), 
-[_] (0) (FieldVariable FieldType) UserID string 
-[__] (41) (Reference FieldType) ref <UserID string> @ ShipmentService // write(shipment_db), 
-[___] (42) (BasicVariable BasicType) UserID string // write(shipment_db), 
-[____] (43) (InterfaceVariable InterfaceType) UserID interface{} // write(order_db), write(billing_db), write(analytics_queue), write(shipment_queue), write(shipment_db), 
-[__] (0) (BasicVariable BasicType) UserID string // write(shipment_db), 
-[___] (41) (Reference FieldType) ref <UserID string> @ ShipmentService // write(shipment_db), 
-[____] (42) (BasicVariable BasicType) UserID string // write(shipment_db), 
-[_____] (43) (InterfaceVariable InterfaceType) UserID interface{} // write(order_db), write(billing_db), write(analytics_queue), write(shipment_queue), write(shipment_db), 
+[] (StructVariable UserType) message shopping_app.ShipmentMessage struct{OrderID string, UserID string} 
+[_] (Reference UserType) ref <workerMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string}> @ ShipmentService 
+[__] (FieldVariable FieldType) OrderID string // write(shipment_db), 
+[___] (BasicVariable BasicType) OrderID string // write(shipment_db), 
+[____] (InterfaceVariable InterfaceType) OrderID interface{} // write(order_db), write(shipment_queue), write(shipment_db), 
+[__] (FieldVariable FieldType) UserID string // write(shipment_db), 
+[___] (BasicVariable BasicType) UserID string // write(shipment_db), 
+[____] (InterfaceVariable InterfaceType) UserID interface{} // write(order_db), write(billing_db), write(analytics_queue), write(shipment_queue), write(shipment_db), 
+[_] (FieldVariable FieldType) OrderID string 
+[__] (Reference FieldType) ref <OrderID string> @ ShipmentService // write(shipment_db), 
+[___] (BasicVariable BasicType) OrderID string // write(shipment_db), 
+[____] (InterfaceVariable InterfaceType) OrderID interface{} // write(order_db), write(shipment_queue), write(shipment_db), 
+[__] (BasicVariable BasicType) OrderID string // write(shipment_db), 
+[___] (Reference FieldType) ref <OrderID string> @ ShipmentService // write(shipment_db), 
+[____] (BasicVariable BasicType) OrderID string // write(shipment_db), 
+[_____] (InterfaceVariable InterfaceType) OrderID interface{} // write(order_db), write(shipment_queue), write(shipment_db), 
+[_] (FieldVariable FieldType) UserID string 
+[__] (Reference FieldType) ref <UserID string> @ ShipmentService // write(shipment_db), 
+[___] (BasicVariable BasicType) UserID string // write(shipment_db), 
+[____] (InterfaceVariable InterfaceType) UserID interface{} // write(order_db), write(billing_db), write(analytics_queue), write(shipment_queue), write(shipment_db), 
+[__] (BasicVariable BasicType) UserID string // write(shipment_db), 
+[___] (Reference FieldType) ref <UserID string> @ ShipmentService // write(shipment_db), 
+[____] (BasicVariable BasicType) UserID string // write(shipment_db), 
+[_____] (InterfaceVariable InterfaceType) UserID interface{} // write(order_db), write(billing_db), write(analytics_queue), write(shipment_queue), write(shipment_db), 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = shipment_database, collection = shipment_collection} 
+[] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = shipment_database, collection = shipment_collection} 
 
-[] (-1) (InterfaceVariable UserType) _ .error 
+[] (InterfaceVariable UserType) _ .error 
 
-[] (-1) (StructVariable UserType) shipment shopping_app.Shipment struct{OrderID string, UserID string, Status string} // write(shipment_db), 
-[_] (0) (FieldVariable FieldType) Status "pending" string // write(shipment_db), 
-[__] (0) (BasicVariable BasicType) "pending" string // write(shipment_db), 
-[_] (0) (FieldVariable FieldType) OrderID string // write(shipment_db), 
-[__] (0) (BasicVariable BasicType) OrderID string // write(shipment_db), 
-[___] (38) (Reference FieldType) ref <OrderID string> @ ShipmentService // write(shipment_db), 
-[____] (39) (BasicVariable BasicType) OrderID string // write(shipment_db), 
-[_____] (40) (InterfaceVariable InterfaceType) OrderID interface{} // write(order_db), write(shipment_queue), write(shipment_db), 
-[_] (0) (FieldVariable FieldType) UserID string // write(shipment_db), 
-[__] (0) (BasicVariable BasicType) UserID string // write(shipment_db), 
-[___] (41) (Reference FieldType) ref <UserID string> @ ShipmentService // write(shipment_db), 
-[____] (42) (BasicVariable BasicType) UserID string // write(shipment_db), 
-[_____] (43) (InterfaceVariable InterfaceType) UserID interface{} // write(order_db), write(billing_db), write(analytics_queue), write(shipment_queue), write(shipment_db), 
+[] (StructVariable UserType) shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} // write(shipment_db), 
+[_] (FieldVariable FieldType) OrderID string // write(shipment_db), 
+[__] (BasicVariable BasicType) OrderID string // write(shipment_db), 
+[___] (Reference FieldType) ref <OrderID string> @ ShipmentService // write(shipment_db), 
+[____] (BasicVariable BasicType) OrderID string // write(shipment_db), 
+[_____] (InterfaceVariable InterfaceType) OrderID interface{} // write(order_db), write(shipment_queue), write(shipment_db), 
+[_] (FieldVariable FieldType) Status "pending" string // write(shipment_db), 
+[__] (BasicVariable BasicType) "pending" string // write(shipment_db), 
+[_] (FieldVariable FieldType) UserID string // write(shipment_db), 
+[__] (BasicVariable BasicType) UserID string // write(shipment_db), 
+[___] (Reference FieldType) ref <UserID string> @ ShipmentService // write(shipment_db), 
+[____] (BasicVariable BasicType) UserID string // write(shipment_db), 
+[_____] (InterfaceVariable InterfaceType) UserID interface{} // write(order_db), write(billing_db), write(analytics_queue), write(shipment_queue), write(shipment_db), 
 

@@ -1,101 +1,94 @@
 (*ConfigServiceImpl).Create(ctx context.Context, conf config.Config struct{Name string, Value string, Description string}):
   block 11 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) config.ConfigServiceImpl struct{db NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) db NoSQLDatabase
+  - (inline) (StructVariable UserType) config.ConfigServiceImpl struct{db NoSQLDatabase}
+  - (PointerVariable PointerType) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
   - |-
-    [-1] (inline) (BasicVariable BasicType) Name string -->
+    (inline) (BasicVariable BasicType) Name string -->
        w-tainted 1x: write(config_db.Config.Name)
   - |-
-    [-1] (inline) (FieldVariable FieldType) Name string -->
+    (inline) (FieldVariable FieldType) Name string -->
        w-tainted 1x: write(config_db.Config.Name)
   - |-
-    [-1] (StructVariable UserType) conf config.Config struct{Name string, Value string, Description string} -->
+    (StructVariable UserType) conf config.Config struct{Name string, Value string, Description string} -->
        w-tainted 1x: write(config_db.Config)
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = config, collection = config}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "name" string,  string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = config, collection = config}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (StructVariable UserType) saved_conf config.Config struct{Name string, Value
-    string, Description string}'
-  - '[-1] (BasicVariable BasicType) exists bool'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = config, collection = config}
+  - (InterfaceVariable UserType) err .error
+  - (inline) (FieldVariable FieldType) string
+  - (inline) (StructVariable StructType) struct{ "name" string, string}
+  - (SliceVariable UserType) query primitive.D
+  - (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = config, collection = config}
+  - (InterfaceVariable UserType) err .error
+  - (StructVariable UserType) saved_conf config.Config struct{Name string, Value string, Description string}
+  - (BasicVariable BasicType) exists bool
+  - (InterfaceVariable UserType) err .error
 
 (*ConfigServiceImpl).Delete(ctx context.Context, name string):
   block 2 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) config.ConfigServiceImpl struct{db NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BasicVariable BasicType) name string'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = config, collection = config}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "name" string,  string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) db NoSQLDatabase
+  - (inline) (StructVariable UserType) config.ConfigServiceImpl struct{db NoSQLDatabase}
+  - (PointerVariable PointerType) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BasicVariable BasicType) name string
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = config, collection = config}
+  - (InterfaceVariable UserType) err .error
+  - (inline) (FieldVariable FieldType) string
+  - (inline) (StructVariable StructType) struct{ "name" string, string}
+  - (SliceVariable UserType) query primitive.D
 
 (*ConfigServiceImpl).Find(ctx context.Context, name string):
   block 11 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) config.ConfigServiceImpl struct{db NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BasicVariable BasicType) name string'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = config, collection = config}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "name" string,  string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = config, collection = config}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (StructVariable UserType) conf config.Config struct{Name string, Value string,
-    Description string}'
-  - '[-1] (BasicVariable BasicType) exists bool'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) db NoSQLDatabase
+  - (inline) (StructVariable UserType) config.ConfigServiceImpl struct{db NoSQLDatabase}
+  - (PointerVariable PointerType) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BasicVariable BasicType) name string
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = config, collection = config}
+  - (InterfaceVariable UserType) err .error
+  - (inline) (FieldVariable FieldType) string
+  - (inline) (StructVariable StructType) struct{ "name" string, string}
+  - (SliceVariable UserType) query primitive.D
+  - (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = config, collection = config}
+  - (InterfaceVariable UserType) err .error
+  - (StructVariable UserType) conf config.Config struct{Name string, Value string, Description string}
+  - (BasicVariable BasicType) exists bool
+  - (InterfaceVariable UserType) err .error
 
 (*ConfigServiceImpl).FindAll(ctx context.Context):
   block 8 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) config.ConfigServiceImpl struct{db NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = config, collection = config}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (ArrayVariable ArrayType) configs []config.Config struct{Name string, Value
-    string, Description string}'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database
-    = config, collection = config}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[-1] (InterfaceVariable UserType) err .error'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) db NoSQLDatabase
+  - (inline) (StructVariable UserType) config.ConfigServiceImpl struct{db NoSQLDatabase}
+  - (PointerVariable PointerType) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = config, collection = config}
+  - (InterfaceVariable UserType) err .error
+  - (ArrayVariable ArrayType) configs []config.Config struct{Name string, Value string, Description string}
+  - (BlueprintBackendVariable BlueprintBackendType) res NoSQLCursor {database = config, collection = config}
+  - (InterfaceVariable UserType) err .error
+  - (InterfaceVariable UserType) err .error
 
 (*ConfigServiceImpl).Update(ctx context.Context, conf config.Config struct{Name string, Value string, Description string}):
   block 2 (IfDone):
-  - '[-1] (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
-  - '[0] (inline) (StructVariable UserType) config.ConfigServiceImpl struct{db NoSQLDatabase}'
-  - '[-1] (PointerVariable PointerType) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})'
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (inline) (BasicVariable BasicType) Name string'
-  - '[-1] (inline) (FieldVariable FieldType) Name string'
-  - '[-1] (StructVariable UserType) conf config.Config struct{Name string, Value string,
-    Description string}'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database
-    = config, collection = config}'
-  - '[-1] (InterfaceVariable UserType) err .error'
-  - '[0] (inline) (FieldVariable FieldType) string'
-  - '[0] (inline) (StructVariable StructType) struct{ "name" string,  string}'
-  - '[-1] (SliceVariable UserType) query primitive.D'
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) db NoSQLDatabase
+  - (inline) (StructVariable UserType) config.ConfigServiceImpl struct{db NoSQLDatabase}
+  - (PointerVariable PointerType) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (inline) (BasicVariable BasicType) Name string
+  - (inline) (FieldVariable FieldType) Name string
+  - (StructVariable UserType) conf config.Config struct{Name string, Value string, Description string}
+  - (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = config, collection = config}
+  - (InterfaceVariable UserType) err .error
+  - (inline) (FieldVariable FieldType) string
+  - (inline) (StructVariable StructType) struct{ "name" string, string}
+  - (SliceVariable UserType) query primitive.D
 
 .NewConfigServiceImpl(ctx context.Context, db NoSQLDatabase):
   block 0 (Body):
-  - '[-1] (InterfaceVariable UserType) ctx context.Context'
-  - '[-1] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase'
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase

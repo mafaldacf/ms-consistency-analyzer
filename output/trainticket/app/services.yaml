@@ -3,28 +3,28 @@ AssuranceService:
     db: NoSQLDatabase
 - services: {}
 - datastores:
-    assurance_db: NoSQLDatabase
+    assurance_db: assurance_db MongoDB (NoSQLDatabase)
 
 ConfigService:
 - fields:
     db: NoSQLDatabase
 - services: {}
 - datastores:
-    config_db: NoSQLDatabase
+    config_db: config_db MongoDB (NoSQLDatabase)
 
 ConsignPriceService:
 - fields:
     db: NoSQLDatabase
 - services: {}
 - datastores:
-    consignprice_db: NoSQLDatabase
+    consignprice_db: consignprice_db MongoDB (NoSQLDatabase)
 
 ContactsService:
 - fields:
     contactsDB: NoSQLDatabase
 - services: {}
 - datastores:
-    contacts_db: NoSQLDatabase
+    contacts_db: contacts_db MongoDB (NoSQLDatabase)
 
 DeliveryService:
 - fields:
@@ -32,8 +32,8 @@ DeliveryService:
     delQ: Queue
 - services: {}
 - datastores:
-    delivery_db: NoSQLDatabase
-    delivery_q: Queue
+    delivery_db: delivery_db MongoDB (NoSQLDatabase)
+    delivery_q: delivery_q RabbitMQ (Queue)
 
 NewsService:
 - fields: {}
@@ -46,54 +46,54 @@ PaymentService:
     paymentDB: NoSQLDatabase
 - services: {}
 - datastores:
-    money_db: NoSQLDatabase
-    payments_db: NoSQLDatabase
+    money_db: money_db MongoDB (NoSQLDatabase)
+    payments_db: payments_db MongoDB (NoSQLDatabase)
 
 PriceService:
 - fields:
     priceDB: NoSQLDatabase
 - services: {}
 - datastores:
-    price_db: NoSQLDatabase
+    price_db: price_db MongoDB (NoSQLDatabase)
 
 RouteService:
 - fields:
     db: NoSQLDatabase
 - services: {}
 - datastores:
-    route_db: NoSQLDatabase
+    route_db: route_db MongoDB (NoSQLDatabase)
 
 StationFoodService:
 - fields:
     db: NoSQLDatabase
 - services: {}
 - datastores:
-    stationfood_db: NoSQLDatabase
+    stationfood_db: stationfood_db MongoDB (NoSQLDatabase)
 
 StationService:
 - fields:
     stationDB: NoSQLDatabase
 - services: {}
 - datastores:
-    station_db: NoSQLDatabase
+    station_db: station_db MongoDB (NoSQLDatabase)
 
 TrainFoodService:
 - fields:
     db: NoSQLDatabase
 - services: {}
 - datastores:
-    trainfood_db: NoSQLDatabase
+    trainfood_db: trainfood_db MongoDB (NoSQLDatabase)
 
 TrainService:
 - fields:
     db: NoSQLDatabase
 - services: {}
 - datastores:
-    train_db: NoSQLDatabase
+    train_db: train_db MongoDB (NoSQLDatabase)
 
 UserService:
 - fields:
     userDB: NoSQLDatabase
 - services: {}
 - datastores:
-    user_db: NoSQLDatabase
+    user_db: user_db MongoDB (NoSQLDatabase)

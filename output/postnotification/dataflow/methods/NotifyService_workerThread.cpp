@@ -1,53 +1,53 @@
-[] (-1) (PointerVariable PointerType) n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, notificationsQueue Queue, num_workers 4 int}) 
-[_] (0) (StructVariable UserType) postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, notificationsQueue Queue, num_workers 4 int} 
-[__] (0) (FieldVariable FieldType) storageService postnotification.StorageService 
-[___] (-1) (ServiceVariable ServiceType) storageService postnotification.StorageService 
-[__] (0) (FieldVariable FieldType) notificationsQueue Queue 
-[___] (-1) (BlueprintBackendVariable BlueprintBackendType) notificationsQueue Queue 
-[__] (0) (FieldVariable FieldType) num_workers 4 int 
-[___] (0) (BasicVariable BasicType) 4 int 
+[] (PointerVariable PointerType) n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, notificationsQueue Queue, num_workers 4 int}) 
+[_] (StructVariable UserType) postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, notificationsQueue Queue, num_workers 4 int} 
+[__] (FieldVariable FieldType) notificationsQueue Queue 
+[___] (BlueprintBackendVariable BlueprintBackendType) notificationsQueue Queue 
+[__] (FieldVariable FieldType) num_workers 4 int 
+[___] (BasicVariable BasicType) 4 int 
+[__] (FieldVariable FieldType) storageService postnotification.StorageService 
+[___] (ServiceVariable ServiceType) storageService postnotification.StorageService 
 
-[] (39) (InterfaceVariable UserType) ctx context.Context 
+[] (InterfaceVariable UserType) ctx context.Context 
 
-[] (-1) (BasicVariable BasicType) workerID int 
+[] (BasicVariable BasicType) workerID int 
 
-[] (-1) (ChanVariable ChanType) forever chan struct{} 
+[] (ChanVariable ChanType) forever chan struct{} 
 
-[] (29) (MapVariable MapType) event map[string]interface{} 
-[_] (29) (Reference UserType) ref <message postnotification.Message struct{ReqID string, PostID string, Timestamp string}> @ NotifyService // write(notifications_queue), 
-[__] (-1) (FieldVariable FieldType) PostID string // write(notifications_queue), 
-[___] (46) (Reference InterfaceType) ref <PostID interface{}> @ NotifyService // write(media_db), write(posts_cache), write(posts_db), write(analytics_queue), write(analytics_db), write(notifications_queue), write(timeline_cache), 
-[___] (-1) (BasicVariable BasicType) string // write(notifications_queue), 
-[____] (46) (Reference InterfaceType) ref <PostID interface{}> @ NotifyService // write(media_db), write(posts_cache), write(posts_db), write(analytics_queue), write(analytics_db), write(notifications_queue), write(timeline_cache), 
-[____] (-1) (BasicVariable BasicType) postID int64 // write(media_db), write(posts_db), write(posts_cache), write(analytics_queue), write(analytics_db), write(notifications_queue), write(timeline_cache), 
-[_____] (46) (Reference InterfaceType) ref <PostID interface{}> @ NotifyService // write(media_db), write(posts_cache), write(posts_db), write(analytics_queue), write(analytics_db), write(notifications_queue), write(timeline_cache), 
-[__] (-1) (FieldVariable FieldType) ReqID string // write(notifications_queue), 
-[___] (43) (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService // write(posts_cache), write(posts_db), write(notifications_queue), write(timeline_cache), 
-[___] (-1) (BasicVariable BasicType) string // write(notifications_queue), 
-[____] (43) (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService // write(posts_cache), write(posts_db), write(notifications_queue), write(timeline_cache), 
-[____] (-1) (BasicVariable BasicType) reqID int64 // write(posts_db), write(posts_cache), write(notifications_queue), write(timeline_cache), 
-[_____] (43) (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService // write(posts_cache), write(posts_db), write(notifications_queue), write(timeline_cache), 
-[_] (46) (InterfaceVariable InterfaceType) PostID interface{} // write(media_db), write(posts_cache), write(posts_db), write(analytics_queue), write(analytics_db), write(notifications_queue), write(timeline_cache), 
-[_] (49) (InterfaceVariable InterfaceType) Timestamp interface{} 
-[_] (43) (InterfaceVariable InterfaceType) ReqID interface{} // write(posts_cache), write(posts_db), write(notifications_queue), write(timeline_cache), 
+[] (MapVariable MapType) event map[string]interface{} 
+[_] (Reference UserType) ref <message postnotification.Message struct{ReqID string, PostID string, Timestamp string}> @ NotifyService // write(notifications_queue), 
+[__] (FieldVariable FieldType) PostID string // write(notifications_queue), 
+[___] (Reference InterfaceType) ref <PostID interface{}> @ NotifyService // write(media_db), write(posts_cache), write(posts_db), write(analytics_queue), write(analytics_db), write(notifications_queue), write(timeline_cache), 
+[___] (BasicVariable BasicType) string // write(notifications_queue), 
+[____] (Reference InterfaceType) ref <PostID interface{}> @ NotifyService // write(media_db), write(posts_cache), write(posts_db), write(analytics_queue), write(analytics_db), write(notifications_queue), write(timeline_cache), 
+[____] (BasicVariable BasicType) postID int64 // write(media_db), write(posts_db), write(posts_cache), write(analytics_queue), write(analytics_db), write(notifications_queue), write(timeline_cache), 
+[_____] (Reference InterfaceType) ref <PostID interface{}> @ NotifyService // write(media_db), write(posts_cache), write(posts_db), write(analytics_queue), write(analytics_db), write(notifications_queue), write(timeline_cache), 
+[__] (FieldVariable FieldType) ReqID string // write(notifications_queue), 
+[___] (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService // write(posts_cache), write(posts_db), write(notifications_queue), write(timeline_cache), 
+[___] (BasicVariable BasicType) string // write(notifications_queue), 
+[____] (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService // write(posts_cache), write(posts_db), write(notifications_queue), write(timeline_cache), 
+[____] (BasicVariable BasicType) reqID int64 // write(posts_db), write(posts_cache), write(notifications_queue), write(timeline_cache), 
+[_____] (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService // write(posts_cache), write(posts_db), write(notifications_queue), write(timeline_cache), 
+[_] (InterfaceVariable InterfaceType) ReqID interface{} // write(posts_cache), write(posts_db), write(notifications_queue), write(timeline_cache), 
+[_] (InterfaceVariable InterfaceType) PostID interface{} // write(media_db), write(posts_cache), write(posts_db), write(analytics_queue), write(analytics_db), write(notifications_queue), write(timeline_cache), 
+[_] (InterfaceVariable InterfaceType) Timestamp interface{} 
 
-[] (42) (BasicVariable BasicType) ReqID string 
-[_] (43) (InterfaceVariable InterfaceType) ReqID interface{} // write(posts_cache), write(posts_db), write(notifications_queue), write(timeline_cache), 
+[] (BasicVariable BasicType) ReqID string 
+[_] (InterfaceVariable InterfaceType) ReqID interface{} // write(posts_cache), write(posts_db), write(notifications_queue), write(timeline_cache), 
 
-[] (45) (BasicVariable BasicType) PostID string 
-[_] (46) (InterfaceVariable InterfaceType) PostID interface{} // write(media_db), write(posts_cache), write(posts_db), write(analytics_queue), write(analytics_db), write(notifications_queue), write(timeline_cache), 
+[] (BasicVariable BasicType) PostID string 
+[_] (InterfaceVariable InterfaceType) PostID interface{} // write(media_db), write(posts_cache), write(posts_db), write(analytics_queue), write(analytics_db), write(notifications_queue), write(timeline_cache), 
 
-[] (48) (BasicVariable BasicType) Timestamp string 
-[_] (49) (InterfaceVariable InterfaceType) Timestamp interface{} 
+[] (BasicVariable BasicType) Timestamp string 
+[_] (InterfaceVariable InterfaceType) Timestamp interface{} 
 
-[] (40) (StructVariable UserType) workerMessage postnotification.Message struct{ReqID string, PostID string, Timestamp string} 
-[_] (47) (FieldVariable FieldType) Timestamp string 
-[__] (48) (BasicVariable BasicType) Timestamp string 
-[___] (49) (InterfaceVariable InterfaceType) Timestamp interface{} 
-[_] (41) (FieldVariable FieldType) ReqID string 
-[__] (42) (BasicVariable BasicType) ReqID string 
-[___] (43) (InterfaceVariable InterfaceType) ReqID interface{} // write(posts_cache), write(posts_db), write(notifications_queue), write(timeline_cache), 
-[_] (44) (FieldVariable FieldType) PostID string 
-[__] (45) (BasicVariable BasicType) PostID string 
-[___] (46) (InterfaceVariable InterfaceType) PostID interface{} // write(media_db), write(posts_cache), write(posts_db), write(analytics_queue), write(analytics_db), write(notifications_queue), write(timeline_cache), 
+[] (StructVariable UserType) workerMessage postnotification.Message struct{ReqID string, PostID string, Timestamp string} 
+[_] (FieldVariable FieldType) PostID string 
+[__] (BasicVariable BasicType) PostID string 
+[___] (InterfaceVariable InterfaceType) PostID interface{} // write(media_db), write(posts_cache), write(posts_db), write(analytics_queue), write(analytics_db), write(notifications_queue), write(timeline_cache), 
+[_] (FieldVariable FieldType) ReqID string 
+[__] (BasicVariable BasicType) ReqID string 
+[___] (InterfaceVariable InterfaceType) ReqID interface{} // write(posts_cache), write(posts_db), write(notifications_queue), write(timeline_cache), 
+[_] (FieldVariable FieldType) Timestamp string 
+[__] (BasicVariable BasicType) Timestamp string 
+[___] (InterfaceVariable InterfaceType) Timestamp interface{} 
 

@@ -1,13 +1,13 @@
-[] (-1) (InterfaceVariable UserType) ctx context.Context 
+[] (InterfaceVariable UserType) ctx context.Context 
 
-[] (-1) (ServiceVariable ServiceType) fooService foo.FooService 
+[] (ServiceVariable ServiceType) fooService foo.FooService 
 
-[] (-1) (ServiceVariable ServiceType) barService bar.BarService 
+[] (ServiceVariable ServiceType) barService bar.BarService 
 
-[] (-1) (PointerVariable PointerType) d (*foobar.FrontendServiceImpl struct{fooService foo.FooService, barService bar.BarService}) 
-[_] (0) (StructVariable UserType) foobar.FrontendServiceImpl struct{fooService foo.FooService, barService bar.BarService} 
-[__] (0) (FieldVariable FieldType) barService bar.BarService 
-[___] (-1) (ServiceVariable ServiceType) barService bar.BarService 
-[__] (0) (FieldVariable FieldType) fooService foo.FooService 
-[___] (-1) (ServiceVariable ServiceType) fooService foo.FooService 
+[] (PointerVariable PointerType) d (*foobar.FrontendServiceImpl struct{fooService foo.FooService, barService bar.BarService}) 
+[_] (StructVariable UserType) foobar.FrontendServiceImpl struct{fooService foo.FooService, barService bar.BarService} 
+[__] (FieldVariable FieldType) barService bar.BarService 
+[___] (ServiceVariable ServiceType) barService bar.BarService 
+[__] (FieldVariable FieldType) fooService foo.FooService 
+[___] (ServiceVariable ServiceType) fooService foo.FooService 
 

@@ -1,22 +1,22 @@
-[] (-1) (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}) 
-[_] (0) (StructVariable UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase} 
-[__] (0) (FieldVariable FieldType) catalogue_db NoSQLDatabase 
-[___] (-1) (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase 
+[] (PointerVariable PointerType) s (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}) 
+[_] (StructVariable UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase} 
+[__] (FieldVariable FieldType) catalogue_db NoSQLDatabase 
+[___] (BlueprintBackendVariable BlueprintBackendType) catalogue_db NoSQLDatabase 
 
-[] (-1) (InterfaceVariable UserType) ctx context.Context 
+[] (InterfaceVariable UserType) ctx context.Context 
 
-[] (-1) (ArrayVariable ArrayType) tags []string 
+[] (ArrayVariable ArrayType) tags []string 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = catalogue, collection = catalogue} 
+[] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = catalogue, collection = catalogue} 
 
-[] (-1) (InterfaceVariable UserType) _ .error 
+[] (InterfaceVariable UserType) _ .error 
 
-[] (-1) (SliceVariable UserType) update primitive.D 
-[_] (0) (StructVariable StructType) struct{Key "tags" string, Value []string} 
-[__] (0) (FieldVariable FieldType) Key "tags" string 
-[___] (0) (BasicVariable BasicType) "tags" string 
-[__] (0) (FieldVariable FieldType) Value []string 
-[___] (-1) (ArrayVariable ArrayType) tags []string 
+[] (SliceVariable UserType) update primitive.D 
+[_] (StructVariable StructType) struct{Key "tags" string, Value []string} 
+[__] (FieldVariable FieldType) Key "tags" string 
+[___] (BasicVariable BasicType) "tags" string 
+[__] (FieldVariable FieldType) Value []string 
+[___] (ArrayVariable ArrayType) tags []string 
 
-[] (-1) (SliceVariable UserType) filter primitive.D 
+[] (SliceVariable UserType) filter primitive.D 
 

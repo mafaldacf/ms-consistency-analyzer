@@ -1,73 +1,76 @@
-[] (-1) (PointerVariable PointerType) s (*shopping_app.AnalyticsServiceImpl struct{analytics_db NoSQLDatabase, analytics_queue Queue, num_workers 4 int}) 
-[_] (0) (StructVariable UserType) shopping_app.AnalyticsServiceImpl struct{analytics_db NoSQLDatabase, analytics_queue Queue, num_workers 4 int} 
-[__] (-1) (BasicVariable BasicType) num_workers 4 int 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) analytics_db NoSQLDatabase 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) analytics_queue Queue 
+[] (PointerVariable PointerType) s (*shopping_app.AnalyticsServiceImpl struct{analytics_db NoSQLDatabase, analytics_queue Queue, num_workers 4 int}) 
+[_] (StructVariable UserType) shopping_app.AnalyticsServiceImpl struct{analytics_db NoSQLDatabase, analytics_queue Queue, num_workers 4 int} 
+[__] (FieldVariable FieldType) analytics_db NoSQLDatabase 
+[___] (BlueprintBackendVariable BlueprintBackendType) analytics_db NoSQLDatabase 
+[__] (FieldVariable FieldType) analytics_queue Queue 
+[___] (BlueprintBackendVariable BlueprintBackendType) analytics_queue Queue 
+[__] (FieldVariable FieldType) num_workers 4 int 
+[___] (BasicVariable BasicType) 4 int 
 
-[] (-1) (InterfaceVariable UserType) ctx context.Context 
-[_] (21) (Reference UserType) ref <ctx context.Context> @ AnalyticsService 
+[] (InterfaceVariable UserType) ctx context.Context 
+[_] (Reference UserType) ref <ctx context.Context> @ AnalyticsService 
 
-[] (-1) (StructVariable UserType) message shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} 
-[_] (22) (Reference UserType) ref <workerMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string}> @ AnalyticsService 
-[__] (23) (FieldVariable FieldType) UserID string // write(analytics_db), 
-[___] (24) (BasicVariable BasicType) UserID string // write(analytics_db), 
-[____] (25) (InterfaceVariable InterfaceType) UserID interface{} // write(order_db), write(billing_db), write(analytics_queue), write(analytics_db), write(shipment_queue), 
-[__] (26) (FieldVariable FieldType) ProductCategory string // write(analytics_db), 
-[___] (27) (BasicVariable BasicType) ProductCategory string // write(analytics_db), 
-[____] (28) (InterfaceVariable InterfaceType) ProductCategory interface{} // write(analytics_queue), write(analytics_db), 
-[_] (0) (FieldVariable FieldType) UserID string 
-[__] (23) (Reference FieldType) ref <UserID string> @ AnalyticsService // write(analytics_db), 
-[___] (24) (BasicVariable BasicType) UserID string // write(analytics_db), 
-[____] (25) (InterfaceVariable InterfaceType) UserID interface{} // write(order_db), write(billing_db), write(analytics_queue), write(analytics_db), write(shipment_queue), 
-[__] (0) (BasicVariable BasicType) UserID string // write(analytics_db), 
-[___] (23) (Reference FieldType) ref <UserID string> @ AnalyticsService // write(analytics_db), 
-[____] (24) (BasicVariable BasicType) UserID string // write(analytics_db), 
-[_____] (25) (InterfaceVariable InterfaceType) UserID interface{} // write(order_db), write(billing_db), write(analytics_queue), write(analytics_db), write(shipment_queue), 
-[_] (0) (FieldVariable FieldType) ProductCategory string 
-[__] (26) (Reference FieldType) ref <ProductCategory string> @ AnalyticsService // write(analytics_db), 
-[___] (27) (BasicVariable BasicType) ProductCategory string // write(analytics_db), 
-[____] (28) (InterfaceVariable InterfaceType) ProductCategory interface{} // write(analytics_queue), write(analytics_db), 
-[__] (0) (BasicVariable BasicType) ProductCategory string // write(analytics_db), 
-[___] (26) (Reference FieldType) ref <ProductCategory string> @ AnalyticsService // write(analytics_db), 
-[____] (27) (BasicVariable BasicType) ProductCategory string // write(analytics_db), 
-[_____] (28) (InterfaceVariable InterfaceType) ProductCategory interface{} // write(analytics_queue), write(analytics_db), 
+[] (StructVariable UserType) message shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} 
+[_] (Reference UserType) ref <workerMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string}> @ AnalyticsService 
+[__] (FieldVariable FieldType) ProductCategory string // write(analytics_db), 
+[___] (BasicVariable BasicType) ProductCategory string // write(analytics_db), 
+[____] (InterfaceVariable InterfaceType) ProductCategory interface{} // write(analytics_queue), write(analytics_db), 
+[__] (FieldVariable FieldType) UserID string // write(analytics_db), 
+[___] (BasicVariable BasicType) UserID string // write(analytics_db), 
+[____] (InterfaceVariable InterfaceType) UserID interface{} // write(order_db), write(billing_db), write(analytics_queue), write(analytics_db), write(shipment_queue), 
+[_] (FieldVariable FieldType) ProductCategory string 
+[__] (Reference FieldType) ref <ProductCategory string> @ AnalyticsService // write(analytics_db), 
+[___] (BasicVariable BasicType) ProductCategory string // write(analytics_db), 
+[____] (InterfaceVariable InterfaceType) ProductCategory interface{} // write(analytics_queue), write(analytics_db), 
+[__] (BasicVariable BasicType) ProductCategory string // write(analytics_db), 
+[___] (Reference FieldType) ref <ProductCategory string> @ AnalyticsService // write(analytics_db), 
+[____] (BasicVariable BasicType) ProductCategory string // write(analytics_db), 
+[_____] (InterfaceVariable InterfaceType) ProductCategory interface{} // write(analytics_queue), write(analytics_db), 
+[_] (FieldVariable FieldType) UserID string 
+[__] (Reference FieldType) ref <UserID string> @ AnalyticsService // write(analytics_db), 
+[___] (BasicVariable BasicType) UserID string // write(analytics_db), 
+[____] (InterfaceVariable InterfaceType) UserID interface{} // write(order_db), write(billing_db), write(analytics_queue), write(analytics_db), write(shipment_queue), 
+[__] (BasicVariable BasicType) UserID string // write(analytics_db), 
+[___] (Reference FieldType) ref <UserID string> @ AnalyticsService // write(analytics_db), 
+[____] (BasicVariable BasicType) UserID string // write(analytics_db), 
+[_____] (InterfaceVariable InterfaceType) UserID interface{} // write(order_db), write(billing_db), write(analytics_queue), write(analytics_db), write(shipment_queue), 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = analytics_database, collection = analytics_collection} 
+[] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = analytics_database, collection = analytics_collection} 
 
-[] (-1) (InterfaceVariable UserType) _ .error 
+[] (InterfaceVariable UserType) _ .error 
 
-[] (-1) (StructVariable UserType) analytics shopping_app.Analytics struct{UserID string, Categories []string} 
-[_] (-1) (FieldVariable FieldType) Categories []string 
-[__] (-1) (SliceVariable SliceType) Categories []string // write(analytics_db), 
-[___] (0) (BasicVariable BasicType) ProductCategory string // write(analytics_db), 
-[____] (26) (Reference FieldType) ref <ProductCategory string> @ AnalyticsService // write(analytics_db), 
-[_____] (27) (BasicVariable BasicType) ProductCategory string // write(analytics_db), 
-[______] (28) (InterfaceVariable InterfaceType) ProductCategory interface{} // write(analytics_queue), write(analytics_db), 
+[] (StructVariable UserType) analytics shopping_app.Analytics struct{UserID string, Categories []string} 
+[_] (FieldVariable FieldType) Categories []string 
+[__] (SliceVariable SliceType) Categories []string // write(analytics_db), 
+[___] (BasicVariable BasicType) ProductCategory string // write(analytics_db), 
+[____] (Reference FieldType) ref <ProductCategory string> @ AnalyticsService // write(analytics_db), 
+[_____] (BasicVariable BasicType) ProductCategory string // write(analytics_db), 
+[______] (InterfaceVariable InterfaceType) ProductCategory interface{} // write(analytics_queue), write(analytics_db), 
 
-[] (-1) (SliceVariable UserType) query primitive.D 
-[_] (0) (StructVariable StructType) struct{Key "userID" string, Value string} 
-[__] (0) (FieldVariable FieldType) Key "userID" string 
-[___] (0) (BasicVariable BasicType) "userID" string 
-[__] (0) (FieldVariable FieldType) Value string 
-[___] (0) (BasicVariable BasicType) UserID string // write(analytics_db), 
-[____] (23) (Reference FieldType) ref <UserID string> @ AnalyticsService // write(analytics_db), 
-[_____] (24) (BasicVariable BasicType) UserID string // write(analytics_db), 
-[______] (25) (InterfaceVariable InterfaceType) UserID interface{} // write(order_db), write(billing_db), write(analytics_queue), write(analytics_db), write(shipment_queue), 
+[] (SliceVariable UserType) query primitive.D 
+[_] (StructVariable StructType) struct{Key "userID" string, Value string} 
+[__] (FieldVariable FieldType) Key "userID" string 
+[___] (BasicVariable BasicType) "userID" string 
+[__] (FieldVariable FieldType) Value string 
+[___] (BasicVariable BasicType) UserID string // write(analytics_db), 
+[____] (Reference FieldType) ref <UserID string> @ AnalyticsService // write(analytics_db), 
+[_____] (BasicVariable BasicType) UserID string // write(analytics_db), 
+[______] (InterfaceVariable InterfaceType) UserID interface{} // write(order_db), write(billing_db), write(analytics_queue), write(analytics_db), write(shipment_queue), 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database = analytics_database, collection = analytics_collection} 
+[] (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database = analytics_database, collection = analytics_collection} 
 
-[] (-1) (InterfaceVariable UserType) _ .error 
+[] (InterfaceVariable UserType) _ .error 
 
-[] (-1) (StructVariable UserType) updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} // write(analytics_db), 
-[_] (0) (FieldVariable FieldType) UserID string // write(analytics_db), 
-[__] (0) (BasicVariable BasicType) UserID string // write(analytics_db), 
-[___] (23) (Reference FieldType) ref <UserID string> @ AnalyticsService // write(analytics_db), 
-[____] (24) (BasicVariable BasicType) UserID string // write(analytics_db), 
-[_____] (25) (InterfaceVariable InterfaceType) UserID interface{} // write(order_db), write(billing_db), write(analytics_queue), write(analytics_db), write(shipment_queue), 
-[_] (0) (FieldVariable FieldType) Categories []string // write(analytics_db), 
-[__] (-1) (SliceVariable SliceType) Categories []string // write(analytics_db), 
-[___] (0) (BasicVariable BasicType) ProductCategory string // write(analytics_db), 
-[____] (26) (Reference FieldType) ref <ProductCategory string> @ AnalyticsService // write(analytics_db), 
-[_____] (27) (BasicVariable BasicType) ProductCategory string // write(analytics_db), 
-[______] (28) (InterfaceVariable InterfaceType) ProductCategory interface{} // write(analytics_queue), write(analytics_db), 
+[] (StructVariable UserType) updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} // write(analytics_db), 
+[_] (FieldVariable FieldType) Categories []string // write(analytics_db), 
+[__] (SliceVariable SliceType) Categories []string // write(analytics_db), 
+[___] (BasicVariable BasicType) ProductCategory string // write(analytics_db), 
+[____] (Reference FieldType) ref <ProductCategory string> @ AnalyticsService // write(analytics_db), 
+[_____] (BasicVariable BasicType) ProductCategory string // write(analytics_db), 
+[______] (InterfaceVariable InterfaceType) ProductCategory interface{} // write(analytics_queue), write(analytics_db), 
+[_] (FieldVariable FieldType) UserID string // write(analytics_db), 
+[__] (BasicVariable BasicType) UserID string // write(analytics_db), 
+[___] (Reference FieldType) ref <UserID string> @ AnalyticsService // write(analytics_db), 
+[____] (BasicVariable BasicType) UserID string // write(analytics_db), 
+[_____] (InterfaceVariable InterfaceType) UserID interface{} // write(order_db), write(billing_db), write(analytics_queue), write(analytics_db), write(shipment_queue), 
 

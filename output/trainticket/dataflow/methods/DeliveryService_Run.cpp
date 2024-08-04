@@ -1,38 +1,42 @@
-[] (-1) (PointerVariable PointerType) d (*delivery.DeliveryServiceImpl struct{db NoSQLDatabase, delQ Queue}) 
-[_] (0) (StructVariable UserType) delivery.DeliveryServiceImpl struct{db NoSQLDatabase, delQ Queue} 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) delQ Queue 
+[] (PointerVariable PointerType) d (*delivery.DeliveryServiceImpl struct{db NoSQLDatabase, delQ Queue}) 
+[_] (StructVariable UserType) delivery.DeliveryServiceImpl struct{db NoSQLDatabase, delQ Queue} 
+[__] (FieldVariable FieldType) db NoSQLDatabase 
+[___] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
+[__] (FieldVariable FieldType) delQ Queue 
+[___] (BlueprintBackendVariable BlueprintBackendType) queue Queue 
 
-[] (-1) (InterfaceVariable UserType) ctx context.Context 
+[] (InterfaceVariable UserType) ctx context.Context 
 
-[] (-1) (StructVariable UserType) delivery delivery.Delivery struct{ID string, OrderID string, FoodName string, StoreName string, StationName string} 
+[] (StructVariable UserType) delivery delivery.Delivery struct{ID string, OrderID string, FoodName string, StoreName string, StationName string} 
 
-[] (-1) (BasicVariable BasicType) didpop bool 
+[] (BasicVariable BasicType) didpop bool 
 
-[] (-1) (InterfaceVariable UserType) err .error 
+[] (InterfaceVariable UserType) err .error 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = delivery, collection = delivery} 
+[] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = delivery, collection = delivery} 
 
-[] (-1) (InterfaceVariable UserType) err .error 
+[] (InterfaceVariable UserType) err .error 
 
-[] (-1) (InterfaceVariable UserType) err .error 
+[] (InterfaceVariable UserType) err .error 
 
-[] (-1) (PointerVariable PointerType) d (*delivery.DeliveryServiceImpl struct{db NoSQLDatabase, delQ Queue}) 
-[_] (0) (StructVariable UserType) delivery.DeliveryServiceImpl struct{db NoSQLDatabase, delQ Queue} 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
-[__] (-1) (BlueprintBackendVariable BlueprintBackendType) delQ Queue 
+[] (PointerVariable PointerType) d (*delivery.DeliveryServiceImpl struct{db NoSQLDatabase, delQ Queue}) 
+[_] (StructVariable UserType) delivery.DeliveryServiceImpl struct{db NoSQLDatabase, delQ Queue} 
+[__] (FieldVariable FieldType) db NoSQLDatabase 
+[___] (BlueprintBackendVariable BlueprintBackendType) db NoSQLDatabase 
+[__] (FieldVariable FieldType) delQ Queue 
+[___] (BlueprintBackendVariable BlueprintBackendType) queue Queue 
 
-[] (-1) (InterfaceVariable UserType) ctx context.Context 
+[] (InterfaceVariable UserType) ctx context.Context 
 
-[] (-1) (StructVariable UserType) delivery delivery.Delivery struct{ID string, OrderID string, FoodName string, StoreName string, StationName string} 
+[] (StructVariable UserType) delivery delivery.Delivery struct{ID string, OrderID string, FoodName string, StoreName string, StationName string} 
 
-[] (-1) (BasicVariable BasicType) didpop bool 
+[] (BasicVariable BasicType) didpop bool 
 
-[] (-1) (InterfaceVariable UserType) err .error 
+[] (InterfaceVariable UserType) err .error 
 
-[] (-1) (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = delivery, collection = delivery} 
+[] (BlueprintBackendVariable BlueprintBackendType) coll NoSQLCollection {database = delivery, collection = delivery} 
 
-[] (-1) (InterfaceVariable UserType) err .error 
+[] (InterfaceVariable UserType) err .error 
 
-[] (-1) (InterfaceVariable UserType) err .error 
+[] (InterfaceVariable UserType) err .error 
 

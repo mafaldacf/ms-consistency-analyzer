@@ -1,11 +1,13 @@
-[] (-1) (PointerVariable PointerType) f (*shopping_app.FrontendImpl struct{cart_service shopping_app.CartService, order_service shopping_app.OrderService}) 
-[_] (0) (StructVariable UserType) shopping_app.FrontendImpl struct{cart_service shopping_app.CartService, order_service shopping_app.OrderService} 
-[__] (-1) (ServiceVariable ServiceType) cart_service shopping_app.CartService 
-[__] (-1) (ServiceVariable ServiceType) order_service shopping_app.OrderService 
+[] (PointerVariable PointerType) f (*shopping_app.FrontendImpl struct{order_service shopping_app.OrderService, cart_service shopping_app.CartService}) 
+[_] (StructVariable UserType) shopping_app.FrontendImpl struct{order_service shopping_app.OrderService, cart_service shopping_app.CartService} 
+[__] (FieldVariable FieldType) cart_service shopping_app.CartService 
+[___] (ServiceVariable ServiceType) cart_service shopping_app.CartService 
+[__] (FieldVariable FieldType) order_service shopping_app.OrderService 
+[___] (ServiceVariable ServiceType) order_service shopping_app.OrderService 
 
-[] (1) (InterfaceVariable UserType) ctx context.Context 
+[] (InterfaceVariable UserType) ctx context.Context 
 
-[] (2) (BasicVariable BasicType) cartID string 
+[] (BasicVariable BasicType) cartID string 
 
-[] (3) (BasicVariable BasicType) productID string 
+[] (BasicVariable BasicType) productID string 
 

@@ -353,7 +353,7 @@
               {
                 "variable": {
                   "name": "order",
-                  "type": "shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64}"
+                  "type": "shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp 1 int}"
                 },
                 "struct_fields": {
                   "OrderID": {
@@ -574,7 +574,7 @@
                   {
                     "variable": {
                       "name": "bill",
-                      "type": "shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost int}"
+                      "type": "shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (\u0026int)}"
                     },
                     "struct_fields": {
                       "PricePerUnit": {
@@ -937,9 +937,9 @@
                       {
                         "variable": {
                           "name": "event",
-                          "type": "(\u0026map[string]interface{})"
+                          "type": "(*map[string]interface{})"
                         },
-                        "addr_of": {
+                        "ptr_to": {
                           "variable": {
                             "name": "event",
                             "type": "map[string]interface{}",
@@ -1286,9 +1286,9 @@
                       {
                         "variable": {
                           "name": "event",
-                          "type": "(\u0026map[string]interface{})"
+                          "type": "(*map[string]interface{})"
                         },
-                        "addr_of": {
+                        "ptr_to": {
                           "variable": {
                             "name": "event",
                             "type": "map[string]interface{}",
@@ -1365,7 +1365,7 @@
                       {
                         "variable": {
                           "name": "shipment",
-                          "type": "shopping_app.Shipment struct{OrderID string, UserID string, Status string}"
+                          "type": "shopping_app.Shipment struct{OrderID string, UserID string, Status \"pending\" string}"
                         },
                         "struct_fields": {
                           "OrderID": {
@@ -1524,7 +1524,7 @@
                     "returns": [
                       {
                         "variable": {
-                          "type": "shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64}"
+                          "type": "shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp 1 int}"
                         }
                       },
                       {
@@ -1698,7 +1698,7 @@
         "returns": [
           {
             "variable": {
-              "type": "shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64}"
+              "type": "shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp 1 int}"
             }
           },
           {

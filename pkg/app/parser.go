@@ -38,6 +38,7 @@ func (app *App) createPackage(goPackage *packages.Package) *types.Package {
 		ImportedConstants: make(map[string]variables.Variable),
 		ImportedVariables: make(map[string]variables.Variable),
 		TypesInfo:         goPackage.TypesInfo,
+		Block:             &types.Block{},
 	}
 
 	if utils.IsAppPackage(app.PackagePath, goPackage.PkgPath) {
@@ -59,7 +60,7 @@ func (app *App) createPackage(goPackage *packages.Package) *types.Package {
 
 func parseBlueprintPackage(bpPackage *types.Package) {
 	packagesPattern := bpPackage.PackagePath
-	pkgs, err := packages.Load(&packages.Config{Mode: packages.NeedName | packages.NeedModule | packages.NeedFiles | packages.NeedTypes | packages.NeedTypesInfo | packages.NeedSyntax | packages.NeedImports}, packagesPattern)
+	pkgs, err := packages.Load(&packages.Config{Mode: packages.NeedName | packages.NeedModule | packages.NeedFiles | packages.NeedTypes | packages.NeedTypesInfo | packages.NeedSyntax | packages.NeedImports | packages.NeedDeps}, packagesPattern)
 	if err != nil {
 		logger.Logger.Fatalf("[APP PACKAGE BLUEPRINT] error loading packages from %s: %s", bpPackage.PackagePath, err.Error())
 	}
@@ -144,7 +145,7 @@ func (app *App) RegisterPackages() {
 		parseBlueprintPackage(parsedPackage)
 	}
 	for _, parsedPackage := range app.GetAppPackages() {
-		app.parseAppPackageNamedTypes(parsedPackage, packagesInfo[parsedPackage.PackagePath].GoPackage)
+		app.parseAppPackage(parsedPackage, packagesInfo[parsedPackage.PackagePath].GoPackage)
 	}
 
 	for _, pkg := range app.AppPackages {
@@ -191,22 +192,41 @@ func parseGolangFuncTypes(pkg *types.Package, def golangtypes.Object, typeNameTo
 	return funcs
 }
 
-func (app *App) parseAppPackageNamedTypes(parsedPackage *types.Package, goPackage *packages.Package) {
+func (app *App) parseAppPackage(parsedPackage *types.Package, goPackage *packages.Package) {
 	logger.Logger.Infof("[APP PACKAGE PARSER] parsing named types for app go package (%s)", goPackage)
 
 	visitedNamedTypes := make(map[*golangtypes.Named]bool)
 	typeNameToFuncs := make(map[string][]*golangtypes.Func)
 	var funcs []*golangtypes.Func
 
-	for _, def := range goPackage.TypesInfo.Defs {
-		if def == nil {
+	for _, obj := range goPackage.TypesInfo.Defs {
+		if obj == nil {
 			continue
 		}
-		logger.Logger.Warnf("[DEF] %s // DEF.(type) = %s // DEF_TYPE.(type) = %s", def.Id(), utils.GetType(def), utils.GetType(def.Type()))
-		funcs = append(funcs, parseGolangFuncTypes(parsedPackage, def, typeNameToFuncs)...)
+		logger.Logger.Warnf("- [OBJ] (pkg-level=%t) [%s %s] %s", obj.Parent() == goPackage.Types.Scope(), utils.GetType(obj), utils.GetType(obj.Type()), obj.Name())
 
-		// built-in (e.g. error, make, println) golang types have no package
-		lookup.FindDefTypesAndAddToPackage(parsedPackage, def, def.Type(), visitedNamedTypes, typeNameToFuncs, app.ServiceTypes)
+		if funcObj, ok := obj.(*golangtypes.Func); ok {
+			funcs = append(funcs, parseGolangFuncTypes(parsedPackage, funcObj, typeNameToFuncs)...)
+			continue
+		} else if namedType, ok := obj.Type().(*golangtypes.Named); ok {
+			// built-in (e.g. error, make, println) golang types have no package
+			t := lookup.FindDefTypesAndAddToPackage(parsedPackage, obj, namedType, visitedNamedTypes, typeNameToFuncs, app.ServiceTypes)
+			if t != nil {
+				continue
+			}
+		}
+
+		if obj.Parent() == goPackage.Types.Scope() {
+			// if it is not a named type, then we want to save package-level objects
+			// whose object type is either a CONST or VAR
+			// note that objects whose object.Type() is Named are also VARs
+			// and that's why this 'else if' condition needs to be after the previous
+			lookup.SaveObjectToPackage(parsedPackage, obj)
+		}
+
+		if obj.Id() == "ALL_ASSURANCES" {
+			logger.Logger.Tracef("OBJ: %s", obj.String())
+		}
 	}
 
 	for i, fileAst := range goPackage.Syntax {
@@ -217,7 +237,7 @@ func (app *App) parseAppPackageNamedTypes(parsedPackage *types.Package, goPackag
 			Package: parsedPackage,
 			Imports: make(map[string]*types.Import),
 		}
-		lookup.ParseImports(file)
+		lookup.ParseFileImports(file)
 		parsedPackage.LinkFile(file)
 
 		ast.Inspect(fileAst, func(n ast.Node) bool {

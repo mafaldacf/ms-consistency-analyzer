@@ -91,7 +91,7 @@ func CreateVariableFromType(name string, t gotypes.Type) variables.Variable {
 	return nil
 }
 
-func ParseImports(file *types.File) {
+func ParseFileImports(file *types.File) {
 	for _, imp := range file.Ast.Imports {
 		path := imp.Path.Value
 		// remove quotes

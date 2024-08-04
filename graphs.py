@@ -149,28 +149,31 @@ if __name__ == "__main__":
     parser.add_argument('--all', action='store_true', help="Construct all combinations of digraphs for all applications")
     args = parser.parse_args()
 
-    if args.all:
-        if args.app != None:
-            apps = [args.app]
-        else:
-            apps = ['postnotification', 'postnotification_simple', 'trainticket', 'shopping_app', 'sockshop2', 'foobar']
-        graphs = ['app', 'call']
-        for app in apps:
-            print(f"[INFO] saving graphs for {app} app...")
-            for graph in graphs:
-                data = load(app, graph, False)
-                build_digraph(data, graph, False)
-                save(app, graph, False, False)
-                if graph == 'call':
-                    build_digraph(data, graph, True)
-                    save(app, graph, True, False)
-            for graph in search_all_per_requests(app):
-                data = load(app, graph, True)
-                build_digraph(data, graph, True)
-                save(app, graph, True, True)
-            print()
+    if args.all == False and args.app == None and args.graph == None:
+        print(f"[ERROR] invalid arguments!")
+        exit(-1)
 
-    else:     
-        data = load(args.app, args.graph, False)
-        build_digraph(data, args.graph, args.labeled)
-        save(args.app, args.graph, args.labeled)
+    if args.app != None:
+        apps = [args.app]
+    else:
+        apps = ['postnotification', 'postnotification_simple', 'trainticket', 'shopping_app', 'sockshop2', 'foobar']
+    
+    if args.graph != None:
+        graphs = [args.graph]
+    else:
+        graphs = ['app', 'call']
+
+    for app in apps:
+        print(f"[INFO] saving graphs for {app} app...")
+        for graph in graphs:
+            data = load(app, graph, False)
+            build_digraph(data, graph, False)
+            save(app, graph, False, False)
+            if graph == 'call': # do another run for labeled
+                build_digraph(data, graph, True)
+                save(app, graph, True, False)
+        for graph in search_all_per_requests(app):
+            data = load(app, graph, True)
+            build_digraph(data, graph, True)
+            save(app, graph, True, True)
+        print()

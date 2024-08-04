@@ -1,9 +1,9 @@
-[] (-1) (PointerVariable PointerType) d (*foo.FooServiceImpl struct{}) 
-[_] (0) (StructVariable UserType) foo.FooServiceImpl struct{} 
+[] (PointerVariable PointerType) d (*foo.FooServiceImpl struct{}) 
+[_] (StructVariable UserType) foo.FooServiceImpl struct{} 
 
-[] (-1) (InterfaceVariable UserType) ctx context.Context 
-[_] (1) (Reference UserType) ref <ctx context.Context> @ FrontendService 
+[] (InterfaceVariable UserType) ctx context.Context 
+[_] (Reference UserType) ref <ctx context.Context> @ FrontendService 
 
-[] (0) (BasicVariable BasicType) text string 
-[_] (2) (Reference BasicType) ref <"Frontend" string> @ FrontendService 
+[] (BasicVariable BasicType) text string 
+[_] (Reference BasicType) ref <"Frontend" string> @ FrontendService 
 
