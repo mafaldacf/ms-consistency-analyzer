@@ -176,6 +176,19 @@
                         {
                           "Key": {
                             "variable": {
+                              "type": "\"Timestamp\" string"
+                            }
+                          },
+                          "Value": {
+                            "variable": {
+                              "name": "Timestamp",
+                              "type": "interface{}"
+                            }
+                          }
+                        },
+                        {
+                          "Key": {
+                            "variable": {
                               "type": "\"ReqID\" string"
                             }
                           },
@@ -195,19 +208,6 @@
                           "Value": {
                             "variable": {
                               "name": "PostID",
-                              "type": "interface{}"
-                            }
-                          }
-                        },
-                        {
-                          "Key": {
-                            "variable": {
-                              "type": "\"Timestamp\" string"
-                            }
-                          },
-                          "Value": {
-                            "variable": {
-                              "name": "Timestamp",
                               "type": "interface{}"
                             }
                           }

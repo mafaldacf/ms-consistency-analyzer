@@ -16,10 +16,10 @@
 - SERVICE CALL @ GetCart >> (*cart.cartImpl).GetCart(ctx context.Context, customerID string) ([]cart.Item struct{ID string, Quantity int, UnitPrice float32}, error)
 
 (*FrontendImpl).GetOrder(ctx context.Context, orderID string):
-- SERVICE CALL @ GetOrder >> (*order.orderImpl).GetOrder(ctx context.Context, orderID string) (order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card []user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}, error)
+- SERVICE CALL @ GetOrder >> (*order.orderImpl).GetOrder(ctx context.Context, orderID string) (order.Order struct{ID string, CustomerID string, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}, error)
 
 (*FrontendImpl).GetOrders(ctx context.Context, userID string):
-- SERVICE CALL @ GetOrders >> (*order.orderImpl).GetOrders(ctx context.Context, customerID string) ([]order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card []user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}, error)
+- SERVICE CALL @ GetOrders >> (*order.orderImpl).GetOrders(ctx context.Context, customerID string) ([]order.Order struct{ID string, CustomerID string, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}, error)
 
 (*FrontendImpl).GetSock(ctx context.Context, itemID string):
 - SERVICE CALL @ Get >> (*catalogue.catalogueImpl).Get(ctx context.Context, id string)
@@ -42,7 +42,7 @@
 - SERVICE CALL @ MergeCarts >> (*cart.cartImpl).MergeCarts(ctx context.Context, customerID string, sessionID string) error
 
 (*FrontendImpl).NewOrder(ctx context.Context, userID string, addressID string, cardID string, cartID string):
-- SERVICE CALL @ NewOrder >> (*order.orderImpl).NewOrder(ctx context.Context, customerID string, addressID string, cardID string, cartID string) (order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card []user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}, error)
+- SERVICE CALL @ NewOrder >> (*order.orderImpl).NewOrder(ctx context.Context, customerID string, addressID string, cardID string, cartID string) (order.Order struct{ID string, CustomerID string, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}, error)
 
 (*FrontendImpl).PostAddress(ctx context.Context, userID string, address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string})
 :

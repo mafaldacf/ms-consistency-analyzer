@@ -429,6 +429,16 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		variable, _ := lookupVariableFromAstExpr(service, method, block, e.X, nil, false)
 		variable.GetVariableInfo().Id = variables.VARIABLE_INLINE_ID
 		return variable, nil
+	case *ast.FuncLit:
+		return &variables.FuncVariable{
+			VariableInfo: &variables.VariableInfo{
+				Id: variables.VARIABLE_INLINE_ID,
+				Type: &gotypes.FuncTypeType{
+					Body: e.Body,
+					Params: e.Type.Params,
+				},
+			},
+		}, nil
 	default:
 		logger.Logger.Fatalf("[CFG - LOOKUP VAR] cannot lookup unknown type (%s) for variable (%v)", utils.GetType(e), e)
 	}

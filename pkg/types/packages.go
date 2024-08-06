@@ -96,9 +96,11 @@ func (p *Package) GetDeclaredVariableOrConstIfExists(name string) variables.Vari
 	if v, ok := p.DeclaredVariables[name]; ok {
 		return v
 	}
+	logger.Logger.Warnf("[BLOCK] variable (%s) does not exist in declared variables list: %v", name, p.DeclaredVariables)
 	if v, ok := p.DeclaredConstants[name]; ok {
 		return v
 	}
+	logger.Logger.Warnf("[BLOCK] variable (%s) does not exist in declared constants list: %v", name, p.DeclaredVariables)
 	return nil
 }
 

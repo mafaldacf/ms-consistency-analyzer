@@ -225,8 +225,8 @@ order:
 - imported constants: []
 - imported variables: []
 - declared types:
-  - order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string},
-    Card []user.Card struct{LongNum string, Expires string, CCV string, ID string},
+  - order.Order struct{ID string, CustomerID string, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string},
+    Card user.Card struct{LongNum string, Expires string, CCV string, ID string},
     Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment
     shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string},
     Date string, Total 10 float32, Total float32}
@@ -247,9 +247,9 @@ order:
     NoSQLDatabase.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
 - parsed methods:
-  - (*order.orderImpl).GetOrder(ctx context.Context, orderID string) (order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card []user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}, error)
-  - (*order.orderImpl).GetOrders(ctx context.Context, customerID string) ([]order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card []user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}, error)
-  - (*order.orderImpl).NewOrder(ctx context.Context, customerID string, addressID string, cardID string, cartID string) (order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card []user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}, error)
+  - (*order.orderImpl).GetOrder(ctx context.Context, orderID string) (order.Order struct{ID string, CustomerID string, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}, error)
+  - (*order.orderImpl).GetOrders(ctx context.Context, customerID string) ([]order.Order struct{ID string, CustomerID string, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}, error)
+  - (*order.orderImpl).NewOrder(ctx context.Context, customerID string, addressID string, cardID string, cartID string) (order.Order struct{ID string, CustomerID string, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}, error)
   - order.NewOrderService(ctx context.Context, userService user.UserService, cartService cart.CartService, payments payment.PaymentService, shipping shipping.ShippingService, orderDB NoSQLDatabase) (order.OrderService, error)
 
 payment:

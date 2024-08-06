@@ -18,7 +18,7 @@ func main() {
 	allFlag := flag.String("all", "", "Run analyzer for all applications ('postnotification', 'shopping_app', 'sockshop2', 'trainticket')")
 	flag.Parse()
 	if *allFlag == "true" || *allFlag == "True" || *allFlag == "1" {
-		var apps = []string{"trainticket", "postnotification", "shopping_app", "sockshop2", "foobar", "postnotification_simple"}
+		var apps = []string{"trainticket", "postnotification_simple", "postnotification", "shopping_app", "sockshop2", "foobar"}
 		for _, app := range apps {
 			logger.Logger.Infof(fmt.Sprintf("running analyzer for '%s'...", app))
 			time.Sleep(1500 * time.Millisecond)

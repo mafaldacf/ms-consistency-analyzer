@@ -3,6 +3,8 @@ package gotypes
 import (
 	"fmt"
 	"strings"
+
+	"analyzer/pkg/utils"
 )
 
 type BasicType struct {
@@ -15,7 +17,7 @@ type BasicType struct {
 // Type Methods
 // ------------
 
-func (t* BasicType) IsNil() bool {
+func (t *BasicType) IsNil() bool {
 	return t.Name == "nil"
 }
 func (t *BasicType) IsSameType(other Type) bool {
@@ -46,9 +48,9 @@ func (t *BasicType) GetBasicValue() string {
 func (t *BasicType) AddValue(value string) {
 	if t.Value == "" {
 		t.Value = value
-	} else {
-		t.Value += value
+		return
 	}
+	t.Value = utils.AddValue(t.Name, t.Value, value)
 }
 func (t *BasicType) GetNestedFieldTypes(prefix string) ([]Type, []string) {
 	return nil, nil

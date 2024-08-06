@@ -24,8 +24,13 @@ func InitParsedCFG(cfg *cfg.CFG, fullMethod string) *CFG {
 		Cfg:        cfg,
 		FullMethod: fullMethod,
 	}
-	for _, block := range cfg.Blocks {
-		parsedCfg.ParsedBlocks = append(parsedCfg.ParsedBlocks, &Block{Block: block})
+	for i, block := range cfg.Blocks {
+		parsedCfg.ParsedBlocks = append(parsedCfg.ParsedBlocks, &Block{Block: block, Index: i})
+	}
+	for _, parsedBlock := range parsedCfg.ParsedBlocks {
+		for _, succ := range parsedBlock.Block.Succs {
+			parsedBlock.Successors = append(parsedBlock.Successors, parsedCfg.ParsedBlocks[succ.Index])
+		}
 	}
 	return parsedCfg
 }

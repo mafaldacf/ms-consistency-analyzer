@@ -1,9 +1,11 @@
 package utils
 
 import (
+	"fmt"
 	"reflect"
 	"runtime"
 	"slices"
+	"strconv"
 
 	"analyzer/pkg/logger"
 )
@@ -23,6 +25,44 @@ var builtInTypes = []string{
 
 var builtInConsts = []string{"true", "false"}
 var builtInFuncs = []string{"make", "println", "append", "len"}
+
+func AddValue(valueType string, s1 string, s2 string) string {
+	switch valueType {
+	case "string":
+		return s1 + s2
+	case "int":
+		i1, _ := strconv.Atoi(s1)
+		i2, _ := strconv.Atoi(s2)
+		i1 += i2
+		return fmt.Sprintf("%d", i1+i2)
+	case "int8":
+		var i1, i2 int8
+		fmt.Sscan(s1, &i1)
+     	fmt.Sscan(s2, &i2)
+		i1 += i2
+		return fmt.Sprintf("%d", i1+i2)
+	case "int16":
+		var i1, i2 int8
+		fmt.Sscan(s1, &i1)
+     	fmt.Sscan(s2, &i2)
+		i1 += i2
+		return fmt.Sprintf("%d", i1+i2)
+	case "int32":
+		var i1, i2 int8
+		fmt.Sscan(s1, &i1)
+     	fmt.Sscan(s2, &i2)
+		i1 += i2
+		return fmt.Sprintf("%d", i1+i2)
+	case "int64":
+		var i1, i2 int8
+		fmt.Sscan(s1, &i1)
+     	fmt.Sscan(s2, &i2)
+		return fmt.Sprintf("%d", i1+i2)
+	default:
+		logger.Logger.Fatalf("[UTILS ADD VALUE] unknown type (%s) for adding values (%s) and (%s)", valueType, s1, s2)
+	}
+	return s1 + s2
+}
 
 func GetType(node interface{}) string {
 	if node == nil {

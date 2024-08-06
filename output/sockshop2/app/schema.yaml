@@ -36,15 +36,23 @@ ORDER_DB:
   - shipdb
 - schema:
   - fields:
-    - document: order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card []user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}
-    - Order: order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card []user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}
+    - document: order.Order struct{ID string, CustomerID string, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}
+    - Order: order.Order struct{ID string, CustomerID string, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}
   - unfolded_fields:
     - Order.ID: string
     - Order.CustomerID: string
-    - Order.Address: '[]user.Address struct{Street string, Number string, Country
-        string, City string, PostCode string, ID string}'
-    - Order.Card: '[]user.Card struct{LongNum string, Expires string, CCV string,
-        ID string}'
+    - Order.Address: user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}
+    - Order.Address.Street: string
+    - Order.Address.Number: string
+    - Order.Address.Country: string
+    - Order.Address.City: string
+    - Order.Address.PostCode: string
+    - Order.Address.ID: string
+    - Order.Card: user.Card struct{LongNum string, Expires string, CCV string, ID string}
+    - Order.Card.LongNum: string
+    - Order.Card.Expires: string
+    - Order.Card.CCV: string
+    - Order.Card.ID: string
     - Order.Items: '[]cart.Item struct{ID string, Quantity int, UnitPrice float32}'
     - Order.Shipment: shipping.Shipment struct{ID string, Name string, Status "awaiting
         shipment" string}

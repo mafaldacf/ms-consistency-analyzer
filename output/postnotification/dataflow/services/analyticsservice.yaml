@@ -46,7 +46,8 @@
   - (PointerVariable PointerType) n (*postnotification.AnalyticsServiceImpl struct{analyticsDb NoSQLDatabase, analyticsQueue Queue, numWorkers 4 int})
   - (InterfaceVariable UserType) ctx context.Context
   - (StructVariable UserType) wg sync.WaitGroup
-  - (BasicVariable BasicType) i 1 int
+  - (BasicVariable BasicType) i 3 int
+  - (BasicVariable BasicType) i 3 int
   - (InterfaceVariable UserType) err .error
 
 (*AnalyticsServiceImpl).handleMessage(ctx context.Context, message postnotification.TriggerAnalyticsMessage struct{PostID string})
@@ -123,28 +124,6 @@
   - (PointerVariable PointerType) n (*postnotification.AnalyticsServiceImpl struct{analyticsDb NoSQLDatabase, analyticsQueue Queue, numWorkers 4 int})
   - (InterfaceVariable UserType) ctx context.Context
   - (ChanVariable ChanType) forever chan struct{}
-  - |-
-    (inline) (Reference InterfaceType) ref <PostID interface{}> @ NotifyService -->
-       w-tainted 9x: write(media_db.Media.PostID, posts_cache.key, posts_cache.value, posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
-  - |-
-    (inline) (BasicVariable BasicType) postID int64 -->
-       w-tainted 9x: write(media_db.Media.PostID, posts_db.Post.PostID, posts_cache.key, posts_cache.value, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
-  - |-
-    (inline) (Reference FieldType) ref <PostID int64> @ UploadService -->
-       w-tainted 5x: write(posts_db.Post.PostID, posts_cache.key, posts_cache.value, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID)
-  - |-
-    (inline) (BasicVariable BasicType) PostID int64 -->
-       w-tainted 2x: write(analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID)
-  - |-
-    (inline) (BasicVariable BasicType) string -->
-       w-tainted 2x: write(analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID)
-  - |-
-    (inline) (FieldVariable FieldType) PostID string -->
-       w-tainted 2x: write(analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID)
-  - |-
-    (inline) (Reference UserType) ref <message postnotification.TriggerAnalyticsMessage struct{PostID string}> @ AnalyticsService -->
-       w-tainted 1x: write(analytics_queue.TriggerAnalyticsMessage)
-  - (StructVariable UserType) event postnotification.TriggerAnalyticsMessage struct{PostID string}
 
 .NewAnalyticsServiceImpl(ctx context.Context, analyticsDb NoSQLDatabase, analyticsQueue Queue):
   block 0 (Body):

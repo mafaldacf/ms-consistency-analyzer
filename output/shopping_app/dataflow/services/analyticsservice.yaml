@@ -10,7 +10,8 @@
   - (PointerVariable PointerType) n (*shopping_app.AnalyticsServiceImpl struct{analytics_db NoSQLDatabase, analytics_queue Queue, num_workers 4 int})
   - (InterfaceVariable UserType) ctx context.Context
   - (StructVariable UserType) wg sync.WaitGroup
-  - (BasicVariable BasicType) i 1 int
+  - (BasicVariable BasicType) i 3 int
+  - (BasicVariable BasicType) i 3 int
   - (InterfaceVariable UserType) err .error
 
 (*AnalyticsServiceImpl).updateAnalytics(ctx context.Context, message shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string})
@@ -102,59 +103,6 @@
   - (PointerVariable PointerType) s (*shopping_app.AnalyticsServiceImpl struct{analytics_db NoSQLDatabase, analytics_queue Queue, num_workers 4 int})
   - (InterfaceVariable UserType) ctx context.Context
   - (ChanVariable ChanType) forever chan struct{}
-  - |-
-    (inline) (InterfaceVariable InterfaceType) ProductCategory interface{} -->
-       w-tainted 2x: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories)
-  - |-
-    (inline) (InterfaceVariable InterfaceType) UserID interface{} -->
-       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID)
-  - |-
-    (inline) (Reference InterfaceType) ref <UserID interface{}> @ ShipmentService -->
-       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID)
-  - |-
-    (inline) (Reference InterfaceType) ref <UserID interface{}> @ AnalyticsService -->
-       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID)
-  - |-
-    (inline) (Reference BasicType) ref <userID string> @ Frontend -->
-       w-tainted 4x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)
-  - |-
-    (inline) (BasicVariable BasicType) userID string -->
-       w-tainted 4x: write(order_db.Order.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, billing_db.Bill.UserID)
-  - |-
-    (inline) (Reference InterfaceType) ref <UserID interface{}> @ AnalyticsService -->
-       w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID)
-  - |-
-    (inline) (FieldVariable FieldType) UserID string -->
-       w-tainted 1x: write(analytics_queue.AnalyticsMessage.UserID)
-  - |-
-    (inline) (Reference InterfaceType) ref <ProductCategory interface{}> @ AnalyticsService -->
-       w-tainted 2x: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories)
-  - |-
-    (inline) (BasicVariable BasicType) Category string -->
-       w-tainted 1x: write(analytics_queue.AnalyticsMessage.ProductCategory)
-  - |-
-    (inline) (Reference InterfaceType) ref <ProductCategory interface{}> @ AnalyticsService -->
-       w-tainted 2x: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories)
-  - |-
-    (inline) (FieldVariable FieldType) ProductCategory string -->
-       w-tainted 1x: write(analytics_queue.AnalyticsMessage.ProductCategory)
-  - |-
-    (inline) (Reference UserType) ref <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string}> @ AnalyticsService -->
-       w-tainted 1x: write(analytics_queue.AnalyticsMessage)
-  - (MapVariable MapType) event map[string]interface{}
-  - |-
-    (BasicVariable BasicType) UserID string -->
-       w-tainted 1x: write(analytics_db.Analytics.UserID)
-  - |-
-    (BasicVariable BasicType) ProductCategory string -->
-       w-tainted 1x: write(analytics_db.Analytics.Categories)
-  - |-
-    (inline) (FieldVariable FieldType) UserID string -->
-       w-tainted 1x: write(analytics_db.Analytics.UserID)
-  - |-
-    (inline) (FieldVariable FieldType) ProductCategory string -->
-       w-tainted 1x: write(analytics_db.Analytics.Categories)
-  - (StructVariable UserType) workerMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string}
 
 .NewAnalyticsServiceImpl(ctx context.Context, analytics_db NoSQLDatabase, analytics_queue Queue):
   block 0 (Body):

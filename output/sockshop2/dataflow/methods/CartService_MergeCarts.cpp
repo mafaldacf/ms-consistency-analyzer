@@ -8,8 +8,8 @@
 [_] (Reference UserType) ref <ctx context.Context> @ FrontendService 
 
 [] (BasicVariable BasicType) customerID string 
-[_] (Reference BasicType) ref <userID string> @ FrontendService 
 [_] (Reference BasicType) ref <UserID string> @ FrontendService 
+[_] (Reference BasicType) ref <userID string> @ FrontendService 
 
 [] (BasicVariable BasicType) sessionID string 
 [_] (Reference BasicType) ref <sessionID string> @ FrontendService 
@@ -19,8 +19,8 @@
 [_] (StructVariable UserType) cart.cart struct{ID string, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}} 
 [__] (FieldVariable FieldType) ID string 
 [___] (BasicVariable BasicType) customerID string 
-[____] (Reference BasicType) ref <userID string> @ FrontendService 
 [____] (Reference BasicType) ref <UserID string> @ FrontendService 
+[____] (Reference BasicType) ref <userID string> @ FrontendService 
 
 [] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = cart, collection = carts} 
 

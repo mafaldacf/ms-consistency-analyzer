@@ -29,16 +29,16 @@
   - (inline) (StructVariable UserType) cart.cartImpl struct{db NoSQLDatabase}
   - (PointerVariable PointerType) s (*cart.cartImpl struct{db NoSQLDatabase})
   - (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService
-  - (inline) (Reference UserType) ref <ctx context.Context> @ OrderService
   - (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService
+  - (inline) (Reference UserType) ref <ctx context.Context> @ OrderService
   - (InterfaceVariable UserType) ctx context.Context
+  - (inline) (Reference BasicType) ref <sessionID string> @ FrontendService
   - |-
     (inline) (Reference BasicType) ref <userID string> @ FrontendService -->
        w-tainted 3x: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.CustomerID)
   - |-
     (inline) (Reference BasicType) ref <customerID string> @ OrderService -->
        w-tainted 3x: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.CustomerID)
-  - (inline) (Reference BasicType) ref <sessionID string> @ FrontendService
   - (BasicVariable BasicType) customerID string
   - (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = cart, collection = carts}
   - (InterfaceVariable UserType) _ .error
@@ -82,8 +82,8 @@
   - (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService
   - (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService
   - (InterfaceVariable UserType) ctx context.Context
-  - (inline) (Reference BasicType) ref <UserID string> @ FrontendService
   - (inline) (Reference BasicType) ref <userID string> @ FrontendService
+  - (inline) (Reference BasicType) ref <UserID string> @ FrontendService
   - (BasicVariable BasicType) customerID string
   - (inline) (Reference BasicType) ref <sessionID string> @ FrontendService
   - (inline) (Reference BasicType) ref <sessionID string> @ FrontendService

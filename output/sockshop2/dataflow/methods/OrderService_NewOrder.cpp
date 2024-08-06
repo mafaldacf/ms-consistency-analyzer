@@ -28,23 +28,11 @@
 
 [] (StructVariable UserType) wg sync.WaitGroup 
 
-[] (ArrayVariable ArrayType) items []cart.Item struct{ID string, Quantity int, UnitPrice float32} 
+[] (ArrayVariable ArrayType) items []cart.Item struct{ID string, Quantity int, UnitPrice float32} // write(order_db), 
 
 [] (ArrayVariable ArrayType) addresses []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string} 
 
 [] (ArrayVariable ArrayType) cards []user.Card struct{LongNum string, Expires string, CCV string, ID string} 
-
-[] (SliceVariable SliceType) items []cart.Item struct{ID string, Quantity int, UnitPrice float32} // write(order_db), 
-
-[] (InterfaceVariable UserType) _ .error 
-
-[] (SliceVariable SliceType) addresses []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string} // write(order_db), 
-
-[] (InterfaceVariable UserType) _ .error 
-
-[] (SliceVariable SliceType) cards []user.Card struct{LongNum string, Expires string, CCV string, ID string} // write(order_db), 
-
-[] (InterfaceVariable UserType) _ .error 
 
 [] (BasicVariable BasicType) amount 10 float32 // write(order_db), 
 
@@ -63,11 +51,11 @@
 
 [] (InterfaceVariable UserType) err .error 
 
-[] (StructVariable UserType) order order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card []user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32} // write(order_db), 
-[_] (FieldVariable FieldType) Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string} // write(order_db), 
-[__] (SliceVariable SliceType) addresses []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string} // write(order_db), 
-[_] (FieldVariable FieldType) Card []user.Card struct{LongNum string, Expires string, CCV string, ID string} // write(order_db), 
-[__] (SliceVariable SliceType) cards []user.Card struct{LongNum string, Expires string, CCV string, ID string} // write(order_db), 
+[] (StructVariable UserType) order order.Order struct{ID string, CustomerID string, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32} // write(order_db), 
+[_] (FieldVariable FieldType) Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string} // write(order_db), 
+[__] (StructVariable UserType) user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string} // write(order_db), 
+[_] (FieldVariable FieldType) Card user.Card struct{LongNum string, Expires string, CCV string, ID string} // write(order_db), 
+[__] (StructVariable UserType) user.Card struct{LongNum string, Expires string, CCV string, ID string} // write(order_db), 
 [_] (FieldVariable FieldType) CustomerID string // write(order_db), 
 [__] (BasicVariable BasicType) customerID string // write(shipqueue), write(shipdb), write(order_db), 
 [___] (Reference BasicType) ref <userID string> @ FrontendService // write(shipqueue), write(shipdb), write(order_db), 
@@ -76,7 +64,7 @@
 [_] (FieldVariable FieldType) ID string // write(order_db), 
 [__] (BasicVariable BasicType) ID string // write(order_db), 
 [_] (FieldVariable FieldType) Items []cart.Item struct{ID string, Quantity int, UnitPrice float32} // write(order_db), 
-[__] (SliceVariable SliceType) items []cart.Item struct{ID string, Quantity int, UnitPrice float32} // write(order_db), 
+[__] (ArrayVariable ArrayType) items []cart.Item struct{ID string, Quantity int, UnitPrice float32} // write(order_db), 
 [_] (FieldVariable FieldType) Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string} // write(order_db), 
 [__] (StructVariable UserType) shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string} // write(order_db), 
 [___] (FieldVariable FieldType) ID string // write(order_db), 

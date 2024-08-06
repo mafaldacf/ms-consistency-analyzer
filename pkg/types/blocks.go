@@ -12,12 +12,39 @@ import (
 	"analyzer/pkg/utils"
 )
 
+type InlineFunc struct {
+	Name string
+	CFG  *CFG
+}
+
 type Block struct {
-	Block *cfg.Block
-	// blocks can contain inline go routines
-	Vars    []variables.Variable
-	Results []variables.Variable
-	Info    *BlockInfo
+	Block      *cfg.Block
+	Index      int
+	Successors []*Block
+
+	Vars        []variables.Variable
+	Results     []variables.Variable
+	InlineFuncs []*InlineFunc // declared inline blocks (NOT ANONYMOUS)
+	Info        *BlockInfo
+	Visited     bool
+}
+
+func (block *Block) AddInlineFunc(name string, cfg *CFG) {
+	block.InlineFuncs = append(block.InlineFuncs, &InlineFunc{
+		Name: name,
+		CFG:  cfg,
+	})
+	logger.Logger.Infof("[BLOCK] added inline func (%s) for cfg: %s", name, block.String())
+}
+
+func (block *Block) GetLatestInlineFunc(name string) *InlineFunc {
+	for i := 0; i < len(block.InlineFuncs); i++ {
+		if block.InlineFuncs[i].Name == name {
+			return block.InlineFuncs[i]
+		}
+	}
+	logger.Logger.Warnf("[BLOCK] could not find latest inline func (%s) in list: %v", name, block.InlineFuncs)
+	return nil
 }
 
 func (block *Block) GetVars() []variables.Variable {
@@ -173,6 +200,11 @@ func (block *Block) AppendVarsFromPredecessor(predecessor *Block) {
 	block.Vars = append(predecessor.Vars, block.Vars...)
 }
 
+func (block *Block) AppendInlineFuncsFromPredecessor(predecessor *Block) {
+	logger.Logger.Tracef("[BLOCK] copying inline funcs %d -> %d: %v -> %v", predecessor.GetIndex(), block.GetIndex(), predecessor.InlineFuncs, block.InlineFuncs)
+	block.InlineFuncs = append(predecessor.InlineFuncs, block.InlineFuncs...)
+}
+
 func (block *Block) String() string {
 	str := fmt.Sprintf("Block %d [%s] (", block.Block.Index, block.Block.Kind)
 	for i, v := range block.Vars {
@@ -183,4 +215,12 @@ func (block *Block) String() string {
 	}
 	str += ")"
 	return str
+}
+
+func (block *Block) AstInfoString() string {
+	var nodesStr []string
+	for _, node := range block.Block.Nodes {
+		nodesStr = append(nodesStr, utils.GetType(node))
+	}
+	return fmt.Sprintf("Block %d [%s] (stmt = %s) with %d nodes %v and succs %v", block.Block.Index, block.Block.Kind, utils.GetType(block.Block.Stmt), len(nodesStr), nodesStr, block)
 }

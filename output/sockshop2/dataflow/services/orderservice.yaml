@@ -23,7 +23,7 @@
   - (InterfaceVariable UserType) _ .error
   - (BlueprintBackendVariable BlueprintBackendType) cursor NoSQLCursor {database = order_service, collection = orders}
   - (InterfaceVariable UserType) err .error
-  - (StructVariable UserType) order order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card []user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}
+  - (StructVariable UserType) order order.Order struct{ID string, CustomerID string, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}
 
 (*orderImpl).GetOrders(ctx context.Context, customerID string):
   block 5 (IfDone):
@@ -50,7 +50,7 @@
   - (InterfaceVariable UserType) _ .error
   - (BlueprintBackendVariable BlueprintBackendType) cursor NoSQLCursor {database = order_service, collection = orders}
   - (InterfaceVariable UserType) err .error
-  - (ArrayVariable ArrayType) orders []order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card []user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}
+  - (ArrayVariable ArrayType) orders []order.Order struct{ID string, CustomerID string, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32}
   - (InterfaceVariable UserType) err .error
 
 (*orderImpl).NewOrder(ctx context.Context, customerID string, addressID string, cardID string, cartID string):
@@ -82,21 +82,11 @@
   - (inline) (Reference BasicType) ref <cartID string> @ FrontendService
   - (BasicVariable BasicType) cartID string
   - (StructVariable UserType) wg sync.WaitGroup
-  - (ArrayVariable ArrayType) items []cart.Item struct{ID string, Quantity int, UnitPrice float32}
+  - |-
+    (ArrayVariable ArrayType) items []cart.Item struct{ID string, Quantity int, UnitPrice float32} -->
+       w-tainted 1x: write(order_db.Order.Items)
   - (ArrayVariable ArrayType) addresses []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}
   - (ArrayVariable ArrayType) cards []user.Card struct{LongNum string, Expires string, CCV string, ID string}
-  - |-
-    (SliceVariable SliceType) items []cart.Item struct{ID string, Quantity int, UnitPrice float32} -->
-       w-tainted 1x: write(order_db.Order.Items)
-  - (InterfaceVariable UserType) _ .error
-  - |-
-    (SliceVariable SliceType) addresses []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string} -->
-       w-tainted 1x: write(order_db.Order.Address)
-  - (InterfaceVariable UserType) _ .error
-  - |-
-    (SliceVariable SliceType) cards []user.Card struct{LongNum string, Expires string, CCV string, ID string} -->
-       w-tainted 1x: write(order_db.Order.Card)
-  - (InterfaceVariable UserType) _ .error
   - |-
     (BasicVariable BasicType) amount 10 float32 -->
        w-tainted 1x: write(order_db.Order.Total)
@@ -120,7 +110,7 @@
        w-tainted 2x: write(shipqueue.Shipment, shipdb.Shipment)
   - |-
     (inline) (BasicVariable BasicType) ID string -->
-       w-tainted 2x: write(order_db.Order.ID, order_db.Order.Shipment.ID)
+       w-tainted 2x: write(order_db.Order.Shipment.ID, order_db.Order.ID)
   - |-
     (inline) (FieldVariable FieldType) ID string -->
        w-tainted 1x: write(order_db.Order.Shipment.ID)
@@ -150,13 +140,19 @@
     (inline) (FieldVariable FieldType) CustomerID string -->
        w-tainted 1x: write(order_db.Order.CustomerID)
   - |-
-    (inline) (FieldVariable FieldType) Card []user.Card struct{LongNum string, Expires string, CCV string, ID string} -->
+    (inline) (StructVariable UserType) user.Card struct{LongNum string, Expires string, CCV string, ID string} -->
        w-tainted 1x: write(order_db.Order.Card)
   - |-
-    (inline) (FieldVariable FieldType) Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string} -->
+    (inline) (FieldVariable FieldType) Card user.Card struct{LongNum string, Expires string, CCV string, ID string} -->
+       w-tainted 1x: write(order_db.Order.Card)
+  - |-
+    (inline) (StructVariable UserType) user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string} -->
        w-tainted 1x: write(order_db.Order.Address)
   - |-
-    (StructVariable UserType) order order.Order struct{ID string, CustomerID string, Address []user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card []user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32} -->
+    (inline) (FieldVariable FieldType) Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string} -->
+       w-tainted 1x: write(order_db.Order.Address)
+  - |-
+    (StructVariable UserType) order order.Order struct{ID string, CustomerID string, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32, Total float32} -->
        w-tainted 1x: write(order_db.Order)
   - (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = order_service, collection = orders}
   - (InterfaceVariable UserType) _ .error

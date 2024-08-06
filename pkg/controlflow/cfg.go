@@ -13,6 +13,13 @@ import (
 	"analyzer/pkg/utils"
 )
 
+// if func is anonymous than name is empty
+func GenerateInlineFuncCFG(inlineBlock *ast.BlockStmt, name string) *types.CFG {
+	cfg := cfg.New(inlineBlock, mayReturn)
+	parsedCfg := types.InitParsedCFG(cfg, name)
+	return parsedCfg
+}
+
 func GenerateMethodCFG(parsedMethod *types.ParsedMethod) {
 	cfg := cfg.New(parsedMethod.GetBody(), mayReturn)
 	parsedCfg := types.InitParsedCFG(cfg, parsedMethod.Name)

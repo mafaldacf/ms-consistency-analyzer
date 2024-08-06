@@ -10,7 +10,8 @@
   - (PointerVariable PointerType) n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, notificationsQueue Queue, num_workers 4 int})
   - (InterfaceVariable UserType) ctx context.Context
   - (StructVariable UserType) wg sync.WaitGroup
-  - (BasicVariable BasicType) i 1 int
+  - (BasicVariable BasicType) i 3 int
+  - (BasicVariable BasicType) i 3 int
   - (InterfaceVariable UserType) err .error
 
 (*NotifyServiceImpl).handleMessage(ctx context.Context, message postnotification.Message struct{ReqID string, PostID string, Timestamp string})
@@ -70,60 +71,6 @@
   - (InterfaceVariable UserType) ctx context.Context
   - (BasicVariable BasicType) workerID int
   - (ChanVariable ChanType) forever chan struct{}
-  - (inline) (InterfaceVariable InterfaceType) Timestamp interface{}
-  - |-
-    (inline) (InterfaceVariable InterfaceType) PostID interface{} -->
-       w-tainted 9x: write(media_db.Media.PostID, posts_cache.key, posts_cache.value, posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
-  - |-
-    (inline) (InterfaceVariable InterfaceType) ReqID interface{} -->
-       w-tainted 6x: write(posts_cache.key, posts_cache.value, posts_db.Post.ReqID, notifications_queue.Message.ReqID, timeline_cache.key, timeline_cache.value)
-  - |-
-    (inline) (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService -->
-       w-tainted 6x: write(posts_cache.key, posts_cache.value, posts_db.Post.ReqID, notifications_queue.Message.ReqID, timeline_cache.key, timeline_cache.value)
-  - |-
-    (inline) (BasicVariable BasicType) reqID int64 -->
-       w-tainted 6x: write(posts_db.Post.ReqID, posts_cache.key, posts_cache.value, notifications_queue.Message.ReqID, timeline_cache.key, timeline_cache.value)
-  - |-
-    (inline) (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService -->
-       w-tainted 6x: write(posts_cache.key, posts_cache.value, posts_db.Post.ReqID, notifications_queue.Message.ReqID, timeline_cache.key, timeline_cache.value)
-  - |-
-    (inline) (BasicVariable BasicType) string -->
-       w-tainted 1x: write(notifications_queue.Message.ReqID)
-  - |-
-    (inline) (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService -->
-       w-tainted 6x: write(posts_cache.key, posts_cache.value, posts_db.Post.ReqID, notifications_queue.Message.ReqID, timeline_cache.key, timeline_cache.value)
-  - |-
-    (inline) (FieldVariable FieldType) ReqID string -->
-       w-tainted 1x: write(notifications_queue.Message.ReqID)
-  - |-
-    (inline) (Reference InterfaceType) ref <PostID interface{}> @ NotifyService -->
-       w-tainted 9x: write(media_db.Media.PostID, posts_cache.key, posts_cache.value, posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
-  - |-
-    (inline) (BasicVariable BasicType) postID int64 -->
-       w-tainted 9x: write(media_db.Media.PostID, posts_db.Post.PostID, posts_cache.key, posts_cache.value, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
-  - |-
-    (inline) (Reference InterfaceType) ref <PostID interface{}> @ NotifyService -->
-       w-tainted 9x: write(media_db.Media.PostID, posts_cache.key, posts_cache.value, posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
-  - |-
-    (inline) (BasicVariable BasicType) string -->
-       w-tainted 1x: write(notifications_queue.Message.PostID)
-  - |-
-    (inline) (Reference InterfaceType) ref <PostID interface{}> @ NotifyService -->
-       w-tainted 9x: write(media_db.Media.PostID, posts_cache.key, posts_cache.value, posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
-  - |-
-    (inline) (FieldVariable FieldType) PostID string -->
-       w-tainted 1x: write(notifications_queue.Message.PostID)
-  - |-
-    (inline) (Reference UserType) ref <message postnotification.Message struct{ReqID string, PostID string, Timestamp string}> @ NotifyService -->
-       w-tainted 1x: write(notifications_queue.Message)
-  - (MapVariable MapType) event map[string]interface{}
-  - (BasicVariable BasicType) ReqID string
-  - (BasicVariable BasicType) PostID string
-  - (BasicVariable BasicType) Timestamp string
-  - (inline) (FieldVariable FieldType) Timestamp string
-  - (inline) (FieldVariable FieldType) ReqID string
-  - (inline) (FieldVariable FieldType) PostID string
-  - (StructVariable UserType) workerMessage postnotification.Message struct{ReqID string, PostID string, Timestamp string}
 
 .NewAnalyticsServiceImpl(ctx context.Context, analyticsDb NoSQLDatabase, analyticsQueue Queue):
   block 0 (Body):
