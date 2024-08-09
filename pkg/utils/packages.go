@@ -22,6 +22,10 @@ var APP_TO_PACKAGE = map[string]string{
 	"dsb_sn":                  PATH_BLUEPRINT_EXAMPLES + "dsb_sn/workflow/socialnetwork",
 }
 
+func RemoveQuotesFromPathImport(path string) string {
+	return strings.Trim(path, "\"")
+}
+
 func LoadAppPath(app string) string {
 	if path, ok := APP_TO_PACKAGE[app]; ok {
 		return path

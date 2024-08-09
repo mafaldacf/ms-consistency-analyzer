@@ -47,8 +47,9 @@ func initAnalyzer(appName string) {
 	app.RegisterDatastoreInstances(databaseInstances)
 	app.RegisterServiceNodes(servicesInfo)
 	app.BuildServiceNodes()
-	app.PreDump()
-
+	/* app.PreDump()
+	logger.Logger.Fatalf("EXIT!") */
+	
 	fmt.Println()
 	fmt.Println(" -------------------------------------------------------------------------------------------------------------- ")
 	fmt.Println(" -------------------------------------------- BUILD ABSTRACT GRAPH -------------------------------------------- ")
@@ -56,7 +57,6 @@ func initAnalyzer(appName string) {
 	fmt.Println()
 
 	abstractGraph := abstractgraph.Build(app, frontends)
-	//logger.Logger.Fatal("EXIT")
 
 	
 	fmt.Println()

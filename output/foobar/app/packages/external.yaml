@@ -2,3 +2,8 @@ context:
 - package: context
 - package path: context
 - module: ""
+
+strconv:
+- package: strconv
+- package path: strconv
+- module: ""

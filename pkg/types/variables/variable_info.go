@@ -14,6 +14,11 @@ type VariableInfo struct {
 	Type gotypes.Type
 	Id   int64
 
+	// dependencies are added to variables computed from returns
+	// from function calls that cannot be statically analyzed
+	// in practice, all returned variables will have all the parameters passed to the function call has dependencies
+	Dependencies []Variable
+
 	ReferencedBy []Variable
 	References   []*Reference
 	Parents      []Variable
@@ -23,6 +28,10 @@ type VariableInfo struct {
 
 	Dataflows         []*Dataflow
 	IndirectDataflows []*Dataflow
+}
+
+func (vinfo *VariableInfo) GetDependencies() []Variable {
+	return vinfo.Dependencies
 }
 
 func (vinfo *VariableInfo) SetType(t gotypes.Type) {
@@ -242,9 +251,6 @@ func (vinfo *VariableInfo) AssignID(id int64) {
 
 func (vinfo *VariableInfo) AddReferenceWithID(source Variable, target Variable, creator string) {
 	logger.Logger.Debugf("[VARS INFO] adding new reference (%s) @ (%s) for variable (%s) with references list (len=%d): %v", target.String(), creator, vinfo.String(), len(vinfo.GetReferences()), vinfo.GetReferences())
-	/* if vinfo.GetReferences() != nil {
-		logger.Logger.Fatalf("[VARS INFO] cannot add new reference (%s) @ (%s). Reference for current variable info (%s) already exists with list (len=%d): %v", target.String(), creator, vinfo.String(), len(vinfo.GetReferences()), vinfo.GetReferences())
-	} */
 	vinfo.ReferencedBy = append(vinfo.ReferencedBy, source)
 	vinfo.Id = target.GetId()
 	vinfo.References = append(vinfo.References, &Reference{
@@ -285,67 +291,11 @@ func (vinfo *VariableInfo) AddParent(current Variable, parent Variable) {
 	}
 	vinfo.Parents = append(vinfo.Parents, parent)
 }
-
-func (vinfo *VariableInfo) getNearestField() []*FieldVariable {
-	var nearestFields []*FieldVariable
-	for _, parent := range vinfo.Parents {
-		if _, ok := parent.GetType().(*gotypes.FieldType); ok {
-			nearestFields = append(nearestFields, parent.(*FieldVariable))
-		} else {
-			if parent.GetVariableInfo() == nil {
-				pc, file, line, ok := runtime.Caller(1)
-				if !ok {
-					logger.Logger.Warnf("NIL INFO FOR V (%s): %s", VariableTypeName(parent), parent.String())
-				}
-				callerFunc := runtime.FuncForPC(pc).Name()
-				logger.Logger.Warnf("NIL INFO FOR V (%s): %s \n\t\t\t\t\t(caller: %s) \n\t\t\t\t\t %s:%d", VariableTypeName(parent), parent.String(), callerFunc, file, line)
-				return nil
-			}
-			nearestFields = append(nearestFields, parent.GetVariableInfo().getNearestField()...)
-		}
-	}
-	return nearestFields
-}
-
 func (vinfo *VariableInfo) GetReferencesNestedDependencies(nearestFields bool, v Variable) []Variable {
 	var deps []Variable
 	for _, ref := range vinfo.References {
 		deps = append(deps, ref.GetNestedDependencies(false)...)
-		/* for _, refBy := range ref.GetVariableInfo().ReferencedBy {
-			if refBy != v {
-				deps = append(deps, refBy.GetNestedDependencies(false)...)
-			}
-		} */
 	}
-	/* if !nearestFields {
-		if vinfo == nil {
-			pc, file, line, ok := runtime.Caller(1)
-			if !ok {
-				logger.Logger.Fatalf("NIL INFO FOR V: %s", v.String())
-			}
-			callerFunc := runtime.FuncForPC(pc).Name()
-			logger.Logger.Fatalf("NIL INFO FOR V: %s \n\t\t\t\t\t(caller: %s) \n\t\t\t\t\t %s:%d", v.String(), callerFunc, file, line)
-		}
-		for _, nearestField := range vinfo.getNearestField() {
-			logger.Logger.Warnf("GOT NEAREST FIELD: %s", nearestField.String())
-			if nearestField != nil {
-				for _, parent := range nearestField.GetVariableInfo().Parents {
-					if structVariable, ok := parent.(*StructVariable); ok {
-						field := structVariable.GetFieldVariableIfExists(nearestField.GetFieldType().FieldName)
-						if field != v {
-							deps = append(deps, field.GetNestedDependencies(true)...)
-						}
-					}
-				}
-				for _, dep := range nearestField.GetDependencies() {
-					if dep != v {
-						deps = append(deps, dep.GetNestedDependencies(true)...)
-					}
-				}
-
-			}
-		}
-	} */
 
 	return deps
 }

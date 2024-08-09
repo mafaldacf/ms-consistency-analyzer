@@ -15,6 +15,14 @@ type File struct {
 	Imports map[string]*Import // key is the alias of the import
 }
 
+func (f *File) ImportsListStr() string {
+	str := ""
+	for _, impt := range f.Imports {
+		str += "\t\t\t\t\t - " + impt.Alias + ": " + impt.PackagePath + "\n"
+	}
+	return str
+}
+
 func (f *File) GetImport(alias string) *Import {
 	if impt, ok := f.Imports[alias]; ok {
 		return impt

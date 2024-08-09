@@ -34,7 +34,7 @@ func (v *ChanVariable) GetVariableInfo() *VariableInfo {
 }
 
 func (v *ChanVariable) GetDependencies() []Variable {
-	return nil
+	return v.GetVariableInfo().GetDependencies()
 }
 
 func (v *ChanVariable) GetNestedDependencies(nearestFields bool) []Variable {

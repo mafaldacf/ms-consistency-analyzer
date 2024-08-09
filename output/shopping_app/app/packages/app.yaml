@@ -3,7 +3,8 @@
 - package path: github.com/blueprint-uservices/blueprint/examples/shopping_app/workflow/...
 - module: ""
 - files: []
-- imports: []
+- imports (extracted from package): []
+- imports (extracted from source files): []
 - imported types: []
 - imported constants: []
 - imported variables: []
@@ -28,9 +29,14 @@ shopping_app:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/shopping_app/workflow/shopping_app/ShipmentService.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/shopping_app/workflow/shopping_app/StockService.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/shopping_app/workflow/shopping_app/models.go
-- imports:
+- imports (extracted from package):
   - context
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+  - sync
+- imports (extracted from source files):
+  - (backend) github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - context
   - go.mongodb.org/mongo-driver/bson
   - sync
 - imported types:

@@ -18,10 +18,10 @@
        w-tainted 1x: write(stock_db.Stock.ProductID)
   - |-
     (inline) (Reference BasicType) ref <quantity int> @ Frontend -->
-       w-tainted 3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.Quantity)
+       w-tainted 3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.TotalCost)
   - |-
     (inline) (Reference BasicType) ref <quantity int> @ OrderService -->
-       w-tainted 3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.Quantity)
+       w-tainted 3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.TotalCost)
   - |-
     (BasicVariable BasicType) quantity int -->
        w-tainted 1x: write(stock_db.Stock.Quantity)

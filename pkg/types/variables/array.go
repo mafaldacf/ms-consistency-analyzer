@@ -111,7 +111,7 @@ func (v *ArrayVariable) GetElementAtIfExists(index int) Variable {
 }
 
 func (v *ArrayVariable) GetDependencies() []Variable {
-	return v.Elements
+	return append(v.GetVariableInfo().GetDependencies(), v.Elements...)
 }
 
 func (v *ArrayVariable) GetNestedDependencies(nearestFields bool) []Variable {

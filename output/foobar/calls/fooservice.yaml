@@ -1,3 +1,7 @@
 (*FooServiceImpl).Foo(ctx context.Context, text string): []
 
+.Int64ToString(i int64): []
+
 .NewFooServiceImpl(ctx context.Context): []
+
+.StringToInt64(s string): []

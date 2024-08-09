@@ -43,9 +43,9 @@ func (v *InterfaceVariable) GetVariableInfo() *VariableInfo {
 
 func (v *InterfaceVariable) GetDependencies() []Variable {
 	if v.UnderlyingVariable != nil {
-		return []Variable{v.UnderlyingVariable}
+		return append(v.GetVariableInfo().GetDependencies(), v.UnderlyingVariable)
 	}
-	return nil
+	return v.GetVariableInfo().GetDependencies()
 }
 
 func (v *InterfaceVariable) GetNestedDependencies(nearestFields bool) []Variable {

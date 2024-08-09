@@ -125,7 +125,7 @@ func (v *StructVariable) GetOrderedFields() []Variable {
 }
 
 func (v *StructVariable) GetDependencies() []Variable {
-	return v.GetOrderedFields()
+	return append(v.GetVariableInfo().GetDependencies(), v.GetOrderedFields()...)
 }
 
 func (v *StructVariable) GetNestedDependencies(nearestFields bool) []Variable {

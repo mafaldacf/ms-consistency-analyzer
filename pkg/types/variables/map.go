@@ -77,6 +77,7 @@ func (v *MapVariable) GetDependencies() []Variable {
 	for _, value := range v.KeyValues {
 		dependencies = append(dependencies, value)
 	}
+	dependencies = append(dependencies, v.GetVariableInfo().GetDependencies()...)
 	return dependencies
 }
 

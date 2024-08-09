@@ -110,7 +110,7 @@
        w-tainted 2x: write(shipqueue.Shipment, shipdb.Shipment)
   - |-
     (inline) (BasicVariable BasicType) ID string -->
-       w-tainted 2x: write(order_db.Order.Shipment.ID, order_db.Order.ID)
+       w-tainted 2x: write(order_db.Order.ID, order_db.Order.Shipment.ID)
   - |-
     (inline) (FieldVariable FieldType) ID string -->
        w-tainted 1x: write(order_db.Order.Shipment.ID)

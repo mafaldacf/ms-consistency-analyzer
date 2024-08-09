@@ -3,7 +3,8 @@
 - package path: github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/...
 - module: ""
 - files: []
-- imports: []
+- imports (extracted from package): []
+- imports (extracted from source files): []
 - imported types: []
 - imported constants: []
 - imported variables: []
@@ -20,7 +21,9 @@ bar:
 - module: github.com/blueprint-uservices/blueprint/examples/foobar/workflow
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/foobar/workflow/foobar/bar/BarService.go
-- imports:
+- imports (extracted from package):
+  - context
+- imports (extracted from source files):
   - context
 - imported types:
   - context.Context
@@ -46,9 +49,18 @@ foo:
 - module: github.com/blueprint-uservices/blueprint/examples/foobar/workflow
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/foobar/workflow/foobar/foo/FooService.go
-- imports:
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/foobar/workflow/foobar/foo/foo.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/foobar/workflow/foobar/foo/foo_1.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/foobar/workflow/foobar/foo/foo_2.go
+- imports (extracted from package):
+  - context
+  - strconv
+- imports (extracted from source files):
+  - (strconvpkg_1) strconv
+  - (strconvpkg_2) strconv
   - context
 - imported types:
+  - .error
   - context.Context
 - imported constants: []
 - imported variables: []
@@ -58,14 +70,18 @@ foo:
   - foo.FooStruct struct{Value string}
 - declared variables:
   - HelloFooVariable string
+  - Hello_World_Variable string
 - declared constants:
   - HELLO_FOO_CONST "Hello Foo (CONST)!" untyped string
+  - HELLO_WORLD_CONST "HELLO WORLD!" untyped string
 - service types:
   - foo.FooService
 - datastore types: []
 - parsed methods:
   - (*foo.FooServiceImpl).Foo(ctx context.Context, text string) (string, error)
+  - foo.Int64ToString(i int64) string
   - foo.NewFooServiceImpl(ctx context.Context) (foo.FooService, error)
+  - foo.StringToInt64(s string) (int64, error)
 
 foobar:
 - package: foobar
@@ -73,7 +89,11 @@ foobar:
 - module: github.com/blueprint-uservices/blueprint/examples/foobar/workflow
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/foobar/workflow/foobar/FrontendService.go
-- imports:
+- imports (extracted from package):
+  - context
+  - github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/bar
+  - github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/foo
+- imports (extracted from source files):
   - context
   - github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/bar
   - github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/foo

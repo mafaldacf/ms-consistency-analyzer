@@ -65,7 +65,7 @@ func (v *TupleVariable) GetTupleType() *gotypes.TupleType {
 }
 
 func (v *TupleVariable) GetDependencies() []Variable {
-	return v.Variables
+	return append(v.GetVariableInfo().GetDependencies(), v.Variables...)
 }
 
 func (v *TupleVariable) GetNestedDependencies(nearestFields bool) []Variable {

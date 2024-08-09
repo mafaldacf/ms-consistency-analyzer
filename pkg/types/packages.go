@@ -31,9 +31,8 @@ type Package struct {
 	// external packages are not parsed
 	Type PackageType
 
-	// maps the package path to another parsed package
-	// REMINDER: IDK if key is the same of the package path (CHECK IF THIS CONCERNS THE REPLACEMENT IN GO.MODULE)
-	ImportedPackages map[string]*Package
+	ImportedPackages        map[string]*Package // maps import paths appearing in source files to loaded packages - TODO: add support to go modules
+	ImportedPackagesByAlias map[string]*Package // maps import alias appearing in source files to loaded packages - TODO: add support to go modules
 
 	TypesInfo         *golangtypes.Info
 	DeclaredVariables map[string]variables.Variable
@@ -51,6 +50,35 @@ type Package struct {
 	ImportedTypes     map[string]gotypes.Type
 	ImportedConstants map[string]variables.Variable
 	ImportedVariables map[string]variables.Variable
+}
+
+func (p *Package) ImportsByAliasMapStr() string {
+	str := ""
+	for alias, impt := range p.ImportedPackagesByAlias {
+		if alias == impt.PackagePath {
+			str += "\t\t\t\t\t - " + impt.PackagePath + "\n"
+		} else {
+			str += "\t\t\t\t\t - (" + alias + ") " + impt.PackagePath + "\n"
+		}
+	}
+	return str
+}
+
+// AddImportedPackageByAliasIfNotExists adds an entry that maps the imported alias to the loaded package
+// The ImportedPackagesByAlias can have many different keys from different source files that map to the same package
+func (p *Package) AddImportedPackageByAliasIfNotExists(alias string, pkg *Package) {
+	if existingPkg, exists := p.ImportedPackagesByAlias[alias]; exists && existingPkg != pkg {
+		logger.Logger.Fatalf("[PACKAGE] [%s] a different package (%s) is already imported for alias (%s) (%s)", p.GetName(), existingPkg.GetPackagePath(), alias, pkg.GetPackagePath())
+	}
+	p.ImportedPackagesByAlias[alias] = pkg
+}
+
+func (p *Package) GetImportedPackageByAliasIfExists(alias string) *Package {
+	if pkg, exists := p.ImportedPackagesByAlias[alias]; exists {
+		return pkg
+	}
+	logger.Logger.Warnf("[PACKAGE] [%s] package with alias (%s) does not exist for import map: %s", p.GetName(), alias, p.ImportsByAliasMapStr())
+	return nil
 }
 
 func (p *Package) IsAppPackage() bool {
@@ -153,6 +181,13 @@ func (p *Package) GetDeclaredType(name string) gotypes.Type {
 		logger.Logger.Fatalf("type %s not found in declared types of package %s", name, p.Name)
 	}
 	return decl
+}
+
+func (p *Package) GetImportedPackageIfExists(alias string) *Package {
+	if pkg, ok := p.ImportedPackages[alias]; ok {
+		return pkg
+	}
+	return nil
 }
 
 func (p *Package) GetImportedPackage(pkgPath string) *Package {

@@ -80,7 +80,7 @@ func (v *FieldVariable) GetVariableInfo() *VariableInfo {
 }
 
 func (v *FieldVariable) GetDependencies() []Variable {
-	return []Variable{v.WrappedVariable}
+	return append(v.GetVariableInfo().GetDependencies(), v.WrappedVariable)
 }
 
 func (v *FieldVariable) GetNestedDependencies(nearestFields bool) []Variable {

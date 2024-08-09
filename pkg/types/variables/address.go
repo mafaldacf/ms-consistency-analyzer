@@ -44,7 +44,7 @@ func (v *AddressVariable) GetAddressOf() Variable {
 }
 
 func (v *AddressVariable) GetDependencies() []Variable {
-	return []Variable{v.AddressOf}
+	return append(v.GetVariableInfo().GetDependencies(), v.AddressOf)
 }
 
 func (v *AddressVariable) GetNestedDependencies(nearestFields bool) []Variable {

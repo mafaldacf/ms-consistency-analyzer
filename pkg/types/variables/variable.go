@@ -89,6 +89,10 @@ func UnwrapFieldVariable(variable Variable) Variable {
 	return variable
 }
 
+func AddVariableInfoDependencies(variable Variable, deps []Variable) {
+	variable.GetVariableInfo().Dependencies = append(variable.GetVariableInfo().Dependencies, deps...)
+}
+
 func AddUnderlyingDependencies(variable Variable, deps []Variable) bool {
 	variableType, _ := gotypes.UnwrapUserAndFieldTypes(variable.GetType())
 

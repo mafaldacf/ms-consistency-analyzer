@@ -82,7 +82,7 @@ func (v *SliceVariable) GetSliceType() *gotypes.SliceType {
 }
 
 func (v *SliceVariable) GetDependencies() []Variable {
-	return v.Elements
+	return append(v.GetVariableInfo().GetDependencies(), v.Elements...)
 }
 
 func (v *SliceVariable) GetNestedDependencies(nearestFields bool) []Variable {

@@ -3,7 +3,8 @@
 - package path: github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification/...
 - module: ""
 - files: []
-- imports: []
+- imports (extracted from package): []
+- imports (extracted from source files): []
 - imported types: []
 - imported constants: []
 - imported variables: []
@@ -20,7 +21,9 @@ common:
 - module: github.com/blueprint-uservices/blueprint/examples/postnotification/workflow
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/common/utils.go
-- imports:
+- imports (extracted from package):
+  - strconv
+- imports (extracted from source files):
   - strconv
 - imported types:
   - .error
@@ -49,7 +52,15 @@ postnotification:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/TimelineService.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/UploadService.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification/workflow/postnotification/models.go
-- imports:
+- imports (extracted from package):
+  - context
+  - github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification/common
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+  - math/rand
+  - strconv
+  - sync
+- imports (extracted from source files):
   - context
   - github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification/common
   - github.com/blueprint-uservices/blueprint/runtime/core/backend

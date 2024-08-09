@@ -42,7 +42,7 @@ func (v *PointerVariable) GetVariableInfo() *VariableInfo {
 }
 
 func (v *PointerVariable) GetDependencies() []Variable {
-	return []Variable{v.PointerTo}
+	return append(v.GetVariableInfo().GetDependencies(), v.PointerTo)
 }
 
 func (v *PointerVariable) GetNestedDependencies(nearestFields bool) []Variable {

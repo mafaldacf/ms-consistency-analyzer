@@ -390,25 +390,26 @@ func computeExternalFuncCallReturns(service *service.Service, callExpr *ast.Call
 				tupleVar.Variables = append(tupleVar.Variables, newVar)
 				newVar.GetVariableInfo().SetParent(newVar, tupleVar)
 			} else {
+				logger.Logger.Warnf("[CFG CALLS] call returns tuple with len %d and depends on %d variables", len(signatureResults.(*gotypes.TupleType).Types), len(deps))
 				for _, t := range signatureResults.(*gotypes.TupleType).Types {
 					newVar := lookup.CreateVariableFromType("", t)
 					ok := variables.AddUnderlyingDependencies(newVar, deps)
 					if !ok {
-						logger.Logger.Fatalf("[CFG CALLS] cannot keep variable (%s) (%s) for underlying deps list with len (%d): %v", variables.VariableTypeName(newVar), newVar.String(), len(deps), deps)
-						newVar = &variables.GenericVariable{
+						logger.Logger.Warnf("[CFG CALLS] cannot keep variable (%s) (%s) for underlying deps list with len (%d): %v", variables.VariableTypeName(newVar), newVar.String(), len(deps), deps)
+						/* newVar = &variables.GenericVariable{
 							VariableInfo: &variables.VariableInfo{
 								Type: newVar.GetType(),
 								Id:   variables.VARIABLE_UNASSIGNED_ID,
 							},
 							Params: deps,
-						}
+						} */
+						variables.AddVariableInfoDependencies(newVar, deps)
 					}
 					tupleVar.Variables = append(tupleVar.Variables, newVar)
 					newVar.GetVariableInfo().SetParent(newVar, tupleVar)
 				}
 				logger.Logger.Warnf("CREATED COMPOSITE VAR FOR (%d) TUPLE: %s", len(deps), tupleVar.String())
 			}
-
 		}
 	} else {
 		logger.Logger.Fatalf("[CFG CALLS] unexpected type for imported method call %v", callExpr.Fun)
@@ -634,39 +635,46 @@ func parseCallToVariableInBlock(service *service.Service, method *types.ParsedMe
 	return nil
 }
 
-func searchCallToMethodInImportedPackage(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr, impt *types.Import, idents []*ast.Ident, identsStr string) (*variables.TupleVariable, *types.Package, bool) {
+func searchCallToMethodInImportedPackage(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr, pkg *types.Package, idents []*ast.Ident, identsStr string) (*variables.TupleVariable, *types.Package, bool) {
+	funcIdent := idents[len(idents)-1]
+	logger.Logger.Infof("[CFG CALLS] [%s.%s] searching call to method (%s) in imported package (%s)", service.GetName(), method.Name, funcIdent, pkg.GetName())
+	switch pkg.Type {
+	case types.EXTERNAL:
+		if deps := getFuncCallDeps(service, method, block, callExpr); deps != nil {
+			tupleVar := computeExternalFuncCallReturns(service, callExpr, deps)
+			return tupleVar, nil, false
+		}
+		parsedCall := &types.ParsedInternalCall{
+			ParsedCall: types.ParsedCall{
+				Ast:     callExpr,
+				CallStr: identsStr,
+				Name:    funcIdent.Name,
+				Pos:     callExpr.Pos(),
+			},
+		}
+		tupleVar := computeInternalFuncCallReturns(service, callExpr, parsedCall)
+		logger.Logger.Infof("[CFG CALLS] [%s.%s] found call (%s) to method in imported external package (%s) -- returned tuple: %s", service.GetName(), method.Name, parsedCall.CallStr, pkg.GetName(), tupleVar.String())
+		return tupleVar, nil, false
+	case types.BLUEPRINT:
+		logger.Logger.Warnf("[CFG CALLS] [%s.%s] ignoring call with idents (%v) in blueprint package", service.GetName(), method.Name, identsStr)
+		// ignore direct calls to blueprint package
+		// we only care about backend calls to functions of well-defined interfaces (cache, queue, nosqldatabase)
+		return nil, nil, true
+	case types.APP:
+		if parsedMethod := pkg.GetParsedMethodIfExists(funcIdent.Name, ""); parsedMethod != nil {
+			return nil, pkg, false
+
+		}
+	}
+	return nil, nil, false
+}
+
+func searchCallToMethodInImport(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr, impt *types.Import, idents []*ast.Ident, identsStr string) (*variables.TupleVariable, *types.Package, bool) {
 	funcIdent := idents[len(idents)-1]
 	logger.Logger.Infof("[CFG CALLS] [%s.%s] searching call to method (%s) in imported package (%s)", service.GetName(), method.Name, funcIdent, impt.Alias)
 
 	if pkg := service.GetPackage().GetImportedPackage(impt.PackagePath); pkg != nil {
-		switch pkg.Type {
-		case types.EXTERNAL:
-			if deps := getFuncCallDeps(service, method, block, callExpr); deps != nil {
-				tupleVar := computeExternalFuncCallReturns(service, callExpr, deps)
-				return tupleVar, nil, false
-			}
-			parsedCall := &types.ParsedInternalCall{
-				ParsedCall: types.ParsedCall{
-					Ast:     callExpr,
-					CallStr: identsStr,
-					Name:    funcIdent.Name,
-					Pos:     callExpr.Pos(),
-				},
-			}
-			tupleVar := computeInternalFuncCallReturns(service, callExpr, parsedCall)
-			logger.Logger.Infof("[CFG CALLS] [%s.%s] found call (%s) to method in imported external package (%s) -- returned tuple: %s", service.GetName(), method.Name, parsedCall.CallStr, impt.PackageName, tupleVar.String())
-			return tupleVar, nil, false
-		case types.BLUEPRINT:
-			logger.Logger.Warnf("[CFG CALLS] [%s.%s] ignoring call with idents (%v) in blueprint package", service.GetName(), method.Name, identsStr)
-			// ignore direct calls to blueprint package
-			// we only care about backend calls to functions of well-defined interfaces (cache, queue, nosqldatabase)
-			return nil, nil, true
-		case types.APP:
-			if parsedMethod := pkg.GetParsedMethodIfExists(funcIdent.Name, ""); parsedMethod != nil {
-				return nil, pkg, false
-
-			}
-		}
+		return searchCallToMethodInImportedPackage(service, method, block, callExpr, pkg, idents, identsStr)
 	}
 	return nil, nil, false
 }
@@ -842,11 +850,24 @@ func parseAndSaveCall(service *service.Service, method *types.ParsedMethod, bloc
 	var callPkg *types.Package
 	var tupleVar *variables.TupleVariable
 
-	// call to method in imported package
-	logger.Logger.Debugf("[CFG CALLS] IS CALL TO IMPORTED PACKAGE ???? (IDENT = %s): IMPORTS = %v", leftIdent.Name, service.File.Imports)
-	if impt, ok := service.File.Imports[leftIdent.Name]; ok {
+	// call to method in imported package of file
+	logger.Logger.Debugf("[CFG CALLS] check if call is to imported package (%s) for package import map:\n%v", leftIdent.Name, service.GetPackage().ImportsByAliasMapStr())
+	if pkg := service.GetPackage().GetImportedPackageByAliasIfExists(leftIdent.Name); pkg != nil {
 		var isBlueprintCall bool
-		tupleVar, callPkg, isBlueprintCall = searchCallToMethodInImportedPackage(service, method, block, callExpr, impt, idents, identsStr)
+		tupleVar, callPkg, isBlueprintCall = searchCallToMethodInImportedPackage(service, method, block, callExpr, pkg, idents, identsStr)
+		logger.Logger.Warnf("!!!!!!!!!!!!!!! FOUND CALL TO METHOD IN IMPORTED PACKAGE: %v // %v // %v", tupleVar, callPkg, isBlueprintCall)
+		if isBlueprintCall { // skip all blueprint calls that are not on backend components - e.g. backend.GetLogger().Info(...)
+			return nil
+		}
+		if tupleVar != nil {
+			return tupleVar
+		}
+		if callPkg != nil {
+			callInPackage = true
+		}
+	} else if  impt := service.File.GetImportIfExists(leftIdent.Name); impt != nil {
+		var isBlueprintCall bool
+		tupleVar, callPkg, isBlueprintCall = searchCallToMethodInImport(service, method, block, callExpr, impt, idents, identsStr)
 		if isBlueprintCall { // skip all blueprint calls that are not on backend components - e.g. backend.GetLogger().Info(...)
 			return nil
 		}

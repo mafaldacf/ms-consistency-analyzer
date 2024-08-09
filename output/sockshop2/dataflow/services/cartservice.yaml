@@ -50,12 +50,12 @@
   - (inline) (StructVariable UserType) cart.cartImpl struct{db NoSQLDatabase}
   - (PointerVariable PointerType) s (*cart.cartImpl struct{db NoSQLDatabase})
   - (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService
-  - (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService
   - (inline) (Reference UserType) ref <ctx context.Context> @ OrderService
+  - (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService
   - (InterfaceVariable UserType) ctx context.Context
-  - (inline) (Reference BasicType) ref <sessionID string> @ FrontendService
   - (inline) (Reference BasicType) ref <cartID string> @ FrontendService
   - (inline) (Reference BasicType) ref <cartID string> @ OrderService
+  - (inline) (Reference BasicType) ref <sessionID string> @ FrontendService
   - (BasicVariable BasicType) customerID string
   - (inline) (ArrayVariable ArrayType) Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}
   - (inline) (FieldVariable FieldType) Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}

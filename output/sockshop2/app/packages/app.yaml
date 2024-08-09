@@ -3,7 +3,8 @@
 - package path: github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/...
 - module: ""
 - files: []
-- imports: []
+- imports (extracted from package): []
+- imports (extracted from source files): []
 - imported types: []
 - imported constants: []
 - imported variables: []
@@ -21,7 +22,11 @@ cart:
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/sockshop2/workflow/cart/cartservice.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/sockshop2/workflow/cart/types.go
-- imports:
+- imports (extracted from package):
+  - context
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+- imports (extracted from source files):
   - context
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
   - go.mongodb.org/mongo-driver/bson
@@ -67,7 +72,12 @@ catalogue:
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/sockshop2/workflow/catalogue/catalogueservice.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/sockshop2/workflow/catalogue/types.go
-- imports:
+- imports (extracted from package):
+  - context
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+  - strings
+- imports (extracted from source files):
   - context
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
   - go.mongodb.org/mongo-driver/bson
@@ -118,7 +128,14 @@ frontend:
 - module: github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/sockshop2/workflow/frontend/frontend.go
-- imports:
+- imports (extracted from package):
+  - context
+  - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/cart
+  - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/catalogue
+  - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/order
+  - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/user
+  - github.com/google/uuid
+- imports (extracted from source files):
   - context
   - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/cart
   - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/catalogue
@@ -186,7 +203,18 @@ order:
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/sockshop2/workflow/order/orderservice.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/sockshop2/workflow/order/types.go
-- imports:
+- imports (extracted from package):
+  - context
+  - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/cart
+  - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/payment
+  - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/shipping
+  - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/user
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - github.com/google/uuid
+  - go.mongodb.org/mongo-driver/bson
+  - sync
+  - time
+- imports (extracted from source files):
   - context
   - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/cart
   - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/payment
@@ -259,7 +287,9 @@ payment:
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/sockshop2/workflow/payment/paymentservice.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/sockshop2/workflow/payment/types.go
-- imports:
+- imports (extracted from package):
+  - context
+- imports (extracted from source files):
   - context
 - imported types:
   - context.Context
@@ -287,7 +317,11 @@ queuemaster:
 - module: github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/sockshop2/workflow/queuemaster/queuemaster.go
-- imports:
+- imports (extracted from package):
+  - context
+  - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/shipping
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+- imports (extracted from source files):
   - context
   - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/shipping
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
@@ -322,7 +356,11 @@ shipping:
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/sockshop2/workflow/shipping/shippingservice.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/sockshop2/workflow/shipping/types.go
-- imports:
+- imports (extracted from package):
+  - context
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+- imports (extracted from source files):
   - context
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
   - go.mongodb.org/mongo-driver/bson
@@ -370,7 +408,12 @@ user:
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/sockshop2/workflow/user/types.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/sockshop2/workflow/user/userservice.go
-- imports:
+- imports (extracted from package):
+  - context
+  - errors
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+- imports (extracted from source files):
   - context
   - errors
   - github.com/blueprint-uservices/blueprint/runtime/core/backend

@@ -25,20 +25,21 @@ func (app *App) createPackage(goPackage *packages.Package) *types.Package {
 	}
 
 	newPackage := &types.Package{
-		Name:              goPackage.Name,    // e.g. models
-		PackagePath:       goPackage.PkgPath, // e.g. github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification/models
-		Module:            modulePath,        // e.g. github.com/blueprint-uservices/blueprint/examples/postnotification/workflow
-		ImportedPackages:  make(map[string]*types.Package),
-		DeclaredTypes:     make(map[string]gotypes.Type),
-		ServiceTypes:      make(map[string]*gotypes.ServiceType),
-		DatastoreTypes:    make(map[string]gotypes.Type),
-		DeclaredConstants: make(map[string]variables.Variable),
-		DeclaredVariables: make(map[string]variables.Variable),
-		ImportedTypes:     make(map[string]gotypes.Type),
-		ImportedConstants: make(map[string]variables.Variable),
-		ImportedVariables: make(map[string]variables.Variable),
-		TypesInfo:         goPackage.TypesInfo,
-		Block:             &types.Block{},
+		Name:                    goPackage.Name,    // e.g. models
+		PackagePath:             goPackage.PkgPath, // e.g. github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification/models
+		Module:                  modulePath,        // e.g. github.com/blueprint-uservices/blueprint/examples/postnotification/workflow
+		ImportedPackages:        make(map[string]*types.Package),
+		ImportedPackagesByAlias: make(map[string]*types.Package),
+		DeclaredTypes:           make(map[string]gotypes.Type),
+		ServiceTypes:            make(map[string]*gotypes.ServiceType),
+		DatastoreTypes:          make(map[string]gotypes.Type),
+		DeclaredConstants:       make(map[string]variables.Variable),
+		DeclaredVariables:       make(map[string]variables.Variable),
+		ImportedTypes:           make(map[string]gotypes.Type),
+		ImportedConstants:       make(map[string]variables.Variable),
+		ImportedVariables:       make(map[string]variables.Variable),
+		TypesInfo:               goPackage.TypesInfo,
+		Block:                   &types.Block{},
 	}
 
 	if utils.IsAppPackage(app.PackagePath, goPackage.PkgPath) {
@@ -124,7 +125,7 @@ func (app *App) RegisterPackages() {
 	packagesPattern := app.PackagePath + "/..."
 	pkgs, err := packages.Load(&packages.Config{Mode: packages.NeedName | packages.NeedModule | packages.NeedFiles | packages.NeedTypes | packages.NeedTypesInfo | packages.NeedSyntax | packages.NeedImports}, packagesPattern)
 	if err != nil {
-		logger.Logger.Fatalf("error loading packages from %s: %s", app.PackagePath, err.Error())
+		logger.Logger.Fatalf("[APP PACKAGES] error loading packages from %s: %s", app.PackagePath, err.Error())
 	}
 
 	packagesInfo := make(map[string]*packageGoInfo)
@@ -137,6 +138,29 @@ func (app *App) RegisterPackages() {
 					importedPackageInfo = app.saveNewPackageGoInfo(packagesInfo, imptgoPackage)
 				}
 				packageInfo.ParsedPackage.ImportedPackages[k] = importedPackageInfo.ParsedPackage
+				logger.Logger.Debugf("[APP PACKAGES] [%s] added import: %s", packageInfo.ParsedPackage.GetName(), importedPackageInfo.ParsedPackage.PackagePath)
+			}
+		}
+	}
+
+	for _, info := range packagesInfo {
+		pkg := info.ParsedPackage
+		files := info.GoPackage.Syntax
+		for _, file := range files {
+			for _, impt := range file.Imports {
+				imptAlias := ""
+				if impt.Name != nil {
+					imptAlias = impt.Name.Name
+				}
+				imptPath := utils.RemoveQuotesFromPathImport(impt.Path.Value)
+				logger.Logger.Warnf("[APP PACKAGES] [%s] added import by alias (%s): %s", pkg.Name, imptAlias, imptPath)
+
+				if impt.Name == nil {
+					imptAlias = imptPath
+				}
+
+				importedPkg := pkg.GetImportedPackage(imptPath)
+				pkg.AddImportedPackageByAliasIfNotExists(imptAlias, importedPkg)
 			}
 		}
 	}

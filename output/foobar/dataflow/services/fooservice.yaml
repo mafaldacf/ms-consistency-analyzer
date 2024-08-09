@@ -7,8 +7,20 @@
   - (inline) (Reference BasicType) ref <"Frontend" string> @ FrontendService
   - (BasicVariable BasicType) text string
 
+.Int64ToString(i int64):
+  block 0 (Body):
+  - (BasicVariable BasicType) i int64
+
 .NewFooServiceImpl(ctx context.Context):
   block 0 (Body):
   - (InterfaceVariable UserType) ctx context.Context
   - (inline) (StructVariable UserType) foo.FooServiceImpl struct{}
   - (PointerVariable PointerType) d (*foo.FooServiceImpl struct{})
+
+.StringToInt64(s string):
+  block 2 (IfDone):
+  - (BasicVariable BasicType) s string
+  - (inline) (BasicVariable BasicType) 64 int
+  - (inline) (BasicVariable BasicType) 10 int
+  - (BasicVariable BasicType) num int64
+  - (InterfaceVariable UserType) err .error

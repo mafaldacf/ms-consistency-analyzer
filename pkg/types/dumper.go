@@ -246,13 +246,26 @@ func (p *Package) DumpYaml() utils.OrderedProperties {
 	}
 	sort.Strings(files)
 	propsData.AddOrderedProperty("files", files)
-	// metadata > imports
+	
+	// metadata > imports (extracted from package)
 	imports := []string{}
 	for key := range p.ImportedPackages {
 		imports = append(imports, key)
 	}
 	sort.Strings(imports)
-	propsData.AddOrderedProperty("imports", imports)
+	propsData.AddOrderedProperty("imports (extracted from package)", imports)
+
+	// metadata > imports (extracted from source files)
+	imports = []string{}
+	for alias, pkg := range p.ImportedPackagesByAlias {
+		if alias == pkg.GetPackagePath() {
+			imports = append(imports, alias)
+		} else {
+			imports = append(imports, fmt.Sprintf("(%s) %s", alias, pkg.GetPackagePath()))
+		}
+	}
+	sort.Strings(imports)
+	propsData.AddOrderedProperty("imports (extracted from source files)", imports)
 
 	// imported types
 	importedTypes := []string{}

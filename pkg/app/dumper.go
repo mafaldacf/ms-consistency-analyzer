@@ -25,8 +25,8 @@ func (app *App) Dump() {
 
 func (app *App) PreDump() {
 	app.dumpYamlPackages()
-	app.dumpYamlServices()
-	app.dumpYamlCalls()
+	//app.dumpYamlServices()
+	//app.dumpYamlCalls()
 }
 
 func (app *App) dumpDiGraph() {

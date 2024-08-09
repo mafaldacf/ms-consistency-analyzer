@@ -3,7 +3,8 @@
 - package path: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/...
 - module: ""
 - files: []
-- imports: []
+- imports (extracted from package): []
+- imports (extracted from source files): []
 - imported types: []
 - imported constants: []
 - imported variables: []
@@ -21,7 +22,13 @@ assurance:
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/assurance/assuranceService.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/assurance/data.go
-- imports:
+- imports (extracted from package):
+  - context
+  - errors
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - github.com/google/uuid
+  - go.mongodb.org/mongo-driver/bson
+- imports (extracted from source files):
   - context
   - errors
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
@@ -77,7 +84,12 @@ config:
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/config/configService.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/config/data.go
-- imports:
+- imports (extracted from package):
+  - context
+  - errors
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+- imports (extracted from source files):
   - context
   - errors
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
@@ -123,7 +135,13 @@ consignprice:
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/consignprice/consignPriceService.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/consignprice/data.go
-- imports:
+- imports (extracted from package):
+  - context
+  - errors
+  - fmt
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+- imports (extracted from source files):
   - context
   - errors
   - fmt
@@ -171,7 +189,12 @@ contacts:
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/contacts/contactsService.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/contacts/data.go
-- imports:
+- imports (extracted from package):
+  - context
+  - errors
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+- imports (extracted from source files):
   - context
   - errors
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
@@ -224,7 +247,12 @@ delivery:
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/delivery/data.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/delivery/deliveryService.go
-- imports:
+- imports (extracted from package):
+  - context
+  - fmt
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - golang.org/x/exp/slog
+- imports (extracted from source files):
   - context
   - fmt
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
@@ -263,7 +291,8 @@ food:
 - module: github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/food/data.go
-- imports: []
+- imports (extracted from package): []
+- imports (extracted from source files): []
 - imported types: []
 - imported constants: []
 - imported variables: []
@@ -283,7 +312,9 @@ news:
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/news/data.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/news/newsService.go
-- imports:
+- imports (extracted from package):
+  - context
+- imports (extracted from source files):
   - context
 - imported types:
   - context.Context
@@ -310,7 +341,13 @@ payment:
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/payment/data.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/payment/paymentService.go
-- imports:
+- imports (extracted from package):
+  - context
+  - errors
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - github.com/google/uuid
+  - go.mongodb.org/mongo-driver/bson
+- imports (extracted from source files):
   - context
   - errors
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
@@ -359,7 +396,13 @@ price:
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/price/data.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/price/priceService.go
-- imports:
+- imports (extracted from package):
+  - context
+  - errors
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+  - strings
+- imports (extracted from source files):
   - context
   - errors
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
@@ -409,7 +452,14 @@ route:
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/route/data.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/route/routeService.go
-- imports:
+- imports (extracted from package):
+  - context
+  - errors
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - github.com/google/uuid
+  - go.mongodb.org/mongo-driver/bson
+  - strings
+- imports (extracted from source files):
   - context
   - errors
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
@@ -460,7 +510,12 @@ station:
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/station/data.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/station/stationService.go
-- imports:
+- imports (extracted from package):
+  - context
+  - errors
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+- imports (extracted from source files):
   - context
   - errors
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
@@ -510,7 +565,13 @@ stationfood:
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/stationfood/data.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/stationfood/stationFoodService.go
-- imports:
+- imports (extracted from package):
+  - context
+  - errors
+  - github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/food
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+- imports (extracted from source files):
   - context
   - errors
   - github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/food
@@ -561,7 +622,12 @@ train:
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/train/data.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/train/trainService.go
-- imports:
+- imports (extracted from package):
+  - context
+  - errors
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+- imports (extracted from source files):
   - context
   - errors
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
@@ -612,7 +678,13 @@ trainfood:
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/trainfood/data.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/trainfood/trainFoodService.go
-- imports:
+- imports (extracted from package):
+  - context
+  - errors
+  - github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/food
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+- imports (extracted from source files):
   - context
   - errors
   - github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow/food
@@ -661,7 +733,12 @@ user:
 - files:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/user/data.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/train_ticket/workflow/user/userService.go
-- imports:
+- imports (extracted from package):
+  - context
+  - errors
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+- imports (extracted from source files):
   - context
   - errors
   - github.com/blueprint-uservices/blueprint/runtime/core/backend

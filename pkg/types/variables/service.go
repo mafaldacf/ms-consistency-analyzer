@@ -39,7 +39,7 @@ func (v *ServiceVariable) GetVariableInfo() *VariableInfo {
 }
 
 func (v *ServiceVariable) GetDependencies() []Variable {
-	return nil
+	return v.GetVariableInfo().GetDependencies()
 }
 
 func (v *ServiceVariable) GetNestedDependencies(nearestFields bool) []Variable {
