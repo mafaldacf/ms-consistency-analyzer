@@ -20,7 +20,7 @@ import (
 
 func ParseServiceMethodCFG(service *service.Service, method *types.ParsedMethod) {
 	if method.IsParsed() {
-		logger.Logger.Warnf("[CFG] [%s] ignoring parsing for already parsed method: %s", service.GetName(), method.String())
+		logger.Logger.Warnf("[CFG] [%s] method ignoring parsed method: %s", service.GetName(), method.String())
 		return
 	}
 	method.SetParsed()
@@ -637,7 +637,7 @@ func parseCallToVariableInBlock(service *service.Service, method *types.ParsedMe
 
 func searchCallToMethodInImportedPackage(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr, pkg *types.Package, idents []*ast.Ident, identsStr string) (*variables.TupleVariable, *types.Package, bool) {
 	funcIdent := idents[len(idents)-1]
-	logger.Logger.Infof("[CFG CALLS] [%s.%s] searching call to method (%s) in imported package (%s)", service.GetName(), method.Name, funcIdent, pkg.GetName())
+	logger.Logger.Infof("[CFG CALLS] [%s.%s] searching call to method (%s) in imported package (%s) (type = %d)", service.GetName(), method.Name, funcIdent, pkg.GetName(), pkg.Type)
 	switch pkg.Type {
 	case types.EXTERNAL:
 		if deps := getFuncCallDeps(service, method, block, callExpr); deps != nil {

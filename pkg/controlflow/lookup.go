@@ -121,6 +121,9 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 	case *ast.CallExpr:
 		variable = parseAndSaveCall(service, method, block, e)
 		variable = variables.UnwrapTupleIfSingleElement(variable)
+		/* if _, ok := variable.(*variables.BasicVariable); ok {
+			logger.Logger.Fatalf("GOT CALL EXPR IN METHOD (%s): %v", method.String(), e.Fun)
+		} */
 	case *ast.BasicLit:
 		basicType := &gotypes.BasicType{
 			Name:  strings.ToLower(e.Kind.String()),

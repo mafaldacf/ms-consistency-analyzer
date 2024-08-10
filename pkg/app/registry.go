@@ -53,7 +53,7 @@ func (app *App) createServiceNodes(servicesInfo []*frameworks.ServiceInfo) {
 				PackagePath: pkg.GetName(),
 				Name:        info.Name,
 			},
-			Contexts: stack.New(),
+			ContextStack: stack.New(),
 		}
 
 		// add entries to be later parsed

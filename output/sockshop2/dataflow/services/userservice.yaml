@@ -53,12 +53,12 @@
   - (inline) (StructVariable UserType) user.userServiceImpl struct{db NoSQLDatabase, db NoSQLDatabase}
   - (PointerVariable PointerType) s (*user.userServiceImpl struct{db NoSQLDatabase, db NoSQLDatabase})
   - (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService
-  - (inline) (Reference UserType) ref <ctx context.Context> @ OrderService
   - (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService
+  - (inline) (Reference UserType) ref <ctx context.Context> @ OrderService
   - (InterfaceVariable UserType) ctx context.Context
   - (inline) (Reference BasicType) ref <cardID string> @ FrontendService
-  - (inline) (Reference BasicType) ref <cardID string> @ OrderService
   - (inline) (Reference BasicType) ref <cardID string> @ FrontendService
+  - (inline) (Reference BasicType) ref <cardID string> @ OrderService
   - (BasicVariable BasicType) cardid string
   - (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = users, collection = users}
   - (InterfaceVariable UserType) _ .error

@@ -18,15 +18,11 @@ import (
 
 type Context struct {
 	Block   *types.Block
-	File    *types.File
 	Package *types.Package
 }
 
 func (context *Context) GetBlock() *types.Block {
 	return context.Block
-}
-func (context *Context) GetFile() *types.File {
-	return context.File
 }
 func (context *Context) GetPackage() *types.Package {
 	return context.Package
@@ -36,7 +32,7 @@ type Service struct {
 	Name            string
 	ConstructorName string
 	File            *types.File
-	Contexts        *stack.Stack
+	ContextStack    *stack.Stack
 
 	//TODO maybe use variable instead of ImplType + Fields
 	//Impl   variables.Variable
@@ -95,12 +91,12 @@ func (node *Service) HasQueueField() bool {
 
 func (node *Service) NewContext() *Context {
 	var newContext *Context
-	node.Contexts.Push(newContext)
+	node.ContextStack.Push(newContext)
 	return newContext
 }
 
 func (node *Service) GetContext() *Context {
-	return node.Contexts.Peek().(*Context)
+	return node.ContextStack.Peek().(*Context)
 }
 
 func (node *Service) GetConstructor() *types.ParsedMethod {
@@ -149,7 +145,7 @@ func (node *Service) SetImplVariableWithType(v variables.Variable) {
 }
 
 func (node *Service) PopContext() *Context {
-	return node.Contexts.Pop().(*Context)
+	return node.ContextStack.Pop().(*Context)
 }
 
 func (node *Service) MarshalJSON() ([]byte, error) {
