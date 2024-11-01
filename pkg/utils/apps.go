@@ -1,0 +1,19 @@
+package utils
+
+const (
+	PATH_BLUEPRINT_EXAMPLES     string = "github.com/blueprint-uservices/blueprint/examples/"
+	PATH_BLUEPRINT_CORE_BACKEND string = "github.com/blueprint-uservices/blueprint/runtime/core/backend"
+)
+
+var APP_TO_PACKAGE = map[string]string{
+	"postnotification":        PATH_BLUEPRINT_EXAMPLES + "postnotification/workflow/postnotification",
+	"postnotification_simple": PATH_BLUEPRINT_EXAMPLES + "postnotification_simple/workflow/postnotification_simple",
+	"foobar":                  PATH_BLUEPRINT_EXAMPLES + "foobar/workflow/foobar",
+	"sockshop2":               PATH_BLUEPRINT_EXAMPLES + "sockshop2/workflow",
+	"trainticket":             PATH_BLUEPRINT_EXAMPLES + "train_ticket/workflow",
+	"shopping_app":            PATH_BLUEPRINT_EXAMPLES + "shopping_app/workflow",
+	"dsb_hotel":               PATH_BLUEPRINT_EXAMPLES + "dsb_hotel/workflow/hotelreservation",
+	"dsb_sn":                  PATH_BLUEPRINT_EXAMPLES + "dsb_sn/workflow/socialnetwork",
+}
+
+var Apps = []string{"postnotification", "trainticket", "shopping_app", "sockshop2", "foobar", "dsb_hotel", "dsb_sn", "postnotification_simple"}

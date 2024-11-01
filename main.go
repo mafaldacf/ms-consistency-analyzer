@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"slices"
 	"time"
 
 	"analyzer/pkg/abstractgraph"
@@ -10,16 +11,16 @@ import (
 	"analyzer/pkg/detection"
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
+	"analyzer/pkg/utils"
 )
 
 func main() {
 
 	appName := flag.String("app", "", "The name of the application to be analyzed")
-	allFlag := flag.String("all", "", "Run analyzer for all applications ('postnotification', 'shopping_app', 'sockshop2', 'trainticket')")
+	allFlag := flag.String("all", "", fmt.Sprintf("Run analyzer for all applications: %v", utils.Apps))
 	flag.Parse()
 	if *allFlag == "true" || *allFlag == "True" || *allFlag == "1" {
-		var apps = []string{"trainticket", "postnotification_simple", "postnotification", "shopping_app", "sockshop2", "foobar"}
-		for _, app := range apps {
+		for _, app := range utils.Apps {
 			logger.Logger.Infof(fmt.Sprintf("running analyzer for '%s'...", app))
 			time.Sleep(1500 * time.Millisecond)
 			initAnalyzer(app)
@@ -28,10 +29,9 @@ func main() {
 		}
 		return
 	}
-	switch *appName {
-	case "postnotification", "trainticket", "shopping_app", "sockshop2", "foobar", "dsb_hotel", "dsb_sn", "postnotification_simple":
-	default:
-		logger.Logger.Fatal(fmt.Sprintf("invalid app name (%s) must provide an application name ('postnotification', 'trainticket', 'shopping_app', 'sockshop2', 'foobar', 'dsb_hotel', 'dsb_sn') using the -app flag", *appName))
+	if !slices.Contains(utils.Apps, *appName) {
+		logger.Logger.Fatal(fmt.Sprintf("invalid app name (%s) must provide an application name using the -app flag for one of the available applications: %v", *appName, utils.Apps))
+
 	}
 	initAnalyzer(*appName)
 }

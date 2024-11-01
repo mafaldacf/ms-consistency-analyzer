@@ -9,16 +9,8 @@ import (
 	"analyzer/pkg/utils"
 )
 
-const (
-	PACKAGE_PATH_POST_NOTIFICATION string = "github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification"
-	PACKAGE_PATH_FOOBAR            string = "github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar"
-	PACKAGE_PATH_SOCKSHOP          string = "github.com/blueprint-uservices/blueprint/examples/sockshop/workflow"
-	PACKAGE_PATH_TRAIN_TICKET      string = "github.com/blueprint-uservices/blueprint/examples/train_ticket/workflow"
-	PACKAGE_PATH_BLUEPRINT         string = "github.com/blueprint-uservices/blueprint/runtime/core/backend"
-)
-
 func isBlueprintPackagePath(name string) bool {
-	return name == PACKAGE_PATH_BLUEPRINT
+	return name == utils.PATH_BLUEPRINT_CORE_BACKEND
 }
 
 func SaveObjectToPackage(pkg *types.Package, obj golangtypes.Object) gotypes.Type {

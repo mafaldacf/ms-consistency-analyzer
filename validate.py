@@ -3,7 +3,7 @@ import argparse
 import yaml
 import os
 import glob
-from colorama import Fore, Style, init
+from colorama import Fore, Style
 
 apps = ['postnotification', 'postnotification_simple', 'shopping_app']
 detection_modes = ['foreign_keys_default']

@@ -169,7 +169,7 @@ func (app *App) RegisterPackages() {
 		parseBlueprintPackage(parsedPackage)
 	}
 	for _, parsedPackage := range app.GetAppPackages() {
-		app.parseAppPackage(parsedPackage, packagesInfo[parsedPackage.PackagePath].GoPackage)
+		app.ParseAppPackage(parsedPackage, packagesInfo[parsedPackage.PackagePath].GoPackage)
 	}
 
 	for _, pkg := range app.AppPackages {
@@ -216,7 +216,7 @@ func parseGolangFuncTypes(pkg *types.Package, def golangtypes.Object, typeNameTo
 	return funcs
 }
 
-func (app *App) parseAppPackage(parsedPackage *types.Package, goPackage *packages.Package) {
+func (app *App) ParseAppPackage(parsedPackage *types.Package, goPackage *packages.Package) {
 	logger.Logger.Infof("[APP PACKAGE PARSER] parsing named types for app go package (%s)", goPackage)
 
 	visitedNamedTypes := make(map[*golangtypes.Named]bool)
@@ -266,32 +266,36 @@ func (app *App) parseAppPackage(parsedPackage *types.Package, goPackage *package
 
 		ast.Inspect(fileAst, func(n ast.Node) bool {
 			if funcDecl, ok := n.(*ast.FuncDecl); ok {
-				var recvTypeIdent *ast.Ident
-				if funcDecl.Recv != nil && len(funcDecl.Recv.List) > 0 {
-					recvField := funcDecl.Recv.List[0]
-					if startExpr, ok := recvField.Type.(*ast.StarExpr); ok {
-						if ident, ok := startExpr.X.(*ast.Ident); ok {
-							recvTypeIdent = ident
-						}
-					} else if ident, ok := recvField.Type.(*ast.Ident); ok {
-						recvTypeIdent = ident
-					}
-				}
-
-				if recvTypeIdent != nil {
-					if structTypeFuncs, ok := typeNameToFuncs[recvTypeIdent.Name]; ok {
-						createAndSaveMethodForFuncDecl(parsedPackage, file, funcDecl, structTypeFuncs)
-					} else {
-						logger.Logger.Fatalf("[APP PACKAGE PARSER] cannot find func for type name (%s)", recvTypeIdent.Name)
-					}
-				} else {
-					createAndSaveMethodForFuncDecl(parsedPackage, file, funcDecl, funcs)
-				}
+				parseFuncDecl(funcDecl, typeNameToFuncs, parsedPackage, file, funcs)
 			}
 			return true
 		})
 	}
 	logger.Logger.Tracef("[APP PACKAGE PARSER] parsed named types app package %s", parsedPackage.Name)
+}
+
+func parseFuncDecl(funcDecl *ast.FuncDecl, typeNameToFuncs map[string][]*golangtypes.Func, parsedPackage *types.Package, file *types.File, funcs []*golangtypes.Func) {
+	var recvTypeIdent *ast.Ident
+	if funcDecl.Recv != nil && len(funcDecl.Recv.List) > 0 {
+		recvField := funcDecl.Recv.List[0]
+		if startExpr, ok := recvField.Type.(*ast.StarExpr); ok {
+			if ident, ok := startExpr.X.(*ast.Ident); ok {
+				recvTypeIdent = ident
+			}
+		} else if ident, ok := recvField.Type.(*ast.Ident); ok {
+			recvTypeIdent = ident
+		}
+	}
+
+	if recvTypeIdent != nil {
+		if structTypeFuncs, ok := typeNameToFuncs[recvTypeIdent.Name]; ok {
+			createAndSaveMethodForFuncDecl(parsedPackage, file, funcDecl, structTypeFuncs)
+		} else {
+			logger.Logger.Fatalf("[APP PACKAGE PARSER] cannot find func for type name (%s)", recvTypeIdent.Name)
+		}
+	} else {
+		createAndSaveMethodForFuncDecl(parsedPackage, file, funcDecl, funcs)
+	}
 }
 
 func createAndSaveMethodForFuncDecl(pkg *types.Package, file *types.File, funcDecl *ast.FuncDecl, funcGoTypes []*golangtypes.Func) {
