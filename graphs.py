@@ -141,9 +141,11 @@ def search_all_per_requests(app):
     names = [os.path.splitext(os.path.basename(file))[0] for file in files]
     return names
 
+APPS = ['postnotification', 'postnotification_simple', 'trainticket', 'shopping_app', 'shopping_simple', 'sockshop2', 'foobar']
+
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Visualize graphs based on the specified application and graph type")
-    parser.add_argument('--app', '-a', choices=['postnotification', 'foobar', 'sockshop', 'trainticket', 'shopping_app'], help="The application for which to visualize the graph")
+    parser.add_argument('--app', '-a', choices=APPS, help="The application for which to visualize the graph")
     parser.add_argument('--graph', '-g', choices=['app', 'call'], help="The type of graph to visualize")
     parser.add_argument('--labeled', '-l', action='store_true', help="Construct labeled digraph")
     parser.add_argument('--all', action='store_true', help="Construct all combinations of digraphs for all applications")
@@ -154,16 +156,16 @@ if __name__ == "__main__":
         exit(-1)
 
     if args.app != None:
-        apps = [args.app]
+        applst = [args.app]
     else:
-        apps = ['postnotification', 'postnotification_simple', 'trainticket', 'shopping_app', 'sockshop2', 'foobar']
+        applst = APPS
     
     if args.graph != None:
         graphs = [args.graph]
     else:
         graphs = ['app', 'call']
 
-    for app in apps:
+    for app in applst:
         print(f"[INFO] saving graphs for {app} app...")
         for graph in graphs:
             data = load(app, graph, False)

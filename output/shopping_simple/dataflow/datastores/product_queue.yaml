@@ -1,0 +1,13 @@
+PRODUCT_QUEUE.ProductQueueMessage:
+- write <message shopping_simple.ProductQueueMessage struct{ProductID string, Remove true bool} (StructVariable)>
+- write <message shopping_simple.ProductQueueMessage struct{ProductID string, Remove true bool} (StructVariable)> from <message shopping_simple.ProductQueueMessage struct{ProductID string, Remove true bool} (StructVariable)>
+
+PRODUCT_QUEUE.ProductQueueMessage.ProductID:
+- write <productID string (BasicVariable)> from <message shopping_simple.ProductQueueMessage struct{ProductID string, Remove true bool} (StructVariable)>
+- write <ref <productID string> @ Frontend (Reference)> from <message shopping_simple.ProductQueueMessage struct{ProductID string, Remove true bool} (StructVariable)>
+- write <productID string (BasicVariable)> from <message shopping_simple.ProductQueueMessage struct{ProductID string, Remove true bool} (StructVariable)>
+- write <ProductID string (FieldVariable)> from <message shopping_simple.ProductQueueMessage struct{ProductID string, Remove true bool} (StructVariable)>
+
+PRODUCT_QUEUE.ProductQueueMessage.Remove:
+- write <true bool (BasicVariable)> from <message shopping_simple.ProductQueueMessage struct{ProductID string, Remove true bool} (StructVariable)>
+- write <Remove true bool (FieldVariable)> from <message shopping_simple.ProductQueueMessage struct{ProductID string, Remove true bool} (StructVariable)>

@@ -17,13 +17,14 @@ import (
 func main() {
 
 	appName := flag.String("app", "", "The name of the application to be analyzed")
+	xcyDetection := flag.Bool("xcy", false, "Enable detection of xcy dependencies and inconsistencies")
 	allFlag := flag.String("all", "", fmt.Sprintf("Run analyzer for all applications: %v", utils.Apps))
 	flag.Parse()
 	if *allFlag == "true" || *allFlag == "True" || *allFlag == "1" {
 		for _, app := range utils.Apps {
 			logger.Logger.Infof(fmt.Sprintf("running analyzer for '%s'...", app))
 			time.Sleep(1500 * time.Millisecond)
-			initAnalyzer(app)
+			initAnalyzer(app, *xcyDetection)
 			fmt.Println()
 			fmt.Println()
 		}
@@ -33,10 +34,10 @@ func main() {
 		logger.Logger.Fatal(fmt.Sprintf("invalid app name (%s) must provide an application name using the -app flag for one of the available applications: %v", *appName, utils.Apps))
 
 	}
-	initAnalyzer(*appName)
+	initAnalyzer(*appName, *xcyDetection)
 }
 
-func initAnalyzer(appName string) {
+func initAnalyzer(appName string, xcyDetection bool) {
 	servicesInfo, databaseInstances, frontends := blueprint.BuildBlueprintAppInfo(appName)
 
 	app, err := app.InitApp(appName, servicesInfo)
@@ -65,38 +66,38 @@ func initAnalyzer(appName string) {
 	fmt.Println(" ----------------------------------------------------------------------------------------------------------------- ")
 	fmt.Println()
 
-	for _, entryNode := range abstractGraph.Nodes {
-		abstractgraph.BuildSchema(app, entryNode)
-	}
-
-	fmt.Println()
-	fmt.Println(" -------------------------------------------------------------------------------------------------------------- ")
-	fmt.Println(" --------------------------------------- CHECK XCY - TAINTED APPROACH  ---------------------------------------- ")
-	fmt.Println(" -------------------------------------------------------------------------------------------------------------- ")
-	fmt.Println()
+	abstractgraph.BuildSchema(app, abstractGraph.Nodes)
 
 	var detectors []*detection.Detector
-	allDatastoresOps := detection.NewDatastoreOps()
-
-	detectionModes := detection.GetAllDetectioModes()
-	for _, entryNode := range abstractGraph.Nodes {
-		for i, detectionMode := range detectionModes {
-			detector := detection.InitDetector(allDatastoresOps, detectionMode)
-			request := detector.InitRequest(entryNode)
-			fmt.Printf("\n\n-------------------- ENTRY NODE = %s.%s --------------------\n", entryNode.GetCallee(), entryNode.GetName())
-			fmt.Printf("-------------------- (%d/%d) XCY DETECTOR MODE = %s --------------------\n\n", i+1, len(detectionModes), detector.DetectionModeName())
-			detector.InitXCYRequestTransversal(request)
-			allDatastoresOps = detector.GetDatastoreOps()
-			detectors = append(detectors, detector)
+	if xcyDetection {
+		fmt.Println()
+		fmt.Println(" -------------------------------------------------------------------------------------------------------------- ")
+		fmt.Println(" --------------------------------------- CHECK XCY - TAINTED APPROACH  ---------------------------------------- ")
+		fmt.Println(" -------------------------------------------------------------------------------------------------------------- ")
+		fmt.Println()
+	
+		allDatastoresOps := detection.NewDatastoreOps()
+	
+		detectionModes := detection.GetAllDetectioModes()
+		for _, entryNode := range abstractGraph.Nodes {
+			for i, detectionMode := range detectionModes {
+				detector := detection.InitDetector(allDatastoresOps, detectionMode)
+				request := detector.InitRequest(entryNode)
+				fmt.Printf("\n\n-------------------- ENTRY NODE = %s.%s --------------------\n", entryNode.GetCallee(), entryNode.GetName())
+				fmt.Printf("-------------------- (%d/%d) XCY DETECTOR MODE = %s --------------------\n\n", i+1, len(detectionModes), detector.DetectionModeName())
+				detector.InitXCYRequestTransversal(request)
+				allDatastoresOps = detector.GetDatastoreOps()
+				detectors = append(detectors, detector)
+			}
 		}
-	}
-	fmt.Println()
-
-	for _, detector := range detectors {
-		detector.UpdateDatastoreOps(allDatastoresOps)
-		logger.Logger.Infof("MINIMIZING FOR DETECTOR %v", detector.Requests)
-		for _, request := range detector.GetRequests() {
-			detector.MinimizeDependecySets(request)
+		fmt.Println()
+	
+		for _, detector := range detectors {
+			detector.UpdateDatastoreOps(allDatastoresOps)
+			//logger.Logger.Infof("MINIMIZING FOR DETECTOR %v", detector.Requests)
+			for _, request := range detector.GetRequests() {
+				detector.MinimizeDependecySets(request)
+			}
 		}
 	}
 
@@ -111,14 +112,16 @@ func initAnalyzer(appName string) {
 
 	fmt.Println()
 
-	fmt.Println()
-	fmt.Println("-----------------------------------------------------------------------------------------------------------------")
-	fmt.Println("------------------------------------------------- XCY SUMMARY ---------------------------------------------------")
-	fmt.Println("-----------------------------------------------------------------------------------------------------------------")
-	fmt.Println()
+	if xcyDetection {
+		fmt.Println()
+		fmt.Println("-----------------------------------------------------------------------------------------------------------------")
+		fmt.Println("------------------------------------------------- XCY SUMMARY ---------------------------------------------------")
+		fmt.Println("-----------------------------------------------------------------------------------------------------------------")
+		fmt.Println()
 
-	for _, detector := range detectors {
-		detector.DumpYaml(app.Name)
-		detector.PrintResults()
+		for _, detector := range detectors {
+			detector.DumpYaml(app.Name)
+			detector.PrintResults()
+		}
 	}
 }

@@ -1,0 +1,140 @@
+? (*ProductServiceImpl).CreateProduct(ctx context.Context, productID string, description string, pricePerUnit int, category string)
+:
+ block 0 (Body):
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) product_queue Queue
+  - (inline) (FieldVariable FieldType) product_queue Queue
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) product_db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) product_db NoSQLDatabase
+  - (inline) (StructVariable UserType) shopping_simple.ProductServiceImpl struct{product_db NoSQLDatabase, product_queue Queue, num_workers int}
+  - (PointerVariable PointerType) s (*shopping_simple.ProductServiceImpl struct{product_db NoSQLDatabase, product_queue Queue, num_workers int})
+  - (inline) (Reference UserType) ref <ctx context.Context> @ Frontend
+  - (InterfaceVariable UserType) ctx context.Context
+  - |-
+    (inline) (Reference BasicType) ref <productID string> @ Frontend -->
+       w-tainted 1x: write(product_db.Product.ProductID)
+  - |-
+    (BasicVariable BasicType) productID string -->
+       w-tainted 1x: write(product_db.Product.ProductID)
+  - |-
+    (inline) (Reference BasicType) ref <description string> @ Frontend -->
+       w-tainted 1x: write(product_db.Product.Description)
+  - |-
+    (BasicVariable BasicType) description string -->
+       w-tainted 1x: write(product_db.Product.Description)
+  - |-
+    (inline) (Reference BasicType) ref <pricePerUnit int> @ Frontend -->
+       w-tainted 1x: write(product_db.Product.PricePerUnit)
+  - |-
+    (BasicVariable BasicType) pricePerUnit int -->
+       w-tainted 1x: write(product_db.Product.PricePerUnit)
+  - |-
+    (inline) (Reference BasicType) ref <category string> @ Frontend -->
+       w-tainted 1x: write(product_db.Product.Category)
+  - |-
+    (BasicVariable BasicType) category string -->
+       w-tainted 1x: write(product_db.Product.Category)
+  - (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = product_database, collection = product_collection}
+  - (InterfaceVariable UserType) _ .error
+  - |-
+    (inline) (FieldVariable FieldType) ProductID string -->
+       w-tainted 1x: write(product_db.Product.ProductID)
+  - |-
+    (inline) (FieldVariable FieldType) PricePerUnit int -->
+       w-tainted 1x: write(product_db.Product.PricePerUnit)
+  - |-
+    (inline) (FieldVariable FieldType) Description string -->
+       w-tainted 1x: write(product_db.Product.Description)
+  - |-
+    (inline) (FieldVariable FieldType) Category string -->
+       w-tainted 1x: write(product_db.Product.Category)
+  - |-
+    (StructVariable UserType) product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} -->
+       w-tainted 1x: write(product_db.Product)
+  - (InterfaceVariable UserType) err .error
+
+(*ProductServiceImpl).DeleteProduct(ctx context.Context, productID string):
+  block 2 (IfDone):
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) product_queue Queue
+  - (inline) (FieldVariable FieldType) product_queue Queue
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) product_db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) product_db NoSQLDatabase
+  - (inline) (StructVariable UserType) shopping_simple.ProductServiceImpl struct{product_db NoSQLDatabase, product_queue Queue, num_workers int}
+  - (PointerVariable PointerType) s (*shopping_simple.ProductServiceImpl struct{product_db NoSQLDatabase, product_queue Queue, num_workers int})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BasicVariable BasicType) productID string
+  - (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = product_database, collection = product_collection}
+  - (InterfaceVariable UserType) _ .error
+  - (inline) (FieldVariable FieldType) Value string
+  - (inline) (BasicVariable BasicType) "productid" string
+  - (inline) (FieldVariable FieldType) Key "productid" string
+  - (inline) (StructVariable StructType) struct{Key "productid" string, Value string}
+  - (SliceVariable UserType) filter primitive.D
+  - (InterfaceVariable UserType) err .error
+
+(*ProductServiceImpl).GetAllProducts(ctx context.Context):
+  block 0 (Body):
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) product_queue Queue
+  - (inline) (FieldVariable FieldType) product_queue Queue
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) product_db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) product_db NoSQLDatabase
+  - (inline) (StructVariable UserType) shopping_simple.ProductServiceImpl struct{product_db NoSQLDatabase, product_queue Queue, num_workers int}
+  - (PointerVariable PointerType) s (*shopping_simple.ProductServiceImpl struct{product_db NoSQLDatabase, product_queue Queue, num_workers int})
+  - (InterfaceVariable UserType) ctx context.Context
+  - (ArrayVariable ArrayType) products []shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
+  - (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = product_database, collection = product_collection}
+  - (InterfaceVariable UserType) _ .error
+  - (SliceVariable UserType) filter primitive.D
+  - (BlueprintBackendVariable BlueprintBackendType) cursor NoSQLCursor {database = product_database, collection = product_collection}
+  - (InterfaceVariable UserType) _ .error
+  - (InterfaceVariable UserType) err .error
+
+(*ProductServiceImpl).GetProduct(ctx context.Context, productID string):
+  block 8 (IfDone):
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) product_queue Queue
+  - (inline) (FieldVariable FieldType) product_queue Queue
+  - (inline) (BlueprintBackendVariable BlueprintBackendType) product_db NoSQLDatabase
+  - (inline) (FieldVariable FieldType) product_db NoSQLDatabase
+  - (inline) (StructVariable UserType) shopping_simple.ProductServiceImpl struct{product_db NoSQLDatabase, product_queue Queue, num_workers int}
+  - (PointerVariable PointerType) s (*shopping_simple.ProductServiceImpl struct{product_db NoSQLDatabase, product_queue Queue, num_workers int})
+  - (inline) (Reference UserType) ref <ctx context.Context> @ Frontend
+  - (inline) (Reference UserType) ref <ctx context.Context> @ CartService
+  - (InterfaceVariable UserType) ctx context.Context
+  - |-
+    (inline) (Reference BasicType) ref <productID string> @ Frontend -->
+       w-tainted 1x: write(cart_db.Cart.Products)
+  - |-
+    (inline) (Reference BasicType) ref <productID string> @ CartService -->
+       w-tainted 2x: write(cart_db.Cart.LastProductID, cart_db.Cart.Products)
+  - (BasicVariable BasicType) productID string
+  - (StructVariable UserType) product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
+  - (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = product_database, collection = product_collection}
+  - (InterfaceVariable UserType) _ .error
+  - (inline) (FieldVariable FieldType) Value string
+  - (inline) (BasicVariable BasicType) "productid" string
+  - (inline) (FieldVariable FieldType) Key "productid" string
+  - (inline) (StructVariable StructType) struct{Key "productid" string, Value string}
+  - (SliceVariable UserType) query primitive.D
+  - (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database = product_database, collection = product_collection}
+  - (InterfaceVariable UserType) err .error
+  - (BasicVariable BasicType) exists bool
+  - (InterfaceVariable UserType) err .error
+
+.NewCartServiceImpl(ctx context.Context, product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue)
+:
+ block 0 (Body):
+  - (InterfaceVariable UserType) ctx context.Context
+  - (ServiceVariable ServiceType) product_service shopping_simple.ProductService
+  - (BlueprintBackendVariable BlueprintBackendType) cart_db NoSQLDatabase
+  - (BlueprintBackendVariable BlueprintBackendType) product_queue Queue
+
+.NewFrontendImpl(ctx context.Context, product_service shopping_simple.ProductService, cart_service shopping_simple.CartService):
+  block 0 (Body):
+  - (InterfaceVariable UserType) ctx context.Context
+  - (ServiceVariable ServiceType) product_service shopping_simple.ProductService
+  - (ServiceVariable ServiceType) cart_service shopping_simple.CartService
+
+.NewProductServiceImpl(ctx context.Context, product_db NoSQLDatabase, product_queue Queue):
+  block 0 (Body):
+  - (InterfaceVariable UserType) ctx context.Context
+  - (BlueprintBackendVariable BlueprintBackendType) product_db NoSQLDatabase
+  - (BlueprintBackendVariable BlueprintBackendType) product_queue Queue

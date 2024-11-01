@@ -1,0 +1,18 @@
+(*CartServiceImpl).AddProductToCart(ctx context.Context, cartID string, productID string):
+- SERVICE CALL @ GetProduct >> (*shopping_simple.ProductServiceImpl).GetProduct(ctx context.Context, productID string) (shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}, error)
+- DATASTORE CALL @ cart_db >> NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor, interface{})
+- DATASTORE CALL @ cart_db >> NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}) interface{}
+
+(*CartServiceImpl).CreateCart(ctx context.Context, cartID string):
+- DATASTORE CALL @ cart_db >> NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}) interface{}
+
+(*CartServiceImpl).GetCart(ctx context.Context, cartID string):
+- DATASTORE CALL @ cart_db >> NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor, interface{})
+
+.NewCartServiceImpl(ctx context.Context, product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue)
+:
+ []
+
+.NewFrontendImpl(ctx context.Context, product_service shopping_simple.ProductService, cart_service shopping_simple.CartService): []
+
+.NewProductServiceImpl(ctx context.Context, product_db NoSQLDatabase, product_queue Queue): []

@@ -1,0 +1,27 @@
+PRODUCT_DB.Product:
+- write <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
+- write <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
+
+PRODUCT_DB.Product.Category:
+- write <category string (BasicVariable)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
+- write <ref <category string> @ Frontend (Reference)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
+- write <category string (BasicVariable)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
+- write <Category string (FieldVariable)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
+
+PRODUCT_DB.Product.Description:
+- write <description string (BasicVariable)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
+- write <ref <description string> @ Frontend (Reference)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
+- write <description string (BasicVariable)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
+- write <Description string (FieldVariable)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
+
+PRODUCT_DB.Product.PricePerUnit:
+- write <pricePerUnit int (BasicVariable)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
+- write <ref <pricePerUnit int> @ Frontend (Reference)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
+- write <pricePerUnit int (BasicVariable)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
+- write <PricePerUnit int (FieldVariable)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
+
+PRODUCT_DB.Product.ProductID:
+- write <productID string (BasicVariable)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
+- write <ref <productID string> @ Frontend (Reference)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
+- write <productID string (BasicVariable)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
+- write <ProductID string (FieldVariable)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>

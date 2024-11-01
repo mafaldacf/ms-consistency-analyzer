@@ -52,7 +52,12 @@ func (b *BackendMethod) DeepCopy() types.Method {
 }
 
 func (b *BackendMethod) String() string {
-	repr := fmt.Sprintf("%s.%s(", b.Backend, b.Name)
+	var repr string
+	if b.Component != "" {
+		repr = fmt.Sprintf("%s.%s.%s(", b.Backend, b.Component, b.Name)
+	} else {
+		repr = fmt.Sprintf("%s.%s(", b.Backend, b.Name)
+	}
 	for i, param := range b.Params {
 		repr += param.String()
 		if i < len(b.Params)-1 {
@@ -64,7 +69,12 @@ func (b *BackendMethod) String() string {
 }
 
 func (b *BackendMethod) LongString() string {
-	repr := fmt.Sprintf("%s.%s(", b.Backend, b.Name)
+	var repr string
+	if b.Component != "" {
+		repr = fmt.Sprintf("%s.%s.%s(", b.Backend, b.Component, b.Name)
+	} else {
+		repr = fmt.Sprintf("%s.%s(", b.Backend, b.Name)
+	}
 	for i, param := range b.Params {
 		repr += param.String()
 		if i < len(b.Params)-1 {
@@ -177,7 +187,7 @@ func (b *BackendMethod) GetWrittenObjectIndex() int {
 	switch b.FullName() {
 	case "Cache.Put":
 		return 2
-	case "NoSQLDatabase.NoSQLCollection.InsertOne", "NoSQLDatabase.NoSQLCollection.UpdateOne":
+	case "NoSQLDatabase.NoSQLCollection.InsertOne", "NoSQLDatabase.NoSQLCollection.UpdateOne", "NoSQLDatabase.NoSQLCollection.UpdateMany":
 		return 1
 	case "NoSQLDatabase.NoSQLCollection.Upsert", "NoSQLDatabase.NoSQLCollection.ReplaceOne":
 		return 2
@@ -208,7 +218,8 @@ func (b *BackendMethod) GetWrittenKeyIndex() int {
 	switch b.FullName() {
 	case "Cache.Put":
 		return 1
-	case "NoSQLDatabase.NoSQLCollection.InsertOne", "NoSQLDatabase.NoSQLCollection.UpdateOne", "NoSQLDatabase.NoSQLCollection.Upsert", "NoSQLDatabase.NoSQLCollection.ReplaceOne":
+	case "NoSQLDatabase.NoSQLCollection.InsertOne", "NoSQLDatabase.NoSQLCollection.UpdateOne", "NoSQLDatabase.NoSQLCollection.UpdateMany", 
+		"NoSQLDatabase.NoSQLCollection.Upsert", "NoSQLDatabase.NoSQLCollection.ReplaceOne":
 		return 1
 	case "Queue.Push":
 		return 1
@@ -298,6 +309,11 @@ func buildBackendNoSQLCollectionMethods() []*BackendMethod {
 	})
 	// UpdateOne(ctx context.Context, filter bson.D, update bson.D) (int, error)
 	methods = append(methods, &BackendMethod{Name: "UpdateOne", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Operation: OP_UPDATE,
+		Params:  []*types.MethodField{&ctxParam, &filterParam, &updateParam},
+		Returns: []*types.MethodField{&intReturn, &errorReturn},
+	})
+	// UpdateMany(ctx context.Context, filter bson.D, update bson.D) (int, error)
+	methods = append(methods, &BackendMethod{Name: "UpdateMany", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Operation: OP_UPDATE,
 		Params:  []*types.MethodField{&ctxParam, &filterParam, &updateParam},
 		Returns: []*types.MethodField{&intReturn, &errorReturn},
 	})

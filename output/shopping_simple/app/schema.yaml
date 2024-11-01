@@ -1,0 +1,44 @@
+CART_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- dependencies: []
+- schema:
+  - fields:
+    - document: shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
+    - Cart: shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
+    - document: shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
+    - Cart: shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
+  - unfolded_fields:
+    - Cart.CartID: string
+    - Cart.TotalQuantity: 1 int
+    - Cart.LastProductID: string
+    - Cart.Products: '[]string'
+    - Cart.CartID: string
+    - Cart.TotalQuantity: 1 int
+    - Cart.LastProductID: string
+    - Cart.Products: '[]string'
+  - foreign_fields: []
+
+PRODUCT_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- dependencies: []
+- schema:
+  - fields:
+    - document: shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
+    - Product: shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
+  - unfolded_fields:
+    - Product.ProductID: string
+    - Product.Description: string
+    - Product.PricePerUnit: int
+    - Product.Category: string
+  - foreign_fields: []
+
+PRODUCT_QUEUE:
+- type: Queue
+- kind: RabbitMQ
+- dependencies: []
+- schema:
+  - fields: []
+  - unfolded_fields: []
+  - foreign_fields: []

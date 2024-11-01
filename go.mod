@@ -24,6 +24,10 @@ require github.com/blueprint-uservices/blueprint/examples/shopping_app/workflow 
 
 require github.com/blueprint-uservices/blueprint/examples/shopping_app/wiring v0.0.0
 
+require github.com/blueprint-uservices/blueprint/examples/shopping_simple/workflow v0.0.0 // indirect
+
+require github.com/blueprint-uservices/blueprint/examples/shopping_simple/wiring v0.0.0
+
 require github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow v0.0.0 // indirect
 
 require github.com/blueprint-uservices/blueprint/examples/sockshop2/wiring v0.0.0
@@ -120,6 +124,12 @@ replace github.com/blueprint-uservices/blueprint/examples/shopping_app => ./blue
 replace github.com/blueprint-uservices/blueprint/examples/shopping_app/workflow => ./blueprint/examples/shopping_app/workflow
 
 replace github.com/blueprint-uservices/blueprint/examples/shopping_app/wiring => ./blueprint/examples/shopping_app/wiring
+
+replace github.com/blueprint-uservices/blueprint/examples/shopping_simple => ./blueprint/examples/shopping_simple
+
+replace github.com/blueprint-uservices/blueprint/examples/shopping_simple/workflow => ./blueprint/examples/shopping_simple/workflow
+
+replace github.com/blueprint-uservices/blueprint/examples/shopping_simple/wiring => ./blueprint/examples/shopping_simple/wiring
 
 replace github.com/blueprint-uservices/blueprint/examples/sockshop2 => ./blueprint/examples/sockshop2
 

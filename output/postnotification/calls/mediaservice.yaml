@@ -1,9 +1,9 @@
 (*MediaServiceImpl).ReadMedia(ctx context.Context, mediaID int64):
-- DATASTORE CALL @ media_db >> NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor, interface{})
+- DATASTORE CALL @ media_db >> NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor, interface{})
 
 (*MediaServiceImpl).StoreMedia(ctx context.Context, media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string})
 :
-	- DATASTORE CALL @ media_db >> NoSQLDatabase.InsertOne(ctx context.Context, document interface{}) interface{}
+	- DATASTORE CALL @ media_db >> NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}) interface{}
 
 .NewAnalyticsServiceImpl(ctx context.Context, analyticsDb NoSQLDatabase, analyticsQueue Queue): []
 

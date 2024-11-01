@@ -72,10 +72,9 @@ postnotification:
   - .error
   - Cache interface{Cache.Put(ctx context.Context, key string, value interface{}),
     Cache.Get(ctx context.Context, key string, value interface{})}
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
-    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
-  - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
-    NoSQLDatabase.All(ctx context.Context, obj interface{})}
+  - NoSQLCollection interface{NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.NoSQLCollection.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.UpdateMany(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.ReplaceOne(ctx context.Context, filter bson.D, interface{}), NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.NoSQLCollection.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCursor interface{NoSQLDatabase.NoSQLCursor.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.NoSQLCursor.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
   - Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}
   - atomic.Uint64
@@ -125,10 +124,9 @@ postnotification:
 - datastore types:
   - Cache interface{Cache.Put(ctx context.Context, key string, value interface{}),
     Cache.Get(ctx context.Context, key string, value interface{})}
-  - NoSQLCollection interface{NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.ReplaceOne(ctx context.Context, filter bson.D, interface{}),
-    NoSQLDatabase.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.DeleteMany(ctx context.Context, filter bson.D)}
-  - NoSQLCursor interface{NoSQLDatabase.One(ctx context.Context, obj interface{}),
-    NoSQLDatabase.All(ctx context.Context, obj interface{})}
+  - NoSQLCollection interface{NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.NoSQLCollection.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.UpdateMany(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.ReplaceOne(ctx context.Context, filter bson.D, interface{}), NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.NoSQLCollection.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCursor interface{NoSQLDatabase.NoSQLCursor.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.NoSQLCursor.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
   - Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}
 - parsed methods:

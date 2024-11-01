@@ -4,15 +4,6 @@ import (
 	"strings"
 
 	"github.com/blueprint-uservices/blueprint/blueprint/pkg/ir"
-	dsb_hotel "github.com/blueprint-uservices/blueprint/examples/dsb_hotel/wiring/specs"
-	dsb_sn "github.com/blueprint-uservices/blueprint/examples/dsb_sn/wiring/specs"
-	specs_foobar "github.com/blueprint-uservices/blueprint/examples/foobar/wiring/specs"
-	specs_postnotification "github.com/blueprint-uservices/blueprint/examples/postnotification/wiring/specs"
-	specs_postnotification_simple "github.com/blueprint-uservices/blueprint/examples/postnotification_simple/wiring/specs"
-	specs_shopping_app "github.com/blueprint-uservices/blueprint/examples/shopping_app/wiring/specs"
-	specs_sockshop2 "github.com/blueprint-uservices/blueprint/examples/sockshop2/wiring/specs"
-	specs_trainticket "github.com/blueprint-uservices/blueprint/examples/train_ticket/wiring/specs"
-	"github.com/blueprint-uservices/blueprint/plugins/cmdbuilder"
 	"github.com/blueprint-uservices/blueprint/plugins/golang"
 	"github.com/blueprint-uservices/blueprint/plugins/memcached"
 	"github.com/blueprint-uservices/blueprint/plugins/mongodb"
@@ -28,28 +19,7 @@ import (
 )
 
 func BuildBlueprintAppInfo(appName string) ([]*frameworks.ServiceInfo, []datastores.DatabaseInstance, []string) {
-	var spec cmdbuilder.SpecOption
-	switch appName {
-	case "postnotification":
-		spec = specs_postnotification.Docker
-	case "postnotification_simple":
-		spec = specs_postnotification_simple.Docker
-	case "foobar":
-		spec = specs_foobar.Docker
-	case "sockshop2":
-		spec = specs_sockshop2.Docker
-	case "trainticket":
-		spec = specs_trainticket.Docker
-	case "shopping_app":
-		spec = specs_shopping_app.Docker
-	case "dsb_hotel":
-		spec = dsb_hotel.Original
-	case "dsb_sn":
-		spec = dsb_sn.Docker
-	default:
-		logger.Logger.Fatalf("unknown application %s", appName)
-	}
-
+	spec := utils.LoadAppSpec(appName)
 	servicesSpec, databasesNodes, frontends := BuildAndInspectIR(appName, spec)
 	servicesInfo := buildBlueprintServicesInfo(servicesSpec)
 	databasesInfo := buildDatabasesInstances(databasesNodes)

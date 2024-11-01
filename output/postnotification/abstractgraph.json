@@ -10,7 +10,7 @@
         "caller": "UploadService",
         "edges": [
           {
-            "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+            "method": "NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{})",
             "depth": 2,
             "caller": "MediaService",
             "params": [
@@ -150,7 +150,7 @@
         "caller": "UploadService",
         "edges": [
           {
-            "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+            "method": "NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{})",
             "depth": 2,
             "caller": "StorageService",
             "params": [
@@ -292,7 +292,7 @@
                     "subscriber": true
                   },
                   {
-                    "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+                    "method": "NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{})",
                     "depth": 4,
                     "caller": "AnalyticsService",
                     "params": [
@@ -479,6 +479,19 @@
                         {
                           "Key": {
                             "variable": {
+                              "type": "\"Timestamp\" string"
+                            }
+                          },
+                          "Value": {
+                            "variable": {
+                              "name": "Timestamp",
+                              "type": "interface{}"
+                            }
+                          }
+                        },
+                        {
+                          "Key": {
+                            "variable": {
                               "type": "\"ReqID\" string"
                             }
                           },
@@ -498,19 +511,6 @@
                           "Value": {
                             "variable": {
                               "name": "PostID",
-                              "type": "interface{}"
-                            }
-                          }
-                        },
-                        {
-                          "Key": {
-                            "variable": {
-                              "type": "\"Timestamp\" string"
-                            }
-                          },
-                          "Value": {
-                            "variable": {
-                              "name": "Timestamp",
                               "type": "interface{}"
                             }
                           }
@@ -540,7 +540,7 @@
                 "caller": "NotifyService",
                 "edges": [
                   {
-                    "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+                    "method": "NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
                     "depth": 4,
                     "caller": "StorageService",
                     "params": [
@@ -623,7 +623,7 @@
                     "caller": "StorageService",
                     "edges": [
                       {
-                        "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+                        "method": "NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
                         "depth": 5,
                         "caller": "AnalyticsService",
                         "params": [
@@ -932,7 +932,7 @@
             "caller": "StorageService",
             "edges": [
               {
-                "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+                "method": "NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
                 "depth": 3,
                 "caller": "MediaService",
                 "params": [

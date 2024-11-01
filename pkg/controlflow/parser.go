@@ -347,6 +347,10 @@ func getFuncCallDeps(service *service.Service, method *types.ParsedMethod, block
 	return deps
 }
 
+// 1. creates new variables from golang types extracted from the original golang expression types
+// 2. returns new tuple variable that encompasses all the new created variables
+// 3. add the new tuple variable to the return parameter of the call argument if not nil
+// (the call argument will be nil when we encounter built-in calls - TO BE FIXED)
 func computeInternalFuncCallReturns(service *service.Service, callExpr *ast.CallExpr, call types.Call) *variables.TupleVariable {
 	tupleVar := &variables.TupleVariable{
 		VariableInfo: &variables.VariableInfo{
@@ -362,7 +366,10 @@ func computeInternalFuncCallReturns(service *service.Service, callExpr *ast.Call
 				newVar := lookup.CreateVariableFromType("", t)
 				tupleVar.AddVariableAndType(newVar)
 				newVar.GetVariableInfo().SetParent(newVar, tupleVar)
-				call.AddReturn(newVar)
+
+				if call != nil {
+					call.AddReturn(newVar)
+				}
 			}
 		}
 	} else {
@@ -418,6 +425,12 @@ func computeExternalFuncCallReturns(service *service.Service, callExpr *ast.Call
 }
 
 func saveCallToStructOrInterface(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr, leftVariableTypeName string, methodName string, pkgPath string) (*types.ParsedInternalCall, *variables.TupleVariable, *variables.TupleVariable) {
+	if pkgPath == "" {
+		logger.Logger.Debugf("FIX ME: WE ENCOUNTER BUILT-IN PACKAGES e.g. err.Error() -> string")
+		tupleVar := computeInternalFuncCallReturns(service, callExpr, nil)
+		return nil, nil, tupleVar
+	}
+	
 	pkg := service.GetPackage().GetImportedPackage(pkgPath)
 	parsedMethod := pkg.GetParsedMethodIfExists(methodName, leftVariableTypeName)
 
@@ -510,9 +523,9 @@ func parseCallToVariableInBlock(service *service.Service, method *types.ParsedMe
 			tupleVar := computeInternalFuncCallReturns(service, callExpr, parsedCall)
 			return tupleVar
 		} else if interfaceVar, ok := variable.(*variables.InterfaceVariable); ok {
+			logger.Logger.Debugf("[CFG CALLS] call to interface variable %s: %v", interfaceVar.LongString(), service.GetPackage().GetTypeInfo(callExpr.Fun))
 			methodName := ident.Name
 			pkgPath := interfaceVar.GetInterfaceType().GetMethodPackagePath(methodName)
-
 			var externalCallTupleVar *variables.TupleVariable
 			_, variable, externalCallTupleVar = saveCallToStructOrInterface(service, method, block, callExpr, leftVariableTypeName, methodName, pkgPath)
 			if externalCallTupleVar != nil {
@@ -623,8 +636,10 @@ func parseCallToVariableInBlock(service *service.Service, method *types.ParsedMe
 		}
 		if blueprintMethod.IsNoSQLCursorCall() {
 			// e.g. NoSQLDatabase.NoSQLCursor.One(), NoSQLDatabase.NoSQLCursor.All()
-			// do not append: cursor is already tainted after reading from collection
-			logger.Logger.Infof("[CFG CALLS] found NoSQLCursor call (%s) to instance (%s) -- returned tuple: %s", parsedCall.Name, parsedCall.DbInstance.String(), tupleVar.String())
+			// APPEND!! although corsor is already tainted after reading from collection
+			// we still need to capture the read to the cursor so that we are able to taint (as read) the destination value
+			//method.Calls = append(method.Calls, parsedCall)
+			logger.Logger.Infof("[CFG CALLS] found NoSQLCursor call (%s) to instance (%s) -- returned tuple: %s // %s", parsedCall.Name, parsedCall.DbInstance.String(), tupleVar.String(), parsedCall.Method.LongString())
 			return tupleVar
 		}
 		method.Calls = append(method.Calls, parsedCall)

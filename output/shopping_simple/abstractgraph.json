@@ -1,0 +1,610 @@
+[
+  {
+    "method": "(*FrontendImpl).CreateProduct(ctx context.Context, productID string, description string, pricePerUnit int, category string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "(*ProductServiceImpl).CreateProduct(ctx context.Context, productID string, description string, pricePerUnit int, category string)",
+        "depth": 1,
+        "caller": "Frontend",
+        "edges": [
+          {
+            "method": "NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{})",
+            "depth": 2,
+            "caller": "ProductService",
+            "params": [
+              {
+                "variable": {
+                  "name": "ctx",
+                  "type": "context.Context",
+                  "refs": [
+                    {
+                      "name": "ctx",
+                      "creator": "Frontend"
+                    }
+                  ]
+                }
+              },
+              {
+                "variable": {
+                  "name": "product",
+                  "type": "shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}"
+                },
+                "struct_fields": {
+                  "Category": {
+                    "variable": {
+                      "name": "Category",
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "category",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "category",
+                            "creator": "Frontend"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "Description": {
+                    "variable": {
+                      "name": "Description",
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "description",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "description",
+                            "creator": "Frontend"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "PricePerUnit": {
+                    "variable": {
+                      "name": "PricePerUnit",
+                      "type": "int"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "pricePerUnit",
+                        "type": "int",
+                        "refs": [
+                          {
+                            "name": "pricePerUnit",
+                            "creator": "Frontend"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "ProductID": {
+                    "variable": {
+                      "name": "ProductID",
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "productID",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "productID",
+                            "creator": "Frontend"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            ],
+            "returns": [
+              {
+                "variable": {
+                  "name": "err",
+                  "type": ".error"
+                }
+              }
+            ],
+            "datastore": "product_db"
+          }
+        ],
+        "params": null,
+        "returns": [
+          {
+            "variable": {
+              "type": "shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}"
+            }
+          },
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ]
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "productID",
+          "type": "string"
+        }
+      },
+      {
+        "variable": {
+          "name": "description",
+          "type": "string"
+        }
+      },
+      {
+        "variable": {
+          "name": "pricePerUnit",
+          "type": "int"
+        }
+      },
+      {
+        "variable": {
+          "name": "category",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*FrontendImpl).CreateCart(ctx context.Context, cartID string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "(*CartServiceImpl).CreateCart(ctx context.Context, cartID string)",
+        "depth": 1,
+        "caller": "Frontend",
+        "edges": [
+          {
+            "method": "NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{})",
+            "depth": 2,
+            "caller": "CartService",
+            "params": [
+              {
+                "variable": {
+                  "name": "ctx",
+                  "type": "context.Context",
+                  "refs": [
+                    {
+                      "name": "ctx",
+                      "creator": "Frontend"
+                    }
+                  ]
+                }
+              },
+              {
+                "variable": {
+                  "name": "cart",
+                  "type": "shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}"
+                },
+                "struct_fields": {
+                  "CartID": {
+                    "variable": {
+                      "name": "CartID",
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "cartID",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "cartID",
+                            "creator": "Frontend"
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            ],
+            "returns": [
+              {
+                "variable": {
+                  "name": "err",
+                  "type": ".error"
+                }
+              }
+            ],
+            "datastore": "cart_db"
+          }
+        ],
+        "params": null,
+        "returns": [
+          {
+            "variable": {
+              "type": "shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}"
+            }
+          },
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ]
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "cartID",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
+    "method": "(*FrontendImpl).AddProductToCart(ctx context.Context, cartID string, productID string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "(*CartServiceImpl).AddProductToCart(ctx context.Context, cartID string, productID string)",
+        "depth": 1,
+        "caller": "Frontend",
+        "edges": [
+          {
+            "method": "(*ProductServiceImpl).GetProduct(ctx context.Context, productID string)",
+            "depth": 2,
+            "caller": "CartService",
+            "edges": [
+              {
+                "method": "NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+                "depth": 3,
+                "caller": "ProductService",
+                "params": [
+                  {
+                    "variable": {
+                      "name": "ctx",
+                      "type": "context.Context",
+                      "refs": [
+                        {
+                          "name": "ctx",
+                          "creator": "CartService"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "variable": {
+                      "name": "query",
+                      "type": "primitive.D"
+                    },
+                    "slice_variables": [
+                      {
+                        "variable": {
+                          "type": "struct{Key \"productid\" string, Value string}"
+                        },
+                        "struct_fields": {
+                          "Key": {
+                            "variable": {
+                              "name": "Key",
+                              "type": "\"productid\" string"
+                            },
+                            "wrapped_variable": {
+                              "variable": {
+                                "type": "\"productid\" string"
+                              }
+                            }
+                          },
+                          "Value": {
+                            "variable": {
+                              "name": "Value",
+                              "type": "string"
+                            },
+                            "wrapped_variable": {
+                              "variable": {
+                                "name": "productID",
+                                "type": "string",
+                                "refs": [
+                                  {
+                                    "name": "productID",
+                                    "creator": "CartService"
+                                  }
+                                ]
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ],
+                "returns": [
+                  {
+                    "variable": {
+                      "name": "result",
+                      "type": "NoSQLCursor {database = product_database, collection = product_collection}"
+                    }
+                  },
+                  {
+                    "variable": {
+                      "name": "err",
+                      "type": ".error"
+                    }
+                  }
+                ],
+                "datastore": "product_db"
+              }
+            ],
+            "params": null,
+            "returns": [
+              {
+                "variable": {
+                  "name": "product",
+                  "type": "shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}"
+                },
+                "struct_fields": {
+                  "PricePerUnit": {
+                    "variable": {
+                      "name": "PricePerUnit",
+                      "type": "int"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "PricePerUnit",
+                        "type": "int"
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "variable": {
+                  "name": "_",
+                  "type": ".error"
+                }
+              }
+            ]
+          },
+          {
+            "method": "NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+            "depth": 2,
+            "caller": "CartService",
+            "params": [
+              {
+                "variable": {
+                  "name": "ctx",
+                  "type": "context.Context",
+                  "refs": [
+                    {
+                      "name": "ctx",
+                      "creator": "Frontend"
+                    }
+                  ]
+                }
+              },
+              {
+                "variable": {
+                  "name": "filter",
+                  "type": "primitive.D"
+                },
+                "slice_variables": [
+                  {
+                    "variable": {
+                      "type": "struct{Key \"cartid\" string, Value string}"
+                    },
+                    "struct_fields": {
+                      "Key": {
+                        "variable": {
+                          "name": "Key",
+                          "type": "\"cartid\" string"
+                        },
+                        "wrapped_variable": {
+                          "variable": {
+                            "type": "\"cartid\" string"
+                          }
+                        }
+                      },
+                      "Value": {
+                        "variable": {
+                          "name": "Value",
+                          "type": "string"
+                        },
+                        "wrapped_variable": {
+                          "variable": {
+                            "name": "cartID",
+                            "type": "string",
+                            "refs": [
+                              {
+                                "name": "cartID",
+                                "creator": "Frontend"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ],
+            "returns": [
+              {
+                "variable": {
+                  "name": "result",
+                  "type": "NoSQLCursor {database = cart_database, collection = cart_collection}"
+                }
+              },
+              {
+                "variable": {
+                  "name": "err",
+                  "type": ".error"
+                }
+              }
+            ],
+            "datastore": "cart_db"
+          },
+          {
+            "method": "NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{})",
+            "depth": 2,
+            "caller": "CartService",
+            "params": [
+              {
+                "variable": {
+                  "name": "ctx",
+                  "type": "context.Context",
+                  "refs": [
+                    {
+                      "name": "ctx",
+                      "creator": "Frontend"
+                    }
+                  ]
+                }
+              },
+              {
+                "variable": {
+                  "name": "cart",
+                  "type": "shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}"
+                },
+                "struct_fields": {
+                  "CartID": {
+                    "variable": {
+                      "name": "CartID",
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "cartID",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "cartID",
+                            "creator": "Frontend"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "LastProductID": {
+                    "variable": {
+                      "name": "LastProductID",
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "name": "productID",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "productID",
+                            "creator": "Frontend"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "Products": {
+                    "variable": {
+                      "name": "Products",
+                      "type": "[]string"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "type": "[]string"
+                      },
+                      "array_elems": [
+                        {
+                          "variable": {
+                            "name": "productID",
+                            "type": "string",
+                            "refs": [
+                              {
+                                "name": "productID",
+                                "creator": "Frontend"
+                              }
+                            ]
+                          }
+                        }
+                      ]
+                    }
+                  },
+                  "TotalQuantity": {
+                    "variable": {
+                      "name": "TotalQuantity",
+                      "type": "1 int"
+                    },
+                    "wrapped_variable": {
+                      "variable": {
+                        "type": "1 int"
+                      }
+                    }
+                  }
+                }
+              }
+            ],
+            "returns": [
+              {
+                "variable": {
+                  "type": ".error"
+                }
+              }
+            ],
+            "datastore": "cart_db"
+          }
+        ],
+        "params": null,
+        "returns": [
+          {
+            "variable": {
+              "type": "shopping_simple.CartProduct struct{CartID string, ProductID string, PricePerUnit int, Quantity 1 int}"
+            }
+          },
+          {
+            "variable": {
+              "type": ".error"
+            }
+          }
+        ]
+      }
+    ],
+    "params": [
+      {
+        "variable": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "variable": {
+          "name": "cartID",
+          "type": "string"
+        }
+      },
+      {
+        "variable": {
+          "name": "productID",
+          "type": "string"
+        }
+      }
+    ]
+  }
+]

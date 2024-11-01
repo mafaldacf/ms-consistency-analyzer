@@ -9,6 +9,7 @@ import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
+	"analyzer/pkg/frameworks/blueprint"
 )
 
 type DependencySet struct {
@@ -41,7 +42,7 @@ func saveUnfoldedFieldsToDatastore(variable variables.Variable, entryName string
 }
 
 func taintDataflowOp(app *app.App, variable variables.Variable, call *AbstractDatabaseCall, datastore *datastores.Datastore, fieldName string, includeNestedFields bool) {
-	fmt.Printf("\n------------- TAINT WRITE DATAFLOW FOR CALL %s @ %s -------------\n\n", call.GetName(), datastore.Name)
+	fmt.Printf("\n------------- TAINT WRITE DATAFLOW FOR CALL %s @ %s -------------\n\n", call.GetMethodStr(), datastore.Name)
 	fmt.Println()
 
 	// taint direct dataflow
@@ -121,7 +122,7 @@ func taintDataflowReadOp(app *app.App, variable variables.Variable, call *Abstra
 }
 
 func taintDataflowReadOpUnnamed(app *app.App, variable variables.Variable, call *AbstractDatabaseCall, datastore *datastores.Datastore, fieldName string) {
-	fmt.Printf("\n------------- TAINT READ UNNAMED DATAFLOW FOR CALL %s @ %s -------------\n\n", call.GetName(), datastore.Name)
+	fmt.Printf("\n------------- TAINT READ UNNAMED DATAFLOW FOR CALL %s @ %s -------------\n\n", call.GetMethodStr(), datastore.Name)
 	fmt.Println()
 
 	// taint direct dataflow
@@ -147,6 +148,11 @@ func taintDataflowReadOpUnnamed(app *app.App, variable variables.Variable, call 
 			app.AddTaintedVariableIfNotExists(dep.GetType().GetName(), dep)
 		}
 	}
+
+	if call.GetName() == "FindOne" && datastore.Name == "product_db" {
+		logger.Logger.Debug("HERE!")
+	}
+
 	fmt.Println()
 }
 
@@ -163,7 +169,7 @@ func referenceTaintedDataflowForSingleValue(writtenVariable variables.Variable, 
 				logger.Logger.Debugf("\t\t[REF TAINTED DEP] (%s -> %s) from %s [%s]", dbField.GetFullName(), df.Field.GetFullName(), dep.String(), utils.GetType(dep))
 			}
 		}
-	
+
 	}
 	fmt.Println()
 }
@@ -188,10 +194,15 @@ func referenceTaintedDataflowForNestedFields(writtenVariable variables.Variable,
 	fmt.Println()
 }
 
-var writtenDatastores map[string]bool
+func BuildSchema(app *app.App, nodes []AbstractNode) {
+	for _, entryNode := range nodes {
+		logger.Logger.Infof(">>>>>>>>>>>>>>>>> DO BUILD SCHEMA FOR NODE: %v <<<<<<<<<<<<<<<<<<<", entryNode.GetMethodStr())
+		doBuildSchema(app, entryNode)
+	}
+}
 
-func BuildSchema(app *app.App, node AbstractNode) {
-	writtenDatastores = make(map[string]bool, 0)
+func doBuildSchema(app *app.App, node AbstractNode) {
+	var writtenDatastores = make(map[string]bool, 0)
 	if dbCall, ok := node.(*AbstractDatabaseCall); ok && dbCall.ParsedCall.Method.IsRead() {
 		datastore := dbCall.DbInstance.GetDatastore()
 		if found := writtenDatastores[datastore.Name]; !found {
@@ -205,8 +216,20 @@ func BuildSchema(app *app.App, node AbstractNode) {
 			msg := params[1]
 			taintDataflowReadOp(app, msg, dbCall, datastore, "message")
 		case datastores.NoSQL:
-			doc := returns[0]
-			taintDataflowReadOpUnnamed(app, doc, dbCall, datastore, "document")
+			if blueprintMethod, ok := dbCall.GetParsedCall().GetMethod().(*blueprint.BackendMethod); ok {
+				if blueprintMethod.IsNoSQLCollectionCall() {
+					query := params[1]
+					taintDataflowReadOpUnnamed(app, query, dbCall, datastore, "document")
+				} else if blueprintMethod.IsNoSQLCursorCall() {
+					obj := params[1]
+					taintDataflowReadOpUnnamed(app, obj, dbCall, datastore, "document")
+				} else {
+					logger.Logger.Fatal("??")
+				}
+			}
+
+			result := returns[0]
+			taintDataflowReadOpUnnamed(app, result, dbCall, datastore, "document")
 			query := params[1]
 			taintDataflowReadOpUnnamed(app, query, dbCall, datastore, "document")
 		case datastores.Cache:
@@ -262,6 +285,6 @@ func BuildSchema(app *app.App, node AbstractNode) {
 	} */
 
 	for _, child := range node.GetChildren() {
-		BuildSchema(app, child)
+		doBuildSchema(app, child)
 	}
 }

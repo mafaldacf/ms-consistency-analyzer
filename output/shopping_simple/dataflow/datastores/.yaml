@@ -1,0 +1,11 @@
+Cart: []
+
+Key: []
+
+Product: []
+
+Value: []
+
+struct{Key "cartid" string, Value string}: []
+
+struct{Key "productid" string, Value string}: []

@@ -24,6 +24,10 @@ Available applications:
 ```zsh
 go run main.go -app=postnotification
 go run main.go -app=footbar
+
+source ~/.venv/bin/activate
+pip3 install -r requirements.txt
+./graphs.py --app shopping_simple
 ```
 
 ## Structure
