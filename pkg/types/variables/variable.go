@@ -129,18 +129,22 @@ func AddUnderlyingDependencies(variable Variable, deps []Variable) bool {
 	return false
 }
 
-func GetReversedNestedFieldsAndNames(variable Variable, fieldName string) (nestedVariables []Variable, nestedNames []string) {
+func GetReversedNestedFieldsAndNames(variable Variable, fieldName string, noSQL bool, queue bool) (nestedVariables []Variable, nestedNames []string) {
 	logger.Logger.Debugf("[VARS] get reversed nested fields and names for variable (%s): %s", utils.GetType(variable), variable.String())
 
 	// e.g. in queue.pop we need to explicitly specify the fieldname otherwise it will be wrong because we are reading from an inteface
+	// also applies to nosql
+	logger.Logger.Debugf("TOP FIELD NAME BEFORE = %s", fieldName)
 	if fieldName == "" {
 		fieldName = variable.GetType().GetName()
 	}
 
+	logger.Logger.Debugf("TOP FIELD NAME AFTER = %s", fieldName)
+
 	if structVariable, ok := variable.(*StructVariable); ok {
 		variables := []Variable{structVariable}
 		names := []string{fieldName}
-		nestedVariables, nestedNames = structVariable.GetNestedFieldVariablesWithReferences(fieldName)
+		nestedVariables, nestedNames = structVariable.GetNestedFieldVariablesWithReferences(fieldName, noSQL)
 
 		variables = append(variables, nestedVariables...)
 		names = append(names, nestedNames...)
@@ -150,7 +154,7 @@ func GetReversedNestedFieldsAndNames(variable Variable, fieldName string) (neste
 	} else if mapVariable, ok := variable.(*MapVariable); ok {
 		variables := []Variable{mapVariable}
 		names := []string{fieldName}
-		nestedVariables, nestedNames = mapVariable.GetNestedFieldVariablesWithReferences(fieldName)
+		nestedVariables, nestedNames = mapVariable.GetNestedFieldVariablesWithReferences(fieldName, noSQL)
 
 		variables = append(variables, nestedVariables...)
 		names = append(names, nestedNames...)
@@ -158,7 +162,9 @@ func GetReversedNestedFieldsAndNames(variable Variable, fieldName string) (neste
 		slices.Reverse(names)
 		return variables, names
 	} else if addressVariable, ok := variable.(*AddressVariable); ok {
-		return GetReversedNestedFieldsAndNames(addressVariable.AddressOf, fieldName)
+		return GetReversedNestedFieldsAndNames(addressVariable.AddressOf, fieldName, noSQL, queue)
+	} else if pointerVariable, ok := variable.(*PointerVariable); ok {
+		return GetReversedNestedFieldsAndNames(pointerVariable.PointerTo, fieldName, noSQL, queue)
 	} else {
 		logger.Logger.Fatalf("unexpected type (%s) for variable (%s)", utils.GetType(variable), variable.String())
 	}

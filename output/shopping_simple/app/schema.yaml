@@ -1,11 +1,32 @@
 CART_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
-- dependencies: []
+- dependencies:
+  - product_db
 - schema:
-  - fields: []
-  - unfolded_fields: []
-  - foreign_fields: []
+  - fields:
+    - document: shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
+    - Cart: shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
+    - document: shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
+    - Cart: shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
+  - unfolded_fields:
+    - Cart: shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
+    - Cart.CartID: string
+    - Cart.TotalQuantity: 1 int
+    - Cart.LastProductID: string
+    - Cart.Products: '[]string'
+    - Cart: shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
+    - Cart.CartID: string
+    - Cart.TotalQuantity: 1 int
+    - Cart.LastProductID: string
+    - Cart.Products: '[]string'
+  - foreign_fields:
+    - Cart:
+      - PRODUCT_DB.Product.ProductID
+    - Cart.LastProductID:
+      - PRODUCT_DB.Product.ProductID
+    - Cart.Products:
+      - PRODUCT_DB.Product.ProductID
 
 PRODUCT_DB:
 - type: NoSQLDatabase
@@ -16,6 +37,7 @@ PRODUCT_DB:
     - document: shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
     - Product: shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
   - unfolded_fields:
+    - Product: shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
     - Product.ProductID: string
     - Product.Description: string
     - Product.PricePerUnit: int

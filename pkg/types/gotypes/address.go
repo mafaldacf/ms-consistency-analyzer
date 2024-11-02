@@ -47,8 +47,8 @@ func (t *AddressType) GetPointerTo() Type {
 	}
 	return t.AddressOf
 }
-func (t *AddressType) GetNestedFieldTypes(prefix string) ([]Type, []string) {
-	return t.AddressOf.GetNestedFieldTypes(prefix)
+func (t *AddressType) GetNestedFieldTypes(prefix string, noSQL bool) ([]Type, []string) {
+	return t.AddressOf.GetNestedFieldTypes(prefix, noSQL)
 }
 
 // ---------------

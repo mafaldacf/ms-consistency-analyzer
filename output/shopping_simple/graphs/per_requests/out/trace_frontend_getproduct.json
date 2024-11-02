@@ -35,12 +35,6 @@
       "callee": "product_db MongoDB",
       "call": "FindOne",
       "depth": 2
-    },
-    {
-      "caller": "ProductService",
-      "callee": "product_db MongoDB",
-      "call": "One",
-      "depth": 2
     }
   ]
 }

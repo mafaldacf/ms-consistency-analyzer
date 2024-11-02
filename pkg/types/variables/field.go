@@ -137,21 +137,24 @@ func (v *FieldVariable) GetUnassaignedVariables() []Variable {
 	return variables
 }
 
-func (t *FieldVariable) GetNestedFieldVariables(prefix string) ([]Variable, []string) {
+func (t *FieldVariable) GetNestedFieldVariables(prefix string, noSQL bool) ([]Variable, []string) {
 	variableType := t.VariableInfo.Type
 	if userType, ok := t.GetType().(*gotypes.UserType); ok {
 		variableType = userType.UserType
 	}
-	prefix = prefix + "." + variableType.(*gotypes.FieldType).FieldName
+
+	logger.Logger.Warnf("PREFIX BEFORE = %s", prefix)
+	prefix = variableType.(*gotypes.FieldType).GetNestedFieldName(prefix, noSQL)
+	logger.Logger.Warnf("PREFIX AFTER = %s", prefix)
 
 	nestedVariables := []Variable{t}
 	nestedNames := []string{prefix}
 	if nestedField, ok := t.WrappedVariable.(*FieldVariable); ok {
-		r1, r2 := nestedField.GetNestedFieldVariables(prefix)
+		r1, r2 := nestedField.GetNestedFieldVariables(prefix, noSQL)
 		nestedVariables = append(nestedVariables, r1...)
 		nestedNames = append(nestedNames, r2...)
 	} else if nestedStruct, ok := t.WrappedVariable.(*StructVariable); ok {
-		r1, r2 := nestedStruct.GetNestedFieldVariables(prefix)
+		r1, r2 := nestedStruct.GetNestedFieldVariables(prefix, noSQL)
 		nestedVariables = append(nestedVariables, r1...)
 		nestedNames = append(nestedNames, r2...)
 	} else {
@@ -161,11 +164,11 @@ func (t *FieldVariable) GetNestedFieldVariables(prefix string) ([]Variable, []st
 	return nestedVariables, nestedNames
 }
 
-func (t *FieldVariable) GetNestedFieldVariablesWithReferences(prefix string) ([]Variable, []string) {
-	nestedVariables, nestedIDs := t.GetNestedFieldVariables(prefix)
+func (t *FieldVariable) GetNestedFieldVariablesWithReferences(prefix string, noSQL bool) ([]Variable, []string) {
+	nestedVariables, nestedIDs := t.GetNestedFieldVariables(prefix, noSQL)
 	for _, reference := range t.GetVariableInfo().GetReferences() {
 		logger.Logger.Debugf("HEREEEEE FOR REFERENCE %s", reference.String())
-		nestedVariablesRef, nestedIDsRef := reference.Variable.(*FieldVariable).GetNestedFieldVariablesWithReferences(prefix)
+		nestedVariablesRef, nestedIDsRef := reference.Variable.(*FieldVariable).GetNestedFieldVariablesWithReferences(prefix, noSQL)
 		nestedVariables = append(nestedVariables, nestedVariablesRef...)
 		nestedIDs = append(nestedIDs, nestedIDsRef...)
 	}

@@ -12,3 +12,8 @@ fmt:
 - package: fmt
 - package path: fmt
 - module: ""
+
+sync:
+- package: sync
+- package path: sync
+- module: ""

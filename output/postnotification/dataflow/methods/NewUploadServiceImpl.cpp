@@ -1,10 +1,10 @@
-[] (InterfaceVariable UserType) ctx context.Context 
+[] (InterfaceVariable UserType) ctx context.Context
 
-[] (ServiceVariable ServiceType) storageService postnotification.StorageService 
+[] (ServiceVariable ServiceType) storageService postnotification.StorageService
 
-[] (ServiceVariable ServiceType) mediaService postnotification.MediaService 
+[] (ServiceVariable ServiceType) mediaService postnotification.MediaService
 
-[] (BlueprintBackendVariable BlueprintBackendType) notificationsQueue Queue 
+[] (BlueprintBackendVariable BlueprintBackendType) notificationsQueue Queue
 
-[] (BlueprintBackendVariable BlueprintBackendType) timelineCache Cache 
+[] (BlueprintBackendVariable BlueprintBackendType) timelineCache Cache
 

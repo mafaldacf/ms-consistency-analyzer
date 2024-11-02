@@ -22,6 +22,14 @@ func CreateEntry(name string, t string, id int64, datastore *Datastore) *Entry {
 	}
 }
 
+func (s *Schema) GetRootField() Field {
+	return s.Fields[1] //FIXME!
+}
+
+func (s *Schema) GetRootFieldName() string {
+	return s.Fields[1].GetName() //FIXME!
+}
+
 func (s *Schema) AddField(name string, t string, id int64, datastore *Datastore) Field {
 	e := CreateEntry(name, t, id, datastore)
 	s.Fields = append(s.Fields, e)
@@ -41,20 +49,15 @@ func (s *Schema) AddForeignReferenceToField(current Field, reference Field) {
 }
 
 func (s *Schema) String() string {
-	str := "{"
-	for i, f := range s.Fields {
-		str += f.String()
-		if i < len(s.Fields)-1 {
-			str += " | "
-		}
+	str := "FIELDS = {\n"
+	for _, f := range s.Fields {
+		str += f.String() + ", "
 	}
-	for i, f := range s.UnfoldedFields {
-		str += f.String()
-		if i < len(s.Fields)-1 {
-			str += " | "
-		}
+	str = "\n} \nUNFOLDED FIELDS = {\n"
+	for _, f := range s.UnfoldedFields {
+		str += f.String() + ", "
 	}
-	return str + "}"
+	return str + "\n}"
 }
 
 func (s *Schema) GetRootUnfoldedField() Field {
@@ -63,17 +66,17 @@ func (s *Schema) GetRootUnfoldedField() Field {
 
 func (s *Schema) GetField(name string) Field {
 	for _, f := range s.Fields {
-		if f.GetName() == name {
+		if f.GetName() == name || strings.EqualFold(f.GetName(), name) { // FIXME NOSQL MONGODB
 			return f
 		}
 	}
 	for _, f := range s.UnfoldedFields {
-		if f.GetName() == name {
+		if f.GetName() == name || strings.EqualFold(f.GetName(), name) { // FIXME NOSQL MONGODB
 			return f
 		}
 	}
 	for _, f := range s.ForeignKeys {
-		if f.GetName() == name {
+		if f.GetName() == name || strings.EqualFold(f.GetName(), name) { // FIXME NOSQL MONGODB
 			return f
 		}
 	}

@@ -11,6 +11,7 @@ ANALYTICS_DB:
     - document: postnotification.Analytics struct{PostID int64}
     - Analytics: postnotification.Analytics struct{PostID int64}
   - unfolded_fields:
+    - Analytics: postnotification.Analytics struct{PostID int64}
     - Analytics.PostID: int64
   - foreign_fields:
     - Analytics:
@@ -38,6 +39,7 @@ ANALYTICS_QUEUE:
     - message: postnotification.TriggerAnalyticsMessage struct{PostID string}
     - TriggerAnalyticsMessage: postnotification.TriggerAnalyticsMessage struct{PostID string}
   - unfolded_fields:
+    - TriggerAnalyticsMessage: postnotification.TriggerAnalyticsMessage struct{PostID string}
     - TriggerAnalyticsMessage.PostID: string
   - foreign_fields:
     - TriggerAnalyticsMessage:
@@ -61,6 +63,8 @@ MEDIA_DB:
     - Media: postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO
         WORLD!" untyped string}
   - unfolded_fields:
+    - Media: postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO
+        WORLD!" untyped string}
     - Media.PostID: int64
     - Media.MediaID: int64
     - Media.Content: '"HELLO WORLD!" untyped string'
@@ -80,11 +84,12 @@ NOTIFICATIONS_QUEUE:
     - message: postnotification.Message struct{ReqID string, PostID string, Timestamp string}
     - Message: postnotification.Message struct{ReqID string, PostID string, Timestamp string}
   - unfolded_fields:
+    - Message: postnotification.Message struct{ReqID string, PostID string, Timestamp string}
     - Message.ReqID: string
     - Message.PostID: string
     - Message.Timestamp: string
   - foreign_fields:
-    - Message:
+    - message:
       - ANALYTICS_DB.Analytics.PostID
       - ANALYTICS_QUEUE.TriggerAnalyticsMessage.PostID
       - MEDIA_DB.Media.PostID
@@ -131,6 +136,7 @@ POSTS_DB:
     - document: postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}}
     - Post: postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}}
   - unfolded_fields:
+    - Post: postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}}
     - Post.ReqID: int64
     - Post.PostID: int64
     - Post.Text: string

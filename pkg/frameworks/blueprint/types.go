@@ -37,8 +37,17 @@ const (
 
 type NoSQLComponent struct {
 	Type       NoSQLComponentType
+	Projection []string // fields to be projected in queries - applies only if Type is NoSQLCursorType
 	Database   string
 	Collection string
+}
+
+func (t *NoSQLComponent) HasProjection() bool{
+	return t.Projection != nil
+}
+
+func (t *NoSQLComponent) GetProjection() []string {
+	return t.Projection
 }
 
 func (t *NoSQLComponent) Copy() *NoSQLComponent {
@@ -181,7 +190,7 @@ func (t *BlueprintBackendType) GetMethods() []*BackendMethod {
 	return t.Methods
 }
 
-func (t *BlueprintBackendType) GetNestedFieldTypes(prefix string) ([]gotypes.Type, []string) {
+func (t *BlueprintBackendType) GetNestedFieldTypes(prefix string, noSQL bool) ([]gotypes.Type, []string) {
 	logger.Logger.Fatalf("[TYPES BLUEPRINT] unable to get nested types blueprint backend type type %s", t.String())
 	return nil, nil
 }

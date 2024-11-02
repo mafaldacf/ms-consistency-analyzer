@@ -7,6 +7,7 @@ POSTS_DB.Post:
   username" string}}> @ UploadService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructVariable)>
 - write <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some
   username" string}} (StructVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructVariable)>
+- read <result NoSQLCursor {database = post, collection = post} (BlueprintBackendVariable)>
 
 POSTS_DB.Post.Creator:
 - write <Creator postnotification.Creator struct{Username "some username" string} (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructVariable)>
@@ -37,3 +38,52 @@ POSTS_DB.Post.Text:
 POSTS_DB.Post.Timestamp:
 - write <timestamp int64 (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructVariable)>
 - write <Timestamp int64 (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructVariable)>
+
+Post:
+- read <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some
+  username" string}} (StructVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructVariable)>
+
+int64:
+- read <postID int64 (BasicVariable)>
+- read <postID int64 (BasicVariable)> from <postID int64 (BasicVariable)>
+- read <ref <postID int64> @ NotifyService (Reference)> from <postID int64 (BasicVariable)>
+- read <postID int64 (BasicVariable)> from <postID int64 (BasicVariable)>
+- read <PostID string (BasicVariable)> from <postID int64 (BasicVariable)>
+- read <ref <PostID string> @ NotifyService (Reference)> from <postID int64 (BasicVariable)>
+- read <PostID string (FieldVariable)> from <postID int64 (BasicVariable)>
+- read <PostID string (BasicVariable)> from <postID int64 (BasicVariable)>
+- read <PostID interface{} (InterfaceVariable)> from <postID int64 (BasicVariable)>
+- read <postID int64 (BasicVariable)>
+- read <postID int64 (BasicVariable)> from <postID int64 (BasicVariable)>
+- read <ref <postID int64> @ StorageService (Reference)> from <postID int64 (BasicVariable)>
+- read <postID int64 (BasicVariable)> from <postID int64 (BasicVariable)>
+- read <ref <postID int64> @ NotifyService (Reference)> from <postID int64 (BasicVariable)>
+- read <postID int64 (BasicVariable)> from <postID int64 (BasicVariable)>
+- read <PostID string (BasicVariable)> from <postID int64 (BasicVariable)>
+- read <ref <PostID string> @ NotifyService (Reference)> from <postID int64 (BasicVariable)>
+- read <PostID string (FieldVariable)> from <postID int64 (BasicVariable)>
+- read <PostID string (BasicVariable)> from <postID int64 (BasicVariable)>
+- read <PostID interface{} (InterfaceVariable)> from <postID int64 (BasicVariable)>
+- read <postID int64 (BasicVariable)>
+- read <postID int64 (BasicVariable)> from <postID int64 (BasicVariable)>
+- read <ref <postID int64> @ NotifyService (Reference)> from <postID int64 (BasicVariable)>
+- read <postID int64 (BasicVariable)> from <postID int64 (BasicVariable)>
+- read <PostID string (BasicVariable)> from <postID int64 (BasicVariable)>
+- read <ref <PostID string> @ NotifyService (Reference)> from <postID int64 (BasicVariable)>
+- read <PostID string (FieldVariable)> from <postID int64 (BasicVariable)>
+- read <PostID string (BasicVariable)> from <postID int64 (BasicVariable)>
+- read <PostID interface{} (InterfaceVariable)> from <postID int64 (BasicVariable)>
+- read <postID int64 (BasicVariable)>
+- read <postID int64 (BasicVariable)> from <postID int64 (BasicVariable)>
+- read <ref <postID int64> @ NotifyService (Reference)> from <postID int64 (BasicVariable)>
+- read <postID int64 (BasicVariable)> from <postID int64 (BasicVariable)>
+- read <PostID string (BasicVariable)> from <postID int64 (BasicVariable)>
+- read <ref <PostID string> @ NotifyService (Reference)> from <postID int64 (BasicVariable)>
+- read <PostID string (FieldVariable)> from <postID int64 (BasicVariable)>
+- read <PostID string (BasicVariable)> from <postID int64 (BasicVariable)>
+- read <PostID interface{} (InterfaceVariable)> from <postID int64 (BasicVariable)>
+- read <mediaID int64 (BasicVariable)>
+- read <mediaID int64 (BasicVariable)> from <mediaID int64 (BasicVariable)>
+- read <ref <mediaID int64> @ StorageService (Reference)> from <mediaID int64 (BasicVariable)>
+- read <mediaID int64 (FieldVariable)> from <mediaID int64 (BasicVariable)>
+- read <PostID int64 (BasicVariable)> from <mediaID int64 (BasicVariable)>

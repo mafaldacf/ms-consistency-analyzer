@@ -69,7 +69,7 @@ func (v *BackendVariable) GetUnassaignedVariables() []Variable {
 	return nil
 }
 
-func (t *BackendVariable) GetNestedFieldVariables(prefix string) ([]Variable, []string) {
+func (t *BackendVariable) GetNestedFieldVariables(prefix string, noSQL bool) ([]Variable, []string) {
 	return nil, nil
 }
 

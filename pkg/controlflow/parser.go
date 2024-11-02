@@ -636,10 +636,12 @@ func parseCallToVariableInBlock(service *service.Service, method *types.ParsedMe
 		}
 		if blueprintMethod.IsNoSQLCursorCall() {
 			// e.g. NoSQLDatabase.NoSQLCursor.One(), NoSQLDatabase.NoSQLCursor.All()
-			// APPEND!! although corsor is already tainted after reading from collection
-			// we still need to capture the read to the cursor so that we are able to taint (as read) the destination value
-			//method.Calls = append(method.Calls, parsedCall)
-			logger.Logger.Infof("[CFG CALLS] found NoSQLCursor call (%s) to instance (%s) -- returned tuple: %s // %s", parsedCall.Name, parsedCall.DbInstance.String(), tupleVar.String(), parsedCall.Method.LongString())
+			// cursor is tainted from operation NoSQLDatabase.FindOne() when building the schema later
+			// this way, we also need to attach the target variable that fetches the result from the cursor to its dependencies
+			// so that we can latter taint the target variable as well
+			targetVariable := parsedCall.GetParam(1)
+			blueprintBackendVar.SetTargetVariable(targetVariable)
+			logger.Logger.Infof("[CFG CALLS] [%s] found NoSQLCursor call (%s) to instance (%s) -- returned tuple: %s // %s", service.GetName(), parsedCall.Name, parsedCall.DbInstance.String(), tupleVar.String(), parsedCall.Method.LongString())
 			return tupleVar
 		}
 		method.Calls = append(method.Calls, parsedCall)

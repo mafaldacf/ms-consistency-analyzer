@@ -254,14 +254,14 @@ func (v *StructVariable) GetUnassaignedVariables() []Variable {
 	return variables
 }
 
-func (v *StructVariable) GetNestedFieldVariables(prefix string) ([]Variable, []string) {
+func (v *StructVariable) GetNestedFieldVariables(prefix string, noSQL bool) ([]Variable, []string) {
 	var nestedVariables []Variable
 	var nestedIDs []string
 
-	logger.Logger.Debugf("[VARS STRUCT] found (%d) field VARIABLES for (%s)", len(v.Fields), v.String())
+	logger.Logger.Debugf("[VARS STRUCT] found (%d) field VARIABLES for (%s); current prefix = %s", len(v.Fields), v.String(), prefix)
 	for _, f := range v.Fields {
 		if fieldVariable, ok := f.(*FieldVariable); ok {
-			nestedFieldVariables, nestedFieldIDs := fieldVariable.GetNestedFieldVariables(prefix)
+			nestedFieldVariables, nestedFieldIDs := fieldVariable.GetNestedFieldVariables(prefix, noSQL)
 			nestedVariables = append(nestedVariables, nestedFieldVariables...)
 			nestedIDs = append(nestedIDs, nestedFieldIDs...)
 		} else {
@@ -271,10 +271,10 @@ func (v *StructVariable) GetNestedFieldVariables(prefix string) ([]Variable, []s
 	return nestedVariables, nestedIDs
 }
 
-func (v *StructVariable) GetNestedFieldVariablesWithReferences(prefix string) ([]Variable, []string) {
-	nestedVariables, nestedIDs := v.GetNestedFieldVariables(prefix)
+func (v *StructVariable) GetNestedFieldVariablesWithReferences(prefix string, noSQL bool) ([]Variable, []string) {
+	nestedVariables, nestedIDs := v.GetNestedFieldVariables(prefix, noSQL)
 	for _, reference := range v.GetVariableInfo().GetReferences() {
-		nestedVariablesRef, nestedIDsRef := reference.Variable.(*StructVariable).GetNestedFieldVariablesWithReferences(prefix)
+		nestedVariablesRef, nestedIDsRef := reference.Variable.(*StructVariable).GetNestedFieldVariablesWithReferences(prefix, noSQL)
 		nestedVariables = append(nestedVariables, nestedVariablesRef...)
 		nestedIDs = append(nestedIDs, nestedIDsRef...)
 	}

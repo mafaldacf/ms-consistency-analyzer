@@ -1,13 +1,14 @@
-NOTIFICATIONS_QUEUE.Message:
-- write <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
-- write <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
-
 NOTIFICATIONS_QUEUE.Message.PostID:
 - write <string (BasicVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
 - write <ref <PostID interface{}> @ NotifyService (Reference)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
 - write <PostID interface{} (InterfaceVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
 - write <postID int64 (BasicVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
 - write <ref <PostID interface{}> @ NotifyService (Reference)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
+- read <string (BasicVariable)> from <event (*map[string]interface{}) (PointerVariable)>
+- read <ref <PostID interface{}> @ NotifyService (Reference)> from <event (*map[string]interface{}) (PointerVariable)>
+- read <PostID interface{} (InterfaceVariable)> from <event (*map[string]interface{}) (PointerVariable)>
+- read <postID int64 (BasicVariable)> from <event (*map[string]interface{}) (PointerVariable)>
+- read <ref <PostID interface{}> @ NotifyService (Reference)> from <event (*map[string]interface{}) (PointerVariable)>
 - write <postID int64 (BasicVariable)> from <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} (StructVariable)>
 - write <ref <PostID interface{}> @ NotifyService (Reference)> from <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} (StructVariable)>
 - write <PostID interface{} (InterfaceVariable)> from <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} (StructVariable)>
@@ -16,6 +17,8 @@ NOTIFICATIONS_QUEUE.Message.PostID:
 - write <PostID interface{} (InterfaceVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructVariable)>
 - write <PostID string (FieldVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
 - write <ref <PostID interface{}> @ NotifyService (Reference)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
+- read <PostID string (FieldVariable)> from <event (*map[string]interface{}) (PointerVariable)>
+- read <ref <PostID interface{}> @ NotifyService (Reference)> from <event (*map[string]interface{}) (PointerVariable)>
 
 NOTIFICATIONS_QUEUE.Message.ReqID:
 - write <string (BasicVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
@@ -23,8 +26,26 @@ NOTIFICATIONS_QUEUE.Message.ReqID:
 - write <ReqID interface{} (InterfaceVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
 - write <reqID int64 (BasicVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
 - write <ref <ReqID interface{}> @ NotifyService (Reference)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
+- read <string (BasicVariable)> from <event (*map[string]interface{}) (PointerVariable)>
+- read <ref <ReqID interface{}> @ NotifyService (Reference)> from <event (*map[string]interface{}) (PointerVariable)>
+- read <ReqID interface{} (InterfaceVariable)> from <event (*map[string]interface{}) (PointerVariable)>
+- read <reqID int64 (BasicVariable)> from <event (*map[string]interface{}) (PointerVariable)>
+- read <ref <ReqID interface{}> @ NotifyService (Reference)> from <event (*map[string]interface{}) (PointerVariable)>
 - write <reqID int64 (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructVariable)>
 - write <ref <ReqID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructVariable)>
 - write <ReqID interface{} (InterfaceVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructVariable)>
 - write <ReqID string (FieldVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
 - write <ref <ReqID interface{}> @ NotifyService (Reference)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
+- read <ReqID string (FieldVariable)> from <event (*map[string]interface{}) (PointerVariable)>
+- read <ref <ReqID interface{}> @ NotifyService (Reference)> from <event (*map[string]interface{}) (PointerVariable)>
+
+NOTIFICATIONS_QUEUE.message:
+- write <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
+- write <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
+- read <event (*map[string]interface{}) (PointerVariable)>
+- read <event map[string]interface{} (MapVariable)> from <event (*map[string]interface{}) (PointerVariable)>
+- read <ref <message postnotification.Message struct{ReqID string, PostID string, Timestamp string}> @ NotifyService (Reference)> from <event (*map[string]interface{}) (PointerVariable)>
+- read <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)> from <event (*map[string]interface{}) (PointerVariable)>
+- read <Timestamp interface{} (InterfaceVariable)> from <event (*map[string]interface{}) (PointerVariable)>
+- write <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>
+- write <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructVariable)>

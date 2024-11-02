@@ -40,7 +40,7 @@ func (t *ArrayType) GetBasicValue() string {
 func (t *ArrayType) AddValue(value string) {
 	logger.Logger.Fatalf("unable to add value for array type %s", t.String())
 }
-func (t *ArrayType) GetNestedFieldTypes(prefix string) ([]Type, []string) {
+func (t *ArrayType) GetNestedFieldTypes(prefix string, noSQL bool) ([]Type, []string) {
 	logger.Logger.Warnf("[TYPES ARRAY] attempted to get nested fields and variables: %s", t.String())
 	return nil, nil
 }

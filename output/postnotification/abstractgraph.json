@@ -917,6 +917,18 @@
                         "blueprint_backend": {
                           "name": "result",
                           "type": "NoSQLCursor {database = post, collection = post}"
+                        },
+                        "target_variable": {
+                          "pointer": {
+                            "name": "post",
+                            "type": "(*postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username \"some username\" string}, Creator postnotification.Creator struct{Username \"some username\" string}})"
+                          },
+                          "ptr_to": {
+                            "struct": {
+                              "name": "post",
+                              "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username \"some username\" string}, Creator postnotification.Creator struct{Username \"some username\" string}}"
+                            }
+                          }
                         }
                       },
                       {
@@ -1002,6 +1014,18 @@
                             "blueprint_backend": {
                               "name": "result",
                               "type": "NoSQLCursor {database = analyticsDb, collection = analytics_collection}"
+                            },
+                            "target_variable": {
+                              "pointer": {
+                                "name": "analytics",
+                                "type": "(*postnotification.Analytics struct{PostID int64})"
+                              },
+                              "ptr_to": {
+                                "struct": {
+                                  "name": "analytics",
+                                  "type": "postnotification.Analytics struct{PostID int64}"
+                                }
+                              }
                             }
                           },
                           {
@@ -1360,6 +1384,18 @@
                     "blueprint_backend": {
                       "name": "result",
                       "type": "NoSQLCursor {database = media, collection = media}"
+                    },
+                    "target_variable": {
+                      "pointer": {
+                        "name": "media",
+                        "type": "(*postnotification.Media struct{PostID int64, MediaID int64, Content \"HELLO WORLD!\" untyped string})"
+                      },
+                      "ptr_to": {
+                        "struct": {
+                          "name": "media",
+                          "type": "postnotification.Media struct{PostID int64, MediaID int64, Content \"HELLO WORLD!\" untyped string}"
+                        }
+                      }
                     }
                   },
                   {

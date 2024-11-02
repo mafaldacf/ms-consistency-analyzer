@@ -38,6 +38,6 @@ func (t *PackageType) GetBasicValue() string {
 func (t *PackageType) AddValue(value string) {
 	logger.Logger.Fatalf("[TYPES PACKAGE] unable to add value for package type %s", t.String())
 }
-func (t *PackageType) GetNestedFieldTypes(prefix string) ([]Type, []string) {
+func (t *PackageType) GetNestedFieldTypes(prefix string, noSQL bool) ([]Type, []string) {
 	return nil, nil
 }

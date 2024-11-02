@@ -52,7 +52,7 @@ func (t *BasicType) AddValue(value string) {
 	}
 	t.Value = utils.AddValue(t.Name, t.Value, value)
 }
-func (t *BasicType) GetNestedFieldTypes(prefix string) ([]Type, []string) {
+func (t *BasicType) GetNestedFieldTypes(prefix string, noSQL bool) ([]Type, []string) {
 	return nil, nil
 }
 

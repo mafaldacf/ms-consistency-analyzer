@@ -1,2 +1,2 @@
-[] (BasicVariable BasicType) i int64 
+[] (BasicVariable BasicType) i int64
 

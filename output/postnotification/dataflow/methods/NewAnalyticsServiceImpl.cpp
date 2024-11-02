@@ -1,15 +1,15 @@
-[] (InterfaceVariable UserType) ctx context.Context 
+[] (InterfaceVariable UserType) ctx context.Context
 
-[] (BlueprintBackendVariable BlueprintBackendType) analyticsDb NoSQLDatabase 
+[] (BlueprintBackendVariable BlueprintBackendType) analyticsDb NoSQLDatabase
 
-[] (BlueprintBackendVariable BlueprintBackendType) analyticsQueue Queue 
+[] (BlueprintBackendVariable BlueprintBackendType) analyticsQueue Queue
 
-[] (PointerVariable PointerType) n (*postnotification.AnalyticsServiceImpl struct{analyticsDb NoSQLDatabase, analyticsQueue Queue, numWorkers 4 int}) 
-[_] (StructVariable UserType) postnotification.AnalyticsServiceImpl struct{analyticsDb NoSQLDatabase, analyticsQueue Queue, numWorkers 4 int} 
-[__] (FieldVariable FieldType) analyticsDb NoSQLDatabase 
-[___] (BlueprintBackendVariable BlueprintBackendType) analyticsDb NoSQLDatabase 
-[__] (FieldVariable FieldType) analyticsQueue Queue 
-[___] (BlueprintBackendVariable BlueprintBackendType) analyticsQueue Queue 
-[__] (FieldVariable FieldType) numWorkers 4 int 
-[___] (BasicVariable BasicType) 4 int 
+[] (PointerVariable PointerType) n (*postnotification.AnalyticsServiceImpl struct{analyticsDb NoSQLDatabase, analyticsQueue Queue, numWorkers 4 int})
+[_] (StructVariable UserType) postnotification.AnalyticsServiceImpl struct{analyticsDb NoSQLDatabase, analyticsQueue Queue, numWorkers 4 int}
+[__] (FieldVariable FieldType) analyticsDb NoSQLDatabase
+[___] (BlueprintBackendVariable BlueprintBackendType) analyticsDb NoSQLDatabase
+[__] (FieldVariable FieldType) analyticsQueue Queue
+[___] (BlueprintBackendVariable BlueprintBackendType) analyticsQueue Queue
+[__] (FieldVariable FieldType) numWorkers 4 int
+[___] (BasicVariable BasicType) 4 int
 

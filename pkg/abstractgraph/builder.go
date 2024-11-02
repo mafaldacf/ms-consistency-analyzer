@@ -162,9 +162,6 @@ func (graph *AbstractGraph) referenceMethodBlockVars(parsedCall types.Call, chil
 		blockVar := entryBlock.GetVariableAt(i)
 		blockVar.AddReferenceWithID(param, child.GetCallerStr())
 		logger.Logger.Infof("\t\t[REF BLOCK VAR] added reference (%d) from creator (%s): (%s) -> (%s)", blockVar.GetId(), child.GetCallerStr(), blockVar.GetType().GetName(), param.GetVariableInfo().GetName())
-		if _, ok := blockVar.(*variables.StructVariable); ok {
-			variables.GetReversedNestedFieldsAndNames(blockVar, "")
-		}
 		for _, dep := range param.GetNestedDependencies(false) {
 			if dep.GetVariableInfo().IsUnassigned() {
 				dep.GetVariableInfo().AssignID(graph.getAndIncGIndex())

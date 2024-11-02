@@ -87,16 +87,19 @@ func getTaintedFieldsListAndString(dfs []*variables.Dataflow) ([]string, string)
 	return fieldsLst, fieldsStr
 }
 
-func getIndirectDependencies(v variables.Variable, i int) ([]variables.Variable, string) {
+func getIndirectDependencies(v variables.Variable, i int) ([]variables.Variable, string, []int) {
 	blockVarsStr := ""
 
 	padding := ""
+	paddingSpace := "  "
 	for j := 0; j < i; j++ {
 		padding += "_"
+		paddingSpace += " "
 	}
 
-	visitedOp := make(map[string]bool)
 	opStr := ""
+
+	visitedOp := make(map[string]bool)
 	for _, df := range v.GetVariableInfo().GetAllDataflows() {
 		s := df.GetOpString() + "(" + df.Datastore + "), "
 		if ok := visitedOp[s]; !ok {
@@ -104,24 +107,44 @@ func getIndirectDependencies(v variables.Variable, i int) ([]variables.Variable,
 			opStr += s
 		}
 	}
-	if opStr != "" {
+
+	/* if opStr != "" {
 		opStr = "// " + opStr
+	} */
+
+	dfsWriteOps := v.GetVariableInfo().GetAllWriteDataflows()
+	dfsReadOps := v.GetVariableInfo().GetAllReadDataflows()
+	if len(dfsWriteOps) > 0 || len(dfsReadOps) > 0 {
+		writeOpsLst, writeOpsStr := getTaintedFieldsListAndString(dfsWriteOps)
+		readOpsLst, readOpsStr := getTaintedFieldsListAndString(dfsReadOps)
+		if len(dfsWriteOps) > 0 {
+			blockVarsStr += fmt.Sprintf("%s %s --> w-tainted: write(%s) {%d}", paddingSpace, blockVarsStr, writeOpsStr, len(writeOpsLst))
+		} 
+		if len(dfsReadOps) > 0 {
+			blockVarsStr += fmt.Sprintf("%s %s --> r-tainted: read(%s) {%d}", paddingSpace, blockVarsStr, readOpsStr, len(readOpsLst))
+		}
+		// the '{}' symbol resets the red color caused by the from the '-->' symbol
+		blockVarsStr += "\n"
 	}
 
-	blockVarsStr += fmt.Sprintf("[%s] (%s) %s %s\n", padding, variables.VariableTypeName(v), v.String(), opStr)
+	blockVarsStr += fmt.Sprintf("[%s] (%s) %s\n", padding, variables.VariableTypeName(v), v.String())
 
 	var deps = []variables.Variable{v}
+	var depth = []int{i}
+
 	// indirect dependencies from reference
 	for _, ref := range v.GetVariableInfo().GetReferences() {
-		indirectDeps, indirectStr := getIndirectDependencies(ref, i+1)
+		indirectDeps, indirectStr, indirectDepth := getIndirectDependencies(ref, i+1)
 		blockVarsStr += indirectStr
 		deps = append(deps, indirectDeps...)
+		depth = append(depth, indirectDepth...)
 	}
 	// direct dependencies
 	for _, dep := range v.GetDependencies() {
-		directDeps, indirectStr := getIndirectDependencies(dep, i+1)
+		directDeps, indirectStr, indirectDepth := getIndirectDependencies(dep, i+1)
 		blockVarsStr += indirectStr
 		deps = append(deps, directDeps...)
+		depth = append(depth, indirectDepth...)
 	}
 
 	/* for _, refBy := range v.GetVariableInfo().ReferencedBy {
@@ -139,7 +162,7 @@ func getIndirectDependencies(v variables.Variable, i int) ([]variables.Variable,
 		blockVarsStr += fmt.Sprintf("[%s] (%d) (%s) ref_by <%s> %s\n", padding, refBy.GetId(), variables.VariableTypeName(refBy), refBy.String(), opStr)
 	} */
 
-	return deps, blockVarsStr
+	return deps, blockVarsStr, depth
 }
 
 func (block *Block) Yaml() ([]string, string) {
@@ -147,35 +170,44 @@ func (block *Block) Yaml() ([]string, string) {
 	visited := make(map[variables.Variable]bool)
 	allBlockVarsStr := ""
 	for _, v := range block.Vars {
-		deps, blockVarsStr := getIndirectDependencies(v, 0)
+		deps, blockVarsStr, depths := getIndirectDependencies(v, 0)
 		allBlockVarsStr += blockVarsStr + "\n"
-		slices.Reverse(deps)
+		/* slices.Reverse(deps) */
 		for i, v := range deps {
-			lastIndex := len(deps) - 1
+			/* lastIndex := len(deps) - 1 */
 			if _, isVisited := visited[v]; isVisited {
 				continue
 			}
 			visited[v] = true
 
 			variableString := v.String()
-			if i != lastIndex {
+			depth := depths[i]
+
+			padding := ""
+			for j := 0; j < depth; j++ {
+				padding += "_"
+			}
+
+			/* if i != lastIndex {
 				// last index corresponds to the original variabl from where we got the parameters
 				// note that it is the last since the deps slice was reversed
 				variableString = fmt.Sprintf("(inline) (%s) %s", variables.VariableTypeName(v), variableString)
 			} else {
 				variableString = fmt.Sprintf("(%s) %s", variables.VariableTypeName(v), variableString)
-			}
+			} */
+			variableString = fmt.Sprintf("%s depth %d (%s) %s", padding, depth, variables.VariableTypeName(v), variableString)
+
 			dfsWriteOps := v.GetVariableInfo().GetAllWriteDataflows()
 			dfsReadOps := v.GetVariableInfo().GetAllReadDataflows()
 			if len(dfsWriteOps) > 0 || len(dfsReadOps) > 0 {
 				writeOpsLst, writeOpsStr := getTaintedFieldsListAndString(dfsWriteOps)
 				readOpsLst, readOpsStr := getTaintedFieldsListAndString(dfsReadOps)
 				if len(dfsWriteOps) > 0 && len(dfsReadOps) == 0 {
-					data = append(data, fmt.Sprintf("%s -->\n   w-tainted %dx: write(%s)", variableString, len(writeOpsLst), writeOpsStr))
+					data = append(data, fmt.Sprintf("%s --> w-tainted %dx: write(%s)", variableString, len(writeOpsLst), writeOpsStr))
 				} else if len(dfsWriteOps) == 0 && len(dfsReadOps) > 0 {
-					data = append(data, fmt.Sprintf("%s -->\n   r-tainted %dx: read(%s)", variableString, len(readOpsLst), readOpsStr))
+					data = append(data, fmt.Sprintf("%s --> r-tainted %dx: read(%s)", variableString, len(readOpsLst), readOpsStr))
 				} else {
-					data = append(data, fmt.Sprintf("%s -->\n   w-tainted %dx: write(%s)\n   r-tainted %dx: read(%s)", variableString, len(writeOpsLst), writeOpsStr, len(readOpsLst), readOpsStr))
+					data = append(data, fmt.Sprintf("%s --> w-tainted %dx: write(%s) --> r-tainted %dx: read(%s)", variableString, len(writeOpsLst), writeOpsStr, len(readOpsLst), readOpsStr))
 				}
 			} else {
 				data = append(data, variableString)
@@ -246,7 +278,7 @@ func (p *Package) DumpYaml() utils.OrderedProperties {
 	}
 	sort.Strings(files)
 	propsData.AddOrderedProperty("files", files)
-	
+
 	// metadata > imports (extracted from package)
 	imports := []string{}
 	for key := range p.ImportedPackages {

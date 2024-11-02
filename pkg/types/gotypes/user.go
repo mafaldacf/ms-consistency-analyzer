@@ -55,11 +55,11 @@ func (t *UserType) GetPackage() string {
 func (t *UserType) GetBasicValue() string {
 	return t.UserType.GetBasicValue()
 }
-func (t *UserType) GetNestedFieldTypes(prefix string) ([]Type, []string) {
+func (t *UserType) GetNestedFieldTypes(prefix string, noSQL bool) ([]Type, []string) {
 	if t.UserType == nil {
 		logger.Logger.Fatalf("[TYPES USER] unexpected nil underlying type for User Type %s.%s", t.PackagePath, t.Name)
 	}
-	return t.UserType.GetNestedFieldTypes(prefix)
+	return t.UserType.GetNestedFieldTypes(prefix, noSQL)
 }
 
 // ------------

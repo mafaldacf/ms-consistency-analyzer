@@ -76,11 +76,29 @@ func (t *FieldType) GetBasicValue() string {
 func (t *FieldType) AddValue(value string) {
 	t.WrappedType.AddValue(value)
 }
-func (t *FieldType) GetNestedFieldTypes(prefix string) ([]Type, []string) {
-	prefix = prefix + "." + t.FieldName
+func (t *FieldType) HasFieldTag() bool {
+	return t.FieldTag != ""
+}
+
+func (t *FieldType) GetNestedFieldName(prefix string, noSQL bool) string {
+	fieldName := t.FieldName
+	/* if noSQL && !t.HasFieldTag() {
+		fieldName = strings.ToLower(fieldName)
+	} */
+	if prefix != "" {
+		prefix += "."
+	}
+	prefix += fieldName
+	return prefix
+}
+
+// if docStyle is set to true then fields that do not have tag will have the field name returned as lower case
+// since mongodb uses lower cases as default
+func (t *FieldType) GetNestedFieldTypes(prefix string, noSQL bool) ([]Type, []string) {
+	prefix = t.GetNestedFieldName(prefix, noSQL)
 	nestedTypes := []Type{t}
 	nestedNames := []string{prefix}
-	nestedFieldTypes, nestedFieldNames := t.GetWrappedType().GetNestedFieldTypes(prefix)
+	nestedFieldTypes, nestedFieldNames := t.GetWrappedType().GetNestedFieldTypes(prefix, noSQL)
 	nestedTypes = append(nestedTypes, nestedFieldTypes...)
 	nestedNames = append(nestedNames, nestedFieldNames...)
 	return nestedTypes, nestedNames

@@ -1,3 +1,13 @@
+(*Post):
+- read <post (*postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some
+  username" string}}) (PointerVariable)>
+- read <post (*postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some
+  username" string}}) (PointerVariable)> from <post (*postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}}) (PointerVariable)>
+- read <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some
+  username" string}} (StructVariable)> from <post (*postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}}) (PointerVariable)>
+- read <PostID int64 (FieldVariable)> from <post (*postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}}) (PointerVariable)>
+- read <PostID int64 (BasicVariable)> from <post (*postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}}) (PointerVariable)>
+
 POSTS_CACHE.key:
 - write <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some
   username" string}} (StructVariable)>
@@ -94,6 +104,12 @@ POSTS_CACHE.key:
 - write <timestamp int64 (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructVariable)>
 - write <PostID int64 (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructVariable)>
 - write <PostID int64 (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructVariable)>
+- read <postIDStr string (BasicVariable)>
+- read <postIDStr string (BasicVariable)> from <postIDStr string (BasicVariable)>
+- read <postID int64 (BasicVariable)> from <postIDStr string (BasicVariable)>
+- read <ref <postID int64> @ UploadService (Reference)> from <postIDStr string (BasicVariable)>
+- read <postID int64 (BasicVariable)> from <postIDStr string (BasicVariable)>
+- read <10 int (BasicVariable)> from <postIDStr string (BasicVariable)>
 
 POSTS_CACHE.value:
 - write <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some
@@ -191,3 +207,19 @@ POSTS_CACHE.value:
 - write <timestamp int64 (BasicVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructVariable)>
 - write <PostID int64 (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructVariable)>
 - write <PostID int64 (FieldVariable)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructVariable)>
+- read <post (*postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some
+  username" string}}) (PointerVariable)>
+- read <post (*postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some
+  username" string}}) (PointerVariable)> from <post (*postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}}) (PointerVariable)>
+- read <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some
+  username" string}} (StructVariable)> from <post (*postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}}) (PointerVariable)>
+- read <PostID int64 (FieldVariable)> from <post (*postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}}) (PointerVariable)>
+- read <PostID int64 (BasicVariable)> from <post (*postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}}) (PointerVariable)>
+
+string:
+- read <postIDStr string (BasicVariable)>
+- read <postIDStr string (BasicVariable)> from <postIDStr string (BasicVariable)>
+- read <postID int64 (BasicVariable)> from <postIDStr string (BasicVariable)>
+- read <ref <postID int64> @ UploadService (Reference)> from <postIDStr string (BasicVariable)>
+- read <postID int64 (BasicVariable)> from <postIDStr string (BasicVariable)>
+- read <10 int (BasicVariable)> from <postIDStr string (BasicVariable)>

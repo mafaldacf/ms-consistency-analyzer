@@ -79,7 +79,7 @@ func (v *ServiceVariable) GetUnassaignedVariables() []Variable {
 	return nil
 }
 
-func (t *ServiceVariable) GetNestedFieldVariables(prefix string) ([]Variable, []string) {
+func (t *ServiceVariable) GetNestedFieldVariables(prefix string, noSQL bool) ([]Variable, []string) {
 	return nil, nil
 }
 

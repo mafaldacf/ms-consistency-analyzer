@@ -84,12 +84,12 @@ func (t *StructType) GetBasicValue() string {
 func (t *StructType) AddValue(value string) {
 	logger.Logger.Fatalf("[TYPES STRUCT] unable to add value for struct type %s", t.String())
 }
-func (t *StructType) GetNestedFieldTypes(prefix string) ([]Type, []string) {
+func (t *StructType) GetNestedFieldTypes(prefix string, noSQL bool) ([]Type, []string) {
 	var nestedTypes []Type
 	var nestedIDs []string
 
 	for _, f := range t.FieldTypes {
-		nestedFieldTypes, nestedFieldIDs := f.GetNestedFieldTypes(prefix)
+		nestedFieldTypes, nestedFieldIDs := f.GetNestedFieldTypes(prefix, noSQL)
 		nestedTypes = append(nestedTypes, nestedFieldTypes...)
 		nestedIDs = append(nestedIDs, nestedFieldIDs...)
 	}

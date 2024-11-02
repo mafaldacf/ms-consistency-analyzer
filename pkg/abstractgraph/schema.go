@@ -6,10 +6,10 @@ import (
 
 	"analyzer/pkg/app"
 	"analyzer/pkg/datastores"
+	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
-	"analyzer/pkg/frameworks/blueprint"
 )
 
 type DependencySet struct {
@@ -32,8 +32,11 @@ func saveUnfoldedFieldsToDatastore(variable variables.Variable, entryName string
 	datastore.Schema.AddField(objType.GetName(), objType.LongString(), variable.GetId(), datastore)
 	logger.Logger.Infof("[SCHEMA] [%s] added field (%s): %s", datastore.Name, objType.GetName(), objType.LongString())
 
+	datastore.Schema.AddUnfoldedField(objType.GetName(), objType.LongString(), variable.GetId(), datastore)
+	logger.Logger.Infof("[SCHEMA] [%s] added unfolded (entry) field (%s): %s", datastore.Name, objType.GetName(), objType.LongString())
+
 	// add nested unfolded types
-	types, names := objType.GetNestedFieldTypes(objType.GetName())
+	types, names := objType.GetNestedFieldTypes(objType.GetName(), datastore.IsNoSQLDatabase())
 	for i, t := range types {
 		name := names[i]
 		datastore.Schema.AddUnfoldedField(name, t.LongString(), 0, datastore)
@@ -64,7 +67,7 @@ func taintDataflowOp(app *app.App, variable variables.Variable, call *AbstractDa
 	var vars []variables.Variable
 	var names []string
 	if includeNestedFields {
-		vars, names = variables.GetReversedNestedFieldsAndNames(variable, fieldName)
+		vars, names = variables.GetReversedNestedFieldsAndNames(variable, fieldName, datastore.IsNoSQLDatabase(), datastore.IsQueue())
 	} else {
 		vars = []variables.Variable{variable}
 		names = []string{fieldName}
@@ -102,7 +105,8 @@ func taintDataflowReadOp(app *app.App, variable variables.Variable, call *Abstra
 
 	// taint indirect dataflow
 	rootUnfoldedField := datastore.Schema.GetRootUnfoldedField()
-	vars, names := variables.GetReversedNestedFieldsAndNames(variable, rootUnfoldedField.GetName())
+	logger.Logger.Debugf("rootUnfoldedField = %v", rootUnfoldedField)
+	vars, names := variables.GetReversedNestedFieldsAndNames(variable, rootUnfoldedField.GetName(), datastore.IsNoSQLDatabase(), datastore.IsQueue())
 
 	for i, v := range vars {
 		dbField := datastore.Schema.GetField(names[i])
@@ -121,7 +125,7 @@ func taintDataflowReadOp(app *app.App, variable variables.Variable, call *Abstra
 	fmt.Println()
 }
 
-func taintDataflowReadOpUnnamed(app *app.App, variable variables.Variable, call *AbstractDatabaseCall, datastore *datastores.Datastore, fieldName string) {
+func taintDataflowReadOpUnnamed(app *app.App, variable variables.Variable, call *AbstractDatabaseCall, datastore *datastores.Datastore, fieldName string, query bool) {
 	fmt.Printf("\n------------- TAINT READ UNNAMED DATAFLOW FOR CALL %s @ %s -------------\n\n", call.GetMethodStr(), datastore.Name)
 	fmt.Println()
 
@@ -135,13 +139,20 @@ func taintDataflowReadOpUnnamed(app *app.App, variable variables.Variable, call 
 	}
 
 	var taintedVariables []variables.Variable
+	logger.Logger.Infof("[TENTATIVE TAINT READ UNNAMED VAR] [%s] (%02d) @ %s", utils.GetType(variable), variable.GetId(), variable.LongString())
+	variable = getTargetVariableIfNoSQLCursorRead(datastore, variable)
 	deps := variable.GetNestedDependencies(false)
-	logger.Logger.Infof("[TENTATIVE TAINT READ UNNAMED VAR] [%s] (%02d) (NUM DEPS = %d) %s", utils.GetType(variable), variable.GetId(), len(deps), variable.LongString())
+	logger.Logger.Infof("[TENTATIVE TAINT READ UNNAMED VAR] [%s] NUM DEPS = %d @ %s", utils.GetType(variable), len(deps), variable.LongString())
 	for _, dep := range deps {
 		if !slices.Contains(taintedVariables, dep) {
 			typeName := dep.GetType().GetName()
-			entry := datastores.CreateEntry(typeName, typeName, 0, datastore)
-			variable.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, dep, variable, entry, false)
+
+			if query {
+				variable.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, dep, variable, rootField, false)
+			} else {
+				entry := datastores.CreateEntry(typeName, typeName, 0, datastore)
+				variable.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, dep, variable, entry, false)
+			}
 			logger.Logger.Debugf("\t\t[TAINT READ UNNAMED INDIRECT] <unnamed> ---> (%02d) %s [%s]", dep.GetId(), dep.String(), utils.GetType(dep))
 
 			taintedVariables = append(taintedVariables, dep)
@@ -154,6 +165,59 @@ func taintDataflowReadOpUnnamed(app *app.App, variable variables.Variable, call 
 	}
 
 	fmt.Println()
+}
+
+func getTargetVariableIfNoSQLCursorRead(datastore *datastores.Datastore, v variables.Variable) variables.Variable {
+	if datastore.IsNoSQLDatabase() {
+		if blueprintVariable, ok := v.(*blueprint.BlueprintBackendVariable); ok && blueprintVariable.IsNoSQLCursor() {
+			targetVariable := blueprintVariable.GetTargetVariable()
+			if ptrTargetVariable, ok := targetVariable.(*variables.PointerVariable); ok {
+				return ptrTargetVariable.PointerTo
+			} else if ifaceTargetVariable, ok := targetVariable.(*variables.InterfaceVariable); ok {
+				logger.Logger.Fatalf("TODO!!!! %s", ifaceTargetVariable.String())
+			} else {
+				logger.Logger.Fatalf("????? %s", targetVariable.String())
+			}
+		}
+	}
+	return v
+}
+
+type noSQLQueryVariable struct {
+	field string
+	value variables.Variable
+}
+
+func getUnderlyingQueryVariablesIfNoSQLCollectionRead(datastore *datastores.Datastore, variable variables.Variable) []noSQLQueryVariable {
+	if datastore.IsNoSQLDatabase() {
+		// should be a bson.D which is a slice with many (inline) structures
+		// e.g. query := bson.D{{Key: "productid", Value: productID}}
+		if sliceVariable, ok := variable.(*variables.SliceVariable); ok {
+			var queryVariables []noSQLQueryVariable
+			for _, elem := range sliceVariable.GetElements() {
+				if structVariable, ok := elem.(*variables.StructVariable); ok {
+					logger.Logger.Warnf("%v", structVariable.Fields)
+					var key, val variables.Variable
+					if len(structVariable.FieldsLst) != 0 {
+						key = structVariable.FieldsLst[0].(*variables.FieldVariable).GetWrappedVariable()
+						val = structVariable.FieldsLst[1].(*variables.FieldVariable).GetWrappedVariable()
+					} else {
+						key = structVariable.Fields["Key"].(*variables.FieldVariable).GetWrappedVariable()
+						val = structVariable.Fields["Value"].(*variables.FieldVariable).GetWrappedVariable()
+					}
+					queryVar := noSQLQueryVariable{
+						field: datastore.Schema.GetRootFieldName() + "." + key.GetType().GetBasicValue(),
+						value: val,
+					}
+					queryVariables = append(queryVariables, queryVar)
+					return queryVariables
+				}
+			}
+			return nil
+		}
+
+	}
+	return nil
 }
 
 func referenceTaintedDataflowForSingleValue(writtenVariable variables.Variable, datastore *datastores.Datastore, fieldName string) {
@@ -177,7 +241,7 @@ func referenceTaintedDataflowForSingleValue(writtenVariable variables.Variable, 
 func referenceTaintedDataflowForNestedFields(writtenVariable variables.Variable, datastore *datastores.Datastore) {
 	fmt.Printf("\n------------- REFERENCE TAINTED DATAFLOW FOR WRITTEN VARIABLE %s @ %s -------------\n\n", writtenVariable.GetType().GetName(), datastore.Name)
 	fmt.Println()
-	vars, names := variables.GetReversedNestedFieldsAndNames(writtenVariable, "")
+	vars, names := variables.GetReversedNestedFieldsAndNames(writtenVariable, "", datastore.IsNoSQLDatabase(), datastore.IsQueue())
 	for i, variable := range vars {
 		dbField := datastore.Schema.GetField(names[i])
 		deps := variable.GetNestedDependencies(false)
@@ -201,13 +265,22 @@ func BuildSchema(app *app.App, nodes []AbstractNode) {
 	}
 }
 
-func doBuildSchema(app *app.App, node AbstractNode) {
-	var writtenDatastores = make(map[string]bool, 0)
+type pendingNode struct {
+	dbCall *AbstractDatabaseCall
+	done   bool
+}
+
+var pendingNodes []*pendingNode
+var pendingDBs map[*datastores.Datastore]bool = make(map[*datastores.Datastore]bool)
+var writtenDatastores = make(map[string]bool, 0)
+
+func doBuildSchema(app *app.App, node AbstractNode) bool {
 	if dbCall, ok := node.(*AbstractDatabaseCall); ok && dbCall.ParsedCall.Method.IsRead() {
 		datastore := dbCall.DbInstance.GetDatastore()
 		if found := writtenDatastores[datastore.Name]; !found {
 			logger.Logger.Warnf("[SCHEMA] skipping read for abstract node: %s", dbCall.String())
-			return
+			pendingNodes = append(pendingNodes, &pendingNode{dbCall: dbCall})
+			return false
 		}
 		params := dbCall.GetParams()
 		returns := dbCall.GetReturns()
@@ -216,28 +289,20 @@ func doBuildSchema(app *app.App, node AbstractNode) {
 			msg := params[1]
 			taintDataflowReadOp(app, msg, dbCall, datastore, "message")
 		case datastores.NoSQL:
-			if blueprintMethod, ok := dbCall.GetParsedCall().GetMethod().(*blueprint.BackendMethod); ok {
-				if blueprintMethod.IsNoSQLCollectionCall() {
-					query := params[1]
-					taintDataflowReadOpUnnamed(app, query, dbCall, datastore, "document")
-				} else if blueprintMethod.IsNoSQLCursorCall() {
-					obj := params[1]
-					taintDataflowReadOpUnnamed(app, obj, dbCall, datastore, "document")
-				} else {
-					logger.Logger.Fatal("??")
-				}
-			}
+			cursor := returns[0]
+			rootFieldName := datastore.Schema.GetRootFieldName()
+			taintDataflowReadOpUnnamed(app, cursor, dbCall, datastore, rootFieldName, false)
 
-			result := returns[0]
-			taintDataflowReadOpUnnamed(app, result, dbCall, datastore, "document")
 			query := params[1]
-			taintDataflowReadOpUnnamed(app, query, dbCall, datastore, "document")
+			queryVars := getUnderlyingQueryVariablesIfNoSQLCollectionRead(datastore, query)
+			for _, v := range queryVars {
+				taintDataflowReadOpUnnamed(app, v.value, dbCall, datastore, v.field, true)
+			}
 		case datastores.Cache:
 			key := params[1]
-			taintDataflowReadOpUnnamed(app, key, dbCall, datastore, "key")
-			obj := returns[2]
-			taintDataflowReadOpUnnamed(app, obj, dbCall, datastore, "value")
-			logger.Logger.Fatal("EXIT!")
+			taintDataflowReadOpUnnamed(app, key, dbCall, datastore, "key", false)
+			obj := params[2]
+			taintDataflowReadOpUnnamed(app, obj, dbCall, datastore, "value", false)
 		}
 
 	}
@@ -262,7 +327,7 @@ func doBuildSchema(app *app.App, node AbstractNode) {
 			for i, param := range params {
 				logger.Logger.Debugf("BUILD SCHEMA!!! (%d) (%s)", i, utils.GetType(param))
 				if _, ok := param.(*variables.StructVariable); ok {
-					variables.GetReversedNestedFieldsAndNames(param, "")
+					variables.GetReversedNestedFieldsAndNames(param, "", datastore.IsNoSQLDatabase(), datastore.IsQueue())
 				}
 			}
 			taintDataflowOp(app, doc, dbCall, datastore, "", true)
@@ -278,6 +343,16 @@ func doBuildSchema(app *app.App, node AbstractNode) {
 			referenceTaintedDataflowForSingleValue(key, datastore, "key")
 			referenceTaintedDataflowForSingleValue(value, datastore, "value")
 		}
+
+		if _, exists := pendingDBs[datastore]; exists {
+			l := len(pendingNodes)
+			for i := 0; i < l; i++ {
+				pending := pendingNodes[i]
+				if !pending.done {
+					pending.done = doBuildSchema(app, pending.dbCall)
+				}
+			}
+		}
 	}
 
 	/* if dbCall, ok := node.(*AbstractDatabaseCall); ok && dbCall.ParsedCall.Method.IsUpdate() {
@@ -287,4 +362,5 @@ func doBuildSchema(app *app.App, node AbstractNode) {
 	for _, child := range node.GetChildren() {
 		doBuildSchema(app, child)
 	}
+	return true
 }

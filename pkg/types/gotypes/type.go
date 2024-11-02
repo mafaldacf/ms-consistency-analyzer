@@ -10,7 +10,7 @@ type Type interface {
 	GetPackage() string // package is always the real package path
 	GetBasicValue() string
 	AddValue(value string)
-	GetNestedFieldTypes(prefix string) ([]Type, []string)
+	GetNestedFieldTypes(prefix string, noSQL bool) ([]Type, []string)
 	GetLongFieldName() string
 	GetParentUserType() *UserType
 	SetParentUserType(userType *UserType)

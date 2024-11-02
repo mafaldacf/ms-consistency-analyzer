@@ -29,11 +29,13 @@ shopping_simple:
   - fmt
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
   - go.mongodb.org/mongo-driver/bson
+  - sync
 - imports (extracted from source files):
   - (backend) github.com/blueprint-uservices/blueprint/runtime/core/backend
   - context
   - fmt
   - go.mongodb.org/mongo-driver/bson
+  - sync
 - imported types:
   - .error
   - NoSQLCollection interface{NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.NoSQLCollection.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.UpdateMany(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.ReplaceOne(ctx context.Context, filter bson.D, interface{}), NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.NoSQLCollection.DeleteMany(ctx context.Context, filter bson.D)}
@@ -41,9 +43,14 @@ shopping_simple:
     NoSQLDatabase.NoSQLCursor.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
   - Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}
+  - atomic.Uint64
+  - atomic.align64
+  - atomic.noCopy
   - context.Context
   - primitive.D
   - primitive.E
+  - sync.WaitGroup
+  - sync.noCopy
 - imported constants: []
 - imported variables: []
 - declared types:
@@ -76,13 +83,24 @@ shopping_simple:
   - (*shopping_simple.CartServiceImpl).AddProductToCart(ctx context.Context, cartID string, productID string) (shopping_simple.CartProduct struct{CartID string, ProductID string, PricePerUnit int, Quantity 1 int}, error)
   - (*shopping_simple.CartServiceImpl).CreateCart(ctx context.Context, cartID string)
     (shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}, error)
+  - (*shopping_simple.CartServiceImpl).GetCart(ctx context.Context, cartID string)
+    (shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}, error)
+  - (*shopping_simple.CartServiceImpl).Run(ctx context.Context) error
+  - (*shopping_simple.CartServiceImpl).removeProduct(ctx context.Context, message shopping_simple.ProductQueueMessage struct{ProductID string, Remove bool}) error
+  - (*shopping_simple.CartServiceImpl).workerThread(ctx context.Context) error
   - (*shopping_simple.FrontendImpl).AddProductToCart(ctx context.Context, cartID string, productID string) (shopping_simple.CartProduct struct{CartID string, ProductID string, PricePerUnit int, Quantity 1 int}, error)
   - (*shopping_simple.FrontendImpl).CreateCart(ctx context.Context, cartID string)
     (shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}, error)
   - (*shopping_simple.FrontendImpl).CreateProduct(ctx context.Context, productID string, description string, pricePerUnit int, category string) (shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}, error)
+  - (*shopping_simple.FrontendImpl).DeleteProduct(ctx context.Context, productID string)
+    (bool, error)
+  - (*shopping_simple.FrontendImpl).GetAllProducts(ctx context.Context) ([]shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}, error)
+  - (*shopping_simple.FrontendImpl).GetCart(ctx context.Context, cartID string) (shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}, error)
   - (*shopping_simple.FrontendImpl).GetProduct(ctx context.Context, productID string)
     (shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}, error)
   - (*shopping_simple.ProductServiceImpl).CreateProduct(ctx context.Context, productID string, description string, pricePerUnit int, category string) (shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}, error)
+  - (*shopping_simple.ProductServiceImpl).DeleteProduct(ctx context.Context, productID string) (bool, error)
+  - (*shopping_simple.ProductServiceImpl).GetAllProducts(ctx context.Context) ([]shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}, error)
   - (*shopping_simple.ProductServiceImpl).GetProduct(ctx context.Context, productID string) (shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}, error)
   - shopping_simple.NewCartServiceImpl(ctx context.Context, product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue) (shopping_simple.CartService, error)
   - shopping_simple.NewFrontendImpl(ctx context.Context, product_service shopping_simple.ProductService, cart_service shopping_simple.CartService) (shopping_simple.Frontend, error)

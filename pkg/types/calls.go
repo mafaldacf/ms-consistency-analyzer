@@ -213,6 +213,20 @@ func (dbCall *ParsedDatabaseCall) GetParams() []variables.Variable {
 	return dbCall.Params
 }
 
+func (dbCall *ParsedDatabaseCall) GetParam(i int) variables.Variable {
+	if i >= len(dbCall.Params) {
+		logger.Logger.Fatalf("[CALLS] index (%d) out of range for parameters list in database call (%s): %v", i, dbCall.CallStr, dbCall.Params)
+	}
+	return dbCall.Params[i]
+}
+
+func (dbCall *ParsedDatabaseCall) GetReturn(i int) variables.Variable {
+	if i >= len(dbCall.Returns) {
+		logger.Logger.Fatalf("[CALLS] index (%d) out of range for returns list in database call (%s): %v", i, dbCall.CallStr, dbCall.Returns)
+	}
+	return dbCall.Returns[i]
+}
+
 func (dbCall *ParsedDatabaseCall) GetMethod() Method {
 	return dbCall.Method
 }
