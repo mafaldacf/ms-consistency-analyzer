@@ -10,13 +10,10 @@
 [___] (ServiceVariable ServiceType) product_service shopping_simple.ProductService 
 
 [] (InterfaceVariable UserType) ctx context.Context 
-[_] (Reference UserType) ref <ctx context.Context> @ Frontend 
 
-[] (BasicVariable BasicType) cartID string // write(cart_db), 
-[_] (Reference BasicType) ref <cartID string> @ Frontend // write(cart_db), 
+[] (BasicVariable BasicType) cartID string 
 
-[] (BasicVariable BasicType) productID string // write(cart_db), 
-[_] (Reference BasicType) ref <productID string> @ Frontend // write(cart_db), 
+[] (BasicVariable BasicType) productID string 
 
 [] (StructVariable UserType) product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} 
 
@@ -39,8 +36,7 @@
 [__] (FieldVariable FieldType) Key "cartid" string 
 [___] (BasicVariable BasicType) "cartid" string 
 [__] (FieldVariable FieldType) Value string 
-[___] (BasicVariable BasicType) cartID string // write(cart_db), 
-[____] (Reference BasicType) ref <cartID string> @ Frontend // write(cart_db), 
+[___] (BasicVariable BasicType) cartID string 
 
 [] (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database = cart_database, collection = cart_collection} 
 
@@ -48,13 +44,11 @@
 
 [] (StructVariable UserType) cartProduct shopping_simple.CartProduct struct{CartID string, ProductID string, PricePerUnit int, Quantity 1 int} 
 [_] (FieldVariable FieldType) CartID string 
-[__] (BasicVariable BasicType) cartID string // write(cart_db), 
-[___] (Reference BasicType) ref <cartID string> @ Frontend // write(cart_db), 
+[__] (BasicVariable BasicType) cartID string 
 [_] (FieldVariable FieldType) PricePerUnit int 
 [__] (BasicVariable BasicType) PricePerUnit int 
 [_] (FieldVariable FieldType) ProductID string 
-[__] (BasicVariable BasicType) productID string // write(cart_db), 
-[___] (Reference BasicType) ref <productID string> @ Frontend // write(cart_db), 
+[__] (BasicVariable BasicType) productID string 
 [_] (FieldVariable FieldType) Quantity 1 int 
 [__] (BasicVariable BasicType) 1 int 
 

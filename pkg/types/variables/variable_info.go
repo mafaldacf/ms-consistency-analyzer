@@ -187,8 +187,8 @@ func (vinfo *VariableInfo) MarshalJSON() ([]byte, error) {
 		refStr = v.Reference.Variable.GetVariableInfo().GetName() + fmt.Sprintf(" (%d) @ ", v.Reference.Variable.GetId()) + v.Reference.Creator
 	} */
 	return json.Marshal(&struct {
-		Name string `json:"name,omitempty"`
-		Type string `json:"type,omitempty"`
+		Name string `json:"name"`
+		Type string `json:"type"`
 		//Id   int64  `json:"id,omitempty"`
 		//Reference bool   `json:"ref,omitempty"`
 		References []*Reference `json:"refs,omitempty"`

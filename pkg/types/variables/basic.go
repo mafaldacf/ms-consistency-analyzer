@@ -1,14 +1,26 @@
 package variables
 
 import (
+	"encoding/json"
+
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
 )
 
 type BasicVariable struct {
-	Variable            `json:"-"`
-	VariableInfo        *VariableInfo `json:"variable"`
-	UnderlyingVariables []Variable    `json:"-"` // variables that influence the value of basic variables - e.g. "some_variable" in len(some_variable)
+	Variable
+	VariableInfo        *VariableInfo
+	UnderlyingVariables []Variable  // variables that influence the value of basic variables - e.g. "some_variable" in len(some_variable)
+}
+
+func (v *BasicVariable) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		VariableInfo        *VariableInfo `json:"basic"`
+		UnderlyingVariables []Variable    `json:"-"`
+	}{
+		VariableInfo:        v.VariableInfo,
+		UnderlyingVariables: v.UnderlyingVariables,
+	})
 }
 
 func (v *BasicVariable) String() string {

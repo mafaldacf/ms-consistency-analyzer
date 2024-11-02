@@ -1,14 +1,26 @@
 package variables
 
 import (
+	"encoding/json"
+
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
 )
 
 type ServiceVariable struct {
-	Variable           `json:"-"`
-	VariableInfo       *VariableInfo `json:"variable"`
-	UnderlyingVariable Variable      `json:"underlying_variable"`
+	Variable
+	VariableInfo       *VariableInfo
+	UnderlyingVariable Variable
+}
+
+func (v *ServiceVariable) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		VariableInfo       *VariableInfo `json:"service"`
+		UnderlyingVariable Variable      `json:"underlying_variable"`
+	}{
+		VariableInfo:       v.VariableInfo,
+		UnderlyingVariable: v.UnderlyingVariable,
+	})
 }
 
 func (v *ServiceVariable) String() string {

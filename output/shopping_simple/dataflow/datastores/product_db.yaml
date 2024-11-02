@@ -1,3 +1,31 @@
+(*Product):
+- read <product (*shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}) (PointerVariable)>
+- read <product (*shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}) (PointerVariable)> from <product (*shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}) (PointerVariable)>
+- read <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)> from <product (*shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}) (PointerVariable)>
+- read <product (*shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}) (PointerVariable)>
+- read <product (*shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}) (PointerVariable)> from <product (*shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}) (PointerVariable)>
+- read <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)> from <product (*shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}) (PointerVariable)>
+
+D:
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{Key "productid" string, Value string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <Key "productid" string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <"productid" string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <Value string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <productID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <productID string> @ Frontend (Reference)> from <query primitive.D (SliceVariable)>
+- read <productID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{Key "productid" string, Value string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <Key "productid" string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <"productid" string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <Value string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <productID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <productID string> @ Frontend (Reference)> from <query primitive.D (SliceVariable)>
+- read <productID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+
 PRODUCT_DB.Product:
 - write <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
 - write <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
@@ -25,3 +53,36 @@ PRODUCT_DB.Product.ProductID:
 - write <ref <productID string> @ Frontend (Reference)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
 - write <productID string (BasicVariable)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
 - write <ProductID string (FieldVariable)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)>
+
+PRODUCT_DB.document:
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{Key "productid" string, Value string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <Key "productid" string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <"productid" string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <Value string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <productID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <productID string> @ Frontend (Reference)> from <query primitive.D (SliceVariable)>
+- read <productID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)>
+- read <query primitive.D (SliceVariable)> from <query primitive.D (SliceVariable)>
+- read <struct{Key "productid" string, Value string} (StructVariable)> from <query primitive.D (SliceVariable)>
+- read <Key "productid" string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <"productid" string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <Value string (FieldVariable)> from <query primitive.D (SliceVariable)>
+- read <productID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <ref <productID string> @ Frontend (Reference)> from <query primitive.D (SliceVariable)>
+- read <productID string (BasicVariable)> from <query primitive.D (SliceVariable)>
+- read <result NoSQLCursor {database = product_database, collection = product_collection} (BlueprintBackendVariable)>
+- read <product (*shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}) (PointerVariable)>
+- read <product (*shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}) (PointerVariable)> from <product (*shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}) (PointerVariable)>
+- read <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)> from <product (*shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}) (PointerVariable)>
+- read <product (*shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}) (PointerVariable)>
+- read <product (*shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}) (PointerVariable)> from <product (*shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}) (PointerVariable)>
+- read <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructVariable)> from <product (*shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}) (PointerVariable)>
+- read <exists bool (BasicVariable)>
+- read <exists bool (BasicVariable)> from <exists bool (BasicVariable)>
+
+bool:
+- read <exists bool (BasicVariable)>
+- read <exists bool (BasicVariable)> from <exists bool (BasicVariable)>

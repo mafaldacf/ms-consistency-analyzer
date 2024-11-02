@@ -1,15 +1,27 @@
 package variables
 
 import (
+	"encoding/json"
+
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
 	"analyzer/pkg/utils"
 )
 
 type FieldVariable struct {
-	Variable        `json:"-"`
-	VariableInfo    *VariableInfo `json:"variable"`
-	WrappedVariable Variable      `json:"wrapped_variable,omitempty"`
+	Variable
+	VariableInfo    *VariableInfo
+	WrappedVariable Variable
+}
+
+func (v *FieldVariable) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		VariableInfo    *VariableInfo `json:"field"`
+		WrappedVariable Variable      `json:"wrapped_variable,omitempty"`
+	}{
+		VariableInfo:    v.VariableInfo,
+		WrappedVariable: v.WrappedVariable,
+	})
 }
 
 func (v *FieldVariable) String() string {

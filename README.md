@@ -24,6 +24,7 @@ Available applications:
 ```zsh
 go run main.go -app=postnotification
 go run main.go -app=footbar
+go run main.go -app=shopping_simple
 
 source ~/.venv/bin/activate
 pip3 install -r requirements.txt

@@ -1,6 +1,7 @@
 package variables
 
 import (
+	"encoding/json"
 	"fmt"
 	"slices"
 
@@ -10,11 +11,25 @@ import (
 )
 
 type StructVariable struct {
-	Variable     `json:"-"`
-	Origin       *Variable           `json:"-"`
-	VariableInfo *VariableInfo       `json:"variable"`
-	Fields       map[string]Variable `json:"struct_fields,omitempty"`
-	FieldsLst    []Variable          `json:"-"`
+	Variable
+	Origin       *Variable
+	VariableInfo *VariableInfo
+	Fields       map[string]Variable
+	FieldsLst    []Variable
+}
+
+func (v *StructVariable) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		Origin       *Variable           `json:"-"`
+		VariableInfo *VariableInfo       `json:"struct"`
+		Fields       map[string]Variable `json:"struct_fields,omitempty"`
+		FieldsLst    []Variable          `json:"-"`
+	}{
+		Origin:       v.Origin,
+		VariableInfo: v.VariableInfo,
+		Fields:       v.Fields,
+		FieldsLst:    v.FieldsLst,
+	})
 }
 
 func (v *StructVariable) String() string {

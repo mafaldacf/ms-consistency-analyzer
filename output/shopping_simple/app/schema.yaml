@@ -3,20 +3,8 @@ CART_DB:
 - kind: MongoDB
 - dependencies: []
 - schema:
-  - fields:
-    - document: shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
-    - Cart: shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
-    - document: shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
-    - Cart: shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
-  - unfolded_fields:
-    - Cart.CartID: string
-    - Cart.TotalQuantity: 1 int
-    - Cart.LastProductID: string
-    - Cart.Products: '[]string'
-    - Cart.CartID: string
-    - Cart.TotalQuantity: 1 int
-    - Cart.LastProductID: string
-    - Cart.Products: '[]string'
+  - fields: []
+  - unfolded_fields: []
   - foreign_fields: []
 
 PRODUCT_DB:

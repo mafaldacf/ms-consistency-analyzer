@@ -9,9 +9,42 @@ import (
 )
 
 type MapVariable struct {
-	Variable     `json:"-"`
-	VariableInfo *VariableInfo         `json:"variable"`
-	KeyValues    map[Variable]Variable `json:"map_kvs,omitempty"`
+	Variable
+	VariableInfo *VariableInfo
+	KeyValues    map[Variable]Variable
+}
+
+/* func (v *MapVariable) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		VariableInfo *VariableInfo         `json:"map"`
+		KeyValues    map[Variable]Variable `json:"map_kvs,omitempty"`
+	}{
+		VariableInfo: v.VariableInfo,
+		KeyValues:    v.KeyValues,
+	})
+} */
+
+func (v *MapVariable) MarshalJSON() ([]byte, error) {
+	type kvstruct struct {
+		Key   Variable
+		Value Variable
+	}
+
+	var kvs []kvstruct
+	for key, value := range v.KeyValues {
+		kvs = append(kvs, kvstruct{
+			Key:   key,
+			Value: value,
+		})
+	}
+
+	return json.MarshalIndent(&struct {
+		VariableInfo *VariableInfo `json:"map"`
+		KeyValues    []kvstruct    `json:"key_values"`
+	}{
+		VariableInfo: v.VariableInfo,
+		KeyValues:    kvs,
+	}, "", " ")
 }
 
 func (v *MapVariable) String() string {
@@ -115,29 +148,6 @@ func (v *MapVariable) DeepCopy() Variable {
 		copy.KeyValues[k].GetVariableInfo().SetParent(copy.KeyValues[k], copy)
 	}
 	return copy
-}
-
-func (v *MapVariable) MarshalJSON() ([]byte, error) {
-	type kvstruct struct {
-		Key   Variable
-		Value Variable
-	}
-
-	var kvs []kvstruct
-	for key, value := range v.KeyValues {
-		kvs = append(kvs, kvstruct{
-			Key:   key,
-			Value: value,
-		})
-	}
-
-	return json.MarshalIndent(&struct {
-		VariableInfo *VariableInfo `json:"variable"`
-		KeyValues    []kvstruct    `json:"key_values"`
-	}{
-		VariableInfo: v.VariableInfo,
-		KeyValues:    kvs,
-	}, "", " ")
 }
 
 func (v *MapVariable) AddReferenceWithID(target Variable, creator string) {

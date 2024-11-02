@@ -1,14 +1,26 @@
 package variables
 
 import (
+	"encoding/json"
+
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
 )
 
 type GenericVariable struct {
-	Variable     `json:"-"`
-	VariableInfo *VariableInfo `json:"variable"`
-	Params       []Variable    `json:"generic_params,omitempty"`
+	Variable
+	VariableInfo *VariableInfo
+	Params       []Variable
+}
+
+func (v *GenericVariable) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		VariableInfo *VariableInfo `json:"generic"`
+		Params       []Variable    `json:"generic_params,omitempty"`
+	}{
+		VariableInfo: v.VariableInfo,
+		Params:       v.Params,
+	})
 }
 
 func (v *GenericVariable) String() string {

@@ -341,6 +341,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		}
 	case *ast.UnaryExpr:
 		if e.Op == token.AND { // e.g. &post
+			// creates a pointer to the variable
 			variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, nil, inAssignment)
 			ptrType := &gotypes.PointerType{
 				PointerTo: variable.GetType(),
@@ -356,8 +357,13 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			variable.GetVariableInfo().SetParent(variable, ptrVariable)
 			return ptrVariable, packageType
 		} else if e.Op == token.MUL { // e.g. *post
+			// dereferences the pointer and gets the value of the variable
 			variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, nil, inAssignment)
-			addrType := &gotypes.AddressType{
+			if ptrVariable, ok := variable.(*variables.PointerVariable); ok {
+				return ptrVariable.PointerTo, packageType
+			}
+			logger.Logger.Fatalf("[LOOKUP] [%s] unexpected variable (%s) for unary token '*': %s", service.GetName(), utils.GetType(variable), variable.LongString())
+			/* addrType := &gotypes.AddressType{
 				AddressOf: variable.GetType(),
 			}
 			pointerVariable := &variables.PointerVariable{
@@ -369,7 +375,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 				},
 			}
 			variable.GetVariableInfo().SetParent(variable, pointerVariable)
-			return pointerVariable, packageType
+			return pointerVariable, packageType */
 
 		} else {
 			logger.Logger.Fatalf("unknown token %v for unary expr %v", e.Op, e)

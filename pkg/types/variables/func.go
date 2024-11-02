@@ -1,14 +1,26 @@
 package variables
 
 import (
+	"encoding/json"
+
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
 )
 
 type FuncVariable struct {
-	Variable     `json:"-"`
-	VariableInfo *VariableInfo `json:"variable"`
+	Variable 
+	VariableInfo *VariableInfo 
 	Name         string
+}
+
+func (v *FuncVariable) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		VariableInfo *VariableInfo `json:"func"`
+		Name         string        `json:"name"`
+	}{
+		VariableInfo: v.VariableInfo,
+		Name:         v.Name,
+	})
 }
 
 func (v *FuncVariable) String() string {

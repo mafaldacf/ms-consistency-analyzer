@@ -7,5 +7,5 @@
 
 [] (InterfaceVariable UserType) ctx context.Context 
 
-[] (BasicVariable BasicType) productID string 
+[] (BasicVariable BasicType) productID string // read(product_db), 
 

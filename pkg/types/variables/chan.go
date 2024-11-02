@@ -1,13 +1,23 @@
 package variables
 
 import (
+	"encoding/json"
+
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
 )
 
 type ChanVariable struct {
-	Variable     `json:"-"`
-	VariableInfo *VariableInfo `json:"variable"`
+	Variable
+	VariableInfo *VariableInfo
+}
+
+func (v *ChanVariable) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		VariableInfo        *VariableInfo `json:"chan"`
+	}{
+		VariableInfo:        v.VariableInfo,
+	})
 }
 
 func (v *ChanVariable) String() string {

@@ -7,12 +7,8 @@
   - (inline) (StructVariable UserType) shopping_simple.FrontendImpl struct{product_service shopping_simple.ProductService, cart_service shopping_simple.CartService}
   - (PointerVariable PointerType) f (*shopping_simple.FrontendImpl struct{product_service shopping_simple.ProductService, cart_service shopping_simple.CartService})
   - (InterfaceVariable UserType) ctx context.Context
-  - |-
-    (BasicVariable BasicType) cartID string -->
-       w-tainted 1x: write(cart_db.Cart.CartID)
-  - |-
-    (BasicVariable BasicType) productID string -->
-       w-tainted 1x: write(cart_db.Cart.Products)
+  - (BasicVariable BasicType) cartID string
+  - (BasicVariable BasicType) productID string
 
 (*FrontendImpl).CreateCart(ctx context.Context, cartID string):
   block 0 (Body):
@@ -23,9 +19,7 @@
   - (inline) (StructVariable UserType) shopping_simple.FrontendImpl struct{product_service shopping_simple.ProductService, cart_service shopping_simple.CartService}
   - (PointerVariable PointerType) f (*shopping_simple.FrontendImpl struct{product_service shopping_simple.ProductService, cart_service shopping_simple.CartService})
   - (InterfaceVariable UserType) ctx context.Context
-  - |-
-    (BasicVariable BasicType) cartID string -->
-       w-tainted 1x: write(cart_db.Cart.CartID)
+  - (BasicVariable BasicType) cartID string
 
 (*FrontendImpl).CreateProduct(ctx context.Context, productID string, description string, pricePerUnit int, category string):
   block 0 (Body):
@@ -49,7 +43,7 @@
     (BasicVariable BasicType) category string -->
        w-tainted 1x: write(product_db.Product.Category)
 
-(*FrontendImpl).DeleteProduct(ctx context.Context, productID string):
+(*FrontendImpl).GetProduct(ctx context.Context, productID string):
   block 0 (Body):
   - (inline) (ServiceVariable ServiceType) product_service shopping_simple.ProductService
   - (inline) (FieldVariable FieldType) product_service shopping_simple.ProductService
@@ -58,28 +52,9 @@
   - (inline) (StructVariable UserType) shopping_simple.FrontendImpl struct{product_service shopping_simple.ProductService, cart_service shopping_simple.CartService}
   - (PointerVariable PointerType) f (*shopping_simple.FrontendImpl struct{product_service shopping_simple.ProductService, cart_service shopping_simple.CartService})
   - (InterfaceVariable UserType) ctx context.Context
-  - (BasicVariable BasicType) productID string
-
-(*FrontendImpl).GetAllProducts(ctx context.Context):
-  block 0 (Body):
-  - (inline) (ServiceVariable ServiceType) product_service shopping_simple.ProductService
-  - (inline) (FieldVariable FieldType) product_service shopping_simple.ProductService
-  - (inline) (ServiceVariable ServiceType) cart_service shopping_simple.CartService
-  - (inline) (FieldVariable FieldType) cart_service shopping_simple.CartService
-  - (inline) (StructVariable UserType) shopping_simple.FrontendImpl struct{product_service shopping_simple.ProductService, cart_service shopping_simple.CartService}
-  - (PointerVariable PointerType) f (*shopping_simple.FrontendImpl struct{product_service shopping_simple.ProductService, cart_service shopping_simple.CartService})
-  - (InterfaceVariable UserType) ctx context.Context
-
-(*FrontendImpl).GetCart(ctx context.Context, cartID string):
-  block 0 (Body):
-  - (inline) (ServiceVariable ServiceType) product_service shopping_simple.ProductService
-  - (inline) (FieldVariable FieldType) product_service shopping_simple.ProductService
-  - (inline) (ServiceVariable ServiceType) cart_service shopping_simple.CartService
-  - (inline) (FieldVariable FieldType) cart_service shopping_simple.CartService
-  - (inline) (StructVariable UserType) shopping_simple.FrontendImpl struct{product_service shopping_simple.ProductService, cart_service shopping_simple.CartService}
-  - (PointerVariable PointerType) f (*shopping_simple.FrontendImpl struct{product_service shopping_simple.ProductService, cart_service shopping_simple.CartService})
-  - (InterfaceVariable UserType) ctx context.Context
-  - (BasicVariable BasicType) cartID string
+  - |-
+    (BasicVariable BasicType) productID string -->
+       r-tainted 1x: read(product_db.string)
 
 .NewCartServiceImpl(ctx context.Context, product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue)
 :

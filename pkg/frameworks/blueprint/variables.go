@@ -1,13 +1,23 @@
 package blueprint
 
 import (
+	"encoding/json"
+
 	"analyzer/pkg/types/gotypes"
 	"analyzer/pkg/types/variables"
 )
 
 type BlueprintBackendVariable struct {
-	variables.Variable `json:"-"`
-	VariableInfo       *variables.VariableInfo `json:"variable"`
+	variables.Variable
+	VariableInfo *variables.VariableInfo
+}
+
+func (v *BlueprintBackendVariable) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		VariableInfo *variables.VariableInfo `json:"blueprint_backend"`
+	}{
+		VariableInfo: v.VariableInfo,
+	})
 }
 
 func (v *BlueprintBackendVariable) IsNoSQLCollection() bool {

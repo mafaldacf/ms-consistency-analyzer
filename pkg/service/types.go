@@ -118,6 +118,7 @@ func (node *Service) GetImplVariable() variables.Variable {
 }
 
 func (node *Service) SetImplVariableWithType(v variables.Variable) {
+	logger.Logger.Debugf("[SERVICE] [%s] set impl variable (%s): %s", node.GetName(), utils.GetType(v), v.LongString())
 	v = variables.UnwrapAddressVariable(v)
 	t := v.GetType()
 
@@ -125,7 +126,7 @@ func (node *Service) SetImplVariableWithType(v variables.Variable) {
 		node.ImplVariable = ptrVariable.GetPointerTo()
 		t = ptrVariable.GetPointerType().GetPointerTo()
 	} else {
-		logger.Logger.Fatalf("[SERVICE] [%s] unexpected type for impl (%s): %s", node.GetName(), utils.GetType(t), t.String())
+		logger.Logger.Fatalf("[SERVICE] [%s] unexpected type for impl (%s) for variable (%s): %s", node.GetName(), utils.GetType(t), utils.GetType(v), t.String())
 	}
 
 	if userType, ok := t.(*gotypes.UserType); ok {

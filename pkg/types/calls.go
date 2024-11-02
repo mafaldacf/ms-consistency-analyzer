@@ -35,21 +35,22 @@ type ParsedCall struct {
 }
 
 func (call ParsedCall) DeepCopy() ParsedCall {
+	// we actually don't need to deep copy the CFG block
+	// what we need is to cpy the parsed call's params and returns
+	// since they are the ones that are looked up for the references between abstract nodes
+	var newParams []variables.Variable
+	for _, v := range call.Params {
+		newParams = append(newParams, v.DeepCopy())
+	}
+
 	newCall := ParsedCall{
 		Ast:     call.Ast,
 		CallStr: call.CallStr,
 		Name:    call.Name,
 		Pos:     call.Pos,
 		Method:  call.Method,
-		Params:  nil,
+		Params:  newParams,
 		Returns: call.Returns, //TODO: set nil
-	}
-
-	// we actually don't need to deep copy the CFG block
-	// what we need is to cpy the parsed call's params and returns
-	// since they are the ones that are looked up for the references between abstract nodes
-	for _, v := range newCall.Params {
-		newCall.Params = append(newCall.Params, v.DeepCopy())
 	}
 
 	return newCall

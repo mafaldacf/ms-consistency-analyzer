@@ -1,15 +1,27 @@
 package variables
 
 import (
+	"encoding/json"
+
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
 	"analyzer/pkg/utils"
 )
 
 type AddressVariable struct {
-	Variable     `json:"-"`
-	VariableInfo *VariableInfo `json:"variable"`
-	AddressOf    Variable      `json:"addr_of,omitempty"`
+	Variable
+	VariableInfo *VariableInfo
+	AddressOf    Variable
+}
+
+func (v *AddressVariable) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		VariableInfo *VariableInfo `json:"address"`
+		AddressOf    Variable      `json:"addr_of,omitempty"`
+	}{
+		VariableInfo: v.VariableInfo,
+		AddressOf:    v.AddressOf,
+	})
 }
 
 func (v *AddressVariable) String() string {
@@ -36,7 +48,7 @@ func (v *AddressVariable) GetVariableInfo() *VariableInfo {
 }
 
 func (v *AddressVariable) GetAddressOf() Variable {
-	logger.Logger.Debugf("[VARS ADDRESS] getting addressOf variable for pointer: %s", v.String())
+	logger.Logger.Debugf("[VARS ADDRESS] getting addressOf variable for address variable: %s", v.String())
 	if v.AddressOf == nil {
 		logger.Logger.Fatalf("[VARS ADDRESS] unexpected nil address to variable in address variable (%s)", v.String())
 	}

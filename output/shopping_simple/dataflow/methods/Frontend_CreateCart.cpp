@@ -7,5 +7,5 @@
 
 [] (InterfaceVariable UserType) ctx context.Context 
 
-[] (BasicVariable BasicType) cartID string // write(cart_db), 
+[] (BasicVariable BasicType) cartID string 
 

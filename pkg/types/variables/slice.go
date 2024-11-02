@@ -1,15 +1,27 @@
 package variables
 
 import (
+	"encoding/json"
+
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
 	"analyzer/pkg/utils"
 )
 
 type SliceVariable struct {
-	Variable     `json:"-"`
-	VariableInfo *VariableInfo `json:"variable"`
-	Elements     []Variable    `json:"slice_variables,omitempty"`
+	Variable
+	VariableInfo *VariableInfo
+	Elements     []Variable
+}
+
+func (v *SliceVariable) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		VariableInfo *VariableInfo `json:"slice"`
+		Elements     []Variable    `json:"slice_variables,omitempty"`
+	}{
+		VariableInfo: v.VariableInfo,
+		Elements:     v.Elements,
+	})
 }
 
 func (v *SliceVariable) GetVariableInfo() *VariableInfo {

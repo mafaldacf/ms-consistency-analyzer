@@ -6,33 +6,30 @@
 [___] (BlueprintBackendVariable BlueprintBackendType) product_queue Queue 
 
 [] (InterfaceVariable UserType) ctx context.Context 
-[_] (Reference UserType) ref <ctx context.Context> @ CartService 
-[__] (Reference UserType) ref <ctx context.Context> @ Frontend 
+[_] (Reference UserType) ref <ctx context.Context> @ Frontend 
 
-[] (BasicVariable BasicType) productID string 
-[_] (Reference BasicType) ref <productID string> @ CartService // write(cart_db), 
-[__] (Reference BasicType) ref <productID string> @ Frontend // write(cart_db), 
+[] (BasicVariable BasicType) productID string // read(product_db), 
+[_] (Reference BasicType) ref <productID string> @ Frontend // read(product_db), 
 
-[] (StructVariable UserType) product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} 
+[] (StructVariable UserType) product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} // read(product_db), 
 
 [] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = product_database, collection = product_collection} 
 
 [] (InterfaceVariable UserType) _ .error 
 
-[] (SliceVariable UserType) query primitive.D 
-[_] (StructVariable StructType) struct{Key "productid" string, Value string} 
-[__] (FieldVariable FieldType) Key "productid" string 
-[___] (BasicVariable BasicType) "productid" string 
-[__] (FieldVariable FieldType) Value string 
-[___] (BasicVariable BasicType) productID string 
-[____] (Reference BasicType) ref <productID string> @ CartService // write(cart_db), 
-[_____] (Reference BasicType) ref <productID string> @ Frontend // write(cart_db), 
+[] (SliceVariable UserType) query primitive.D // read(product_db), 
+[_] (StructVariable StructType) struct{Key "productid" string, Value string} // read(product_db), 
+[__] (FieldVariable FieldType) Key "productid" string // read(product_db), 
+[___] (BasicVariable BasicType) "productid" string // read(product_db), 
+[__] (FieldVariable FieldType) Value string // read(product_db), 
+[___] (BasicVariable BasicType) productID string // read(product_db), 
+[____] (Reference BasicType) ref <productID string> @ Frontend // read(product_db), 
 
-[] (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database = product_database, collection = product_collection} 
+[] (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database = product_database, collection = product_collection} // read(product_db), 
 
 [] (InterfaceVariable UserType) err .error 
 
-[] (BasicVariable BasicType) exists bool 
+[] (BasicVariable BasicType) exists bool // read(product_db), 
 
 [] (InterfaceVariable UserType) err .error 
 

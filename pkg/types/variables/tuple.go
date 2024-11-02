@@ -1,14 +1,26 @@
 package variables
 
 import (
+	"encoding/json"
+
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
 )
 
 type TupleVariable struct {
-	Variable     `json:"-"`
-	VariableInfo *VariableInfo `json:"variable"`
-	Variables    []Variable    `json:"tuple_variables,omitempty"`
+	Variable
+	VariableInfo *VariableInfo
+	Variables    []Variable
+}
+
+func (v *TupleVariable) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		VariableInfo *VariableInfo `json:"tuple"`
+		Variables    []Variable    `json:"tuple_variables,omitempty"`
+	}{
+		VariableInfo: v.VariableInfo,
+		Variables:    v.Variables,
+	})
 }
 
 func (v *TupleVariable) GetVariableInfo() *VariableInfo {

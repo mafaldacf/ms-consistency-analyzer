@@ -1,14 +1,26 @@
 package variables
 
 import (
+	"encoding/json"
+
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
 )
 
 type PointerVariable struct {
-	Variable     `json:"-"`
-	VariableInfo *VariableInfo `json:"variable"`
-	PointerTo    Variable      `json:"ptr_to,omitempty"`
+	Variable
+	VariableInfo *VariableInfo
+	PointerTo    Variable
+}
+
+func (v *PointerVariable) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		VariableInfo *VariableInfo `json:"pointer"`
+		PointerTo    Variable      `json:"ptr_to,omitempty"`
+	}{
+		VariableInfo: v.VariableInfo,
+		PointerTo:    v.PointerTo,
+	})
 }
 
 func (v *PointerVariable) String() string {

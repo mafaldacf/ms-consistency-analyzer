@@ -1,15 +1,27 @@
 package variables
 
 import (
+	"encoding/json"
+
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
 	"analyzer/pkg/utils"
 )
 
 type ArrayVariable struct {
-	Variable     `json:"-"`
-	VariableInfo *VariableInfo `json:"variable"`
-	Elements     []Variable    `json:"array_elems,omitempty"`
+	Variable
+	VariableInfo *VariableInfo
+	Elements     []Variable
+}
+
+func (v *ArrayVariable) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		VariableInfo *VariableInfo `json:"array"`
+		Elements     []Variable    `json:"array_elems,omitempty"`
+	}{
+		VariableInfo: v.VariableInfo,
+		Elements:     v.Elements,
+	})
 }
 
 func (v *ArrayVariable) String() string {
@@ -67,7 +79,6 @@ func (v *ArrayVariable) AppendElements(varElements Variable) {
 func (v *ArrayVariable) GetId() int64 {
 	return v.VariableInfo.GetId()
 }
-
 
 func (v *ArrayVariable) GetType() gotypes.Type {
 	if v.VariableInfo.GetType() == nil {
