@@ -81,7 +81,7 @@ func (service *Service) RegisterFields() {
 		for idx, fieldVariable := range structVar.GetFieldVariablesLst() {
 			fieldName := fieldVariable.GetFieldType().GetFieldName()
 			field := service.computeServiceFieldFromVariable(fieldVariable, fieldName, idx)
-			service.AddField(fieldName, field)
+			service.AddOrGetField(fieldName, field)
 		}
 	}
 
@@ -224,6 +224,7 @@ func (service *Service) attachInternalMethod(parsedMethod *types.ParsedMethod) {
 func (service *Service) attachExportedMethod(parsedMethod *types.ParsedMethod) {
 	service.ExposedMethods[parsedMethod.Name] = parsedMethod
 	parsedMethod.AttachService(service.GetName())
+	service.ExposedMethodsLst = append(service.ExposedMethodsLst, parsedMethod)
 	logger.Logger.Infof("[PARSER] [%s] attached exposed method: %s", service.Name, parsedMethod.String())
 	//logger.Logger.Warnf("[PARSER] [%s] exposed methods list: %v", service.Name, service.ExposedMethods)
 }

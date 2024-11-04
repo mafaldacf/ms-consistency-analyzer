@@ -161,7 +161,7 @@ func (t *StructType) UpdateFieldAtIfExists(index int, fieldType *FieldType) {
 	t.FieldTypes[index] = fieldType
 }
 
-func (t *StructType) AddFieldType(field *FieldType) {
+func (t *StructType) AddOrGetFieldType(field *FieldType) {
 	t.FieldTypes = append(t.FieldTypes, field)
 }
 

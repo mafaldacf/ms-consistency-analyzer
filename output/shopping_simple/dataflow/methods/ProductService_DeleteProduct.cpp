@@ -6,8 +6,10 @@
 [___] (BlueprintBackendVariable BlueprintBackendType) product_queue Queue
 
 [] (InterfaceVariable UserType) ctx context.Context
+[_] (Reference UserType) ref <ctx context.Context> @ Frontend
 
 [] (BasicVariable BasicType) productID string
+[_] (Reference BasicType) ref <productID string> @ Frontend
 
 [] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = product_database, collection = product_collection}
 
@@ -19,6 +21,7 @@
 [___] (BasicVariable BasicType) "productid" string
 [__] (FieldVariable FieldType) Value string
 [___] (BasicVariable BasicType) productID string
+[____] (Reference BasicType) ref <productID string> @ Frontend
 
 [] (InterfaceVariable UserType) err .error
 

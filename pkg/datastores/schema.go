@@ -30,13 +30,25 @@ func (s *Schema) GetRootFieldName() string {
 	return s.Fields[1].GetName() //FIXME!
 }
 
-func (s *Schema) AddField(name string, t string, id int64, datastore *Datastore) Field {
+func (s *Schema) AddOrGetField(name string, t string, id int64, datastore *Datastore) Field {
+	for _, field := range s.Fields {
+		if field.GetName() == name && field.GetDatastore() == datastore.GetName() { // last condition of datastore is just for sanity check
+			return field
+		}
+	}
+
 	e := CreateEntry(name, t, id, datastore)
 	s.Fields = append(s.Fields, e)
 	return e
 }
 
-func (s *Schema) AddUnfoldedField(name string, t string, id int64, datastore *Datastore) Field {
+func (s *Schema) AddOrGetUnfoldedField(name string, t string, id int64, datastore *Datastore) Field {
+	for _, field := range s.UnfoldedFields {
+		if field.GetName() == name && field.GetDatastore() == datastore.GetName() { // last condition of datastore is just for sanity check
+			return field
+		}
+	}
+
 	e := CreateEntry(name, t, id, datastore)
 	s.UnfoldedFields = append(s.UnfoldedFields, e)
 	return e

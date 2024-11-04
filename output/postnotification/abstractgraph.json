@@ -784,20 +784,6 @@
                           "Key": {
                             "basic": {
                               "name": "",
-                              "type": "\"ReqID\" string"
-                            }
-                          },
-                          "Value": {
-                            "interface": {
-                              "name": "ReqID",
-                              "type": "interface{}"
-                            }
-                          }
-                        },
-                        {
-                          "Key": {
-                            "basic": {
-                              "name": "",
                               "type": "\"PostID\" string"
                             }
                           },
@@ -818,6 +804,20 @@
                           "Value": {
                             "interface": {
                               "name": "Timestamp",
+                              "type": "interface{}"
+                            }
+                          }
+                        },
+                        {
+                          "Key": {
+                            "basic": {
+                              "name": "",
+                              "type": "\"ReqID\" string"
+                            }
+                          },
+                          "Value": {
+                            "interface": {
+                              "name": "ReqID",
                               "type": "interface{}"
                             }
                           }

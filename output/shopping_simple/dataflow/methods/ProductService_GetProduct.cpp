@@ -16,7 +16,7 @@
 [_] (Reference BasicType) ref <productID string> @ Frontend
      --> w-tainted: write(cart_db.Cart.LastProductID, cart_db.Cart.Products) {2}         --> w-tainted: write(cart_db.Cart.LastProductID, cart_db.Cart.Products) {2} --> r-tainted: read(product_db.Product.ProductID) {1}
 [_] (Reference BasicType) ref <productID string> @ CartService
-      --> w-tainted: write(cart_db.Cart.Products) {1}           --> w-tainted: write(cart_db.Cart.Products) {1} --> r-tainted: read(product_db.Product.ProductID) {1}
+      --> w-tainted: write(cart_db.Cart.LastProductID) {1}           --> w-tainted: write(cart_db.Cart.LastProductID) {1} --> r-tainted: read(product_db.Product.ProductID) {1}
 [__] (Reference BasicType) ref <productID string> @ Frontend
 
     --> r-tainted: read(product_db.Product) {1}
@@ -37,7 +37,7 @@
 [____] (Reference BasicType) ref <productID string> @ Frontend
         --> w-tainted: write(cart_db.Cart.LastProductID, cart_db.Cart.Products) {2}               --> w-tainted: write(cart_db.Cart.LastProductID, cart_db.Cart.Products) {2} --> r-tainted: read(product_db.Product.ProductID) {1}
 [____] (Reference BasicType) ref <productID string> @ CartService
-         --> w-tainted: write(cart_db.Cart.Products) {1}                 --> w-tainted: write(cart_db.Cart.Products) {1} --> r-tainted: read(product_db.Product.ProductID) {1}
+         --> w-tainted: write(cart_db.Cart.LastProductID) {1}                 --> w-tainted: write(cart_db.Cart.LastProductID) {1} --> r-tainted: read(product_db.Product.ProductID) {1}
 [_____] (Reference BasicType) ref <productID string> @ Frontend
 
     --> r-tainted: read(product_db.Product) {1}

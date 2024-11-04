@@ -62,9 +62,9 @@ func WrapToFieldVariable(variable Variable, structVariable *StructVariable, addT
 		}
 	}
 	if addTypeToStruct {
-		structVariable.AddFieldVariableAndType(fieldVariable)
+		structVariable.AddOrGetFieldVariableAndType(fieldVariable)
 	} else {
-		structVariable.AddFieldVariable(fieldVariable)
+		structVariable.AddOrGetFieldVariable(fieldVariable)
 	}
 }
 

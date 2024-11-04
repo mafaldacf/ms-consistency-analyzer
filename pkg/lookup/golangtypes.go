@@ -216,7 +216,7 @@ func ComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type, computeIf
 				FieldName:   name,
 				FieldTag:    e.Tag(i),
 			}
-			structType.AddFieldType(fieldType)
+			structType.AddOrGetFieldType(fieldType)
 		}
 		return structType
 	case *golangtypes.Basic:

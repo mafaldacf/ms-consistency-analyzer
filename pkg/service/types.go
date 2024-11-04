@@ -53,6 +53,10 @@ type Service struct {
 	Constructor         *types.ParsedMethod
 
 	QueueField bool
+
+	// helps tracking which ones appear first so we can then build schema
+	// -> THIS COULD BE IMPROVED!! BECAUSE IT IS TRACKING THE ORDER OF IMPLEMENTATION AND NOT THE ORDER OF DEFINITION
+	ExposedMethodsLst []*types.ParsedMethod
 }
 
 func (node *Service) GetDatastoreFieldIfExists(name string) *types.DatabaseField {
@@ -73,7 +77,7 @@ func (node *Service) GetFieldIfExists(name string) types.Field {
 	return nil
 }
 
-func (node *Service) AddField(name string, field types.Field) {
+func (node *Service) AddOrGetField(name string, field types.Field) {
 	node.Fields[name] = field
 }
 

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"slices"
 
+	/* "github.com/golang-collections/collections/stack" */
+
 	"analyzer/pkg/app"
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/frameworks/blueprint"
@@ -20,26 +22,26 @@ type DependencySet struct {
 
 func saveFieldToDatastore(variable variables.Variable, entryName string, datastore *datastores.Datastore) {
 	objType := variable.GetType()
-	datastore.Schema.AddField(entryName, objType.GetName(), variable.GetId(), datastore)
+	datastore.Schema.AddOrGetField(entryName, objType.GetName(), variable.GetId(), datastore)
 	logger.Logger.Infof("[SCHEMA] [%s] added entry (%s): %s", datastore.Name, entryName, objType.LongString())
 }
 
 func saveUnfoldedFieldsToDatastore(variable variables.Variable, entryName string, datastore *datastores.Datastore) {
 	objType := variable.GetType()
-	datastore.Schema.AddField(entryName, objType.LongString(), variable.GetId(), datastore)
+	datastore.Schema.AddOrGetField(entryName, objType.LongString(), variable.GetId(), datastore)
 	logger.Logger.Infof("[SCHEMA] [%s] added entry (%s): %s", datastore.Name, entryName, objType.LongString())
 
-	datastore.Schema.AddField(objType.GetName(), objType.LongString(), variable.GetId(), datastore)
+	datastore.Schema.AddOrGetField(objType.GetName(), objType.LongString(), variable.GetId(), datastore)
 	logger.Logger.Infof("[SCHEMA] [%s] added field (%s): %s", datastore.Name, objType.GetName(), objType.LongString())
 
-	datastore.Schema.AddUnfoldedField(objType.GetName(), objType.LongString(), variable.GetId(), datastore)
+	datastore.Schema.AddOrGetUnfoldedField(objType.GetName(), objType.LongString(), variable.GetId(), datastore)
 	logger.Logger.Infof("[SCHEMA] [%s] added unfolded (entry) field (%s): %s", datastore.Name, objType.GetName(), objType.LongString())
 
 	// add nested unfolded types
 	types, names := objType.GetNestedFieldTypes(objType.GetName(), datastore.IsNoSQLDatabase())
 	for i, t := range types {
 		name := names[i]
-		datastore.Schema.AddUnfoldedField(name, t.LongString(), 0, datastore)
+		datastore.Schema.AddOrGetUnfoldedField(name, t.LongString(), 0, datastore)
 		logger.Logger.Infof("[SCHEMA] [%s] added nested field (%s): %s", datastore.GetName(), name, t.LongString())
 	}
 }
@@ -258,30 +260,65 @@ func referenceTaintedDataflowForNestedFields(writtenVariable variables.Variable,
 	fmt.Println()
 }
 
-func BuildSchema(app *app.App, nodes []AbstractNode) {
-	for _, entryNode := range nodes {
-		logger.Logger.Infof(">>>>>>>>>>>>>>>>> DO BUILD SCHEMA FOR NODE: %v <<<<<<<<<<<<<<<<<<<", entryNode.GetMethodStr())
-		doBuildSchema(app, entryNode)
+/* var pendingNodes *stack.Stack
+
+func BuildSchema2(app *app.App, entryNodes []AbstractNode) {
+	pendingNodes = stack.New()
+	for _, entry := range entryNodes {
+		pendingNodes.Push(entry)
 	}
+	for {
+		node := pendingNodes.Pop().(*AbstractNode)
+		if pendingNodes.Len() == 0 {
+			break
+		}
+	}
+} */
+
+func BuildSchema(app *app.App, frontends []string, entryNodes []AbstractNode) {
+	visited := make(map[AbstractNode]bool, 0)
+	for _, frontend := range frontends {
+		for _, exposedMethod := range app.Services[frontend].ExposedMethodsLst {
+			for _, entry := range entryNodes {
+				if entry.GetName() == exposedMethod.GetName() {
+					if _, isVisited := visited[entry]; !isVisited {
+						doBuildSchema(app, entry)
+						visited[entry] = true
+					}
+				}
+			}
+		}
+	}
+
+	/* logger.Logger.Debug()
+	for i, pendingNode := range pendingNodes {
+		logger.Logger.Debugf("[%d] pending node %s ", i, pendingNode.dbCall.String())
+	}
+	logger.Logger.Info()
+	for i, node := range visitedNodes {
+		logger.Logger.Infof("[%d] visited node %s ", i, node.String())
+	} */
 }
 
-type pendingNode struct {
+/* type pendingNode struct {
 	dbCall *AbstractDatabaseCall
 	done   bool
 }
 
 var pendingNodes []*pendingNode
-var pendingDBs map[*datastores.Datastore]bool = make(map[*datastores.Datastore]bool)
+var pendingDBs map[*datastores.Datastore]bool = make(map[*datastores.Datastore]bool) */
+
+var visitedNodes []AbstractNode
 var writtenDatastores = make(map[string]bool, 0)
 
 func doBuildSchema(app *app.App, node AbstractNode) bool {
 	if dbCall, ok := node.(*AbstractDatabaseCall); ok && dbCall.ParsedCall.Method.IsRead() {
 		datastore := dbCall.DbInstance.GetDatastore()
-		if found := writtenDatastores[datastore.Name]; !found {
+		/* if found := writtenDatastores[datastore.Name]; !found {
 			logger.Logger.Warnf("[SCHEMA] skipping read for abstract node: %s", dbCall.String())
 			pendingNodes = append(pendingNodes, &pendingNode{dbCall: dbCall})
 			return false
-		}
+		} */
 		params := dbCall.GetParams()
 		returns := dbCall.GetReturns()
 		switch datastore.Type {
@@ -344,7 +381,7 @@ func doBuildSchema(app *app.App, node AbstractNode) bool {
 			referenceTaintedDataflowForSingleValue(value, datastore, "value")
 		}
 
-		if _, exists := pendingDBs[datastore]; exists {
+		/* if _, exists := pendingDBs[datastore]; exists {
 			l := len(pendingNodes)
 			for i := 0; i < l; i++ {
 				pending := pendingNodes[i]
@@ -352,8 +389,10 @@ func doBuildSchema(app *app.App, node AbstractNode) bool {
 					pending.done = doBuildSchema(app, pending.dbCall)
 				}
 			}
-		}
+		} */
 	}
+
+	visitedNodes = append(visitedNodes, node)
 
 	/* if dbCall, ok := node.(*AbstractDatabaseCall); ok && dbCall.ParsedCall.Method.IsUpdate() {
 		logger.Logger.Fatalf("TODO FOR DB CALL: %s", dbCall.String())

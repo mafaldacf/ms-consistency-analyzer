@@ -430,7 +430,7 @@ func saveCallToStructOrInterface(service *service.Service, method *types.ParsedM
 		tupleVar := computeInternalFuncCallReturns(service, callExpr, nil)
 		return nil, nil, tupleVar
 	}
-	
+
 	pkg := service.GetPackage().GetImportedPackage(pkgPath)
 	parsedMethod := pkg.GetParsedMethodIfExists(methodName, leftVariableTypeName)
 
@@ -494,7 +494,7 @@ func parseCallToVariableInBlock(service *service.Service, method *types.ParsedMe
 				fieldType := structVar.GetStructType().GetFieldTypeByNameIfExists(fieldName)
 				if fieldType != nil {
 					fieldVar := lookup.CreateVariableFromType(fieldName, fieldType)
-					structVar.AddFieldKeyVariable(fieldName, fieldVar)
+					structVar.AddOrGetFieldKeyVariable(fieldName, fieldVar)
 				} else {
 					methodName := ident.Name
 					pkgPath := structVar.GetStructType().GetMethodPackagePath(methodName)
@@ -882,7 +882,7 @@ func parseAndSaveCall(service *service.Service, method *types.ParsedMethod, bloc
 		if callPkg != nil {
 			callInPackage = true
 		}
-	} else if  impt := service.File.GetImportIfExists(leftIdent.Name); impt != nil {
+	} else if impt := service.File.GetImportIfExists(leftIdent.Name); impt != nil {
 		var isBlueprintCall bool
 		tupleVar, callPkg, isBlueprintCall = searchCallToMethodInImport(service, method, block, callExpr, impt, idents, identsStr)
 		if isBlueprintCall { // skip all blueprint calls that are not on backend components - e.g. backend.GetLogger().Info(...)

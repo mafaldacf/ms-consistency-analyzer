@@ -33,13 +33,15 @@ CART_DB.Cart.CartID:
 
 CART_DB.Cart.LastProductID:
 - write <productID string (BasicVariable)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructVariable)>
+- write <ref <productID string> @ Frontend (Reference)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructVariable)>
+- write <productID string (BasicVariable)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructVariable)>
 - write <LastProductID string (FieldVariable)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructVariable)>
 
 CART_DB.Cart.Products:
 - write <[]string (ArrayVariable)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructVariable)>
 - write <productID string (BasicVariable)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructVariable)>
-- write <ref <productID string> @ Frontend (Reference)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructVariable)>
 - write <productID string (BasicVariable)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructVariable)>
+- write <ref <productID string> @ Frontend (Reference)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructVariable)>
 - write <productID string (BasicVariable)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructVariable)>
 - write <Products []string (FieldVariable)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructVariable)>
 
@@ -50,34 +52,3 @@ CART_DB.Cart.TotalQuantity:
 Cart:
 - read <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructVariable)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructVariable)>
 - read <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructVariable)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructVariable)>
-
-string:
-- read <cartID string (BasicVariable)>
-- read <cartID string (BasicVariable)> from <cartID string (BasicVariable)>
-- read <ref <cartID string> @ Frontend (Reference)> from <cartID string (BasicVariable)>
-- read <cartID string (BasicVariable)> from <cartID string (BasicVariable)>
-- read <productID string (BasicVariable)>
-- read <productID string (BasicVariable)> from <productID string (BasicVariable)>
-- read <ref <productID string> @ Frontend (Reference)> from <productID string (BasicVariable)>
-- read <productID string (BasicVariable)> from <productID string (BasicVariable)>
-- read <ref <productID string> @ CartService (Reference)> from <productID string (BasicVariable)>
-- read <productID string (BasicVariable)> from <productID string (BasicVariable)>
-- read <ref <productID string> @ Frontend (Reference)> from <productID string (BasicVariable)>
-- read <productID string (BasicVariable)> from <productID string (BasicVariable)>
-- read <productID string (BasicVariable)>
-- read <productID string (BasicVariable)> from <productID string (BasicVariable)>
-- read <ref <productID string> @ Frontend (Reference)> from <productID string (BasicVariable)>
-- read <productID string (BasicVariable)> from <productID string (BasicVariable)>
-- read <ref <productID string> @ CartService (Reference)> from <productID string (BasicVariable)>
-- read <productID string (BasicVariable)> from <productID string (BasicVariable)>
-- read <ref <productID string> @ Frontend (Reference)> from <productID string (BasicVariable)>
-- read <productID string (BasicVariable)> from <productID string (BasicVariable)>
-- write <productID string (BasicVariable)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructVariable)>
-- write <productID string (BasicVariable)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructVariable)>
-- read <cartID string (BasicVariable)>
-- read <cartID string (BasicVariable)> from <cartID string (BasicVariable)>
-- read <ref <cartID string> @ Frontend (Reference)> from <cartID string (BasicVariable)>
-- read <cartID string (BasicVariable)> from <cartID string (BasicVariable)>
-- write <cartID string (BasicVariable)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructVariable)>
-- write <ref <cartID string> @ Frontend (Reference)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructVariable)>
-- write <cartID string (BasicVariable)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructVariable)>

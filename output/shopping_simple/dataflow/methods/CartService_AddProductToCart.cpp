@@ -19,7 +19,7 @@
 
     --> w-tainted: write(cart_db.Cart.LastProductID, cart_db.Cart.Products) {2}       --> w-tainted: write(cart_db.Cart.LastProductID, cart_db.Cart.Products) {2} --> r-tainted: read(product_db.Product.ProductID) {1}
 [] (BasicVariable BasicType) productID string
-     --> w-tainted: write(cart_db.Cart.Products) {1}         --> w-tainted: write(cart_db.Cart.Products) {1} --> r-tainted: read(product_db.Product.ProductID) {1}
+     --> w-tainted: write(cart_db.Cart.LastProductID) {1}         --> w-tainted: write(cart_db.Cart.LastProductID) {1} --> r-tainted: read(product_db.Product.ProductID) {1}
 [_] (Reference BasicType) ref <productID string> @ Frontend
 
 [] (StructVariable UserType) product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
@@ -67,7 +67,7 @@
 [_] (FieldVariable FieldType) ProductID string
       --> w-tainted: write(cart_db.Cart.LastProductID, cart_db.Cart.Products) {2}           --> w-tainted: write(cart_db.Cart.LastProductID, cart_db.Cart.Products) {2} --> r-tainted: read(product_db.Product.ProductID) {1}
 [__] (BasicVariable BasicType) productID string
-       --> w-tainted: write(cart_db.Cart.Products) {1}             --> w-tainted: write(cart_db.Cart.Products) {1} --> r-tainted: read(product_db.Product.ProductID) {1}
+       --> w-tainted: write(cart_db.Cart.LastProductID) {1}             --> w-tainted: write(cart_db.Cart.LastProductID) {1} --> r-tainted: read(product_db.Product.ProductID) {1}
 [___] (Reference BasicType) ref <productID string> @ Frontend
 [_] (FieldVariable FieldType) Quantity 1 int
 [__] (BasicVariable BasicType) 1 int

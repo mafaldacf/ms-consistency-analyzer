@@ -103,7 +103,7 @@ func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 			if _, ok := fieldType.WrappedType.(*gotypes.StructType); ok {
 				fieldType.SetEmbedded()
 			}
-			structType.AddFieldType(fieldType)
+			structType.AddOrGetFieldType(fieldType)
 		}
 		return structType
 	case *ast.StarExpr:

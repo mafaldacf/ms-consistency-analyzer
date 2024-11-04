@@ -66,7 +66,7 @@ func initAnalyzer(appName string, xcyDetection bool) {
 	fmt.Println(" ----------------------------------------------------------------------------------------------------------------- ")
 	fmt.Println()
 
-	abstractgraph.BuildSchema(app, abstractGraph.Nodes)
+	abstractgraph.BuildSchema(app, frontends, abstractGraph.Nodes)
 
 	var detectors []*detection.Detector
 	if xcyDetection {

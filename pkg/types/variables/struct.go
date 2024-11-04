@@ -81,7 +81,7 @@ func (v *StructVariable) attachFieldVariable(fieldVariable *FieldVariable) {
 	}
 }
 
-func (v *StructVariable) AddFieldVariable(fieldVariable *FieldVariable) {
+func (v *StructVariable) AddOrGetFieldVariable(fieldVariable *FieldVariable) {
 	logger.Logger.Warnf("[VARS STRUCT] adding field named (%s) to struct variable (%s): (%s) %s", fieldVariable.GetFieldType().GetFieldName(), v.String(), VariableTypeName(fieldVariable.WrappedVariable), fieldVariable.WrappedVariable.String())
 	if fieldVariable.GetFieldType().GetFieldName() != "" {
 		v.Fields[fieldVariable.GetFieldType().GetFieldName()] = fieldVariable
@@ -97,9 +97,9 @@ func (v *StructVariable) AddFieldVariable(fieldVariable *FieldVariable) {
 	v.GetStructType().UpdateFieldAtIfExists(len(v.FieldsLst)-1, fieldVariable.GetFieldType())
 }
 
-func (v *StructVariable) AddFieldVariableAndType(fieldVariable *FieldVariable) {
-	v.AddFieldVariable(fieldVariable)
-	v.GetStructType().AddFieldType(fieldVariable.GetFieldType())
+func (v *StructVariable) AddOrGetFieldVariableAndType(fieldVariable *FieldVariable) {
+	v.AddOrGetFieldVariable(fieldVariable)
+	v.GetStructType().AddOrGetFieldType(fieldVariable.GetFieldType())
 	fieldVariable.GetVariableInfo().SetParent(fieldVariable, v)
 }
 
@@ -187,13 +187,13 @@ func (v *StructVariable) GetFieldVariableIfExists(name string) Variable {
 	return nil
 }
 
-func (v *StructVariable) AddFieldKeyVariable(name string, field Variable) {
+func (v *StructVariable) AddOrGetFieldKeyVariable(name string, field Variable) {
 	v.Fields[name] = field
 	v.FieldsLst = append(v.FieldsLst, field)
 	field.GetVariableInfo().SetParent(field, v)
 }
 
-func (v *StructVariable) AddFieldKeyVariableIfNotExists(name string, field Variable) bool {
+func (v *StructVariable) AddOrGetFieldKeyVariableIfNotExists(name string, field Variable) bool {
 	if _, exists := v.Fields[name]; !exists {
 		v.Fields[name] = field
 		v.FieldsLst = append(v.FieldsLst, field)
