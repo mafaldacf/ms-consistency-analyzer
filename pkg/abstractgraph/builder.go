@@ -256,7 +256,7 @@ func (graph *AbstractGraph) createQueueHandlerNodes(app *app.App, publisher *Abs
 		logger.Logger.Fatalf("received unexpected nil database for queue publisher parsed call: %s", publisher.ParsedCall.String())
 	}
 	for _, node := range app.Services {
-		for _, handlerMethod := range node.GetQueueHandlersForDatabase(instance) {
+		for _, handlerMethod := range node.GetQueueHandlersForDatabaseInstance(instance) {
 			logger.Logger.Debugf("[GRAPH - QUEUE] found worker %s on instance '%s'", handlerMethod.String(), instance.GetName())
 			abstractHandler := &AbstractQueueHandler{
 				AbstractServiceCall: graph.createDummyAbstractServiceCall(node, handlerMethod, publisher, publisher.GetNextDepth()),

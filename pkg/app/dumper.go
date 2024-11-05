@@ -194,8 +194,8 @@ func (app *App) dumpYamlDatastores() {
 				var lst []string
 				for _, r := range entry.References {
 					lst = append(lst, r.GetFullName())
-					if !slices.Contains(dependencies, r.GetDatastore()) {
-						dependencies = append(dependencies, r.GetDatastore())
+					if !slices.Contains(dependencies, r.GetDatastoreName()) {
+						dependencies = append(dependencies, r.GetDatastoreName())
 					}
 				}
 				sort.Strings(lst)
@@ -208,8 +208,8 @@ func (app *App) dumpYamlDatastores() {
 				var lst []string
 				for _, r := range entry.References {
 					lst = append(lst, r.GetFullName())
-					if !slices.Contains(dependencies, r.GetDatastore()) {
-						dependencies = append(dependencies, r.GetDatastore())
+					if !slices.Contains(dependencies, r.GetDatastoreName()) {
+						dependencies = append(dependencies, r.GetDatastoreName())
 					}
 				}
 				sort.Strings(lst)

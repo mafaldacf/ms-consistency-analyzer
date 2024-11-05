@@ -59,6 +59,15 @@ type Service struct {
 	ExposedMethodsLst []*types.ParsedMethod
 }
 
+func (node *Service) HasDatastore(datastore *datastores.Datastore) bool {
+	for _, datastoreInstance := range node.Datastores {
+		if datastoreInstance.GetDatastore() == datastore {
+			return true
+		}
+	}
+	return false
+}
+
 func (node *Service) GetDatastoreFieldIfExists(name string) *types.DatabaseField {
 	if field, ok := node.Fields[name]; ok {
 		if datastoreField, isDbField := field.(*types.DatabaseField); isDbField {
@@ -208,7 +217,7 @@ func (node *Service) GetPackageName() string {
 	return node.File.Package.Name
 }
 
-func (node *Service) GetQueueHandlersForDatabase(database datastores.DatabaseInstance) []*types.ParsedMethod {
+func (node *Service) GetQueueHandlersForDatabaseInstance(database datastores.DatabaseInstance) []*types.ParsedMethod {
 	logger.Logger.Warnf("[SERVICE] [%s] getting queue handlers for datastore (%s): %v", node.GetName(), database.GetName(), node.QueueHandlerMethods)
 	if _, ok := node.Datastores[database.GetName()]; !ok {
 		return nil
@@ -218,6 +227,18 @@ func (node *Service) GetQueueHandlersForDatabase(database datastores.DatabaseIns
 	for _, handler := range node.QueueHandlerMethods {
 		if slices.Contains(handler.DbInstances, database) {
 			handlers = append(handlers, handler)
+		}
+	}
+	return handlers
+}
+
+func (node *Service) GetQueueHandlersForDatastore(datastore *datastores.Datastore) []*types.ParsedMethod {
+	var handlers []*types.ParsedMethod
+	for _, handler := range node.QueueHandlerMethods {
+		for _, dbInstances := range handler.DbInstances {
+			if dbInstances.GetDatastore() == datastore {
+				handlers = append(handlers, handler)
+			}
 		}
 	}
 	return handlers

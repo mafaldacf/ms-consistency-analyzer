@@ -22,9 +22,11 @@ Available applications:
 - `foobar`
 
 ```zsh
-go run main.go -app=postnotification
+go run main.go -app=postnotification --xcy
+go run main.go -app=postnotification --fk
 go run main.go -app=foobar
-go run main.go -app=shopping_simple
+go run main.go -app=shopping_simple --cascade
+go run main.go -app=shopping_simple --fk
 
 source ~/.venv/bin/activate
 pip3 install -r requirements.txt

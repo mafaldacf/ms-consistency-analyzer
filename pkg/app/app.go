@@ -38,6 +38,14 @@ func (app *App) MarshalJSON() ([]byte, error) {
 	})
 }
 
+func (app *App) GetServices() map[string]*service.Service {
+	return app.Services
+}
+
+func (app *App) GetDbInstances() map[string]datastores.DatabaseInstance {
+	return app.Databases
+}
+
 func (app *App) String() string {
 	str, _ := app.MarshalJSON()
 	return string(str)

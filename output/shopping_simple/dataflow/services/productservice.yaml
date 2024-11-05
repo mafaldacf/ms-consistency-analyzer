@@ -56,6 +56,7 @@
   - ___ depth 3 (BasicVariable BasicType) "productid" string
   - __ depth 2 (FieldVariable FieldType) Value string
   - ' depth 0 (InterfaceVariable UserType) err .error'
+  - ' depth 0 (BasicVariable BasicType) val bool'
 
 (*ProductServiceImpl).GetAllProducts(ctx context.Context):
   block 0 (Body):
@@ -101,7 +102,7 @@
     2x: write(cart_db.Cart.LastProductID, cart_db.Cart.Products) --> r-tainted 1x:
     read(product_db.Product.ProductID)'
   - '__ depth 2 (Reference BasicType) ref <productID string> @ Frontend --> w-tainted
-    1x: write(cart_db.Cart.LastProductID) --> r-tainted 1x: read(product_db.Product.ProductID)'
+    1x: write(cart_db.Cart.Products) --> r-tainted 1x: read(product_db.Product.ProductID)'
   - ' depth 0 (StructVariable UserType) product shopping_simple.Product struct{ProductID
     string, Description string, PricePerUnit int, Category string} --> r-tainted 1x:
     read(product_db.Product)'

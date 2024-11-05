@@ -32,7 +32,7 @@ func (s *Schema) GetRootFieldName() string {
 
 func (s *Schema) AddOrGetField(name string, t string, id int64, datastore *Datastore) Field {
 	for _, field := range s.Fields {
-		if field.GetName() == name && field.GetDatastore() == datastore.GetName() { // last condition of datastore is just for sanity check
+		if field.GetName() == name && field.GetDatastoreName() == datastore.GetName() { // last condition of datastore is just for sanity check
 			return field
 		}
 	}
@@ -44,7 +44,7 @@ func (s *Schema) AddOrGetField(name string, t string, id int64, datastore *Datas
 
 func (s *Schema) AddOrGetUnfoldedField(name string, t string, id int64, datastore *Datastore) Field {
 	for _, field := range s.UnfoldedFields {
-		if field.GetName() == name && field.GetDatastore() == datastore.GetName() { // last condition of datastore is just for sanity check
+		if field.GetName() == name && field.GetDatastoreName() == datastore.GetName() { // last condition of datastore is just for sanity check
 			return field
 		}
 	}
@@ -123,7 +123,8 @@ type Field interface {
 	HasId(id int64) bool
 	GetType() string
 	AddReference(Field)
-	GetDatastore() string
+	GetDatastoreName() string
+	GetDatastore() *Datastore
 }
 type Key struct {
 	Field
@@ -153,8 +154,11 @@ type ForeignEntry struct {
 func (f *Key) GetName() string {
 	return f.Name
 }
-func (f *Key) GetDatastore() string {
+func (f *Key) GetDatastoreName() string {
 	return f.Datastore.GetName()
+}
+func (f *Key) GetDatastore() *Datastore {
+	return f.Datastore
 }
 func (f *Key) GetFullName() string {
 	return strings.ToUpper(f.Datastore.GetName()) + "." + f.Name
@@ -173,8 +177,11 @@ func (f *Key) HasId(id int64) bool {
 func (f *Entry) GetName() string {
 	return f.Name
 }
-func (f *Entry) GetDatastore() string {
+func (f *Entry) GetDatastoreName() string {
 	return f.Datastore.GetName()
+}
+func (f *Entry) GetDatastore() *Datastore {
+	return f.Datastore
 }
 func (f *Entry) GetFullName() string {
 	return strings.ToUpper(f.Datastore.GetName()) + "." + f.Name
@@ -193,8 +200,11 @@ func (f *Entry) HasId(id int64) bool {
 func (f *ForeignEntry) GetName() string {
 	return f.Name
 }
-func (f *ForeignEntry) GetDatastore() string {
+func (f *ForeignEntry) GetDatastoreName() string {
 	return f.Datastore.GetName()
+}
+func (f *ForeignEntry) GetDatastore() *Datastore {
+	return f.Datastore
 }
 func (f *ForeignEntry) GetFullName() string {
 	return strings.ToUpper(f.Datastore.GetName()) + "." + f.Name

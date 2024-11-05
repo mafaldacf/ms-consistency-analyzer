@@ -3,6 +3,7 @@ package datastores
 import (
 	"encoding/json"
 	"fmt"
+	"slices"
 )
 
 type DatastoreType int
@@ -25,14 +26,28 @@ const (
 )
 
 type Datastore struct {
-	Name   string
-	Type   DatastoreType
-	Kind   DatastoreKind
-	Schema *Schema
+	Name                  string
+	Type                  DatastoreType
+	Kind                  DatastoreKind
+	Schema                *Schema
+	ReferencingDatastores []*Datastore
 }
 
 func (ds *Datastore) GetTypeLongName() string {
 	return fmt.Sprintf("%s (%s)", ds.GetKindString(), ds.GetTypeString())
+}
+
+func (ds *Datastore) IsReferencingDatastore(dependency *Datastore) bool {
+	return slices.Contains(ds.ReferencingDatastores, dependency)
+}
+
+func (ds *Datastore) AddReferencingDatastoreIfNotExists(newDep *Datastore) {
+	for _, dep := range ds.ReferencingDatastores {
+		if dep == newDep {
+			return
+		}
+	}
+	ds.ReferencingDatastores = append(ds.ReferencingDatastores, newDep)
 }
 
 func (ds *Datastore) GetTypeString() string {

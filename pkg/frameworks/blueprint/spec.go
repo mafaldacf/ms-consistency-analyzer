@@ -18,7 +18,7 @@ import (
 	"analyzer/pkg/utils"
 )
 
-func BuildBlueprintAppInfo(appName string) ([]*frameworks.ServiceInfo, []datastores.DatabaseInstance, []string) {
+func LoadWiring(appName string) ([]*frameworks.ServiceInfo, []datastores.DatabaseInstance, []string) {
 	spec := utils.LoadAppSpec(appName)
 	servicesSpec, databasesNodes, frontends := BuildAndInspectIR(appName, spec)
 	servicesInfo := buildBlueprintServicesInfo(servicesSpec)

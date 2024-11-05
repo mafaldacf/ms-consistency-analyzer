@@ -10,7 +10,7 @@
   - ' depth 0 (InterfaceVariable UserType) ctx context.Context'
   - ' depth 0 (BasicVariable BasicType) cartID string --> w-tainted 1x: write(cart_db.Cart.CartID)
     --> r-tainted 1x: read(cart_db.Cart.CartID)'
-  - ' depth 0 (BasicVariable BasicType) productID string --> w-tainted 1x: write(cart_db.Cart.LastProductID)
+  - ' depth 0 (BasicVariable BasicType) productID string --> w-tainted 1x: write(cart_db.Cart.Products)
     --> r-tainted 1x: read(product_db.Product.ProductID)'
 
 (*FrontendImpl).CreateCart(ctx context.Context, cartID string):

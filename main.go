@@ -9,6 +9,7 @@ import (
 	"analyzer/pkg/abstractgraph"
 	"analyzer/pkg/app"
 	"analyzer/pkg/detection"
+	"analyzer/pkg/detection/cascade"
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/utils"
@@ -18,13 +19,15 @@ func main() {
 
 	appName := flag.String("app", "", "The name of the application to be analyzed")
 	xcyDetection := flag.Bool("xcy", false, "Enable detection of xcy dependencies and inconsistencies")
+	//foreignKeyDetection := flag.Bool("fk", false, "Enable detection of anomalies in foreign key constraints")
+	cascadeDetection := flag.Bool("cascade", false, "Enable detection of the absence of cascading delete logic")
 	allFlag := flag.String("all", "", fmt.Sprintf("Run analyzer for all applications: %v", utils.Apps))
 	flag.Parse()
 	if *allFlag == "true" || *allFlag == "True" || *allFlag == "1" {
 		for _, app := range utils.Apps {
 			logger.Logger.Infof(fmt.Sprintf("running analyzer for '%s'...", app))
 			time.Sleep(1500 * time.Millisecond)
-			initAnalyzer(app, *xcyDetection)
+			initAnalyzer(app, *xcyDetection, *cascadeDetection)
 			fmt.Println()
 			fmt.Println()
 		}
@@ -34,11 +37,11 @@ func main() {
 		logger.Logger.Fatal(fmt.Sprintf("invalid app name (%s) must provide an application name using the -app flag for one of the available applications: %v", *appName, utils.Apps))
 
 	}
-	initAnalyzer(*appName, *xcyDetection)
+	initAnalyzer(*appName, *xcyDetection, *cascadeDetection)
 }
 
-func initAnalyzer(appName string, xcyDetection bool) {
-	servicesInfo, databaseInstances, frontends := blueprint.BuildBlueprintAppInfo(appName)
+func initAnalyzer(appName string, xcyDetection bool, cascadeDetection bool) {
+	servicesInfo, databaseInstances, frontends := blueprint.LoadWiring(appName)
 
 	app, err := app.InitApp(appName, servicesInfo)
 	if err != nil {
@@ -123,5 +126,18 @@ func initAnalyzer(appName string, xcyDetection bool) {
 			detector.DumpYaml(app.Name)
 			detector.PrintResults()
 		}
+	}
+
+	if cascadeDetection {
+		fmt.Println()
+		fmt.Println(" ------------------------------------------------------------------------------------------------------------------ ")
+		fmt.Println(" --------------------------------------- CHECK ABSENCE OF CASCADING DELETE ---------------------------------------- ")
+		fmt.Println(" ------------------------------------------------------------------------------------------------------------------ ")
+		fmt.Println()
+		detector := cascade.InitDetector(app, abstractGraph)
+		detector.Run()
+		results := detector.Results()
+		fmt.Println(results)
+
 	}
 }

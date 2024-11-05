@@ -25,3 +25,5 @@
 
 [] (InterfaceVariable UserType) err .error
 
+[] (BasicVariable BasicType) val bool
+
