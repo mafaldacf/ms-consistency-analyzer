@@ -1,0 +1,131 @@
+name: foobar
+services:
+  BarService:
+    name: BarService
+    package: github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/bar
+    services: []
+    datastores: []
+  FooService:
+    name: FooService
+    package: github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/foo
+    services: []
+    datastores: []
+  FrontendService:
+    name: FrontendService
+    package: github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar
+    services:
+    - FooService
+    - BarService
+    datastores: []
+datastores: {}
+app_packages:
+  github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar:
+    name: foobar
+    type: App
+    module: github.com/blueprint-uservices/blueprint/examples/foobar/workflow
+    path: github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar
+    files:
+    - name: FrontendService.go
+      path: /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/foobar/workflow/foobar/FrontendService.go
+    imports:
+    - context
+    - github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/bar
+    - github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/foo
+    named_types:
+    - bar.BarService interface {func Bar (ctx context.Context interface{}, text string)
+      ( string,  .error interface{})}
+    - foobar.FrontendService interface {func Frontend (ctx context.Context interface{})
+      ( string,  .error interface{})}
+    - time.zoneTrans struct{when int64; index uint8; isstd bool; isutc bool}
+    - foo.FooService interface {func Foo (ctx context.Context interface{}, text string)
+      ( string,  .error interface{})}
+    - time.Time struct{wall uint64; ext int64; loc *time.Location struct{}}
+    - .error interface {func Error ()  string}
+    - context.Context interface {func Deadline () (deadline time.Time struct{}, ok
+      bool); func Done ()  <-chan struct{}; func Err ()  .error interface{}; func
+      Value (key interface {})  interface {}}
+    - foobar.FrontendServiceImpl struct{barService bar.BarService interface{}; fooService
+      foo.FooService interface{}}
+    - time.zone struct{name string; offset int; isDST bool}
+    - time.Location struct{name string; zone []time.zone struct{}; tx []time.zoneTrans
+      struct{}; extend string; cacheStart int64; cacheEnd int64; cacheZone *time.zone
+      struct{}}
+    objects: []
+  github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/bar:
+    name: bar
+    type: App
+    module: github.com/blueprint-uservices/blueprint/examples/foobar/workflow
+    path: github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/bar
+    files:
+    - name: BarService.go
+      path: /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/foobar/workflow/foobar/bar/BarService.go
+    imports:
+    - context
+    named_types:
+    - time.Time struct{wall uint64; ext int64; loc *time.Location struct{}}
+    - .error interface {func Error ()  string}
+    - context.Context interface {func Deadline () (deadline time.Time struct{}, ok
+      bool); func Done ()  <-chan struct{}; func Err ()  .error interface{}; func
+      Value (key interface {})  interface {}}
+    - bar.BarService interface {func Bar (ctx context.Context interface{}, text string)
+      ( string,  .error interface{})}
+    - bar.BarServiceImpl struct{}
+    - time.zone struct{name string; offset int; isDST bool}
+    - time.zoneTrans struct{when int64; index uint8; isstd bool; isutc bool}
+    - time.Location struct{name string; zone []time.zone struct{}; tx []time.zoneTrans
+      struct{}; extend string; cacheStart int64; cacheEnd int64; cacheZone *time.zone
+      struct{}}
+    objects: []
+  github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/foo:
+    name: foo
+    type: App
+    module: github.com/blueprint-uservices/blueprint/examples/foobar/workflow
+    path: github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/foo
+    files:
+    - name: FooService.go
+      path: /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/foobar/workflow/foobar/foo/FooService.go
+    - name: foo.go
+      path: /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/foobar/workflow/foobar/foo/foo.go
+    - name: foo_1.go
+      path: /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/foobar/workflow/foobar/foo/foo_1.go
+    - name: foo_2.go
+      path: /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/foobar/workflow/foobar/foo/foo_2.go
+    imports:
+    - strconv
+    - context
+    named_types:
+    - .error interface {func Error ()  string}
+    - context.Context interface {func Deadline () (deadline time.Time struct{}, ok
+      bool); func Done ()  <-chan struct{}; func Err ()  .error interface{}; func
+      Value (key interface {})  interface {}}
+    - foo.FooService interface {func Foo (ctx context.Context interface{}, text string)
+      ( string,  .error interface{})}
+    - foo.FooServiceImpl struct{}
+    - time.zone struct{name string; offset int; isDST bool}
+    - time.zoneTrans struct{when int64; index uint8; isstd bool; isutc bool}
+    - time.Location struct{name string; zone []time.zone struct{}; tx []time.zoneTrans
+      struct{}; extend string; cacheStart int64; cacheEnd int64; cacheZone *time.zone
+      struct{}}
+    - time.Time struct{wall uint64; ext int64; loc *time.Location struct{}}
+    objects: []
+builtin_packages: {}
+blueprint_packages: {}
+external_packages:
+  context:
+    name: context
+    type: External
+    module: ""
+    path: context
+    files: []
+    imports: []
+    named_types: []
+    objects: []
+  strconv:
+    name: strconv
+    type: External
+    module: ""
+    path: strconv
+    files: []
+    imports: []
+    named_types: []
+    objects: []

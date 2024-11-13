@@ -1,0 +1,191 @@
+name: shopping_simple
+services:
+  CartService:
+    name: CartService
+    package: github.com/blueprint-uservices/blueprint/examples/shopping_simple/workflow/shopping_simple
+    services:
+    - ProductService
+    datastores:
+    - cart_db
+    - product_queue
+  Frontend:
+    name: Frontend
+    package: github.com/blueprint-uservices/blueprint/examples/shopping_simple/workflow/shopping_simple
+    services:
+    - CartService
+    - ProductService
+    datastores: []
+  ProductService:
+    name: ProductService
+    package: github.com/blueprint-uservices/blueprint/examples/shopping_simple/workflow/shopping_simple
+    services: []
+    datastores:
+    - product_db
+    - product_queue
+datastores:
+  cart_db:
+    name: cart_db
+    type: NoSQL
+    kind: MongoDB
+  product_db:
+    name: product_db
+    type: NoSQL
+    kind: MongoDB
+  product_queue:
+    name: product_queue
+    type: Queue
+    kind: RabbitMQ
+app_packages:
+  github.com/blueprint-uservices/blueprint/examples/shopping_simple/workflow/shopping_simple:
+    name: shopping_simple
+    type: App
+    module: github.com/blueprint-uservices/blueprint/examples/shopping_simple/workflow
+    path: github.com/blueprint-uservices/blueprint/examples/shopping_simple/workflow/shopping_simple
+    files:
+    - name: CartService.go
+      path: /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/shopping_simple/workflow/shopping_simple/CartService.go
+    - name: Frontend.go
+      path: /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/shopping_simple/workflow/shopping_simple/Frontend.go
+    - name: ProductService.go
+      path: /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/shopping_simple/workflow/shopping_simple/ProductService.go
+    - name: models.go
+      path: /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/shopping_simple/workflow/shopping_simple/models.go
+    imports:
+    - go.mongodb.org/mongo-driver/bson
+    - sync
+    - context
+    - fmt
+    - github.com/blueprint-uservices/blueprint/runtime/core/backend
+    named_types:
+    - time.Location struct{name string; zone []time.zone struct{}; tx []time.zoneTrans
+      struct{}; extend string; cacheStart int64; cacheEnd int64; cacheZone *time.zone
+      struct{}}
+    - context.Context interface {func Deadline () (deadline time.Time struct{}, ok
+      bool); func Done ()  <-chan struct{}; func Err ()  .error interface{}; func
+      Value (key interface {})  interface {}}
+    - shopping_simple.Product struct{ProductID string; Description string; PricePerUnit
+      int; Category string}
+    - primitive.D []primitive.E struct{}
+    - backend.NoSQLCollection interface {func DeleteMany (ctx context.Context interface{},
+      filter primitive.D []primitive.E struct{})  .error interface{}; func DeleteOne
+      (ctx context.Context interface{}, filter primitive.D []primitive.E struct{})  .error
+      interface{}; func FindMany (ctx context.Context interface{}, filter primitive.D
+      []primitive.E struct{}, projection []primitive.D []primitive.E struct{}) ( backend.NoSQLCursor
+      interface{},  .error interface{}); func FindOne (ctx context.Context interface{},
+      filter primitive.D []primitive.E struct{}, projection []primitive.D []primitive.E
+      struct{}) ( backend.NoSQLCursor interface{},  .error interface{}); func InsertMany
+      (ctx context.Context interface{}, documents []interface {})  .error interface{};
+      func InsertOne (ctx context.Context interface{}, document interface {})  .error
+      interface{}; func ReplaceMany (ctx context.Context interface{}, filter primitive.D
+      []primitive.E struct{}, replacements []interface {}) ( int,  .error interface{});
+      func ReplaceOne (ctx context.Context interface{}, filter primitive.D []primitive.E
+      struct{}, replacement interface {}) ( int,  .error interface{}); func UpdateMany
+      (ctx context.Context interface{}, filter primitive.D []primitive.E struct{},
+      update primitive.D []primitive.E struct{}) ( int,  .error interface{}); func
+      UpdateOne (ctx context.Context interface{}, filter primitive.D []primitive.E
+      struct{}, update primitive.D []primitive.E struct{}) ( int,  .error interface{});
+      func Upsert (ctx context.Context interface{}, filter primitive.D []primitive.E
+      struct{}, document interface {}) ( bool,  .error interface{}); func UpsertID
+      (ctx context.Context interface{}, id primitive.ObjectID [12]byte, document interface
+      {}) ( bool,  .error interface{})}
+    - backend.NoSQLDatabase interface {func GetCollection (ctx context.Context interface{},
+      db_name string, collection_name string) ( backend.NoSQLCollection interface{},  .error
+      interface{})}
+    - backend.Queue interface {func Pop (ctx context.Context interface{}, dst interface
+      {}) ( bool,  .error interface{}); func Push (ctx context.Context interface{},
+      item interface {}) ( bool,  .error interface{})}
+    - shopping_simple.ProductService interface {func CreateProduct (ctx context.Context
+      interface{}, productID string, description string, pricePerUnit int, category
+      string) ( shopping_simple.Product struct{},  .error interface{}); func DeleteProduct
+      (ctx context.Context interface{}, productID string) ( bool,  .error interface{});
+      func GetAllProducts (ctx context.Context interface{}) ( []shopping_simple.Product
+      struct{},  .error interface{}); func GetProduct (ctx context.Context interface{},
+      productID string) ( shopping_simple.Product struct{},  .error interface{})}
+    - backend.NoSQLCursor interface {func All (ctx context.Context interface{}, obj
+      interface {})  .error interface{}; func One (ctx context.Context interface{},
+      obj interface {}) ( bool,  .error interface{})}
+    - primitive.ObjectID [12]byte
+    - shopping_simple.Cart struct{CartID string; LastProductID string; TotalQuantity
+      int; Products []string}
+    - shopping_simple.CartService interface {func AddProductToCart (ctx context.Context
+      interface{}, cartID string, productID string) ( shopping_simple.CartProduct
+      struct{},  .error interface{}); func CreateCart (ctx context.Context interface{},
+      cartID string) ( shopping_simple.Cart struct{},  .error interface{}); func GetCart
+      (ctx context.Context interface{}, cartID string) ( shopping_simple.Cart struct{},  .error
+      interface{}); func Run (ctx context.Context interface{})  .error interface{}}
+    - shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService
+      interface{}; cart_db backend.NoSQLDatabase interface{}; product_queue backend.Queue
+      interface{}; num_workers int}
+    - shopping_simple.ProductQueueMessage struct{ProductID string; Remove bool}
+    - time.zoneTrans struct{when int64; index uint8; isstd bool; isutc bool}
+    - time.Time struct{wall uint64; ext int64; loc *time.Location struct{}}
+    - .error interface {func Error ()  string}
+    - primitive.E struct{Key string; Value interface {}}
+    - shopping_simple.FrontendImpl struct{product_service shopping_simple.ProductService
+      interface{}; cart_service shopping_simple.CartService interface{}}
+    - time.zone struct{name string; offset int; isDST bool}
+    - shopping_simple.CartProduct struct{CartID string; ProductID string; Quantity
+      int; PricePerUnit int}
+    - shopping_simple.Frontend interface {func AddProductToCart (ctx context.Context
+      interface{}, cartID string, productID string) ( shopping_simple.CartProduct
+      struct{},  .error interface{}); func CreateCart (ctx context.Context interface{},
+      cartID string) ( shopping_simple.Cart struct{},  .error interface{}); func CreateProduct
+      (ctx context.Context interface{}, productID string, description string, pricePerUnit
+      int, category string) ( shopping_simple.Product struct{},  .error interface{});
+      func DeleteProduct (ctx context.Context interface{}, productID string) ( bool,  .error
+      interface{}); func GetAllProducts (ctx context.Context interface{}) ( []shopping_simple.Product
+      struct{},  .error interface{}); func GetCart (ctx context.Context interface{},
+      cartID string) ( shopping_simple.Cart struct{},  .error interface{}); func GetProduct
+      (ctx context.Context interface{}, productID string) ( shopping_simple.Product
+      struct{},  .error interface{})}
+    - shopping_simple.ProductServiceImpl struct{product_db backend.NoSQLDatabase interface{};
+      product_queue backend.Queue interface{}; num_workers int}
+    objects: []
+builtin_packages:
+  github.com/blueprint-uservices/blueprint/runtime/core/backend:
+    name: backend
+    type: Blueprint
+    module: github.com/blueprint-uservices/blueprint/runtime
+    path: github.com/blueprint-uservices/blueprint/runtime/core/backend
+    files: []
+    imports: []
+    named_types: []
+    objects: []
+blueprint_packages: {}
+external_packages:
+  context:
+    name: context
+    type: External
+    module: ""
+    path: context
+    files: []
+    imports: []
+    named_types: []
+    objects: []
+  fmt:
+    name: fmt
+    type: External
+    module: ""
+    path: fmt
+    files: []
+    imports: []
+    named_types: []
+    objects: []
+  go.mongodb.org/mongo-driver/bson:
+    name: bson
+    type: External
+    module: go.mongodb.org/mongo-driver
+    path: go.mongodb.org/mongo-driver/bson
+    files: []
+    imports: []
+    named_types: []
+    objects: []
+  sync:
+    name: sync
+    type: External
+    module: ""
+    path: sync
+    files: []
+    imports: []
+    named_types: []
+    objects: []
