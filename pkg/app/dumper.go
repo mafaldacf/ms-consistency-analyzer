@@ -99,7 +99,7 @@ func (app *App) dumpDiGraph() {
 	sortNodes(nodes)
 	sortEdges(edges)
 	outputGraph := digraph{Nodes: nodes, Edges: edges}
-	utils.DumpToJSONFile(outputGraph, app.Name, "graphs/global/out/app_graph")
+	utils.DumpToJSONFile(outputGraph, app.Name, "graphs/output/app_graph")
 }
 
 func (app *App) dumpYamlPackages() {

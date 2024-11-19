@@ -3,6 +3,7 @@ import glob
 import json
 import os
 import re
+import matplotlib
 import networkx as nx
 import matplotlib.pyplot as plt
 import argparse
@@ -89,18 +90,13 @@ def build_digraph(data, graph_type, labeled):
             connectionstyle='arc3,rad=0.3',
         )
 
-def compute_base_path(app, per_requests):
-    path = f"{FOLDER_NAME_BASE}/{app}/{FOLDER_NAME_GRAPHS}"
-    if per_requests:
-        path += "/per_requests"
-    else:
-        path += "/global"
-    return path
+def compute_base_path(app):
+    return f"{FOLDER_NAME_BASE}/{app}/{FOLDER_NAME_GRAPHS}"
 
 def load(app, graph, per_requests):
-    base_path = compute_base_path(app, per_requests)
+    base_path = compute_base_path(app)
 
-    filename = f"{base_path}/out/{graph}"
+    filename = f"{base_path}/output/{graph}"
     if not per_requests:
         filename += "_graph"
     
@@ -110,7 +106,7 @@ def load(app, graph, per_requests):
     return data
 
 def save(app, graph, labeled, per_requests):
-    base_path = compute_base_path(app, per_requests)
+    base_path = compute_base_path(app)
 
     if labeled:
         plt.title(f"{graph.capitalize()} Labeled Graph")
@@ -120,10 +116,11 @@ def save(app, graph, labeled, per_requests):
     #plt.show()
 
     output_path = f"{base_path}/figures/{graph}"
-    if labeled:
-        output_path += "_labeled"
+    
     if not per_requests:
         output_path += "_graph"
+    if labeled:
+        output_path += "_labeled"
 
     output_path += ".png"
 
@@ -132,21 +129,33 @@ def save(app, graph, labeled, per_requests):
 
     plt.savefig(output_path, format='png')
     print(f"[{app.upper()}] graph saved to {output_path}")
+    matplotlib.pyplot.close()
 
-def search_all_per_requests(app):
-    base_path = compute_base_path(app, True)
-    directory = f"{base_path}/out/"
+def search_all_trace_filenames(app):
+    base_path = compute_base_path(app)
+    directory = f"{base_path}/output/"
     pattern = os.path.join(directory, 'trace_*.json')
     files = glob.glob(pattern)
     names = [os.path.splitext(os.path.basename(file))[0] for file in files]
     return names
 
-APPS = ['postnotification', 'postnotification_simple', 'trainticket', 'shopping_app', 'shopping_simple', 'sockshop2', 'foobar']
+ALL_APPS = ['postnotification', 'postnotification_simple', 'trainticket', 'shopping_app', 'shopping_simple', 'sockshop2', 'foobar']
+ALL_GRAPHS = ['app', 'call']
+
+def get_app_list(app_arg):
+    if app_arg != None:
+        return [app_arg]
+    return ALL_APPS
+
+def get_graph_list(app_arg):
+    if app_arg != None:
+        return [app_arg]
+    return ALL_GRAPHS
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description="Visualize graphs based on the specified application and graph type")
-    parser.add_argument('--app', '-a', choices=APPS, help="The application for which to visualize the graph")
-    parser.add_argument('--graph', '-g', choices=['app', 'call'], help="The type of graph to visualize")
+    parser.add_argument('--app', '-a', choices=ALL_APPS, help="The application for which to visualize the graph. If not specified, graph(s) for all available apps will be computed.")
+    parser.add_argument('--graph', '-g', choices=ALL_GRAPHS, help="The type of graph to visualize. If not specified, all possible graphs will be computed.")
     parser.add_argument('--labeled', '-l', action='store_true', help="Construct labeled digraph")
     parser.add_argument('--all', action='store_true', help="Construct all combinations of digraphs for all applications")
     args = parser.parse_args()
@@ -155,17 +164,10 @@ if __name__ == "__main__":
         print(f"[ERROR] invalid arguments!")
         exit(-1)
 
-    if args.app != None:
-        applst = [args.app]
-    else:
-        applst = APPS
-    
-    if args.graph != None:
-        graphs = [args.graph]
-    else:
-        graphs = ['app', 'call']
+    apps = get_app_list(args.app)
+    graphs = get_graph_list(args.graph)
 
-    for app in applst:
+    for app in apps:
         print(f"[INFO] saving graphs for {app} app...")
         for graph in graphs:
             data = load(app, graph, False)
@@ -174,7 +176,7 @@ if __name__ == "__main__":
             if graph == 'call': # do another run for labeled
                 build_digraph(data, graph, True)
                 save(app, graph, True, False)
-        for graph in search_all_per_requests(app):
+        for graph in search_all_trace_filenames(app):
             data = load(app, graph, True)
             build_digraph(data, graph, True)
             save(app, graph, True, True)

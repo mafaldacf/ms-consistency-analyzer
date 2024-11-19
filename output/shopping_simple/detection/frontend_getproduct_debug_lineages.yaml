@@ -1,0 +1,13 @@
+mode: DEBUG_LINEAGES
+
+number_inconsistencies: 0
+
+xcy_inconsistencies: []
+
+xcy_lineages:
+- _id: 0
+  _operations:
+  - _operation: (0, 0) read(product_db, query, result) @ ProductService
+    visible_dependency_set: []
+  lineage_dependencies: []
+  missing_dependencies: []

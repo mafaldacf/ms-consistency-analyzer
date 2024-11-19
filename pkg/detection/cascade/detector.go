@@ -2,6 +2,8 @@ package cascade
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 
 	"analyzer/pkg/abstractgraph"
 	"analyzer/pkg/app"
@@ -99,17 +101,34 @@ func (detector *CascadeDetector) searchCascadingDeletes(deleteOp *deleteOperatio
 
 func (detector *CascadeDetector) Results() string {
 	// red := "\033[31m"
-	reset := "\033[0m"
+	// reset := "\033[0m"
 	bold_light_red := "\033[1;31m"
-	results := fmt.Sprintf("\n\n%s-------------------- CASCADING ANALYSIS --------------------%s", bold_light_red, reset)
+	results := "-------------------- CASCADING ANALYSIS --------------------"
 	
 	for _, op := range detector.getDeleteOperations() {
-		results += fmt.Sprintf("\n%sorigin operation = %s%s\n", bold_light_red, op.LongString(), reset)
+		results += fmt.Sprintf("\norigin operation = %s\n", op.LongString())
 		for _, dep := range op.getDependencies() {
 			if !dep.cascading {
-				results += fmt.Sprintf("%s\t - missing cascading delete @ %s%s\n", bold_light_red, dep.LongString(), reset)
+				results += fmt.Sprintf("\t - missing cascading delete @ %s\n", dep.LongString())
 			}
 		}
 	}
-	return results
+	detector.saveResults(results)
+	return "\n\n" + bold_light_red + results
+}
+
+func (detector *CascadeDetector) saveResults(results string) {
+	path := fmt.Sprintf("output/%s/analysis/cascade.txt", detector.app.Name)
+
+	dir := filepath.Dir(path)
+	err := os.MkdirAll(dir, 0755)
+	if err != nil {
+		logger.Logger.Fatalf("[CASCADE] error creating directory %s: %s", dir, err.Error())
+	}
+
+	err = os.WriteFile(path, []byte(results), 0644)
+	if err != nil {
+		logger.Logger.Fatalf("[CASCADE] error writing data to %s: %s", path, err.Error())
+	}
+	logger.Logger.Tracef("[CASCADE] saved cascading detection results to %s", path)
 }

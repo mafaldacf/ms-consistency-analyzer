@@ -62,13 +62,18 @@ shopping_simple:
     Queue.Pop(ctx context.Context, item interface{})}, num_workers 4 int}
   - shopping_simple.Frontend
   - shopping_simple.FrontendImpl struct{product_service shopping_simple.ProductService, cart_service shopping_simple.CartService}
+  - shopping_simple.Media struct{Video []byte}
+  - shopping_simple.Post struct{User shopping_simple.User struct{ID int64, Name string},
+    Media shopping_simple.Media struct{Video []byte}, Text string}
   - shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
   - shopping_simple.ProductQueueMessage struct{ProductID string, Remove bool}
   - shopping_simple.ProductService
   - shopping_simple.ProductServiceImpl struct{product_db NoSQLDatabase {instance = product_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, product_queue Queue {instance = product_queue}
     interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}, num_workers int}
+  - shopping_simple.User struct{ID int64, Name string}
 - declared variables: []
-- declared constants: []
+- declared constants:
+  - DECLARED_CONSTANT "THIS IS A CONSTANT!" untyped string
 - service types:
   - shopping_simple.CartService
   - shopping_simple.Frontend

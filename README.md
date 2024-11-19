@@ -22,6 +22,7 @@ Available applications:
 - `foobar`
 
 ```zsh
+go run main.go -app=postnotification [--xcy] [--fk]
 go run main.go -app=postnotification --xcy
 go run main.go -app=postnotification --fk
 go run main.go -app=foobar
@@ -30,6 +31,8 @@ go run main.go -app=shopping_simple --fk
 
 source ~/.venv/bin/activate
 pip3 install -r requirements.txt
+./graphs.py --app postnotification [--graph {app, call}] [--labeled]
+./graphs.py --app postnotification
 ./graphs.py --app shopping_simple
 ```
 

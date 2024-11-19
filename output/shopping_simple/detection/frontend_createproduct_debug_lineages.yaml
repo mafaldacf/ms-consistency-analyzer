@@ -1,0 +1,14 @@
+mode: DEBUG_LINEAGES
+
+number_inconsistencies: 0
+
+xcy_inconsistencies: []
+
+xcy_lineages:
+- _id: 0
+  _operations:
+  - _operation: (0, 0) write(product_db, product, product) @ ProductService
+    visible_dependency_set: []
+  lineage_dependencies:
+  - (0, 0) write(product_db, product, product) @ ProductService
+  missing_dependencies: []

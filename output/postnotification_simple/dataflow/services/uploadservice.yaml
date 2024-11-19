@@ -1,123 +1,103 @@
 (*UploadServiceImpl).UploadPost(ctx context.Context, username string, text string):
   block 2 (IfDone):
-  - (inline) (ServiceVariable ServiceType) storageService postnotification_simple.StorageService
-  - (inline) (FieldVariable FieldType) storageService postnotification_simple.StorageService
-  - (inline) (BlueprintBackendVariable BlueprintBackendType) notificationsQueue Queue
-  - (inline) (FieldVariable FieldType) notificationsQueue Queue
-  - (inline) (StructVariable UserType) postnotification_simple.UploadServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue}
-  - (PointerVariable PointerType) u (*postnotification_simple.UploadServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue})
-  - (InterfaceVariable UserType) ctx context.Context
-  - (BasicVariable BasicType) username string
-  - |-
-    (BasicVariable BasicType) text string -->
-       w-tainted 1x: write(posts_db.Post.Text)
-  - |-
-    (inline) (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService -->
-       w-tainted 2x: write(posts_db.Post.ReqID, notifications_queue.Message.ReqID)
-  - |-
-    (BasicVariable BasicType) reqID int64 -->
-       w-tainted 2x: write(posts_db.Post.ReqID, notifications_queue.Message.ReqID)
-  - |-
-    (inline) (Reference InterfaceType) ref <PostID interface{}> @ NotifyService -->
-       w-tainted 2x: write(posts_db.Post.PostID, notifications_queue.Message.PostID)
-  - |-
-    (BasicVariable BasicType) postID int64 -->
-       w-tainted 2x: write(posts_db.Post.PostID, notifications_queue.Message.PostID)
-  - |-
-    (BasicVariable BasicType) timestamp int64 -->
-       w-tainted 1x: write(posts_db.Post.Timestamp)
-  - |-
-    (inline) (BasicVariable BasicType) "bob" string -->
-       w-tainted 1x: write(posts_db.Post.Mentions)
-  - |-
-    (inline) (BasicVariable BasicType) "alice" string -->
-       w-tainted 1x: write(posts_db.Post.Mentions)
-  - |-
-    (ArrayVariable ArrayType) mentions []string -->
-       w-tainted 1x: write(posts_db.Post.Mentions)
-  - |-
-    (inline) (FieldVariable FieldType) Timestamp int64 -->
-       w-tainted 1x: write(posts_db.Post.Timestamp)
-  - |-
-    (inline) (FieldVariable FieldType) Text string -->
-       w-tainted 1x: write(posts_db.Post.Text)
-  - |-
-    (inline) (FieldVariable FieldType) ReqID int64 -->
-       w-tainted 1x: write(posts_db.Post.ReqID)
-  - |-
-    (inline) (FieldVariable FieldType) PostID int64 -->
-       w-tainted 1x: write(posts_db.Post.PostID)
-  - |-
-    (inline) (FieldVariable FieldType) Mentions []string -->
-       w-tainted 1x: write(posts_db.Post.Mentions)
-  - |-
-    (inline) (BasicVariable BasicType) "some username" string -->
-       w-tainted 1x: write(posts_db.Post.Creator.Username)
-  - |-
-    (inline) (FieldVariable FieldType) Username "some username" string -->
-       w-tainted 1x: write(posts_db.Post.Creator.Username)
-  - |-
-    (inline) (StructVariable UserType) postnotification_simple.Creator struct{Username "some username" string} -->
-       w-tainted 1x: write(posts_db.Post.Creator)
-  - |-
-    (inline) (FieldVariable FieldType) Creator postnotification_simple.Creator struct{Username "some username" string} -->
-       w-tainted 1x: write(posts_db.Post.Creator)
-  - |-
-    (StructVariable UserType) post postnotification_simple.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username "some username" string}, Creator postnotification_simple.Creator struct{Username "some username" string}} -->
-       w-tainted 1x: write(posts_db.Post)
-  - |-
-    (inline) (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService -->
-       w-tainted 2x: write(posts_db.Post.ReqID, notifications_queue.Message.ReqID)
-  - |-
-    (inline) (BasicVariable BasicType) string -->
-       w-tainted 1x: write(notifications_queue.Message.ReqID)
-  - |-
-    (inline) (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService -->
-       w-tainted 2x: write(posts_db.Post.ReqID, notifications_queue.Message.ReqID)
-  - |-
-    (inline) (FieldVariable FieldType) ReqID string -->
-       w-tainted 1x: write(notifications_queue.Message.ReqID)
-  - |-
-    (inline) (Reference InterfaceType) ref <PostID interface{}> @ NotifyService -->
-       w-tainted 2x: write(posts_db.Post.PostID, notifications_queue.Message.PostID)
-  - |-
-    (inline) (BasicVariable BasicType) string -->
-       w-tainted 1x: write(notifications_queue.Message.PostID)
-  - |-
-    (inline) (Reference InterfaceType) ref <PostID interface{}> @ NotifyService -->
-       w-tainted 2x: write(posts_db.Post.PostID, notifications_queue.Message.PostID)
-  - |-
-    (inline) (FieldVariable FieldType) PostID string -->
-       w-tainted 1x: write(notifications_queue.Message.PostID)
-  - |-
-    (StructVariable UserType) message postnotification_simple.Message struct{ReqID string, PostID string, Timestamp string} -->
-       w-tainted 1x: write(notifications_queue.Message)
-  - (BasicVariable BasicType) _ bool
-  - (InterfaceVariable UserType) err .error
+  - ' depth 0 (PointerVariable PointerType) u (*postnotification_simple.UploadServiceImpl
+    struct{storageService postnotification_simple.StorageService, notificationsQueue
+    Queue})'
+  - _ depth 1 (StructVariable UserType) postnotification_simple.UploadServiceImpl
+    struct{storageService postnotification_simple.StorageService, notificationsQueue Queue}
+  - __ depth 2 (FieldVariable FieldType) notificationsQueue Queue
+  - ___ depth 3 (BlueprintBackendVariable BlueprintBackendType) notificationsQueue
+    Queue
+  - __ depth 2 (FieldVariable FieldType) storageService postnotification_simple.StorageService
+  - ___ depth 3 (ServiceVariable ServiceType) storageService postnotification_simple.StorageService
+  - ' depth 0 (InterfaceVariable UserType) ctx context.Context'
+  - ' depth 0 (BasicVariable BasicType) username string'
+  - ' depth 0 (BasicVariable BasicType) text string --> w-tainted 1x: write(posts_db.Post.Text)'
+  - ' depth 0 (BasicVariable BasicType) reqID int64 --> w-tainted 2x: write(posts_db.Post.ReqID,
+    notifications_queue.Message.ReqID) --> r-tainted 1x: read(notifications_queue.Message.ReqID)'
+  - '_ depth 1 (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService -->
+    w-tainted 2x: write(posts_db.Post.ReqID, notifications_queue.Message.ReqID) -->
+    r-tainted 1x: read(notifications_queue.Message.ReqID)'
+  - ' depth 0 (BasicVariable BasicType) postID int64 --> w-tainted 2x: write(posts_db.Post.PostID,
+    notifications_queue.Message.PostID) --> r-tainted 1x: read(notifications_queue.Message.PostID)'
+  - '_ depth 1 (Reference InterfaceType) ref <PostID interface{}> @ NotifyService
+    --> w-tainted 2x: write(posts_db.Post.PostID, notifications_queue.Message.PostID)
+    --> r-tainted 2x: read(notifications_queue.Message.PostID, posts_db.Post.PostID)'
+  - ' depth 0 (BasicVariable BasicType) timestamp int64 --> w-tainted 1x: write(posts_db.Post.Timestamp)'
+  - ' depth 0 (ArrayVariable ArrayType) mentions []string --> w-tainted 1x: write(posts_db.Post.Mentions)'
+  - '_ depth 1 (BasicVariable BasicType) "alice" string --> w-tainted 1x: write(posts_db.Post.Mentions)'
+  - '_ depth 1 (BasicVariable BasicType) "bob" string --> w-tainted 1x: write(posts_db.Post.Mentions)'
+  - ' depth 0 (StructVariable UserType) post postnotification_simple.Post struct{ReqID
+    int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator
+    postnotification_simple.Creator struct{Username "some username" string}, Creator
+    postnotification_simple.Creator struct{Username "some username" string}} --> w-tainted
+    1x: write(posts_db.Post)'
+  - '_ depth 1 (FieldVariable FieldType) Creator postnotification_simple.Creator struct{Username
+    "some username" string} --> w-tainted 1x: write(posts_db.Post.Creator)'
+  - '__ depth 2 (StructVariable UserType) postnotification_simple.Creator struct{Username
+    "some username" string} --> w-tainted 1x: write(posts_db.Post.Creator)'
+  - '___ depth 3 (FieldVariable FieldType) Username "some username" string --> w-tainted
+    1x: write(posts_db.Post.Creator.Username)'
+  - '____ depth 4 (BasicVariable BasicType) "some username" string --> w-tainted 1x:
+    write(posts_db.Post.Creator.Username)'
+  - '_ depth 1 (FieldVariable FieldType) Mentions []string --> w-tainted 1x: write(posts_db.Post.Mentions)'
+  - '_ depth 1 (FieldVariable FieldType) PostID int64 --> w-tainted 1x: write(posts_db.Post.PostID)'
+  - '_ depth 1 (FieldVariable FieldType) ReqID int64 --> w-tainted 1x: write(posts_db.Post.ReqID)'
+  - '_ depth 1 (FieldVariable FieldType) Text string --> w-tainted 1x: write(posts_db.Post.Text)'
+  - '_ depth 1 (FieldVariable FieldType) Timestamp int64 --> w-tainted 1x: write(posts_db.Post.Timestamp)'
+  - ' depth 0 (StructVariable UserType) message postnotification_simple.Message struct{ReqID
+    string, PostID string, Timestamp string} --> w-tainted 1x: write(notifications_queue.message)
+    --> r-tainted 1x: read(notifications_queue.message)'
+  - '_ depth 1 (FieldVariable FieldType) PostID string --> w-tainted 1x: write(notifications_queue.Message.PostID)
+    --> r-tainted 1x: read(notifications_queue.Message.PostID)'
+  - '__ depth 2 (Reference InterfaceType) ref <PostID interface{}> @ NotifyService
+    --> w-tainted 2x: write(posts_db.Post.PostID, notifications_queue.Message.PostID)
+    --> r-tainted 2x: read(notifications_queue.Message.PostID, posts_db.Post.PostID)'
+  - '__ depth 2 (BasicVariable BasicType) string --> w-tainted 1x: write(notifications_queue.Message.PostID)
+    --> r-tainted 1x: read(notifications_queue.Message.PostID)'
+  - '___ depth 3 (Reference InterfaceType) ref <PostID interface{}> @ NotifyService
+    --> w-tainted 2x: write(posts_db.Post.PostID, notifications_queue.Message.PostID)
+    --> r-tainted 2x: read(notifications_queue.Message.PostID, posts_db.Post.PostID)'
+  - '_ depth 1 (FieldVariable FieldType) ReqID string --> w-tainted 1x: write(notifications_queue.Message.ReqID)
+    --> r-tainted 1x: read(notifications_queue.Message.ReqID)'
+  - '__ depth 2 (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService
+    --> w-tainted 2x: write(posts_db.Post.ReqID, notifications_queue.Message.ReqID)
+    --> r-tainted 1x: read(notifications_queue.Message.ReqID)'
+  - '__ depth 2 (BasicVariable BasicType) string --> w-tainted 1x: write(notifications_queue.Message.ReqID)
+    --> r-tainted 1x: read(notifications_queue.Message.ReqID)'
+  - '___ depth 3 (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService
+    --> w-tainted 2x: write(posts_db.Post.ReqID, notifications_queue.Message.ReqID)
+    --> r-tainted 1x: read(notifications_queue.Message.ReqID)'
+  - ' depth 0 (BasicVariable BasicType) _ bool'
+  - ' depth 0 (InterfaceVariable UserType) err .error'
 
 .NewNotifyServiceImpl(ctx context.Context, storageService postnotification_simple.StorageService, notificationsQueue Queue):
   block 0 (Body):
-  - (InterfaceVariable UserType) ctx context.Context
-  - (ServiceVariable ServiceType) storageService postnotification_simple.StorageService
-  - (BlueprintBackendVariable BlueprintBackendType) notificationsQueue Queue
-  - (inline) (FieldVariable FieldType) storageService postnotification_simple.StorageService
-  - (inline) (BasicVariable BasicType) 4 int
-  - (inline) (FieldVariable FieldType) num_workers 4 int
-  - (inline) (FieldVariable FieldType) notificationsQueue Queue
-  - (inline) (StructVariable UserType) postnotification_simple.NotifyServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue, num_workers 4 int}
-  - (PointerVariable PointerType) n (*postnotification_simple.NotifyServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue, num_workers 4 int})
+  - ' depth 0 (InterfaceVariable UserType) ctx context.Context'
+  - ' depth 0 (ServiceVariable ServiceType) storageService postnotification_simple.StorageService'
+  - ' depth 0 (BlueprintBackendVariable BlueprintBackendType) notificationsQueue Queue'
+  - ' depth 0 (PointerVariable PointerType) n (*postnotification_simple.NotifyServiceImpl
+    struct{storageService postnotification_simple.StorageService, notificationsQueue
+    Queue, num_workers 4 int})'
+  - _ depth 1 (StructVariable UserType) postnotification_simple.NotifyServiceImpl
+    struct{storageService postnotification_simple.StorageService, notificationsQueue Queue, num_workers 4 int}
+  - __ depth 2 (FieldVariable FieldType) notificationsQueue Queue
+  - __ depth 2 (FieldVariable FieldType) num_workers 4 int
+  - ___ depth 3 (BasicVariable BasicType) 4 int
+  - __ depth 2 (FieldVariable FieldType) storageService postnotification_simple.StorageService
 
 .NewStorageServiceImpl(ctx context.Context, postsDb NoSQLDatabase):
   block 0 (Body):
-  - (InterfaceVariable UserType) ctx context.Context
-  - (BlueprintBackendVariable BlueprintBackendType) postsDb NoSQLDatabase
-  - (inline) (FieldVariable FieldType) postsDb NoSQLDatabase
-  - (inline) (StructVariable UserType) postnotification_simple.StorageServiceImpl
+  - ' depth 0 (InterfaceVariable UserType) ctx context.Context'
+  - ' depth 0 (BlueprintBackendVariable BlueprintBackendType) postsDb NoSQLDatabase'
+  - ' depth 0 (PointerVariable PointerType) s (*postnotification_simple.StorageServiceImpl
+    struct{postsDb NoSQLDatabase})'
+  - _ depth 1 (StructVariable UserType) postnotification_simple.StorageServiceImpl
     struct{postsDb NoSQLDatabase}
-  - (PointerVariable PointerType) s (*postnotification_simple.StorageServiceImpl struct{postsDb NoSQLDatabase})
+  - __ depth 2 (FieldVariable FieldType) postsDb NoSQLDatabase
 
 .NewUploadServiceImpl(ctx context.Context, storageService postnotification_simple.StorageService, notificationsQueue Queue):
   block 0 (Body):
-  - (InterfaceVariable UserType) ctx context.Context
-  - (ServiceVariable ServiceType) storageService postnotification_simple.StorageService
-  - (BlueprintBackendVariable BlueprintBackendType) notificationsQueue Queue
+  - ' depth 0 (InterfaceVariable UserType) ctx context.Context'
+  - ' depth 0 (ServiceVariable ServiceType) storageService postnotification_simple.StorageService'
+  - ' depth 0 (BlueprintBackendVariable BlueprintBackendType) notificationsQueue Queue'
