@@ -102,13 +102,25 @@
           {
             "basic": {
               "name": "",
-              "type": "bool"
+              "type": "bool",
+              "refs": [
+                {
+                  "name": "val",
+                  "creator": "ProductService"
+                }
+              ]
             }
           },
           {
             "interface": {
               "name": "",
-              "type": ".error"
+              "type": ".error",
+              "refs": [
+                {
+                  "name": "err",
+                  "creator": "ProductService"
+                }
+              ]
             }
           }
         ]
@@ -284,13 +296,25 @@
           {
             "struct": {
               "name": "",
-              "type": "shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}"
+              "type": "shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}",
+              "refs": [
+                {
+                  "name": "product",
+                  "creator": "ProductService"
+                }
+              ]
             }
           },
           {
             "interface": {
               "name": "",
-              "type": ".error"
+              "type": ".error",
+              "refs": [
+                {
+                  "name": "err",
+                  "creator": "ProductService"
+                }
+              ]
             }
           }
         ]
@@ -412,13 +436,25 @@
           {
             "struct": {
               "name": "",
-              "type": "shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}"
+              "type": "shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}",
+              "refs": [
+                {
+                  "name": "cart",
+                  "creator": "CartService"
+                }
+              ]
             }
           },
           {
             "interface": {
               "name": "",
-              "type": ".error"
+              "type": ".error",
+              "refs": [
+                {
+                  "name": "err",
+                  "creator": "CartService"
+                }
+              ]
             }
           }
         ]
@@ -514,13 +550,25 @@
           {
             "slice": {
               "name": "",
-              "type": "[]shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}"
+              "type": "[]shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}",
+              "refs": [
+                {
+                  "name": "products",
+                  "creator": "ProductService"
+                }
+              ]
             }
           },
           {
             "interface": {
               "name": "",
-              "type": ".error"
+              "type": ".error",
+              "refs": [
+                {
+                  "name": "err",
+                  "creator": "ProductService"
+                }
+              ]
             }
           }
         ]
@@ -656,13 +704,25 @@
           {
             "struct": {
               "name": "",
-              "type": "shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}"
+              "type": "shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}",
+              "refs": [
+                {
+                  "name": "cart",
+                  "creator": "CartService"
+                }
+              ]
             }
           },
           {
             "interface": {
               "name": "",
-              "type": ".error"
+              "type": ".error",
+              "refs": [
+                {
+                  "name": "err",
+                  "creator": "CartService"
+                }
+              ]
             }
           }
         ]
@@ -812,13 +872,25 @@
           {
             "struct": {
               "name": "",
-              "type": "shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}"
+              "type": "shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}",
+              "refs": [
+                {
+                  "name": "product",
+                  "creator": "ProductService"
+                }
+              ]
             }
           },
           {
             "interface": {
               "name": "",
-              "type": ".error"
+              "type": ".error",
+              "refs": [
+                {
+                  "name": "err",
+                  "creator": "ProductService"
+                }
+              ]
             }
           }
         ]
@@ -985,7 +1057,13 @@
               {
                 "struct": {
                   "name": "product",
-                  "type": "shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}"
+                  "type": "shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}",
+                  "refs": [
+                    {
+                      "name": "product",
+                      "creator": "ProductService"
+                    }
+                  ]
                 },
                 "struct_fields": {
                   "PricePerUnit": {
@@ -1005,7 +1083,13 @@
               {
                 "interface": {
                   "name": "_",
-                  "type": ".error"
+                  "type": ".error",
+                  "refs": [
+                    {
+                      "name": "err",
+                      "creator": "ProductService"
+                    }
+                  ]
                 }
               }
             ]
@@ -1237,13 +1321,25 @@
           {
             "struct": {
               "name": "",
-              "type": "shopping_simple.CartProduct struct{CartID string, ProductID string, PricePerUnit int, Quantity 1 int}"
+              "type": "shopping_simple.CartProduct struct{CartID string, ProductID string, PricePerUnit int, Quantity 1 int}",
+              "refs": [
+                {
+                  "name": "cartProduct",
+                  "creator": "CartService"
+                }
+              ]
             }
           },
           {
             "interface": {
               "name": "",
-              "type": ".error"
+              "type": ".error",
+              "refs": [
+                {
+                  "name": "err",
+                  "creator": "CartService"
+                }
+              ]
             }
           }
         ]

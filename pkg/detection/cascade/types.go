@@ -73,7 +73,7 @@ func (op *deleteOperation) getDependency(serviceName string, datastore *datastor
 			return dep
 		}
 	}
-    logger.Logger.Warnf("[CASCADE DETECTOR] could not find dependency for service (%s) and datastore (%s) for origin delete operation %s")
+    logger.Logger.Warnf("[CASCADE DETECTOR] could not find dependency for service (%s) and datastore (%s) for origin delete operation %s", serviceName, datastore.Name, op.String())
 	return nil
 }
 

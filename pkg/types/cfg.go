@@ -78,6 +78,20 @@ func (cfg *CFG) GetEntryParsedBlock() *Block {
 	return nil
 }
 
+//FIXME: THIS SHOULD NOT BE USED IN THE FUTURE
+// BUT CURRENTLY WE ARE NOT CONCERNED ABOUT CONDITIONAL BRANCHES RESULTING IN OTHER BLOCKS
+func (cfg *CFG) GetLastLiveBlock() *Block {
+	// interate in reverse
+	for i := len(cfg.ParsedBlocks) - 1; i >= 0; i-- {
+		block := cfg.ParsedBlocks[i]
+		if block.Block.Live {
+			return block
+		}
+	}
+	logger.Logger.Fatalf("[CFG] no live blocks for CFG: %s", cfg.String())
+	return nil
+}
+
 func (cfg *CFG) GetParsedBlocks() []*Block {
 	return cfg.ParsedBlocks
 }

@@ -51,14 +51,12 @@ postnotification_simple:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/postnotification_simple/workflow/postnotification_simple/models.go
 - imports (extracted from package):
   - context
-  - github.com/blueprint-uservices/blueprint/examples/postnotification_simple/workflow/postnotification_simple/common
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
   - go.mongodb.org/mongo-driver/bson
   - math/rand
   - sync
 - imports (extracted from source files):
   - context
-  - github.com/blueprint-uservices/blueprint/examples/postnotification_simple/workflow/postnotification_simple/common
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
   - go.mongodb.org/mongo-driver/bson
   - math/rand
@@ -82,7 +80,7 @@ postnotification_simple:
 - imported variables: []
 - declared types:
   - postnotification_simple.Creator struct{Username "some username" string}
-  - postnotification_simple.Message struct{ReqID string, PostID string, Timestamp string}
+  - postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64}
   - postnotification_simple.NotifyService
   - postnotification_simple.NotifyServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue {instance = notifications_queue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})},
     num_workers 4 int}
@@ -105,10 +103,9 @@ postnotification_simple:
   - Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}
 - parsed methods:
   - (*postnotification_simple.NotifyServiceImpl).Run(ctx context.Context) error
-  - (*postnotification_simple.NotifyServiceImpl).handleMessage(ctx context.Context, message postnotification_simple.Message struct{ReqID string, PostID string, Timestamp string}) error
   - (*postnotification_simple.NotifyServiceImpl).workerThread(ctx context.Context, workerID int) error
   - (*postnotification_simple.StorageServiceImpl).ReadPost(ctx context.Context, reqID int64, postID int64) (postnotification_simple.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username "some username" string}, Creator postnotification_simple.Creator struct{Username "some username" string}}, error)
-  - (*postnotification_simple.StorageServiceImpl).StorePost(ctx context.Context, reqID int64, post postnotification_simple.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username "some username" string}, Creator postnotification_simple.Creator struct{Username "some username" string}}) error
+  - (*postnotification_simple.StorageServiceImpl).StorePost(ctx context.Context, reqID int64, text string) (int64, error)
   - (*postnotification_simple.UploadServiceImpl).UploadPost(ctx context.Context, username string, text string) (int64, error)
   - postnotification_simple.NewNotifyServiceImpl(ctx context.Context, storageService postnotification_simple.StorageService, notificationsQueue Queue) (postnotification_simple.NotifyService, error)
   - postnotification_simple.NewStorageServiceImpl(ctx context.Context, postsDb NoSQLDatabase)

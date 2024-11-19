@@ -9,8 +9,8 @@ import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
-	"analyzer/pkg/types/objects"
 	"analyzer/pkg/types/gotypes"
+	"analyzer/pkg/types/objects"
 	"analyzer/pkg/utils"
 )
 
@@ -24,6 +24,7 @@ type App struct {
 	ExternalPackages  map[string]*types.Package // key is package name (FIXME: should be path actually)
 	TaintedVariables  map[string][]objects.Object
 	ServiceTypes      map[string]*gotypes.ServiceType
+	Dataflows         []*objects.Dataflow
 }
 
 func (app *App) MarshalJSON() ([]byte, error) {
@@ -36,6 +37,18 @@ func (app *App) MarshalJSON() ([]byte, error) {
 		Services:  app.Services,
 		Databases: app.Databases,
 	})
+}
+
+func (app *App) ResetAllDataflows()  {
+	for _, df := range app.Dataflows {
+		objInfo := df.Variable.GetVariableInfo()
+		objInfo.ResetAllDataflows()
+	}
+	app.Dataflows = nil
+}
+
+func (app *App) AddDataflow(df *objects.Dataflow)  {
+	app.Dataflows = append(app.Dataflows, df)
 }
 
 func (app *App) GetServices() map[string]*service.Service {

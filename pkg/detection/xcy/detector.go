@@ -1,4 +1,4 @@
-package detection
+package xcy
 
 import (
 	"slices"
@@ -6,23 +6,25 @@ import (
 	"github.com/golang-collections/collections/stack"
 
 	"analyzer/pkg/abstractgraph"
+	"analyzer/pkg/app"
 	"analyzer/pkg/datastores"
-	"analyzer/pkg/detection/xcy"
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
-	"analyzer/pkg/utils"
 	"analyzer/pkg/types/objects"
+	"analyzer/pkg/utils"
 )
 
 type DetectionSet struct {
 	DetectionMode DetectionMode
-	Requests      []*xcy.Request
+	Requests      []*Request
 }
 
 type Detector struct {
+	app           *app.App
 	DetectionMode DetectionMode
-	Requests      []*xcy.Request
-	DatastoresOps map[*datastores.Datastore][]*xcy.Operation
+	Requests      []*Request
+	DatastoresOps map[*datastores.Datastore][]*Operation
+	Inconsistencies int
 }
 
 type DetectionMode int
@@ -37,13 +39,13 @@ const (
 	DEBUG_XCY_MINIMIZE_DEPENDENCIES
 )
 
-func GetAllDetectioModes() []DetectionMode {
+func GetAllDetectionModes() []DetectionMode {
 	return []DetectionMode{
-		XCY_ALL_DATASTORES,
-		XCY_EQUAL_DATASTORES,
-		FOREIGN_KEYS_DEFAULT,
+		//XCY_ALL_DATASTORES,
+		//XCY_EQUAL_DATASTORES,
+		//FOREIGN_KEYS_DEFAULT,
 		FOREIGN_KEYS_LINEAGES,
-		DEBUG_LINEAGES,
+		//DEBUG_LINEAGES,
 		DEBUG_XCY_MISSING_DEPENDENCIES,
 		DEBUG_XCY_MINIMIZE_DEPENDENCIES,
 	}
@@ -74,31 +76,32 @@ func (detector *Detector) DetectionModeUsesLineages() bool {
 	return slices.Contains(modesWithLineages, detector.DetectionMode)
 }
 
-func (detector *Detector) GetRequests() []*xcy.Request {
+func (detector *Detector) GetRequests() []*Request {
 	return detector.Requests
 }
 
-func NewDatastoreOps() map[*datastores.Datastore][]*xcy.Operation {
-	return make(map[*datastores.Datastore][]*xcy.Operation)
+func NewDatastoreOps() map[*datastores.Datastore][]*Operation {
+	return make(map[*datastores.Datastore][]*Operation)
 }
 
-func InitDetector(datastoreOps map[*datastores.Datastore][]*xcy.Operation, mode DetectionMode) *Detector {
+func InitDetector(app *app.App, datastoreOps map[*datastores.Datastore][]*Operation, mode DetectionMode) *Detector {
 	return &Detector{
+		app:           app,
 		DatastoresOps: datastoreOps,
 		DetectionMode: mode,
 	}
 }
 
-func (detector *Detector) GetDatastoreOps() map[*datastores.Datastore][]*xcy.Operation {
+func (detector *Detector) GetDatastoreOps() map[*datastores.Datastore][]*Operation {
 	return detector.DatastoresOps
 }
 
-func (detector *Detector) UpdateDatastoreOps(ops map[*datastores.Datastore][]*xcy.Operation) {
+func (detector *Detector) UpdateDatastoreOps(ops map[*datastores.Datastore][]*Operation) {
 	detector.DatastoresOps = ops
 }
 
-func (detector *Detector) InitRequest(entryNode abstractgraph.AbstractNode) *xcy.Request {
-	request := &xcy.Request{
+func (detector *Detector) InitRequest(entryNode abstractgraph.AbstractNode) *Request {
+	request := &Request{
 		EntryNode:     entryNode,
 		LineagesStack: stack.New(),
 	}
@@ -107,14 +110,14 @@ func (detector *Detector) InitRequest(entryNode abstractgraph.AbstractNode) *xcy
 	return request
 }
 
-func (detector *Detector) captureInconsistency(request *xcy.Request, read *xcy.Operation, readCall *abstractgraph.AbstractDatabaseCall) []*xcy.Inconsistency {
-	var inconsistencies []*xcy.Inconsistency
+func (detector *Detector) captureInconsistency(request *Request, read *Operation, readCall *abstractgraph.AbstractDatabaseCall) []*Inconsistency {
+	var inconsistencies []*Inconsistency
 	if readCall.DbInstance.IsQueue() {
 		// skip inconsistencies between a write and a read in the same queue
 		return inconsistencies
 	}
 
-	var dependencies []*xcy.Operation
+	var dependencies []*Operation
 	if detector.HasDetectionMode(DEBUG_XCY_MISSING_DEPENDENCIES) {
 		dependencies = request.GetDependencies()
 	} else {
@@ -124,21 +127,23 @@ func (detector *Detector) captureInconsistency(request *xcy.Request, read *xcy.O
 
 	for _, write := range dependencies {
 		if detector.HasDetectionMode(XCY_ALL_DATASTORES) {
-			inconsistency := &xcy.Inconsistency{
+			inconsistency := &Inconsistency{
 				Write: write,
 				Read:  read,
 			}
 			request.AddInconsistency(inconsistency)
+			detector.Inconsistencies += 1
 			continue
 		}
 
 		if detector.HasDetectionMode(XCY_EQUAL_DATASTORES) {
 			if readCall.DbInstance.GetDatastore() == write.Datastore {
-				inconsistency := &xcy.Inconsistency{
+				inconsistency := &Inconsistency{
 					Write: write,
 					Read:  read,
 				}
 				request.AddInconsistency(inconsistency)
+				detector.Inconsistencies += 1
 			}
 			continue
 		}
@@ -146,7 +151,7 @@ func (detector *Detector) captureInconsistency(request *xcy.Request, read *xcy.O
 		if readCall.DbInstance.GetDatastore() == write.Datastore {
 			logger.Logger.Debugf("[XCY] evaluating XCY violation for read (%s @ %s) and write (%s @ %s)", read.Key.GetVariableInfo().Name, readCall.DbInstance.GetName(), write.Key.GetVariableInfo().Name, write.Datastore.GetName())
 
-			inconsistency := &xcy.Inconsistency{
+			inconsistency := &Inconsistency{
 				Write: write,
 				Read:  read,
 			}
@@ -170,6 +175,7 @@ func (detector *Detector) captureInconsistency(request *xcy.Request, read *xcy.O
 			if inconsistency.Dataflows != nil {
 				logger.Logger.Warnf("[XCY] found inconsistency: %s", inconsistency.String())
 				request.AddInconsistency(inconsistency)
+				detector.Inconsistencies += 1
 				inconsistencies = append(inconsistencies, inconsistency)
 			}
 		}
@@ -177,7 +183,7 @@ func (detector *Detector) captureInconsistency(request *xcy.Request, read *xcy.O
 	return inconsistencies
 }
 
-func operationDataDependsOnPrevious(op_1 *xcy.Operation, op_2 *xcy.Operation) bool {
+func operationDataDependsOnPrevious(op_1 *Operation, op_2 *Operation) bool {
 	datastore_1 := op_1.GetDatastore()
 	datastore_2 := op_2.GetDatastore()
 
@@ -197,7 +203,7 @@ func operationDataDependsOnPrevious(op_1 *xcy.Operation, op_2 *xcy.Operation) bo
 	return false
 }
 
-func filterWriteDependencySet(writes_1 []*xcy.Operation, read_2 *xcy.Operation) {
+func filterWriteDependencySet(writes_1 []*Operation, read_2 *Operation) {
 	for _, write_1 := range writes_1 {
 		for _, dep_1 := range write_1.GetVisibleDependenciesForDatastore(read_2.GetDatastore()) {
 			write_1.AddMinimizedDependencyIfNotExists(dep_1)
@@ -205,7 +211,7 @@ func filterWriteDependencySet(writes_1 []*xcy.Operation, read_2 *xcy.Operation) 
 	}
 }
 
-func (detector *Detector) MinimizeDependecySets(request *xcy.Request) {
+func (detector *Detector) MinimizeDependecySets(request *Request) {
 	if !detector.HasDetectionMode(DEBUG_XCY_MINIMIZE_DEPENDENCIES) {
 		return
 	}
@@ -222,7 +228,7 @@ func (detector *Detector) MinimizeDependecySets(request *xcy.Request) {
 	}
 }
 
-func (detector *Detector) InitXCYRequestTransversal(request *xcy.Request) {
+func (detector *Detector) InitXCYRequestTransversal(request *Request) {
 	logger.Logger.Tracef("[XCY] init tranversal for entry node: %s", request.EntryNode.GetName())
 	for _, edge := range request.EntryNode.GetChildren() {
 		/* fmt.Println("\n------------------------------------------------------------------------------------------------------------------------------------------------")
@@ -236,7 +242,7 @@ func (detector *Detector) HasDetectionMode(mode DetectionMode) bool {
 	return detector.DetectionMode == mode
 }
 
-func detectMissingDependencies(request *xcy.Request, inconsistencies []*xcy.Inconsistency) {
+func detectMissingDependencies(request *Request, inconsistencies []*Inconsistency) {
 	for _, inconsistency := range inconsistencies {
 		if !slices.Contains(request.CurrentLineage().GetDependenciesByMostRecent(), inconsistency.Write) {
 			inconsistency.MissingDependency = true
@@ -244,12 +250,12 @@ func detectMissingDependencies(request *xcy.Request, inconsistencies []*xcy.Inco
 	}
 }
 
-func (detector *Detector) attachOperationToDatastore(operation *xcy.Operation) {
+func (detector *Detector) attachOperationToDatastore(operation *Operation) {
 	detector.DatastoresOps[operation.GetDatastore()] = append(detector.DatastoresOps[operation.GetDatastore()], operation)
 }
 
-func (detector *Detector) getWriteOperationsForDatastore(datastore *datastores.Datastore) []*xcy.Operation {
-	var ops []*xcy.Operation
+func (detector *Detector) getWriteOperationsForDatastore(datastore *datastores.Datastore) []*Operation {
+	var ops []*Operation
 	for _, op := range detector.DatastoresOps[datastore] {
 		if op.Write {
 			ops = append(ops, op)
@@ -258,7 +264,7 @@ func (detector *Detector) getWriteOperationsForDatastore(datastore *datastores.D
 	return ops
 }
 
-func (detector *Detector) transverseOperations(request *xcy.Request, node abstractgraph.AbstractNode) {
+func (detector *Detector) transverseOperations(request *Request, node abstractgraph.AbstractNode) {
 	// FIXME: maybe we should link the two stateful nodes (push and pop) in the abstract graph
 	// instead of placing a stateless queue handler between both
 	if detector.DetectionModeUsesLineages() {
@@ -268,7 +274,7 @@ func (detector *Detector) transverseOperations(request *xcy.Request, node abstra
 	}
 
 	if dbCall, ok := node.(*abstractgraph.AbstractDatabaseCall); ok {
-		var operation *xcy.Operation
+		var operation *Operation
 		if backend, ok := dbCall.ParsedCall.Method.(*blueprint.BackendMethod); ok {
 			if backend.IsWrite() || backend.IsUpdate() {
 				operation = request.SaveWriteOperation(dbCall, backend)

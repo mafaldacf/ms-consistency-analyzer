@@ -19,11 +19,11 @@ func InitDetector(app *app.App, graph *abstractgraph.AbstractGraph) *CascadeDete
 
 func (detector *CascadeDetector) Run() {
 	for idx, entry := range detector.getGraph().Nodes {
-		detector.analyzeDependencyNodes(entry.(*abstractgraph.AbstractServiceCall), entry, idx)
+		detector.analyzeNodes(entry.(*abstractgraph.AbstractServiceCall), entry, idx)
 	}
 }
 
-func (detector *CascadeDetector) analyzeDependencyNodes(lastServiceCallNode *abstractgraph.AbstractServiceCall, node abstractgraph.AbstractNode, child_idx int) {
+func (detector *CascadeDetector) analyzeNodes(lastServiceCallNode *abstractgraph.AbstractServiceCall, node abstractgraph.AbstractNode, child_idx int) {
 	if svcCall, ok := node.(*abstractgraph.AbstractServiceCall); ok {
 		lastServiceCallNode = svcCall
 	}
@@ -70,7 +70,7 @@ func (detector *CascadeDetector) analyzeDependencyNodes(lastServiceCallNode *abs
 	}
 
 	for idx, child := range node.GetChildren() {
-		detector.analyzeDependencyNodes(lastServiceCallNode, child, idx)
+		detector.analyzeNodes(lastServiceCallNode, child, idx)
 	}
 }
 
@@ -100,9 +100,6 @@ func (detector *CascadeDetector) searchCascadingDeletes(deleteOp *deleteOperatio
 }
 
 func (detector *CascadeDetector) Results() string {
-	// red := "\033[31m"
-	// reset := "\033[0m"
-	bold_light_red := "\033[1;31m"
 	results := "-------------------- CASCADING ANALYSIS --------------------"
 	
 	for _, op := range detector.getDeleteOperations() {
@@ -113,11 +110,11 @@ func (detector *CascadeDetector) Results() string {
 			}
 		}
 	}
-	detector.saveResults(results)
-	return "\n\n" + bold_light_red + results
+	detector.save(results)
+	return results
 }
 
-func (detector *CascadeDetector) saveResults(results string) {
+func (detector *CascadeDetector) save(results string) {
 	path := fmt.Sprintf("output/%s/analysis/cascade.txt", detector.app.Name)
 
 	dir := filepath.Dir(path)

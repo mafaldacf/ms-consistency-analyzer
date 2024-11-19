@@ -21,6 +21,8 @@ type Call interface {
 	AddParam(param objects.Object)
 	AddReturn(ret objects.Object)
 	GetParams() []objects.Object
+	GetReturns() []objects.Object
+	GetReturn(i int) objects.Object
 }
 
 type ParsedCall struct {
@@ -106,6 +108,13 @@ type ParsedServiceCall struct {
 	CalleeTypeName gotypes.Type
 }
 
+func (svcCall *ParsedServiceCall) GetReturn(i int) objects.Object {
+	if i >= len(svcCall.Returns) {
+		logger.Logger.Fatalf("[CALLS] index (%d) out of range for returns list in service call (%s): %v", i, svcCall.CallStr, svcCall.Returns)
+	}
+	return svcCall.Returns[i]
+}
+
 func (svcCall *ParsedServiceCall) DeepCopy() *ParsedServiceCall {
 	return &ParsedServiceCall{
 		Call:           svcCall.Call,
@@ -153,7 +162,7 @@ func (svcCall *ParsedServiceCall) GetParams() []objects.Object {
 }
 
 func (svcCall *ParsedServiceCall) GetReturns() []objects.Object {
-	return svcCall.Params
+	return svcCall.Returns
 }
 
 func (svcCall *ParsedServiceCall) GetMethod() Method {
@@ -213,6 +222,10 @@ func (dbCall *ParsedDatabaseCall) GetParams() []objects.Object {
 	return dbCall.Params
 }
 
+func (dbCall *ParsedDatabaseCall) GetReturns() []objects.Object {
+	return dbCall.Returns
+}
+
 func (dbCall *ParsedDatabaseCall) GetParam(i int) objects.Object {
 	if i >= len(dbCall.Params) {
 		logger.Logger.Fatalf("[CALLS] index (%d) out of range for parameters list in database call (%s): %v", i, dbCall.CallStr, dbCall.Params)
@@ -235,6 +248,13 @@ type ParsedInternalCall struct {
 	Call
 	ParsedCall
 	ServiceTypeName gotypes.Type
+}
+
+func (internalCall *ParsedInternalCall) GetReturn(i int) objects.Object {
+	if i >= len(internalCall.Returns) {
+		logger.Logger.Fatalf("[CALLS] index (%d) out of range for returns list in internal call (%s): %v", i, internalCall.CallStr, internalCall.Returns)
+	}
+	return internalCall.Returns[i]
 }
 
 func (internalCall *ParsedInternalCall) DeepCopy() *ParsedInternalCall {
@@ -271,6 +291,10 @@ func (internalCall *ParsedInternalCall) AddReturn(ret objects.Object) {
 
 func (internalCall *ParsedInternalCall) GetParams() []objects.Object {
 	return internalCall.Params
+}
+
+func (internalCall *ParsedInternalCall) GetReturns() []objects.Object {
+	return internalCall.Returns
 }
 
 func (internalCall *ParsedInternalCall) GetMethod() Method {

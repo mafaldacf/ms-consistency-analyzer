@@ -9,8 +9,8 @@ import (
 	"analyzer/pkg/lookup"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
-	"analyzer/pkg/utils"
 	"analyzer/pkg/types/objects"
+	"analyzer/pkg/utils"
 )
 
 func Build(app *app.App, frontends []string) *AbstractGraph {
@@ -150,24 +150,34 @@ func getPushMethodIfPublisherChild(parent AbstractNode, child *AbstractDatabaseC
 	return nil
 }
 
+func (graph *AbstractGraph) assignRemainingObjectIDs(objects []objects.Object) {
+	for _, dep := range objects {
+		if dep.GetVariableInfo().IsUnassigned() {
+			dep.GetVariableInfo().AssignID(graph.getAndIncGIndex())
+			logger.Logger.Debugf("\t\t\t[GID DEP] assigned new gid (%d) to (%s)", dep.GetId(), dep.String())
+		}
+	}
+}
+
 // FIXME: we should actually create a new deep copy for the CFG
 // to avoid changing it if we have another abstract node that will use the same parsed method
-func (graph *AbstractGraph) referenceMethodBlockVars(parsedCall types.Call, child AbstractNode) {
+func (graph *AbstractGraph) referenceCallObjects(parsedCall types.Call, child AbstractNode) {
 	entryBlock := parsedCall.GetMethod().(*types.ParsedMethod).GetParsedCfg().GetEntryParsedBlock()
-	for i, param := range parsedCall.GetParams() {
+	for i, parentObj := range parsedCall.GetParams() {
 		// variable at block index 0 is the receiver so we need to skip that one
 		if parsedCall.GetMethod().(*types.ParsedMethod).HasReceiver() {
 			i = i + 1
 		}
-		blockVar := entryBlock.GetVariableAt(i)
-		blockVar.AddReferenceWithID(param, child.GetCallerStr())
-		logger.Logger.Infof("\t\t[REF BLOCK VAR] added reference (%d) from creator (%s): (%s) -> (%s)", blockVar.GetId(), child.GetCallerStr(), blockVar.GetType().GetName(), param.GetVariableInfo().GetName())
-		for _, dep := range param.GetNestedDependencies(false) {
-			if dep.GetVariableInfo().IsUnassigned() {
-				dep.GetVariableInfo().AssignID(graph.getAndIncGIndex())
-				logger.Logger.Debugf("\t\t\t[GID DEP] assigned new gid (%d) to (%s)", dep.GetId(), dep.String())
-			}
-		}
+		childObj := entryBlock.GetVariableAt(i)
+		childObj.AddReferenceWithID(parentObj, child.GetCallerStr())
+		logger.Logger.Infof("\t\t[REF CALL OBJS - PARAMS] added reference (%d) to parent %s: (%s) -> (%s)", childObj.GetId(), child.GetCallerStr(), childObj.GetVariableInfo().String(), parentObj.GetVariableInfo().String())
+		graph.assignRemainingObjectIDs(parentObj.GetNestedDependencies(false))
+	}
+	liveBlock := parsedCall.GetMethod().(*types.ParsedMethod).GetParsedCfg().GetLastLiveBlock() //FIXME: check comment in GetLastLiveBlock function
+	for i, childObj := range liveBlock.GetResults() {
+		parentObj := parsedCall.GetReturn(i)
+		parentObj.AddReferenceWithID(childObj, child.GetCallee())
+		logger.Logger.Infof("\t\t[REF CALL OBJS - RESULTS] added reference (%d) to child %s: (%s) -> (%s)", parentObj.GetId(), child.GetCallee(), parentObj.GetVariableInfo().String(), childObj.GetVariableInfo().String())
 	}
 }
 
@@ -230,7 +240,7 @@ func (graph *AbstractGraph) appendAbstractEdges(parent AbstractNode, targetMetho
 			}
 			parent.AddChild(child)
 			logger.Logger.Infof("[GRAPH] adding node for abstract service call: %s", child.String())
-			graph.referenceMethodBlockVars(parsedCall, child)
+			graph.referenceCallObjects(parsedCall, child)
 			logger.Logger.Infof("[GRAPH] added node for abstract service call: %s", child.String())
 
 		case *types.ParsedInternalCall:
@@ -244,7 +254,7 @@ func (graph *AbstractGraph) appendAbstractEdges(parent AbstractNode, targetMetho
 			graph.appendAbstractEdges(parent, tempMethod)
 
 			logger.Logger.Infof("[GRAPH] adding temporary node for abstract service call: %s", tempChild.String())
-			graph.referenceMethodBlockVars(parsedCall, tempChild)
+			graph.referenceCallObjects(parsedCall, tempChild)
 			logger.Logger.Infof("[GRAPH] added temporary node for abstract service call: %s", tempChild.String())
 		}
 	}

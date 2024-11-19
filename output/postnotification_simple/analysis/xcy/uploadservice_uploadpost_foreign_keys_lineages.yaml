@@ -13,5 +13,5 @@ xcy_lineages:
   - (0, 1) write(notifications_queue, message, message) @ UploadService
 - _id: 1
   _operations:
-  - (1, 0) read(notifications_queue, event, event) @ NotifyService
+  - (1, 0) read(notifications_queue, workerMessage, workerMessage) @ NotifyService
   - (1, 1) read(posts_db, query, result) @ StorageService

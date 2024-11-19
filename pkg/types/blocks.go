@@ -8,8 +8,8 @@ import (
 	"golang.org/x/tools/go/cfg"
 
 	"analyzer/pkg/logger"
-	"analyzer/pkg/utils"
 	"analyzer/pkg/types/objects"
+	"analyzer/pkg/utils"
 )
 
 type InlineFunc struct {

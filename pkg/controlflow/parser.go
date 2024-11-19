@@ -280,6 +280,7 @@ func parseNode(service *service.Service, method *types.ParsedMethod, block *type
 	case *ast.ReturnStmt:
 		for _, resultExpr := range e.Results {
 			v, _ := lookupVariableFromAstExpr(service, method, block, resultExpr, nil, false)
+			logger.Logger.Infof("ADDED RESULT: %s", v.String())
 			block.AddResult(v)
 		}
 	// -------------

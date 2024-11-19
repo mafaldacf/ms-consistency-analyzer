@@ -6,3 +6,5 @@ info.md
 assets/postnotification/datastores_old.yaml
 .venv/
 **/.DS_Store
+.idea
+.vscode

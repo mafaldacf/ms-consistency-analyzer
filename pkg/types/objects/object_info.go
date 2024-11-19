@@ -30,6 +30,11 @@ type ObjectInfo struct {
 	IndirectDataflows []*Dataflow
 }
 
+func (vinfo *ObjectInfo) ResetAllDataflows() {
+	vinfo.Dataflows = nil
+	vinfo.IndirectDataflows = nil
+}
+
 func (vinfo *ObjectInfo) GetDependencies() []Object {
 	return vinfo.Dependencies
 }
@@ -74,6 +79,21 @@ func (vinfo *ObjectInfo) GetAllReadDataflowsForDatastore(datastore string) []*Da
 	}
 	for _, df := range vinfo.IndirectDataflows {
 		if df.IsOpInDatastore(datastore) && !df.IsWriteOp() {
+			dataflows = append(dataflows, df)
+		}
+	}
+	return dataflows
+}
+
+func (vinfo *ObjectInfo) GetAllReadDataflowsExceptDatastore(datastore string) []*Dataflow {
+	var dataflows []*Dataflow
+	for _, df := range vinfo.Dataflows {
+		if !df.IsOpInDatastore(datastore) && !df.IsWriteOp() {
+			dataflows = append(dataflows, df)
+		}
+	}
+	for _, df := range vinfo.IndirectDataflows {
+		if !df.IsOpInDatastore(datastore) && !df.IsWriteOp() {
 			dataflows = append(dataflows, df)
 		}
 	}

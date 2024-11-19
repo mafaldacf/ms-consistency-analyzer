@@ -1,17 +1,19 @@
-package detection
+package xcy
 
 import (
 	"fmt"
+	"os"
+	"path/filepath"
 	"slices"
 	"strings"
 
 	"gopkg.in/yaml.v2"
 
-	"analyzer/pkg/detection/xcy"
+	"analyzer/pkg/logger"
 	"analyzer/pkg/utils"
 )
 
-func (detector *Detector) dumpOperationYaml(operation *xcy.Operation) map[string]interface{} {
+func (detector *Detector) dumpOperationYaml(operation *Operation) map[string]interface{} {
 	data := make(map[string]interface{})
 	data["_operation"] = operation.String()
 	data["visible_dependency_set"] = operation.GetVisibleDependenciesString()
@@ -24,7 +26,7 @@ func (detector *Detector) dumpOperationYaml(operation *xcy.Operation) map[string
 	return data
 }
 
-func (detector *Detector) dumpInconsistencyYaml(inconsistency *xcy.Inconsistency) map[string]interface{} {
+func (detector *Detector) dumpInconsistencyYaml(inconsistency *Inconsistency) map[string]interface{} {
 	data := make(map[string]interface{})
 	data["write"] = inconsistency.Write.String()
 	data["read"] = inconsistency.Read.String()
@@ -35,7 +37,7 @@ func (detector *Detector) dumpInconsistencyYaml(inconsistency *xcy.Inconsistency
 	return data
 }
 
-func (detector *Detector) dumpLineageYaml(request *xcy.Request, lineage *xcy.Lineage) map[string]interface{} {
+func (detector *Detector) dumpLineageYaml(request *Request, lineage *Lineage) map[string]interface{} {
 	data := make(map[string]interface{})
 	data["_id"] = lineage.ID
 	var dataOperations []interface{}
@@ -72,7 +74,7 @@ func (detector *Detector) dumpLineageYaml(request *xcy.Request, lineage *xcy.Lin
 	return data
 }
 
-func (detector *Detector) dumpRequestYaml(request *xcy.Request, includeLineages bool) map[string]interface{} {
+func (detector *Detector) dumpRequestYaml(request *Request, includeLineages bool) map[string]interface{} {
 	data := make(map[string]interface{})
 	data["mode"] = detector.DetectionModeName()
 	data["number_inconsistencies"] = len(request.Inconsistencies)
@@ -95,19 +97,38 @@ func (detector *Detector) dumpRequestYaml(request *xcy.Request, includeLineages 
 	return data
 }
 
-func (detector *Detector) PrintResults() {
+func (detector *Detector) Results() string {
+	results := "-------------------- XCY ANALYSIS --------------------\n"
+	
 	for _, request := range detector.Requests {
 		if len(request.Inconsistencies) > 0 {
 			data, _ := yaml.Marshal(detector.dumpRequestYaml(request, false))
-			fmt.Println(string(data))
-			fmt.Println("----------------------------------------------------------")
+			results += string(data)
+			results += "----------------------------------------------------------"
 		}
 	}
+	return results
+}
+
+func Save(appName string, results string) {
+	path := fmt.Sprintf("output/%s/analysis/xcy.txt", appName)
+
+	dir := filepath.Dir(path)
+	err := os.MkdirAll(dir, 0755)
+	if err != nil {
+		logger.Logger.Fatalf("[XCY] error creating directory %s: %s", dir, err.Error())
+	}
+
+	err = os.WriteFile(path, []byte(results), 0644)
+	if err != nil {
+		logger.Logger.Fatalf("[XCY] error writing data to %s: %s", path, err.Error())
+	}
+	logger.Logger.Tracef("[XCY] saved cascading detection results to %s", path)
 }
 
 func (detector *Detector) DumpYaml(app string) {
 	for _, request := range detector.Requests {
-		filename := fmt.Sprintf("detection/%s_%s_%s", strings.ToLower(request.EntryNode.GetCallee()), strings.ToLower(request.EntryNode.GetName()), strings.ToLower(detector.DetectionModeName()))
+		filename := fmt.Sprintf("analysis/xcy/%s_%s_%s", strings.ToLower(request.EntryNode.GetCallee()), strings.ToLower(request.EntryNode.GetName()), strings.ToLower(detector.DetectionModeName()))
 		data := detector.dumpRequestYaml(request, true)
 		utils.DumpToYamlFile(data, app, filename)
 	}

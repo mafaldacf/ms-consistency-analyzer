@@ -47,19 +47,10 @@ func (f *ParsedMethod) YamlCalls() []string {
 
 func (cfg *CFG) Yaml() (map[string][]string, string) {
 	data := make(map[string][]string)
-
-	// iterate in reverse
-	for i := len(cfg.ParsedBlocks) - 1; i >= 0; i-- {
-		block := cfg.ParsedBlocks[i]
-		if block.Block.Live {
-			logger.Logger.Tracef("parsing cfg for method: %s", cfg.FullMethod)
-			var blockVarsStr string
-			data[block.Block.String()], blockVarsStr = block.Yaml()
-			return data, blockVarsStr
-		}
-	}
-
-	return data, ""
+	block := cfg.GetLastLiveBlock()
+	var blockVarsStr string
+	data[block.Block.String()], blockVarsStr = block.Yaml()
+	return data, blockVarsStr
 }
 
 // ------

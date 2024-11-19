@@ -1,9 +1,8 @@
 (*StorageServiceImpl).ReadPost(ctx context.Context, reqID int64, postID int64):
 - DATASTORE CALL @ posts_db >> NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor, interface{})
 
-(*StorageServiceImpl).StorePost(ctx context.Context, reqID int64, post postnotification_simple.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username "some username" string}, Creator postnotification_simple.Creator struct{Username "some username" string}})
-:
-	- DATASTORE CALL @ posts_db >> NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}) interface{}
+(*StorageServiceImpl).StorePost(ctx context.Context, reqID int64, text string):
+- DATASTORE CALL @ posts_db >> NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}) interface{}
 
 .NewNotifyServiceImpl(ctx context.Context, storageService postnotification_simple.StorageService, notificationsQueue Queue): []
 

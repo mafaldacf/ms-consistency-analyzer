@@ -25,12 +25,13 @@
 [] (StructObject UserType) product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
 
 [] (StructObject UserType) product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
+[_] (Reference UserType) ref <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}> @ ProductService
 [_] (FieldObject FieldType) PricePerUnit int
 [__] (BasicObject BasicType) PricePerUnit int
 
 [] (InterfaceObject UserType) _ .error
+[_] (Reference UserType) ref <err .error> @ ProductService
 
-    --> r-tainted: read(cart_db.Cart) {1}
 [] (StructObject UserType) cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
 
 [] (StructObject UserType) cartProduct shopping_simple.CartProduct struct{CartID string, ProductID string, PricePerUnit int, Quantity 1 int}
@@ -49,9 +50,7 @@
         --> w-tainted: write(cart_db.Cart.CartID) {1}               --> w-tainted: write(cart_db.Cart.CartID) {1} --> r-tainted: read(cart_db.Cart.CartID) {1}
 [____] (Reference BasicType) ref <cartID string> @ Frontend
 
-    --> r-tainted: read(cart_db.Cart) {1}
 [] (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database = cart_database, collection = cart_collection}
-     --> r-tainted: read(cart_db.Cart) {1}
 [_] (StructObject UserType) cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
 
 [] (InterfaceObject UserType) err .error

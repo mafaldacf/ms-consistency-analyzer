@@ -5,20 +5,20 @@ NOTIFICATIONS_QUEUE:
   - posts_db
 - schema:
   - fields:
-    - message: postnotification_simple.Message struct{ReqID string, PostID string, Timestamp string}
-    - Message: postnotification_simple.Message struct{ReqID string, PostID string, Timestamp string}
+    - message: postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64}
+    - Message: postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64}
   - unfolded_fields:
-    - Message: postnotification_simple.Message struct{ReqID string, PostID string, Timestamp string}
-    - Message.ReqID: string
-    - Message.PostID: string
-    - Message.Timestamp: string
+    - Message: postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64}
+    - Message.ReqID: int64
+    - Message.PostID_MESSAGE: int64
+    - Message.Timestamp: int64
   - foreign_fields:
     - message:
       - POSTS_DB.Post.PostID
       - POSTS_DB.Post.ReqID
     - Message.ReqID:
       - POSTS_DB.Post.ReqID
-    - Message.PostID:
+    - Message.PostID_MESSAGE:
       - POSTS_DB.Post.PostID
 
 POSTS_DB:

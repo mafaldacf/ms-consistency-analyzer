@@ -17,7 +17,6 @@
      --> r-tainted: read(cart_db.Cart.CartID) {1}
 [_] (Reference BasicType) ref <cartID string> @ Frontend
 
-    --> r-tainted: read(cart_db.Cart) {1}
 [] (StructObject UserType) cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
 
 [] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = cart_database, collection = cart_database}
@@ -34,9 +33,7 @@
         --> r-tainted: read(cart_db.Cart.CartID) {1}
 [____] (Reference BasicType) ref <cartID string> @ Frontend
 
-    --> r-tainted: read(cart_db.Cart) {1}
 [] (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database = cart_database, collection = cart_database}
-     --> r-tainted: read(cart_db.Cart) {1}
 [_] (StructObject UserType) cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
 
 [] (InterfaceObject UserType) err .error

@@ -70,15 +70,13 @@
   - ' depth 0 (InterfaceObject UserType) ctx context.Context'
   - _ depth 1 (Reference UserType) ref <ctx context.Context> @ Frontend
   - ' depth 0 (ArrayObject ArrayType) products []shopping_simple.Product struct{ProductID
-    string, Description string, PricePerUnit int, Category string} --> r-tainted 1x:
-    read(product_db.[]shopping_simple.Product struct{ProductID string, Description
-    string, PricePerUnit int, Category string})'
+    string, Description string, PricePerUnit int, Category string}'
   - ' depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
     {database = product_database, collection = product_collection}'
   - ' depth 0 (InterfaceObject UserType) _ .error'
   - ' depth 0 (SliceObject UserType) filter primitive.D'
   - ' depth 0 (BlueprintBackendObject BlueprintBackendType) cursor NoSQLCursor {database
-    = product_database, collection = product_collection} --> r-tainted 1x: read(product_db.Product)'
+    = product_database, collection = product_collection}'
   - ' depth 0 (InterfaceObject UserType) _ .error'
   - ' depth 0 (InterfaceObject UserType) err .error'
 
@@ -104,8 +102,7 @@
   - '__ depth 2 (Reference BasicType) ref <productID string> @ Frontend --> w-tainted
     1x: write(cart_db.Cart.Products) --> r-tainted 1x: read(product_db.Product.ProductID)'
   - ' depth 0 (StructObject UserType) product shopping_simple.Product struct{ProductID
-    string, Description string, PricePerUnit int, Category string} --> r-tainted 1x:
-    read(product_db.Product)'
+    string, Description string, PricePerUnit int, Category string}'
   - ' depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
     {database = product_database, collection = product_collection}'
   - ' depth 0 (InterfaceObject UserType) _ .error'
@@ -115,7 +112,7 @@
   - ___ depth 3 (BasicObject BasicType) "productid" string
   - __ depth 2 (FieldObject FieldType) Value string
   - ' depth 0 (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database
-    = product_database, collection = product_collection} --> r-tainted 1x: read(product_db.Product)'
+    = product_database, collection = product_collection}'
   - ' depth 0 (InterfaceObject UserType) err .error'
   - ' depth 0 (BasicObject BasicType) exists bool'
   - ' depth 0 (InterfaceObject UserType) err .error'
