@@ -8,8 +8,8 @@ import (
 	"golang.org/x/tools/go/cfg"
 
 	"analyzer/pkg/logger"
-	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
+	"analyzer/pkg/types/objects"
 )
 
 type InlineFunc struct {
@@ -22,8 +22,8 @@ type Block struct {
 	Index      int
 	Successors []*Block
 
-	Vars        []variables.Variable
-	Results     []variables.Variable
+	Vars        []objects.Object
+	Results     []objects.Object
 	InlineFuncs []*InlineFunc // declared inline blocks (NOT ANONYMOUS)
 	Info        *BlockInfo
 	Visited     bool
@@ -47,7 +47,7 @@ func (block *Block) GetLatestInlineFunc(name string) *InlineFunc {
 	return nil
 }
 
-func (block *Block) GetVars() []variables.Variable {
+func (block *Block) GetVars() []objects.Object {
 	return block.Vars
 }
 
@@ -64,7 +64,7 @@ func (block *Block) VarsString() string {
 }
 
 func (block *Block) DeepCopy() *Block {
-	var copyVars []variables.Variable
+	var copyVars []objects.Object
 	for _, v := range block.Vars {
 		copyVars = append(copyVars, v.DeepCopy())
 	}
@@ -75,12 +75,12 @@ func (block *Block) DeepCopy() *Block {
 	}
 }
 
-func (block *Block) AddResult(variable variables.Variable) {
-	logger.Logger.Debugf("[BLOCK (%d)] added new result: \n\t\t\t\t\t\t - (%s) %s", block.Block.Index, variables.VariableTypeName(variable), variable.LongString())
+func (block *Block) AddResult(variable objects.Object) {
+	logger.Logger.Debugf("[BLOCK (%d)] added new result: \n\t\t\t\t\t\t - (%s) %s", block.Block.Index, objects.VariableTypeName(variable), variable.LongString())
 	block.Results = append(block.Results, variable)
 }
 
-func (block *Block) GetVariableAt(index int) variables.Variable {
+func (block *Block) GetVariableAt(index int) objects.Object {
 	if index < len(block.Vars) {
 		return block.Vars[index]
 	}
@@ -101,48 +101,48 @@ func (block *Block) LongString() string {
 }
 
 type BlockInfo struct {
-	Gen []variables.Variable
-	In  []variables.Variable
-	Out []variables.Variable
+	Gen []objects.Object
+	In  []objects.Object
+	Out []objects.Object
 }
 
-func (block *Block) GetVariables() []variables.Variable {
+func (block *Block) GetVariables() []objects.Object {
 	return block.Vars
 }
 
-func (block *Block) GetResults() []variables.Variable {
+func (block *Block) GetResults() []objects.Object {
 	return block.Results
 }
 
-func (block *Block) GetFirstResult() variables.Variable {
+func (block *Block) GetFirstResult() objects.Object {
 	if len(block.Results) == 0 {
 		logger.Logger.Fatalf("[BLOCKS] block has no results: %s", block.String())
 	}
 	return block.Results[0]
 }
 
-func (block *Block) GetReceiver() variables.Variable {
+func (block *Block) GetReceiver() objects.Object {
 	if len(block.Vars) == 0 {
 		logger.Logger.Fatalf("[BLOCKS] unexpected empty CFG block (%v)", block)
 	}
 	return block.Vars[0]
 }
 
-func (block *Block) UpdateReceiver(v variables.Variable) {
+func (block *Block) UpdateReceiver(v objects.Object) {
 	if len(block.Vars) == 0 {
 		logger.Logger.Fatalf("[BLOCKS] unexpected empty CFG block (%v)", block)
 	}
 	block.Vars[0] = v
 }
 
-func (block *Block) IsReceiverVariable(v variables.Variable) bool {
+func (block *Block) IsReceiverVariable(v objects.Object) bool {
 	if len(block.Vars) > 0 {
 		return block.Vars[0] == v
 	}
 	return false
 }
 
-func (block *Block) GetLastestVariable(name string) variables.Variable {
+func (block *Block) GetLastestVariable(name string) objects.Object {
 	for i := len(block.Vars) - 1; i >= 0; i-- {
 		v := block.Vars[i]
 		if name == v.GetVariableInfo().GetName() {
@@ -153,7 +153,7 @@ func (block *Block) GetLastestVariable(name string) variables.Variable {
 	return nil
 }
 
-func (block *Block) GetLastestVariableIfExists(name string) variables.Variable {
+func (block *Block) GetLastestVariableIfExists(name string) objects.Object {
 	for i := len(block.Vars) - 1; i >= 0; i-- {
 		v := block.Vars[i]
 		if name == v.GetVariableInfo().GetName() {
@@ -164,18 +164,18 @@ func (block *Block) GetLastestVariableIfExists(name string) variables.Variable {
 	return nil
 }
 
-func (block *Block) AddVariables(variables []variables.Variable) {
-	logger.Logger.Tracef("[BLOCK] added variables to block: %s", variables)
-	block.Vars = append(block.Vars, variables...)
+func (block *Block) AddVariables(objects []objects.Object) {
+	logger.Logger.Tracef("[BLOCK] added variables to block: %s", objects)
+	block.Vars = append(block.Vars, objects...)
 }
 
-func (block *Block) AddVariable(variable variables.Variable) {
-	if variable.GetVariableInfo().Id == variables.VARIABLE_INLINE_ID {
+func (block *Block) AddVariable(variable objects.Object) {
+	if variable.GetVariableInfo().Id == objects.VARIABLE_INLINE_ID {
 		logger.Logger.Warnf("[BLOCK] skipping addition of new inline variable (%s) to block", variable.String())
 		return
 	}
 
-	logger.Logger.Debugf("[BLOCK (%d)] added new variable: \n\t\t\t\t\t\t - (%s) %s", block.Block.Index, variables.VariableTypeName(variable), variable.LongString())
+	logger.Logger.Debugf("[BLOCK (%d)] added new variable: \n\t\t\t\t\t\t - (%s) %s", block.Block.Index, objects.VariableTypeName(variable), variable.LongString())
 	block.Vars = append(block.Vars, variable)
 }
 

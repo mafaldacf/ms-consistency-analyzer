@@ -8,7 +8,7 @@ import (
 
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
-	"analyzer/pkg/types/variables"
+	"analyzer/pkg/types/objects"
 )
 
 type PackageType int
@@ -35,8 +35,8 @@ type Package struct {
 	ImportedPackagesByAlias map[string]*Package // maps import alias appearing in source files to loaded packages - TODO: add support to go modules
 
 	TypesInfo         *golangtypes.Info
-	DeclaredVariables map[string]variables.Variable
-	DeclaredConstants map[string]variables.Variable
+	DeclaredVariables map[string]objects.Object
+	DeclaredConstants map[string]objects.Object
 	DeclaredTypes     map[string]gotypes.Type
 	ServiceTypes      map[string]*gotypes.ServiceType
 	ParsedMethods     []*ParsedMethod
@@ -48,8 +48,8 @@ type Package struct {
 	// contains all imported types, including blueprint backend types for datastores
 	// key: package_path.type_name, where package_path is the real package name
 	ImportedTypes     map[string]gotypes.Type
-	ImportedConstants map[string]variables.Variable
-	ImportedVariables map[string]variables.Variable
+	ImportedConstants map[string]objects.Object
+	ImportedVariables map[string]objects.Object
 }
 
 func (p *Package) ImportsByAliasMapStr() string {
@@ -101,7 +101,7 @@ func (p *Package) GetPackagePath() string {
 	return p.PackagePath
 }
 
-func (p *Package) GetDeclaredVariableOrConst(typeNameIdent *ast.Ident) variables.Variable {
+func (p *Package) GetDeclaredVariableOrConst(typeNameIdent *ast.Ident) objects.Object {
 	if v, ok := p.DeclaredVariables[typeNameIdent.Name]; ok {
 		return v
 	}
@@ -112,7 +112,7 @@ func (p *Package) GetDeclaredVariableOrConst(typeNameIdent *ast.Ident) variables
 	return nil
 }
 
-func (p *Package) GetDeclaredConstant(typeNameIdent *ast.Ident) variables.Variable {
+func (p *Package) GetDeclaredConstant(typeNameIdent *ast.Ident) objects.Object {
 	if v, ok := p.DeclaredConstants[typeNameIdent.Name]; ok {
 		return v
 	}
@@ -120,7 +120,7 @@ func (p *Package) GetDeclaredConstant(typeNameIdent *ast.Ident) variables.Variab
 	return nil
 }
 
-func (p *Package) GetDeclaredVariableOrConstIfExists(name string) variables.Variable {
+func (p *Package) GetDeclaredVariableOrConstIfExists(name string) objects.Object {
 	if v, ok := p.DeclaredVariables[name]; ok {
 		return v
 	}
@@ -223,14 +223,14 @@ func ImportedTypeKey(packagePath string, typeName string) string {
 	return packagePath + "." + typeName
 }
 
-func (p *Package) AddConstant(v variables.Variable) {
+func (p *Package) AddConstant(v objects.Object) {
 	if _, exists := p.DeclaredConstants[v.GetVariableInfo().GetName()]; exists {
 		logger.Logger.Fatalf("package %s already constains declared constant %s", v.GetVariableInfo().GetName(), v.String())
 	}
 	p.DeclaredConstants[v.GetVariableInfo().GetName()] = v
 }
 
-func (p *Package) AddVariable(v variables.Variable) {
+func (p *Package) AddVariable(v objects.Object) {
 	if _, exists := p.DeclaredVariables[v.GetVariableInfo().GetName()]; exists {
 		logger.Logger.Fatalf("package %s already constains declared variable %s", v.GetVariableInfo().GetName(), v.String())
 	}
@@ -252,7 +252,7 @@ func (p *Package) AddImportedType(e gotypes.Type) {
 	p.ImportedTypes[key] = e
 }
 
-func (p *Package) AddImportedConstant(v variables.Variable, packagePath string) {
+func (p *Package) AddImportedConstant(v objects.Object, packagePath string) {
 	key := ImportedTypeKey(packagePath, v.GetVariableInfo().GetName())
 	if _, exists := p.ImportedConstants[key]; exists {
 		logger.Logger.Fatalf("package %s already constains imported constant %s", v.GetVariableInfo().GetName(), v.String())
@@ -260,7 +260,7 @@ func (p *Package) AddImportedConstant(v variables.Variable, packagePath string) 
 	p.ImportedConstants[key] = v
 }
 
-func (p *Package) AddImportedVariable(v variables.Variable, packagePath string) {
+func (p *Package) AddImportedVariable(v objects.Object, packagePath string) {
 	key := ImportedTypeKey(packagePath, v.GetVariableInfo().GetName())
 	if _, exists := p.ImportedVariables[key]; exists {
 		logger.Logger.Fatalf("package %s already constains imported variable %s", v.GetVariableInfo().GetName(), v.String())

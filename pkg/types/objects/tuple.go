@@ -1,0 +1,146 @@
+package objects
+
+import (
+	"encoding/json"
+
+	"analyzer/pkg/logger"
+	"analyzer/pkg/types/gotypes"
+)
+
+type TupleObject struct {
+	Object
+	ObjectInfo *ObjectInfo
+	Objects    []Object
+}
+
+func (v *TupleObject) MarshalJSON() ([]byte, error) {
+	return json.Marshal(&struct {
+		ObjectInfo *ObjectInfo `json:"tuple"`
+		Variables  []Object    `json:"tuple_variables,omitempty"`
+	}{
+		ObjectInfo: v.ObjectInfo,
+		Variables:  v.Objects,
+	})
+}
+
+func (v *TupleObject) GetVariableInfo() *ObjectInfo {
+	return nil
+}
+
+func (v *TupleObject) AddVariableAndType(variable Object) {
+	logger.Logger.Warnf("[VARS TUPLE] adding variable (%s) to tuple variable (%s)", variable.String(), v.String())
+	v.Objects = append(v.Objects, variable)
+	v.GetTupleType().AddType(variable.GetType())
+}
+
+func (v *TupleObject) GetVariables() []Object {
+	return v.Objects
+}
+
+func (v *TupleObject) AddReferenceWithID(target Object, creator string) {
+	v.ObjectInfo.AddReferenceWithID(v, target, creator)
+	for i := 0; i < len(v.Objects); i++ {
+		v.AddReferenceWithID(target.GetElementAt(i), creator)
+	}
+}
+
+func (v *TupleObject) MergeTupleVariable(tupleVariable *TupleObject) {
+	logger.Logger.Warnf("[VARS TUPLE] merging tuple variable (%s) to (%s)", tupleVariable.String(), v.String())
+	v.Objects = append(v.Objects, tupleVariable.GetVariables()...)
+}
+
+func (v *TupleObject) GetVariableAt(index int) Object {
+	if index < len(v.Objects) {
+		return v.Objects[index]
+	}
+	logger.Logger.Fatalf("index (%d) out of bounds for tuple variable (%s) -- variables: %v", index, v.LongString(), v.Objects)
+	return nil
+}
+
+func (v *TupleObject) GetId() int64 {
+	return v.ObjectInfo.GetId()
+}
+
+func (v *TupleObject) NumVariables() int {
+	return len(v.Objects)
+}
+
+func (v *TupleObject) GetType() gotypes.Type {
+	if v.ObjectInfo.GetType() == nil {
+		logger.Logger.Fatalf("[VARS ADDRESS] unexpected nil type for tuple variable: %s", v.String())
+	}
+	return v.ObjectInfo.GetType()
+}
+
+func (v *TupleObject) GetTupleType() *gotypes.TupleType {
+	return v.ObjectInfo.GetType().(*gotypes.TupleType)
+}
+
+func (v *TupleObject) GetDependencies() []Object {
+	return append(v.GetVariableInfo().GetDependencies(), v.Objects...)
+}
+
+func (v *TupleObject) GetNestedDependencies(nearestFields bool) []Object {
+	var deps = []Object{v}
+	if v.GetVariableInfo().HasReferences() {
+		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
+	}
+	for _, elem := range v.Objects {
+		deps = append(deps, elem.GetNestedDependencies(nearestFields)...)
+	}
+	return deps
+}
+
+func (v *TupleObject) String() string {
+	s := "("
+	for i, elem := range v.Objects {
+		s += elem.String()
+		if i < len(v.Objects)-1 {
+			s += ", "
+		}
+	}
+	return s + ")"
+}
+
+func (v *TupleObject) LongString() string {
+	s := v.ObjectInfo.String() + " = ("
+	for i, elem := range v.Objects {
+		s += elem.String()
+		if i < len(v.Objects)-1 {
+			s += ", "
+		}
+	}
+	return s + ")"
+}
+
+func (v *TupleObject) Copy(force bool) Object {
+	copy := &TupleObject{ObjectInfo: v.ObjectInfo.Copy(force)}
+	for _, v := range v.Objects {
+		newElem := v.Copy(force)
+		copy.Objects = append(copy.Objects, newElem)
+		newElem.GetVariableInfo().SetParent(newElem, copy)
+	}
+	return copy
+}
+
+func (v *TupleObject) DeepCopy() Object {
+	logger.Logger.Debugf("[VARS TUPLE - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
+	copy := &TupleObject{ObjectInfo: v.ObjectInfo.DeepCopy()}
+	for _, v := range v.Objects {
+		newElem := v.DeepCopy()
+		copy.Objects = append(copy.Objects, newElem)
+		newElem.GetVariableInfo().SetParent(newElem, copy)
+	}
+	return copy
+}
+
+func (v *TupleObject) GetUnassaignedVariables() []Object {
+	var variables []Object
+	if v.GetVariableInfo().IsUnassigned() {
+		variables = append(variables, v)
+		for _, v := range v.Objects {
+			variables = append(variables, v.GetUnassaignedVariables()...)
+		}
+	}
+	return variables
+}

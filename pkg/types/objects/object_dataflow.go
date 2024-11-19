@@ -1,4 +1,4 @@
-package variables
+package objects
 
 import (
 	"fmt"
@@ -14,8 +14,8 @@ type Dataflow struct {
 	Service        string
 	Write          bool
 	Direct         bool
-	Variable       Variable
-	IndirectSource Variable
+	Variable       Object
+	IndirectSource Object
 	Field          datastores.Field
 }
 
@@ -26,11 +26,11 @@ func (df *Dataflow) GetOpString() string {
 	return "read"
 }
 
-func (df *Dataflow) HasVariable(variable Variable) bool {
+func (df *Dataflow) HasVariable(variable Object) bool {
 	return df.Variable == variable
 }
 
-func (df *Dataflow) HasAnyVariable(variables []Variable) bool {
+func (df *Dataflow) HasAnyVariable(variables []Object) bool {
 	for _, v := range variables {
 		if df.Variable == v {
 			return true
@@ -72,7 +72,7 @@ func (df *Dataflow) ShortString() string {
 	return fmt.Sprintf("%s <%s (%s)> from <%s (%s)>", df.GetOpString(), df.Variable.String(), utils.GetType(df.Variable), df.IndirectSource.String(), utils.GetType(df.IndirectSource))
 }
 
-func (df *Dataflow) GetVariable() Variable {
+func (df *Dataflow) GetVariable() Object {
 	if df.Direct {
 		return df.Variable
 	}
@@ -83,7 +83,7 @@ func (df *Dataflow) GetDatastore() string {
 	return df.Datastore
 }
 
-func (v *VariableInfo) SetDirectDataflow(datastore string, service string, variable Variable, field datastores.Field, write bool) {
+func (v *ObjectInfo) SetDirectDataflow(datastore string, service string, variable Object, field datastores.Field, write bool) {
 	df := &Dataflow{
 		Direct:    true,
 		Variable:  variable,
@@ -96,7 +96,7 @@ func (v *VariableInfo) SetDirectDataflow(datastore string, service string, varia
 	logger.Logger.Warnf("[DIRECT DATAFLOW - %s] (%d) %s", strings.ToUpper(df.GetOpString()), df.Variable.GetId(), df.Variable.String())
 }
 
-func (v *VariableInfo) SetIndirectDataflow(datastore string, service string, current Variable, source Variable, field datastores.Field, write bool) {
+func (v *ObjectInfo) SetIndirectDataflow(datastore string, service string, current Object, source Object, field datastores.Field, write bool) {
 	df := &Dataflow{
 		Variable:       current,
 		IndirectSource: source,
@@ -110,7 +110,7 @@ func (v *VariableInfo) SetIndirectDataflow(datastore string, service string, cur
 	logger.Logger.Warnf("\t\t[INDIRECT DATAFLOW - %s] (%d) %s", strings.ToUpper(df.GetOpString()), df.Variable.GetId(), df.Variable.String())
 }
 
-func (v *VariableInfo) GetForeignDataflows(currentDS *datastores.Datastore) []*Dataflow {
+func (v *ObjectInfo) GetForeignDataflows(currentDS *datastores.Datastore) []*Dataflow {
 	var dataflows []*Dataflow
 	for _, df := range v.GetDataflows() {
 		// only append if it a different datastore

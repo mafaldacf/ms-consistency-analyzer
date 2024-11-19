@@ -5,7 +5,7 @@ import (
 
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/types"
-	"analyzer/pkg/types/variables"
+	"analyzer/pkg/types/objects"
 )
 
 type AbstractEdgeType int
@@ -26,12 +26,12 @@ type AbstractEdge struct {
 
 func (edge *AbstractEdge) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Type      string               `json:"type"`
-		Params    []variables.Variable `json:"params"`
-		Returns   []variables.Variable `json:"returns"`
-		Source    AbstractNode         `json:"source"`
-		Target    AbstractNode         `json:"target"`
-		Datastore string               `json:"datastore"`
+		Type      string           `json:"type"`
+		Params    []objects.Object `json:"params"`
+		Returns   []objects.Object `json:"returns"`
+		Source    AbstractNode     `json:"source"`
+		Target    AbstractNode     `json:"target"`
+		Datastore string           `json:"datastore"`
 	}{
 		Type:      edge.GetTypeName(),
 		Params:    edge.ParsedCall.Params,
@@ -75,11 +75,11 @@ func (edge *AbstractEdge) GetMethodString() string {
 	return edge.ParsedCall.GetMethod().String()
 }
 
-func (edge *AbstractEdge) GetParams() []variables.Variable {
+func (edge *AbstractEdge) GetParams() []objects.Object {
 	return edge.ParsedCall.GetParams()
 }
 
-func (edge *AbstractEdge) GetReturns() []variables.Variable {
+func (edge *AbstractEdge) GetReturns() []objects.Object {
 	return edge.ParsedCall.GetReturns()
 }
 

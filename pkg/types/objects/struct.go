@@ -1,4 +1,4 @@
-package variables
+package objects
 
 import (
 	"encoding/json"
@@ -10,34 +10,34 @@ import (
 	"analyzer/pkg/utils"
 )
 
-type StructVariable struct {
-	Variable
-	Origin       *Variable
-	VariableInfo *VariableInfo
-	Fields       map[string]Variable
-	FieldsLst    []Variable
+type StructObject struct {
+	Object
+	Origin     *Object
+	ObjectInfo *ObjectInfo
+	Fields     map[string]Object
+	FieldsLst  []Object
 }
 
-func (v *StructVariable) MarshalJSON() ([]byte, error) {
+func (v *StructObject) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Origin       *Variable           `json:"-"`
-		VariableInfo *VariableInfo       `json:"struct"`
-		Fields       map[string]Variable `json:"struct_fields,omitempty"`
-		FieldsLst    []Variable          `json:"-"`
+		Origin     *Object           `json:"-"`
+		ObjectInfo *ObjectInfo       `json:"struct"`
+		Fields     map[string]Object `json:"struct_fields,omitempty"`
+		FieldsLst  []Object          `json:"-"`
 	}{
-		Origin:       v.Origin,
-		VariableInfo: v.VariableInfo,
-		Fields:       v.Fields,
-		FieldsLst:    v.FieldsLst,
+		Origin:     v.Origin,
+		ObjectInfo: v.ObjectInfo,
+		Fields:     v.Fields,
+		FieldsLst:  v.FieldsLst,
 	})
 }
 
-func (v *StructVariable) String() string {
-	return v.VariableInfo.String()
+func (v *StructObject) String() string {
+	return v.ObjectInfo.String()
 }
 
-func (v *StructVariable) LongString() string {
-	s := v.VariableInfo.LongString() + " \n\t\t\t\t\t\t = {"
+func (v *StructObject) LongString() string {
+	s := v.ObjectInfo.LongString() + " \n\t\t\t\t\t\t = {"
 	i := len(v.Fields)
 	for name, f := range v.Fields {
 		s += fmt.Sprintf("%s: %s", name, f.LongString())
@@ -49,30 +49,30 @@ func (v *StructVariable) LongString() string {
 	return s + "}"
 }
 
-func (v *StructVariable) GetElementAt(index int) Variable {
+func (v *StructObject) GetElementAt(index int) Object {
 	if index > len(v.FieldsLst)-1 {
 		logger.Logger.Fatalf("[VARS STRUCT] element at index (%d) does not exist in array variable with len (%d): %s", index, len(v.FieldsLst), v.String())
 	}
 	return v.FieldsLst[index]
 }
 
-func (v *StructVariable) GetFieldVariablesLst() []*FieldVariable {
-	var fields []*FieldVariable
+func (v *StructObject) GetFieldVariablesLst() []*FieldObject {
+	var fields []*FieldObject
 	for _, f := range v.Fields {
-		fields = append(fields, f.(*FieldVariable))
+		fields = append(fields, f.(*FieldObject))
 	}
 	return fields
 }
 
-func (v *StructVariable) GetFieldVariables() map[string]*FieldVariable {
-	fields := make(map[string]*FieldVariable)
+func (v *StructObject) GetFieldVariables() map[string]*FieldObject {
+	fields := make(map[string]*FieldObject)
 	for n, f := range v.Fields {
-		fields[n] = f.(*FieldVariable)
+		fields[n] = f.(*FieldObject)
 	}
 	return fields
 }
 
-func (v *StructVariable) attachFieldVariable(fieldVariable *FieldVariable) {
+func (v *StructObject) attachFieldVariable(fieldVariable *FieldObject) {
 	fieldType := fieldVariable.GetFieldType()
 	fieldType.SetOrigin(v.GetType())
 	fieldType.EnableStructField()
@@ -81,7 +81,7 @@ func (v *StructVariable) attachFieldVariable(fieldVariable *FieldVariable) {
 	}
 }
 
-func (v *StructVariable) AddOrGetFieldVariable(fieldVariable *FieldVariable) {
+func (v *StructObject) AddOrGetFieldVariable(fieldVariable *FieldObject) {
 	logger.Logger.Warnf("[VARS STRUCT] adding field named (%s) to struct variable (%s): (%s) %s", fieldVariable.GetFieldType().GetFieldName(), v.String(), VariableTypeName(fieldVariable.WrappedVariable), fieldVariable.WrappedVariable.String())
 	if fieldVariable.GetFieldType().GetFieldName() != "" {
 		v.Fields[fieldVariable.GetFieldType().GetFieldName()] = fieldVariable
@@ -97,54 +97,54 @@ func (v *StructVariable) AddOrGetFieldVariable(fieldVariable *FieldVariable) {
 	v.GetStructType().UpdateFieldAtIfExists(len(v.FieldsLst)-1, fieldVariable.GetFieldType())
 }
 
-func (v *StructVariable) AddOrGetFieldVariableAndType(fieldVariable *FieldVariable) {
+func (v *StructObject) AddOrGetFieldVariableAndType(fieldVariable *FieldObject) {
 	v.AddOrGetFieldVariable(fieldVariable)
 	v.GetStructType().AddOrGetFieldType(fieldVariable.GetFieldType())
 	fieldVariable.GetVariableInfo().SetParent(fieldVariable, v)
 }
 
-func (v *StructVariable) GetId() int64 {
-	return v.VariableInfo.GetId()
+func (v *StructObject) GetId() int64 {
+	return v.ObjectInfo.GetId()
 }
 
-func (v *StructVariable) GetType() gotypes.Type {
-	if v.VariableInfo.GetType() == nil {
+func (v *StructObject) GetType() gotypes.Type {
+	if v.ObjectInfo.GetType() == nil {
 		logger.Logger.Fatalf("[VARS ADDRESS] unexpected nil type for struct variable: %s", v.String())
 	}
-	return v.VariableInfo.GetType()
+	return v.ObjectInfo.GetType()
 }
 
-func (v *StructVariable) GetStructType() *gotypes.StructType {
+func (v *StructObject) GetStructType() *gotypes.StructType {
 	if userType, ok := v.GetType().(*gotypes.UserType); ok {
 		return userType.UserType.(*gotypes.StructType)
 	}
 	return v.GetType().(*gotypes.StructType)
 }
 
-func (v *StructVariable) GetVariableInfo() *VariableInfo {
-	return v.VariableInfo
+func (v *StructObject) GetVariableInfo() *ObjectInfo {
+	return v.ObjectInfo
 }
 
-func (v *StructVariable) GetOrderedFields() []Variable {
+func (v *StructObject) GetOrderedFields() []Object {
 	var orderedKeys []string
 	for k := range v.Fields {
 		orderedKeys = append(orderedKeys, k)
 	}
 	slices.Sort(orderedKeys)
 
-	var orderedFields []Variable
+	var orderedFields []Object
 	for _, k := range orderedKeys {
 		orderedFields = append(orderedFields, v.Fields[k])
 	}
 	return orderedFields
 }
 
-func (v *StructVariable) GetDependencies() []Variable {
+func (v *StructObject) GetDependencies() []Object {
 	return append(v.GetVariableInfo().GetDependencies(), v.GetOrderedFields()...)
 }
 
-func (v *StructVariable) GetNestedDependencies(nearestFields bool) []Variable {
-	var deps = []Variable{v}
+func (v *StructObject) GetNestedDependencies(nearestFields bool) []Object {
+	var deps = []Object{v}
 	if v.GetVariableInfo().HasReferences() {
 		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
 	}
@@ -154,10 +154,10 @@ func (v *StructVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	return deps
 }
 
-func (v *StructVariable) Copy(force bool) Variable {
-	copy := &StructVariable{
-		VariableInfo: v.VariableInfo.Copy(force),
-		Fields:       make(map[string]Variable),
+func (v *StructObject) Copy(force bool) Object {
+	copy := &StructObject{
+		ObjectInfo: v.ObjectInfo.Copy(force),
+		Fields:     make(map[string]Object),
 	}
 	for n, p := range v.Fields {
 		copy.Fields[n] = p.Copy(force)
@@ -166,11 +166,11 @@ func (v *StructVariable) Copy(force bool) Variable {
 	return copy
 }
 
-func (v *StructVariable) DeepCopy() Variable {
+func (v *StructObject) DeepCopy() Object {
 	logger.Logger.Debugf("[VARS STRUCT - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
-	copy := &StructVariable{
-		VariableInfo: v.VariableInfo.DeepCopy(),
-		Fields:       make(map[string]Variable),
+	copy := &StructObject{
+		ObjectInfo: v.ObjectInfo.DeepCopy(),
+		Fields:     make(map[string]Object),
 	}
 	for n, p := range v.Fields {
 		copy.Fields[n] = p.DeepCopy()
@@ -179,7 +179,7 @@ func (v *StructVariable) DeepCopy() Variable {
 	return copy
 }
 
-func (v *StructVariable) GetFieldVariableIfExists(name string) Variable {
+func (v *StructObject) GetFieldVariableIfExists(name string) Object {
 	if f, ok := v.Fields[name]; ok {
 		return f
 	}
@@ -187,13 +187,13 @@ func (v *StructVariable) GetFieldVariableIfExists(name string) Variable {
 	return nil
 }
 
-func (v *StructVariable) AddOrGetFieldKeyVariable(name string, field Variable) {
+func (v *StructObject) AddOrGetFieldKeyVariable(name string, field Object) {
 	v.Fields[name] = field
 	v.FieldsLst = append(v.FieldsLst, field)
 	field.GetVariableInfo().SetParent(field, v)
 }
 
-func (v *StructVariable) AddOrGetFieldKeyVariableIfNotExists(name string, field Variable) bool {
+func (v *StructObject) AddOrGetFieldKeyVariableIfNotExists(name string, field Object) bool {
 	if _, exists := v.Fields[name]; !exists {
 		v.Fields[name] = field
 		v.FieldsLst = append(v.FieldsLst, field)
@@ -205,13 +205,13 @@ func (v *StructVariable) AddOrGetFieldKeyVariableIfNotExists(name string, field 
 	return false
 }
 
-func (v *StructVariable) attachReferenceToFields(target Variable, creator string) {
-	if targetField, ok := target.(*FieldVariable); ok {
+func (v *StructObject) attachReferenceToFields(target Object, creator string) {
+	if targetField, ok := target.(*FieldObject); ok {
 		logger.Logger.Warnf("------- FOUND FIELD THAT IS ALSO A STRUCT!!!!")
 		target = targetField.WrappedVariable
 	}
 
-	if referenceStruct, ok := target.(*StructVariable); ok {
+	if referenceStruct, ok := target.(*StructObject); ok {
 		logger.Logger.Infof("[VARS STRUCT - REF] current variable has %d fields & reference variable has (%d)", len(v.Fields), len(referenceStruct.Fields))
 		for name, field := range referenceStruct.Fields {
 			if _, ok := v.Fields[name]; ok {
@@ -225,9 +225,9 @@ func (v *StructVariable) attachReferenceToFields(target Variable, creator string
 	}
 }
 
-func (v *StructVariable) AddReferenceWithID(target Variable, creator string) {
+func (v *StructObject) AddReferenceWithID(target Object, creator string) {
 	logger.Logger.Infof("[VARS STRUCT - REF] trying to reference struct variable type (%s) for target type (%s) for variables: \n\t\t\t\t\t - current: %s \n\t\t\t\t\t - target: %s", utils.GetType(v), utils.GetType(target), v.String(), target.String())
-	v.VariableInfo.AddReferenceWithID(v, target, creator)
+	v.ObjectInfo.AddReferenceWithID(v, target, creator)
 
 	// target can also have its own references e.g.
 	// (i) 1st reference: StorageService pushes to queue and Analytics service pops from queue using the workerThread() method
@@ -237,14 +237,14 @@ func (v *StructVariable) AddReferenceWithID(target Variable, creator string) {
 	// which in turn references the message queued by StorageService in (i)
 	v.attachReferenceToFields(target, creator)
 	for _, ref := range target.GetVariableInfo().GetReferences() {
-		v.AddReferenceWithID(ref.Variable, ref.Creator)
+		v.AddReferenceWithID(ref.Object, ref.Creator)
 	}
 
-	logger.Logger.Debugf("[VARS STRUCT - REF] added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
+	logger.Logger.Debugf("[VARS STRUCT - REF] added reference (%s) -> (%s) with id = %d (creator: %s)", v.ObjectInfo.Name, target.GetVariableInfo().GetName(), v.ObjectInfo.Id, creator)
 }
 
-func (v *StructVariable) GetUnassaignedVariables() []Variable {
-	var variables []Variable
+func (v *StructObject) GetUnassaignedVariables() []Object {
+	var variables []Object
 	if v.GetVariableInfo().IsUnassigned() {
 		variables = append(variables, v)
 		for _, p := range v.Fields {
@@ -254,15 +254,15 @@ func (v *StructVariable) GetUnassaignedVariables() []Variable {
 	return variables
 }
 
-func (v *StructVariable) GetNestedFieldVariables(prefix string, noSQL bool) ([]Variable, []string) {
-	var nestedVariables []Variable
+func (v *StructObject) GetNestedFieldVariables(prefix string, noSQL bool) ([]Object, []string) {
+	var nestedVariables []Object
 	var nestedIDs []string
 
 	logger.Logger.Debugf("[VARS STRUCT] found (%d) field VARIABLES for (%s); current prefix = %s", len(v.Fields), v.String(), prefix)
 	for _, f := range v.Fields {
-		if fieldVariable, ok := f.(*FieldVariable); ok {
-			nestedFieldVariables, nestedFieldIDs := fieldVariable.GetNestedFieldVariables(prefix, noSQL)
-			nestedVariables = append(nestedVariables, nestedFieldVariables...)
+		if fieldVariable, ok := f.(*FieldObject); ok {
+			nestedFieldObjects, nestedFieldIDs := fieldVariable.GetNestedFieldVariables(prefix, noSQL)
+			nestedVariables = append(nestedVariables, nestedFieldObjects...)
 			nestedIDs = append(nestedIDs, nestedFieldIDs...)
 		} else {
 			logger.Logger.Fatalf("[VARS STRUCT] ignoring field variable (%s) for (%s)", f.String(), VariableTypeName(f))
@@ -271,17 +271,17 @@ func (v *StructVariable) GetNestedFieldVariables(prefix string, noSQL bool) ([]V
 	return nestedVariables, nestedIDs
 }
 
-func (v *StructVariable) GetNestedFieldVariablesWithReferences(prefix string, noSQL bool) ([]Variable, []string) {
+func (v *StructObject) GetNestedFieldVariablesWithReferences(prefix string, noSQL bool) ([]Object, []string) {
 	nestedVariables, nestedIDs := v.GetNestedFieldVariables(prefix, noSQL)
 	for _, reference := range v.GetVariableInfo().GetReferences() {
-		nestedVariablesRef, nestedIDsRef := reference.Variable.(*StructVariable).GetNestedFieldVariablesWithReferences(prefix, noSQL)
+		nestedVariablesRef, nestedIDsRef := reference.Object.(*StructObject).GetNestedFieldVariablesWithReferences(prefix, noSQL)
 		nestedVariables = append(nestedVariables, nestedVariablesRef...)
 		nestedIDs = append(nestedIDs, nestedIDsRef...)
 	}
 	return nestedVariables, nestedIDs
 }
 
-func (v *StructVariable) CopyFrom(target *StructVariable) {
+func (v *StructObject) CopyFrom(target *StructObject) {
 	logger.Logger.Debugf("[VARS STRUCT COPY] copying from %s", target.LongString())
 	for name, targetField := range target.Fields {
 		if _, ok := v.Fields[name]; !ok {

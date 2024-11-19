@@ -11,7 +11,7 @@ import (
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
-	"analyzer/pkg/types/variables"
+	"analyzer/pkg/types/objects"
 )
 
 type Request struct {
@@ -92,7 +92,7 @@ func (request *Request) GetDependencies() []*Operation {
 	return dependencies
 }
 
-func (request *Request) createOperation(key variables.Variable, object variables.Variable, call *abstractgraph.AbstractDatabaseCall, write bool) *Operation {
+func (request *Request) createOperation(key objects.Object, object objects.Object, call *abstractgraph.AbstractDatabaseCall, write bool) *Operation {
 	op := &Operation{
 		Key:       key,
 		Object:    object,
@@ -124,7 +124,7 @@ func (request *Request) SaveReadOperation(call *abstractgraph.AbstractDatabaseCa
 	keyIndex := backend.GetReadKeyIndex()
 	objIndex := backend.GetReadObjectIndex()
 
-	var object variables.Variable
+	var object objects.Object
 	key := call.GetParam(keyIndex)
 
 	if objIndex >= 0 {
@@ -147,10 +147,10 @@ type Inconsistency struct {
 	Write             *Operation
 	Read              *Operation
 	MissingDependency bool
-	Dataflows         []*variables.Dataflow
+	Dataflows         []*objects.Dataflow
 }
 
-func (inconsistency *Inconsistency) AppendDataflows(dataflows []*variables.Dataflow) {
+func (inconsistency *Inconsistency) AppendDataflows(dataflows []*objects.Dataflow) {
 	inconsistency.Dataflows = append(inconsistency.Dataflows, dataflows...)
 }
 
@@ -170,7 +170,7 @@ func (inconsistency *Inconsistency) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		Write     *Operation `json:"write"`
 		Read      *Operation `json:"read"`
-		Dataflows []string       `json:"-"`
+		Dataflows []string   `json:"-"`
 	}{
 		Write:     inconsistency.Write,
 		Read:      inconsistency.Read,

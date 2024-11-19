@@ -1,4 +1,4 @@
-package variables
+package objects
 
 import (
 	"fmt"
@@ -12,28 +12,28 @@ import (
 const VARIABLE_INLINE_ID int64 = 0
 const VARIABLE_UNASSIGNED_ID int64 = -1
 
-type Variable interface {
+type Object interface {
 	String() string
 	LongString() string
-	GetVariableInfo() *VariableInfo
-	GetDependencies() []Variable
-	AddReferenceWithID(reference Variable, creator string)
-	GetUnassaignedVariables() []Variable
-	Copy(force bool) Variable
-	DeepCopy() Variable
+	GetVariableInfo() *ObjectInfo
+	GetDependencies() []Object
+	AddReferenceWithID(reference Object, creator string)
+	GetUnassaignedVariables() []Object
+	Copy(force bool) Object
+	DeepCopy() Object
 	GetId() int64
 	GetType() gotypes.Type
-	AssignVariable(variable Variable)
-	UpgradeFromPreviousInterface(interfaceVariable *InterfaceVariable)
-	GetNestedDependencies(nearestFields bool) []Variable
-	GetElementAt(index int) Variable
+	AssignVariable(variable Object)
+	UpgradeFromPreviousInterface(interfaceVariable *InterfaceObject)
+	GetNestedDependencies(nearestFields bool) []Object
+	GetElementAt(index int) Object
 }
 
-func VariableTypeName(v Variable) string {
+func VariableTypeName(v Object) string {
 	return utils.GetType(v) + " " + utils.GetType(v.GetType())
 }
 
-func GetDependenciesStringLst(deps ...Variable) string {
+func GetDependenciesStringLst(deps ...Object) string {
 	out := ""
 	for _, d := range deps {
 		out += fmt.Sprintf("\t\t\t\t\t - [%d] (%s) %s: %s\n", d.GetId(), VariableTypeName(d), d.GetVariableInfo().GetName(), d.GetVariableInfo().String())
@@ -41,18 +41,18 @@ func GetDependenciesStringLst(deps ...Variable) string {
 	return out
 }
 
-func UnwrapTupleIfSingleElement(variable Variable) Variable {
-	if tupleVar, ok := variable.(*TupleVariable); ok && len(tupleVar.Variables) == 1 {
-		return tupleVar.Variables[0]
+func UnwrapTupleIfSingleElement(variable Object) Object {
+	if tupleVar, ok := variable.(*TupleObject); ok && len(tupleVar.Objects) == 1 {
+		return tupleVar.Objects[0]
 	}
 	return variable
 }
 
-func WrapToFieldVariable(variable Variable, structVariable *StructVariable, addTypeToStruct bool) {
-	fieldVariable, ok := variable.(*FieldVariable)
+func WrapToFieldVariable(variable Object, structVariable *StructObject, addTypeToStruct bool) {
+	fieldVariable, ok := variable.(*FieldObject)
 	if !ok {
-		fieldVariable = &FieldVariable{
-			VariableInfo: &VariableInfo{
+		fieldVariable = &FieldObject{
+			ObjectInfo: &ObjectInfo{
 				Type: &gotypes.FieldType{
 					WrappedType: variable.GetType(),
 				},
@@ -68,46 +68,46 @@ func WrapToFieldVariable(variable Variable, structVariable *StructVariable, addT
 	}
 }
 
-func UnwrapAddressVariable(variable Variable) Variable {
-	if addressVar, ok := variable.(*AddressVariable); ok {
+func UnwrapAddressVariable(variable Object) Object {
+	if addressVar, ok := variable.(*AddressObject); ok {
 		return UnwrapAddressVariable(addressVar.GetAddressOf())
 	}
 	return variable
 }
 
-func UnwrapPointerVariable(variable Variable) Variable {
-	if pointerVar, ok := variable.(*PointerVariable); ok {
+func UnwrapPointerVariable(variable Object) Object {
+	if pointerVar, ok := variable.(*PointerObject); ok {
 		return UnwrapPointerVariable(pointerVar.GetPointerTo())
 	}
 	return variable
 }
 
-func UnwrapFieldVariable(variable Variable) Variable {
-	if fieldVar, ok := variable.(*FieldVariable); ok {
+func UnwrapFieldVariable(variable Object) Object {
+	if fieldVar, ok := variable.(*FieldObject); ok {
 		return UnwrapPointerVariable(fieldVar.WrappedVariable)
 	}
 	return variable
 }
 
-func AddVariableInfoDependencies(variable Variable, deps []Variable) {
+func AddVariableInfoDependencies(variable Object, deps []Object) {
 	variable.GetVariableInfo().Dependencies = append(variable.GetVariableInfo().Dependencies, deps...)
 }
 
-func AddUnderlyingDependencies(variable Variable, deps []Variable) bool {
+func AddUnderlyingDependencies(variable Object, deps []Object) bool {
 	variableType, _ := gotypes.UnwrapUserAndFieldTypes(variable.GetType())
 
 	if _, ok := variableType.(*gotypes.GenericType); ok {
-		genericVariable, _ := variable.(*GenericVariable)
+		genericVariable, _ := variable.(*GenericObject)
 		genericVariable.Params = append(genericVariable.Params, deps...)
 		return true
 	}
 	if _, ok := variableType.(*gotypes.BasicType); ok {
-		basicVariable, _ := variable.(*BasicVariable)
-		basicVariable.UnderlyingVariables = append(basicVariable.UnderlyingVariables, deps...)
+		basicVariable, _ := variable.(*BasicObject)
+		basicVariable.UnderlyingObjects = append(basicVariable.UnderlyingObjects, deps...)
 		return true
 	}
 	if _, ok := variableType.(*gotypes.InterfaceType); ok {
-		interfaceVariable, _ := variable.(*InterfaceVariable)
+		interfaceVariable, _ := variable.(*InterfaceObject)
 		if interfaceVariable.UnderlyingVariable != nil || len(deps) > 1 {
 			return false
 		}
@@ -115,7 +115,7 @@ func AddUnderlyingDependencies(variable Variable, deps []Variable) bool {
 		return true
 	}
 	if sliceType, ok := variableType.(*gotypes.SliceType); ok {
-		sliceVariable, _ := variable.(*SliceVariable)
+		sliceVariable, _ := variable.(*SliceObject)
 		for _, dep := range deps {
 			depType, _ := gotypes.UnwrapUserAndFieldTypes(dep.GetType())
 			if !sliceType.UnderlyingType.IsSameType(depType) {
@@ -129,7 +129,7 @@ func AddUnderlyingDependencies(variable Variable, deps []Variable) bool {
 	return false
 }
 
-func GetReversedNestedFieldsAndNames(variable Variable, fieldName string, noSQL bool, queue bool) (nestedVariables []Variable, nestedNames []string) {
+func GetReversedNestedFieldsAndNames(variable Object, fieldName string, noSQL bool, queue bool) (nestedObjects []Object, nestedNames []string) {
 	logger.Logger.Debugf("[VARS] get reversed nested fields and names for variable (%s): %s", utils.GetType(variable), variable.String())
 
 	// e.g. in queue.pop we need to explicitly specify the fieldname otherwise it will be wrong because we are reading from an inteface
@@ -141,29 +141,29 @@ func GetReversedNestedFieldsAndNames(variable Variable, fieldName string, noSQL 
 
 	logger.Logger.Debugf("TOP FIELD NAME AFTER = %s", fieldName)
 
-	if structVariable, ok := variable.(*StructVariable); ok {
-		variables := []Variable{structVariable}
+	if structVariable, ok := variable.(*StructObject); ok {
+		variables := []Object{structVariable}
 		names := []string{fieldName}
-		nestedVariables, nestedNames = structVariable.GetNestedFieldVariablesWithReferences(fieldName, noSQL)
+		nestedObjects, nestedNames = structVariable.GetNestedFieldVariablesWithReferences(fieldName, noSQL)
 
-		variables = append(variables, nestedVariables...)
+		variables = append(variables, nestedObjects...)
 		names = append(names, nestedNames...)
 		slices.Reverse(variables)
 		slices.Reverse(names)
 		return variables, names
-	} else if mapVariable, ok := variable.(*MapVariable); ok {
-		variables := []Variable{mapVariable}
+	} else if mapVariable, ok := variable.(*MapObject); ok {
+		variables := []Object{mapVariable}
 		names := []string{fieldName}
-		nestedVariables, nestedNames = mapVariable.GetNestedFieldVariablesWithReferences(fieldName, noSQL)
+		nestedObjects, nestedNames = mapVariable.GetNestedFieldVariablesWithReferences(fieldName, noSQL)
 
-		variables = append(variables, nestedVariables...)
+		variables = append(variables, nestedObjects...)
 		names = append(names, nestedNames...)
 		slices.Reverse(variables)
 		slices.Reverse(names)
 		return variables, names
-	} else if addressVariable, ok := variable.(*AddressVariable); ok {
+	} else if addressVariable, ok := variable.(*AddressObject); ok {
 		return GetReversedNestedFieldsAndNames(addressVariable.AddressOf, fieldName, noSQL, queue)
-	} else if pointerVariable, ok := variable.(*PointerVariable); ok {
+	} else if pointerVariable, ok := variable.(*PointerObject); ok {
 		return GetReversedNestedFieldsAndNames(pointerVariable.PointerTo, fieldName, noSQL, queue)
 	} else {
 		logger.Logger.Fatalf("unexpected type (%s) for variable (%s)", utils.GetType(variable), variable.String())

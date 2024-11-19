@@ -5,11 +5,12 @@ import (
 	"fmt"
 	"sort"
 	"strings"
+
 	//"fmt"
 	/* "strings"
 
 	"analyzer/pkg/logger"
-	"analyzer/pkg/types/variables" */
+	"analyzer/pkg/types/objects" */
 	"analyzer/pkg/utils"
 )
 
@@ -113,7 +114,7 @@ func (graph *AbstractGraph) dumpDiGraph() {
 		outputGraph := digraph{Nodes: nodes, Edges: edges}
 		utils.DumpToJSONFile(outputGraph, graph.AppName, fmt.Sprintf("graphs/output/trace_%s_%s", strings.ToLower(n.GetCallee()), strings.ToLower(n.GetName())))
 	}
-	
+
 	sortEdges(global_edges)
 	sortNodes(global_nodes)
 	outputGraph := digraph{Nodes: global_nodes, Edges: global_edges}

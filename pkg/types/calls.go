@@ -8,7 +8,7 @@ import (
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
-	"analyzer/pkg/types/variables"
+	"analyzer/pkg/types/objects"
 	"analyzer/pkg/utils"
 )
 
@@ -18,9 +18,9 @@ type Call interface {
 	GetMethod() Method
 	SimpleString() string
 	IsAtPos(token.Pos) bool
-	AddParam(param variables.Variable)
-	AddReturn(ret variables.Variable)
-	GetParams() []variables.Variable
+	AddParam(param objects.Object)
+	AddReturn(ret objects.Object)
+	GetParams() []objects.Object
 }
 
 type ParsedCall struct {
@@ -30,15 +30,15 @@ type ParsedCall struct {
 
 	Pos     token.Pos
 	Method  Method
-	Params  []variables.Variable
-	Returns []variables.Variable
+	Params  []objects.Object
+	Returns []objects.Object
 }
 
 func (call ParsedCall) DeepCopy() ParsedCall {
 	// we actually don't need to deep copy the CFG block
 	// what we need is to cpy the parsed call's params and returns
 	// since they are the ones that are looked up for the references between abstract nodes
-	var newParams []variables.Variable
+	var newParams []objects.Object
 	for _, v := range call.Params {
 		newParams = append(newParams, v.DeepCopy())
 	}
@@ -60,15 +60,15 @@ func (call ParsedCall) GetMethod() Method {
 	return call.Method
 }
 
-func (call ParsedCall) GetParams() []variables.Variable {
+func (call ParsedCall) GetParams() []objects.Object {
 	return call.Params
 }
 
-func (call ParsedCall) GetReturns() []variables.Variable {
+func (call ParsedCall) GetReturns() []objects.Object {
 	return call.Returns
 }
 
-func (call ParsedCall) GetArgument(i int) variables.Variable {
+func (call ParsedCall) GetArgument(i int) objects.Object {
 	if i > len(call.Params) {
 		logger.Logger.Fatalf("invalid argument index %d for length %d in params: %v", i, (call.Params), call.Params)
 	}
@@ -135,7 +135,7 @@ func (svcCall *ParsedServiceCall) GetName() string {
 	return svcCall.Name
 }
 
-func (svcCall *ParsedServiceCall) AddParam(param variables.Variable) {
+func (svcCall *ParsedServiceCall) AddParam(param objects.Object) {
 	deepCopy := param.Copy(false)
 	logger.Logger.Tracef("[------- DEEP COPY -------] [%s] %v", utils.GetType(deepCopy), deepCopy.String())
 	if deepCopy.GetVariableInfo() == nil {
@@ -144,15 +144,15 @@ func (svcCall *ParsedServiceCall) AddParam(param variables.Variable) {
 	svcCall.Params = append(svcCall.Params, deepCopy)
 }
 
-func (svcCall *ParsedServiceCall) AddReturn(ret variables.Variable) {
+func (svcCall *ParsedServiceCall) AddReturn(ret objects.Object) {
 	svcCall.Returns = append(svcCall.Returns, ret)
 }
 
-func (svcCall *ParsedServiceCall) GetParams() []variables.Variable {
+func (svcCall *ParsedServiceCall) GetParams() []objects.Object {
 	return svcCall.Params
 }
 
-func (svcCall *ParsedServiceCall) GetReturns() []variables.Variable {
+func (svcCall *ParsedServiceCall) GetReturns() []objects.Object {
 	return svcCall.Params
 }
 
@@ -196,7 +196,7 @@ func (dbCall *ParsedDatabaseCall) GetName() string {
 	return dbCall.Name
 }
 
-func (dbCall *ParsedDatabaseCall) AddParam(param variables.Variable) {
+func (dbCall *ParsedDatabaseCall) AddParam(param objects.Object) {
 	deepCopy := param.Copy(false)
 	logger.Logger.Tracef("[------- DEEP COPY -------] [%s] %v", utils.GetType(deepCopy), deepCopy.String())
 	if deepCopy.GetVariableInfo() == nil {
@@ -205,22 +205,22 @@ func (dbCall *ParsedDatabaseCall) AddParam(param variables.Variable) {
 	dbCall.Params = append(dbCall.Params, deepCopy)
 }
 
-func (dbCall *ParsedDatabaseCall) AddReturn(ret variables.Variable) {
+func (dbCall *ParsedDatabaseCall) AddReturn(ret objects.Object) {
 	dbCall.Returns = append(dbCall.Returns, ret)
 }
 
-func (dbCall *ParsedDatabaseCall) GetParams() []variables.Variable {
+func (dbCall *ParsedDatabaseCall) GetParams() []objects.Object {
 	return dbCall.Params
 }
 
-func (dbCall *ParsedDatabaseCall) GetParam(i int) variables.Variable {
+func (dbCall *ParsedDatabaseCall) GetParam(i int) objects.Object {
 	if i >= len(dbCall.Params) {
 		logger.Logger.Fatalf("[CALLS] index (%d) out of range for parameters list in database call (%s): %v", i, dbCall.CallStr, dbCall.Params)
 	}
 	return dbCall.Params[i]
 }
 
-func (dbCall *ParsedDatabaseCall) GetReturn(i int) variables.Variable {
+func (dbCall *ParsedDatabaseCall) GetReturn(i int) objects.Object {
 	if i >= len(dbCall.Returns) {
 		logger.Logger.Fatalf("[CALLS] index (%d) out of range for returns list in database call (%s): %v", i, dbCall.CallStr, dbCall.Returns)
 	}
@@ -261,15 +261,15 @@ func (internalCall *ParsedInternalCall) GetName() string {
 	return internalCall.Name
 }
 
-func (internalCall *ParsedInternalCall) AddParam(param variables.Variable) {
+func (internalCall *ParsedInternalCall) AddParam(param objects.Object) {
 	internalCall.Params = append(internalCall.Params, param)
 }
 
-func (internalCall *ParsedInternalCall) AddReturn(ret variables.Variable) {
+func (internalCall *ParsedInternalCall) AddReturn(ret objects.Object) {
 	internalCall.Returns = append(internalCall.Returns, ret)
 }
 
-func (internalCall *ParsedInternalCall) GetParams() []variables.Variable {
+func (internalCall *ParsedInternalCall) GetParams() []objects.Object {
 	return internalCall.Params
 }
 

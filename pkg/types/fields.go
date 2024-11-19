@@ -5,7 +5,7 @@ import (
 
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/types/gotypes"
-	"analyzer/pkg/types/variables"
+	"analyzer/pkg/types/objects"
 )
 
 type Field interface {
@@ -23,7 +23,7 @@ type Field interface {
 type FieldInfo struct {
 	Name     string
 	Type     gotypes.Type
-	Variable variables.Variable
+	Variable objects.Object
 	Idx      int
 }
 

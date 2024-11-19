@@ -1,4 +1,4 @@
-package variables
+package objects
 
 import (
 	"encoding/json"
@@ -8,60 +8,60 @@ import (
 	"analyzer/pkg/utils"
 )
 
-type FieldVariable struct {
-	Variable
-	VariableInfo    *VariableInfo
-	WrappedVariable Variable
+type FieldObject struct {
+	Object
+	ObjectInfo      *ObjectInfo
+	WrappedVariable Object
 }
 
-func (v *FieldVariable) MarshalJSON() ([]byte, error) {
+func (v *FieldObject) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		VariableInfo    *VariableInfo `json:"field"`
-		WrappedVariable Variable      `json:"wrapped_variable,omitempty"`
+		ObjectInfo      *ObjectInfo `json:"field"`
+		WrappedVariable Object      `json:"wrapped_variable,omitempty"`
 	}{
-		VariableInfo:    v.VariableInfo,
+		ObjectInfo:      v.ObjectInfo,
 		WrappedVariable: v.WrappedVariable,
 	})
 }
 
-func (v *FieldVariable) String() string {
-	return v.VariableInfo.String()
+func (v *FieldObject) String() string {
+	return v.ObjectInfo.String()
 }
 
-func (v *FieldVariable) LongString() string {
-	return v.VariableInfo.LongString()
+func (v *FieldObject) LongString() string {
+	return v.ObjectInfo.LongString()
 }
 
-func (v *FieldVariable) GetId() int64 {
-	return v.VariableInfo.GetId()
+func (v *FieldObject) GetId() int64 {
+	return v.ObjectInfo.GetId()
 }
 
-func (v *FieldVariable) GetType() gotypes.Type {
-	if v.VariableInfo.GetType() == nil {
+func (v *FieldObject) GetType() gotypes.Type {
+	if v.ObjectInfo.GetType() == nil {
 		logger.Logger.Fatalf("[VARS ADDRESS] unexpected nil type for field variable: %s", v.String())
 	}
-	return v.VariableInfo.GetType()
+	return v.ObjectInfo.GetType()
 }
 
-func (v *FieldVariable) GetFieldType() *gotypes.FieldType {
-	return v.VariableInfo.GetType().(*gotypes.FieldType)
+func (v *FieldObject) GetFieldType() *gotypes.FieldType {
+	return v.ObjectInfo.GetType().(*gotypes.FieldType)
 }
 
-func (v *FieldVariable) GetWrappedVariable() Variable {
+func (v *FieldObject) GetWrappedVariable() Object {
 	return v.WrappedVariable
 }
 
-func (v *FieldVariable) FieldTypeIsDirectStructType() bool {
+func (v *FieldObject) FieldTypeIsDirectStructType() bool {
 	// if it is directly a struct type (and not user type)
-	_, ok := v.VariableInfo.GetType().(*gotypes.FieldType).GetWrappedType().(*gotypes.StructType)
+	_, ok := v.ObjectInfo.GetType().(*gotypes.FieldType).GetWrappedType().(*gotypes.StructType)
 	return ok
 }
 
-func (v *FieldVariable) AssignVariable(rvariable Variable) {
+func (v *FieldObject) AssignVariable(rvariable Object) {
 	// e.g. post.Text = post2.Text2
 	if v.GetType().IsSameType(rvariable.GetType()) {
 		logger.Logger.Infof("[VAR FIELD] (a) assigning variables with types (%s --> %s) for lvariable (%s) and rvariable (%s)", utils.GetType(v.WrappedVariable), utils.GetType(rvariable), v.WrappedVariable.String(), rvariable.String())
-		v.WrappedVariable = rvariable.(*FieldVariable).WrappedVariable.Copy(false)
+		v.WrappedVariable = rvariable.(*FieldObject).WrappedVariable.Copy(false)
 		v.WrappedVariable.GetVariableInfo().SetParent(v.WrappedVariable, v)
 		return
 	}
@@ -79,7 +79,7 @@ func (v *FieldVariable) AssignVariable(rvariable Variable) {
 	if leftSliceOk && rightArrayOk {
 		// maintain left slice and add copy right array
 		v.WrappedVariable = rvariable.Copy(false)
-		v.WrappedVariable.(*ArrayVariable).UpgradeToSlice()
+		v.WrappedVariable.(*ArrayObject).UpgradeToSlice()
 		v.WrappedVariable.GetVariableInfo().SetParent(v.WrappedVariable, v)
 		return
 	}
@@ -87,16 +87,16 @@ func (v *FieldVariable) AssignVariable(rvariable Variable) {
 	logger.Logger.Fatalf("[VAR FIELD] cannot assign variable with unmatched types (%s --> %s) for lvariable (%s) and rvariable (%s)", utils.GetType(v.WrappedVariable), utils.GetType(rvariable), v.WrappedVariable.String(), rvariable.String())
 }
 
-func (v *FieldVariable) GetVariableInfo() *VariableInfo {
-	return v.VariableInfo
+func (v *FieldObject) GetVariableInfo() *ObjectInfo {
+	return v.ObjectInfo
 }
 
-func (v *FieldVariable) GetDependencies() []Variable {
+func (v *FieldObject) GetDependencies() []Object {
 	return append(v.GetVariableInfo().GetDependencies(), v.WrappedVariable)
 }
 
-func (v *FieldVariable) GetNestedDependencies(nearestFields bool) []Variable {
-	var deps = []Variable{v}
+func (v *FieldObject) GetNestedDependencies(nearestFields bool) []Object {
+	var deps = []Object{v}
 	if v.GetVariableInfo().HasReferences() {
 		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
 	}
@@ -104,32 +104,32 @@ func (v *FieldVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	return deps
 }
 
-func (v *FieldVariable) AddReferenceWithID(target Variable, creator string) {
-	v.VariableInfo.AddReferenceWithID(v, target, creator)
+func (v *FieldObject) AddReferenceWithID(target Object, creator string) {
+	v.ObjectInfo.AddReferenceWithID(v, target, creator)
 	v.WrappedVariable.AddReferenceWithID(target, creator)
 }
 
-func (v *FieldVariable) Copy(force bool) Variable {
-	copy := &FieldVariable{
-		VariableInfo:    v.VariableInfo.Copy(force),
+func (v *FieldObject) Copy(force bool) Object {
+	copy := &FieldObject{
+		ObjectInfo:      v.ObjectInfo.Copy(force),
 		WrappedVariable: v.WrappedVariable.Copy(force),
 	}
 	copy.WrappedVariable.GetVariableInfo().SetParent(v.WrappedVariable, copy)
 	return copy
 }
 
-func (v *FieldVariable) DeepCopy() Variable {
+func (v *FieldObject) DeepCopy() Object {
 	logger.Logger.Debugf("[VARS FIELD - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
-	copy := &FieldVariable{
-		VariableInfo:    v.VariableInfo.DeepCopy(),
+	copy := &FieldObject{
+		ObjectInfo:      v.ObjectInfo.DeepCopy(),
 		WrappedVariable: v.WrappedVariable.DeepCopy(),
 	}
 	copy.WrappedVariable.GetVariableInfo().SetParent(v.WrappedVariable, copy)
 	return copy
 }
 
-func (v *FieldVariable) GetUnassaignedVariables() []Variable {
-	var variables []Variable
+func (v *FieldObject) GetUnassaignedVariables() []Object {
+	var variables []Object
 	if v.GetVariableInfo().IsUnassigned() {
 		variables = append(variables, v)
 		variables = append(variables, v.WrappedVariable.GetUnassaignedVariables()...)
@@ -137,8 +137,8 @@ func (v *FieldVariable) GetUnassaignedVariables() []Variable {
 	return variables
 }
 
-func (t *FieldVariable) GetNestedFieldVariables(prefix string, noSQL bool) ([]Variable, []string) {
-	variableType := t.VariableInfo.Type
+func (t *FieldObject) GetNestedFieldVariables(prefix string, noSQL bool) ([]Object, []string) {
+	variableType := t.ObjectInfo.Type
 	if userType, ok := t.GetType().(*gotypes.UserType); ok {
 		variableType = userType.UserType
 	}
@@ -147,13 +147,13 @@ func (t *FieldVariable) GetNestedFieldVariables(prefix string, noSQL bool) ([]Va
 	prefix = variableType.(*gotypes.FieldType).GetNestedFieldName(prefix, noSQL)
 	logger.Logger.Warnf("PREFIX AFTER = %s", prefix)
 
-	nestedVariables := []Variable{t}
+	nestedVariables := []Object{t}
 	nestedNames := []string{prefix}
-	if nestedField, ok := t.WrappedVariable.(*FieldVariable); ok {
+	if nestedField, ok := t.WrappedVariable.(*FieldObject); ok {
 		r1, r2 := nestedField.GetNestedFieldVariables(prefix, noSQL)
 		nestedVariables = append(nestedVariables, r1...)
 		nestedNames = append(nestedNames, r2...)
-	} else if nestedStruct, ok := t.WrappedVariable.(*StructVariable); ok {
+	} else if nestedStruct, ok := t.WrappedVariable.(*StructObject); ok {
 		r1, r2 := nestedStruct.GetNestedFieldVariables(prefix, noSQL)
 		nestedVariables = append(nestedVariables, r1...)
 		nestedNames = append(nestedNames, r2...)
@@ -164,11 +164,11 @@ func (t *FieldVariable) GetNestedFieldVariables(prefix string, noSQL bool) ([]Va
 	return nestedVariables, nestedNames
 }
 
-func (t *FieldVariable) GetNestedFieldVariablesWithReferences(prefix string, noSQL bool) ([]Variable, []string) {
+func (t *FieldObject) GetNestedFieldVariablesWithReferences(prefix string, noSQL bool) ([]Object, []string) {
 	nestedVariables, nestedIDs := t.GetNestedFieldVariables(prefix, noSQL)
 	for _, reference := range t.GetVariableInfo().GetReferences() {
 		logger.Logger.Debugf("HEREEEEE FOR REFERENCE %s", reference.String())
-		nestedVariablesRef, nestedIDsRef := reference.Variable.(*FieldVariable).GetNestedFieldVariablesWithReferences(prefix, noSQL)
+		nestedVariablesRef, nestedIDsRef := reference.Object.(*FieldObject).GetNestedFieldVariablesWithReferences(prefix, noSQL)
 		nestedVariables = append(nestedVariables, nestedVariablesRef...)
 		nestedIDs = append(nestedIDs, nestedIDsRef...)
 	}

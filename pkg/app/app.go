@@ -9,8 +9,8 @@ import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
+	"analyzer/pkg/types/objects"
 	"analyzer/pkg/types/gotypes"
-	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
 )
 
@@ -22,7 +22,7 @@ type App struct {
 	AppPackages       map[string]*types.Package // key is package name (FIXME: should be path actually)
 	BlueprintPackages map[string]*types.Package // key is package name (FIXME: should be path actually)
 	ExternalPackages  map[string]*types.Package // key is package name (FIXME: should be path actually)
-	TaintedVariables  map[string][]variables.Variable
+	TaintedVariables  map[string][]objects.Object
 	ServiceTypes      map[string]*gotypes.ServiceType
 }
 
@@ -68,7 +68,7 @@ func (app *App) GetAllAppPackages() []*types.Package {
 }
 
 // this is just an helper to later print tainted dataflow in yaml files
-func (app *App) AddTaintedVariableIfNotExists(fieldName string, variable variables.Variable) {
+func (app *App) AddTaintedVariableIfNotExists(fieldName string, variable objects.Object) {
 	if !slices.Contains(app.TaintedVariables[fieldName], variable) {
 		app.TaintedVariables[fieldName] = append(app.TaintedVariables[fieldName], variable)
 	}
@@ -122,7 +122,7 @@ func InitApp(name string, servicesInfo []*frameworks.ServiceInfo) (*App, error) 
 		AppPackages:       make(map[string]*types.Package),
 		BlueprintPackages: make(map[string]*types.Package),
 		ExternalPackages:  make(map[string]*types.Package),
-		TaintedVariables:  make(map[string][]variables.Variable),
+		TaintedVariables:  make(map[string][]objects.Object),
 		ServiceTypes:      make(map[string]*gotypes.ServiceType),
 	}
 

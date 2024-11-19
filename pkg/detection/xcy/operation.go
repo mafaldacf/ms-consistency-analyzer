@@ -7,7 +7,7 @@ import (
 
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/logger"
-	"analyzer/pkg/types/variables"
+	"analyzer/pkg/types/objects"
 )
 
 type Operation struct {
@@ -15,8 +15,8 @@ type Operation struct {
 	LineageID              int
 	Service                string
 	Method                 string
-	Key                    variables.Variable
-	Object                 variables.Variable
+	Key                    objects.Object
+	Object                 objects.Object
 	Datastore              *datastores.Datastore
 	Write                  bool
 	VisibleDependencies    []*Operation
@@ -73,15 +73,15 @@ func (op *Operation) HasDatastore(datastore *datastores.Datastore) bool {
 	return op.Datastore == datastore
 }
 
-func (op *Operation) GetAllUnderlyingVariables() []variables.Variable {
+func (op *Operation) GetAllUnderlyingVariables() []objects.Object {
 	return append(op.Key.GetNestedDependencies(false), op.Object.GetNestedDependencies(false)...)
 }
 
-func (op *Operation) GetKeyUnderlyingVariables() []variables.Variable {
+func (op *Operation) GetKeyUnderlyingVariables() []objects.Object {
 	return op.Key.GetNestedDependencies(false)
 }
 
-func (op *Operation) GetObjectUnderlyingVariables() []variables.Variable {
+func (op *Operation) GetObjectUnderlyingVariables() []objects.Object {
 	return op.Object.GetNestedDependencies(false)
 }
 

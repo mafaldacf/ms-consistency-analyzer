@@ -1,29 +1,29 @@
-[] (PointerVariable PointerType) s (*shopping_simple.ProductServiceImpl struct{product_db NoSQLDatabase, product_queue Queue, num_workers int})
-[_] (StructVariable UserType) shopping_simple.ProductServiceImpl struct{product_db NoSQLDatabase, product_queue Queue, num_workers int}
-[__] (FieldVariable FieldType) product_db NoSQLDatabase
-[___] (BlueprintBackendVariable BlueprintBackendType) product_db NoSQLDatabase
-[__] (FieldVariable FieldType) product_queue Queue
-[___] (BlueprintBackendVariable BlueprintBackendType) product_queue Queue
+[] (PointerObject PointerType) s (*shopping_simple.ProductServiceImpl struct{product_db NoSQLDatabase, product_queue Queue, num_workers int})
+[_] (StructObject UserType) shopping_simple.ProductServiceImpl struct{product_db NoSQLDatabase, product_queue Queue, num_workers int}
+[__] (FieldObject FieldType) product_db NoSQLDatabase
+[___] (BlueprintBackendObject BlueprintBackendType) product_db NoSQLDatabase
+[__] (FieldObject FieldType) product_queue Queue
+[___] (BlueprintBackendObject BlueprintBackendType) product_queue Queue
 
-[] (InterfaceVariable UserType) ctx context.Context
+[] (InterfaceObject UserType) ctx context.Context
 [_] (Reference UserType) ref <ctx context.Context> @ Frontend
 
-[] (BasicVariable BasicType) productID string
+[] (BasicObject BasicType) productID string
 [_] (Reference BasicType) ref <productID string> @ Frontend
 
-[] (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection {database = product_database, collection = product_collection}
+[] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = product_database, collection = product_collection}
 
-[] (InterfaceVariable UserType) _ .error
+[] (InterfaceObject UserType) _ .error
 
-[] (SliceVariable UserType) filter primitive.D
-[_] (StructVariable StructType) struct{Key "productid" string, Value string}
-[__] (FieldVariable FieldType) Key "productid" string
-[___] (BasicVariable BasicType) "productid" string
-[__] (FieldVariable FieldType) Value string
-[___] (BasicVariable BasicType) productID string
+[] (SliceObject UserType) filter primitive.D
+[_] (StructObject StructType) struct{Key "productid" string, Value string}
+[__] (FieldObject FieldType) Key "productid" string
+[___] (BasicObject BasicType) "productid" string
+[__] (FieldObject FieldType) Value string
+[___] (BasicObject BasicType) productID string
 [____] (Reference BasicType) ref <productID string> @ Frontend
 
-[] (InterfaceVariable UserType) err .error
+[] (InterfaceObject UserType) err .error
 
-[] (BasicVariable BasicType) val bool
+[] (BasicObject BasicType) val bool
 

@@ -9,8 +9,8 @@ import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
 	"analyzer/pkg/types/gotypes"
-	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
+	"analyzer/pkg/types/objects"
 )
 
 func (service *Service) isMethodExposedByService(methodName string) bool {
@@ -77,7 +77,7 @@ func (service *Service) AttachAllPackageMethods() {
 func (service *Service) RegisterFields() {
 	logger.Logger.Tracef("[PARSER] [%s] registering fields...\n", service.Name)
 
-	if structVar, ok := service.GetImplVariable().(*variables.StructVariable); ok {
+	if structVar, ok := service.GetImplVariable().(*objects.StructObject); ok {
 		for idx, fieldVariable := range structVar.GetFieldVariablesLst() {
 			fieldName := fieldVariable.GetFieldType().GetFieldName()
 			field := service.computeServiceFieldFromVariable(fieldVariable, fieldName, idx)
@@ -97,7 +97,7 @@ func (service *Service) RegisterFields() {
 	logger.Logger.Infof("[PARSER] [%s] registered %d fields:\n%s", service.GetName(), len(service.Fields), fieldsStr)
 }
 
-func (service *Service) computeServiceFieldFromVariable(fieldVariable *variables.FieldVariable, paramName string, idx int) types.Field {
+func (service *Service) computeServiceFieldFromVariable(fieldVariable *objects.FieldObject, paramName string, idx int) types.Field {
 	wrappedType := fieldVariable.GetFieldType().GetWrappedType()
 	wrappedVariable := fieldVariable.GetWrappedVariable()
 	fieldInfo := types.FieldInfo{

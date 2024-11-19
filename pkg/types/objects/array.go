@@ -1,4 +1,4 @@
-package variables
+package objects
 
 import (
 	"encoding/json"
@@ -8,33 +8,33 @@ import (
 	"analyzer/pkg/utils"
 )
 
-type ArrayVariable struct {
-	Variable
-	VariableInfo *VariableInfo
-	Elements     []Variable
+type ArrayObject struct {
+	Object
+	ObjectInfo *ObjectInfo
+	Elements   []Object
 }
 
-func (v *ArrayVariable) MarshalJSON() ([]byte, error) {
+func (v *ArrayObject) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		VariableInfo *VariableInfo `json:"array"`
-		Elements     []Variable    `json:"array_elems,omitempty"`
+		ObjectInfo *ObjectInfo `json:"array"`
+		Elements   []Object    `json:"array_elems,omitempty"`
 	}{
-		VariableInfo: v.VariableInfo,
-		Elements:     v.Elements,
+		ObjectInfo: v.ObjectInfo,
+		Elements:   v.Elements,
 	})
 }
 
-func (v *ArrayVariable) String() string {
-	return v.VariableInfo.String()
+func (v *ArrayObject) String() string {
+	return v.ObjectInfo.String()
 }
 
-func (v *ArrayVariable) UpgradeToSlice() *SliceVariable {
-	v.VariableInfo.Type = &gotypes.SliceType{
+func (v *ArrayObject) UpgradeToSlice() *SliceObject {
+	v.ObjectInfo.Type = &gotypes.SliceType{
 		UnderlyingType: v.GetArrayType().ElementsType,
 	}
-	sliceVariable := &SliceVariable{
-		VariableInfo: v.VariableInfo,
-		Elements:     v.Elements,
+	sliceVariable := &SliceObject{
+		ObjectInfo: v.ObjectInfo,
+		Elements:   v.Elements,
 	}
 	for _, elem := range sliceVariable.Elements {
 		elem.GetVariableInfo().SetParent(elem, sliceVariable)
@@ -42,8 +42,8 @@ func (v *ArrayVariable) UpgradeToSlice() *SliceVariable {
 	return sliceVariable
 }
 
-func (v *ArrayVariable) LongString() string {
-	s := v.VariableInfo.String() + " = ("
+func (v *ArrayObject) LongString() string {
+	s := v.ObjectInfo.String() + " = ("
 	for i, elem := range v.Elements {
 		s += elem.String()
 		if i < len(v.Elements)-1 {
@@ -53,19 +53,19 @@ func (v *ArrayVariable) LongString() string {
 	return s + ")"
 }
 
-func (v *ArrayVariable) AddReferenceWithID(target Variable, creator string) {
-	v.VariableInfo.AddReferenceWithID(v, target, creator)
+func (v *ArrayObject) AddReferenceWithID(target Object, creator string) {
+	v.ObjectInfo.AddReferenceWithID(v, target, creator)
 	for i := 0; i < len(v.Elements); i++ {
 		v.AddReferenceWithID(target.GetElementAt(i), creator)
 	}
 }
 
-func (v *ArrayVariable) GetElements() []Variable {
+func (v *ArrayObject) GetElements() []Object {
 	return v.Elements
 }
 
-func (v *ArrayVariable) AppendElements(varElements Variable) {
-	if varElementsSlice, ok := varElements.(*ArrayVariable); ok {
+func (v *ArrayObject) AppendElements(varElements Object) {
+	if varElementsSlice, ok := varElements.(*ArrayObject); ok {
 		v.Elements = append(v.Elements, varElementsSlice.GetElements()...)
 	} else {
 		if v.GetArrayType().ElementsType.IsSameType(varElements.GetType()) {
@@ -76,44 +76,44 @@ func (v *ArrayVariable) AppendElements(varElements Variable) {
 	}
 }
 
-func (v *ArrayVariable) GetId() int64 {
-	return v.VariableInfo.GetId()
+func (v *ArrayObject) GetId() int64 {
+	return v.ObjectInfo.GetId()
 }
 
-func (v *ArrayVariable) GetType() gotypes.Type {
-	if v.VariableInfo.GetType() == nil {
+func (v *ArrayObject) GetType() gotypes.Type {
+	if v.ObjectInfo.GetType() == nil {
 		logger.Logger.Fatalf("[VARS ADDRESS] unexpected nil type for array variable: %s", v.String())
 	}
-	return v.VariableInfo.GetType()
+	return v.ObjectInfo.GetType()
 }
 
-func (v *ArrayVariable) GetArrayType() *gotypes.ArrayType {
-	if userType, ok := v.VariableInfo.GetType().(*gotypes.UserType); ok {
+func (v *ArrayObject) GetArrayType() *gotypes.ArrayType {
+	if userType, ok := v.ObjectInfo.GetType().(*gotypes.UserType); ok {
 		return userType.UserType.(*gotypes.ArrayType)
 	}
-	return v.VariableInfo.GetType().(*gotypes.ArrayType)
+	return v.ObjectInfo.GetType().(*gotypes.ArrayType)
 }
 
-func (v *ArrayVariable) GetVariableInfo() *VariableInfo {
-	return v.VariableInfo
+func (v *ArrayObject) GetVariableInfo() *ObjectInfo {
+	return v.ObjectInfo
 }
 
-func (v *ArrayVariable) AddElement(element Variable) {
+func (v *ArrayObject) AddElement(element Object) {
 	v.Elements = append(v.Elements, element)
 }
 
-func (v *ArrayVariable) AddElements(element []Variable) {
+func (v *ArrayObject) AddElements(element []Object) {
 	v.Elements = append(v.Elements, element...)
 }
 
-func (v *ArrayVariable) GetElementAt(index int) Variable {
+func (v *ArrayObject) GetElementAt(index int) Object {
 	if index > len(v.Elements)-1 {
 		logger.Logger.Fatalf("[VARS ARRAY] element at index (%d) does not exist in array variable with len (%d): %s", index, len(v.Elements), v.String())
 	}
 	return v.Elements[index]
 }
 
-func (v *ArrayVariable) GetElementAtIfExists(index int) Variable {
+func (v *ArrayObject) GetElementAtIfExists(index int) Object {
 	if index > len(v.Elements)-1 {
 		logger.Logger.Warnf("[VARS ARRAY] element at index (%d) does not exist in array variable with len (%d): %s", index, len(v.Elements), v.String())
 		return nil
@@ -121,12 +121,12 @@ func (v *ArrayVariable) GetElementAtIfExists(index int) Variable {
 	return v.Elements[index]
 }
 
-func (v *ArrayVariable) GetDependencies() []Variable {
+func (v *ArrayObject) GetDependencies() []Object {
 	return append(v.GetVariableInfo().GetDependencies(), v.Elements...)
 }
 
-func (v *ArrayVariable) GetNestedDependencies(nearestFields bool) []Variable {
-	var deps = []Variable{v}
+func (v *ArrayObject) GetNestedDependencies(nearestFields bool) []Object {
+	var deps = []Object{v}
 	if v.GetVariableInfo().HasReferences() {
 		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
 	}
@@ -136,9 +136,9 @@ func (v *ArrayVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	return deps
 }
 
-func (v *ArrayVariable) Copy(force bool) Variable {
-	copy := &ArrayVariable{
-		VariableInfo: v.VariableInfo.Copy(force),
+func (v *ArrayObject) Copy(force bool) Object {
+	copy := &ArrayObject{
+		ObjectInfo: v.ObjectInfo.Copy(force),
 	}
 	for _, elem := range v.Elements {
 		newElem := elem.Copy(force)
@@ -148,10 +148,10 @@ func (v *ArrayVariable) Copy(force bool) Variable {
 	return copy
 }
 
-func (v *ArrayVariable) DeepCopy() Variable {
+func (v *ArrayObject) DeepCopy() Object {
 	logger.Logger.Debugf("[VARS ARRAY - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
-	copy := &ArrayVariable{
-		VariableInfo: v.VariableInfo.DeepCopy(),
+	copy := &ArrayObject{
+		ObjectInfo: v.ObjectInfo.DeepCopy(),
 	}
 	for _, elem := range v.Elements {
 		newElem := elem.DeepCopy()
@@ -161,8 +161,8 @@ func (v *ArrayVariable) DeepCopy() Variable {
 	return copy
 }
 
-func (v *ArrayVariable) GetUnassaignedVariables() []Variable {
-	var variables []Variable
+func (v *ArrayObject) GetUnassaignedVariables() []Object {
+	var variables []Object
 	if v.GetVariableInfo().IsUnassigned() {
 		variables = append(variables, v)
 		for _, v := range v.Elements {

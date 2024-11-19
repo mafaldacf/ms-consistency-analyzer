@@ -9,8 +9,8 @@ import (
 	"analyzer/pkg/lookup"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
-	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
+	"analyzer/pkg/types/objects"
 )
 
 func Build(app *app.App, frontends []string) *AbstractGraph {
@@ -184,7 +184,7 @@ func (graph *AbstractGraph) referenceQueuePopMethodBlockVars(queueHandler *Abstr
 		popParam := queuePopCall.GetParam(popParamIdx)
 
 		// FIXME: do we really need this?
-		popParam = variables.UnwrapPointerVariable(popParam)
+		popParam = objects.UnwrapPointerVariable(popParam)
 
 		logger.Logger.Warnf("FIXMEEEEEEEEEE! IDK IF IT IS WORKING IN NOTIFY BECAUSE OF ASSIGNMENTS AND ASSERTS AFTERWARDS")
 		for _, dep := range pushParam.GetNestedDependencies(false) {

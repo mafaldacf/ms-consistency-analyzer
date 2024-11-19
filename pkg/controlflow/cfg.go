@@ -9,7 +9,7 @@ import (
 	"analyzer/pkg/lookup"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
-	"analyzer/pkg/types/variables"
+	"analyzer/pkg/types/objects"
 	"analyzer/pkg/utils"
 )
 
@@ -32,7 +32,7 @@ func GenerateMethodCFG(parsedMethod *types.ParsedMethod) {
 		entryBlock.AddVariable(receiver)
 		parsedCfg.HasReceiver = true
 		parsedCfg.ReceiverType = receiver.GetType()
-		logger.Logger.Tracef("[CFG] added receiver (%s) %s", variables.VariableTypeName(receiver), receiver.String())
+		logger.Logger.Tracef("[CFG] added receiver (%s) %s", objects.VariableTypeName(receiver), receiver.String())
 	}
 
 	for i, param := range parsedMethod.Params {
@@ -53,7 +53,7 @@ func InitServiceReceiverFieldsForParsedCFG(service *service.Service, parsedMetho
 	receiver := parsedCfg.GetEntryParsedBlock().GetReceiver()
 	implVariable := service.GetImplVariable()
 
-	if ptrReceiver, ok := receiver.(*variables.PointerVariable); ok {
+	if ptrReceiver, ok := receiver.(*objects.PointerObject); ok {
 		ptrReceiver.PointerTo = implVariable
 	} else {
 		logger.Logger.Fatalf("[CFG] TODO!!!!")
@@ -73,15 +73,15 @@ func GenerateMethodCFGForService(service *service.Service, parsedMethod *types.P
 	entryBlock.AddVariable(receiver)
 
 	variable := receiver
-	if pointerVar, ok := variable.(*variables.PointerVariable); ok {
+	if pointerVar, ok := variable.(*objects.PointerObject); ok {
 		variable = pointerVar.PointerTo
 	}
-	if structVar, ok := variable.(*variables.StructVariable); ok {
+	if structVar, ok := variable.(*objects.StructObject); ok {
 		for name, f := range service.Fields {
 			structVar.Fields[name] = lookup.CreateVariableFromType(name, f.GetType())
 		}
 	}
-	logger.Logger.Tracef("[CFG] added service receiver %s (%s) (%s)", receiver.String(), utils.GetType(receiver.(*variables.PointerVariable).PointerTo), utils.GetType(receiver.(*variables.PointerVariable).PointerTo.GetType()))
+	logger.Logger.Tracef("[CFG] added service receiver %s (%s) (%s)", receiver.String(), utils.GetType(receiver.(*objects.PointerObject).PointerTo), utils.GetType(receiver.(*objects.PointerObject).PointerTo.GetType()))
 
 	for i, param := range parsedMethod.Params {
 		v := lookup.CreateVariableFromType(param.GetName(), param.GetType())

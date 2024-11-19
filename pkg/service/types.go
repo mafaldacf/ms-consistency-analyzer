@@ -12,8 +12,8 @@ import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
 	"analyzer/pkg/types/gotypes"
-	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
+	"analyzer/pkg/types/objects"
 )
 
 type Context struct {
@@ -35,9 +35,9 @@ type Service struct {
 	ContextStack    *stack.Stack
 
 	//TODO maybe use variable instead of ImplType + Fields
-	//Impl   variables.Variable
+	//Impl   objects.Variable
 	ImplName     string
-	ImplVariable variables.Variable   // variable is either StructVariable or InterfaceVariable, and its type is UserType whose underlying type is the following ImplType:
+	ImplVariable objects.Object       // variable is either StructVariable or InterfaceVariable, and its type is UserType whose underlying type is the following ImplType:
 	ImplType     *gotypes.ServiceType // type is either StructType or InterfaceType
 	Fields       map[string]types.Field
 
@@ -123,19 +123,19 @@ func (node *Service) GetImplType() *gotypes.ServiceType {
 	return node.ImplType
 }
 
-func (node *Service) GetImplVariable() variables.Variable {
+func (node *Service) GetImplVariable() objects.Object {
 	if node.ImplVariable == nil {
 		logger.Logger.Fatalf("[SERVICE] [%s] unexpected nil impl variable", node.GetName())
 	}
 	return node.ImplVariable
 }
 
-func (node *Service) SetImplVariableWithType(v variables.Variable) {
+func (node *Service) SetImplVariableWithType(v objects.Object) {
 	logger.Logger.Debugf("[SERVICE] [%s] set impl variable (%s): %s", node.GetName(), utils.GetType(v), v.LongString())
-	v = variables.UnwrapAddressVariable(v)
+	v = objects.UnwrapAddressVariable(v)
 	t := v.GetType()
 
-	if ptrVariable, ok := v.(*variables.PointerVariable); ok {
+	if ptrVariable, ok := v.(*objects.PointerObject); ok {
 		node.ImplVariable = ptrVariable.GetPointerTo()
 		t = ptrVariable.GetPointerType().GetPointerTo()
 	} else {

@@ -6,8 +6,8 @@ import (
 	"sort"
 
 	"analyzer/pkg/logger"
-	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
+	"analyzer/pkg/types/objects"
 )
 
 // --------------
@@ -66,7 +66,7 @@ func (cfg *CFG) Yaml() (map[string][]string, string) {
 // BLOCKS
 // ------
 
-func getTaintedFieldsListAndString(dfs []*variables.Dataflow) ([]string, string) {
+func getTaintedFieldsListAndString(dfs []*objects.Dataflow) ([]string, string) {
 	var fieldsLst []string
 	fieldsStr := ""
 	for _, df := range dfs {
@@ -87,7 +87,7 @@ func getTaintedFieldsListAndString(dfs []*variables.Dataflow) ([]string, string)
 	return fieldsLst, fieldsStr
 }
 
-func getIndirectDependencies(v variables.Variable, i int) ([]variables.Variable, string, []int) {
+func getIndirectDependencies(v objects.Object, i int) ([]objects.Object, string, []int) {
 	blockVarsStr := ""
 
 	padding := ""
@@ -119,7 +119,7 @@ func getIndirectDependencies(v variables.Variable, i int) ([]variables.Variable,
 		readOpsLst, readOpsStr := getTaintedFieldsListAndString(dfsReadOps)
 		if len(dfsWriteOps) > 0 {
 			blockVarsStr += fmt.Sprintf("%s %s --> w-tainted: write(%s) {%d}", paddingSpace, blockVarsStr, writeOpsStr, len(writeOpsLst))
-		} 
+		}
 		if len(dfsReadOps) > 0 {
 			blockVarsStr += fmt.Sprintf("%s %s --> r-tainted: read(%s) {%d}", paddingSpace, blockVarsStr, readOpsStr, len(readOpsLst))
 		}
@@ -127,9 +127,9 @@ func getIndirectDependencies(v variables.Variable, i int) ([]variables.Variable,
 		blockVarsStr += "\n"
 	}
 
-	blockVarsStr += fmt.Sprintf("[%s] (%s) %s\n", padding, variables.VariableTypeName(v), v.String())
+	blockVarsStr += fmt.Sprintf("[%s] (%s) %s\n", padding, objects.VariableTypeName(v), v.String())
 
-	var deps = []variables.Variable{v}
+	var deps = []objects.Object{v}
 	var depth = []int{i}
 
 	// indirect dependencies from reference
@@ -159,7 +159,7 @@ func getIndirectDependencies(v variables.Variable, i int) ([]variables.Variable,
 		if opStr != "" {
 			opStr = "// " + opStr
 		}
-		blockVarsStr += fmt.Sprintf("[%s] (%d) (%s) ref_by <%s> %s\n", padding, refBy.GetId(), variables.VariableTypeName(refBy), refBy.String(), opStr)
+		blockVarsStr += fmt.Sprintf("[%s] (%d) (%s) ref_by <%s> %s\n", padding, refBy.GetId(), objects.VariableTypeName(refBy), refBy.String(), opStr)
 	} */
 
 	return deps, blockVarsStr, depth
@@ -167,7 +167,7 @@ func getIndirectDependencies(v variables.Variable, i int) ([]variables.Variable,
 
 func (block *Block) Yaml() ([]string, string) {
 	data := []string{}
-	visited := make(map[variables.Variable]bool)
+	visited := make(map[objects.Object]bool)
 	allBlockVarsStr := ""
 	for _, v := range block.Vars {
 		deps, blockVarsStr, depths := getIndirectDependencies(v, 0)
@@ -191,11 +191,11 @@ func (block *Block) Yaml() ([]string, string) {
 			/* if i != lastIndex {
 				// last index corresponds to the original variabl from where we got the parameters
 				// note that it is the last since the deps slice was reversed
-				variableString = fmt.Sprintf("(inline) (%s) %s", variables.VariableTypeName(v), variableString)
+				variableString = fmt.Sprintf("(inline) (%s) %s", objects.VariableTypeName(v), variableString)
 			} else {
-				variableString = fmt.Sprintf("(%s) %s", variables.VariableTypeName(v), variableString)
+				variableString = fmt.Sprintf("(%s) %s", objects.VariableTypeName(v), variableString)
 			} */
-			variableString = fmt.Sprintf("%s depth %d (%s) %s", padding, depth, variables.VariableTypeName(v), variableString)
+			variableString = fmt.Sprintf("%s depth %d (%s) %s", padding, depth, objects.VariableTypeName(v), variableString)
 
 			dfsWriteOps := v.GetVariableInfo().GetAllWriteDataflows()
 			dfsReadOps := v.GetVariableInfo().GetAllReadDataflows()

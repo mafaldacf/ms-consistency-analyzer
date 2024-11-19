@@ -7,19 +7,19 @@ import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
 	"analyzer/pkg/types/gotypes"
-	"analyzer/pkg/types/variables"
+	"analyzer/pkg/types/objects"
 	"analyzer/pkg/utils"
 )
 
-func CreateVariableFromType(name string, t gotypes.Type) variables.Variable {
+func CreateVariableFromType(name string, t gotypes.Type) objects.Object {
 	logger.Logger.Debugf("[LOOKUP] created variable named (%s) from type (%s): %v", name, utils.GetType(t), t)
-	info := &variables.VariableInfo{
+	info := &objects.ObjectInfo{
 		Name: name,
 		Type: t,
-		Id:   variables.VARIABLE_UNASSIGNED_ID,
+		Id:   objects.VARIABLE_UNASSIGNED_ID,
 	}
 	if name == "" {
-		info.Id = variables.VARIABLE_INLINE_ID
+		info.Id = objects.VARIABLE_INLINE_ID
 	}
 
 	switch e := t.(type) {
@@ -37,38 +37,38 @@ func CreateVariableFromType(name string, t gotypes.Type) variables.Variable {
 		}
 		// e.g. context.Context is nil
 		logger.Logger.Warnf("[LOOKUP] user type (%s) with nil underlying type", e.String())
-		return &variables.GenericVariable{VariableInfo: info}
+		return &objects.GenericObject{ObjectInfo: info}
 	case *gotypes.ChanType:
-		return &variables.ChanVariable{VariableInfo: info}
+		return &objects.ChanObject{ObjectInfo: info}
 	case *gotypes.BasicType:
-		return &variables.BasicVariable{VariableInfo: info}
+		return &objects.BasicObject{ObjectInfo: info}
 	case *gotypes.InterfaceType:
-		return &variables.InterfaceVariable{VariableInfo: info}
+		return &objects.InterfaceObject{ObjectInfo: info}
 	case *gotypes.ArrayType:
-		return &variables.ArrayVariable{VariableInfo: info}
+		return &objects.ArrayObject{ObjectInfo: info}
 	case *gotypes.AddressType:
 		addressOfVariable := CreateVariableFromType("", e.AddressOf)
-		addressVariable := &variables.AddressVariable{
-			VariableInfo: info, AddressOf: CreateVariableFromType("", e.AddressOf),
+		addressVariable := &objects.AddressObject{
+			ObjectInfo: info, AddressOf: CreateVariableFromType("", e.AddressOf),
 		}
 		addressOfVariable.GetVariableInfo().SetParent(addressOfVariable, addressVariable)
 		return addressVariable
 	case *gotypes.PointerType:
-		v := &variables.PointerVariable{
-			VariableInfo: info, PointerTo: CreateVariableFromType("", e.PointerTo),
+		v := &objects.PointerObject{
+			ObjectInfo: info, PointerTo: CreateVariableFromType("", e.PointerTo),
 		}
 		return v
 	case *gotypes.StructType:
-		return &variables.StructVariable{VariableInfo: info, Fields: make(map[string]variables.Variable)}
+		return &objects.StructObject{ObjectInfo: info, Fields: make(map[string]objects.Object)}
 	case *gotypes.SliceType:
-		return &variables.SliceVariable{VariableInfo: info}
+		return &objects.SliceObject{ObjectInfo: info}
 	case *gotypes.MapType:
-		return &variables.MapVariable{VariableInfo: info, KeyValues: make(map[variables.Variable]variables.Variable, 0)}
+		return &objects.MapObject{ObjectInfo: info, KeyValues: make(map[objects.Object]objects.Object, 0)}
 	case *gotypes.FieldType:
 		info.Name = e.FieldName
 		wrappedFieldVariable := CreateVariableFromType(name, e.WrappedType)
-		fieldVariable := &variables.FieldVariable{
-			VariableInfo:    info,
+		fieldVariable := &objects.FieldObject{
+			ObjectInfo:      info,
 			WrappedVariable: wrappedFieldVariable,
 		}
 		wrappedFieldVariable.GetVariableInfo().SetParent(wrappedFieldVariable, fieldVariable)
@@ -77,15 +77,15 @@ func CreateVariableFromType(name string, t gotypes.Type) variables.Variable {
 		info.Type = e.Copy(true)
 		if e.IsNoSQLCollection() {
 			// blueprint NoSQL type (blueprint.NoSQLCollectionType) is later assigned
-			return &blueprint.BlueprintBackendVariable{VariableInfo: info}
+			return &blueprint.BlueprintBackendObject{ObjectInfo: info}
 		}
 		if e.IsNoSQLCursor() {
 			// blueprint NoSQL type (blueprint.NoSQLCursorType) is later assigned
-			return &blueprint.BlueprintBackendVariable{VariableInfo: info}
+			return &blueprint.BlueprintBackendObject{ObjectInfo: info}
 		}
-		return &blueprint.BlueprintBackendVariable{VariableInfo: info}
+		return &blueprint.BlueprintBackendObject{ObjectInfo: info}
 	case *gotypes.ServiceType:
-		return &variables.ServiceVariable{VariableInfo: info}
+		return &objects.ServiceObject{ObjectInfo: info}
 	}
 	logger.Logger.Fatalf("[LOOKUP] could not create variable with name (%s) for type (%v) (type = %s)", name, t, utils.GetType(t))
 	return nil

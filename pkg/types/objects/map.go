@@ -1,4 +1,4 @@
-package variables
+package objects
 
 import (
 	"encoding/json"
@@ -8,26 +8,26 @@ import (
 	"analyzer/pkg/utils"
 )
 
-type MapVariable struct {
-	Variable
-	VariableInfo *VariableInfo
-	KeyValues    map[Variable]Variable
+type MapObject struct {
+	Object
+	ObjectInfo *ObjectInfo
+	KeyValues  map[Object]Object
 }
 
 /* func (v *MapVariable) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		VariableInfo *VariableInfo         `json:"map"`
+		ObjectInfo *ObjectInfo         `json:"map"`
 		KeyValues    map[Variable]Variable `json:"map_kvs,omitempty"`
 	}{
-		VariableInfo: v.VariableInfo,
+		ObjectInfo: v.ObjectInfo,
 		KeyValues:    v.KeyValues,
 	})
 } */
 
-func (v *MapVariable) MarshalJSON() ([]byte, error) {
+func (v *MapObject) MarshalJSON() ([]byte, error) {
 	type kvstruct struct {
-		Key   Variable
-		Value Variable
+		Key   Object
+		Value Object
 	}
 
 	var kvs []kvstruct
@@ -39,23 +39,23 @@ func (v *MapVariable) MarshalJSON() ([]byte, error) {
 	}
 
 	return json.MarshalIndent(&struct {
-		VariableInfo *VariableInfo `json:"map"`
-		KeyValues    []kvstruct    `json:"key_values"`
+		ObjectInfo *ObjectInfo `json:"map"`
+		KeyValues  []kvstruct  `json:"key_values"`
 	}{
-		VariableInfo: v.VariableInfo,
-		KeyValues:    kvs,
+		ObjectInfo: v.ObjectInfo,
+		KeyValues:  kvs,
 	}, "", " ")
 }
 
-func (v *MapVariable) String() string {
-	return v.VariableInfo.String()
+func (v *MapObject) String() string {
+	return v.ObjectInfo.String()
 }
 
-func (v *MapVariable) LongString() string {
-	return v.VariableInfo.LongString()
+func (v *MapObject) LongString() string {
+	return v.ObjectInfo.LongString()
 }
 
-func (v *MapVariable) GetKeyValueIfExists(targetKey Variable) Variable {
+func (v *MapObject) GetKeyValueIfExists(targetKey Object) Object {
 	if !v.GetMapType().GetKeyType().IsSameType(targetKey.GetType()) {
 		logger.Logger.Fatalf("[VARS MAP] provided key (%s) with type (%s) does not match expected type (%s)", targetKey.String(), utils.GetType(targetKey.GetType()), utils.GetType(v.GetMapType().GetKeyType()))
 	}
@@ -73,40 +73,40 @@ func (v *MapVariable) GetKeyValueIfExists(targetKey Variable) Variable {
 	return v.KeyValues[targetKey]
 }
 
-func (v *MapVariable) AddKeyValue(key Variable, value Variable) {
+func (v *MapObject) AddKeyValue(key Object, value Object) {
 	v.KeyValues[key] = value
 	value.GetVariableInfo().SetParent(value, v)
 }
 
-func (v *MapVariable) GetId() int64 {
-	return v.VariableInfo.GetId()
+func (v *MapObject) GetId() int64 {
+	return v.ObjectInfo.GetId()
 }
 
-func (v *MapVariable) GetType() gotypes.Type {
-	if v.VariableInfo.GetType() == nil {
+func (v *MapObject) GetType() gotypes.Type {
+	if v.ObjectInfo.GetType() == nil {
 		logger.Logger.Fatalf("[VARS ADDRESS] unexpected nil type for map variable: %s", v.String())
 	}
-	return v.VariableInfo.GetType()
+	return v.ObjectInfo.GetType()
 }
 
-func (v *MapVariable) GetMapType() *gotypes.MapType {
-	if userType, ok := v.VariableInfo.GetType().(*gotypes.UserType); ok {
+func (v *MapObject) GetMapType() *gotypes.MapType {
+	if userType, ok := v.ObjectInfo.GetType().(*gotypes.UserType); ok {
 		return userType.UserType.(*gotypes.MapType)
 	}
-	return v.VariableInfo.GetType().(*gotypes.MapType)
+	return v.ObjectInfo.GetType().(*gotypes.MapType)
 }
 
-func (v *MapVariable) GetVariableInfo() *VariableInfo {
-	return v.VariableInfo
+func (v *MapObject) GetVariableInfo() *ObjectInfo {
+	return v.ObjectInfo
 }
 
-func (v *MapVariable) AddKeyValuePair(key Variable, value Variable) {
+func (v *MapObject) AddKeyValuePair(key Object, value Object) {
 	v.KeyValues[key] = value
 	value.GetVariableInfo().SetParent(value, v)
 }
 
-func (v *MapVariable) GetDependencies() []Variable {
-	var dependencies []Variable
+func (v *MapObject) GetDependencies() []Object {
+	var dependencies []Object
 	for _, value := range v.KeyValues {
 		dependencies = append(dependencies, value)
 	}
@@ -114,8 +114,8 @@ func (v *MapVariable) GetDependencies() []Variable {
 	return dependencies
 }
 
-func (v *MapVariable) GetNestedDependencies(nearestFields bool) []Variable {
-	var deps = []Variable{v}
+func (v *MapObject) GetNestedDependencies(nearestFields bool) []Object {
+	var deps = []Object{v}
 	if v.GetVariableInfo().HasReferences() {
 		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
 	}
@@ -125,10 +125,10 @@ func (v *MapVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	return deps
 }
 
-func (v *MapVariable) Copy(force bool) Variable {
-	copy := &MapVariable{
-		KeyValues:    make(map[Variable]Variable, 0),
-		VariableInfo: v.VariableInfo.Copy(force),
+func (v *MapObject) Copy(force bool) Object {
+	copy := &MapObject{
+		KeyValues:  make(map[Object]Object, 0),
+		ObjectInfo: v.ObjectInfo.Copy(force),
 	}
 	for k, v := range v.KeyValues {
 		copy.KeyValues[k] = v.Copy(force)
@@ -137,11 +137,11 @@ func (v *MapVariable) Copy(force bool) Variable {
 	return copy
 }
 
-func (v *MapVariable) DeepCopy() Variable {
+func (v *MapObject) DeepCopy() Object {
 	logger.Logger.Debugf("[VARS MAP - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
-	copy := &MapVariable{
-		KeyValues:    make(map[Variable]Variable, 0),
-		VariableInfo: v.VariableInfo.DeepCopy(),
+	copy := &MapObject{
+		KeyValues:  make(map[Object]Object, 0),
+		ObjectInfo: v.ObjectInfo.DeepCopy(),
 	}
 	for k, v := range v.KeyValues {
 		copy.KeyValues[k] = v.DeepCopy()
@@ -150,9 +150,9 @@ func (v *MapVariable) DeepCopy() Variable {
 	return copy
 }
 
-func (v *MapVariable) AddReferenceWithID(target Variable, creator string) {
-	v.VariableInfo.AddReferenceWithID(v, target, creator)
-	if targetMap, ok := target.(*MapVariable); ok {
+func (v *MapObject) AddReferenceWithID(target Object, creator string) {
+	v.ObjectInfo.AddReferenceWithID(v, target, creator)
+	if targetMap, ok := target.(*MapObject); ok {
 		for key, value := range v.KeyValues {
 			targetValue, ok := targetMap.KeyValues[key]
 			if !ok {
@@ -161,13 +161,13 @@ func (v *MapVariable) AddReferenceWithID(target Variable, creator string) {
 				targetValue.AddReferenceWithID(value, creator)
 			}
 		}
-		logger.Logger.Debugf("[VARS MAP - REF] added reference (%s) -> (%s) with id = %d (creator: %s)", v.VariableInfo.Name, target.GetVariableInfo().GetName(), v.VariableInfo.Id, creator)
+		logger.Logger.Debugf("[VARS MAP - REF] added reference (%s) -> (%s) with id = %d (creator: %s)", v.ObjectInfo.Name, target.GetVariableInfo().GetName(), v.ObjectInfo.Id, creator)
 		return
 	}
 	// exception: map[string]interface{} --> struct
 	if _, keyIsMapType := v.GetMapType().KeyType.(*gotypes.BasicType); keyIsMapType {
 		if _, valueIsInterfaceType := v.GetMapType().ValueType.(*gotypes.InterfaceType); valueIsInterfaceType {
-			if targetStructVariable, ok := target.(*StructVariable); ok {
+			if targetStructVariable, ok := target.(*StructObject); ok {
 				for key, value := range v.KeyValues {
 					targetValue, ok := targetStructVariable.Fields[key.GetType().GetBasicValue()]
 					if !ok {
@@ -180,7 +180,7 @@ func (v *MapVariable) AddReferenceWithID(target Variable, creator string) {
 						targetValue.AddReferenceWithID(value, creator)
 					}
 				}
-				logger.Logger.Debugf("[VARS MAP - REF] added reference (%s) (%s) -> (%s) (%s) with id = %d (creator: %s)", v.VariableInfo.Name, utils.GetType(v), target.GetVariableInfo().GetName(), utils.GetType(target), v.VariableInfo.Id, creator)
+				logger.Logger.Debugf("[VARS MAP - REF] added reference (%s) (%s) -> (%s) (%s) with id = %d (creator: %s)", v.ObjectInfo.Name, utils.GetType(v), target.GetVariableInfo().GetName(), utils.GetType(target), v.ObjectInfo.Id, creator)
 				return
 			}
 		}
@@ -188,15 +188,15 @@ func (v *MapVariable) AddReferenceWithID(target Variable, creator string) {
 	logger.Logger.Fatalf("[VARS MAP - REF] attempted to reference variables with different types (%s vs %s) (%s vs %s)", v.String(), target.String(), utils.GetType(v), utils.GetType(target))
 }
 
-func (v *MapVariable) GetNestedFieldVariables(prefix string, noSQL bool) ([]Variable, []string) {
-	var nestedVariables []Variable
+func (v *MapObject) GetNestedFieldVariables(prefix string, noSQL bool) ([]Object, []string) {
+	var nestedVariables []Object
 	var nestedIDs []string
 
 	logger.Logger.Debugf("[VARS MAP] found (%d) field VARIABLES for (%s): %v", len(v.KeyValues), v.String(), v.KeyValues)
 	for _, value := range v.KeyValues {
-		if fieldVariable, ok := value.(*FieldVariable); ok {
-			nestedFieldVariables, nestedFieldIDs := fieldVariable.GetNestedFieldVariables(prefix, noSQL)
-			nestedVariables = append(nestedVariables, nestedFieldVariables...)
+		if fieldVariable, ok := value.(*FieldObject); ok {
+			nestedFieldObjects, nestedFieldIDs := fieldVariable.GetNestedFieldVariables(prefix, noSQL)
+			nestedVariables = append(nestedVariables, nestedFieldObjects...)
 			nestedIDs = append(nestedIDs, nestedFieldIDs...)
 		} else {
 			logger.Logger.Warnf("[VARS MAP] ignoring field key typed (%s) for value variable (%s) in map variable (%s): (%s)", utils.GetType(value), value.String(), VariableTypeName(v), v.String())
@@ -205,28 +205,28 @@ func (v *MapVariable) GetNestedFieldVariables(prefix string, noSQL bool) ([]Vari
 	return nestedVariables, nestedIDs
 }
 
-func (v *MapVariable) GetNestedFieldVariablesWithReferences(prefix string, noSQL bool) ([]Variable, []string) {
+func (v *MapObject) GetNestedFieldVariablesWithReferences(prefix string, noSQL bool) ([]Object, []string) {
 	logger.Logger.Debugf("[VARS MAP] HAS REFERENCE????? %v", v.GetVariableInfo().GetReferences())
 	nestedVariables, nestedIDs := v.GetNestedFieldVariables(prefix, noSQL)
 	for _, reference := range v.GetVariableInfo().GetReferences() {
 		logger.Logger.Debugf("[VARS MAP] HEREEEEE FOR REFERENCE %s", reference.String())
-		if referenceMapVar, ok := reference.Variable.(*MapVariable); ok {
+		if referenceMapVar, ok := reference.Object.(*MapObject); ok {
 			nestedVariablesRef, nestedIDsRef := referenceMapVar.GetNestedFieldVariablesWithReferences(prefix, noSQL)
 			nestedVariables = append(nestedVariables, nestedVariablesRef...)
 			nestedIDs = append(nestedIDs, nestedIDsRef...)
-		} else if referenceStructVar, ok := reference.Variable.(*StructVariable); ok {
+		} else if referenceStructVar, ok := reference.Object.(*StructObject); ok {
 			nestedVariablesRef, nestedIDsRef := referenceStructVar.GetNestedFieldVariablesWithReferences(prefix, noSQL)
 			nestedVariables = append(nestedVariables, nestedVariablesRef...)
 			nestedIDs = append(nestedIDs, nestedIDsRef...)
 		} else {
-			logger.Logger.Warnf("[VARS MAP] ignoring reference typed (%s) for reference variable (%s) in map variable (%s): (%s)", utils.GetType(reference.Variable), reference.Variable.String(), VariableTypeName(v), v.String())
+			logger.Logger.Warnf("[VARS MAP] ignoring reference typed (%s) for reference variable (%s) in map variable (%s): (%s)", utils.GetType(reference.Object), reference.Object.String(), VariableTypeName(v), v.String())
 		}
 	}
 	return nestedVariables, nestedIDs
 }
 
-func (v *MapVariable) GetUnassaignedVariables() []Variable {
-	var variables []Variable
+func (v *MapObject) GetUnassaignedVariables() []Object {
+	var variables []Object
 	if v.GetVariableInfo().IsUnassigned() {
 		variables = append(variables, v)
 		for k, v := range v.KeyValues {

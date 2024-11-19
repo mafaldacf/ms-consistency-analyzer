@@ -7,8 +7,8 @@ import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
-	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
+	"analyzer/pkg/types/objects"
 )
 
 type AbstractGraph struct {
@@ -25,9 +25,9 @@ func (graph *AbstractGraph) getAndIncGIndex() int64 {
 }
 
 type AbstractNode interface {
-	GetParams() []variables.Variable
-	GetParam(int) variables.Variable
-	GetReturns() []variables.Variable
+	GetParams() []objects.Object
+	GetParam(int) objects.Object
+	GetReturns() []objects.Object
 	GetMethodStr() string
 	String() string
 	LongString() string
@@ -58,12 +58,12 @@ type AbstractServiceCall struct {
 
 func (call *AbstractServiceCall) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Method   string               `json:"method"`
-		Depth    int                  `json:"depth"`
-		Caller   string               `json:"caller"`
-		Children []AbstractNode       `json:"edges"`
-		Params   []variables.Variable `json:"params"`
-		Returns  []variables.Variable `json:"returns,omitempty"`
+		Method   string           `json:"method"`
+		Depth    int              `json:"depth"`
+		Caller   string           `json:"caller"`
+		Children []AbstractNode   `json:"edges"`
+		Params   []objects.Object `json:"params"`
+		Returns  []objects.Object `json:"returns,omitempty"`
 	}{
 		Caller:   call.Caller,
 		Depth:    call.Depth,
@@ -82,15 +82,15 @@ func (call *AbstractServiceCall) GetNextDepth() int {
 	return call.Depth + 1
 }
 
-func (call *AbstractServiceCall) GetParams() []variables.Variable {
+func (call *AbstractServiceCall) GetParams() []objects.Object {
 	return call.ParsedCall.Params
 }
 
-func (call *AbstractServiceCall) GetReturns() []variables.Variable {
+func (call *AbstractServiceCall) GetReturns() []objects.Object {
 	return call.ParsedCall.Returns
 }
 
-func (call *AbstractServiceCall) GetParam(index int) variables.Variable {
+func (call *AbstractServiceCall) GetParam(index int) objects.Object {
 	return call.ParsedCall.Params[index]
 }
 
@@ -154,12 +154,12 @@ type AbstractTempInternalCall struct {
 
 func (call *AbstractTempInternalCall) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Method   string               `json:"method"`
-		Depth    int                  `json:"depth"`
-		Service  string               `json:"service"`
-		Params   []variables.Variable `json:"params"`
-		Returns  []variables.Variable `json:"returns,omitempty"`
-		Children []AbstractNode       `json:"edges"`
+		Method   string           `json:"method"`
+		Depth    int              `json:"depth"`
+		Service  string           `json:"service"`
+		Params   []objects.Object `json:"params"`
+		Returns  []objects.Object `json:"returns,omitempty"`
+		Children []AbstractNode   `json:"edges"`
 	}{
 		Method:   call.ParsedCall.Method.String(),
 		Depth:    call.Depth,
@@ -194,15 +194,15 @@ func (call *AbstractTempInternalCall) LongString() string {
 	return call.ParsedCall.String()
 }
 
-func (call *AbstractTempInternalCall) GetParams() []variables.Variable {
+func (call *AbstractTempInternalCall) GetParams() []objects.Object {
 	return call.ParsedCall.Params
 }
 
-func (call *AbstractTempInternalCall) GetReturns() []variables.Variable {
+func (call *AbstractTempInternalCall) GetReturns() []objects.Object {
 	return call.ParsedCall.Returns
 }
 
-func (call *AbstractTempInternalCall) GetParam(index int) variables.Variable {
+func (call *AbstractTempInternalCall) GetParam(index int) objects.Object {
 	return call.ParsedCall.Params[index]
 }
 
@@ -272,14 +272,14 @@ type AbstractDatabaseCall struct {
 
 func (call *AbstractDatabaseCall) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		Method     string               `json:"method"`
-		Depth      int                  `json:"depth"`
-		Service    string               `json:"caller"`
-		Params     []variables.Variable `json:"params"`
-		Returns    []variables.Variable `json:"returns,omitempty"`
-		Children   []AbstractNode       `json:"queue_handlers,omitempty"`
-		DbInstance string               `json:"datastore"`
-		Subscriber bool                 `json:"subscriber,omitempty"`
+		Method     string           `json:"method"`
+		Depth      int              `json:"depth"`
+		Service    string           `json:"caller"`
+		Params     []objects.Object `json:"params"`
+		Returns    []objects.Object `json:"returns,omitempty"`
+		Children   []AbstractNode   `json:"queue_handlers,omitempty"`
+		DbInstance string           `json:"datastore"`
+		Subscriber bool             `json:"subscriber,omitempty"`
 	}{
 		Method:     call.ParsedCall.Method.String(),
 		Depth:      call.Depth,
@@ -300,11 +300,11 @@ func (call *AbstractDatabaseCall) GetNextDepth() int {
 	return call.Depth + 1
 }
 
-func (call *AbstractDatabaseCall) GetParams() []variables.Variable {
+func (call *AbstractDatabaseCall) GetParams() []objects.Object {
 	return call.ParsedCall.Params
 }
 
-func (call *AbstractDatabaseCall) GetParam(index int) variables.Variable {
+func (call *AbstractDatabaseCall) GetParam(index int) objects.Object {
 	if index > 0 && index < len(call.ParsedCall.Params) {
 		logger.Logger.Tracef("got param with index %d for call %s", index, call.LongString())
 		return call.ParsedCall.Params[index]
@@ -313,11 +313,11 @@ func (call *AbstractDatabaseCall) GetParam(index int) variables.Variable {
 	return nil
 }
 
-func (call *AbstractDatabaseCall) GetReturns() []variables.Variable {
+func (call *AbstractDatabaseCall) GetReturns() []objects.Object {
 	return call.ParsedCall.Returns
 }
 
-func (call *AbstractDatabaseCall) GetReturn(index int) variables.Variable {
+func (call *AbstractDatabaseCall) GetReturn(index int) objects.Object {
 	if index >= 0 && index < len(call.ParsedCall.Returns) {
 		logger.Logger.Tracef("got return with index %d for call %s", index, call.LongString())
 		return call.ParsedCall.Returns[index]

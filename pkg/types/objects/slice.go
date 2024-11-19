@@ -1,4 +1,4 @@
-package variables
+package objects
 
 import (
 	"encoding/json"
@@ -8,39 +8,39 @@ import (
 	"analyzer/pkg/utils"
 )
 
-type SliceVariable struct {
-	Variable
-	VariableInfo *VariableInfo
-	Elements     []Variable
+type SliceObject struct {
+	Object
+	ObjectInfo *ObjectInfo
+	Elements   []Object
 }
 
-func (v *SliceVariable) MarshalJSON() ([]byte, error) {
+func (v *SliceObject) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
-		VariableInfo *VariableInfo `json:"slice"`
-		Elements     []Variable    `json:"slice_variables,omitempty"`
+		ObjectInfo *ObjectInfo `json:"slice"`
+		Elements   []Object    `json:"slice_variables,omitempty"`
 	}{
-		VariableInfo: v.VariableInfo,
-		Elements:     v.Elements,
+		ObjectInfo: v.ObjectInfo,
+		Elements:   v.Elements,
 	})
 }
 
-func (v *SliceVariable) GetVariableInfo() *VariableInfo {
-	return v.VariableInfo
+func (v *SliceObject) GetVariableInfo() *ObjectInfo {
+	return v.ObjectInfo
 }
 
-func (v *SliceVariable) GetElements() []Variable {
+func (v *SliceObject) GetElements() []Object {
 	return v.Elements
 }
 
-func (v *SliceVariable) AddReferenceWithID(target Variable, creator string) {
-	v.VariableInfo.AddReferenceWithID(v, target, creator)
+func (v *SliceObject) AddReferenceWithID(target Object, creator string) {
+	v.ObjectInfo.AddReferenceWithID(v, target, creator)
 	for i := 0; i < len(v.Elements); i++ {
 		v.AddReferenceWithID(target.GetElementAt(i), creator)
 	}
 }
 
-func (v *SliceVariable) AppendElements(varElements Variable) {
-	if varElementsSlice, ok := varElements.(*SliceVariable); ok {
+func (v *SliceObject) AppendElements(varElements Object) {
+	if varElementsSlice, ok := varElements.(*SliceObject); ok {
 		v.Elements = append(v.Elements, varElementsSlice.GetElements()...)
 	} else {
 		if v.GetSliceType().UnderlyingType.IsSameType(varElements.GetType()) {
@@ -51,19 +51,19 @@ func (v *SliceVariable) AppendElements(varElements Variable) {
 	}
 }
 
-func (v *SliceVariable) AddElement(element Variable) {
+func (v *SliceObject) AddElement(element Object) {
 	v.Elements = append(v.Elements, element)
 	element.GetVariableInfo().SetParent(element, v)
 }
 
-func (v *SliceVariable) AddElements(elements []Variable) {
+func (v *SliceObject) AddElements(elements []Object) {
 	v.Elements = append(v.Elements, elements...)
 	for _, elem := range elements {
 		elem.GetVariableInfo().SetParent(elem, v)
 	}
 }
 
-func (v *SliceVariable) GetVariableAt(index int) Variable {
+func (v *SliceObject) GetVariableAt(index int) Object {
 	if index < len(v.Elements) {
 		return v.Elements[index]
 	}
@@ -71,34 +71,34 @@ func (v *SliceVariable) GetVariableAt(index int) Variable {
 	return nil
 }
 
-func (v *SliceVariable) GetId() int64 {
-	return v.VariableInfo.GetId()
+func (v *SliceObject) GetId() int64 {
+	return v.ObjectInfo.GetId()
 }
 
-func (v *SliceVariable) NumVariables() int {
+func (v *SliceObject) NumVariables() int {
 	return len(v.Elements)
 }
 
-func (v *SliceVariable) GetType() gotypes.Type {
-	if v.VariableInfo.GetType() == nil {
+func (v *SliceObject) GetType() gotypes.Type {
+	if v.ObjectInfo.GetType() == nil {
 		logger.Logger.Fatalf("[VARS ADDRESS] unexpected nil type for slice variable: %s", v.String())
 	}
-	return v.VariableInfo.GetType()
+	return v.ObjectInfo.GetType()
 }
 
-func (v *SliceVariable) GetSliceType() *gotypes.SliceType {
-	if userType, ok := v.VariableInfo.GetType().(*gotypes.UserType); ok {
+func (v *SliceObject) GetSliceType() *gotypes.SliceType {
+	if userType, ok := v.ObjectInfo.GetType().(*gotypes.UserType); ok {
 		return userType.UserType.(*gotypes.SliceType)
 	}
-	return v.VariableInfo.GetType().(*gotypes.SliceType)
+	return v.ObjectInfo.GetType().(*gotypes.SliceType)
 }
 
-func (v *SliceVariable) GetDependencies() []Variable {
+func (v *SliceObject) GetDependencies() []Object {
 	return append(v.GetVariableInfo().GetDependencies(), v.Elements...)
 }
 
-func (v *SliceVariable) GetNestedDependencies(nearestFields bool) []Variable {
-	var deps = []Variable{v}
+func (v *SliceObject) GetNestedDependencies(nearestFields bool) []Object {
+	var deps = []Object{v}
 	if v.GetVariableInfo().HasReferences() {
 		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
 	}
@@ -108,14 +108,14 @@ func (v *SliceVariable) GetNestedDependencies(nearestFields bool) []Variable {
 	return deps
 }
 
-func (v *SliceVariable) GetElementAt(index int) Variable {
+func (v *SliceObject) GetElementAt(index int) Object {
 	if index > len(v.Elements)-1 {
 		logger.Logger.Fatalf("[VARS SLICE] element at index (%d) does not exist in array variable with len (%d): %s", index, len(v.Elements), v.String())
 	}
 	return v.Elements[index]
 }
 
-func (v *SliceVariable) GetElementAtIfExists(index int) Variable {
+func (v *SliceObject) GetElementAtIfExists(index int) Object {
 	if index > len(v.Elements)-1 {
 		logger.Logger.Warnf("[VARS SLICE] element at index (%d) does not exist in array variable with len (%d): %s", index, len(v.Elements), v.String())
 		return nil
@@ -123,12 +123,12 @@ func (v *SliceVariable) GetElementAtIfExists(index int) Variable {
 	return v.Elements[index]
 }
 
-func (v *SliceVariable) String() string {
-	return v.VariableInfo.String()
+func (v *SliceObject) String() string {
+	return v.ObjectInfo.String()
 }
 
-func (v *SliceVariable) LongString() string {
-	s := v.VariableInfo.LongString() + " = ("
+func (v *SliceObject) LongString() string {
+	s := v.ObjectInfo.LongString() + " = ("
 	for i, elem := range v.Elements {
 		s += elem.String()
 		if i < len(v.Elements)-1 {
@@ -138,8 +138,8 @@ func (v *SliceVariable) LongString() string {
 	return s + ")"
 }
 
-func (v *SliceVariable) Copy(force bool) Variable {
-	copy := &SliceVariable{VariableInfo: v.VariableInfo.Copy(force)}
+func (v *SliceObject) Copy(force bool) Object {
+	copy := &SliceObject{ObjectInfo: v.ObjectInfo.Copy(force)}
 	for _, v := range v.Elements {
 		newElem := v.Copy(force)
 		copy.Elements = append(copy.Elements, newElem)
@@ -148,9 +148,9 @@ func (v *SliceVariable) Copy(force bool) Variable {
 	return copy
 }
 
-func (v *SliceVariable) DeepCopy() Variable {
+func (v *SliceObject) DeepCopy() Object {
 	logger.Logger.Debugf("[VARS SLICE - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
-	copy := &SliceVariable{VariableInfo: v.VariableInfo.DeepCopy()}
+	copy := &SliceObject{ObjectInfo: v.ObjectInfo.DeepCopy()}
 	for _, v := range v.Elements {
 		newElem := v.DeepCopy()
 		copy.Elements = append(copy.Elements, newElem)
@@ -159,8 +159,8 @@ func (v *SliceVariable) DeepCopy() Variable {
 	return copy
 }
 
-func (v *SliceVariable) GetUnassaignedVariables() []Variable {
-	var variables []Variable
+func (v *SliceObject) GetUnassaignedVariables() []Object {
+	var variables []Object
 	if v.GetVariableInfo().IsUnassigned() {
 		variables = append(variables, v)
 		for _, v := range v.Elements {

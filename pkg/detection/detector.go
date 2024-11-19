@@ -10,8 +10,8 @@ import (
 	"analyzer/pkg/detection/xcy"
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
-	"analyzer/pkg/types/variables"
 	"analyzer/pkg/utils"
+	"analyzer/pkg/types/objects"
 )
 
 type DetectionSet struct {
@@ -153,8 +153,8 @@ func (detector *Detector) captureInconsistency(request *xcy.Request, read *xcy.O
 
 			readUnderlyingVars := read.GetKeyUnderlyingVariables()
 			writeUnderlyingVars := write.GetObjectUnderlyingVariables()
-			logger.Logger.Tracef("[READ KEY] dependencies for (%s) %s: \n%v", utils.GetType(read.Key), read.Key.String(), variables.GetDependenciesStringLst(readUnderlyingVars...))
-			logger.Logger.Tracef("[WRITE VALUE] dependencies for (%s) %s: \n%v", utils.GetType(write.Object), write.Object.String(), variables.GetDependenciesStringLst(writeUnderlyingVars...))
+			logger.Logger.Tracef("[READ KEY] dependencies for (%s) %s: \n%v", utils.GetType(read.Key), read.Key.String(), objects.GetDependenciesStringLst(readUnderlyingVars...))
+			logger.Logger.Tracef("[WRITE VALUE] dependencies for (%s) %s: \n%v", utils.GetType(write.Object), write.Object.String(), objects.GetDependenciesStringLst(writeUnderlyingVars...))
 
 			for _, readVar := range readUnderlyingVars {
 				readDfs := readVar.GetVariableInfo().GetAllDataflowsForDatastore(readCall.DbInstance.GetName())

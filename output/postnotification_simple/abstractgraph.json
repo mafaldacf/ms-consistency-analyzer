@@ -10,12 +10,12 @@
         "caller": "UploadService",
         "edges": [
           {
-            "method": "NoSQLDatabase.InsertOne(ctx context.Context, document interface{})",
+            "method": "NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{})",
             "depth": 2,
             "caller": "StorageService",
             "params": [
               {
-                "variable": {
+                "interface": {
                   "name": "ctx",
                   "type": "context.Context",
                   "refs": [
@@ -27,7 +27,7 @@
                 }
               },
               {
-                "variable": {
+                "struct": {
                   "name": "post",
                   "type": "postnotification_simple.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username \"some username\" string}, Creator postnotification_simple.Creator struct{Username \"some username\" string}}",
                   "refs": [
@@ -41,7 +41,7 @@
             ],
             "returns": [
               {
-                "variable": {
+                "interface": {
                   "name": "err",
                   "type": ".error"
                 }
@@ -50,10 +50,132 @@
             "datastore": "posts_db"
           }
         ],
-        "params": null,
+        "params": [
+          {
+            "interface": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "basic": {
+              "name": "reqID",
+              "type": "int64"
+            }
+          },
+          {
+            "struct": {
+              "name": "post",
+              "type": "postnotification_simple.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username \"some username\" string}, Creator postnotification_simple.Creator struct{Username \"some username\" string}}"
+            },
+            "struct_fields": {
+              "Creator": {
+                "field": {
+                  "name": "Creator",
+                  "type": "postnotification_simple.Creator struct{Username \"some username\" string}"
+                },
+                "wrapped_variable": {
+                  "struct": {
+                    "name": "",
+                    "type": "postnotification_simple.Creator struct{Username \"some username\" string}"
+                  },
+                  "struct_fields": {
+                    "Username": {
+                      "field": {
+                        "name": "Username",
+                        "type": "\"some username\" string"
+                      },
+                      "wrapped_variable": {
+                        "basic": {
+                          "name": "",
+                          "type": "\"some username\" string"
+                        }
+                      }
+                    }
+                  }
+                }
+              },
+              "Mentions": {
+                "field": {
+                  "name": "Mentions",
+                  "type": "[]string"
+                },
+                "wrapped_variable": {
+                  "array": {
+                    "name": "mentions",
+                    "type": "[]string"
+                  },
+                  "array_elems": [
+                    {
+                      "basic": {
+                        "name": "",
+                        "type": "\"alice\" string"
+                      }
+                    },
+                    {
+                      "basic": {
+                        "name": "",
+                        "type": "\"bob\" string"
+                      }
+                    }
+                  ]
+                }
+              },
+              "PostID": {
+                "field": {
+                  "name": "PostID",
+                  "type": "int64"
+                },
+                "wrapped_variable": {
+                  "basic": {
+                    "name": "postID",
+                    "type": "int64"
+                  }
+                }
+              },
+              "ReqID": {
+                "field": {
+                  "name": "ReqID",
+                  "type": "int64"
+                },
+                "wrapped_variable": {
+                  "basic": {
+                    "name": "reqID",
+                    "type": "int64"
+                  }
+                }
+              },
+              "Text": {
+                "field": {
+                  "name": "Text",
+                  "type": "string"
+                },
+                "wrapped_variable": {
+                  "basic": {
+                    "name": "text",
+                    "type": "string"
+                  }
+                }
+              },
+              "Timestamp": {
+                "field": {
+                  "name": "Timestamp",
+                  "type": "int64"
+                },
+                "wrapped_variable": {
+                  "basic": {
+                    "name": "timestamp",
+                    "type": "int64"
+                  }
+                }
+              }
+            }
+          }
+        ],
         "returns": [
           {
-            "variable": {
+            "interface": {
+              "name": "",
               "type": ".error"
             }
           }
@@ -65,19 +187,19 @@
         "caller": "UploadService",
         "params": [
           {
-            "variable": {
+            "interface": {
               "name": "ctx",
               "type": "context.Context"
             }
           },
           {
-            "variable": {
+            "struct": {
               "name": "message",
               "type": "postnotification_simple.Message struct{ReqID string, PostID string, Timestamp string}"
             },
             "struct_fields": {
               "PostID": {
-                "variable": {
+                "field": {
                   "name": "PostID",
                   "type": "string",
                   "refs": [
@@ -88,7 +210,8 @@
                   ]
                 },
                 "wrapped_variable": {
-                  "variable": {
+                  "basic": {
+                    "name": "",
                     "type": "string",
                     "refs": [
                       {
@@ -100,7 +223,7 @@
                 }
               },
               "ReqID": {
-                "variable": {
+                "field": {
                   "name": "ReqID",
                   "type": "string",
                   "refs": [
@@ -111,7 +234,8 @@
                   ]
                 },
                 "wrapped_variable": {
-                  "variable": {
+                  "basic": {
+                    "name": "",
                     "type": "string",
                     "refs": [
                       {
@@ -127,13 +251,13 @@
         ],
         "returns": [
           {
-            "variable": {
+            "basic": {
               "name": "_",
               "type": "bool"
             }
           },
           {
-            "variable": {
+            "interface": {
               "name": "err",
               "type": ".error"
             }
@@ -151,18 +275,18 @@
                 "caller": "NotifyService",
                 "params": [
                   {
-                    "variable": {
+                    "interface": {
                       "name": "ctx",
                       "type": "context.Context"
                     }
                   },
                   {
-                    "variable": {
+                    "pointer": {
                       "name": "event",
                       "type": "(*map[string]interface{})"
                     },
                     "ptr_to": {
-                      "variable": {
+                      "map": {
                         "name": "event",
                         "type": "map[string]interface{}",
                         "refs": [
@@ -175,25 +299,13 @@
                       "key_values": [
                         {
                           "Key": {
-                            "variable": {
-                              "type": "\"Timestamp\" string"
-                            }
-                          },
-                          "Value": {
-                            "variable": {
-                              "name": "Timestamp",
-                              "type": "interface{}"
-                            }
-                          }
-                        },
-                        {
-                          "Key": {
-                            "variable": {
+                            "basic": {
+                              "name": "",
                               "type": "\"ReqID\" string"
                             }
                           },
                           "Value": {
-                            "variable": {
+                            "interface": {
                               "name": "ReqID",
                               "type": "interface{}"
                             }
@@ -201,13 +313,28 @@
                         },
                         {
                           "Key": {
-                            "variable": {
+                            "basic": {
+                              "name": "",
                               "type": "\"PostID\" string"
                             }
                           },
                           "Value": {
-                            "variable": {
+                            "interface": {
                               "name": "PostID",
+                              "type": "interface{}"
+                            }
+                          }
+                        },
+                        {
+                          "Key": {
+                            "basic": {
+                              "name": "",
+                              "type": "\"Timestamp\" string"
+                            }
+                          },
+                          "Value": {
+                            "interface": {
+                              "name": "Timestamp",
                               "type": "interface{}"
                             }
                           }
@@ -218,12 +345,14 @@
                 ],
                 "returns": [
                   {
-                    "variable": {
+                    "basic": {
+                      "name": "",
                       "type": "bool"
                     }
                   },
                   {
-                    "variable": {
+                    "interface": {
+                      "name": "",
                       "type": ".error"
                     }
                   }
@@ -237,12 +366,12 @@
                 "caller": "NotifyService",
                 "edges": [
                   {
-                    "method": "NoSQLDatabase.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
+                    "method": "NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D)",
                     "depth": 4,
                     "caller": "StorageService",
                     "params": [
                       {
-                        "variable": {
+                        "interface": {
                           "name": "ctx",
                           "type": "context.Context",
                           "refs": [
@@ -254,34 +383,36 @@
                         }
                       },
                       {
-                        "variable": {
+                        "slice": {
                           "name": "query",
                           "type": "primitive.D"
                         },
                         "slice_variables": [
                           {
-                            "variable": {
+                            "struct": {
+                              "name": "",
                               "type": "struct{Key \"postid\" string, Value int64}"
                             },
                             "struct_fields": {
                               "Key": {
-                                "variable": {
+                                "field": {
                                   "name": "Key",
                                   "type": "\"postid\" string"
                                 },
                                 "wrapped_variable": {
-                                  "variable": {
+                                  "basic": {
+                                    "name": "",
                                     "type": "\"postid\" string"
                                   }
                                 }
                               },
                               "Value": {
-                                "variable": {
+                                "field": {
                                   "name": "Value",
                                   "type": "int64"
                                 },
                                 "wrapped_variable": {
-                                  "variable": {
+                                  "basic": {
                                     "name": "postID",
                                     "type": "int64",
                                     "refs": [
@@ -300,13 +431,25 @@
                     ],
                     "returns": [
                       {
-                        "variable": {
+                        "blueprint_backend": {
                           "name": "result",
                           "type": "NoSQLCursor {database = post, collection = post}"
+                        },
+                        "target_variable": {
+                          "pointer": {
+                            "name": "post",
+                            "type": "(*postnotification_simple.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username \"some username\" string}, Creator postnotification_simple.Creator struct{Username \"some username\" string}})"
+                          },
+                          "ptr_to": {
+                            "struct": {
+                              "name": "post",
+                              "type": "postnotification_simple.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username \"some username\" string}, Creator postnotification_simple.Creator struct{Username \"some username\" string}}"
+                            }
+                          }
                         }
                       },
                       {
-                        "variable": {
+                        "interface": {
                           "name": "err",
                           "type": ".error"
                         }
@@ -315,16 +458,35 @@
                     "datastore": "posts_db"
                   }
                 ],
-                "params": null,
+                "params": [
+                  {
+                    "interface": {
+                      "name": "ctx",
+                      "type": "context.Context"
+                    }
+                  },
+                  {
+                    "basic": {
+                      "name": "reqID",
+                      "type": "int64"
+                    }
+                  },
+                  {
+                    "basic": {
+                      "name": "postID",
+                      "type": "int64"
+                    }
+                  }
+                ],
                 "returns": [
                   {
-                    "variable": {
+                    "struct": {
                       "name": "_",
                       "type": "postnotification_simple.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username \"some username\" string}, Creator postnotification_simple.Creator struct{Username \"some username\" string}}"
                     }
                   },
                   {
-                    "variable": {
+                    "interface": {
                       "name": "err",
                       "type": ".error"
                     }
@@ -334,13 +496,13 @@
             ],
             "params": [
               {
-                "variable": {
+                "interface": {
                   "name": "ctx",
                   "type": "context.Context"
                 }
               },
               {
-                "variable": {
+                "basic": {
                   "name": "workerID",
                   "type": "int"
                 }
@@ -353,19 +515,19 @@
     ],
     "params": [
       {
-        "variable": {
+        "interface": {
           "name": "ctx",
           "type": "context.Context"
         }
       },
       {
-        "variable": {
+        "basic": {
           "name": "username",
           "type": "string"
         }
       },
       {
-        "variable": {
+        "basic": {
           "name": "text",
           "type": "string"
         }

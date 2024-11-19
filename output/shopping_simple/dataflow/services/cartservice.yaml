@@ -1,224 +1,224 @@
 (*CartServiceImpl).AddProductToCart(ctx context.Context, cartID string, productID string):
   block 5 (IfDone):
-  - ' depth 0 (PointerVariable PointerType) s (*shopping_simple.CartServiceImpl struct{product_service
+  - ' depth 0 (PointerObject PointerType) s (*shopping_simple.CartServiceImpl struct{product_service
     shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers
     4 int})'
-  - _ depth 1 (StructVariable UserType) shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int}
-  - __ depth 2 (FieldVariable FieldType) cart_db NoSQLDatabase
-  - ___ depth 3 (BlueprintBackendVariable BlueprintBackendType) cart_db NoSQLDatabase
-  - __ depth 2 (FieldVariable FieldType) num_workers 4 int
-  - ___ depth 3 (BasicVariable BasicType) 4 int
-  - __ depth 2 (FieldVariable FieldType) product_queue Queue
-  - ___ depth 3 (BlueprintBackendVariable BlueprintBackendType) product_queue Queue
-  - __ depth 2 (FieldVariable FieldType) product_service shopping_simple.ProductService
-  - ___ depth 3 (ServiceVariable ServiceType) product_service shopping_simple.ProductService
-  - ' depth 0 (InterfaceVariable UserType) ctx context.Context'
+  - _ depth 1 (StructObject UserType) shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int}
+  - __ depth 2 (FieldObject FieldType) cart_db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) cart_db NoSQLDatabase
+  - __ depth 2 (FieldObject FieldType) num_workers 4 int
+  - ___ depth 3 (BasicObject BasicType) 4 int
+  - __ depth 2 (FieldObject FieldType) product_queue Queue
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) product_queue Queue
+  - __ depth 2 (FieldObject FieldType) product_service shopping_simple.ProductService
+  - ___ depth 3 (ServiceObject ServiceType) product_service shopping_simple.ProductService
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
   - _ depth 1 (Reference UserType) ref <ctx context.Context> @ Frontend
-  - ' depth 0 (BasicVariable BasicType) cartID string --> w-tainted 1x: write(cart_db.Cart.CartID)
+  - ' depth 0 (BasicObject BasicType) cartID string --> w-tainted 1x: write(cart_db.Cart.CartID)
     --> r-tainted 1x: read(cart_db.Cart.CartID)'
   - '_ depth 1 (Reference BasicType) ref <cartID string> @ Frontend --> w-tainted
     1x: write(cart_db.Cart.CartID) --> r-tainted 1x: read(cart_db.Cart.CartID)'
-  - ' depth 0 (BasicVariable BasicType) productID string --> w-tainted 2x: write(cart_db.Cart.LastProductID,
+  - ' depth 0 (BasicObject BasicType) productID string --> w-tainted 2x: write(cart_db.Cart.LastProductID,
     cart_db.Cart.Products) --> r-tainted 1x: read(product_db.Product.ProductID)'
   - '_ depth 1 (Reference BasicType) ref <productID string> @ Frontend --> w-tainted
     1x: write(cart_db.Cart.Products) --> r-tainted 1x: read(product_db.Product.ProductID)'
-  - ' depth 0 (StructVariable UserType) product shopping_simple.Product struct{ProductID
+  - ' depth 0 (StructObject UserType) product shopping_simple.Product struct{ProductID
     string, Description string, PricePerUnit int, Category string}'
-  - ' depth 0 (StructVariable UserType) product shopping_simple.Product struct{ProductID
+  - ' depth 0 (StructObject UserType) product shopping_simple.Product struct{ProductID
     string, Description string, PricePerUnit int, Category string}'
-  - _ depth 1 (FieldVariable FieldType) PricePerUnit int
-  - __ depth 2 (BasicVariable BasicType) PricePerUnit int
-  - ' depth 0 (InterfaceVariable UserType) _ .error'
-  - ' depth 0 (StructVariable UserType) cart shopping_simple.Cart struct{CartID string,
+  - _ depth 1 (FieldObject FieldType) PricePerUnit int
+  - __ depth 2 (BasicObject BasicType) PricePerUnit int
+  - ' depth 0 (InterfaceObject UserType) _ .error'
+  - ' depth 0 (StructObject UserType) cart shopping_simple.Cart struct{CartID string,
     TotalQuantity 1 int, LastProductID string, Products []string} --> r-tainted 1x:
     read(cart_db.Cart)'
-  - ' depth 0 (StructVariable UserType) cartProduct shopping_simple.CartProduct struct{CartID
+  - ' depth 0 (StructObject UserType) cartProduct shopping_simple.CartProduct struct{CartID
     string, ProductID string, PricePerUnit int, Quantity 1 int}'
-  - ' depth 0 (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
     {database = cart_database, collection = cart_collection}'
-  - ' depth 0 (InterfaceVariable UserType) _ .error'
-  - ' depth 0 (SliceVariable UserType) filter primitive.D'
-  - _ depth 1 (StructVariable StructType) struct{Key "cartid" string, Value string}
-  - __ depth 2 (FieldVariable FieldType) Key "cartid" string
-  - ___ depth 3 (BasicVariable BasicType) "cartid" string
-  - __ depth 2 (FieldVariable FieldType) Value string
-  - ' depth 0 (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database
+  - ' depth 0 (InterfaceObject UserType) _ .error'
+  - ' depth 0 (SliceObject UserType) filter primitive.D'
+  - _ depth 1 (StructObject StructType) struct{Key "cartid" string, Value string}
+  - __ depth 2 (FieldObject FieldType) Key "cartid" string
+  - ___ depth 3 (BasicObject BasicType) "cartid" string
+  - __ depth 2 (FieldObject FieldType) Value string
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database
     = cart_database, collection = cart_collection} --> r-tainted 1x: read(cart_db.Cart)'
-  - ' depth 0 (InterfaceVariable UserType) err .error'
-  - ' depth 0 (StructVariable UserType) cartProduct shopping_simple.CartProduct struct{CartID
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (StructObject UserType) cartProduct shopping_simple.CartProduct struct{CartID
     string, ProductID string, PricePerUnit int, Quantity 1 int}'
-  - _ depth 1 (FieldVariable FieldType) CartID string
-  - _ depth 1 (FieldVariable FieldType) PricePerUnit int
-  - _ depth 1 (FieldVariable FieldType) ProductID string
-  - _ depth 1 (FieldVariable FieldType) Quantity 1 int
-  - __ depth 2 (BasicVariable BasicType) 1 int
-  - ' depth 0 (BasicVariable BasicType) exists bool'
-  - ' depth 0 (InterfaceVariable UserType) _ .error'
+  - _ depth 1 (FieldObject FieldType) CartID string
+  - _ depth 1 (FieldObject FieldType) PricePerUnit int
+  - _ depth 1 (FieldObject FieldType) ProductID string
+  - _ depth 1 (FieldObject FieldType) Quantity 1 int
+  - __ depth 2 (BasicObject BasicType) 1 int
+  - ' depth 0 (BasicObject BasicType) exists bool'
+  - ' depth 0 (InterfaceObject UserType) _ .error'
 
 (*CartServiceImpl).CreateCart(ctx context.Context, cartID string):
   block 0 (Body):
-  - ' depth 0 (PointerVariable PointerType) s (*shopping_simple.CartServiceImpl struct{product_service
+  - ' depth 0 (PointerObject PointerType) s (*shopping_simple.CartServiceImpl struct{product_service
     shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers
     4 int})'
-  - _ depth 1 (StructVariable UserType) shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int}
-  - __ depth 2 (FieldVariable FieldType) cart_db NoSQLDatabase
-  - ___ depth 3 (BlueprintBackendVariable BlueprintBackendType) cart_db NoSQLDatabase
-  - __ depth 2 (FieldVariable FieldType) num_workers 4 int
-  - ___ depth 3 (BasicVariable BasicType) 4 int
-  - __ depth 2 (FieldVariable FieldType) product_queue Queue
-  - ___ depth 3 (BlueprintBackendVariable BlueprintBackendType) product_queue Queue
-  - __ depth 2 (FieldVariable FieldType) product_service shopping_simple.ProductService
-  - ___ depth 3 (ServiceVariable ServiceType) product_service shopping_simple.ProductService
-  - ' depth 0 (InterfaceVariable UserType) ctx context.Context'
+  - _ depth 1 (StructObject UserType) shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int}
+  - __ depth 2 (FieldObject FieldType) cart_db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) cart_db NoSQLDatabase
+  - __ depth 2 (FieldObject FieldType) num_workers 4 int
+  - ___ depth 3 (BasicObject BasicType) 4 int
+  - __ depth 2 (FieldObject FieldType) product_queue Queue
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) product_queue Queue
+  - __ depth 2 (FieldObject FieldType) product_service shopping_simple.ProductService
+  - ___ depth 3 (ServiceObject ServiceType) product_service shopping_simple.ProductService
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
   - _ depth 1 (Reference UserType) ref <ctx context.Context> @ Frontend
-  - ' depth 0 (BasicVariable BasicType) cartID string --> w-tainted 1x: write(cart_db.Cart.CartID)'
+  - ' depth 0 (BasicObject BasicType) cartID string --> w-tainted 1x: write(cart_db.Cart.CartID)'
   - '_ depth 1 (Reference BasicType) ref <cartID string> @ Frontend --> w-tainted
     1x: write(cart_db.Cart.CartID)'
-  - ' depth 0 (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
     {database = cart_database, collection = cart_database}'
-  - ' depth 0 (InterfaceVariable UserType) _ .error'
-  - ' depth 0 (StructVariable UserType) cart shopping_simple.Cart struct{CartID string,
+  - ' depth 0 (InterfaceObject UserType) _ .error'
+  - ' depth 0 (StructObject UserType) cart shopping_simple.Cart struct{CartID string,
     TotalQuantity 1 int, LastProductID string, Products []string} --> w-tainted 1x:
     write(cart_db.Cart)'
-  - '_ depth 1 (FieldVariable FieldType) CartID string --> w-tainted 1x: write(cart_db.Cart.CartID)'
-  - ' depth 0 (InterfaceVariable UserType) err .error'
+  - '_ depth 1 (FieldObject FieldType) CartID string --> w-tainted 1x: write(cart_db.Cart.CartID)'
+  - ' depth 0 (InterfaceObject UserType) err .error'
 
 (*CartServiceImpl).GetCart(ctx context.Context, cartID string):
   block 5 (IfDone):
-  - ' depth 0 (PointerVariable PointerType) s (*shopping_simple.CartServiceImpl struct{product_service
+  - ' depth 0 (PointerObject PointerType) s (*shopping_simple.CartServiceImpl struct{product_service
     shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers
     4 int})'
-  - _ depth 1 (StructVariable UserType) shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int}
-  - __ depth 2 (FieldVariable FieldType) cart_db NoSQLDatabase
-  - ___ depth 3 (BlueprintBackendVariable BlueprintBackendType) cart_db NoSQLDatabase
-  - __ depth 2 (FieldVariable FieldType) num_workers 4 int
-  - ___ depth 3 (BasicVariable BasicType) 4 int
-  - __ depth 2 (FieldVariable FieldType) product_queue Queue
-  - ___ depth 3 (BlueprintBackendVariable BlueprintBackendType) product_queue Queue
-  - __ depth 2 (FieldVariable FieldType) product_service shopping_simple.ProductService
-  - ___ depth 3 (ServiceVariable ServiceType) product_service shopping_simple.ProductService
-  - ' depth 0 (InterfaceVariable UserType) ctx context.Context'
+  - _ depth 1 (StructObject UserType) shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int}
+  - __ depth 2 (FieldObject FieldType) cart_db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) cart_db NoSQLDatabase
+  - __ depth 2 (FieldObject FieldType) num_workers 4 int
+  - ___ depth 3 (BasicObject BasicType) 4 int
+  - __ depth 2 (FieldObject FieldType) product_queue Queue
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) product_queue Queue
+  - __ depth 2 (FieldObject FieldType) product_service shopping_simple.ProductService
+  - ___ depth 3 (ServiceObject ServiceType) product_service shopping_simple.ProductService
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
   - _ depth 1 (Reference UserType) ref <ctx context.Context> @ Frontend
-  - ' depth 0 (BasicVariable BasicType) cartID string --> r-tainted 1x: read(cart_db.Cart.CartID)'
+  - ' depth 0 (BasicObject BasicType) cartID string --> r-tainted 1x: read(cart_db.Cart.CartID)'
   - '_ depth 1 (Reference BasicType) ref <cartID string> @ Frontend --> r-tainted
     1x: read(cart_db.Cart.CartID)'
-  - ' depth 0 (StructVariable UserType) cart shopping_simple.Cart struct{CartID string,
+  - ' depth 0 (StructObject UserType) cart shopping_simple.Cart struct{CartID string,
     TotalQuantity 1 int, LastProductID string, Products []string} --> r-tainted 1x:
     read(cart_db.Cart)'
-  - ' depth 0 (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
     {database = cart_database, collection = cart_database}'
-  - ' depth 0 (InterfaceVariable UserType) _ .error'
-  - ' depth 0 (SliceVariable UserType) filter primitive.D'
-  - _ depth 1 (StructVariable StructType) struct{Key "cartid" string, Value string}
-  - __ depth 2 (FieldVariable FieldType) Key "cartid" string
-  - ___ depth 3 (BasicVariable BasicType) "cartid" string
-  - __ depth 2 (FieldVariable FieldType) Value string
-  - ' depth 0 (BlueprintBackendVariable BlueprintBackendType) result NoSQLCursor {database
+  - ' depth 0 (InterfaceObject UserType) _ .error'
+  - ' depth 0 (SliceObject UserType) filter primitive.D'
+  - _ depth 1 (StructObject StructType) struct{Key "cartid" string, Value string}
+  - __ depth 2 (FieldObject FieldType) Key "cartid" string
+  - ___ depth 3 (BasicObject BasicType) "cartid" string
+  - __ depth 2 (FieldObject FieldType) Value string
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database
     = cart_database, collection = cart_database} --> r-tainted 1x: read(cart_db.Cart)'
-  - ' depth 0 (InterfaceVariable UserType) err .error'
-  - ' depth 0 (BasicVariable BasicType) exists bool'
-  - ' depth 0 (InterfaceVariable UserType) err .error'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (BasicObject BasicType) exists bool'
+  - ' depth 0 (InterfaceObject UserType) err .error'
 
 (*CartServiceImpl).Run(ctx context.Context):
   block 4 (ForPost):
-  - ' depth 0 (PointerVariable PointerType) s (*shopping_simple.CartServiceImpl struct{product_service
+  - ' depth 0 (PointerObject PointerType) s (*shopping_simple.CartServiceImpl struct{product_service
     shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers
     4 int})'
-  - _ depth 1 (StructVariable UserType) shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int}
-  - __ depth 2 (FieldVariable FieldType) cart_db NoSQLDatabase
-  - ___ depth 3 (BlueprintBackendVariable BlueprintBackendType) cart_db NoSQLDatabase
-  - __ depth 2 (FieldVariable FieldType) num_workers 4 int
-  - ___ depth 3 (BasicVariable BasicType) 4 int
-  - __ depth 2 (FieldVariable FieldType) product_queue Queue
-  - ___ depth 3 (BlueprintBackendVariable BlueprintBackendType) product_queue Queue
-  - __ depth 2 (FieldVariable FieldType) product_service shopping_simple.ProductService
-  - ___ depth 3 (ServiceVariable ServiceType) product_service shopping_simple.ProductService
-  - ' depth 0 (InterfaceVariable UserType) ctx context.Context'
-  - ' depth 0 (StructVariable UserType) wg sync.WaitGroup'
-  - ' depth 0 (BasicVariable BasicType) i 3 int'
-  - ' depth 0 (BasicVariable BasicType) i 3 int'
-  - ' depth 0 (InterfaceVariable UserType) err .error'
+  - _ depth 1 (StructObject UserType) shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int}
+  - __ depth 2 (FieldObject FieldType) cart_db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) cart_db NoSQLDatabase
+  - __ depth 2 (FieldObject FieldType) num_workers 4 int
+  - ___ depth 3 (BasicObject BasicType) 4 int
+  - __ depth 2 (FieldObject FieldType) product_queue Queue
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) product_queue Queue
+  - __ depth 2 (FieldObject FieldType) product_service shopping_simple.ProductService
+  - ___ depth 3 (ServiceObject ServiceType) product_service shopping_simple.ProductService
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (StructObject UserType) wg sync.WaitGroup'
+  - ' depth 0 (BasicObject BasicType) i 3 int'
+  - ' depth 0 (BasicObject BasicType) i 3 int'
+  - ' depth 0 (InterfaceObject UserType) err .error'
 
 (*CartServiceImpl).removeProduct(ctx context.Context, message shopping_simple.ProductQueueMessage struct{ProductID string, Remove bool})
 :
  block 2 (IfDone):
-  - ' depth 0 (PointerVariable PointerType) s (*shopping_simple.CartServiceImpl struct{product_service
+  - ' depth 0 (PointerObject PointerType) s (*shopping_simple.CartServiceImpl struct{product_service
     shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers
     4 int})'
-  - _ depth 1 (StructVariable UserType) shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int}
-  - __ depth 2 (FieldVariable FieldType) cart_db NoSQLDatabase
-  - ___ depth 3 (BlueprintBackendVariable BlueprintBackendType) cart_db NoSQLDatabase
-  - __ depth 2 (FieldVariable FieldType) num_workers 4 int
-  - ___ depth 3 (BasicVariable BasicType) 4 int
-  - __ depth 2 (FieldVariable FieldType) product_queue Queue
-  - ___ depth 3 (BlueprintBackendVariable BlueprintBackendType) product_queue Queue
-  - __ depth 2 (FieldVariable FieldType) product_service shopping_simple.ProductService
-  - ___ depth 3 (ServiceVariable ServiceType) product_service shopping_simple.ProductService
-  - ' depth 0 (InterfaceVariable UserType) ctx context.Context'
-  - ' depth 0 (StructVariable UserType) message shopping_simple.ProductQueueMessage
+  - _ depth 1 (StructObject UserType) shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int}
+  - __ depth 2 (FieldObject FieldType) cart_db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) cart_db NoSQLDatabase
+  - __ depth 2 (FieldObject FieldType) num_workers 4 int
+  - ___ depth 3 (BasicObject BasicType) 4 int
+  - __ depth 2 (FieldObject FieldType) product_queue Queue
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) product_queue Queue
+  - __ depth 2 (FieldObject FieldType) product_service shopping_simple.ProductService
+  - ___ depth 3 (ServiceObject ServiceType) product_service shopping_simple.ProductService
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (StructObject UserType) message shopping_simple.ProductQueueMessage
     struct{ProductID string, Remove bool}'
-  - _ depth 1 (FieldVariable FieldType) ProductID string
-  - __ depth 2 (BasicVariable BasicType) ProductID string
-  - ' depth 0 (BlueprintBackendVariable BlueprintBackendType) collection NoSQLCollection
+  - _ depth 1 (FieldObject FieldType) ProductID string
+  - __ depth 2 (BasicObject BasicType) ProductID string
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
     {database = cart_database, collection = cart_database}'
-  - ' depth 0 (InterfaceVariable UserType) _ .error'
-  - ' depth 0 (SliceVariable UserType) filter primitive.D'
-  - ' depth 0 (SliceVariable UserType) update primitive.D'
-  - _ depth 1 (StructVariable StructType) struct{Key "$dec" string, Value primitive.D}
-  - __ depth 2 (FieldVariable FieldType) Key "$dec" string
-  - ___ depth 3 (BasicVariable BasicType) "$dec" string
-  - __ depth 2 (FieldVariable FieldType) Value primitive.D
-  - ___ depth 3 (SliceVariable UserType) primitive.D
-  - ____ depth 4 (StructVariable StructType) struct{Key "totalquantity" string, Value 1 int}
-  - _____ depth 5 (FieldVariable FieldType) Key "totalquantity" string
-  - ______ depth 6 (BasicVariable BasicType) "totalquantity" string
-  - _____ depth 5 (FieldVariable FieldType) Value 1 int
-  - ______ depth 6 (BasicVariable BasicType) 1 int
-  - _ depth 1 (StructVariable StructType) struct{Key "$pull" string, Value primitive.D}
-  - __ depth 2 (FieldVariable FieldType) Key "$pull" string
-  - ___ depth 3 (BasicVariable BasicType) "$pull" string
-  - __ depth 2 (FieldVariable FieldType) Value primitive.D
-  - ___ depth 3 (SliceVariable UserType) primitive.D
-  - ____ depth 4 (StructVariable StructType) struct{Key "products" string, Value string}
-  - _____ depth 5 (FieldVariable FieldType) Key "products" string
-  - ______ depth 6 (BasicVariable BasicType) "products" string
-  - _____ depth 5 (FieldVariable FieldType) Value string
-  - ' depth 0 (BasicVariable BasicType) updated int'
-  - ' depth 0 (InterfaceVariable UserType) err .error'
+  - ' depth 0 (InterfaceObject UserType) _ .error'
+  - ' depth 0 (SliceObject UserType) filter primitive.D'
+  - ' depth 0 (SliceObject UserType) update primitive.D'
+  - _ depth 1 (StructObject StructType) struct{Key "$dec" string, Value primitive.D}
+  - __ depth 2 (FieldObject FieldType) Key "$dec" string
+  - ___ depth 3 (BasicObject BasicType) "$dec" string
+  - __ depth 2 (FieldObject FieldType) Value primitive.D
+  - ___ depth 3 (SliceObject UserType) primitive.D
+  - ____ depth 4 (StructObject StructType) struct{Key "totalquantity" string, Value 1 int}
+  - _____ depth 5 (FieldObject FieldType) Key "totalquantity" string
+  - ______ depth 6 (BasicObject BasicType) "totalquantity" string
+  - _____ depth 5 (FieldObject FieldType) Value 1 int
+  - ______ depth 6 (BasicObject BasicType) 1 int
+  - _ depth 1 (StructObject StructType) struct{Key "$pull" string, Value primitive.D}
+  - __ depth 2 (FieldObject FieldType) Key "$pull" string
+  - ___ depth 3 (BasicObject BasicType) "$pull" string
+  - __ depth 2 (FieldObject FieldType) Value primitive.D
+  - ___ depth 3 (SliceObject UserType) primitive.D
+  - ____ depth 4 (StructObject StructType) struct{Key "products" string, Value string}
+  - _____ depth 5 (FieldObject FieldType) Key "products" string
+  - ______ depth 6 (BasicObject BasicType) "products" string
+  - _____ depth 5 (FieldObject FieldType) Value string
+  - ' depth 0 (BasicObject BasicType) updated int'
+  - ' depth 0 (InterfaceObject UserType) err .error'
 
 (*CartServiceImpl).workerThread(ctx context.Context):
   block 0 (Body):
-  - ' depth 0 (PointerVariable PointerType) s (*shopping_simple.CartServiceImpl struct{product_service
+  - ' depth 0 (PointerObject PointerType) s (*shopping_simple.CartServiceImpl struct{product_service
     shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers
     4 int})'
-  - _ depth 1 (StructVariable UserType) shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int}
-  - __ depth 2 (FieldVariable FieldType) cart_db NoSQLDatabase
-  - ___ depth 3 (BlueprintBackendVariable BlueprintBackendType) cart_db NoSQLDatabase
-  - __ depth 2 (FieldVariable FieldType) num_workers 4 int
-  - ___ depth 3 (BasicVariable BasicType) 4 int
-  - __ depth 2 (FieldVariable FieldType) product_queue Queue
-  - ___ depth 3 (BlueprintBackendVariable BlueprintBackendType) product_queue Queue
-  - __ depth 2 (FieldVariable FieldType) product_service shopping_simple.ProductService
-  - ___ depth 3 (ServiceVariable ServiceType) product_service shopping_simple.ProductService
-  - ' depth 0 (InterfaceVariable UserType) ctx context.Context'
-  - ' depth 0 (ChanVariable ChanType) forever chan struct{}'
+  - _ depth 1 (StructObject UserType) shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int}
+  - __ depth 2 (FieldObject FieldType) cart_db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) cart_db NoSQLDatabase
+  - __ depth 2 (FieldObject FieldType) num_workers 4 int
+  - ___ depth 3 (BasicObject BasicType) 4 int
+  - __ depth 2 (FieldObject FieldType) product_queue Queue
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) product_queue Queue
+  - __ depth 2 (FieldObject FieldType) product_service shopping_simple.ProductService
+  - ___ depth 3 (ServiceObject ServiceType) product_service shopping_simple.ProductService
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (ChanObject ChanType) forever chan struct{}'
 
 .NewCartServiceImpl(ctx context.Context, product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue)
 :
  block 0 (Body):
-  - ' depth 0 (InterfaceVariable UserType) ctx context.Context'
-  - ' depth 0 (ServiceVariable ServiceType) product_service shopping_simple.ProductService'
-  - ' depth 0 (BlueprintBackendVariable BlueprintBackendType) cart_db NoSQLDatabase'
-  - ' depth 0 (BlueprintBackendVariable BlueprintBackendType) product_queue Queue'
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (ServiceObject ServiceType) product_service shopping_simple.ProductService'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) cart_db NoSQLDatabase'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) product_queue Queue'
 
 .NewFrontendImpl(ctx context.Context, product_service shopping_simple.ProductService, cart_service shopping_simple.CartService):
   block 0 (Body):
-  - ' depth 0 (InterfaceVariable UserType) ctx context.Context'
-  - ' depth 0 (ServiceVariable ServiceType) product_service shopping_simple.ProductService'
-  - ' depth 0 (ServiceVariable ServiceType) cart_service shopping_simple.CartService'
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (ServiceObject ServiceType) product_service shopping_simple.ProductService'
+  - ' depth 0 (ServiceObject ServiceType) cart_service shopping_simple.CartService'
 
 .NewProductServiceImpl(ctx context.Context, product_db NoSQLDatabase, product_queue Queue):
   block 0 (Body):
-  - ' depth 0 (InterfaceVariable UserType) ctx context.Context'
-  - ' depth 0 (BlueprintBackendVariable BlueprintBackendType) product_db NoSQLDatabase'
-  - ' depth 0 (BlueprintBackendVariable BlueprintBackendType) product_queue Queue'
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) product_db NoSQLDatabase'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) product_queue Queue'
