@@ -1,9 +1,12 @@
 package foreign_key
 
 import (
+	"fmt"
+
 	"analyzer/pkg/abstractgraph"
 	"analyzer/pkg/app"
 	"analyzer/pkg/datastores"
+	"analyzer/pkg/types"
 )
 
 // --------------------
@@ -16,10 +19,6 @@ type ForeignKeyDetector struct {
 	reads []*ForeignKeyRead
 }
 
-func (detector *ForeignKeyDetector) getApp() *app.App {
-	return detector.app
-}
-
 func (detector *ForeignKeyDetector) getGraph() *abstractgraph.AbstractGraph {
 	return detector.graph
 }
@@ -29,13 +28,23 @@ func (detector *ForeignKeyDetector) addForeignKeyRead(read *ForeignKeyRead) {
 }
 
 type ForeignKeyRead struct {
-	originField *datastores.Entry // field that is being referenced
-	refField *datastores.Entry // field that is referencing
+	refField     *datastores.Entry // field that is referencing
+	originField  *datastores.Entry // field that is being referenced
+	refDbCall    *types.ParsedDatabaseCall
+	originDbCall *types.ParsedDatabaseCall
 }
 
-func newForeignKeyRead(originField *datastores.Entry, refField *datastores.Entry) *ForeignKeyRead {
+func newForeignKeyRead(refField *datastores.Entry, originField *datastores.Entry, refDbCall *types.ParsedDatabaseCall, originDbCall *types.ParsedDatabaseCall) *ForeignKeyRead {
 	return &ForeignKeyRead{
-		originField: originField,
-		refField: refField,
+		refField:        refField,
+		originField:     originField,
+		refDbCall:       refDbCall,
+		originDbCall:    originDbCall,
 	}
+}
+
+func (read *ForeignKeyRead) String() string {
+	ref := fmt.Sprintf("- ref:\t%s\n\t@ %s", read.refField.GetFullName(), read.refDbCall.String())
+	dst := fmt.Sprintf("- dst:\t%s\n\t@ %s", read.originField.GetFullName(), read.originDbCall.String())
+	return ref + "\n" + dst
 }

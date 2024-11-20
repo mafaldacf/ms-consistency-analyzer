@@ -23,20 +23,21 @@ func NewDetector(app *app.App, graph *abstractgraph.AbstractGraph) *ForeignKeyDe
 
 func (detector *ForeignKeyDetector) Run() {
 	detector.app.ResetAllDataflows()
-	for idx, entry := range detector.getGraph().Nodes {
-		detector.analyzeNodes(entry.(*abstractgraph.AbstractServiceCall), entry, idx)
+	for _, entry := range detector.getGraph().Nodes {
+		detector.analyzeNodes(entry.(*abstractgraph.AbstractServiceCall), entry)
 		detector.app.ResetAllDataflows()
 	}
 }
 
-func (detector *ForeignKeyDetector) checkForeignKeyRead(obj objects.Object, originField *datastores.Entry, datastore *datastores.Datastore) {
+func (detector *ForeignKeyDetector) checkForeignKeyRead(obj objects.Object, originField *datastores.Entry, dbCall *abstractgraph.AbstractDatabaseCall) {
 	var savedOriginFieldName []string
+	datastore := dbCall.DbInstance.GetDatastore()
 	for _, dep := range obj.GetNestedDependencies(false) {
 		for _, df := range dep.GetVariableInfo().GetAllReadDataflowsExceptDatastore(datastore.Name) {
 			refField := df.Field.(*datastores.Entry)
 			for _, refTarget := range refField.References {
 				if !slices.Contains(savedOriginFieldName, originField.GetFullName()) && refTarget == originField {
-					read := newForeignKeyRead(originField, refField)
+					read := newForeignKeyRead(refField, originField, detector.app.GetDataflowForObjectDataflow(df).GetDatabaseCall(), dbCall.ParsedCall)
 					detector.addForeignKeyRead(read)
 					savedOriginFieldName = append(savedOriginFieldName, originField.GetFullName())
 				}
@@ -45,7 +46,7 @@ func (detector *ForeignKeyDetector) checkForeignKeyRead(obj objects.Object, orig
 	}
 }
 
-func (detector *ForeignKeyDetector) analyzeNodes(lastServiceCallNode *abstractgraph.AbstractServiceCall, node abstractgraph.AbstractNode, child_idx int) {
+func (detector *ForeignKeyDetector) analyzeNodes(lastServiceCallNode *abstractgraph.AbstractServiceCall, node abstractgraph.AbstractNode) {
 	if dbCall, ok := node.(*abstractgraph.AbstractDatabaseCall); ok {
 		if dbCall.ParsedCall.Method.IsRead() {
 			logger.Logger.Infof("[FOREIGN KEY] analyzing %s: %s", utils.GetType(dbCall), dbCall.String())
@@ -68,7 +69,7 @@ func (detector *ForeignKeyDetector) analyzeNodes(lastServiceCallNode *abstractgr
 				for _, obj := range queryObjs {
 					logger.Logger.Infof("[QUERY OBJ] %s", obj.String())
 					field := datastore.Schema.GetField(obj.Field).(*datastores.Entry)
-					detector.checkForeignKeyRead(obj.Value, field, dbCall.DbInstance.GetDatastore())
+					detector.checkForeignKeyRead(obj.Value, field, dbCall)
 				}
 				for _, obj := range queryObjs {
 					logger.Logger.Infof("[QUERY OBJ] %s", obj.String())
@@ -93,8 +94,8 @@ func (detector *ForeignKeyDetector) analyzeNodes(lastServiceCallNode *abstractgr
 	} else {
 		logger.Logger.Debugf("[FOREIGN KEY] analyzing %s: %s", utils.GetType(node), node.String())
 	}
-	for i, child := range node.GetChildren() {
-		detector.analyzeNodes(lastServiceCallNode, child, i)
+	for _, child := range node.GetChildren() {
+		detector.analyzeNodes(lastServiceCallNode, child)
 	}
 }
 
@@ -103,7 +104,7 @@ func (detector *ForeignKeyDetector) Results() string {
 	results += "------------------- FOREIGN KEY ANALYSIS -------------------\n"
 	results += "------------------------------------------------------------\n"
 	for i, read := range detector.reads {
-		results += fmt.Sprintf("foreign key read #%d:\t%s ---> %s\n", i, read.refField.GetFullName(), read.originField.GetFullName())
+		results += fmt.Sprintf("foreign key read #%d:\n%s", i, read.String())
 	}
 	detector.save(results)
 	return results

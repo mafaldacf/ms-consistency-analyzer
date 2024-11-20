@@ -26,8 +26,8 @@ type ObjectInfo struct {
 	IsBlockParam  bool
 	BlockParamIdx int
 
-	Dataflows         []*Dataflow
-	IndirectDataflows []*Dataflow
+	Dataflows         []*ObjectDataflow
+	IndirectDataflows []*ObjectDataflow
 }
 
 func (vinfo *ObjectInfo) ResetAllDataflows() {
@@ -43,20 +43,20 @@ func (vinfo *ObjectInfo) SetType(t gotypes.Type) {
 	vinfo.Type = t
 }
 
-func (vinfo *ObjectInfo) GetDataflows() []*Dataflow {
+func (vinfo *ObjectInfo) GetDataflows() []*ObjectDataflow {
 	return vinfo.Dataflows
 }
 
-func (vinfo *ObjectInfo) GetIndirectDataflows() []*Dataflow {
+func (vinfo *ObjectInfo) GetIndirectDataflows() []*ObjectDataflow {
 	return vinfo.IndirectDataflows
 }
 
-func (vinfo *ObjectInfo) GetAllDataflows() []*Dataflow {
+func (vinfo *ObjectInfo) GetAllDataflows() []*ObjectDataflow {
 	return append(vinfo.Dataflows, vinfo.IndirectDataflows...)
 }
 
-func (vinfo *ObjectInfo) GetAllDataflowsForDatastore(datastore string) []*Dataflow {
-	var dataflows []*Dataflow
+func (vinfo *ObjectInfo) GetAllDataflowsForDatastore(datastore string) []*ObjectDataflow {
+	var dataflows []*ObjectDataflow
 	for _, df := range vinfo.Dataflows {
 		if df.IsOpInDatastore(datastore) {
 			dataflows = append(dataflows, df)
@@ -70,8 +70,8 @@ func (vinfo *ObjectInfo) GetAllDataflowsForDatastore(datastore string) []*Datafl
 	return dataflows
 }
 
-func (vinfo *ObjectInfo) GetAllReadDataflowsForDatastore(datastore string) []*Dataflow {
-	var dataflows []*Dataflow
+func (vinfo *ObjectInfo) GetAllReadDataflowsForDatastore(datastore string) []*ObjectDataflow {
+	var dataflows []*ObjectDataflow
 	for _, df := range vinfo.Dataflows {
 		if df.IsOpInDatastore(datastore) && !df.IsWriteOp() {
 			dataflows = append(dataflows, df)
@@ -85,8 +85,8 @@ func (vinfo *ObjectInfo) GetAllReadDataflowsForDatastore(datastore string) []*Da
 	return dataflows
 }
 
-func (vinfo *ObjectInfo) GetAllReadDataflowsExceptDatastore(datastore string) []*Dataflow {
-	var dataflows []*Dataflow
+func (vinfo *ObjectInfo) GetAllReadDataflowsExceptDatastore(datastore string) []*ObjectDataflow {
+	var dataflows []*ObjectDataflow
 	for _, df := range vinfo.Dataflows {
 		if !df.IsOpInDatastore(datastore) && !df.IsWriteOp() {
 			dataflows = append(dataflows, df)
@@ -100,8 +100,8 @@ func (vinfo *ObjectInfo) GetAllReadDataflowsExceptDatastore(datastore string) []
 	return dataflows
 }
 
-func (vinfo *ObjectInfo) GetAllWriteDataflowsForDatastore(datastore string) []*Dataflow {
-	var dataflows []*Dataflow
+func (vinfo *ObjectInfo) GetAllWriteDataflowsForDatastore(datastore string) []*ObjectDataflow {
+	var dataflows []*ObjectDataflow
 	for _, df := range vinfo.Dataflows {
 		if df.IsOpInDatastore(datastore) && df.IsWriteOp() {
 			dataflows = append(dataflows, df)
@@ -115,8 +115,8 @@ func (vinfo *ObjectInfo) GetAllWriteDataflowsForDatastore(datastore string) []*D
 	return dataflows
 }
 
-func (vinfo *ObjectInfo) GetAllWriteDataflows() []*Dataflow {
-	var dataflows []*Dataflow
+func (vinfo *ObjectInfo) GetAllWriteDataflows() []*ObjectDataflow {
+	var dataflows []*ObjectDataflow
 	for _, df := range vinfo.Dataflows {
 		if df.IsWriteOp() {
 			dataflows = append(dataflows, df)
@@ -130,8 +130,8 @@ func (vinfo *ObjectInfo) GetAllWriteDataflows() []*Dataflow {
 	return dataflows
 }
 
-func (vinfo *ObjectInfo) GetAllReadDataflows() []*Dataflow {
-	var dataflows []*Dataflow
+func (vinfo *ObjectInfo) GetAllReadDataflows() []*ObjectDataflow {
+	var dataflows []*ObjectDataflow
 	for _, df := range vinfo.Dataflows {
 		if !df.IsWriteOp() {
 			dataflows = append(dataflows, df)
@@ -151,11 +151,11 @@ func (vinfo *ObjectInfo) Copy(force bool) *ObjectInfo {
 		return vinfo
 	}
 
-	var dataflows []*Dataflow
+	var dataflows []*ObjectDataflow
 	for _, df := range vinfo.Dataflows {
 		dataflows = append(dataflows, df.Copy(force))
 	}
-	var indirectDataflows []*Dataflow
+	var indirectDataflows []*ObjectDataflow
 	for _, df := range vinfo.IndirectDataflows {
 		indirectDataflows = append(indirectDataflows, df.Copy(force))
 	}
@@ -176,11 +176,11 @@ func (vinfo *ObjectInfo) Copy(force bool) *ObjectInfo {
 }
 
 func (vinfo *ObjectInfo) DeepCopy() *ObjectInfo {
-	var dataflows []*Dataflow
+	var dataflows []*ObjectDataflow
 	for _, df := range vinfo.Dataflows {
 		dataflows = append(dataflows, df.DeepCopy())
 	}
-	var indirectDataflows []*Dataflow
+	var indirectDataflows []*ObjectDataflow
 	for _, df := range vinfo.IndirectDataflows {
 		indirectDataflows = append(indirectDataflows, df.DeepCopy())
 	}

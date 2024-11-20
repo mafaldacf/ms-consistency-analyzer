@@ -76,6 +76,7 @@ func (detector *Detector) dumpLineageYaml(request *Request, lineage *Lineage) ma
 
 func (detector *Detector) dumpRequestYaml(request *Request, includeLineages bool) map[string]interface{} {
 	data := make(map[string]interface{})
+	data["entry"] = detector.EntryNode.GetMethodStr()
 	data["mode"] = detector.DetectionModeName()
 	data["number_inconsistencies"] = len(request.Inconsistencies)
 
@@ -104,11 +105,9 @@ func (set *DetectorSet) Results() string {
 
 	for _, detector := range set.detectors {
 		for _, request := range detector.Requests {
-			if len(request.Inconsistencies) > 0 {
-				data, _ := yaml.Marshal(detector.dumpRequestYaml(request, false))
-				results += string(data)
-				results += "\n----------------------------------------------------------\n"
-			}
+			data, _ := yaml.Marshal(detector.dumpRequestYaml(request, false))
+			results += string(data)
+			results += "\n----------------------------------------------------------\n"
 		}
 	}
 	set.save(results)

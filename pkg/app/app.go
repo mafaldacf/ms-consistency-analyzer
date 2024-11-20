@@ -24,7 +24,7 @@ type App struct {
 	ExternalPackages  map[string]*types.Package // key is package name (FIXME: should be path actually)
 	TaintedVariables  map[string][]objects.Object
 	ServiceTypes      map[string]*gotypes.ServiceType
-	Dataflows         []*objects.Dataflow
+	Dataflows         []*types.Dataflow
 }
 
 func (app *App) MarshalJSON() ([]byte, error) {
@@ -39,16 +39,26 @@ func (app *App) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func (app *App) ResetAllDataflows()  {
+func (app *App) ResetAllDataflows() {
 	for _, df := range app.Dataflows {
-		objInfo := df.Variable.GetVariableInfo()
+		objInfo := df.GetObjectDataflow().Variable.GetVariableInfo()
 		objInfo.ResetAllDataflows()
 	}
 	app.Dataflows = nil
 }
 
-func (app *App) AddDataflow(df *objects.Dataflow)  {
-	app.Dataflows = append(app.Dataflows, df)
+func (app *App) AddDataflow(objDataflow *objects.ObjectDataflow, dbCall *types.ParsedDatabaseCall) {
+	app.Dataflows = append(app.Dataflows, types.NewDataflow(objDataflow, dbCall))
+}
+
+func (app *App) GetDataflowForObjectDataflow(objDataflow *objects.ObjectDataflow) *types.Dataflow {
+	for _, df := range app.Dataflows {
+		if df.HasObjectDataflow(objDataflow) {
+			return df
+		}
+	}
+	logger.Logger.Fatalf("[APP] could not find dataflow for object dataflow: %s", objDataflow.String())
+	return nil
 }
 
 func (app *App) GetServices() map[string]*service.Service {

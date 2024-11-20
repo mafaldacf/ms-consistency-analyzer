@@ -9,7 +9,7 @@ import (
 	"analyzer/pkg/utils"
 )
 
-type Dataflow struct {
+type ObjectDataflow struct {
 	Datastore      string
 	Service        string
 	Write          bool
@@ -19,18 +19,18 @@ type Dataflow struct {
 	Field          datastores.Field
 }
 
-func (df *Dataflow) GetOpString() string {
+func (df *ObjectDataflow) GetOpString() string {
 	if df.Write {
 		return "write"
 	}
 	return "read"
 }
 
-func (df *Dataflow) HasVariable(variable Object) bool {
+func (df *ObjectDataflow) HasVariable(variable Object) bool {
 	return df.Variable == variable
 }
 
-func (df *Dataflow) HasAnyVariable(variables []Object) bool {
+func (df *ObjectDataflow) HasAnyVariable(variables []Object) bool {
 	for _, v := range variables {
 		if df.Variable == v {
 			return true
@@ -42,18 +42,30 @@ func (df *Dataflow) HasAnyVariable(variables []Object) bool {
 	return false
 }
 
-func (df *Dataflow) IsWriteOp() bool {
+func (df *ObjectDataflow) IsWriteOp() bool {
 	return df.Write
 }
 
-func (df *Dataflow) IsOpInDatastore(datastore string) bool {
+func (df *ObjectDataflow) IsOpInDatastore(datastore string) bool {
 	return df.Datastore == datastore
 }
 
-func (df *Dataflow) String() string {
-	prefix := fmt.Sprintf("%s %s", 
-    	func() string { if df.Direct { return "direct" } else { return "indirect" } }(),
-    	func() string { if df.Write { return "write" } else { return "read" } }(),
+func (df *ObjectDataflow) String() string {
+	prefix := fmt.Sprintf("%s %s",
+		func() string {
+			if df.Direct {
+				return "direct"
+			} else {
+				return "indirect"
+			}
+		}(),
+		func() string {
+			if df.Write {
+				return "write"
+			} else {
+				return "read"
+			}
+		}(),
 	)
 	if df.Direct {
 		return fmt.Sprintf("%s <%s> @ (%s, %s)", prefix, df.Variable.String(), df.Service, df.Datastore)
@@ -61,34 +73,34 @@ func (df *Dataflow) String() string {
 	return fmt.Sprintf("%s <%s> by <%s> @ (%s, %s)", prefix, df.Variable.String(), df.IndirectSource.String(), df.Service, df.Datastore)
 }
 
-func (df *Dataflow) Copy(force bool) *Dataflow {
+func (df *ObjectDataflow) Copy(force bool) *ObjectDataflow {
 	return df
 }
 
-func (df *Dataflow) DeepCopy() *Dataflow {
+func (df *ObjectDataflow) DeepCopy() *ObjectDataflow {
 	return df
 }
 
-func (df *Dataflow) ShortString() string {
+func (df *ObjectDataflow) ShortString() string {
 	if df.Direct {
 		return fmt.Sprintf("%s <%s (%s)>", df.GetOpString(), df.Variable.String(), utils.GetType(df.Variable))
 	}
 	return fmt.Sprintf("%s <%s (%s)> from <%s (%s)>", df.GetOpString(), df.Variable.String(), utils.GetType(df.Variable), df.IndirectSource.String(), utils.GetType(df.IndirectSource))
 }
 
-func (df *Dataflow) GetVariable() Object {
+func (df *ObjectDataflow) GetVariable() Object {
 	if df.Direct {
 		return df.Variable
 	}
 	return df.IndirectSource
 }
 
-func (df *Dataflow) GetDatastore() string {
+func (df *ObjectDataflow) GetDatastore() string {
 	return df.Datastore
 }
 
-func (v *ObjectInfo) SetDirectDataflow(datastore string, service string, variable Object, field datastores.Field, write bool) *Dataflow {
-	df := &Dataflow{
+func (v *ObjectInfo) SetDirectDataflow(datastore string, service string, variable Object, field datastores.Field, write bool) *ObjectDataflow {
+	df := &ObjectDataflow{
 		Direct:    true,
 		Variable:  variable,
 		Datastore: datastore,
@@ -101,8 +113,8 @@ func (v *ObjectInfo) SetDirectDataflow(datastore string, service string, variabl
 	return df
 }
 
-func (v *ObjectInfo) SetIndirectDataflow(datastore string, service string, current Object, source Object, field datastores.Field, write bool) *Dataflow {
-	df := &Dataflow{
+func (v *ObjectInfo) SetIndirectDataflow(datastore string, service string, current Object, source Object, field datastores.Field, write bool) *ObjectDataflow {
+	df := &ObjectDataflow{
 		Variable:       current,
 		IndirectSource: source,
 		Datastore:      datastore,
@@ -116,8 +128,8 @@ func (v *ObjectInfo) SetIndirectDataflow(datastore string, service string, curre
 	return df
 }
 
-func (v *ObjectInfo) GetForeignDataflows(currentDS *datastores.Datastore) []*Dataflow {
-	var dataflows []*Dataflow
+func (v *ObjectInfo) GetForeignDataflows(currentDS *datastores.Datastore) []*ObjectDataflow {
+	var dataflows []*ObjectDataflow
 	for _, df := range v.GetDataflows() {
 		// only append if it a different datastore
 		if df.Datastore != currentDS.Name {

@@ -56,7 +56,7 @@ func taintDataflowOp(app *app.App, variable objects.Object, call *AbstractDataba
 	}
 	rootField := datastore.Schema.GetField(fieldName)
 	df := variable.GetVariableInfo().SetDirectDataflow(datastore.Name, call.Service, variable, rootField, true)
-	app.AddDataflow(df)
+	app.AddDataflow(df, call.ParsedCall)
 	logger.Logger.Debugf("[TAINT WRITE DIRECT] %s ---> (%02d) %s [%s]", rootField.GetFullName(), variable.GetId(), variable.String(), utils.GetType(variable))
 	if !slices.Contains(app.TaintedVariables[rootField.GetFullName()], variable) {
 		app.TaintedVariables[rootField.GetFullName()] = append(app.TaintedVariables[rootField.GetFullName()], variable)
@@ -88,7 +88,7 @@ func taintDataflowOp(app *app.App, variable objects.Object, call *AbstractDataba
 			}
 			if !slices.Contains(taintedVariables, dep) {
 				df := v.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, dep, variable, dbField, true)
-				app.AddDataflow(df)
+				app.AddDataflow(df, call.ParsedCall)
 				logger.Logger.Debugf("\t\t[TAINT WRITE INDIRECT] %s ---> (%02d) %s [%s]", dbField.GetFullName(), dep.GetId(), dep.String(), utils.GetType(dep))
 
 				taintedVariables = append(taintedVariables, dep)
@@ -110,7 +110,7 @@ func TaintDataflowReadQueue(app *app.App, variable objects.Object, call *Abstrac
 	// taint direct dataflow
 	rootField := datastore.Schema.GetField(fieldName)
 	df := variable.GetVariableInfo().SetDirectDataflow(datastore.Name, call.Service, variable, rootField, false)
-	app.AddDataflow(df)
+	app.AddDataflow(df, call.ParsedCall)
 	logger.Logger.Debugf("[TAINT READ DIRECT] %s ---> (%02d) %s [%s]", rootField.GetFullName(), variable.GetId(), variable.String(), utils.GetType(variable))
 	if !slices.Contains(app.TaintedVariables[rootField.GetFullName()], variable) {
 		app.TaintedVariables[rootField.GetFullName()] = append(app.TaintedVariables[rootField.GetFullName()], variable)
@@ -129,7 +129,7 @@ func TaintDataflowReadQueue(app *app.App, variable objects.Object, call *Abstrac
 		for _, dep := range deps {
 			if !slices.Contains(taintedVariables, dep) {
 				df := v.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, dep, variable, dbField, false)
-				app.AddDataflow(df)
+				app.AddDataflow(df, call.ParsedCall)
 				logger.Logger.Debugf("\t\t[TAINT READ INDIRECT] %s ---> (%02d) %s [%s]", dbField.GetFullName(), dep.GetId(), dep.String(), utils.GetType(dep))
 
 				taintedVariables = append(taintedVariables, dep)
@@ -149,7 +149,7 @@ func TaintDataflowRead(app *app.App, variable objects.Object, call *AbstractData
 	rootField := datastore.Schema.GetField(fieldName)
 	// variable is expected to be e.g. a cursor for nosql
 	df := variable.GetVariableInfo().SetDirectDataflow(datastore.Name, call.Service, variable, rootField, false)
-	app.AddDataflow(df)
+	app.AddDataflow(df, call.ParsedCall)
 	logger.Logger.Debugf("[TAINT READ DIRECT] %s ---> (%02d) %s [%s]", rootField.GetFullName(), variable.GetId(), variable.String(), utils.GetType(variable))
 	if !slices.Contains(app.TaintedVariables[rootField.GetFullName()], variable) {
 		app.TaintedVariables[rootField.GetFullName()] = append(app.TaintedVariables[rootField.GetFullName()], variable)
@@ -166,11 +166,11 @@ func TaintDataflowRead(app *app.App, variable objects.Object, call *AbstractData
 
 			if query {
 				df := variable.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, dep, variable, rootField, false)
-				app.AddDataflow(df)
+				app.AddDataflow(df, call.ParsedCall)
 			} else {
 				entry := datastores.CreateEntry(typeName, typeName, 0, datastore)
 				df := variable.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, dep, variable, entry, false)
-				app.AddDataflow(df)
+				app.AddDataflow(df, call.ParsedCall)
 			}
 			logger.Logger.Debugf("\t\t[TAINT READ UNNAMED INDIRECT] <unnamed> ---> (%02d) %s [%s]", dep.GetId(), dep.String(), utils.GetType(dep))
 

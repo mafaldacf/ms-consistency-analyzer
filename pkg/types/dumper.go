@@ -6,8 +6,8 @@ import (
 	"sort"
 
 	"analyzer/pkg/logger"
-	"analyzer/pkg/utils"
 	"analyzer/pkg/types/objects"
+	"analyzer/pkg/utils"
 )
 
 // --------------
@@ -57,7 +57,7 @@ func (cfg *CFG) Yaml() (map[string][]string, string) {
 // BLOCKS
 // ------
 
-func getTaintedFieldsListAndString(dfs []*objects.Dataflow) ([]string, string) {
+func getTaintedFieldsListAndString(dfs []*objects.ObjectDataflow) ([]string, string) {
 	var fieldsLst []string
 	fieldsStr := ""
 	for _, df := range dfs {

@@ -147,10 +147,10 @@ type Inconsistency struct {
 	Write             *Operation
 	Read              *Operation
 	MissingDependency bool
-	Dataflows         []*objects.Dataflow
+	Dataflows         []*objects.ObjectDataflow
 }
 
-func (inconsistency *Inconsistency) AppendDataflows(dataflows []*objects.Dataflow) {
+func (inconsistency *Inconsistency) AppendDataflows(dataflows []*objects.ObjectDataflow) {
 	inconsistency.Dataflows = append(inconsistency.Dataflows, dataflows...)
 }
 
