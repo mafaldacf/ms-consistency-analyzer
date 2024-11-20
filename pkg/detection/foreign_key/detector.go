@@ -14,7 +14,7 @@ import (
 	"analyzer/pkg/utils"
 )
 
-func InitDetector(app *app.App, graph *abstractgraph.AbstractGraph) *ForeignKeyDetector {
+func NewDetector(app *app.App, graph *abstractgraph.AbstractGraph) *ForeignKeyDetector {
 	return &ForeignKeyDetector{
 		app:   app,
 		graph: graph,
@@ -22,12 +22,14 @@ func InitDetector(app *app.App, graph *abstractgraph.AbstractGraph) *ForeignKeyD
 }
 
 func (detector *ForeignKeyDetector) Run() {
+	detector.app.ResetAllDataflows()
 	for idx, entry := range detector.getGraph().Nodes {
 		detector.analyzeNodes(entry.(*abstractgraph.AbstractServiceCall), entry, idx)
+		detector.app.ResetAllDataflows()
 	}
 }
 
-func (detector *ForeignKeyDetector) checkObjectIsTaintedByOtherRead(obj objects.Object, originField *datastores.Entry, datastore *datastores.Datastore) {
+func (detector *ForeignKeyDetector) checkForeignKeyRead(obj objects.Object, originField *datastores.Entry, datastore *datastores.Datastore) {
 	var savedOriginFieldName []string
 	for _, dep := range obj.GetNestedDependencies(false) {
 		for _, df := range dep.GetVariableInfo().GetAllReadDataflowsExceptDatastore(datastore.Name) {
@@ -66,7 +68,7 @@ func (detector *ForeignKeyDetector) analyzeNodes(lastServiceCallNode *abstractgr
 				for _, obj := range queryObjs {
 					logger.Logger.Infof("[QUERY OBJ] %s", obj.String())
 					field := datastore.Schema.GetField(obj.Field).(*datastores.Entry)
-					detector.checkObjectIsTaintedByOtherRead(obj.Value, field, dbCall.DbInstance.GetDatastore())
+					detector.checkForeignKeyRead(obj.Value, field, dbCall.DbInstance.GetDatastore())
 				}
 				for _, obj := range queryObjs {
 					logger.Logger.Infof("[QUERY OBJ] %s", obj.String())
@@ -97,9 +99,11 @@ func (detector *ForeignKeyDetector) analyzeNodes(lastServiceCallNode *abstractgr
 }
 
 func (detector *ForeignKeyDetector) Results() string {
-	results := "-------------------- FOREIGN KEY ANALYSIS --------------------"
+	results := "------------------------------------------------------------\n"
+	results += "------------------- FOREIGN KEY ANALYSIS -------------------\n"
+	results += "------------------------------------------------------------\n"
 	for i, read := range detector.reads {
-		results += fmt.Sprintf("\nforeign key read #%d:\t%s ---> %s", i, read.refField.GetFullName(), read.originField.GetFullName())
+		results += fmt.Sprintf("foreign key read #%d:\t%s ---> %s\n", i, read.refField.GetFullName(), read.originField.GetFullName())
 	}
 	detector.save(results)
 	return results

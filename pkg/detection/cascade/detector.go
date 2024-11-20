@@ -10,7 +10,7 @@ import (
 	"analyzer/pkg/logger"
 )
 
-func InitDetector(app *app.App, graph *abstractgraph.AbstractGraph) *CascadeDetector {
+func NewDetector(app *app.App, graph *abstractgraph.AbstractGraph) *CascadeDetector {
 	return &CascadeDetector{
 		app:   app,
 		graph: graph,
@@ -40,8 +40,8 @@ func (detector *CascadeDetector) analyzeNodes(lastServiceCallNode *abstractgraph
 		// 3. TODO LATER: to be more precise, we can check which object was deleted and if that specific reference to that object was deleted aswell
 
 		deleteOp := &deleteOperation{
-			call:         dbCall,
-			datastore:    dbCall.DbInstance.GetDatastore(),
+			call:      dbCall,
+			datastore: dbCall.DbInstance.GetDatastore(),
 		}
 
 		for _, datastoreInstance := range detector.getApp().GetDbInstances() {
@@ -53,7 +53,7 @@ func (detector *CascadeDetector) analyzeNodes(lastServiceCallNode *abstractgraph
 					for _, service := range detector.getApp().GetServices() {
 						if service.HasDatastore(dependentDatastore) {
 							deleteDep := &deleteDependency{
-								service: service,
+								service:   service,
 								datastore: dependentDatastore,
 							}
 							if !deleteOp.hasDependency(deleteDep) {
@@ -100,10 +100,12 @@ func (detector *CascadeDetector) searchCascadingDeletes(deleteOp *deleteOperatio
 }
 
 func (detector *CascadeDetector) Results() string {
-	results := "-------------------- CASCADING ANALYSIS --------------------"
-	
+	results := "------------------------------------------------------------\n"
+	results += "-------------------- CASCADING ANALYSIS --------------------\n"
+	results += "------------------------------------------------------------\n"
+
 	for _, op := range detector.getDeleteOperations() {
-		results += fmt.Sprintf("\norigin operation = %s\n", op.LongString())
+		results += fmt.Sprintf("origin operation = %s\n", op.LongString())
 		for _, dep := range op.getDependencies() {
 			if !dep.cascading {
 				results += fmt.Sprintf("\t - missing cascading delete @ %s\n", dep.LongString())

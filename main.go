@@ -8,9 +8,10 @@ import (
 
 	"analyzer/pkg/abstractgraph"
 	"analyzer/pkg/app"
-	"analyzer/pkg/detection/xcy"
+	"analyzer/pkg/datastores"
 	"analyzer/pkg/detection/cascade"
 	"analyzer/pkg/detection/foreign_key"
+	"analyzer/pkg/detection/xcy"
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
 	"analyzer/pkg/utils"
@@ -82,42 +83,18 @@ func initAnalyzer(appName string, xcyDetection bool, cascadeDetection bool, fore
 		fmt.Println(" --------------------------------------- CHECK XCY - TAINTED APPROACH  ---------------------------------------- ")
 		fmt.Println(" -------------------------------------------------------------------------------------------------------------- ")
 		fmt.Println()
-		
-		var detectors []*xcy.Detector
-		allDatastoresOps := xcy.NewDatastoreOps()
 
-		detectionModes := xcy.GetAllDetectionModes()
-		for _, entryNode := range abstractGraph.Nodes {
-			for i, detectionMode := range detectionModes {
-				detector := xcy.InitDetector(app, allDatastoresOps, detectionMode)
-				request := detector.InitRequest(entryNode)
-				fmt.Printf("\n\n-------------------- ENTRY NODE = %s.%s --------------------\n", entryNode.GetCallee(), entryNode.GetName())
-				fmt.Printf("-------------------- (%d/%d) XCY DETECTOR MODE = %s --------------------\n\n", i+1, len(detectionModes), detector.DetectionModeName())
-				detector.InitXCYRequestTransversal(request)
-				allDatastoresOps = detector.GetDatastoreOps()
-				detectors = append(detectors, detector)
-			}
+		detectorSet := xcy.NewDetectorSet(app, abstractGraph.Nodes)
+		var cumulativeDatastoreOps map[*datastores.Datastore][]*xcy.Operation
+		for _, detector := range detectorSet.GetAllDetectors() {
+			request := detector.InitRequest(cumulativeDatastoreOps)
+			detector.InitXCYRequestTransversal(request)
+			cumulativeDatastoreOps = detector.GetDatastoreOps()
 		}
+
 		fmt.Println()
-
-		for _, detector := range detectors {
-			detector.UpdateDatastoreOps(allDatastoresOps)
-			//logger.Logger.Infof("MINIMIZING FOR DETECTOR %v", detector.Requests)
-			for _, request := range detector.GetRequests() {
-				detector.MinimizeDependecySets(request)
-			}
-		}
-		
-		var allResults string
-		for _, detector := range detectors {
-			detector.DumpYaml(app.Name)
-			if detector.Inconsistencies > 0 {
-				results := detector.Results()
-				allResults += results + "\n\n"
-				summary += results + "\n\n"
-			}
-		}
-		xcy.Save(app.Name, allResults)
+		results := detectorSet.Results()
+		summary += results + "\n\n"
 	}
 
 	app.ResetAllDataflows()
@@ -128,7 +105,7 @@ func initAnalyzer(appName string, xcyDetection bool, cascadeDetection bool, fore
 		fmt.Println(" --------------------------------------- CHECK ABSENCE OF CASCADING DELETE ---------------------------------------- ")
 		fmt.Println(" ------------------------------------------------------------------------------------------------------------------ ")
 		fmt.Println()
-		detector := cascade.InitDetector(app, abstractGraph)
+		detector := cascade.NewDetector(app, abstractGraph)
 		detector.Run()
 		results := detector.Results()
 		summary += results + "\n\n"
@@ -140,7 +117,7 @@ func initAnalyzer(appName string, xcyDetection bool, cascadeDetection bool, fore
 		fmt.Println(" ----------------------------------- CHECK INTEGRITY ANOMALIES FOR FOREIGN KEYS ----------------------------------- ")
 		fmt.Println(" ------------------------------------------------------------------------------------------------------------------ ")
 		fmt.Println()
-		detector := foreign_key.InitDetector(app, abstractGraph)
+		detector := foreign_key.NewDetector(app, abstractGraph)
 		detector.Run()
 		results := detector.Results()
 		summary += results + "\n\n"

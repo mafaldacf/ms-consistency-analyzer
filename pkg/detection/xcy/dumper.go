@@ -97,21 +97,26 @@ func (detector *Detector) dumpRequestYaml(request *Request, includeLineages bool
 	return data
 }
 
-func (detector *Detector) Results() string {
-	results := "-------------------- XCY ANALYSIS --------------------\n"
-	
-	for _, request := range detector.Requests {
-		if len(request.Inconsistencies) > 0 {
-			data, _ := yaml.Marshal(detector.dumpRequestYaml(request, false))
-			results += string(data)
-			results += "----------------------------------------------------------"
+func (set *DetectorSet) Results() string {
+	results := "------------------------------------------------------------\n"
+	results += "----------------------- XCY ANALYSIS -----------------------\n"
+	results += "------------------------------------------------------------\n"
+
+	for _, detector := range set.detectors {
+		for _, request := range detector.Requests {
+			if len(request.Inconsistencies) > 0 {
+				data, _ := yaml.Marshal(detector.dumpRequestYaml(request, false))
+				results += string(data)
+				results += "\n----------------------------------------------------------\n"
+			}
 		}
 	}
+	set.save(results)
 	return results
 }
 
-func Save(appName string, results string) {
-	path := fmt.Sprintf("output/%s/analysis/xcy.txt", appName)
+func (set *DetectorSet) save(results string) {
+	path := fmt.Sprintf("output/%s/analysis/xcy.txt", set.app.Name)
 
 	dir := filepath.Dir(path)
 	err := os.MkdirAll(dir, 0755)
@@ -126,10 +131,12 @@ func Save(appName string, results string) {
 	logger.Logger.Tracef("[XCY] saved cascading detection results to %s", path)
 }
 
-func (detector *Detector) DumpYaml(app string) {
-	for _, request := range detector.Requests {
-		filename := fmt.Sprintf("analysis/xcy/%s_%s_%s", strings.ToLower(request.EntryNode.GetCallee()), strings.ToLower(request.EntryNode.GetName()), strings.ToLower(detector.DetectionModeName()))
-		data := detector.dumpRequestYaml(request, true)
-		utils.DumpToYamlFile(data, app, filename)
+func (set *DetectorSet) DumpYaml(results string) {
+	for _, detector := range set.detectors {
+		for _, request := range detector.Requests {
+			filename := fmt.Sprintf("analysis/xcy/%s_%s_%s", strings.ToLower(request.EntryNode.GetCallee()), strings.ToLower(request.EntryNode.GetName()), strings.ToLower(detector.DetectionModeName()))
+			data := detector.dumpRequestYaml(request, true)
+			utils.DumpToYamlFile(data, set.app.Name, filename)
+		}
 	}
 }

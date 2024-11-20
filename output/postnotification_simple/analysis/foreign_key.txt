@@ -1,2 +1,4 @@
--------------------- FOREIGN KEY ANALYSIS --------------------
+------------------------------------------------------------
+------------------- FOREIGN KEY ANALYSIS -------------------
+------------------------------------------------------------
 foreign key read #0:	NOTIFICATIONS_QUEUE.Message.PostID_MESSAGE ---> POSTS_DB.Post.PostID

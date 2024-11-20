@@ -1,6 +1,7 @@
 package xcy
 
 import (
+	"fmt"
 	"slices"
 
 	"github.com/golang-collections/collections/stack"
@@ -14,17 +15,42 @@ import (
 	"analyzer/pkg/utils"
 )
 
-type DetectionSet struct {
-	DetectionMode DetectionMode
-	Requests      []*Request
+type DetectorSet struct {
+	app       *app.App
+	detectors []*Detector
+}
+
+func NewDetectorSet(app *app.App, entryNodes []abstractgraph.AbstractNode) *DetectorSet {
+	set := &DetectorSet{
+		app: app,
+	}
+	for _, entryNode := range entryNodes {
+		for _, mode := range GetActiveDetectionModes() {
+			detector := NewDetector(app, entryNode, mode)
+			set.detectors = append(set.detectors, detector)
+		}
+	}
+	return set
+}
+
+func (set *DetectorSet) GetAllDetectors() []*Detector {
+	return set.detectors
 }
 
 type Detector struct {
-	app           *app.App
-	DetectionMode DetectionMode
-	Requests      []*Request
-	DatastoresOps map[*datastores.Datastore][]*Operation
+	DetectionMode   DetectionMode
+	Requests        []*Request
+	DatastoresOps   map[*datastores.Datastore][]*Operation
+	EntryNode       abstractgraph.AbstractNode
 	Inconsistencies int
+}
+
+func NewDetector(app *app.App, entryNode abstractgraph.AbstractNode, mode DetectionMode) *Detector {
+	return &Detector{
+		DatastoresOps: make(map[*datastores.Datastore][]*Operation),
+		EntryNode:     entryNode,
+		DetectionMode: mode,
+	}
 }
 
 type DetectionMode int
@@ -39,7 +65,7 @@ const (
 	DEBUG_XCY_MINIMIZE_DEPENDENCIES
 )
 
-func GetAllDetectionModes() []DetectionMode {
+func GetActiveDetectionModes() []DetectionMode {
 	return []DetectionMode{
 		//XCY_ALL_DATASTORES,
 		//XCY_EQUAL_DATASTORES,
@@ -49,6 +75,16 @@ func GetAllDetectionModes() []DetectionMode {
 		DEBUG_XCY_MISSING_DEPENDENCIES,
 		DEBUG_XCY_MINIMIZE_DEPENDENCIES,
 	}
+}
+
+func (detector *Detector) GetActiveDetectionModeIndex() int {
+	for i, activeMode := range GetActiveDetectionModes() {
+		if detector.DetectionMode == activeMode {
+			return i
+		}
+	}
+	logger.Logger.Fatalf("[XCY DETECTOR] could not find current detection mode (%s) in active mode list: %v", detector.DetectionModeName(), GetActiveDetectionModes())
+	return -1
 }
 
 func (detector *Detector) DetectionModeName() string {
@@ -80,18 +116,6 @@ func (detector *Detector) GetRequests() []*Request {
 	return detector.Requests
 }
 
-func NewDatastoreOps() map[*datastores.Datastore][]*Operation {
-	return make(map[*datastores.Datastore][]*Operation)
-}
-
-func InitDetector(app *app.App, datastoreOps map[*datastores.Datastore][]*Operation, mode DetectionMode) *Detector {
-	return &Detector{
-		app:           app,
-		DatastoresOps: datastoreOps,
-		DetectionMode: mode,
-	}
-}
-
 func (detector *Detector) GetDatastoreOps() map[*datastores.Datastore][]*Operation {
 	return detector.DatastoresOps
 }
@@ -100,11 +124,16 @@ func (detector *Detector) UpdateDatastoreOps(ops map[*datastores.Datastore][]*Op
 	detector.DatastoresOps = ops
 }
 
-func (detector *Detector) InitRequest(entryNode abstractgraph.AbstractNode) *Request {
+func (detector *Detector) InitRequest(cumulativeDatastoreOps map[*datastores.Datastore][]*Operation) *Request {
+	if cumulativeDatastoreOps != nil {
+		detector.DatastoresOps = cumulativeDatastoreOps //FIXME: this is not copying and instead it is just using the pointer for the cumulativeDatastoreOps
+	}
 	request := &Request{
-		EntryNode:     entryNode,
+		EntryNode:     detector.EntryNode,
 		LineagesStack: stack.New(),
 	}
+	fmt.Printf("\n\n-------------------- ENTRY NODE = %s.%s --------------------\n", request.EntryNode.GetCallee(), request.EntryNode.GetName())
+	fmt.Printf("-------------------- (%d/%d) XCY DETECTOR MODE = %s --------------------\n\n", detector.GetActiveDetectionModeIndex()+1, len(GetActiveDetectionModes()), detector.DetectionModeName())
 	request.PushLineage()
 	detector.Requests = append(detector.Requests, request)
 	return request
