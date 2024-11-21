@@ -1,0 +1,99 @@
+MEDIA_DB._:
+- read <result NoSQLCursor {database = media, collection = media} (BlueprintBackendObject)>
+
+MEDIA_DB._.mediaid:
+- read <mediaID int64 (BasicObject)>
+- read <mediaID int64 (BasicObject)> from <mediaID int64 (BasicObject)>
+- read <ref <mediaID int64> @ StorageService (Reference)> from <mediaID int64 (BasicObject)>
+- read <mediaID int64 (FieldObject)> from <mediaID int64 (BasicObject)>
+- read <PostID int64 (BasicObject)> from <mediaID int64 (BasicObject)>
+
+MEDIA_DB.Media:
+- write <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} (StructObject)>
+- write <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} (StructObject)> from <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} (StructObject)>
+- write <ref <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string}> @ UploadService (Reference)> from <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} (StructObject)>
+- write <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} (StructObject)> from <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} (StructObject)>
+
+MEDIA_DB.Media.Content:
+- write <HELLO_WORLD_CONST "HELLO WORLD!" untyped string (BasicObject)> from <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} (StructObject)>
+- write <Content "HELLO WORLD!" untyped string (FieldObject)> from <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} (StructObject)>
+
+MEDIA_DB.Media.MediaID:
+- write <mediaID int64 (BasicObject)> from <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} (StructObject)>
+- write <MediaID int64 (FieldObject)> from <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} (StructObject)>
+
+MEDIA_DB.Media.PostID:
+- write <postID int64 (BasicObject)> from <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} (StructObject)>
+- write <ref <PostID interface{}> @ NotifyService (Reference)> from <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} (StructObject)>
+- write <PostID interface{} (InterfaceObject)> from <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} (StructObject)>
+- write <postID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructObject)>
+- write <ref <PostID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructObject)>
+- write <PostID interface{} (InterfaceObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructObject)>
+- write <PostID int64 (FieldObject)> from <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} (StructObject)>
+
+Media:
+- read <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO
+  WORLD!" untyped string} (StructObject)> from <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} (StructObject)>
+
+POSTS_DB.Post.PostID:
+- write <postID int64 (BasicObject)> from <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} (StructObject)>
+- write <ref <PostID interface{}> @ NotifyService (Reference)> from <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} (StructObject)>
+- write <PostID interface{} (InterfaceObject)> from <media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string} (StructObject)>
+- write <postID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructObject)>
+- write <ref <PostID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructObject)>
+- write <PostID interface{} (InterfaceObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructObject)>
+- write <PostID int64 (FieldObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}} (StructObject)>
+- read <postID int64 (BasicObject)>
+- read <postID int64 (BasicObject)> from <postID int64 (BasicObject)>
+- read <ref <postID int64> @ NotifyService (Reference)> from <postID int64 (BasicObject)>
+- read <postID int64 (BasicObject)> from <postID int64 (BasicObject)>
+- read <PostID string (BasicObject)> from <postID int64 (BasicObject)>
+- read <ref <PostID string> @ NotifyService (Reference)> from <postID int64 (BasicObject)>
+- read <PostID string (FieldObject)> from <postID int64 (BasicObject)>
+- read <PostID string (BasicObject)> from <postID int64 (BasicObject)>
+- read <PostID interface{} (InterfaceObject)> from <postID int64 (BasicObject)>
+
+int64:
+- read <mediaID int64 (BasicObject)>
+- read <mediaID int64 (BasicObject)> from <mediaID int64 (BasicObject)>
+- read <ref <mediaID int64> @ StorageService (Reference)> from <mediaID int64 (BasicObject)>
+- read <mediaID int64 (FieldObject)> from <mediaID int64 (BasicObject)>
+- read <PostID int64 (BasicObject)> from <mediaID int64 (BasicObject)>
+- read <postID int64 (BasicObject)>
+- read <postID int64 (BasicObject)> from <postID int64 (BasicObject)>
+- read <ref <postID int64> @ NotifyService (Reference)> from <postID int64 (BasicObject)>
+- read <postID int64 (BasicObject)> from <postID int64 (BasicObject)>
+- read <PostID string (BasicObject)> from <postID int64 (BasicObject)>
+- read <ref <PostID string> @ NotifyService (Reference)> from <postID int64 (BasicObject)>
+- read <PostID string (FieldObject)> from <postID int64 (BasicObject)>
+- read <PostID string (BasicObject)> from <postID int64 (BasicObject)>
+- read <PostID interface{} (InterfaceObject)> from <postID int64 (BasicObject)>
+- read <postID int64 (BasicObject)>
+- read <postID int64 (BasicObject)> from <postID int64 (BasicObject)>
+- read <ref <postID int64> @ StorageService (Reference)> from <postID int64 (BasicObject)>
+- read <postID int64 (BasicObject)> from <postID int64 (BasicObject)>
+- read <ref <postID int64> @ NotifyService (Reference)> from <postID int64 (BasicObject)>
+- read <postID int64 (BasicObject)> from <postID int64 (BasicObject)>
+- read <PostID string (BasicObject)> from <postID int64 (BasicObject)>
+- read <ref <PostID string> @ NotifyService (Reference)> from <postID int64 (BasicObject)>
+- read <PostID string (FieldObject)> from <postID int64 (BasicObject)>
+- read <PostID string (BasicObject)> from <postID int64 (BasicObject)>
+- read <PostID interface{} (InterfaceObject)> from <postID int64 (BasicObject)>
+- read <postID int64 (BasicObject)>
+- read <postID int64 (BasicObject)> from <postID int64 (BasicObject)>
+- read <ref <postID int64> @ NotifyService (Reference)> from <postID int64 (BasicObject)>
+- read <postID int64 (BasicObject)> from <postID int64 (BasicObject)>
+- read <PostID string (BasicObject)> from <postID int64 (BasicObject)>
+- read <ref <PostID string> @ NotifyService (Reference)> from <postID int64 (BasicObject)>
+- read <PostID string (FieldObject)> from <postID int64 (BasicObject)>
+- read <PostID string (BasicObject)> from <postID int64 (BasicObject)>
+- read <PostID interface{} (InterfaceObject)> from <postID int64 (BasicObject)>
+- read <postID int64 (BasicObject)>
+- read <postID int64 (BasicObject)> from <postID int64 (BasicObject)>
+- read <ref <postID int64> @ NotifyService (Reference)> from <postID int64 (BasicObject)>
+- read <postID int64 (BasicObject)> from <postID int64 (BasicObject)>
+- read <PostID string (BasicObject)> from <postID int64 (BasicObject)>
+- read <ref <PostID string> @ NotifyService (Reference)> from <postID int64 (BasicObject)>
+- read <PostID string (FieldObject)> from <postID int64 (BasicObject)>
+- read <PostID string (BasicObject)> from <postID int64 (BasicObject)>
+- read <PostID interface{} (InterfaceObject)> from <postID int64 (BasicObject)>

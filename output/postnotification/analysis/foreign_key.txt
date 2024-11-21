@@ -1,0 +1,12 @@
+------------------------------------------------------------
+------------------- FOREIGN KEY ANALYSIS -------------------
+------------------------------------------------------------
+foreign key read #0:
+- ref:	ANALYTICS_QUEUE.TriggerAnalyticsMessage.PostID
+	@ n.analyticsQueue.Pop(ctx context.Context, event (*postnotification.TriggerAnalyticsMessage struct{PostID string}))
+- dst:	POSTS_DB.Post.PostID
+	@ collection.FindOne(ctx context.Context, query primitive.D)foreign key read #1:
+- ref:	NOTIFICATIONS_QUEUE.Message.PostID
+	@ n.notificationsQueue.Pop(ctx context.Context, event (*map[string]interface{}))
+- dst:	ANALYTICS_DB.Analytics.PostID
+	@ collection.FindOne(ctx context.Context, query primitive.D)

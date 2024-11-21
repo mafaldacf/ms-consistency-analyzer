@@ -30,10 +30,13 @@ func (detector *ForeignKeyDetector) Run() {
 }
 
 func (detector *ForeignKeyDetector) checkForeignKeyRead(obj objects.Object, originField *datastores.Entry, dbCall *abstractgraph.AbstractDatabaseCall) {
+	logger.Logger.Infof("[FOREIGN KEY] check foreign key read for origin field (%s) and object: %s", originField.String(), obj.String())
 	var savedOriginFieldName []string
-	datastore := dbCall.DbInstance.GetDatastore()
+	//datastore := dbCall.DbInstance.GetDatastore()
 	for _, dep := range obj.GetNestedDependencies(false) {
-		for _, df := range dep.GetVariableInfo().GetAllReadDataflowsExceptDatastore(datastore.Name) {
+		logger.Logger.Debugf("[FOREIGN KEY] \t dep: %s", dep.String())
+		for _, df := range dep.GetVariableInfo().GetAllReadDataflows() {
+			logger.Logger.Debugf("[FOREIGN KEY] \t\t df: %s", df.String())
 			refField := df.Field.(*datastores.Entry)
 			for _, refTarget := range refField.References {
 				if !slices.Contains(savedOriginFieldName, originField.GetFullName()) && refTarget == originField {
@@ -61,15 +64,15 @@ func (detector *ForeignKeyDetector) analyzeNodes(lastServiceCallNode *abstractgr
 				for _, df := range msg.GetVariableInfo().GetAllDataflows() {
 					logger.Logger.Infof("[df] %s", df.String())
 				}
-				abstractgraph.TaintDataflowReadQueue(detector.app, msg, dbCall, datastore, "message")
+				abstractgraph.TaintDataflowReadQueue(detector.app, msg, dbCall, datastore, datastores.ROOT_FIELD_NAME_QUEUE)
 			case datastores.NoSQL:
 
 				query := params[1]
 				queryObjs := abstractgraph.GetQueryObjectsIfNoSQLRead(datastore, query)
-				for _, obj := range queryObjs {
-					logger.Logger.Infof("[QUERY OBJ] %s", obj.String())
-					field := datastore.Schema.GetField(obj.Field).(*datastores.Entry)
-					detector.checkForeignKeyRead(obj.Value, field, dbCall)
+				for _, qObj := range queryObjs {
+					logger.Logger.Infof("[QUERY OBJ] %s", qObj.String())
+					field := datastore.Schema.GetField(qObj.FieldName).(*datastores.Entry)
+					detector.checkForeignKeyRead(qObj.Object, field, dbCall)
 				}
 				for _, obj := range queryObjs {
 					logger.Logger.Infof("[QUERY OBJ] %s", obj.String())
@@ -82,8 +85,17 @@ func (detector *ForeignKeyDetector) analyzeNodes(lastServiceCallNode *abstractgr
 							logger.Logger.Warnf("\t[df] %s", df.String())
 						}
 					} */
-					abstractgraph.TaintDataflowRead(detector.app, obj.Value, dbCall, datastore, obj.Field, true)
+					abstractgraph.TaintDataflowReadNoSQL(detector.app, obj.Object, dbCall, datastore, obj.FieldName, true)
 				}
+			case datastores.Cache:
+				key, value := params[1], params[2]
+
+				field := datastore.Schema.GetField(datastores.ROOT_FIELD_NAME_CACHE_KEY).(*datastores.Entry)
+				detector.checkForeignKeyRead(key, field, dbCall)
+
+				abstractgraph.TaintDataflowReadCache(detector.app, key, datastores.ROOT_FIELD_NAME_CACHE_KEY, dbCall, datastore)
+				abstractgraph.TaintDataflowReadCache(detector.app, value, datastores.ROOT_FIELD_NAME_CACHE_VALUE, dbCall, datastore)
+
 			default:
 				logger.Logger.Fatalf("[FOREIGN KEY] TODO: %s", dbCall.String())
 			}

@@ -72,7 +72,7 @@ pip3 install -r requirements.txt
 | `shopping_simple`         | **YES**       | 0             | 1                 | 0                     |
 | `shopping_app`            | NO            |               |                   |                       |
 | `postnotification_simple` | **YES**       | 1             | 0                 | 1                     |
-| `postnotification`        | NO            |               |                   |                       |
+| `postnotification`        | **YES**       | 1             | 0                 | ??                    |
 | `sockshop2`               | NO            |               |                   |                       |
 | `trainticket`             | NO            |               |                   |                       |
 
