@@ -1,6 +1,12 @@
+'[]shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}':
+- read <products []shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (ArrayObject)> from <products []shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (ArrayObject)>
+
 PRODUCT_DB.Product:
 - write <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructObject)>
 - write <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructObject)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructObject)>
+- read <cursor NoSQLCursor {database = product_database, collection = product_collection} (BlueprintBackendObject)>
+- read <result NoSQLCursor {database = product_database, collection = product_collection} (BlueprintBackendObject)>
+- read <result NoSQLCursor {database = product_database, collection = product_collection} (BlueprintBackendObject)>
 
 PRODUCT_DB.Product.Category:
 - write <category string (BasicObject)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructObject)>
@@ -41,6 +47,10 @@ PRODUCT_DB.Product.ProductID:
 - read <productID string (BasicObject)> from <productID string (BasicObject)>
 - read <ref <productID string> @ Frontend (Reference)> from <productID string (BasicObject)>
 - read <productID string (BasicObject)> from <productID string (BasicObject)>
+
+Product:
+- read <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructObject)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructObject)>
+- read <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructObject)> from <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string} (StructObject)>
 
 string:
 - read <productID string (BasicObject)>

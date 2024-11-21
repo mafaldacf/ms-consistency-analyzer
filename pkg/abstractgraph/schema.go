@@ -344,15 +344,15 @@ func doBuildSchema(app *app.App, node AbstractNode) bool {
 			return false
 		} */
 		params := dbCall.GetParams()
-		//returns := dbCall.GetReturns()
+		returns := dbCall.GetReturns()
 		switch datastore.Type {
 		case datastores.Queue:
 			msg := params[1]
 			TaintDataflowReadQueue(app, msg, dbCall, datastore, "message")
 		case datastores.NoSQL:
-			/* cursor := returns[0]
+			cursor := returns[0]
 			rootFieldName := datastore.Schema.GetRootFieldName()
-			TaintDataflowRead(app, cursor, dbCall, datastore, rootFieldName, false) */
+			TaintDataflowRead(app, cursor, dbCall, datastore, rootFieldName, false)
 
 			query := params[1]
 			queryObjs := GetQueryObjectsIfNoSQLRead(datastore, query)
@@ -378,13 +378,13 @@ func doBuildSchema(app *app.App, node AbstractNode) bool {
 		switch datastore.Type {
 		case datastores.Queue:
 			msg := params[1]
-			saveUnfoldedFieldsToDatastore(msg, "message", datastore)
+			saveUnfoldedFieldsToDatastore(msg, "_", datastore)
 			taintDataflowOp(app, msg, dbCall, datastore, "", true)
 			referenceTaintedDataflowForNestedFields(msg, datastore)
 
 		case datastores.NoSQL:
 			doc := params[1]
-			saveUnfoldedFieldsToDatastore(doc, "document", datastore)
+			saveUnfoldedFieldsToDatastore(doc, "_", datastore)
 			/* for i, param := range params {
 				logger.Logger.Debugf("BUILD SCHEMA!!! (%d) (%s)", i, utils.GetType(param))
 				if _, ok := param.(*objects.StructObject); ok {

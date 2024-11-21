@@ -21,8 +21,8 @@
   - ' depth 0 (InterfaceObject UserType) _ .error'
   - _ depth 1 (Reference UserType) ref <err .error> @ StorageService
   - ' depth 0 (StructObject UserType) message postnotification_simple.Message struct{ReqID
-    int64, PostID_MESSAGE int64, Timestamp int64} --> w-tainted 1x: write(notifications_queue.message)
-    --> r-tainted 1x: read(notifications_queue.message)'
+    int64, PostID_MESSAGE int64, Timestamp int64} --> w-tainted 1x: write(notifications_queue.Message)
+    --> r-tainted 1x: read(notifications_queue.Message)'
   - '_ depth 1 (FieldObject FieldType) PostID_MESSAGE int64 --> w-tainted 1x: write(notifications_queue.Message.PostID_MESSAGE)
     --> r-tainted 2x: read(notifications_queue.Message.PostID_MESSAGE, posts_db.Post.PostID)'
   - '_ depth 1 (FieldObject FieldType) ReqID int64 --> w-tainted 1x: write(notifications_queue.Message.ReqID)

@@ -26,13 +26,16 @@
     string, Description string, PricePerUnit int, Category string}'
   - ' depth 0 (StructObject UserType) product shopping_simple.Product struct{ProductID
     string, Description string, PricePerUnit int, Category string}'
-  - _ depth 1 (Reference UserType) ref <product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}> @ ProductService
+  - '_ depth 1 (Reference UserType) ref <product shopping_simple.Product struct{ProductID
+    string, Description string, PricePerUnit int, Category string}> @ ProductService
+    --> r-tainted 1x: read(product_db.Product)'
   - _ depth 1 (FieldObject FieldType) PricePerUnit int
   - __ depth 2 (BasicObject BasicType) PricePerUnit int
   - ' depth 0 (InterfaceObject UserType) _ .error'
   - _ depth 1 (Reference UserType) ref <err .error> @ ProductService
   - ' depth 0 (StructObject UserType) cart shopping_simple.Cart struct{CartID string,
-    TotalQuantity 1 int, LastProductID string, Products []string}'
+    TotalQuantity 1 int, LastProductID string, Products []string} --> r-tainted 1x:
+    read(cart_db.Cart)'
   - ' depth 0 (StructObject UserType) cartProduct shopping_simple.CartProduct struct{CartID
     string, ProductID string, PricePerUnit int, Quantity 1 int}'
   - ' depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
@@ -44,7 +47,7 @@
   - ___ depth 3 (BasicObject BasicType) "cartid" string
   - __ depth 2 (FieldObject FieldType) Value string
   - ' depth 0 (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database
-    = cart_database, collection = cart_collection}'
+    = cart_database, collection = cart_collection} --> r-tainted 1x: read(cart_db.Cart)'
   - ' depth 0 (InterfaceObject UserType) err .error'
   - ' depth 0 (StructObject UserType) cartProduct shopping_simple.CartProduct struct{CartID
     string, ProductID string, PricePerUnit int, Quantity 1 int}'
@@ -104,7 +107,8 @@
   - '_ depth 1 (Reference BasicType) ref <cartID string> @ Frontend --> r-tainted
     1x: read(cart_db.Cart.CartID)'
   - ' depth 0 (StructObject UserType) cart shopping_simple.Cart struct{CartID string,
-    TotalQuantity 1 int, LastProductID string, Products []string}'
+    TotalQuantity 1 int, LastProductID string, Products []string} --> r-tainted 1x:
+    read(cart_db.Cart)'
   - ' depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
     {database = cart_database, collection = cart_database}'
   - ' depth 0 (InterfaceObject UserType) _ .error'
@@ -114,7 +118,7 @@
   - ___ depth 3 (BasicObject BasicType) "cartid" string
   - __ depth 2 (FieldObject FieldType) Value string
   - ' depth 0 (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database
-    = cart_database, collection = cart_database}'
+    = cart_database, collection = cart_database} --> r-tainted 1x: read(cart_db.Cart)'
   - ' depth 0 (InterfaceObject UserType) err .error'
   - ' depth 0 (BasicObject BasicType) exists bool'
   - ' depth 0 (InterfaceObject UserType) err .error'

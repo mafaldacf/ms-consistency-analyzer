@@ -1,17 +1,23 @@
-[] (PointerVariable PointerType) d (*foobar.FrontendServiceImpl struct{fooService foo.FooService, barService bar.BarService}) 
-[_] (StructVariable UserType) foobar.FrontendServiceImpl struct{fooService foo.FooService, barService bar.BarService} 
-[__] (FieldVariable FieldType) barService bar.BarService 
-[___] (ServiceVariable ServiceType) barService bar.BarService 
-[__] (FieldVariable FieldType) fooService foo.FooService 
-[___] (ServiceVariable ServiceType) fooService foo.FooService 
+[] (PointerObject PointerType) d (*foobar.FrontendServiceImpl struct{fooService foo.FooService, barService bar.BarService})
+[_] (StructObject UserType) foobar.FrontendServiceImpl struct{fooService foo.FooService, barService bar.BarService}
+[__] (FieldObject FieldType) barService bar.BarService
+[___] (ServiceObject ServiceType) barService bar.BarService
+[__] (FieldObject FieldType) fooService foo.FooService
+[___] (ServiceObject ServiceType) fooService foo.FooService
 
-[] (InterfaceVariable UserType) ctx context.Context 
+[] (InterfaceObject UserType) ctx context.Context
 
-[] (BasicVariable BasicType) f string 
+[] (BasicObject BasicType) f string
+[_] (Reference AddressType) ref <(&"Foo: " string)> @ FooService
+[__] (BasicObject BasicType) "Foo: " string
 
-[] (InterfaceVariable UserType) err1 .error 
+[] (InterfaceObject UserType) err1 .error
+[_] (Reference BasicType) ref <nil> @ FooService
 
-[] (BasicVariable BasicType) b string 
+[] (BasicObject BasicType) b string
+[_] (Reference AddressType) ref <(&"Bar: " string)> @ BarService
+[__] (BasicObject BasicType) "Bar: " string
 
-[] (InterfaceVariable UserType) err2 .error 
+[] (InterfaceObject UserType) err2 .error
+[_] (Reference BasicType) ref <nil> @ BarService
 

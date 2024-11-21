@@ -1,3 +1,13 @@
+NOTIFICATIONS_QUEUE.Message:
+- write <message postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64} (StructObject)>
+- write <message postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64} (StructObject)> from <message postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64} (StructObject)>
+- read <workerMessage (*postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64}) (PointerObject)>
+- read <workerMessage postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64} (StructObject)> from <workerMessage (*postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64}) (PointerObject)>
+- read <ref <message postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64}> @ NotifyService (Reference)> from <workerMessage (*postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64}) (PointerObject)>
+- read <message postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64} (StructObject)> from <workerMessage (*postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64}) (PointerObject)>
+- write <message postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64} (StructObject)>
+- write <message postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64} (StructObject)> from <message postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64} (StructObject)>
+
 NOTIFICATIONS_QUEUE.Message.PostID_MESSAGE:
 - write <postID_UploadSVC int64 (BasicObject)> from <message postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64} (StructObject)>
 - write <ref <postID_STORAGE_SVC int64> @ StorageService (Reference)> from <message postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64} (StructObject)>
@@ -31,16 +41,6 @@ NOTIFICATIONS_QUEUE.Message.ReqID:
 - read <ref <ReqID int64> @ NotifyService (Reference)> from <workerMessage (*postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64}) (PointerObject)>
 - write <ReqID int64 (FieldObject)> from <message postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64} (StructObject)>
 - read <ReqID int64 (FieldObject)> from <workerMessage (*postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64}) (PointerObject)>
-
-NOTIFICATIONS_QUEUE.message:
-- write <message postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64} (StructObject)>
-- write <message postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64} (StructObject)> from <message postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64} (StructObject)>
-- read <workerMessage (*postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64}) (PointerObject)>
-- read <workerMessage postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64} (StructObject)> from <workerMessage (*postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64}) (PointerObject)>
-- read <ref <message postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64}> @ NotifyService (Reference)> from <workerMessage (*postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64}) (PointerObject)>
-- read <message postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64} (StructObject)> from <workerMessage (*postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64}) (PointerObject)>
-- write <message postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64} (StructObject)>
-- write <message postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64} (StructObject)> from <message postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64} (StructObject)>
 
 PostID_MESSAGE:
 - write <PostID_MESSAGE int64 (FieldObject)> from <message postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64} (StructObject)>

@@ -1,9 +1,9 @@
-[] (PointerVariable PointerType) d (*bar.BarServiceImpl struct{}) 
-[_] (StructVariable UserType) bar.BarServiceImpl struct{} 
+[] (PointerObject PointerType) d (*bar.BarServiceImpl struct{})
+[_] (StructObject UserType) bar.BarServiceImpl struct{}
 
-[] (InterfaceVariable UserType) ctx context.Context 
-[_] (Reference UserType) ref <ctx context.Context> @ FrontendService 
+[] (InterfaceObject UserType) ctx context.Context
+[_] (Reference UserType) ref <ctx context.Context> @ FrontendService
 
-[] (BasicVariable BasicType) text string 
-[_] (Reference BasicType) ref <"Frontend" string> @ FrontendService 
+[] (BasicObject BasicType) text string
+[_] (Reference BasicType) ref <"Frontend" string> @ FrontendService
 

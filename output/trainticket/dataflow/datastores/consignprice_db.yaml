@@ -1,8 +1,0 @@
-CONSIGNPRICE_DB.ConsignPrice:
-- write <priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64} (StructVariable)>
-- write <priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64} (StructVariable)>
-  from <priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64} (StructVariable)>
-
-CONSIGNPRICE_DB.ConsignPrice.Index:
-- write <0 int (BasicVariable)> from <priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64} (StructVariable)>
-- write <Index int64 (FieldVariable)> from <priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64} (StructVariable)>

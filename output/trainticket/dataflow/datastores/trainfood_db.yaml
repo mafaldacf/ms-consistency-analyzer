@@ -1,7 +1,0 @@
-TRAINFOOD_DB.TrainFood:
-- write <tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}} (StructVariable)>
-- write <tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}} (StructVariable)> from <tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}} (StructVariable)>
-
-TRAINFOOD_DB.TrainFood.TripID:
-- write <TripID string (BasicVariable)> from <tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}} (StructVariable)>
-- write <TripID string (FieldVariable)> from <tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}} (StructVariable)>

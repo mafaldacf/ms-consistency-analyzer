@@ -1,14 +1,14 @@
 (*BarServiceImpl).Bar(ctx context.Context, text string):
   block 0 (Body):
-  - (inline) (StructVariable UserType) bar.BarServiceImpl struct{}
-  - (PointerVariable PointerType) d (*bar.BarServiceImpl struct{})
-  - (inline) (Reference UserType) ref <ctx context.Context> @ FrontendService
-  - (InterfaceVariable UserType) ctx context.Context
-  - (inline) (Reference BasicType) ref <"Frontend" string> @ FrontendService
-  - (BasicVariable BasicType) text string
+  - ' depth 0 (PointerObject PointerType) d (*bar.BarServiceImpl struct{})'
+  - _ depth 1 (StructObject UserType) bar.BarServiceImpl struct{}
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - _ depth 1 (Reference UserType) ref <ctx context.Context> @ FrontendService
+  - ' depth 0 (BasicObject BasicType) text string'
+  - _ depth 1 (Reference BasicType) ref <"Frontend" string> @ FrontendService
 
 .NewBarServiceImpl(ctx context.Context):
   block 0 (Body):
-  - (InterfaceVariable UserType) ctx context.Context
-  - (inline) (StructVariable UserType) bar.BarServiceImpl struct{}
-  - (PointerVariable PointerType) d (*bar.BarServiceImpl struct{})
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (PointerObject PointerType) d (*bar.BarServiceImpl struct{})'
+  - _ depth 1 (StructObject UserType) bar.BarServiceImpl struct{}

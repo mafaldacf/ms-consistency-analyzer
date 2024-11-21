@@ -19,11 +19,11 @@ import (
 
 func main() {
 
-	appName := flag.String("app", "", "The name of the application to be analyzed")
+	allFlag := flag.String("all", "", fmt.Sprintf("Run analyzer for all applications: %v", utils.Apps))
+	appName := flag.String("app", "", fmt.Sprintf("The name of the application to be analyzed: %v", utils.Apps))
 	xcyDetection := flag.Bool("xcy", false, "Enable detection of xcy dependencies and inconsistencies")
 	foreignKeyDetection := flag.Bool("fk", false, "Enable detection of anomalies in foreign key constraints")
 	cascadeDetection := flag.Bool("cascade", false, "Enable detection of the absence of cascading delete logic")
-	allFlag := flag.String("all", "", fmt.Sprintf("Run analyzer for all applications: %v", utils.Apps))
 	flag.Parse()
 	if *allFlag == "true" || *allFlag == "True" || *allFlag == "1" {
 		for _, app := range utils.Apps {

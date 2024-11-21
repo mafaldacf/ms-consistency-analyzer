@@ -1,7 +1,0 @@
-TRAIN_DB.TrainType:
-- write <tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} (StructVariable)>
-- write <tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} (StructVariable)> from <tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} (StructVariable)>
-
-TRAIN_DB.TrainType.Name:
-- write <Name string (BasicVariable)> from <tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} (StructVariable)>
-- write <Name string (FieldVariable)> from <tt train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64} (StructVariable)>

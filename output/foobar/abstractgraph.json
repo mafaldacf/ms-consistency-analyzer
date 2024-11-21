@@ -9,18 +9,43 @@
         "depth": 1,
         "caller": "FrontendService",
         "edges": null,
-        "params": null,
-        "returns": [
+        "params": [
           {
-            "variable": {
-              "name": "f",
-              "type": "string"
+            "interface": {
+              "name": "ctx",
+              "type": "context.Context"
             }
           },
           {
-            "variable": {
+            "basic": {
+              "name": "",
+              "type": "\"Frontend\" string"
+            }
+          }
+        ],
+        "returns": [
+          {
+            "basic": {
+              "name": "f",
+              "type": "string",
+              "refs": [
+                {
+                  "name": "",
+                  "creator": "FooService"
+                }
+              ]
+            }
+          },
+          {
+            "interface": {
               "name": "err1",
-              "type": ".error"
+              "type": ".error",
+              "refs": [
+                {
+                  "name": "",
+                  "creator": "FooService"
+                }
+              ]
             }
           }
         ]
@@ -30,18 +55,43 @@
         "depth": 1,
         "caller": "FrontendService",
         "edges": null,
-        "params": null,
-        "returns": [
+        "params": [
           {
-            "variable": {
-              "name": "b",
-              "type": "string"
+            "interface": {
+              "name": "ctx",
+              "type": "context.Context"
             }
           },
           {
-            "variable": {
+            "basic": {
+              "name": "",
+              "type": "\"Frontend\" string"
+            }
+          }
+        ],
+        "returns": [
+          {
+            "basic": {
+              "name": "b",
+              "type": "string",
+              "refs": [
+                {
+                  "name": "",
+                  "creator": "BarService"
+                }
+              ]
+            }
+          },
+          {
+            "interface": {
               "name": "err2",
-              "type": ".error"
+              "type": ".error",
+              "refs": [
+                {
+                  "name": "",
+                  "creator": "BarService"
+                }
+              ]
             }
           }
         ]
@@ -49,7 +99,7 @@
     ],
     "params": [
       {
-        "variable": {
+        "interface": {
           "name": "ctx",
           "type": "context.Context"
         }

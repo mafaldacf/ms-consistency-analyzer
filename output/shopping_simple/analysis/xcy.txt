@@ -1,6 +1,60 @@
 ------------------------------------------------------------
 ----------------------- XCY ANALYSIS -----------------------
 ------------------------------------------------------------
+entry: (*FrontendImpl).GetAllProducts(ctx context.Context)
+mode: FOREIGN_KEYS_LINEAGES
+number_inconsistencies: 0
+xcy_inconsistencies: []
+
+----------------------------------------------------------
+entry: (*FrontendImpl).GetAllProducts(ctx context.Context)
+mode: DEBUG_XCY_MISSING_DEPENDENCIES
+number_inconsistencies: 0
+xcy_inconsistencies: []
+
+----------------------------------------------------------
+entry: (*FrontendImpl).GetAllProducts(ctx context.Context)
+mode: DEBUG_XCY_MINIMIZE_DEPENDENCIES
+number_inconsistencies: 0
+xcy_inconsistencies: []
+
+----------------------------------------------------------
+entry: (*FrontendImpl).GetCart(ctx context.Context, cartID string)
+mode: FOREIGN_KEYS_LINEAGES
+number_inconsistencies: 0
+xcy_inconsistencies: []
+
+----------------------------------------------------------
+entry: (*FrontendImpl).GetCart(ctx context.Context, cartID string)
+mode: DEBUG_XCY_MISSING_DEPENDENCIES
+number_inconsistencies: 0
+xcy_inconsistencies: []
+
+----------------------------------------------------------
+entry: (*FrontendImpl).GetCart(ctx context.Context, cartID string)
+mode: DEBUG_XCY_MINIMIZE_DEPENDENCIES
+number_inconsistencies: 0
+xcy_inconsistencies: []
+
+----------------------------------------------------------
+entry: (*FrontendImpl).GetProduct(ctx context.Context, productID string)
+mode: FOREIGN_KEYS_LINEAGES
+number_inconsistencies: 0
+xcy_inconsistencies: []
+
+----------------------------------------------------------
+entry: (*FrontendImpl).GetProduct(ctx context.Context, productID string)
+mode: DEBUG_XCY_MISSING_DEPENDENCIES
+number_inconsistencies: 0
+xcy_inconsistencies: []
+
+----------------------------------------------------------
+entry: (*FrontendImpl).GetProduct(ctx context.Context, productID string)
+mode: DEBUG_XCY_MINIMIZE_DEPENDENCIES
+number_inconsistencies: 0
+xcy_inconsistencies: []
+
+----------------------------------------------------------
 entry: (*FrontendImpl).AddProductToCart(ctx context.Context, cartID string, productID
   string)
 mode: FOREIGN_KEYS_LINEAGES
@@ -74,60 +128,6 @@ xcy_inconsistencies: []
 
 ----------------------------------------------------------
 entry: (*FrontendImpl).CreateCart(ctx context.Context, cartID string)
-mode: DEBUG_XCY_MINIMIZE_DEPENDENCIES
-number_inconsistencies: 0
-xcy_inconsistencies: []
-
-----------------------------------------------------------
-entry: (*FrontendImpl).GetAllProducts(ctx context.Context)
-mode: FOREIGN_KEYS_LINEAGES
-number_inconsistencies: 0
-xcy_inconsistencies: []
-
-----------------------------------------------------------
-entry: (*FrontendImpl).GetAllProducts(ctx context.Context)
-mode: DEBUG_XCY_MISSING_DEPENDENCIES
-number_inconsistencies: 0
-xcy_inconsistencies: []
-
-----------------------------------------------------------
-entry: (*FrontendImpl).GetAllProducts(ctx context.Context)
-mode: DEBUG_XCY_MINIMIZE_DEPENDENCIES
-number_inconsistencies: 0
-xcy_inconsistencies: []
-
-----------------------------------------------------------
-entry: (*FrontendImpl).GetCart(ctx context.Context, cartID string)
-mode: FOREIGN_KEYS_LINEAGES
-number_inconsistencies: 0
-xcy_inconsistencies: []
-
-----------------------------------------------------------
-entry: (*FrontendImpl).GetCart(ctx context.Context, cartID string)
-mode: DEBUG_XCY_MISSING_DEPENDENCIES
-number_inconsistencies: 0
-xcy_inconsistencies: []
-
-----------------------------------------------------------
-entry: (*FrontendImpl).GetCart(ctx context.Context, cartID string)
-mode: DEBUG_XCY_MINIMIZE_DEPENDENCIES
-number_inconsistencies: 0
-xcy_inconsistencies: []
-
-----------------------------------------------------------
-entry: (*FrontendImpl).GetProduct(ctx context.Context, productID string)
-mode: FOREIGN_KEYS_LINEAGES
-number_inconsistencies: 0
-xcy_inconsistencies: []
-
-----------------------------------------------------------
-entry: (*FrontendImpl).GetProduct(ctx context.Context, productID string)
-mode: DEBUG_XCY_MISSING_DEPENDENCIES
-number_inconsistencies: 0
-xcy_inconsistencies: []
-
-----------------------------------------------------------
-entry: (*FrontendImpl).GetProduct(ctx context.Context, productID string)
 mode: DEBUG_XCY_MINIMIZE_DEPENDENCIES
 number_inconsistencies: 0
 xcy_inconsistencies: []

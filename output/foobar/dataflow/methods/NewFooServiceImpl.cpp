@@ -1,5 +1,5 @@
-[] (InterfaceVariable UserType) ctx context.Context 
+[] (InterfaceObject UserType) ctx context.Context
 
-[] (PointerVariable PointerType) d (*foo.FooServiceImpl struct{}) 
-[_] (StructVariable UserType) foo.FooServiceImpl struct{} 
+[] (PointerObject PointerType) d (*foo.FooServiceImpl struct{})
+[_] (StructObject UserType) foo.FooServiceImpl struct{}
 

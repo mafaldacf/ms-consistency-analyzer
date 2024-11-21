@@ -1,12 +1,12 @@
-[] (BasicVariable BasicType) s string 
+[] (BasicObject BasicType) s string
 
-[] (BasicVariable BasicType) num int64 
-[_] (BasicVariable BasicType) s string 
-[_] (BasicVariable BasicType) 10 int 
-[_] (BasicVariable BasicType) 64 int 
+[] (BasicObject BasicType) num int64
+[_] (BasicObject BasicType) s string
+[_] (BasicObject BasicType) 10 int
+[_] (BasicObject BasicType) 64 int
 
-[] (InterfaceVariable UserType) err .error 
-[_] (BasicVariable BasicType) s string 
-[_] (BasicVariable BasicType) 10 int 
-[_] (BasicVariable BasicType) 64 int 
+[] (InterfaceObject UserType) err .error
+[_] (BasicObject BasicType) s string
+[_] (BasicObject BasicType) 10 int
+[_] (BasicObject BasicType) 64 int
 

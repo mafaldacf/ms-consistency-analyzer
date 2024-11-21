@@ -23,7 +23,7 @@
 [] (InterfaceObject UserType) _ .error
 [_] (Reference UserType) ref <err .error> @ StorageService
 
-    --> w-tainted: write(notifications_queue.message) {1}       --> w-tainted: write(notifications_queue.message) {1} --> r-tainted: read(notifications_queue.message) {1}
+    --> w-tainted: write(notifications_queue.Message) {1}       --> w-tainted: write(notifications_queue.Message) {1} --> r-tainted: read(notifications_queue.Message) {1}
 [] (StructObject UserType) message postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64}
      --> w-tainted: write(notifications_queue.Message.PostID_MESSAGE) {1}         --> w-tainted: write(notifications_queue.Message.PostID_MESSAGE) {1} --> r-tainted: read(notifications_queue.Message.PostID_MESSAGE, posts_db.Post.PostID) {2}
 [_] (FieldObject FieldType) PostID_MESSAGE int64

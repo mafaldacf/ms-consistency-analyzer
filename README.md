@@ -1,6 +1,6 @@
 # Microservices Consistency Analyzer
 
-**Microservices Consistency Analyzer** is a toolkit that statically analyzes microservice applications written in frameworks (e.g. [Service Weaver](https://dl.acm.org/doi/10.1145/3593856.3595909) and [Blueprint](https://dl.acm.org/doi/10.1145/3600006.3613138)) that introduce a new modular approach for building and deploying microservices. The goal is to detect potential consistency violations at configuration time by leveraging the global view over the entire application, including the relationship between services and operations to underlying databases. At the moment, the toolkit supports Blueprint ([code](https://github.com/Blueprint-uServices/blueprint)), and is capable of capturing *cross-service inconsistencies*, introduced in [Antipode](https://dl.acm.org/doi/10.1145/3600006.3613176). In the future, we aim to support a wide variety of similar frameworks and capture additional consistency anomalies.
+**Microservices Consistency Analyzer** is a toolkit that statically analyzes microservice applications written in frameworks (e.g. [Service Weaver](https://dl.acm.org/doi/10.1145/3593856.3595909) and [Blueprint](https://dl.acm.org/doi/10.1145/3600006.3613138)) that introduce a new modular approach for building and deploying microservices. The goal is to detect potential consistency violations at configuration time by leveraging the global view over the entire application, including the relationship between services and operations to underlying databases. At the moment, the toolkit supports Blueprint ([code](https://github.com/Blueprint-uServices/blueprint)), and is capable of capturing _cross-service inconsistencies_, introduced in [Antipode](https://dl.acm.org/doi/10.1145/3600006.3613176). In the future, we aim to support a wide variety of similar frameworks and capture additional consistency anomalies.
 
 ## Getting Started
 
@@ -18,23 +18,63 @@ git submodule update --init --recursive
 ## How to Run
 
 Available applications:
-- `postnotification`
 - `foobar`
+- `shopping_simple`
+- `shopping_app`
+- `postnotification_simple`
+- `postnotification`
+- `sockshop2`
+- `trainticket`
 
 ```zsh
-go run main.go -app=postnotification [--xcy] [--fk]
+go run main.go --help
+
+go run main.go -app=foobar
+go run main.go -app=shopping_simple
+go run main.go -app=shopping_app
+go run main.go -app=postnotification_simple
+go run main.go -app=postnotification
+go run main.go -app=sockshop2
+go run main.go -app=trainticket
+
 go run main.go -app=postnotification --xcy
 go run main.go -app=postnotification --fk
-go run main.go -app=foobar
+go run main.go -app=postnotification --cascade
+go run main.go -app=postnotification --xcy --fk --cascade
+
+go run main.go -app=shopping_simple
+go run main.go -app=shopping_simple --xcy
 go run main.go -app=shopping_simple --cascade
 go run main.go -app=shopping_simple --fk
+go run main.go -app=shopping_simple --xcy --fk --cascade
 
+python3 -m venv ~/.venv
 source ~/.venv/bin/activate
 pip3 install -r requirements.txt
-./graphs.py --app postnotification [--graph {app, call}] [--labeled]
-./graphs.py --app postnotification
+
+./graphs.py --help
+# usage: graphs.py [-h] [--app {postnotification,postnotification_simple,trainticket,shopping_app,shopping_simple,sockshop2,foobar}] [--graph {app,call}] [--labeled] [--all]
+
+./graphs.py --app foobar
 ./graphs.py --app shopping_simple
+./graphs.py --app shopping_app
+./graphs.py --app postnotification_simple
+./graphs.py --app postnotification
+./graphs.py --app sockshop2
+./graphs.py --app trainticket
 ```
+
+## Summary
+
+| Application Name          | Runs          | XCY Analysis  | Cascade Analysis  | Foreign Key Analysis  |
+|---------------------------|---------------|---------------|-------------------|-----------------------|
+| `foobar`                  | **YES**       | 0             | 0                 | 0                     |
+| `shopping_simple`         | **YES**       | 0             | 1                 | 0                     |
+| `shopping_app`            | NO            |               |                   |                       |
+| `postnotification_simple` | **YES**       | 1             | 0                 | 1                     |
+| `postnotification`        | NO            |               |                   |                       |
+| `sockshop2`               | NO            |               |                   |                       |
+| `trainticket`             | NO            |               |                   |                       |
 
 ## Structure
 
@@ -44,11 +84,11 @@ The representation of the application and the abstract graph are saved in the `a
 
 The source code is located in the `pkg` folder, divided into the following modules: `abstractgraph`, `app`, `controlflow`, `frameworks`, `logger`, `service`, `types`, `utils`.
 
-| Module                    | Description |
-| --------------------------| ---------- |
-|                           |            |
-| **Application**           | Initializes the application and registers **service nodes** and **database instances** with the application spec generated by Blueprint       |
-| **Frameworks**            | Contains utilities specific to each framework. In the context of Blueprint, it contains (i) helper functions to compute the service spec from Intermediate Representation (IR), and (ii) methods that define backends like databases and queues       |
-| **Service**               | Parses the **abstract syntax tree (ast)** of each service, capturing all service, database, or even internal calls within each exposed method       |
-| **Control Flow Graph**    | Parses the **control flow graph (cfg)** of each service, capturing all dependencies in declared and assigned variables within each exposed method block from service, database, or internal calls       |
-| **Abstract Graph**        | Generates the final abstract graph containing nodes (**abstract service calls** or **abstract database calls**) and edges representing the relationship and order between service and database calls, including queue handlers triggered by publishers       |
+| Module                 | Description                                                                                                                                                                                                                                            |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+|                        |                                                                                                                                                                                                                                                        |
+| **Application**        | Initializes the application and registers **service nodes** and **database instances** with the application spec generated by Blueprint                                                                                                                |
+| **Frameworks**         | Contains utilities specific to each framework. In the context of Blueprint, it contains (i) helper functions to compute the service spec from Intermediate Representation (IR), and (ii) methods that define backends like databases and queues        |
+| **Service**            | Parses the **abstract syntax tree (ast)** of each service, capturing all service, database, or even internal calls within each exposed method                                                                                                          |
+| **Control Flow Graph** | Parses the **control flow graph (cfg)** of each service, capturing all dependencies in declared and assigned variables within each exposed method block from service, database, or internal calls                                                      |
+| **Abstract Graph**     | Generates the final abstract graph containing nodes (**abstract service calls** or **abstract database calls**) and edges representing the relationship and order between service and database calls, including queue handlers triggered by publishers |

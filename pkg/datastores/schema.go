@@ -27,6 +27,7 @@ func (s *Schema) GetRootField() Field {
 }
 
 func (s *Schema) GetRootFieldName() string {
+	logger.Logger.Infof("SCHEMA: %s", s.String())
 	return s.Fields[1].GetName() //FIXME!
 }
 

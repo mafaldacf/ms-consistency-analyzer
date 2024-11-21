@@ -5,7 +5,7 @@ CART_DB:
   - product_db
 - schema:
   - fields:
-    - document: shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
+    - _: shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
     - Cart: shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
   - unfolded_fields:
     - Cart: shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
@@ -27,7 +27,7 @@ PRODUCT_DB:
 - dependencies: []
 - schema:
   - fields:
-    - document: shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
+    - _: shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
     - Product: shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
   - unfolded_fields:
     - Product: shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}

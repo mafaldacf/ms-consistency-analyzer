@@ -1,7 +1,0 @@
-CONFIG_DB.Config:
-- write <conf config.Config struct{Name string, Value string, Description string} (StructVariable)>
-- write <conf config.Config struct{Name string, Value string, Description string} (StructVariable)> from <conf config.Config struct{Name string, Value string, Description string} (StructVariable)>
-
-CONFIG_DB.Config.Name:
-- write <Name string (BasicVariable)> from <conf config.Config struct{Name string, Value string, Description string} (StructVariable)>
-- write <Name string (FieldVariable)> from <conf config.Config struct{Name string, Value string, Description string} (StructVariable)>
