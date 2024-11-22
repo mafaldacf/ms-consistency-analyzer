@@ -14,6 +14,13 @@ type FieldObject struct {
 	WrappedVariable Object
 }
 
+func NewFieldObject(info *ObjectInfo, wrappedObj Object) *FieldObject {
+	return &FieldObject{
+		ObjectInfo: info,
+		WrappedVariable: wrappedObj,
+	}
+}
+
 func (v *FieldObject) MarshalJSON() ([]byte, error) {
 	return json.Marshal(&struct {
 		ObjectInfo      *ObjectInfo `json:"field"`
@@ -99,6 +106,9 @@ func (v *FieldObject) GetNestedDependencies(nearestFields bool) []Object {
 	var deps = []Object{v}
 	if v.GetVariableInfo().HasReferences() {
 		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
+	}
+	if v.GetVariableInfo().IsReferencedBy() {
+		deps = append(deps, v.GetVariableInfo().GetNestedRefByDependencies(nil)...)
 	}
 	deps = append(deps, v.WrappedVariable.GetNestedDependencies(nearestFields)...)
 	return deps

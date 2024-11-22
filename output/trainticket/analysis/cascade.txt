@@ -1,0 +1,16 @@
+------------------------------------------------------------
+-------------------- CASCADING ANALYSIS --------------------
+------------------------------------------------------------
+origin operation = (UserService, user_db) -> coll.DeleteOne(ctx context.Context, query primitive.D)
+origin operation = (ContactsService, contacts_db) -> coll.DeleteOne(ctx context.Context, query primitive.D)
+origin operation = (PriceService, price_db) -> coll.DeleteOne(ctx context.Context, query primitive.D)
+origin operation = (StationService, station_db) -> coll.DeleteOne(ctx context.Context, query primitive.D)
+origin operation = (AssuranceService, assurance_db) -> coll.DeleteOne(ctx context.Context, query primitive.D)
+origin operation = (AssuranceService, assurance_db) -> coll.DeleteOne(ctx context.Context, query primitive.D)
+origin operation = (ConfigService, config_db) -> coll.DeleteOne(ctx context.Context, query primitive.D)
+origin operation = (TrainFoodService, trainfood_db) -> coll.DeleteMany(ctx context.Context, primitive.D)
+origin operation = (TrainService, train_db) -> coll.DeleteOne(ctx context.Context, primitive.D)
+origin operation = (RouteService, route_db) -> coll.DeleteOne(ctx context.Context, primitive.D)
+origin operation = (StationFoodService, stationfood_db) -> coll.DeleteMany(ctx context.Context, primitive.D)
+origin operation = (PaymentService, money_db) -> pay_coll.DeleteMany(ctx context.Context, primitive.D)
+origin operation = (PaymentService, money_db) -> money_coll.DeleteMany(ctx context.Context, primitive.D)

@@ -1,0 +1,99 @@
+(*ConfigServiceImpl).Create(ctx context.Context, conf config.Config struct{Name string, Value string, Description string}):
+  block 11 (IfDone):
+  - ' depth 0 (PointerObject PointerType) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) config.ConfigServiceImpl struct{db NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (StructObject UserType) conf config.Config struct{Name string, Value
+    string, Description string} --> w-tainted 1x: write(config_db.Config)'
+  - '_ depth 1 (FieldObject FieldType) Name string --> w-tainted 1x: write(config_db.Config.Name)'
+  - '__ depth 2 (BasicObject BasicType) Name string --> w-tainted 1x: write(config_db.Config.Name)
+    --> r-tainted 1x: read(config_db._.name)'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
+    = config, collection = config}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (SliceObject UserType) query primitive.D'
+  - _ depth 1 (StructObject StructType) struct{ "name" string, string}
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database
+    = config, collection = config} --> r-tainted 1x: read(config_db._)'
+  - '_ depth 1 (StructObject UserType) saved_conf config.Config struct{Name string,
+    Value string, Description string} --> r-tainted 1x: read(config_db.Config)'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (BasicObject BasicType) exists bool'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+
+(*ConfigServiceImpl).Delete(ctx context.Context, name string):
+  block 2 (IfDone):
+  - ' depth 0 (PointerObject PointerType) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) config.ConfigServiceImpl struct{db NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BasicObject BasicType) name string'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
+    = config, collection = config}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (SliceObject UserType) query primitive.D'
+  - _ depth 1 (StructObject StructType) struct{ "name" string, string}
+
+(*ConfigServiceImpl).Find(ctx context.Context, name string):
+  block 11 (IfDone):
+  - ' depth 0 (PointerObject PointerType) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) config.ConfigServiceImpl struct{db NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BasicObject BasicType) name string --> r-tainted 1x: read(config_db.Config.Name)'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
+    = config, collection = config}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (SliceObject UserType) query primitive.D'
+  - _ depth 1 (StructObject StructType) struct{ "name" string, string}
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database
+    = config, collection = config} --> r-tainted 1x: read(config_db.Config)'
+  - '_ depth 1 (StructObject UserType) conf config.Config struct{Name string, Value
+    string, Description string} --> r-tainted 1x: read(config_db.Config)'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (BasicObject BasicType) exists bool'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+
+(*ConfigServiceImpl).FindAll(ctx context.Context):
+  block 8 (IfDone):
+  - ' depth 0 (PointerObject PointerType) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) config.ConfigServiceImpl struct{db NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
+    = config, collection = config}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (ArrayObject ArrayType) configs []config.Config struct{Name string,
+    Value string, Description string} --> r-tainted 1x: read(config_db.[]config.Config
+    struct{Name string, Value string, Description string})'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database
+    = config, collection = config} --> r-tainted 1x: read(config_db.Config)'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+
+(*ConfigServiceImpl).Update(ctx context.Context, conf config.Config struct{Name string, Value string, Description string}):
+  block 2 (IfDone):
+  - ' depth 0 (PointerObject PointerType) c (*config.ConfigServiceImpl struct{db NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) config.ConfigServiceImpl struct{db NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (StructObject UserType) conf config.Config struct{Name string, Value
+    string, Description string}'
+  - _ depth 1 (FieldObject FieldType) Name string
+  - __ depth 2 (BasicObject BasicType) Name string
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
+    = config, collection = config}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (SliceObject UserType) query primitive.D'
+  - _ depth 1 (StructObject StructType) struct{ "name" string, string}
+
+.NewConfigServiceImpl(ctx context.Context, db NoSQLDatabase):
+  block 0 (Body):
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase'

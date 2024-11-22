@@ -1,0 +1,24 @@
+(*DeliveryServiceImpl).Run(ctx context.Context):
+  block 14 (IfDone):
+  - ' depth 0 (PointerObject PointerType) d (*delivery.DeliveryServiceImpl struct{db
+    NoSQLDatabase, delQ Queue})'
+  - _ depth 1 (StructObject UserType) delivery.DeliveryServiceImpl struct{db NoSQLDatabase, delQ Queue}
+  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - __ depth 2 (FieldObject FieldType) delQ Queue
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) queue Queue
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (StructObject UserType) delivery delivery.Delivery struct{ID string,
+    OrderID string, FoodName string, StoreName string, StationName string}'
+  - ' depth 0 (BasicObject BasicType) didpop bool'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
+    = delivery, collection = delivery}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+
+.NewDeliveryServiceImpl(ctx context.Context, queue Queue, db NoSQLDatabase):
+  block 0 (Body):
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) queue Queue'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase'

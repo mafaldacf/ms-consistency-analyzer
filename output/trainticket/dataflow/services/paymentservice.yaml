@@ -1,0 +1,121 @@
+? (*PaymentServiceImpl).AddMoney(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string})
+:
+ block 2 (IfDone):
+  - ' depth 0 (PointerObject PointerType) p (*payment.PaymentServiceImpl struct{paymentDB
+    NoSQLDatabase, moneyDB NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) moneyDB NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) moneyDB NoSQLDatabase
+  - __ depth 2 (FieldObject FieldType) paymentDB NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) payDB NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (StructObject UserType) payment payment.Payment struct{ID string, OrderID
+    string, UserID string, Price string}'
+  - _ depth 1 (FieldObject FieldType) Price string
+  - '__ depth 2 (BasicObject BasicType) Price string --> w-tainted 1x: write(money_db.Money.Price)'
+  - _ depth 1 (FieldObject FieldType) UserID string
+  - '__ depth 2 (BasicObject BasicType) UserID string --> w-tainted 1x: write(money_db.Money.UserID)'
+  - ' depth 0 (StructObject UserType) m payment.Money struct{ID string, UserID string,
+    Price string} --> w-tainted 1x: write(money_db.Money)'
+  - '_ depth 1 (FieldObject FieldType) ID string --> w-tainted 1x: write(money_db.Money.ID)'
+  - '__ depth 2 (BasicObject BasicType) string --> w-tainted 1x: write(money_db.Money.ID)'
+  - '_ depth 1 (FieldObject FieldType) Price string --> w-tainted 1x: write(money_db.Money.Price)'
+  - '__ depth 2 (BasicObject BasicType) Price string --> w-tainted 1x: write(money_db.Money.Price)'
+  - '_ depth 1 (FieldObject FieldType) UserID string --> w-tainted 1x: write(money_db.Money.UserID)'
+  - '__ depth 2 (BasicObject BasicType) UserID string --> w-tainted 1x: write(money_db.Money.UserID)'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
+    = payment, collection = money}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+
+(*PaymentServiceImpl).Cleanup(ctx context.Context):
+  block 8 (IfDone):
+  - ' depth 0 (PointerObject PointerType) p (*payment.PaymentServiceImpl struct{paymentDB
+    NoSQLDatabase, moneyDB NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) moneyDB NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) moneyDB NoSQLDatabase
+  - __ depth 2 (FieldObject FieldType) paymentDB NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) payDB NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) pay_coll NoSQLCollection
+    {database = payment, collection = payment}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) money_coll NoSQLCollection
+    {database = payment, collection = money}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+
+(*PaymentServiceImpl).InitPayment(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string})
+:
+ block 11 (IfDone):
+  - ' depth 0 (PointerObject PointerType) p (*payment.PaymentServiceImpl struct{paymentDB
+    NoSQLDatabase, moneyDB NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) moneyDB NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) moneyDB NoSQLDatabase
+  - __ depth 2 (FieldObject FieldType) paymentDB NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) payDB NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (StructObject UserType) payment payment.Payment struct{ID string, OrderID
+    string, UserID string, Price string} --> w-tainted 1x: write(payments_db.Payment)'
+  - '_ depth 1 (FieldObject FieldType) ID string --> w-tainted 1x: write(payments_db.Payment.ID)'
+  - '__ depth 2 (BasicObject BasicType) ID string --> w-tainted 1x: write(payments_db.Payment.ID)
+    --> r-tainted 1x: read(payments_db._.id)'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
+    = payment, collection = payment}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database
+    = payment, collection = payment} --> r-tainted 1x: read(payments_db._)'
+  - '_ depth 1 (StructObject UserType) stored payment.Payment struct{ID string, OrderID
+    string, UserID string, Price string} --> r-tainted 1x: read(payments_db.Payment)'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (BasicObject BasicType) exists bool'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+
+(*PaymentServiceImpl).Pay(ctx context.Context, payment payment.Payment struct{ID string, OrderID string, UserID string, Price string})
+:
+ block 8 (IfDone):
+  - ' depth 0 (PointerObject PointerType) p (*payment.PaymentServiceImpl struct{paymentDB
+    NoSQLDatabase, moneyDB NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) moneyDB NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) moneyDB NoSQLDatabase
+  - __ depth 2 (FieldObject FieldType) paymentDB NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) payDB NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (StructObject UserType) payment payment.Payment struct{ID string, OrderID
+    string, UserID string, Price string}'
+  - _ depth 1 (FieldObject FieldType) OrderID string
+  - __ depth 2 (BasicObject BasicType) OrderID string
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
+    = payment, collection = payment}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (BasicObject BasicType) ok bool'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+
+(*PaymentServiceImpl).Query(ctx context.Context):
+  block 5 (IfDone):
+  - ' depth 0 (PointerObject PointerType) p (*payment.PaymentServiceImpl struct{paymentDB
+    NoSQLDatabase, moneyDB NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase, moneyDB NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) moneyDB NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) moneyDB NoSQLDatabase
+  - __ depth 2 (FieldObject FieldType) paymentDB NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) payDB NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (ArrayObject ArrayType) payments []payment.Payment struct{ID string,
+    OrderID string, UserID string, Price string} --> r-tainted 1x: read(payments_db.[]payment.Payment
+    struct{ID string, OrderID string, UserID string, Price string})'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
+    = payment, collection = payment}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database
+    = payment, collection = payment} --> r-tainted 1x: read(payments_db.Payment)'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+
+.NewPaymentServiceImpl(ctx context.Context, payDB NoSQLDatabase, moneyDB NoSQLDatabase):
+  block 0 (Body):
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) payDB NoSQLDatabase'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) moneyDB NoSQLDatabase'

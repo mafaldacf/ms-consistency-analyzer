@@ -236,51 +236,111 @@ func getTargetVariableIfNoSQLCursorRead(datastore *datastores.Datastore, v objec
 				return ptrTargetVariable.PointerTo
 			} else if ifaceTargetVariable, ok := targetVariable.(*objects.InterfaceObject); ok {
 				logger.Logger.Fatalf("TODO!!!! %s", ifaceTargetVariable.String())
-			} else {
-				logger.Logger.Fatalf("????? %s", targetVariable.String())
+			} else { //FIXME: cursor.One(ctx, existing) --> this is happening in trainticket where "existing" object passed as a struct and not the ptr to it, but is this even possible
+				logger.Logger.Warnf("????? [%s] %s", utils.GetType(targetVariable), targetVariable.String())
+				return targetVariable
 			}
 		}
 	}
 	return v
 }
 
-type NoSQLQueryObject struct {
+type NoSQLQueryDocument struct {
 	FieldName string
 	Object    objects.Object
 }
 
-func (obj *NoSQLQueryObject) String() string {
+func (obj *NoSQLQueryDocument) String() string {
 	return fmt.Sprintf("%s: %s", obj.FieldName, obj.Object.String())
 }
 
-func GetQueryObjectsIfNoSQLRead(datastore *datastores.Datastore, variable objects.Object) []NoSQLQueryObject {
-	if datastore.IsNoSQLDatabase() {
-		// should be a bson.D which is a slice with many (inline) structures
-		// e.g. query := bson.D{{Key: "productid", Value: productID}}
-		if sliceVariable, ok := variable.(*objects.SliceObject); ok {
-			var queryVariables []NoSQLQueryObject
-			for _, elem := range sliceVariable.GetElements() {
-				if structVariable, ok := elem.(*objects.StructObject); ok {
-					logger.Logger.Warnf("%v", structVariable.Fields)
-					var key, val objects.Object
-					if len(structVariable.FieldsLst) != 0 {
-						key = structVariable.FieldsLst[0].(*objects.FieldObject).GetWrappedVariable()
-						val = structVariable.FieldsLst[1].(*objects.FieldObject).GetWrappedVariable()
-					} else {
-						key = structVariable.Fields["Key"].(*objects.FieldObject).GetWrappedVariable()
-						val = structVariable.Fields["Value"].(*objects.FieldObject).GetWrappedVariable()
+func GetNoSQLQueryDocument_DEPRECATED(datastore *datastores.Datastore, variable objects.Object) []NoSQLQueryDocument {
+	// should be a bson.D which is a slice with many (inline) structures
+	// e.g. query := bson.D{{Key: "productid", Value: productID}}
+	if sliceVariable, ok := variable.(*objects.SliceObject); ok {
+		var queryObjects []NoSQLQueryDocument
+		for i, elem := range sliceVariable.GetElements() {
+			if structVariable, ok := elem.(*objects.StructObject); ok {
+				logger.Logger.Warnf("MAP: %v", structVariable.GetFieldsMap())
+				logger.Logger.Warnf("LIST: %v", structVariable.GetFieldsList())
+				logger.Logger.Warnf("STRUCT: %v", structVariable.LongString())
+				var key, val objects.Object
+				if structVariable.NumFieldsList() != 0 {
+					key = structVariable.GetFieldAt(0).GetWrappedVariable()
+					val = structVariable.GetFieldAt(1).GetWrappedVariable()
+				} else {
+					key = structVariable.GetFieldByKey("Key").GetWrappedVariable()
+					val = structVariable.GetFieldByKey("Value").GetWrappedVariable()
+				}
+				queryObj := NoSQLQueryDocument{
+					FieldName: datastore.Schema.GetRootFieldName() + "." + key.GetType().GetBasicValue(),
+					Object:    val,
+				}
+				queryObjects = append(queryObjects, queryObj)
+				logger.Logger.Infof("[QUERY OBJ #%d] %s", i, queryObj.String())
+				return queryObjects
+			}
+		}
+		return nil
+	}
+	return nil
+}
+
+func GetNoSQLQueryDocument(datastore *datastores.Datastore, variable objects.Object) []NoSQLQueryDocument {
+	// should be a bson.D which is a slice with many (inline) structures
+	// e.g. query := bson.D{{Key: "productid", Value: productID}}
+	if sliceVariable, ok := variable.(*objects.SliceObject); ok {
+		var queryObjects []NoSQLQueryDocument
+		for _, elem := range sliceVariable.GetElements() {
+			if structVariable, ok := elem.(*objects.StructObject); ok {
+				logger.Logger.Infof("[DOC_ELEM] [%s] %s", utils.GetType(structVariable), structVariable.LongString())
+
+				key := structVariable.GetFieldAt(0).GetWrappedVariable()
+
+				if key.GetType().GetBasicValue() == "$and" {
+					// detect and handle the "$and" clause as an array of conditions
+					//
+					// e.g.
+					// query := bson.D{{"$and", bson.A{
+					//		bson.D{{"startstation", start}},
+					//		bson.D{{"endstation", end}},
+					// }}}
+					// handle $and as an array of conditions
+					andArray := structVariable.GetFieldAt(1).GetWrappedVariable()
+					if andSlice, ok := andArray.(*objects.SliceObject); ok {
+						logger.Logger.Warnf("[$AND_SLICE] [%s] %s", utils.GetType(andSlice), andSlice.LongString())
+						for i, andElem := range andSlice.GetElements() {
+							logger.Logger.Warnf("[$AND_ELEM #%d] [%s] %s", i, utils.GetType(andElem), andElem.LongString())
+							for j, andNestedElem := range GetNoSQLQueryDocument(datastore, andElem) {
+								logger.Logger.Warnf("[$AND_NESTED_ELEM #%d.%d] [%s] %s", i, j, utils.GetType(andNestedElem.Object), andNestedElem.Object.LongString())
+								queryObjects = append(queryObjects, andNestedElem)
+							}
+
+							/* if andStruct, ok := andElem.(*objects.StructObject); ok {
+								key := andStruct.GetFieldAt(0).GetWrappedVariable()
+								val := andStruct.GetFieldAt(1).GetWrappedVariable()
+								queryObj := NoSQLQueryDocument{
+									FieldName: datastore.Schema.GetRootFieldName() + "." + key.GetType().GetBasicValue(),
+									Object:    val,
+								}
+								queryObjects = append(queryObjects, queryObj)
+								logger.Logger.Infof("[QUERY OBJ $AND] %s", queryObj.String())
+							} */
+						}
 					}
-					queryVar := NoSQLQueryObject{
+				} else {
+					// normal key-value pairs
+					val := structVariable.GetFieldAt(1).GetWrappedVariable()
+					queryObj := NoSQLQueryDocument{
 						FieldName: datastore.Schema.GetRootFieldName() + "." + key.GetType().GetBasicValue(),
 						Object:    val,
 					}
-					queryVariables = append(queryVariables, queryVar)
-					return queryVariables
+					queryObjects = append(queryObjects, queryObj)
+					logger.Logger.Debugf("[DOC QUERY OBJ] %s", queryObj.String())
 				}
 			}
-			return nil
 		}
-
+		return queryObjects
 	}
 	return nil
 }
@@ -394,7 +454,7 @@ func doBuildSchema(app *app.App, node AbstractNode) bool {
 		case datastores.NoSQL:
 			cursor, query := returns[0], params[1]
 			TaintDataflowReadNoSQL(app, cursor, dbCall, datastore, datastores.ROOT_FIELD_NAME_NOSQL, false)
-			queryObjs := GetQueryObjectsIfNoSQLRead(datastore, query)
+			queryObjs := GetNoSQLQueryDocument(datastore, query)
 			for _, v := range queryObjs {
 				TaintDataflowReadNoSQL(app, v.Object, dbCall, datastore, v.FieldName, true)
 			}

@@ -150,6 +150,9 @@ func assignLeftValues(service *service.Service, method *types.ParsedMethod, bloc
 					rvariable.GetVariableInfo().SetUnassigned()
 					rvariable.GetVariableInfo().SetName(e.Name)
 					block.AddVariable(rvariable)
+					if e.Name == "query_test" {
+						logger.Logger.Warnf("EXIT!: [%s] %s", utils.GetType(rvariable), rvariable.LongString())
+					}
 				} else { // already exists (token.ASSIGN)
 					logger.Logger.Warnf("[CFG - ASSIGN LEFT] FIX ME!!!! WE SHOULD SEARCH FOR THE LEFT VARIABLE THAT ALREADY EXISTS IN THE BLOCK")
 					lvariable := rvariable.Copy(true)

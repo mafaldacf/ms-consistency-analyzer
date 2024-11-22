@@ -1,0 +1,20 @@
+{
+  "nodes": [
+    {
+      "id": "Client",
+      "type": "client"
+    },
+    {
+      "id": "NewsService",
+      "type": "service"
+    }
+  ],
+  "edges": [
+    {
+      "caller": "Client",
+      "callee": "NewsService",
+      "call": "Hello",
+      "depth": 0
+    }
+  ]
+}

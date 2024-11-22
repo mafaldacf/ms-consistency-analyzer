@@ -64,6 +64,9 @@ func (v *AddressObject) GetNestedDependencies(nearestFields bool) []Object {
 	if v.GetVariableInfo().HasReferences() {
 		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
 	}
+	if v.GetVariableInfo().IsReferencedBy() {
+		deps = append(deps, v.GetVariableInfo().GetNestedRefByDependencies(nil)...)
+	}
 	deps = append(deps, v.AddressOf.GetNestedDependencies(nearestFields)...)
 	return deps
 }

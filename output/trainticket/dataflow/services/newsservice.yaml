@@ -1,0 +1,15 @@
+(*NewsServiceImpl).Hello(ctx context.Context, val string):
+  block 0 (Body):
+  - ' depth 0 (PointerObject PointerType) n (*news.NewsServiceImpl struct{})'
+  - _ depth 1 (StructObject UserType) news.NewsServiceImpl struct{}
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BasicObject BasicType) val string'
+  - |2-
+     depth 0 (BasicObject BasicType) str `[
+                           {"Title": "News Service Complete", "Content": "Congratulations:Your News Service Complete"},
+                           {"Title": "Total Ticket System Complete", "Content": "Just a total test"}
+                        ]` byte
+
+.NewNewsServiceImpl(ctx context.Context):
+  block 0 (Body):
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'

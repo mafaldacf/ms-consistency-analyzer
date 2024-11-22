@@ -1,0 +1,20 @@
+{
+  "nodes": [
+    {
+      "id": "Client",
+      "type": "client"
+    },
+    {
+      "id": "AssuranceService",
+      "type": "service"
+    }
+  ],
+  "edges": [
+    {
+      "caller": "Client",
+      "callee": "AssuranceService",
+      "call": "GetAllAssuranceTypes",
+      "depth": 0
+    }
+  ]
+}

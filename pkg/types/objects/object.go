@@ -48,23 +48,15 @@ func UnwrapTupleIfSingleElement(variable Object) Object {
 	return variable
 }
 
-func WrapToFieldVariable(variable Object, structVariable *StructObject, addTypeToStruct bool) {
-	fieldVariable, ok := variable.(*FieldObject)
+func WrapObjectToField(obj Object, structObj *StructObject, addTypeToStruct bool) {
+	fieldObj, ok := obj.(*FieldObject)
 	if !ok {
-		fieldVariable = &FieldObject{
-			ObjectInfo: &ObjectInfo{
-				Type: &gotypes.FieldType{
-					WrappedType: variable.GetType(),
-				},
-				Id: VARIABLE_INLINE_ID,
-			},
-			WrappedVariable: variable,
-		}
+		fieldObj = NewFieldObject(NewObjectInfoInline(gotypes.NewFieldType(obj.GetType())), obj)
 	}
 	if addTypeToStruct {
-		structVariable.AddOrGetFieldVariableAndType(fieldVariable)
+		structObj.AddOrGetFieldVariableAndType(fieldObj)
 	} else {
-		structVariable.AddOrGetFieldVariable(fieldVariable)
+		structObj.AddOrGetFieldVariable(fieldObj)
 	}
 }
 

@@ -78,7 +78,7 @@ func GenerateMethodCFGForService(service *service.Service, parsedMethod *types.P
 	}
 	if structVar, ok := variable.(*objects.StructObject); ok {
 		for name, f := range service.Fields {
-			structVar.Fields[name] = lookup.CreateVariableFromType(name, f.GetType())
+			structVar.SetFieldByKey(name, lookup.CreateVariableFromType(name, f.GetType()))
 		}
 	}
 	logger.Logger.Tracef("[CFG] added service receiver %s (%s) (%s)", receiver.String(), utils.GetType(receiver.(*objects.PointerObject).PointerTo), utils.GetType(receiver.(*objects.PointerObject).PointerTo.GetType()))

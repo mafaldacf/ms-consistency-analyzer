@@ -130,6 +130,9 @@ func (v *ArrayObject) GetNestedDependencies(nearestFields bool) []Object {
 	if v.GetVariableInfo().HasReferences() {
 		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
 	}
+	if v.GetVariableInfo().IsReferencedBy() {
+		deps = append(deps, v.GetVariableInfo().GetNestedRefByDependencies(nil)...)
+	}
 	for _, elem := range v.Elements {
 		deps = append(deps, elem.GetNestedDependencies(nearestFields)...)
 	}

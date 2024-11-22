@@ -1,0 +1,117 @@
+? (*ProductServiceImpl).CreateProduct(ctx context.Context, productID string, description string, pricePerUnit int, category string)
+:
+ block 0 (Body):
+  - ' depth 0 (PointerObject PointerType) s (*shopping_app.ProductServiceImpl struct{product_db
+    NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) shopping_app.ProductServiceImpl struct{product_db NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) product_db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) product_db NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BasicObject BasicType) productID string'
+  - ' depth 0 (BasicObject BasicType) description string'
+  - ' depth 0 (BasicObject BasicType) pricePerUnit int'
+  - ' depth 0 (BasicObject BasicType) category string'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
+    {database = product_database, collection = product_collection}'
+  - ' depth 0 (InterfaceObject UserType) _ .error'
+  - ' depth 0 (StructObject UserType) product shopping_app.Product struct{ProductID
+    string, Description string, PricePerUnit int, Category string}'
+  - _ depth 1 (FieldObject FieldType) Category string
+  - _ depth 1 (FieldObject FieldType) Description string
+  - _ depth 1 (FieldObject FieldType) PricePerUnit int
+  - _ depth 1 (FieldObject FieldType) ProductID string
+  - ' depth 0 (InterfaceObject UserType) err .error'
+
+(*ProductServiceImpl).GetProduct(ctx context.Context, productID string):
+  block 0 (Body):
+  - ' depth 0 (PointerObject PointerType) s (*shopping_app.ProductServiceImpl struct{product_db
+    NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) shopping_app.ProductServiceImpl struct{product_db NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) product_db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) product_db NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - _ depth 1 (Reference UserType) ref <ctx context.Context> @ CartService
+  - __ depth 2 (Reference UserType) ref <ctx context.Context> @ Frontend
+  - _ depth 1 (Reference UserType) ref <ctx context.Context> @ OrderService
+  - __ depth 2 (Reference UserType) ref <ctx context.Context> @ Frontend
+  - ' depth 0 (BasicObject BasicType) productID string --> r-tainted 1x: read(product_db._.productID)'
+  - '_ depth 1 (Reference BasicType) ref <productID string> @ CartService --> r-tainted
+    1x: read(product_db._.productID)'
+  - '__ depth 2 (Reference BasicType) ref <productID string> @ Frontend --> r-tainted
+    1x: read(product_db._.productID)'
+  - '_ depth 1 (Reference BasicType) ref <productID string> @ OrderService --> w-tainted
+    3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
+    --> r-tainted 1x: read(product_db._.productID)'
+  - '__ depth 2 (Reference BasicType) ref <productID string> @ Frontend --> w-tainted
+    3x: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID)
+    --> r-tainted 1x: read(product_db._.productID)'
+  - ' depth 0 (StructObject UserType) product shopping_app.Product struct{ProductID
+    string, Description string, PricePerUnit int, Category string} --> r-tainted 1x:
+    read(product_db.Product)'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
+    {database = product_database, collection = product_collection}'
+  - ' depth 0 (InterfaceObject UserType) _ .error'
+  - ' depth 0 (SliceObject UserType) query primitive.D'
+  - _ depth 1 (StructObject StructType) struct{Key "productID" string, Value string}
+  - __ depth 2 (FieldObject FieldType) Key "productID" string
+  - ___ depth 3 (BasicObject BasicType) "productID" string
+  - __ depth 2 (FieldObject FieldType) Value string
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database
+    = product_database, collection = product_collection} --> r-tainted 1x: read(product_db._)'
+  - ' depth 0 (InterfaceObject UserType) _ .error'
+  - ' depth 0 (BasicObject BasicType) _ bool'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+
+.NewAnalyticsServiceImpl(ctx context.Context, analytics_db NoSQLDatabase, analytics_queue Queue):
+  block 0 (Body):
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) analytics_db NoSQLDatabase'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) analytics_queue Queue'
+
+.NewBillingServiceImpl(ctx context.Context, bill_db NoSQLDatabase):
+  block 0 (Body):
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) bill_db NoSQLDatabase'
+
+.NewCartServiceImpl(ctx context.Context, order_service shopping_app.OrderService, product_service shopping_app.ProductService, cart_db NoSQLDatabase)
+:
+ block 0 (Body):
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (ServiceObject ServiceType) order_service shopping_app.OrderService'
+  - ' depth 0 (ServiceObject ServiceType) product_service shopping_app.ProductService'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) cart_db NoSQLDatabase'
+
+.NewFrontendImpl(ctx context.Context, order_service shopping_app.OrderService, cart_service shopping_app.CartService):
+  block 0 (Body):
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (ServiceObject ServiceType) order_service shopping_app.OrderService'
+  - ' depth 0 (ServiceObject ServiceType) cart_service shopping_app.CartService'
+
+.NewOrderServiceImpl(ctx context.Context, stock_service shopping_app.StockService, billing_service shopping_app.BillingService, product_service shopping_app.ProductService, order_db NoSQLDatabase, shipment_queue Queue, analytics_queue Queue)
+:
+ block 0 (Body):
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (ServiceObject ServiceType) stock_service shopping_app.StockService'
+  - ' depth 0 (ServiceObject ServiceType) billing_service shopping_app.BillingService'
+  - ' depth 0 (ServiceObject ServiceType) product_service shopping_app.ProductService'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) order_db NoSQLDatabase'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) shipment_queue Queue'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) analytics_queue Queue'
+
+.NewProductServiceImpl(ctx context.Context, product_db NoSQLDatabase):
+  block 0 (Body):
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) product_db NoSQLDatabase'
+
+.NewShipmentServiceImpl(ctx context.Context, order_service shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue)
+:
+ block 0 (Body):
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (ServiceObject ServiceType) order_service shopping_app.OrderService'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) shipment_db NoSQLDatabase'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) shipment_queue Queue'
+
+.NewStockServiceImpl(ctx context.Context, stock_db NoSQLDatabase):
+  block 0 (Body):
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) stock_db NoSQLDatabase'

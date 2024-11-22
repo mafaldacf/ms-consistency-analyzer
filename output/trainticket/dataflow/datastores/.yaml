@@ -1,0 +1,19 @@
+'[]food.Food struct{Name string, Price float64}': []
+
+'[]string': []
+
+BeyondPrice: []
+
+Foods: []
+
+ID: []
+
+InitialPrice: []
+
+InitialWeight: []
+
+WithinPrice: []
+
+float64: []
+
+struct{ "$in" string, primitive.A}: []

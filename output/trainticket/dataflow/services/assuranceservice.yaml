@@ -1,0 +1,181 @@
+(*AssuranceServiceImpl).Create(ctx context.Context, typeindex int64, orderid string):
+  block 5 (IfDone):
+  - ' depth 0 (PointerObject PointerType) a (*assurance.AssuranceServiceImpl struct{db
+    NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) assurance.AssuranceServiceImpl struct{db NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BasicObject BasicType) typeindex int64'
+  - ' depth 0 (BasicObject BasicType) orderid string --> w-tainted 1x: write(assurance_db.Assurance.OrderID)'
+  - ' depth 0 (StructObject UserType) at assurance.AssuranceType struct{Index int64,
+    Name string, Price float64} --> w-tainted 1x: write(assurance_db.Assurance.AT)'
+  - '_ depth 1 (Reference UserType) ref <assurance.AssuranceType struct{Index int64,
+    Name string, Price float64}> @ getAssuranceType --> w-tainted 1x: write(assurance_db.Assurance.AT)'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - _ depth 1 (Reference BasicType) ref <nil> @ getAssuranceType
+  - ' depth 0 (BasicObject BasicType) id string --> w-tainted 1x: write(assurance_db.Assurance.ID)'
+  - ' depth 0 (StructObject UserType) assurance assurance.Assurance struct{ID string,
+    OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price
+    float64}} --> w-tainted 1x: write(assurance_db.Assurance)'
+  - '_ depth 1 (FieldObject FieldType) AT assurance.AssuranceType struct{Index int64,
+    Name string, Price float64} --> w-tainted 1x: write(assurance_db.Assurance.AT)'
+  - '__ depth 2 (StructObject UserType) at assurance.AssuranceType struct{Index int64,
+    Name string, Price float64} --> w-tainted 1x: write(assurance_db.Assurance.AT)'
+  - '_ depth 1 (FieldObject FieldType) ID string --> w-tainted 1x: write(assurance_db.Assurance.ID)'
+  - '__ depth 2 (BasicObject BasicType) id string --> w-tainted 1x: write(assurance_db.Assurance.ID)'
+  - '_ depth 1 (FieldObject FieldType) OrderID string --> w-tainted 1x: write(assurance_db.Assurance.OrderID)'
+  - '__ depth 2 (BasicObject BasicType) orderid string --> w-tainted 1x: write(assurance_db.Assurance.OrderID)'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
+    = assurance, collection = assurance}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+
+(*AssuranceServiceImpl).DeleteById(ctx context.Context, id string):
+  block 2 (IfDone):
+  - ' depth 0 (PointerObject PointerType) a (*assurance.AssuranceServiceImpl struct{db
+    NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) assurance.AssuranceServiceImpl struct{db NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BasicObject BasicType) id string'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
+    = assurance, collection = assurance}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (SliceObject UserType) query primitive.D'
+  - _ depth 1 (StructObject StructType) struct{ "id" string, string}
+
+(*AssuranceServiceImpl).DeleteByOrderId(ctx context.Context, order_id string):
+  block 2 (IfDone):
+  - ' depth 0 (PointerObject PointerType) a (*assurance.AssuranceServiceImpl struct{db
+    NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) assurance.AssuranceServiceImpl struct{db NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BasicObject BasicType) order_id string'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
+    = assurance, collection = assurance}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (SliceObject UserType) query primitive.D'
+  - _ depth 1 (StructObject StructType) struct{ "orderid" string, string}
+
+(*AssuranceServiceImpl).FindAssuranceById(ctx context.Context, id string):
+  block 11 (IfDone):
+  - ' depth 0 (PointerObject PointerType) a (*assurance.AssuranceServiceImpl struct{db
+    NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) assurance.AssuranceServiceImpl struct{db NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - _ depth 1 (Reference UserType) ref <ctx context.Context> @ AssuranceService
+  - ' depth 0 (BasicObject BasicType) id string --> r-tainted 1x: read(assurance_db._.id)'
+  - '_ depth 1 (Reference BasicType) ref <ID string> @ AssuranceService --> r-tainted
+    1x: read(assurance_db._.id)'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
+    = assurance, collection = assurance}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (SliceObject UserType) query primitive.D'
+  - _ depth 1 (StructObject StructType) struct{ "id" string, string}
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database
+    = assurance, collection = assurance} --> r-tainted 1x: read(assurance_db._)'
+  - '_ depth 1 (StructObject UserType) ass assurance.Assurance struct{ID string, OrderID
+    string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
+    --> r-tainted 1x: read(assurance_db.Assurance)'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (BasicObject BasicType) exists bool'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+
+(*AssuranceServiceImpl).FindAssuranceByOrderId(ctx context.Context, order_id string):
+  block 11 (IfDone):
+  - ' depth 0 (PointerObject PointerType) a (*assurance.AssuranceServiceImpl struct{db
+    NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) assurance.AssuranceServiceImpl struct{db NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BasicObject BasicType) order_id string --> r-tainted 1x: read(assurance_db._.orderid)'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
+    = assurance, collection = assurance}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (SliceObject UserType) query primitive.D'
+  - _ depth 1 (StructObject StructType) struct{ "orderid" string, string}
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database
+    = assurance, collection = assurance} --> r-tainted 1x: read(assurance_db._)'
+  - '_ depth 1 (StructObject UserType) ass assurance.Assurance struct{ID string, OrderID
+    string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
+    --> r-tainted 1x: read(assurance_db.Assurance)'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (BasicObject BasicType) exists bool'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+
+(*AssuranceServiceImpl).GetAllAssuranceTypes(ctx context.Context):
+  block 0 (Body):
+  - ' depth 0 (PointerObject PointerType) a (*assurance.AssuranceServiceImpl struct{db
+    NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) assurance.AssuranceServiceImpl struct{db NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+
+(*AssuranceServiceImpl).GetAllAssurances(ctx context.Context):
+  block 5 (IfDone):
+  - ' depth 0 (PointerObject PointerType) a (*assurance.AssuranceServiceImpl struct{db
+    NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) assurance.AssuranceServiceImpl struct{db NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
+    = assurance, collection = assurance}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database
+    = assurance, collection = assurance} --> r-tainted 1x: read(assurance_db._)'
+  - '_ depth 1 (ArrayObject ArrayType) assurances []assurance.Assurance struct{ID
+    string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string,
+    Price float64}} --> r-tainted 1x: read(assurance_db.[]assurance.Assurance struct{ID
+    string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string,
+    Price float64}})'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+
+(*AssuranceServiceImpl).Modify(ctx context.Context, assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}})
+:
+ block 11 (IfDone):
+  - ' depth 0 (PointerObject PointerType) a (*assurance.AssuranceServiceImpl struct{db
+    NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) assurance.AssuranceServiceImpl struct{db NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (StructObject UserType) assurance assurance.Assurance struct{ID string,
+    OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price
+    float64}}'
+  - _ depth 1 (FieldObject FieldType) ID string
+  - '__ depth 2 (BasicObject BasicType) ID string --> r-tainted 1x: read(assurance_db._.id)'
+  - ' depth 0 (StructObject UserType) _ assurance.Assurance struct{ID string, OrderID
+    string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}'
+  - '_ depth 1 (Reference UserType) ref <ass assurance.Assurance struct{ID string,
+    OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price
+    float64}}> @ FindAssuranceById --> r-tainted 1x: read(assurance_db.Assurance)'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - _ depth 1 (Reference BasicType) ref <nil> @ FindAssuranceById
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
+    = assurance, collection = assurance}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (SliceObject UserType) query primitive.D'
+  - _ depth 1 (StructObject StructType) struct{ "id" string, string}
+  - ' depth 0 (BasicObject BasicType) ok bool'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+
+.NewAssuranceServiceImpl(ctx context.Context, db NoSQLDatabase):
+  block 0 (Body):
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase'
+
+.getAssuranceType(ctx context.Context, index int64):
+  block 2 (IfDone):
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - _ depth 1 (Reference UserType) ref <ctx context.Context> @ AssuranceService
+  - ' depth 0 (BasicObject BasicType) index int64'
+  - _ depth 1 (Reference BasicType) ref <typeindex int64> @ AssuranceService

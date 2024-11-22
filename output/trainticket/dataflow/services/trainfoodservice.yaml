@@ -1,0 +1,94 @@
+(*TrainFoodServiceImpl).Cleanup(ctx context.Context):
+  block 2 (IfDone):
+  - ' depth 0 (PointerObject PointerType) t (*trainfood.TrainFoodServiceImpl struct{db
+    NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) trainfood.TrainFoodServiceImpl struct{db NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
+    = trainfood, collection = trainfood}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+
+(*TrainFoodServiceImpl).CreateTrainFood(ctx context.Context, tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}})
+:
+ block 17 (IfDone):
+  - ' depth 0 (PointerObject PointerType) t (*trainfood.TrainFoodServiceImpl struct{db
+    NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) trainfood.TrainFoodServiceImpl struct{db NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (StructObject UserType) tf trainfood.TrainFood struct{ID string, TripID
+    string, Foods []food.Food struct{Name string, Price float64}} --> w-tainted 1x:
+    write(trainfood_db.TrainFood)'
+  - '_ depth 1 (FieldObject FieldType) TripID string --> w-tainted 1x: write(trainfood_db.TrainFood.TripID)'
+  - '__ depth 2 (BasicObject BasicType) TripID string --> w-tainted 1x: write(trainfood_db.TrainFood.TripID)
+    --> r-tainted 1x: read(trainfood_db._.tripid)'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
+    = trainfood, collection = trainfood}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (SliceObject UserType) query primitive.D'
+  - _ depth 1 (StructObject StructType) struct{ "tripid" string, string}
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database
+    = trainfood, collection = trainfood} --> r-tainted 1x: read(trainfood_db._)'
+  - '_ depth 1 (StructObject UserType) stored_tf trainfood.TrainFood struct{ID string,
+    TripID string, Foods []food.Food struct{Name string, Price float64}} --> r-tainted
+    1x: read(trainfood_db.TrainFood)'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (BasicObject BasicType) exists bool'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (BasicObject BasicType) ok bool'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+
+(*TrainFoodServiceImpl).ListTrainFood(ctx context.Context):
+  block 8 (IfDone):
+  - ' depth 0 (PointerObject PointerType) t (*trainfood.TrainFoodServiceImpl struct{db
+    NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) trainfood.TrainFoodServiceImpl struct{db NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
+    = trainfood, collection = trainfood}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database
+    = trainfood, collection = trainfood} --> r-tainted 1x: read(trainfood_db._)'
+  - '_ depth 1 (ArrayObject ArrayType) all_foods []trainfood.TrainFood struct{ID string,
+    TripID string, Foods []food.Food struct{Name string, Price float64}} --> r-tainted
+    1x: read(trainfood_db.[]trainfood.TrainFood struct{ID string, TripID string, Foods
+    []food.Food struct{Name string, Price float64}})'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+
+(*TrainFoodServiceImpl).ListTrainFoodByTripID(ctx context.Context, tripid string):
+  block 11 (IfDone):
+  - ' depth 0 (PointerObject PointerType) t (*trainfood.TrainFoodServiceImpl struct{db
+    NoSQLDatabase})'
+  - _ depth 1 (StructObject UserType) trainfood.TrainFoodServiceImpl struct{db NoSQLDatabase}
+  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BasicObject BasicType) tripid string --> r-tainted 1x: read(trainfood_db._.tripid)'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
+    = trainfood, collection = trainfood}'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database
+    = trainfood, collection = trainfood} --> r-tainted 1x: read(trainfood_db._)'
+  - '_ depth 1 (StructObject UserType) tf trainfood.TrainFood struct{ID string, TripID
+    string, Foods []food.Food struct{Name string, Price float64}} --> r-tainted 3x:
+    read(trainfood_db.TrainFood, trainfood_db.Foods, trainfood_db.[]food.Food struct{Name
+    string, Price float64})'
+  - '__ depth 2 (FieldObject FieldType) Foods []food.Food struct{Name string, Price
+    float64} --> r-tainted 1x: read(trainfood_db.Foods)'
+  - '___ depth 3 (SliceObject SliceType) Foods []food.Food struct{Name string, Price
+    float64} --> r-tainted 1x: read(trainfood_db.[]food.Food struct{Name string, Price
+    float64})'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+  - ' depth 0 (BasicObject BasicType) exists bool'
+  - ' depth 0 (InterfaceObject UserType) err .error'
+
+.NewTrainFoodServiceImpl(ctx context.Context, db NoSQLDatabase):
+  block 0 (Body):
+  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase'

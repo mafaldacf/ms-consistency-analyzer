@@ -2,12 +2,6 @@
 ----------------------- XCY ANALYSIS -----------------------
 ------------------------------------------------------------
 entry: (*FrontendServiceImpl).Frontend(ctx context.Context)
-mode: FOREIGN_KEYS_LINEAGES
-number_inconsistencies: 0
-xcy_inconsistencies: []
-
-----------------------------------------------------------
-entry: (*FrontendServiceImpl).Frontend(ctx context.Context)
 mode: DEBUG_XCY_MISSING_DEPENDENCIES
 number_inconsistencies: 0
 xcy_inconsistencies: []
@@ -15,6 +9,12 @@ xcy_inconsistencies: []
 ----------------------------------------------------------
 entry: (*FrontendServiceImpl).Frontend(ctx context.Context)
 mode: DEBUG_XCY_MINIMIZE_DEPENDENCIES
+number_inconsistencies: 0
+xcy_inconsistencies: []
+
+----------------------------------------------------------
+entry: (*FrontendServiceImpl).Frontend(ctx context.Context)
+mode: FOREIGN_KEYS_LINEAGES
 number_inconsistencies: 0
 xcy_inconsistencies: []
 

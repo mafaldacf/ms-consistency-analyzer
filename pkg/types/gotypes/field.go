@@ -19,6 +19,12 @@ type FieldType struct {
 	FieldTag      string // set if is struct field
 }
 
+func NewFieldType(wrappedType Type) *FieldType {
+	return &FieldType{
+		WrappedType: wrappedType,
+	}
+}
+
 // ------------
 // Type Methods
 // ------------

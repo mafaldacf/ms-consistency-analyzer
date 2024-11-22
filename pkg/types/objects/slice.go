@@ -102,6 +102,9 @@ func (v *SliceObject) GetNestedDependencies(nearestFields bool) []Object {
 	if v.GetVariableInfo().HasReferences() {
 		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
 	}
+	if v.GetVariableInfo().IsReferencedBy() {
+		deps = append(deps, v.GetVariableInfo().GetNestedRefByDependencies(nil)...)
+	}
 	for _, elem := range v.Elements {
 		deps = append(deps, elem.GetNestedDependencies(nearestFields)...)
 	}
@@ -128,6 +131,7 @@ func (v *SliceObject) String() string {
 }
 
 func (v *SliceObject) LongString() string {
+	// USE ONLY STRING HERE TO SIMPLIFY DEBUG
 	s := v.ObjectInfo.LongString() + " = ("
 	for i, elem := range v.Elements {
 		s += elem.String()
@@ -149,7 +153,7 @@ func (v *SliceObject) Copy(force bool) Object {
 }
 
 func (v *SliceObject) DeepCopy() Object {
-	logger.Logger.Debugf("[VARS SLICE - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
+	logger.Logger.Fatalf("[VARS SLICE - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
 	copy := &SliceObject{ObjectInfo: v.ObjectInfo.DeepCopy()}
 	for _, v := range v.Elements {
 		newElem := v.DeepCopy()

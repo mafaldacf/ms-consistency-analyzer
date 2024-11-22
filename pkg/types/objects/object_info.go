@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"runtime"
+	"slices"
 
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
@@ -28,6 +29,13 @@ type ObjectInfo struct {
 
 	Dataflows         []*ObjectDataflow
 	IndirectDataflows []*ObjectDataflow
+}
+
+func NewObjectInfoInline(t gotypes.Type) *ObjectInfo {
+	return &ObjectInfo{
+		Type: t,
+		Id:   VARIABLE_INLINE_ID,
+	}
 }
 
 func (vinfo *ObjectInfo) ResetAllDataflows() {
@@ -265,6 +273,10 @@ func (vinfo *ObjectInfo) HasReferences() bool {
 	return vinfo.References != nil
 }
 
+func (vinfo *ObjectInfo) IsReferencedBy() bool {
+	return vinfo.ReferencedBy != nil
+}
+
 func (vinfo *ObjectInfo) AssignID(id int64) {
 	vinfo.Id = id
 }
@@ -316,6 +328,19 @@ func (vinfo *ObjectInfo) GetReferencesNestedDependencies(nearestFields bool, v O
 	for _, ref := range vinfo.References {
 		deps = append(deps, ref.GetNestedDependencies(false)...)
 	}
+	var visited []*ObjectInfo
+	deps = append(deps, vinfo.GetNestedRefByDependencies(visited)...)
+	return deps
+}
 
+func (vinfo *ObjectInfo) GetNestedRefByDependencies(visited []*ObjectInfo) []Object {
+	var deps []Object
+	if !slices.Contains(visited, vinfo) {
+		visited = append(visited, vinfo)
+		for _, refBy := range vinfo.ReferencedBy {
+			deps = append(deps, refBy)
+			deps = append(deps, refBy.GetVariableInfo().GetNestedRefByDependencies(visited)...)
+		}
+	}
 	return deps
 }

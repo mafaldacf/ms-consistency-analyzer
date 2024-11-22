@@ -79,6 +79,9 @@ func (v *BlueprintBackendObject) GetNestedDependencies(nearestFields bool) []obj
 	if v.GetVariableInfo().HasReferences() {
 		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
 	}
+	if v.GetVariableInfo().IsReferencedBy() {
+		deps = append(deps, v.GetVariableInfo().GetNestedRefByDependencies(nil)...)
+	}
 	deps = append(deps, v.TargetVariable.GetNestedDependencies(nearestFields)...)
 	return deps
 }

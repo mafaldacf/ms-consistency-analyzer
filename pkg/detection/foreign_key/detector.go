@@ -68,7 +68,7 @@ func (detector *ForeignKeyDetector) analyzeNodes(lastServiceCallNode *abstractgr
 			case datastores.NoSQL:
 
 				query := params[1]
-				queryObjs := abstractgraph.GetQueryObjectsIfNoSQLRead(datastore, query)
+				queryObjs := abstractgraph.GetNoSQLQueryDocument(datastore, query)
 				for _, qObj := range queryObjs {
 					logger.Logger.Infof("[QUERY OBJ] %s", qObj.String())
 					field := datastore.Schema.GetField(qObj.FieldName).(*datastores.Entry)
@@ -116,7 +116,10 @@ func (detector *ForeignKeyDetector) Results() string {
 	results += "------------------- FOREIGN KEY ANALYSIS -------------------\n"
 	results += "------------------------------------------------------------\n"
 	for i, read := range detector.reads {
-		results += fmt.Sprintf("foreign key read #%d:\n%s", i, read.String())
+		results += fmt.Sprintf("foreign key read #%d:\n%s\n", i, read.String())
+		if i < len(detector.reads)-1 {
+			results += "\n" // enforce empty line between each foreign key read result
+		}
 	}
 	detector.save(results)
 	return results

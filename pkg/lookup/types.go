@@ -59,7 +59,7 @@ func CreateVariableFromType(name string, t gotypes.Type) objects.Object {
 		}
 		return v
 	case *gotypes.StructType:
-		return &objects.StructObject{ObjectInfo: info, Fields: make(map[string]objects.Object)}
+		return objects.NewStructObject(info)
 	case *gotypes.SliceType:
 		return &objects.SliceObject{ObjectInfo: info}
 	case *gotypes.MapType:

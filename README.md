@@ -27,6 +27,10 @@ Available applications:
 - `trainticket`
 
 ```zsh
+python3 -m venv ~/.venv
+source ~/.venv/bin/activate
+pip3 install -r requirements.txt
+
 go run main.go --help
 
 go run main.go -app=foobar
@@ -48,9 +52,7 @@ go run main.go -app=shopping_simple --cascade
 go run main.go -app=shopping_simple --fk
 go run main.go -app=shopping_simple --xcy --fk --cascade
 
-python3 -m venv ~/.venv
 source ~/.venv/bin/activate
-pip3 install -r requirements.txt
 
 ./graphs.py --help
 # usage: graphs.py [-h] [--app {postnotification,postnotification_simple,trainticket,shopping_app,shopping_simple,sockshop2,foobar}] [--graph {app,call}] [--labeled] [--all]
@@ -70,11 +72,11 @@ pip3 install -r requirements.txt
 |---------------------------|---------------|---------------|-------------------|-----------------------|
 | `foobar`                  | **YES**       | 0             | 0                 | 0                     |
 | `shopping_simple`         | **YES**       | 0             | 1                 | 0                     |
-| `shopping_app`            | NO            |               |                   |                       |
+| `shopping_app`            | **YES**       | 1             | 0                 | 1                     |
 | `postnotification_simple` | **YES**       | 1             | 0                 | 1                     |
-| `postnotification`        | **YES**       | 1             | 0                 | ??                    |
-| `sockshop2`               | NO            |               |                   |                       |
-| `trainticket`             | NO            |               |                   |                       |
+| `postnotification`        | **YES**       | 1             | 0                 | 2                     |
+| `sockshop2`               | **YES**       | 0             | 0                 | 0                     |
+| `trainticket`             | **YES**       | 0             | 13                | 0                     |
 
 ## Structure
 

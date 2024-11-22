@@ -32,7 +32,7 @@ func NewEntry(name string, t string, id int64, datastore *Datastore) *Entry {
 }
 
 func (s *Schema) GetRootFieldName() string {
-	logger.Logger.Infof("SCHEMA: %v", s.Fields)
+	//logger.Logger.Infof("SCHEMA: %v", s.Fields)
 	// FIXME: better to have an additional bool for the fields that state if they are root or no, but for now we have:
 	// index 0 is for "_" root field (that can be created in reads if no fields exists) and index 1 is when there was a previous write
 	if len(s.Fields) >= 2 {

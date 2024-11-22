@@ -1,0 +1,77 @@
+------------------------------------------------------------
+----------------------- XCY ANALYSIS -----------------------
+------------------------------------------------------------
+entry: (*FrontendImpl).AddProductToCart(ctx context.Context, cartID string, productID
+  string)
+mode: DEBUG_XCY_MISSING_DEPENDENCIES
+number_inconsistencies: 0
+xcy_inconsistencies: []
+
+----------------------------------------------------------
+entry: (*FrontendImpl).AddProductToCart(ctx context.Context, cartID string, productID
+  string)
+mode: DEBUG_XCY_MINIMIZE_DEPENDENCIES
+number_inconsistencies: 0
+xcy_inconsistencies: []
+
+----------------------------------------------------------
+entry: (*FrontendImpl).AddProductToCart(ctx context.Context, cartID string, productID
+  string)
+mode: FOREIGN_KEYS_LINEAGES
+number_inconsistencies: 0
+xcy_inconsistencies: []
+
+----------------------------------------------------------
+entry: (*FrontendImpl).Checkout(ctx context.Context, cartID string, userID string,
+  productID string, quantity int, price int)
+mode: DEBUG_XCY_MISSING_DEPENDENCIES
+number_inconsistencies: 1
+xcy_inconsistencies:
+- missing_dependency: false
+  read: (2, 2) read(order_db, query, result) @ OrderService
+  visible_dependency_set:
+  - (0, 0) write(order_db, order, order) @ OrderService
+  - (0, 1) write(stock_db, stock, stock) @ StockService
+  - (0, 2) write(billing_db, bill, bill) @ BillingService
+  - (0, 4) write(analytics_queue, analyticsMessage, analyticsMessage) @ OrderService
+  - (0, 5) write(shipment_queue, shipmentMessage, shipmentMessage) @ OrderService
+  - (2, 1) write(shipment_db, shipment, shipment) @ ShipmentService
+  write: (0, 0) write(order_db, order, order) @ OrderService
+
+----------------------------------------------------------
+entry: (*FrontendImpl).Checkout(ctx context.Context, cartID string, userID string,
+  productID string, quantity int, price int)
+mode: DEBUG_XCY_MINIMIZE_DEPENDENCIES
+number_inconsistencies: 1
+xcy_inconsistencies:
+- read: (2, 2) read(order_db, query, result) @ OrderService
+  write: (0, 0) write(order_db, order, order) @ OrderService
+
+----------------------------------------------------------
+entry: (*FrontendImpl).Checkout(ctx context.Context, cartID string, userID string,
+  productID string, quantity int, price int)
+mode: FOREIGN_KEYS_LINEAGES
+number_inconsistencies: 1
+xcy_inconsistencies:
+- read: (2, 2) read(order_db, query, result) @ OrderService
+  write: (0, 0) write(order_db, order, order) @ OrderService
+
+----------------------------------------------------------
+entry: (*FrontendImpl).ReadOrder(ctx context.Context, orderID string)
+mode: DEBUG_XCY_MISSING_DEPENDENCIES
+number_inconsistencies: 0
+xcy_inconsistencies: []
+
+----------------------------------------------------------
+entry: (*FrontendImpl).ReadOrder(ctx context.Context, orderID string)
+mode: DEBUG_XCY_MINIMIZE_DEPENDENCIES
+number_inconsistencies: 0
+xcy_inconsistencies: []
+
+----------------------------------------------------------
+entry: (*FrontendImpl).ReadOrder(ctx context.Context, orderID string)
+mode: FOREIGN_KEYS_LINEAGES
+number_inconsistencies: 0
+xcy_inconsistencies: []
+
+----------------------------------------------------------

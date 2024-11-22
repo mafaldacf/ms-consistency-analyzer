@@ -119,6 +119,9 @@ func (v *MapObject) GetNestedDependencies(nearestFields bool) []Object {
 	if v.GetVariableInfo().HasReferences() {
 		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
 	}
+	if v.GetVariableInfo().IsReferencedBy() {
+		deps = append(deps, v.GetVariableInfo().GetNestedRefByDependencies(nil)...)
+	}
 	for _, elem := range v.KeyValues {
 		deps = append(deps, elem.GetNestedDependencies(nearestFields)...)
 	}
@@ -169,10 +172,10 @@ func (v *MapObject) AddReferenceWithID(target Object, creator string) {
 		if _, valueIsInterfaceType := v.GetMapType().ValueType.(*gotypes.InterfaceType); valueIsInterfaceType {
 			if targetStructVariable, ok := target.(*StructObject); ok {
 				for key, value := range v.KeyValues {
-					targetValue, ok := targetStructVariable.Fields[key.GetType().GetBasicValue()]
+					targetValue, ok := targetStructVariable.fields[key.GetType().GetBasicValue()]
 					if !ok {
 						logger.Logger.Warnf("[VARS MAP - REF] skipping target key (%s) (%s) in struct (%s) with fields:", utils.GetType(key), key.GetType().GetBasicValue(), targetStructVariable)
-						for k, f := range targetStructVariable.Fields {
+						for k, f := range targetStructVariable.fields {
 							logger.Logger.Warnf("\t\t [VARS MAP - REF] - %s: (%s) %s", k, VariableTypeName(f), f.String())
 						}
 					} else {

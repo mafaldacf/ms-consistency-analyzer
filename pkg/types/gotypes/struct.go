@@ -11,6 +11,10 @@ type StructType struct {
 	Methods        map[string]string // maps method name to package path
 }
 
+func NewStructType() *StructType {
+	return &StructType{}
+}
+
 // ------------
 // Type Methods
 // ------------

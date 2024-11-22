@@ -1,0 +1,8 @@
+------------------------------------------------------------
+------------------- FOREIGN KEY ANALYSIS -------------------
+------------------------------------------------------------
+foreign key read #0:
+- ref:	SHIPMENT_QUEUE.ShipmentMessage.OrderID
+	@ s.shipment_queue.Pop(ctx context.Context, event (*map[string]interface{}))
+- dst:	ORDER_DB.Order.OrderID
+	@ collection.FindOne(ctx context.Context, query primitive.D)

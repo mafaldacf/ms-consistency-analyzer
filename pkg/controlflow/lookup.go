@@ -10,8 +10,8 @@ import (
 	"analyzer/pkg/lookup"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
-	"analyzer/pkg/types/objects"
 	"analyzer/pkg/types/gotypes"
+	"analyzer/pkg/types/objects"
 	"analyzer/pkg/utils"
 )
 
@@ -85,13 +85,14 @@ func lookupFieldForVariable(variable objects.Object, fieldName string, inAssignm
 	case *objects.GenericObject:
 		logger.Logger.Fatalf("[CFG - LOOKUP VAR] ignoring generic variable (%s)", v.String())
 	case *objects.StructObject:
-		field, exists := v.Fields[fieldName]
-		if !exists {
+		var field *objects.FieldObject
+		field = v.GetFieldByKeyIfExists(fieldName)
+		if field == nil {
 			v.GetStructType().GetFieldTypeByName(fieldName)
 			fieldType := v.GetStructType().GetFieldTypeByName(fieldName)
-			field = lookup.CreateVariableFromType(fieldName, fieldType)
-			v.Fields[fieldName] = field
-			logger.Logger.Warnf("[REVIEW] added new variable (%s) for field (%s) in structure variable (%s) -- fields: %v", field.String(), fieldName, variable.String(), v.Fields)
+			field = lookup.CreateVariableFromType(fieldName, fieldType).(*objects.FieldObject)
+			v.SetFieldByKey(fieldName, field)
+			logger.Logger.Warnf("[REVIEW] added new variable (%s) for field (%s) in structure variable (%s) -- fields: %v", field.String(), fieldName, variable.String(), v.GetFieldsMap())
 		}
 		if !inAssignment {
 			return objects.UnwrapFieldVariable(field)
@@ -217,38 +218,28 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 	// 		- composite lit:
 	// 			[]string{"alice", "bob"}
 	case *ast.CompositeLit:
-		logger.Logger.Debugf("INSIDE COMPOSITE LIT FOR e.Type (%v), and e.Elts (%v)", e.Type, e.Elts)
 		if e.Type == nil {
-			structVariable := &objects.StructObject{
-				ObjectInfo: &objects.ObjectInfo{
-					Type: &gotypes.StructType{},
-					Id:   objects.VARIABLE_INLINE_ID,
-				},
-				Fields: make(map[string]objects.Object),
-			}
+			logger.Logger.Debugf("[COMPOSITE LIT - TYPE NIL] e.Type (%v), and e.Elts (%v)", e.Type, e.Elts)
+			structVariable := objects.NewStructObject(objects.NewObjectInfoInline(gotypes.NewStructType()))
 			for _, elt := range e.Elts {
 				eltVar, _ := lookupVariableFromAstExpr(service, method, block, elt, nil, false)
-				logger.Logger.Debugf("--------- [%s.%s] FOUND ELT VAR (%s) FOR COMPOSITE LIT (%v)", service.GetName(), method.GetName(), eltVar.String(), e)
-				objects.WrapToFieldVariable(eltVar, structVariable, true)
+				logger.Logger.Debugf("[%s.%s] FOUND ELT VAR (%s) FOR COMPOSITE LIT (%v)", service.GetName(), method.GetName(), eltVar.String(), e)
+				objects.WrapObjectToField(eltVar, structVariable, true)
 			}
+			logger.Logger.Infof("EXIT! %v", structVariable.LongString())
 			return structVariable, nil
 		}
 
+		logger.Logger.Debugf("[COMPOSITE LIT] e.Type (%v), and e.Elts (%v)", e.Type, e.Elts)
 		eType := lookup.ComputeTypeForAstExpr(service.GetFile(), e.Type)
 		eType, eTypeOrUserType := gotypes.UnwrapUserType(eType)
 
 		switch eType.(type) {
 		case *gotypes.StructType:
-			structVariable := &objects.StructObject{
-				ObjectInfo: &objects.ObjectInfo{
-					Type: eTypeOrUserType,
-					Id:   objects.VARIABLE_INLINE_ID,
-				},
-				Fields: make(map[string]objects.Object),
-			}
+			structVariable := objects.NewStructObject(objects.NewObjectInfoInline(eTypeOrUserType))
 			for _, elt := range e.Elts {
 				eltVar, _ := lookupVariableFromAstExpr(service, method, block, elt, nil, false)
-				objects.WrapToFieldVariable(eltVar, structVariable, false)
+				objects.WrapObjectToField(eltVar, structVariable, false)
 			}
 			return structVariable, nil
 		case *gotypes.ArrayType:
