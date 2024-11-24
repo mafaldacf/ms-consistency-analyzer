@@ -106,7 +106,7 @@ foobar:
 - imported variables: []
 - declared types:
   - foobar.FrontendService
-  - foobar.FrontendServiceImpl struct{fooService foo.FooService, barService bar.BarService}
+  - foobar.FrontendServiceImpl struct{barService bar.BarService, fooService foo.FooService}
 - declared variables:
   - HelloWorldVariable string
 - declared constants:

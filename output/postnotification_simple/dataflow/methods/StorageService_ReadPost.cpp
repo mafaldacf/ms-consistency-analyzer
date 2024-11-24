@@ -26,7 +26,7 @@
 [____] (Reference BasicType) ref <postID_STORAGE_SVC int64> @ StorageService
 
     --> r-tainted: read(posts_db.Post) {1}
-[] (StructObject UserType) post postnotification_simple.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username "some username" string}, Creator postnotification_simple.Creator struct{Username "some username" string}}
+[] (StructObject UserType) post postnotification_simple.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username string}}
 
 [] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = post, collection = post}
 
@@ -51,7 +51,7 @@
     --> r-tainted: read(posts_db.Post) {1}
 [] (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database = post, collection = post}
      --> r-tainted: read(posts_db.Post) {1}
-[_] (StructObject UserType) post postnotification_simple.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username "some username" string}, Creator postnotification_simple.Creator struct{Username "some username" string}}
+[_] (StructObject UserType) post postnotification_simple.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username string}}
 
 [] (InterfaceObject UserType) err .error
 

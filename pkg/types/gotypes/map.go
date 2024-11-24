@@ -16,6 +16,13 @@ type MapType struct {
 // Type Methods
 // ------------
 
+func (t *MapType) DeepCopy() Type {
+	return &MapType{
+		KeyType:   t.KeyType,
+		ValueType: t.ValueType,
+	}
+}
+
 func (t *MapType) IsSameType(other Type) bool {
 	_, ok := other.(*MapType)
 	return ok

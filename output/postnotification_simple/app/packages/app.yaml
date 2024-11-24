@@ -79,16 +79,17 @@ postnotification_simple:
 - imported constants: []
 - imported variables: []
 - declared types:
-  - postnotification_simple.Creator struct{Username "some username" string}
+  - postnotification_simple.Creator struct{Username string}
   - postnotification_simple.Message struct{ReqID int64, PostID_MESSAGE int64, Timestamp int64}
   - postnotification_simple.NotifyService
-  - postnotification_simple.NotifyServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue {instance = notifications_queue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})},
-    num_workers 4 int}
-  - postnotification_simple.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username "some username" string}, Creator postnotification_simple.Creator struct{Username "some username" string}}
+  - postnotification_simple.NotifyServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue interface{Queue.Push(ctx context.Context, item interface{}),
+    Queue.Pop(ctx context.Context, item interface{})}, num_workers int}
+  - postnotification_simple.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username string}}
   - postnotification_simple.StorageService
-  - postnotification_simple.StorageServiceImpl struct{postsDb NoSQLDatabase {instance = posts_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - postnotification_simple.StorageServiceImpl struct{postsDb NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
   - postnotification_simple.UploadService
-  - postnotification_simple.UploadServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue {instance = notifications_queue} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}}
+  - postnotification_simple.UploadServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue interface{Queue.Push(ctx context.Context, item interface{}),
+    Queue.Pop(ctx context.Context, item interface{})}}
 - declared variables: []
 - declared constants: []
 - service types:
@@ -104,7 +105,7 @@ postnotification_simple:
 - parsed methods:
   - (*postnotification_simple.NotifyServiceImpl).Run(ctx context.Context) error
   - (*postnotification_simple.NotifyServiceImpl).workerThread(ctx context.Context, workerID int) error
-  - (*postnotification_simple.StorageServiceImpl).ReadPost(ctx context.Context, reqID int64, postID int64) (postnotification_simple.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username "some username" string}, Creator postnotification_simple.Creator struct{Username "some username" string}}, error)
+  - (*postnotification_simple.StorageServiceImpl).ReadPost(ctx context.Context, reqID int64, postID int64) (postnotification_simple.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username string}}, error)
   - (*postnotification_simple.StorageServiceImpl).StorePost(ctx context.Context, reqID int64, text string) (int64, error)
   - (*postnotification_simple.UploadServiceImpl).UploadPost(ctx context.Context, username string, text string) (int64, error)
   - postnotification_simple.NewNotifyServiceImpl(ctx context.Context, storageService postnotification_simple.StorageService, notificationsQueue Queue) (postnotification_simple.NotifyService, error)

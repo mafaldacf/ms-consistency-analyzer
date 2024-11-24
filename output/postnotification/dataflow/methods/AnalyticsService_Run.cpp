@@ -1,4 +1,4 @@
-[] (PointerObject PointerType) n (*postnotification.AnalyticsServiceImpl struct{analyticsDb NoSQLDatabase, analyticsQueue Queue, numWorkers 4 int})
+[] (PointerObject PointerType) n (*postnotification.AnalyticsServiceImpl struct{analyticsQueue Queue, analyticsDb NoSQLDatabase, numWorkers int})
 [_] (StructObject UserType) postnotification.AnalyticsServiceImpl struct{analyticsDb NoSQLDatabase, analyticsQueue Queue, numWorkers 4 int}
 [__] (FieldObject FieldType) analyticsDb NoSQLDatabase
 [___] (BlueprintBackendObject BlueprintBackendType) analyticsDb NoSQLDatabase
@@ -17,7 +17,7 @@
 
 [] (InterfaceObject UserType) err .error
 
-[] (PointerObject PointerType) n (*postnotification.AnalyticsServiceImpl struct{analyticsDb NoSQLDatabase, analyticsQueue Queue, numWorkers 4 int})
+[] (PointerObject PointerType) n (*postnotification.AnalyticsServiceImpl struct{analyticsQueue Queue, analyticsDb NoSQLDatabase, numWorkers int})
 [_] (StructObject UserType) postnotification.AnalyticsServiceImpl struct{analyticsDb NoSQLDatabase, analyticsQueue Queue, numWorkers 4 int}
 [__] (FieldObject FieldType) analyticsDb NoSQLDatabase
 [___] (BlueprintBackendObject BlueprintBackendType) analyticsDb NoSQLDatabase

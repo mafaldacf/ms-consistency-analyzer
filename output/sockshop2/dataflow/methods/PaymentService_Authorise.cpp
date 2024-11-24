@@ -1,4 +1,4 @@
-[] (PointerObject PointerType) s (*payment.paymentImpl struct{declineOverAmount 50 float32})
+[] (PointerObject PointerType) s (*payment.paymentImpl struct{declineOverAmount float32})
 [_] (StructObject UserType) payment.paymentImpl struct{declineOverAmount 50 float32}
 [__] (FieldObject FieldType) declineOverAmount 50 float32
 [___] (BasicObject BasicType) 50 float32

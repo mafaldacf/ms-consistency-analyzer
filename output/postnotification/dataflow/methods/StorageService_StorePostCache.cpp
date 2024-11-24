@@ -21,9 +21,9 @@
 [__] (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService
 
     --> w-tainted: write(posts_cache.key, posts_cache.value) {2}
-[] (StructObject UserType) post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}}
+[] (StructObject UserType) post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}
      --> w-tainted: write(posts_cache.key, posts_cache.value, posts_db.Post) {3}
-[_] (Reference UserType) ref <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}}> @ UploadService
+[_] (Reference UserType) ref <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username string}}> @ UploadService
       --> w-tainted: write(posts_db.Post.Creator, posts_cache.key, posts_cache.value) {3}
 [__] (FieldObject FieldType) Creator postnotification.Creator struct{Username "some username" string}
        --> w-tainted: write(posts_cache.key, posts_cache.value, posts_db.Post.Creator) {3}

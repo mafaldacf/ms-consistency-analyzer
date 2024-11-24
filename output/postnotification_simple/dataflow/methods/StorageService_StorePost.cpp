@@ -30,7 +30,7 @@
 [_] (BasicObject BasicType) "bob" string
 
     --> w-tainted: write(posts_db.Post) {1}
-[] (StructObject UserType) post postnotification_simple.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username "some username" string}, Creator postnotification_simple.Creator struct{Username "some username" string}}
+[] (StructObject UserType) post postnotification_simple.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification_simple.Creator struct{Username "some username" string}, Creator postnotification_simple.Creator struct{Username string}}
      --> w-tainted: write(posts_db.Post.Creator) {1}
 [_] (FieldObject FieldType) Creator postnotification_simple.Creator struct{Username "some username" string}
       --> w-tainted: write(posts_db.Post.Creator) {1}

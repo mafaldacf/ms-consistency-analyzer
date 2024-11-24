@@ -1,19 +1,12 @@
-(*StorageServiceImpl).ReadMedia(ctx context.Context, reqID int64, postID int64):
+(*StorageServiceImpl).ReadPostMedia(ctx context.Context, reqID int64, postID int64):
 - DATASTORE CALL @ posts_cache >> Cache.Get(ctx context.Context, key string, value interface{}) (err, interface{})
-- SERVICE CALL @ ReadMedia >> (*postnotification.MediaServiceImpl).ReadMedia(ctx context.Context, mediaID int64) (postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string}, error)
-
-(*StorageServiceImpl).ReadPostCache(ctx context.Context, reqID int64, postID int64):
-- DATASTORE CALL @ posts_cache >> Cache.Get(ctx context.Context, key string, value interface{}) (err, interface{})
+- SERVICE CALL @ ReadMedia >> (*postnotification.MediaServiceImpl).ReadMedia(ctx context.Context, mediaID int64) (postnotification.Media struct{MediaID int64, Content string}, error)
 
 (*StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID int64):
 - DATASTORE CALL @ posts_db >> NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor, interface{})
 - SERVICE CALL @ ReadAnalytics >> (*postnotification.AnalyticsServiceImpl).ReadAnalytics(ctx context.Context, postID int64) (postnotification.Analytics struct{PostID int64}, error)
 
-(*StorageServiceImpl).StorePostCache(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}})
-:
-	- DATASTORE CALL @ posts_cache >> Cache.Put(ctx context.Context, key string, value interface{}) interface{}
-
-(*StorageServiceImpl).StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}})
+(*StorageServiceImpl).StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}})
 :
 	- DATASTORE CALL @ posts_db >> NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}) interface{}
   - DATASTORE CALL @ analytics_queue >> Queue.Push(ctx context.Context, item interface{})

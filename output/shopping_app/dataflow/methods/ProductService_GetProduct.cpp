@@ -4,20 +4,20 @@
 [___] (BlueprintBackendObject BlueprintBackendType) product_db NoSQLDatabase
 
 [] (InterfaceObject UserType) ctx context.Context
-[_] (Reference UserType) ref <ctx context.Context> @ CartService
-[__] (Reference UserType) ref <ctx context.Context> @ Frontend
 [_] (Reference UserType) ref <ctx context.Context> @ OrderService
+[__] (Reference UserType) ref <ctx context.Context> @ Frontend
+[_] (Reference UserType) ref <ctx context.Context> @ CartService
 [__] (Reference UserType) ref <ctx context.Context> @ Frontend
 
     --> r-tainted: read(product_db._.productID) {1}
 [] (BasicObject BasicType) productID string
-     --> r-tainted: read(product_db._.productID) {1}
-[_] (Reference BasicType) ref <productID string> @ CartService
-      --> r-tainted: read(product_db._.productID) {1}
-[__] (Reference BasicType) ref <productID string> @ Frontend
      --> w-tainted: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID) {3}         --> w-tainted: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID) {3} --> r-tainted: read(product_db._.productID) {1}
 [_] (Reference BasicType) ref <productID string> @ OrderService
       --> w-tainted: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID) {3}           --> w-tainted: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID) {3} --> r-tainted: read(product_db._.productID) {1}
+[__] (Reference BasicType) ref <productID string> @ Frontend
+     --> r-tainted: read(product_db._.productID) {1}
+[_] (Reference BasicType) ref <productID string> @ CartService
+      --> r-tainted: read(product_db._.productID) {1}
 [__] (Reference BasicType) ref <productID string> @ Frontend
 
     --> r-tainted: read(product_db.Product) {1}
@@ -34,13 +34,13 @@
 [__] (FieldObject FieldType) Value string
        --> r-tainted: read(product_db._.productID) {1}
 [___] (BasicObject BasicType) productID string
-        --> r-tainted: read(product_db._.productID) {1}
-[____] (Reference BasicType) ref <productID string> @ CartService
-         --> r-tainted: read(product_db._.productID) {1}
-[_____] (Reference BasicType) ref <productID string> @ Frontend
         --> w-tainted: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID) {3}               --> w-tainted: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID) {3} --> r-tainted: read(product_db._.productID) {1}
 [____] (Reference BasicType) ref <productID string> @ OrderService
          --> w-tainted: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID) {3}                 --> w-tainted: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID) {3} --> r-tainted: read(product_db._.productID) {1}
+[_____] (Reference BasicType) ref <productID string> @ Frontend
+        --> r-tainted: read(product_db._.productID) {1}
+[____] (Reference BasicType) ref <productID string> @ CartService
+         --> r-tainted: read(product_db._.productID) {1}
 [_____] (Reference BasicType) ref <productID string> @ Frontend
 
     --> r-tainted: read(product_db._) {1}

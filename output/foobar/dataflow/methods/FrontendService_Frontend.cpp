@@ -1,4 +1,4 @@
-[] (PointerObject PointerType) d (*foobar.FrontendServiceImpl struct{fooService foo.FooService, barService bar.BarService})
+[] (PointerObject PointerType) d (*foobar.FrontendServiceImpl struct{barService bar.BarService, fooService foo.FooService})
 [_] (StructObject UserType) foobar.FrontendServiceImpl struct{fooService foo.FooService, barService bar.BarService}
 [__] (FieldObject FieldType) barService bar.BarService
 [___] (ServiceObject ServiceType) barService bar.BarService

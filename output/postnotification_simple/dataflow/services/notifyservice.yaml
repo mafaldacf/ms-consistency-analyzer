@@ -2,7 +2,7 @@
   block 4 (ForPost):
   - ' depth 0 (PointerObject PointerType) n (*postnotification_simple.NotifyServiceImpl
     struct{storageService postnotification_simple.StorageService, notificationsQueue
-    Queue, num_workers 4 int})'
+    Queue, num_workers int})'
   - _ depth 1 (StructObject UserType) postnotification_simple.NotifyServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue, num_workers 4 int}
   - __ depth 2 (FieldObject FieldType) notificationsQueue Queue
   - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) notificationsQueue Queue
@@ -21,7 +21,7 @@
   block 0 (Body):
   - ' depth 0 (PointerObject PointerType) n (*postnotification_simple.NotifyServiceImpl
     struct{storageService postnotification_simple.StorageService, notificationsQueue
-    Queue, num_workers 4 int})'
+    Queue, num_workers int})'
   - _ depth 1 (StructObject UserType) postnotification_simple.NotifyServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue, num_workers 4 int}
   - __ depth 2 (FieldObject FieldType) notificationsQueue Queue
   - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) notificationsQueue Queue

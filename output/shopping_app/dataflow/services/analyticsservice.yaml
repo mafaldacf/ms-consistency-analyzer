@@ -1,7 +1,7 @@
 (*AnalyticsServiceImpl).Run(ctx context.Context):
   block 4 (ForPost):
   - ' depth 0 (PointerObject PointerType) n (*shopping_app.AnalyticsServiceImpl struct{analytics_db
-    NoSQLDatabase, analytics_queue Queue, num_workers 4 int})'
+    NoSQLDatabase, analytics_queue Queue, num_workers int})'
   - _ depth 1 (StructObject UserType) shopping_app.AnalyticsServiceImpl struct{analytics_db NoSQLDatabase, analytics_queue Queue, num_workers 4 int}
   - __ depth 2 (FieldObject FieldType) analytics_db NoSQLDatabase
   - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) analytics_db NoSQLDatabase
@@ -19,7 +19,7 @@
 :
  block 0 (Body):
   - ' depth 0 (PointerObject PointerType) s (*shopping_app.AnalyticsServiceImpl struct{analytics_db
-    NoSQLDatabase, analytics_queue Queue, num_workers 4 int})'
+    NoSQLDatabase, analytics_queue Queue, num_workers int})'
   - _ depth 1 (StructObject UserType) shopping_app.AnalyticsServiceImpl struct{analytics_db NoSQLDatabase, analytics_queue Queue, num_workers 4 int}
   - __ depth 2 (FieldObject FieldType) analytics_db NoSQLDatabase
   - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) analytics_db NoSQLDatabase
@@ -86,7 +86,7 @@
 (*AnalyticsServiceImpl).workerThread(ctx context.Context):
   block 0 (Body):
   - ' depth 0 (PointerObject PointerType) s (*shopping_app.AnalyticsServiceImpl struct{analytics_db
-    NoSQLDatabase, analytics_queue Queue, num_workers 4 int})'
+    NoSQLDatabase, analytics_queue Queue, num_workers int})'
   - _ depth 1 (StructObject UserType) shopping_app.AnalyticsServiceImpl struct{analytics_db NoSQLDatabase, analytics_queue Queue, num_workers 4 int}
   - __ depth 2 (FieldObject FieldType) analytics_db NoSQLDatabase
   - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) analytics_db NoSQLDatabase

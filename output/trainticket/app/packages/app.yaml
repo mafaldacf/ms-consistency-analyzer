@@ -48,8 +48,7 @@ assurance:
 - declared types:
   - assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
   - assurance.AssuranceService
-  - assurance.AssuranceServiceImpl struct{db NoSQLDatabase {instance = assurance_db}
-    interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - assurance.AssuranceServiceImpl struct{db NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
   - assurance.AssuranceType struct{Index int64, Name string, Price float64}
 - declared variables:
   - ALL_ASSURANCES []assurance.AssuranceType struct{Index int64, Name string, Price float64}
@@ -106,7 +105,7 @@ config:
 - declared types:
   - config.Config struct{Name string, Value string, Description string}
   - config.ConfigService
-  - config.ConfigServiceImpl struct{db NoSQLDatabase {instance = config_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - config.ConfigServiceImpl struct{db NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
 - declared variables: []
 - declared constants: []
 - service types:
@@ -157,8 +156,7 @@ consignprice:
 - declared types:
   - consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64}
   - consignprice.ConsignPriceService
-  - consignprice.ConsignPriceServiceImpl struct{db NoSQLDatabase {instance = consignprice_db}
-    interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - consignprice.ConsignPriceServiceImpl struct{db NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
 - declared variables: []
 - declared constants: []
 - service types:
@@ -207,8 +205,7 @@ contacts:
 - declared types:
   - contacts.Contact struct{ID string, AccountID string, Name string, DocumentType int, DocumentNumber string, PhoneNumber string}
   - contacts.ContactsService
-  - contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase {instance = contacts_db}
-    interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - contacts.ContactsServiceImpl struct{contactsDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
 - declared variables: []
 - declared constants:
   - ID_CARD 1 int64
@@ -260,8 +257,7 @@ delivery:
 - declared types:
   - delivery.Delivery struct{ID string, OrderID string, FoodName string, StoreName string, StationName string}
   - delivery.DeliveryService
-  - delivery.DeliveryServiceImpl struct{db NoSQLDatabase {instance = delivery_db}
-    interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, delQ Queue {instance = delivery_q} interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}}
+  - delivery.DeliveryServiceImpl struct{db NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, delQ Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}}
 - declared variables: []
 - declared constants: []
 - service types:
@@ -358,8 +354,8 @@ payment:
   - payment.Money struct{ID string, UserID string, Price string}
   - payment.Payment struct{ID string, OrderID string, UserID string, Price string}
   - payment.PaymentService
-  - payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase {instance = payments_db}
-    interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, moneyDB NoSQLDatabase {instance = money_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - payment.PaymentServiceImpl struct{paymentDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, moneyDB NoSQLDatabase
+    interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
 - declared variables: []
 - declared constants: []
 - service types:
@@ -411,7 +407,7 @@ price:
 - declared types:
   - price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
   - price.PriceService
-  - price.PriceServiceImpl struct{priceDB NoSQLDatabase {instance = price_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - price.PriceServiceImpl struct{priceDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
 - declared variables: []
 - declared constants: []
 - service types:
@@ -468,7 +464,7 @@ route:
   - route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
   - route.RouteInfo struct{ID string, StartStation string, EndStation string, StationList string, DistanceList string}
   - route.RouteService
-  - route.RouteServiceImpl struct{db NoSQLDatabase {instance = route_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - route.RouteServiceImpl struct{db NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
 - declared variables: []
 - declared constants: []
 - service types:
@@ -518,8 +514,7 @@ station:
 - declared types:
   - station.Station struct{ID string, Name string, StayTime int64}
   - station.StationService
-  - station.StationServiceImpl struct{stationDB NoSQLDatabase {instance = station_db}
-    interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - station.StationServiceImpl struct{stationDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
 - declared variables: []
 - declared constants: []
 - service types:
@@ -574,8 +569,7 @@ stationfood:
 - imported variables: []
 - declared types:
   - stationfood.StationFoodService
-  - stationfood.StationFoodServiceImpl struct{db NoSQLDatabase {instance = stationfood_db}
-    interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - stationfood.StationFoodServiceImpl struct{db NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
   - stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}}
 - declared variables: []
 - declared constants: []
@@ -625,7 +619,7 @@ train:
 - imported variables: []
 - declared types:
   - train.TrainService
-  - train.TrainServiceImpl struct{db NoSQLDatabase {instance = train_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - train.TrainServiceImpl struct{db NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
   - train.TrainType struct{ID string, Name string, EconomyClass int64, ComfortClass int64, AvgSpeed int64}
 - declared variables: []
 - declared constants: []
@@ -683,8 +677,7 @@ trainfood:
 - declared types:
   - trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}}
   - trainfood.TrainFoodService
-  - trainfood.TrainFoodServiceImpl struct{db NoSQLDatabase {instance = trainfood_db}
-    interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - trainfood.TrainFoodServiceImpl struct{db NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
 - declared variables: []
 - declared constants: []
 - service types:
@@ -733,7 +726,7 @@ user:
 - declared types:
   - user.User struct{UserID string, Username string, Password string, Gender int64, DocumentType int64, DocumentNum string, Email string}
   - user.UserService
-  - user.UserServiceImpl struct{userDB NoSQLDatabase {instance = user_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - user.UserServiceImpl struct{userDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
 - declared variables: []
 - declared constants: []
 - service types:

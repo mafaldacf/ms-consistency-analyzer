@@ -16,7 +16,7 @@ var Logger = logrus.New()
 type CustomFormatter struct{}
 
 func init() {
-	Logger.SetLevel(logrus.DebugLevel)
+	Logger.SetLevel(logrus.InfoLevel)
 	Logger.SetFormatter(&CustomFormatter{})
 }
 

@@ -15,7 +15,7 @@
 [__] (BasicObject BasicType) PostID int64
 
     --> r-tainted: read(media_db.Media) {1}
-[] (StructObject UserType) media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string}
+[] (StructObject UserType) media postnotification.Media struct{MediaID int64, Content string}
 
 [] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = media, collection = media}
 
@@ -36,7 +36,7 @@
     --> r-tainted: read(media_db._) {1}
 [] (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database = media, collection = media}
      --> r-tainted: read(media_db.Media) {1}
-[_] (StructObject UserType) media postnotification.Media struct{PostID int64, MediaID int64, Content "HELLO WORLD!" untyped string}
+[_] (StructObject UserType) media postnotification.Media struct{MediaID int64, Content string}
 
 [] (InterfaceObject UserType) err .error
 

@@ -1,7 +1,7 @@
 (*FrontendServiceImpl).Frontend(ctx context.Context):
   block 5 (IfDone):
-  - ' depth 0 (PointerObject PointerType) d (*foobar.FrontendServiceImpl struct{fooService
-    foo.FooService, barService bar.BarService})'
+  - ' depth 0 (PointerObject PointerType) d (*foobar.FrontendServiceImpl struct{barService
+    bar.BarService, fooService foo.FooService})'
   - _ depth 1 (StructObject UserType) foobar.FrontendServiceImpl struct{fooService foo.FooService, barService bar.BarService}
   - __ depth 2 (FieldObject FieldType) barService bar.BarService
   - ___ depth 3 (ServiceObject ServiceType) barService bar.BarService

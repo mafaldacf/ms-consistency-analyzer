@@ -57,7 +57,7 @@
 [] (InterfaceObject UserType) err .error
 [_] (Reference BasicType) ref <nil> @ CatalogueService
 
-[] (StructObject UserType) _ cart.Item struct{ID string, Quantity int, UnitPrice float32}
+[] (StructObject UserType) _ cart.Item struct{ID string, Quantity 1 int, UnitPrice float32}
 [_] (Reference UserType) ref <item cart.Item struct{ID string, Quantity int, UnitPrice float32}> @ CartService
 [__] (Reference UserType) ref <cart.Item struct{ID string, Quantity int, UnitPrice float32}> @ FrontendService
 [___] (FieldObject FieldType) ID string

@@ -1,5 +1,6 @@
 ------------------------------------------------------------
 -------------------- CASCADING ANALYSIS --------------------
 ------------------------------------------------------------
-origin operation = (ProductService, product_db) -> collection.DeleteOne(ctx context.Context, filter primitive.D)
-	 - missing cascading delete @ (CartService, cart_db)
+(#0) ProductService: product_db.DeleteOne()
+	missing cascading deletes:
+	- (CartService, cart_db)

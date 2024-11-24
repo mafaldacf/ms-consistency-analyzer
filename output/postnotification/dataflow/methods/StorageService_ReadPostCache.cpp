@@ -17,7 +17,7 @@
 
 [] (BasicObject BasicType) postID int64
 
-[] (StructObject UserType) post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username "some username" string}}
+[] (StructObject UserType) post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}
 
 [] (BasicObject BasicType) postIDStr string
 [_] (BasicObject BasicType) postID int64

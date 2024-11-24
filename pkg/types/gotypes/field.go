@@ -29,6 +29,18 @@ func NewFieldType(wrappedType Type) *FieldType {
 // Type Methods
 // ------------
 
+func (t *FieldType) DeepCopy() Type {
+	return &FieldType{
+		Origin:        nil, // just a placeholder to remind that origin will be copied by the structure that is calling deepcopy for this field
+		WrappedType:   t.WrappedType.DeepCopy(),
+		StructField:   t.StructField,
+		Embedded:      t.Embedded,
+		FieldName:     t.FieldName,
+		FieldLongName: t.FieldLongName,
+		FieldTag:      t.FieldTag,
+	}
+}
+
 func (t *FieldType) IsSameType(other Type) bool {
 	_, ok := other.(*FieldType)
 	return ok

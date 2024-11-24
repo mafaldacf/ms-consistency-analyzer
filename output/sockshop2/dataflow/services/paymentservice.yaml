@@ -1,7 +1,7 @@
 (*paymentImpl).Authorise(ctx context.Context, amount float32):
   block 0 (Body):
   - ' depth 0 (PointerObject PointerType) s (*payment.paymentImpl struct{declineOverAmount
-    50 float32})'
+    float32})'
   - _ depth 1 (StructObject UserType) payment.paymentImpl struct{declineOverAmount 50 float32}
   - __ depth 2 (FieldObject FieldType) declineOverAmount 50 float32
   - ___ depth 3 (BasicObject BasicType) 50 float32

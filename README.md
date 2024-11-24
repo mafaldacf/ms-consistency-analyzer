@@ -74,7 +74,7 @@ source ~/.venv/bin/activate
 | `shopping_simple`         | **YES**       | 0             | 1                 | 0                     |
 | `shopping_app`            | **YES**       | 1             | 0                 | 1                     |
 | `postnotification_simple` | **YES**       | 1             | 0                 | 1                     |
-| `postnotification`        | **YES**       | 1             | 0                 | 2                     |
+| `postnotification`        | **YES**       | 2             | 0                 | 2                     |
 | `sockshop2`               | **YES**       | 0             | 0                 | 0                     |
 | `trainticket`             | **YES**       | 0             | 13                | 0                     |
 

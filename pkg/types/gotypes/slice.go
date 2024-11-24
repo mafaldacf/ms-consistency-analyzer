@@ -11,6 +11,12 @@ type SliceType struct {
 // Type Methods
 // ------------
 
+func (t *SliceType) DeepCopy() Type {
+	return &SliceType{
+		UnderlyingType: t.UnderlyingType.DeepCopy(),
+	}
+}
+
 func (t *SliceType) IsSameType(other Type) bool {
 	_, ok := other.(*SliceType)
 	return ok

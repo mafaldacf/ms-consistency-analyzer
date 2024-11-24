@@ -65,10 +65,6 @@
       "type": "datastore"
     },
     {
-      "id": "posts_cache Redis",
-      "type": "datastore"
-    },
-    {
       "id": "posts_db MongoDB",
       "type": "datastore"
     },
@@ -99,7 +95,7 @@
     {
       "caller": "Client",
       "callee": "UploadService",
-      "call": "ReadPostMedia",
+      "call": "ReadMedia",
       "depth": 0
     },
     {
@@ -158,12 +154,6 @@
     },
     {
       "caller": "StorageService",
-      "callee": "posts_cache Redis",
-      "call": "Put",
-      "depth": 2
-    },
-    {
-      "caller": "StorageService",
       "callee": "posts_db MongoDB",
       "call": "InsertOne",
       "depth": 2
@@ -183,13 +173,7 @@
     {
       "caller": "UploadService",
       "callee": "StorageService",
-      "call": "ReadMedia",
-      "depth": 1
-    },
-    {
-      "caller": "UploadService",
-      "callee": "StorageService",
-      "call": "StorePostCache",
+      "call": "ReadPostMedia",
       "depth": 1
     },
     {

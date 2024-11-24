@@ -104,11 +104,12 @@ func (detector *CascadeDetector) Results() string {
 	results += "-------------------- CASCADING ANALYSIS --------------------\n"
 	results += "------------------------------------------------------------\n"
 
-	for _, op := range detector.getDeleteOperations() {
-		results += fmt.Sprintf("origin operation = %s\n", op.LongString())
+	for i, op := range detector.getDeleteOperations() {
+		results += fmt.Sprintf("(#%0d) %s: %s\n", i, op.getCall().GetCallerStr(), op.call.ShortString())
+		results += "\tmissing cascading deletes:\n"
 		for _, dep := range op.getDependencies() {
 			if !dep.cascading {
-				results += fmt.Sprintf("\t - missing cascading delete @ %s\n", dep.LongString())
+				results += fmt.Sprintf("\t- %s\n", dep.LongString())
 			}
 		}
 	}

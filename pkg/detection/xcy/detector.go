@@ -42,7 +42,7 @@ type Detector struct {
 	Requests        []*Request
 	DatastoresOps   map[*datastores.Datastore][]*Operation
 	EntryNode       abstractgraph.AbstractNode
-	Inconsistencies int
+	inconsistencies int
 }
 
 func NewDetector(app *app.App, entryNode abstractgraph.AbstractNode, mode DetectionMode) *Detector {
@@ -70,11 +70,15 @@ func GetActiveDetectionModes() []DetectionMode {
 		//XCY_ALL_DATASTORES,
 		//XCY_EQUAL_DATASTORES,
 		//FOREIGN_KEYS_DEFAULT,
-		//DEBUG_LINEAGES,
+		DEBUG_LINEAGES,
 		DEBUG_XCY_MISSING_DEPENDENCIES,
 		DEBUG_XCY_MINIMIZE_DEPENDENCIES,
 		FOREIGN_KEYS_LINEAGES,
 	}
+}
+
+func (detector *Detector) HasInconsistencies() bool {
+	return detector.inconsistencies > 0
 }
 
 func (detector *Detector) GetActiveDetectionModeIndex() int {
@@ -161,7 +165,7 @@ func (detector *Detector) captureInconsistency(request *Request, read *Operation
 				Read:  read,
 			}
 			request.AddInconsistency(inconsistency)
-			detector.Inconsistencies += 1
+			detector.inconsistencies += 1
 			continue
 		}
 
@@ -172,7 +176,7 @@ func (detector *Detector) captureInconsistency(request *Request, read *Operation
 					Read:  read,
 				}
 				request.AddInconsistency(inconsistency)
-				detector.Inconsistencies += 1
+				detector.inconsistencies += 1
 			}
 			continue
 		}
@@ -204,7 +208,7 @@ func (detector *Detector) captureInconsistency(request *Request, read *Operation
 			if inconsistency.Dataflows != nil {
 				logger.Logger.Warnf("[XCY] found inconsistency: %s", inconsistency.String())
 				request.AddInconsistency(inconsistency)
-				detector.Inconsistencies += 1
+				detector.inconsistencies += 1
 				inconsistencies = append(inconsistencies, inconsistency)
 			}
 		}

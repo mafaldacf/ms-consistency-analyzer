@@ -26,6 +26,14 @@ func (t *UserType) skipUnderlyingTypeString() bool {
 	return slices.Contains(packagesToSkip, t.PackagePath)
 }
 
+func (t *UserType) DeepCopy() Type {
+	return &UserType{
+		UserType: t.UserType.DeepCopy(),
+		PackagePath: t.PackagePath,
+		Name: t.Name,
+	}
+}
+
 func (t *UserType) IsSameType(other Type) bool {
 	_, ok := other.(*UserType)
 	return ok

@@ -32,7 +32,7 @@
 [_] (Reference BasicType) ref <orderID string> @ Frontend
 
     --> r-tainted: read(order_db.Order) {1}
-[] (StructObject UserType) order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp 1 int}
+[] (StructObject UserType) order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64}
 
 [] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = order_database, collection = order_collection}
 
@@ -59,7 +59,7 @@
     --> r-tainted: read(order_db._, order_db.Order) {2}
 [] (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database = order_database, collection = order_collection}
      --> r-tainted: read(order_db.Order) {1}
-[_] (StructObject UserType) order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp 1 int}
+[_] (StructObject UserType) order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64}
 
 [] (InterfaceObject UserType) _ .error
 

@@ -7,8 +7,8 @@ import (
 	"analyzer/pkg/logger"
 	"analyzer/pkg/service"
 	"analyzer/pkg/types"
-	"analyzer/pkg/utils"
 	"analyzer/pkg/types/objects"
+	"analyzer/pkg/utils"
 )
 
 type AbstractGraph struct {
@@ -43,6 +43,7 @@ type AbstractNode interface {
 	GetDepth() int
 	GetNextDepth() int
 	SetDepth(int)
+	ShortString() string
 }
 
 type AbstractServiceCall struct {
@@ -96,6 +97,10 @@ func (call *AbstractServiceCall) GetParam(index int) objects.Object {
 
 func (call *AbstractServiceCall) GetName() string {
 	return call.ParsedCall.Name
+}
+
+func (call *AbstractServiceCall) ShortString() string {
+	return call.Callee + "." + call.GetName() + "()"
 }
 
 func (call *AbstractServiceCall) GetCallee() string {
@@ -172,6 +177,10 @@ func (call *AbstractTempInternalCall) MarshalJSON() ([]byte, error) {
 
 func (call *AbstractTempInternalCall) GetDepth() int {
 	return call.Depth
+}
+
+func (call *AbstractTempInternalCall) ShortString() string {
+	return call.Service + "." + call.GetName() + "()"
 }
 
 func (call *AbstractTempInternalCall) GetNextDepth() int {
@@ -290,6 +299,10 @@ func (call *AbstractDatabaseCall) MarshalJSON() ([]byte, error) {
 		DbInstance: call.DbInstance.GetName(),
 		Subscriber: call.Subscriber,
 	})
+}
+
+func (call *AbstractDatabaseCall) ShortString() string {
+	return call.ParsedCall.DbInstance.GetName() + "." + call.GetName() + "()"
 }
 
 func (call *AbstractDatabaseCall) GetDepth() int {

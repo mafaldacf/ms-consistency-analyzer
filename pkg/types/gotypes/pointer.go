@@ -15,6 +15,12 @@ type PointerType struct {
 // Type Methods
 // ------------
 
+func (t *PointerType) DeepCopy() Type {
+	return &PointerType{
+		PointerTo: t.PointerTo.DeepCopy(),
+	}
+}
+
 func (t *PointerType) IsSameType(other Type) bool {
 	_, ok := other.(*PointerType)
 	return ok

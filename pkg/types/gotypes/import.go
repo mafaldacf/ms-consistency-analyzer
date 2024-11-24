@@ -15,6 +15,14 @@ type PackageType struct {
 // Type Methods
 // ------------
 
+func (t *PackageType) DeepCopy() Type {
+	return &PackageType{
+		Alias: t.Alias,
+		Name: t.Name,
+		Path: t.Path,
+	}
+}
+
 func (t *PackageType) IsSameType(other Type) bool {
 	_, ok := other.(*PackageType)
 	return ok

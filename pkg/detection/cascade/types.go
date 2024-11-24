@@ -73,13 +73,8 @@ func (op *deleteOperation) getDependency(serviceName string, datastore *datastor
 			return dep
 		}
 	}
-    logger.Logger.Warnf("[CASCADE DETECTOR] could not find dependency for service (%s) and datastore (%s) for origin delete operation %s", serviceName, datastore.Name, op.String())
+	logger.Logger.Warnf("[CASCADE DETECTOR] could not find dependency for service (%s) and datastore (%s) for origin delete operation %s", serviceName, datastore.Name, op.String())
 	return nil
-}
-
-func (op *deleteOperation) LongString() string {
-	call := op.getCall()
-	return fmt.Sprintf("(%s, %s) -> %s", call.GetCallerStr(), call.DbInstance.GetDatastore().GetName(), call.LongString())
 }
 
 func (op *deleteOperation) String() string {
@@ -110,4 +105,12 @@ func (dep *deleteDependency) String() string {
 
 func (dep *deleteDependency) LongString() string {
 	return fmt.Sprintf("(%s, %s)", dep.service.Name, dep.datastore.GetName())
+}
+
+func (dep *deleteDependency) GetServiceName() string {
+	return dep.service.Name
+}
+
+func (dep *deleteDependency) GetDatastoreName() string {
+	return dep.datastore.GetName()
 }

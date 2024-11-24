@@ -74,7 +74,7 @@ func FindDefTypesAndAddToPackage(pkg *types.Package, object golangtypes.Object, 
 		if !pkg.HasPath(objectPackagePath) {
 			if isBlueprintPackagePath(objectPackagePath) {
 				bpPackage := pkg.GetImportedPackage(objectPackagePath)
-				declaredType := bpPackage.GetDeclaredType(typeName)
+				declaredType := bpPackage.GetDeclaredType(typeName).DeepCopy()
 				pkg.AddImportedType(declaredType)
 				pkg.AddDatastoreType(declaredType)
 
@@ -188,7 +188,7 @@ func ComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type, computeIf
 			path = e.Obj().Pkg().Path()
 		}
 		if namedType, ok := p.DeclaredTypes[name]; ok {
-			return namedType
+			return namedType.DeepCopy()
 		}
 		if serviceType, ok := p.ServiceTypes[name]; ok {
 			return serviceType
@@ -197,7 +197,7 @@ func ComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type, computeIf
 			return datastoreType
 		}
 		if importedType, ok := p.ImportedTypes[types.ImportedTypeKey(path, name)]; ok {
-			return importedType
+			return importedType.DeepCopy()
 		}
 
 		if true {

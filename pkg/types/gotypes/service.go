@@ -20,6 +20,27 @@ type ServiceType struct {
 // Type Methods
 // ------------
 
+func (t *ServiceType) DeepCopy() Type {
+	var methodsCopy []string
+	methodsCopy = append(methodsCopy, t.Methods...)
+	var structTypeCopy *StructType
+	if t.StructType != nil {
+		structTypeCopy = t.StructType.DeepCopy().(*StructType)
+	}
+	var interfaceTypeCopy *InterfaceType
+	if t.InterfaceType != nil {
+		interfaceTypeCopy = t.InterfaceType.DeepCopy().(*InterfaceType)
+	}
+	return &ServiceType{
+		ImplName:      t.ImplName,
+		Name:          t.Name,
+		PackagePath:   t.PackagePath,
+		Methods:       methodsCopy,
+		StructType:    structTypeCopy,
+		InterfaceType: interfaceTypeCopy,
+	}
+}
+
 func (t *ServiceType) IsSameType(other Type) bool {
 	_, ok := other.(*ServiceType)
 	return ok

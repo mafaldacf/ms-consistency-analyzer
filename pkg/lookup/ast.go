@@ -38,7 +38,7 @@ func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 		}
 		if namedType, ok := file.Package.GetNamedType(e.Name); ok {
 			//logger.Logger.Debugf("[LOOKUP AST IDENT] got named type (%s) (type = %s)", namedType.String(), utils.GetType(namedType))
-			return namedType
+			return namedType.DeepCopy()
 		}
 
 		logger.Logger.Fatalf("[LOOKUP AST IDENT] cannot compute type for ident (%s)", e)

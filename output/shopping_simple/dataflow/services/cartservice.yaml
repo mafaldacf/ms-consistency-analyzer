@@ -2,7 +2,7 @@
   block 5 (IfDone):
   - ' depth 0 (PointerObject PointerType) s (*shopping_simple.CartServiceImpl struct{product_service
     shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers
-    4 int})'
+    int})'
   - _ depth 1 (StructObject UserType) shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int}
   - __ depth 2 (FieldObject FieldType) cart_db NoSQLDatabase
   - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) cart_db NoSQLDatabase
@@ -34,10 +34,10 @@
   - ' depth 0 (InterfaceObject UserType) _ .error'
   - _ depth 1 (Reference UserType) ref <err .error> @ ProductService
   - ' depth 0 (StructObject UserType) cart shopping_simple.Cart struct{CartID string,
-    TotalQuantity 1 int, LastProductID string, Products []string} --> r-tainted 1x:
+    LastProductID string, TotalQuantity int, Products []string} --> r-tainted 1x:
     read(cart_db.Cart)'
   - ' depth 0 (StructObject UserType) cartProduct shopping_simple.CartProduct struct{CartID
-    string, ProductID string, PricePerUnit int, Quantity 1 int}'
+    string, ProductID string, Quantity int, PricePerUnit int}'
   - ' depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
     {database = cart_database, collection = cart_collection}'
   - ' depth 0 (InterfaceObject UserType) _ .error'
@@ -63,7 +63,7 @@
   block 0 (Body):
   - ' depth 0 (PointerObject PointerType) s (*shopping_simple.CartServiceImpl struct{product_service
     shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers
-    4 int})'
+    int})'
   - _ depth 1 (StructObject UserType) shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int}
   - __ depth 2 (FieldObject FieldType) cart_db NoSQLDatabase
   - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) cart_db NoSQLDatabase
@@ -82,7 +82,7 @@
     {database = cart_database, collection = cart_database}'
   - ' depth 0 (InterfaceObject UserType) _ .error'
   - ' depth 0 (StructObject UserType) cart shopping_simple.Cart struct{CartID string,
-    TotalQuantity 1 int, LastProductID string, Products []string} --> w-tainted 1x:
+    LastProductID string, TotalQuantity int, Products []string} --> w-tainted 1x:
     write(cart_db.Cart)'
   - '_ depth 1 (FieldObject FieldType) CartID string --> w-tainted 1x: write(cart_db.Cart.CartID)'
   - ' depth 0 (InterfaceObject UserType) err .error'
@@ -91,7 +91,7 @@
   block 5 (IfDone):
   - ' depth 0 (PointerObject PointerType) s (*shopping_simple.CartServiceImpl struct{product_service
     shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers
-    4 int})'
+    int})'
   - _ depth 1 (StructObject UserType) shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int}
   - __ depth 2 (FieldObject FieldType) cart_db NoSQLDatabase
   - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) cart_db NoSQLDatabase
@@ -107,7 +107,7 @@
   - '_ depth 1 (Reference BasicType) ref <cartID string> @ Frontend --> r-tainted
     1x: read(cart_db.Cart.CartID)'
   - ' depth 0 (StructObject UserType) cart shopping_simple.Cart struct{CartID string,
-    TotalQuantity 1 int, LastProductID string, Products []string} --> r-tainted 1x:
+    LastProductID string, TotalQuantity int, Products []string} --> r-tainted 1x:
     read(cart_db.Cart)'
   - ' depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
     {database = cart_database, collection = cart_database}'
@@ -127,7 +127,7 @@
   block 4 (ForPost):
   - ' depth 0 (PointerObject PointerType) s (*shopping_simple.CartServiceImpl struct{product_service
     shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers
-    4 int})'
+    int})'
   - _ depth 1 (StructObject UserType) shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int}
   - __ depth 2 (FieldObject FieldType) cart_db NoSQLDatabase
   - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) cart_db NoSQLDatabase
@@ -148,7 +148,7 @@
  block 2 (IfDone):
   - ' depth 0 (PointerObject PointerType) s (*shopping_simple.CartServiceImpl struct{product_service
     shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers
-    4 int})'
+    int})'
   - _ depth 1 (StructObject UserType) shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int}
   - __ depth 2 (FieldObject FieldType) cart_db NoSQLDatabase
   - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) cart_db NoSQLDatabase
@@ -194,7 +194,7 @@
   block 0 (Body):
   - ' depth 0 (PointerObject PointerType) s (*shopping_simple.CartServiceImpl struct{product_service
     shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers
-    4 int})'
+    int})'
   - _ depth 1 (StructObject UserType) shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int}
   - __ depth 2 (FieldObject FieldType) cart_db NoSQLDatabase
   - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) cart_db NoSQLDatabase

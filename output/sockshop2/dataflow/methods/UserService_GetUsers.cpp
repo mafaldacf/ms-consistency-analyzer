@@ -1,4 +1,4 @@
-[] (PointerObject PointerType) s (*user.userServiceImpl struct{db NoSQLDatabase, db NoSQLDatabase})
+[] (PointerObject PointerType) s (*user.userServiceImpl struct{UserService user.UserService, db NoSQLDatabase})
 [_] (StructObject UserType) user.userServiceImpl struct{db NoSQLDatabase, db NoSQLDatabase}
 [__] (FieldObject FieldType) db NoSQLDatabase
 [___] (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase

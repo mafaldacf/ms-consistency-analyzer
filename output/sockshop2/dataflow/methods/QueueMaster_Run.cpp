@@ -1,4 +1,4 @@
-[] (PointerObject PointerType) q (*queuemaster.queueMasterImpl struct{q Queue, shipping shipping.ShippingService, exitOnError false bool, processed 0 int})
+[] (PointerObject PointerType) q (*queuemaster.queueMasterImpl struct{q Queue, shipping shipping.ShippingService, exitOnError bool, processed int32})
 [_] (StructObject UserType) queuemaster.queueMasterImpl struct{q Queue, shipping shipping.ShippingService, exitOnError false bool, processed 0 int}
 [__] (FieldObject FieldType) exitOnError false bool
 [___] (BasicObject BasicType) false bool

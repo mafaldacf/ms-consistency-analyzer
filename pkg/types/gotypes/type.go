@@ -15,6 +15,7 @@ type Type interface {
 	GetParentUserType() *UserType
 	SetParentUserType(userType *UserType)
 	IsSameType(t Type) bool
+	DeepCopy() Type
 }
 
 func packageAlias(pkg string) string {

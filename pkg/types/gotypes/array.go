@@ -11,6 +11,12 @@ type ArrayType struct {
 // Type Methods
 // ------------
 
+func (t *ArrayType) DeepCopy() Type {
+	return &ArrayType{
+		ElementsType: t.ElementsType,
+	}
+}
+
 func (t *ArrayType) IsSameType(other Type) bool {
 	_, ok := other.(*ArrayType)
 	return ok
@@ -44,7 +50,6 @@ func (t *ArrayType) GetNestedFieldTypes(prefix string, noSQL bool) ([]Type, []st
 	logger.Logger.Warnf("[TYPES ARRAY] attempted to get nested fields and variables: %s", t.String())
 	return nil, nil
 }
-
 
 // -------------
 // Array Methods

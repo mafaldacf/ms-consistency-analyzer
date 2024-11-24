@@ -1,4 +1,4 @@
-[] (PointerObject PointerType) n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, notificationsQueue Queue, num_workers 4 int})
+[] (PointerObject PointerType) n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, notificationsQueue Queue, num_workers int})
 [_] (StructObject UserType) postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, notificationsQueue Queue, num_workers 4 int}
 [__] (FieldObject FieldType) notificationsQueue Queue
 [___] (BlueprintBackendObject BlueprintBackendType) notificationsQueue Queue
@@ -8,8 +8,6 @@
 [___] (ServiceObject ServiceType) storageService postnotification.StorageService
 
 [] (InterfaceObject UserType) ctx context.Context
-
-[] (BasicObject BasicType) workerID int
 
 [] (ChanObject ChanType) forever chan struct{}
 

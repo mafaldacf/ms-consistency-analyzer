@@ -55,6 +55,7 @@ func taintDataflowOp(app *app.App, variable objects.Object, call *AbstractDataba
 		fieldName = variable.GetType().GetName()
 	}
 	rootField := datastore.Schema.GetField(fieldName)
+	logger.Logger.Infof("[TAINT WRITE] got root field for name (%s): %s", fieldName, rootField.String())
 	df := variable.GetVariableInfo().SetDirectDataflow(datastore.Name, call.Service, variable, rootField, true)
 	app.AddDataflow(df, call.ParsedCall)
 	logger.Logger.Debugf("[TAINT WRITE DIRECT] %s ---> (%02d) %s [%s]", rootField.GetFullName(), variable.GetId(), variable.String(), utils.GetType(variable))
@@ -77,9 +78,9 @@ func taintDataflowOp(app *app.App, variable objects.Object, call *AbstractDataba
 	}
 
 	for i, v := range vars {
+		logger.Logger.Infof("[TENTATIVE TAINT WRITE VAR] [%s] %s", utils.GetType(v), v.LongString())
 		dbField := datastore.Schema.GetField(names[i])
 		deps := v.GetNestedDependencies(false)
-		logger.Logger.Infof("[TENTATIVE TAINT WRITE VAR] [%s] (%02d) (NUM DEPS = %d) %s", utils.GetType(v), v.GetId(), len(deps), v.LongString())
 
 		for _, dep := range deps {
 			logger.Logger.Debugf("visiting dep: %s", dep.String())

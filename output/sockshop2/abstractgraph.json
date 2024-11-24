@@ -407,7 +407,7 @@
           {
             "struct": {
               "name": "_",
-              "type": "cart.Item struct{ID string, Quantity int, UnitPrice float32}",
+              "type": "cart.Item struct{ID string, Quantity 1 int, UnitPrice float32}",
               "refs": [
                 {
                   "name": "item",

@@ -1,4 +1,4 @@
-[] (PointerObject PointerType) n (*postnotification_simple.NotifyServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue, num_workers 4 int})
+[] (PointerObject PointerType) n (*postnotification_simple.NotifyServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue, num_workers int})
 [_] (StructObject UserType) postnotification_simple.NotifyServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue, num_workers 4 int}
 [__] (FieldObject FieldType) notificationsQueue Queue
 [___] (BlueprintBackendObject BlueprintBackendType) notificationsQueue Queue
@@ -19,7 +19,7 @@
 
 [] (InterfaceObject UserType) err .error
 
-[] (PointerObject PointerType) n (*postnotification_simple.NotifyServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue, num_workers 4 int})
+[] (PointerObject PointerType) n (*postnotification_simple.NotifyServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue, num_workers int})
 [_] (StructObject UserType) postnotification_simple.NotifyServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue, num_workers 4 int}
 [__] (FieldObject FieldType) notificationsQueue Queue
 [___] (BlueprintBackendObject BlueprintBackendType) notificationsQueue Queue

@@ -11,6 +11,12 @@ type GenericType struct {
 // Type Methods
 // ------------
 
+func (t *GenericType) DeepCopy() Type {
+	return &GenericType{
+		Name: t.Name,
+	}
+}
+
 func (t *GenericType) IsSameType(other Type) bool {
 	_, ok := other.(*GenericType)
 	return ok

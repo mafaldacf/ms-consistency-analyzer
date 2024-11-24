@@ -11,6 +11,16 @@ type SignatureType struct {
 // Type Methods
 // ------------
 
+func (t *SignatureType) DeepCopy() Type {
+	var returnTypesCopy []Type
+	for _, returnType := range t.ReturnTypes {
+		returnTypesCopy = append(returnTypesCopy, returnType.DeepCopy())
+	}
+	return &SignatureType{
+		ReturnTypes: returnTypesCopy,
+	}
+}
+
 func (t *SignatureType) IsSameType(other Type) bool {
 	_, ok := other.(*SignatureType)
 	return ok

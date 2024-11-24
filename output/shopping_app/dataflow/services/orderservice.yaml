@@ -153,7 +153,7 @@
   - '_ depth 1 (Reference BasicType) ref <orderID string> @ Frontend --> r-tainted
     2x: read(order_db._.orderID, order_db.Order.OrderID)'
   - ' depth 0 (StructObject UserType) order shopping_app.Order struct{OrderID string,
-    UserID string, ProductID string, Quantity int, Timestamp 1 int} --> r-tainted
+    UserID string, ProductID string, Quantity int, Timestamp int64} --> r-tainted
     1x: read(order_db.Order)'
   - ' depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
     {database = order_database, collection = order_collection}'

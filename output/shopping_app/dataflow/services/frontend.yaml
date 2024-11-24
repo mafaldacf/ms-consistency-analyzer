@@ -1,7 +1,7 @@
 (*FrontendImpl).AddProductToCart(ctx context.Context, cartID string, productID string):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) f (*shopping_app.FrontendImpl struct{order_service
-    shopping_app.OrderService, cart_service shopping_app.CartService})'
+  - ' depth 0 (PointerObject PointerType) f (*shopping_app.FrontendImpl struct{cart_service
+    shopping_app.CartService, order_service shopping_app.OrderService})'
   - _ depth 1 (StructObject UserType) shopping_app.FrontendImpl struct{order_service shopping_app.OrderService, cart_service shopping_app.CartService}
   - __ depth 2 (FieldObject FieldType) cart_service shopping_app.CartService
   - ___ depth 3 (ServiceObject ServiceType) cart_service shopping_app.CartService
@@ -13,8 +13,8 @@
 
 (*FrontendImpl).Checkout(ctx context.Context, cartID string, userID string, productID string, quantity int, price int):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) f (*shopping_app.FrontendImpl struct{order_service
-    shopping_app.OrderService, cart_service shopping_app.CartService})'
+  - ' depth 0 (PointerObject PointerType) f (*shopping_app.FrontendImpl struct{cart_service
+    shopping_app.CartService, order_service shopping_app.OrderService})'
   - _ depth 1 (StructObject UserType) shopping_app.FrontendImpl struct{order_service shopping_app.OrderService, cart_service shopping_app.CartService}
   - __ depth 2 (FieldObject FieldType) cart_service shopping_app.CartService
   - ___ depth 3 (ServiceObject ServiceType) cart_service shopping_app.CartService
@@ -34,8 +34,8 @@
 
 (*FrontendImpl).ReadOrder(ctx context.Context, orderID string):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) f (*shopping_app.FrontendImpl struct{order_service
-    shopping_app.OrderService, cart_service shopping_app.CartService})'
+  - ' depth 0 (PointerObject PointerType) f (*shopping_app.FrontendImpl struct{cart_service
+    shopping_app.CartService, order_service shopping_app.OrderService})'
   - _ depth 1 (StructObject UserType) shopping_app.FrontendImpl struct{order_service shopping_app.OrderService, cart_service shopping_app.CartService}
   - __ depth 2 (FieldObject FieldType) cart_service shopping_app.CartService
   - ___ depth 3 (ServiceObject ServiceType) cart_service shopping_app.CartService

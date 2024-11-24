@@ -42,7 +42,7 @@ type NoSQLComponent struct {
 	Collection string
 }
 
-func (t *NoSQLComponent) HasProjection() bool{
+func (t *NoSQLComponent) HasProjection() bool {
 	return t.Projection != nil
 }
 
@@ -79,6 +79,20 @@ type BlueprintBackendType struct {
 	Methods           []*BackendMethod
 	DatastoreInstance datastores.DatabaseInstance
 	NoSQLComponent    *NoSQLComponent
+}
+
+func (t *BlueprintBackendType) DeepCopy() gotypes.Type {
+	var noSQLComponentCopy *NoSQLComponent
+	if t.NoSQLComponent != nil {
+		noSQLComponentCopy = t.NoSQLComponent.Copy()
+	}
+	return &BlueprintBackendType{
+		Name:              t.Name,
+		Package:           t.Package,
+		Methods:           t.Methods,
+		DatastoreInstance: t.DatastoreInstance,
+		NoSQLComponent:    noSQLComponentCopy,
+	}
 }
 
 func (t *BlueprintBackendType) IsSameType(other gotypes.Type) bool {

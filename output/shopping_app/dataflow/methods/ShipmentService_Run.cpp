@@ -1,4 +1,4 @@
-[] (PointerObject PointerType) n (*shopping_app.ShipmentServiceImpl struct{order_service shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers 4 int})
+[] (PointerObject PointerType) n (*shopping_app.ShipmentServiceImpl struct{order_service shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers int})
 [_] (StructObject UserType) shopping_app.ShipmentServiceImpl struct{order_service shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers 4 int}
 [__] (FieldObject FieldType) num_workers 4 int
 [___] (BasicObject BasicType) 4 int
@@ -19,7 +19,7 @@
 
 [] (InterfaceObject UserType) err .error
 
-[] (PointerObject PointerType) n (*shopping_app.ShipmentServiceImpl struct{order_service shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers 4 int})
+[] (PointerObject PointerType) n (*shopping_app.ShipmentServiceImpl struct{order_service shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers int})
 [_] (StructObject UserType) shopping_app.ShipmentServiceImpl struct{order_service shopping_app.OrderService, shipment_db NoSQLDatabase, shipment_queue Queue, num_workers 4 int}
 [__] (FieldObject FieldType) num_workers 4 int
 [___] (BasicObject BasicType) 4 int

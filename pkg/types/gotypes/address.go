@@ -15,6 +15,12 @@ type AddressType struct {
 // Type Methods
 // ------------
 
+func (t *AddressType) DeepCopy() Type {
+	return &AddressType{
+		AddressOf: t.AddressOf.DeepCopy(),
+	}
+}
+
 func (t *AddressType) IsSameType(other Type) bool {
 	_, ok := other.(*AddressType)
 	return ok

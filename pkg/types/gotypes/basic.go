@@ -17,6 +17,13 @@ type BasicType struct {
 // Type Methods
 // ------------
 
+func (t *BasicType) DeepCopy() Type {
+	return &BasicType{
+		Name:  t.Name,
+		Value: t.Value,
+	}
+}
+
 func (t *BasicType) IsNil() bool {
 	return t.Name == "nil"
 }

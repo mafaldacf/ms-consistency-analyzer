@@ -162,7 +162,8 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			}
 			declaredType := importedPkg.GetDeclaredTypeIfExists(e.Sel)
 			if declaredType != nil {
-				variable = lookup.CreateVariableFromType("", declaredType)
+				newDeclaredType := declaredType.DeepCopy()
+				variable = lookup.CreateVariableFromType("", newDeclaredType)
 				return variable, nil
 			}
 
@@ -226,7 +227,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 				logger.Logger.Debugf("[%s.%s] FOUND ELT VAR (%s) FOR COMPOSITE LIT (%v)", service.GetName(), method.GetName(), eltVar.String(), e)
 				objects.WrapObjectToField(eltVar, structVariable, true)
 			}
-			logger.Logger.Infof("EXIT! %v", structVariable.LongString())
+			logger.Logger.Infof("%s", structVariable.LongString())
 			return structVariable, nil
 		}
 
@@ -241,6 +242,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 				eltVar, _ := lookupVariableFromAstExpr(service, method, block, elt, nil, false)
 				objects.WrapObjectToField(eltVar, structVariable, false)
 			}
+			logger.Logger.Infof("GOT STRUCT VARIABLE: %s", structVariable.String())
 			return structVariable, nil
 		case *gotypes.ArrayType:
 			arrayVariable := &objects.ArrayObject{

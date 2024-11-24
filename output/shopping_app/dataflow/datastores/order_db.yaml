@@ -472,8 +472,8 @@ ORDER_DB.Order.UserID:
 - write <UserID string (FieldObject)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp 1 int} (StructObject)>
 
 Order:
-- read <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp 1 int} (StructObject)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp 1 int} (StructObject)>
-- read <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp 1 int} (StructObject)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp 1 int} (StructObject)>
+- read <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructObject)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructObject)>
+- read <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructObject)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64} (StructObject)>
 
 SHIPMENT_QUEUE.ShipmentMessage.OrderID:
 - write <cartID string (BasicObject)> from <order shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp 1 int} (StructObject)>
@@ -706,24 +706,24 @@ string:
 - write <OrderID string (BasicObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
 - read <productID string (BasicObject)>
 - read <productID string (BasicObject)> from <productID string (BasicObject)>
-- read <ref <productID string> @ CartService (Reference)> from <productID string (BasicObject)>
+- read <ref <productID string> @ OrderService (Reference)> from <productID string (BasicObject)>
 - read <productID string (BasicObject)> from <productID string (BasicObject)>
 - read <ref <productID string> @ Frontend (Reference)> from <productID string (BasicObject)>
 - read <productID string (BasicObject)> from <productID string (BasicObject)>
 - read <productID string (BasicObject)> from <productID string (BasicObject)>
-- read <ref <productID string> @ OrderService (Reference)> from <productID string (BasicObject)>
+- read <ref <productID string> @ CartService (Reference)> from <productID string (BasicObject)>
 - read <productID string (BasicObject)> from <productID string (BasicObject)>
 - read <ref <productID string> @ Frontend (Reference)> from <productID string (BasicObject)>
 - read <productID string (BasicObject)> from <productID string (BasicObject)>
 - read <productID string (BasicObject)> from <productID string (BasicObject)>
 - read <productID string (BasicObject)>
 - read <productID string (BasicObject)> from <productID string (BasicObject)>
-- read <ref <productID string> @ CartService (Reference)> from <productID string (BasicObject)>
+- read <ref <productID string> @ OrderService (Reference)> from <productID string (BasicObject)>
 - read <productID string (BasicObject)> from <productID string (BasicObject)>
 - read <ref <productID string> @ Frontend (Reference)> from <productID string (BasicObject)>
 - read <productID string (BasicObject)> from <productID string (BasicObject)>
 - read <productID string (BasicObject)> from <productID string (BasicObject)>
-- read <ref <productID string> @ OrderService (Reference)> from <productID string (BasicObject)>
+- read <ref <productID string> @ CartService (Reference)> from <productID string (BasicObject)>
 - read <productID string (BasicObject)> from <productID string (BasicObject)>
 - read <ref <productID string> @ Frontend (Reference)> from <productID string (BasicObject)>
 - read <productID string (BasicObject)> from <productID string (BasicObject)>

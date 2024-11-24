@@ -15,6 +15,12 @@ type ChanType struct {
 // Type Methods
 // ------------
 
+func (t *ChanType) DeepCopy() Type {
+	return &ChanType{
+		ChanType: t.ChanType,
+	}
+}
+
 func (t *ChanType) IsSameType(other Type) bool {
 	_, ok := other.(*ChanType)
 	return ok

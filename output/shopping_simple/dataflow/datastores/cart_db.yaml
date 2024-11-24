@@ -1,21 +1,21 @@
 CART_DB.Cart:
-- write <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructObject)>
-- write <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructObject)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructObject)>
+- write <cart shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string} (StructObject)>
+- write <cart shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string} (StructObject)> from <cart shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string} (StructObject)>
 - read <result NoSQLCursor {database = cart_database, collection = cart_database} (BlueprintBackendObject)>
 - read <result NoSQLCursor {database = cart_database, collection = cart_collection} (BlueprintBackendObject)>
 - write <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructObject)>
 - write <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructObject)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructObject)>
 
 CART_DB.Cart.CartID:
-- write <cartID string (BasicObject)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructObject)>
-- write <ref <cartID string> @ Frontend (Reference)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructObject)>
-- write <cartID string (BasicObject)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructObject)>
-- write <cartID string (BasicObject)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructObject)>
-- write <cartID string (BasicObject)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructObject)>
-- write <ref <cartID string> @ Frontend (Reference)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructObject)>
-- write <cartID string (BasicObject)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructObject)>
-- write <cartID string (BasicObject)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructObject)>
-- write <CartID string (FieldObject)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructObject)>
+- write <cartID string (BasicObject)> from <cart shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string} (StructObject)>
+- write <ref <cartID string> @ Frontend (Reference)> from <cart shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string} (StructObject)>
+- write <cartID string (BasicObject)> from <cart shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string} (StructObject)>
+- write <cartID string (BasicObject)> from <cart shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string} (StructObject)>
+- write <cartID string (BasicObject)> from <cart shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string} (StructObject)>
+- write <ref <cartID string> @ Frontend (Reference)> from <cart shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string} (StructObject)>
+- write <cartID string (BasicObject)> from <cart shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string} (StructObject)>
+- write <cartID string (BasicObject)> from <cart shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string} (StructObject)>
+- write <CartID string (FieldObject)> from <cart shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string} (StructObject)>
 - read <cartID string (BasicObject)>
 - read <cartID string (BasicObject)> from <cartID string (BasicObject)>
 - read <ref <cartID string> @ Frontend (Reference)> from <cartID string (BasicObject)>
@@ -57,5 +57,5 @@ CART_DB.Cart.TotalQuantity:
 - write <TotalQuantity 1 int (FieldObject)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructObject)>
 
 Cart:
-- read <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructObject)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructObject)>
-- read <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructObject)> from <cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string} (StructObject)>
+- read <cart shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string} (StructObject)> from <cart shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string} (StructObject)>
+- read <cart shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string} (StructObject)> from <cart shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string} (StructObject)>

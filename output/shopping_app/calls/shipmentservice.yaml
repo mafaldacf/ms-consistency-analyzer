@@ -5,7 +5,7 @@
 (*ShipmentServiceImpl).createPendingShipment(ctx context.Context, message shopping_app.ShipmentMessage struct{OrderID string, UserID string})
 :
 	- DATASTORE CALL @ shipment_db >> NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}) interface{}
-  - SERVICE CALL @ ReadOrder >> (*shopping_app.OrderServiceImpl).ReadOrder(ctx context.Context, orderID string) (shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp 1 int}, error)
+  - SERVICE CALL @ ReadOrder >> (*shopping_app.OrderServiceImpl).ReadOrder(ctx context.Context, orderID string) (shopping_app.Order struct{OrderID string, UserID string, ProductID string, Quantity int, Timestamp int64}, error)
 
 (*ShipmentServiceImpl).workerThread(ctx context.Context):
 - DATASTORE CALL @ shipment_queue >> Queue.Pop(ctx context.Context, item interface{})

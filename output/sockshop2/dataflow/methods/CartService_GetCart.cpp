@@ -12,5 +12,5 @@
 [__] (FieldObject FieldType) ID string
 [___] (BasicObject BasicType) customerID string
 [__] (FieldObject FieldType) Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}
-[___] (ArrayObject ArrayType) Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}
+[___] (SliceObject SliceType) Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}
 

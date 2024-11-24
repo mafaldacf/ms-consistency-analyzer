@@ -12,7 +12,7 @@ import (
 )
 
 func CreateVariableFromType(name string, t gotypes.Type) objects.Object {
-	logger.Logger.Debugf("[LOOKUP] created variable named (%s) from type (%s): %v", name, utils.GetType(t), t)
+	logger.Logger.Infof("[LOOKUP] creating variable (%s) for type [%s]: %v", name, utils.GetType(t), t)
 	info := &objects.ObjectInfo{
 		Name: name,
 		Type: t,
@@ -31,7 +31,7 @@ func CreateVariableFromType(name string, t gotypes.Type) objects.Object {
 			}
 			e.UserType = underlyingVariable.GetType()
 			underlyingVariable.GetVariableInfo().Type = e
-			logger.Logger.Warnf("[LOOKUP] got underlying variable (%s) for user type named (%s): %s", underlyingVariable.String(), name, e.String())
+			logger.Logger.Debugf("[LOOKUP] got underlying variable (%s) for user type named (%s): %s", underlyingVariable.String(), name, e.String())
 			//logger.Logger.Warnf("[LOOKUP] returning user type variable (%s) with underlying type (%s)", underlyingVariable.String(), utils.GetType(underlyingVariable.GetType()))
 			return underlyingVariable
 		}
@@ -59,7 +59,9 @@ func CreateVariableFromType(name string, t gotypes.Type) objects.Object {
 		}
 		return v
 	case *gotypes.StructType:
-		return objects.NewStructObject(info)
+		obj := objects.NewStructObject(info)
+		logger.Logger.Debugf("[LOOKUP - %s] created struct object: %s", utils.GetType(obj), obj.String())
+		return obj
 	case *gotypes.SliceType:
 		return &objects.SliceObject{ObjectInfo: info}
 	case *gotypes.MapType:

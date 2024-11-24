@@ -1,7 +1,7 @@
 (*userServiceImpl).Delete(ctx context.Context, entity string, id string):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) s (*user.userServiceImpl struct{db NoSQLDatabase,
-    db NoSQLDatabase})'
+  - ' depth 0 (PointerObject PointerType) s (*user.userServiceImpl struct{UserService
+    user.UserService, db NoSQLDatabase})'
   - _ depth 1 (StructObject UserType) user.userServiceImpl struct{db NoSQLDatabase, db NoSQLDatabase}
   - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
   - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
@@ -19,8 +19,8 @@
 
 (*userServiceImpl).GetAddresses(ctx context.Context, addressid string):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) s (*user.userServiceImpl struct{db NoSQLDatabase,
-    db NoSQLDatabase})'
+  - ' depth 0 (PointerObject PointerType) s (*user.userServiceImpl struct{UserService
+    user.UserService, db NoSQLDatabase})'
   - _ depth 1 (StructObject UserType) user.userServiceImpl struct{db NoSQLDatabase, db NoSQLDatabase}
   - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
   - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
@@ -48,8 +48,8 @@
 
 (*userServiceImpl).GetCards(ctx context.Context, cardid string):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) s (*user.userServiceImpl struct{db NoSQLDatabase,
-    db NoSQLDatabase})'
+  - ' depth 0 (PointerObject PointerType) s (*user.userServiceImpl struct{UserService
+    user.UserService, db NoSQLDatabase})'
   - _ depth 1 (StructObject UserType) user.userServiceImpl struct{db NoSQLDatabase, db NoSQLDatabase}
   - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
   - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
@@ -77,8 +77,8 @@
 
 (*userServiceImpl).GetUsers(ctx context.Context, userid string):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) s (*user.userServiceImpl struct{db NoSQLDatabase,
-    db NoSQLDatabase})'
+  - ' depth 0 (PointerObject PointerType) s (*user.userServiceImpl struct{UserService
+    user.UserService, db NoSQLDatabase})'
   - _ depth 1 (StructObject UserType) user.userServiceImpl struct{db NoSQLDatabase, db NoSQLDatabase}
   - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
   - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
@@ -103,8 +103,8 @@
 
 (*userServiceImpl).Login(ctx context.Context, username string, password string):
   block 2 (IfDone):
-  - ' depth 0 (PointerObject PointerType) s (*user.userServiceImpl struct{db NoSQLDatabase,
-    db NoSQLDatabase})'
+  - ' depth 0 (PointerObject PointerType) s (*user.userServiceImpl struct{UserService
+    user.UserService, db NoSQLDatabase})'
   - _ depth 1 (StructObject UserType) user.userServiceImpl struct{db NoSQLDatabase, db NoSQLDatabase}
   - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
   - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
@@ -137,8 +137,8 @@
 (*userServiceImpl).PostAddress(ctx context.Context, userid string, address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string})
 :
  block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) s (*user.userServiceImpl struct{db NoSQLDatabase,
-    db NoSQLDatabase})'
+  - ' depth 0 (PointerObject PointerType) s (*user.userServiceImpl struct{UserService
+    user.UserService, db NoSQLDatabase})'
   - _ depth 1 (StructObject UserType) user.userServiceImpl struct{db NoSQLDatabase, db NoSQLDatabase}
   - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
   - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
@@ -163,8 +163,8 @@
 (*userServiceImpl).PostCard(ctx context.Context, userid string, card user.Card struct{LongNum string, Expires string, CCV string, ID string})
 :
  block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) s (*user.userServiceImpl struct{db NoSQLDatabase,
-    db NoSQLDatabase})'
+  - ' depth 0 (PointerObject PointerType) s (*user.userServiceImpl struct{UserService
+    user.UserService, db NoSQLDatabase})'
   - _ depth 1 (StructObject UserType) user.userServiceImpl struct{db NoSQLDatabase, db NoSQLDatabase}
   - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
   - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
@@ -189,8 +189,8 @@
 (*userServiceImpl).PostUser(ctx context.Context, u user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string})
 :
  block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) s (*user.userServiceImpl struct{db NoSQLDatabase,
-    db NoSQLDatabase})'
+  - ' depth 0 (PointerObject PointerType) s (*user.userServiceImpl struct{UserService
+    user.UserService, db NoSQLDatabase})'
   - _ depth 1 (StructObject UserType) user.userServiceImpl struct{db NoSQLDatabase, db NoSQLDatabase}
   - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
   - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
@@ -208,8 +208,8 @@
 
 (*userServiceImpl).Register(ctx context.Context, username string, password string, email string, first string, last string):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) s (*user.userServiceImpl struct{db NoSQLDatabase,
-    db NoSQLDatabase})'
+  - ' depth 0 (PointerObject PointerType) s (*user.userServiceImpl struct{UserService
+    user.UserService, db NoSQLDatabase})'
   - _ depth 1 (StructObject UserType) user.userServiceImpl struct{db NoSQLDatabase, db NoSQLDatabase}
   - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
   - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase

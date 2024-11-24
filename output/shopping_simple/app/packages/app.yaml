@@ -54,12 +54,11 @@ shopping_simple:
 - imported constants: []
 - imported variables: []
 - declared types:
-  - shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
-  - shopping_simple.CartProduct struct{CartID string, ProductID string, PricePerUnit int, Quantity 1 int}
+  - shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string}
+  - shopping_simple.CartProduct struct{CartID string, ProductID string, Quantity int, PricePerUnit int}
   - shopping_simple.CartService
-  - shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase {instance = cart_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, product_queue Queue
-    {instance = product_queue} interface{Queue.Push(ctx context.Context, item interface{}),
-    Queue.Pop(ctx context.Context, item interface{})}, num_workers 4 int}
+  - shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, product_queue Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})},
+    num_workers int}
   - shopping_simple.Frontend
   - shopping_simple.FrontendImpl struct{product_service shopping_simple.ProductService, cart_service shopping_simple.CartService}
   - shopping_simple.Media struct{Video []byte}
@@ -68,10 +67,11 @@ shopping_simple:
   - shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
   - shopping_simple.ProductQueueMessage struct{ProductID string, Remove bool}
   - shopping_simple.ProductService
-  - shopping_simple.ProductServiceImpl struct{product_db NoSQLDatabase {instance = product_db} interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, product_queue Queue {instance = product_queue}
+  - shopping_simple.ProductServiceImpl struct{product_db NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, product_queue Queue
     interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}, num_workers int}
   - shopping_simple.User struct{ID int64, Name string}
-- declared variables: []
+- declared variables:
+  - MyPost shopping_simple.Post struct{User shopping_simple.User struct{ID int64, Name string}, Media shopping_simple.Media struct{Video []byte}, Text string}
 - declared constants:
   - DECLARED_CONSTANT "THIS IS A CONSTANT!" untyped string
 - service types:
@@ -85,22 +85,22 @@ shopping_simple:
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
   - Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}
 - parsed methods:
-  - (*shopping_simple.CartServiceImpl).AddProductToCart(ctx context.Context, cartID string, productID string) (shopping_simple.CartProduct struct{CartID string, ProductID string, PricePerUnit int, Quantity 1 int}, error)
+  - (*shopping_simple.CartServiceImpl).AddProductToCart(ctx context.Context, cartID string, productID string) (shopping_simple.CartProduct struct{CartID string, ProductID string, Quantity int, PricePerUnit int}, error)
   - (*shopping_simple.CartServiceImpl).CreateCart(ctx context.Context, cartID string)
-    (shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}, error)
+    (shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string}, error)
   - (*shopping_simple.CartServiceImpl).GetCart(ctx context.Context, cartID string)
-    (shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}, error)
+    (shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string}, error)
   - (*shopping_simple.CartServiceImpl).Run(ctx context.Context) error
   - (*shopping_simple.CartServiceImpl).removeProduct(ctx context.Context, message shopping_simple.ProductQueueMessage struct{ProductID string, Remove bool}) error
   - (*shopping_simple.CartServiceImpl).workerThread(ctx context.Context) error
-  - (*shopping_simple.FrontendImpl).AddProductToCart(ctx context.Context, cartID string, productID string) (shopping_simple.CartProduct struct{CartID string, ProductID string, PricePerUnit int, Quantity 1 int}, error)
+  - (*shopping_simple.FrontendImpl).AddProductToCart(ctx context.Context, cartID string, productID string) (shopping_simple.CartProduct struct{CartID string, ProductID string, Quantity int, PricePerUnit int}, error)
   - (*shopping_simple.FrontendImpl).CreateCart(ctx context.Context, cartID string)
-    (shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}, error)
+    (shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string}, error)
   - (*shopping_simple.FrontendImpl).CreateProduct(ctx context.Context, productID string, description string, pricePerUnit int, category string) (shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}, error)
   - (*shopping_simple.FrontendImpl).DeleteProduct(ctx context.Context, productID string)
     (bool, error)
   - (*shopping_simple.FrontendImpl).GetAllProducts(ctx context.Context) ([]shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}, error)
-  - (*shopping_simple.FrontendImpl).GetCart(ctx context.Context, cartID string) (shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}, error)
+  - (*shopping_simple.FrontendImpl).GetCart(ctx context.Context, cartID string) (shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string}, error)
   - (*shopping_simple.FrontendImpl).GetProduct(ctx context.Context, productID string)
     (shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}, error)
   - (*shopping_simple.ProductServiceImpl).CreateProduct(ctx context.Context, productID string, description string, pricePerUnit int, category string) (shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}, error)

@@ -30,12 +30,16 @@ func ParseServiceMethodCFG(service *service.Service, method *types.ParsedMethod)
 		blocksStr += "\t\t\t\t\t - " + block.AstInfoString() + "\n"
 	}
 
+	/* if method.GetName() == "StorePostNoSQL" {
+		logger.Logger.Fatal("EXIT!")
+	} */
+
 	logger.Logger.Debugf("[CFG] [%s] parsing service method cfg for (%s):\n%s", service.GetName(), method.String(), blocksStr)
 
 	entryBlock := method.ParsedCfg.GetEntryParsedBlock()
 	visitBasicBlock(service, method, entryBlock)
 
-	/* if method.GetName() == "Run" {
+	/* if method.GetName() == "StorePostNoSQL" {
 		logger.Logger.Fatal("EXIT!")
 	} */
 }
@@ -71,7 +75,15 @@ func visitBasicBlock(service *service.Service, method *types.ParsedMethod, block
 			}
 		}
 
-		logger.Logger.Warnf("\n\n----------------------------------------------\nPARSING BLOCK [%d] NODE [%d]: %v \n----------------------------------------------", block.Block.Index, i, blockNode)
+		initialObjsStr := ""
+		for i, obj := range block.Vars  {
+			initialObjsStr += fmt.Sprintf("\t (#%d) %s", i, obj.String())
+			if i < len(block.Vars) - 1 {
+				initialObjsStr += "\n"
+			}
+		}
+
+		logger.Logger.Warnf("\n----------------------------------------------\nPARSING BLOCK [%d] NODE [%d]: %v \n\t@ METHOD: %s.%s\n%s\n----------------------------------------------", block.Block.Index, i, blockNode, service.Name, method.Name, initialObjsStr)
 		deferStmts = append(deferStmts, parseNode(service, method, block, blockNode)...)
 	}
 
@@ -533,7 +545,7 @@ func parseCallToVariableInBlock(service *service.Service, method *types.ParsedMe
 			var externalCallTupleVar *objects.TupleObject
 			_, variable, externalCallTupleVar = saveCallToStructOrInterface(service, method, block, callExpr, leftVariableTypeName, methodName, pkgPath)
 			if externalCallTupleVar != nil {
-				logger.Logger.Warnf("[CFG CALLS] EXTERNAL TUPLE VAR: %s (%s)", externalCallTupleVar.String(), utils.GetType(externalCallTupleVar.Objects[0]))
+				logger.Logger.Debugf("[CFG CALLS] EXTERNAL TUPLE VAR: %s (%s)", externalCallTupleVar.String(), utils.GetType(externalCallTupleVar.Objects[0]))
 				return externalCallTupleVar
 			}
 
@@ -541,7 +553,7 @@ func parseCallToVariableInBlock(service *service.Service, method *types.ParsedMe
 			return nil
 		} else if fieldVariable, ok := variable.(*objects.FieldObject); ok {
 			variable = fieldVariable.GetWrappedVariable()
-			logger.Logger.Warnf("GOT VAR: %s", variable.String())
+			logger.Logger.Debugf("GOT VAR: %s", variable.String())
 		} else if _, ok := variable.(*objects.ServiceObject); ok {
 			break
 		} else if _, ok := variable.(*blueprint.BlueprintBackendObject); ok {

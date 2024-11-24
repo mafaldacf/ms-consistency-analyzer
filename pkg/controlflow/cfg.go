@@ -42,6 +42,10 @@ func GenerateMethodCFG(parsedMethod *types.ParsedMethod) {
 		entryBlock.Vars = append(entryBlock.Vars, v)
 	}
 
+	/* if parsedMethod.GetName() == "ReadPostMedia" {
+		logger.Logger.Fatal("EXIT!")
+	} */
+
 	// note that parameters also include receiver
 	logger.Logger.Infof("[CFG] parsed CFG with receiver (%v) and (%d) initial variables for method (%s)", receiver, len(entryBlock.Vars), parsedMethod.String())
 }

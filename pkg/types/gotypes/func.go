@@ -18,6 +18,14 @@ type FuncTypeType struct {
 // Type Methods
 // ------------
 
+func (t *FuncTypeType) DeepCopy() Type {
+	return &FuncTypeType{
+		Body: t.Body,
+		Name: t.Name,
+		Params: t.Params,
+	}
+}
+
 func (t *FuncTypeType) IsSameType(other Type) bool {
 	_, ok := other.(*FuncTypeType)
 	return ok

@@ -1,4 +1,4 @@
-[] (PointerObject PointerType) f (*shopping_app.FrontendImpl struct{order_service shopping_app.OrderService, cart_service shopping_app.CartService})
+[] (PointerObject PointerType) f (*shopping_app.FrontendImpl struct{cart_service shopping_app.CartService, order_service shopping_app.OrderService})
 [_] (StructObject UserType) shopping_app.FrontendImpl struct{order_service shopping_app.OrderService, cart_service shopping_app.CartService}
 [__] (FieldObject FieldType) cart_service shopping_app.CartService
 [___] (ServiceObject ServiceType) cart_service shopping_app.CartService

@@ -17,6 +17,22 @@ type InterfaceType struct {
 // Type Methods
 // ------------
 
+func (t *InterfaceType) DeepCopy() Type {
+	var methodsCopy map[string]string = make(map[string]string)
+	for k, v := range t.Methods {
+		methodsCopy[k] = v
+	}
+	var parentUserTypeCopy *UserType
+	if t.ParentUserType != nil {
+		parentUserTypeCopy = t.ParentUserType.DeepCopy().(*UserType)
+	}
+	return &InterfaceType{
+		Content: t.Content,
+		ParentUserType: parentUserTypeCopy,
+		Methods: methodsCopy,
+	}
+}
+
 func (t *InterfaceType) IsSameType(other Type) bool {
 	_, ok := other.(*InterfaceType)
 	return ok

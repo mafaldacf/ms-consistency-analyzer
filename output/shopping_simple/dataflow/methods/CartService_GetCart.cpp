@@ -1,4 +1,4 @@
-[] (PointerObject PointerType) s (*shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int})
+[] (PointerObject PointerType) s (*shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers int})
 [_] (StructObject UserType) shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int}
 [__] (FieldObject FieldType) cart_db NoSQLDatabase
 [___] (BlueprintBackendObject BlueprintBackendType) cart_db NoSQLDatabase
@@ -18,7 +18,7 @@
 [_] (Reference BasicType) ref <cartID string> @ Frontend
 
     --> r-tainted: read(cart_db.Cart) {1}
-[] (StructObject UserType) cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
+[] (StructObject UserType) cart shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string}
 
 [] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = cart_database, collection = cart_database}
 
@@ -37,7 +37,7 @@
     --> r-tainted: read(cart_db.Cart) {1}
 [] (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database = cart_database, collection = cart_database}
      --> r-tainted: read(cart_db.Cart) {1}
-[_] (StructObject UserType) cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
+[_] (StructObject UserType) cart shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string}
 
 [] (InterfaceObject UserType) err .error
 

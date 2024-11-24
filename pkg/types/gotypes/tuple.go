@@ -11,6 +11,16 @@ type TupleType struct {
 // Type Methods
 // ------------
 
+func (t *TupleType) DeepCopy() Type {
+	var subTypesCopy []Type
+	for _, subType := range t.Types {
+		subTypesCopy = append(subTypesCopy, subType.DeepCopy())
+	}
+	return &TupleType{
+		Types: subTypesCopy,
+	}
+}
+
 func (t *TupleType) IsSameType(other Type) bool {
 	_, ok := other.(*TupleType)
 	return ok

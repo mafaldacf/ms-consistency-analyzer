@@ -19,6 +19,30 @@ func NewStructType() *StructType {
 // Type Methods
 // ------------
 
+func (t *StructType) DeepCopy() Type {
+	var fieldTypesCopy []*FieldType
+	var methodsCopy map[string]string = make(map[string]string)
+	for _, fieldType := range t.FieldTypes {
+		fieldTypeCopy := fieldType.DeepCopy().(*FieldType)
+		fieldTypeCopy.Origin = t
+		fieldTypesCopy = append(fieldTypesCopy, fieldTypeCopy)
+	}
+	for k, v := range t.Methods {
+		methodsCopy[k] = v
+	}
+
+	var parentUserType *UserType
+	if t.ParentUserType != nil {
+		parentUserType = t.ParentUserType.DeepCopy().(*UserType)
+	}
+
+	return &StructType{
+		ParentUserType: parentUserType,
+		FieldTypes:     fieldTypesCopy,
+		Methods:        t.Methods,
+	}
+}
+
 func (t *StructType) AddNewFieldType(newType *FieldType) {
 	t.FieldTypes = append(t.FieldTypes, newType)
 }

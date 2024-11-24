@@ -9,9 +9,7 @@
 - SERVICE CALL @ GetUsers >> (*user.userServiceImpl).GetUsers(ctx context.Context, userid string) ([]user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, error)
 - SERVICE CALL @ GetAddresses >> (*user.userServiceImpl).GetAddresses(ctx context.Context, addressid string) ([]user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, error)
 - SERVICE CALL @ GetCards >> (*user.userServiceImpl).GetCards(ctx context.Context, cardid string) ([]user.Card struct{LongNum string, Expires string, CCV string, ID string}, error)
-- 'SERVICE CALL @ Authorise >> (*payment.paymentImpl).Authorise(ctx context.Context,
-  amount float32) (payment.Authorisation struct{Authorised false bool, Message "Payment
-  declined: amount exceeds" string}, error)'
+- SERVICE CALL @ Authorise >> (*payment.paymentImpl).Authorise(ctx context.Context, amount float32) (payment.Authorisation struct{Authorised bool, Message string}, error)
 - SERVICE CALL @ PostShipping >> (*shipping.shippingImpl).PostShipping(ctx context.Context, shipment shipping.Shipment struct{ID string, Name string, Status string}) (shipping.Shipment struct{ID string, Name string, Status string}, error)
 - DATASTORE CALL @ order_db >> NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}) interface{}
 - SERVICE CALL @ DeleteCart >> (*cart.cartImpl).DeleteCart(ctx context.Context, customerID string) error

@@ -1,8 +1,7 @@
 (*queueMasterImpl).Run(ctx context.Context):
   block 5 (SelectAfterCase):
   - ' depth 0 (PointerObject PointerType) q (*queuemaster.queueMasterImpl struct{q
-    Queue, shipping shipping.ShippingService, exitOnError false bool, processed 0
-    int})'
+    Queue, shipping shipping.ShippingService, exitOnError bool, processed int32})'
   - _ depth 1 (StructObject UserType) queuemaster.queueMasterImpl struct{q Queue, shipping shipping.ShippingService, exitOnError false bool, processed 0 int}
   - __ depth 2 (FieldObject FieldType) exitOnError false bool
   - ___ depth 3 (BasicObject BasicType) false bool

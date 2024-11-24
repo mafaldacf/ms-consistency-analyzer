@@ -38,16 +38,16 @@
      --> r-tainted: read(posts_cache.int) {1}
 [_] (BasicObject BasicType) 10 int
 
-[] (StructObject UserType) media postnotification.Media struct{MediaID int64, PostID int64, Content string}
+[] (StructObject UserType) media postnotification.Media struct{MediaID int64, Content string}
 
     --> r-tainted: read(media_db._.mediaid) {1}
 [] (FieldObject FieldType) mediaID int64
      --> r-tainted: read(media_db._.mediaid) {1}
 [_] (BasicObject BasicType) PostID int64
 
-[] (StructObject UserType) media postnotification.Media struct{MediaID int64, PostID int64, Content string}
+[] (StructObject UserType) media postnotification.Media struct{MediaID int64, Content string}
      --> r-tainted: read(media_db.Media) {1}
-[_] (Reference UserType) ref <media postnotification.Media struct{MediaID int64, PostID int64, Content string}> @ MediaService
+[_] (Reference UserType) ref <media postnotification.Media struct{MediaID int64, Content string}> @ MediaService
 
 [] (InterfaceObject UserType) _ .error
 [_] (Reference UserType) ref <err .error> @ MediaService

@@ -1,4 +1,4 @@
-[] (PointerObject PointerType) s (*shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int})
+[] (PointerObject PointerType) s (*shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers int})
 [_] (StructObject UserType) shopping_simple.CartServiceImpl struct{product_service shopping_simple.ProductService, cart_db NoSQLDatabase, product_queue Queue, num_workers 4 int}
 [__] (FieldObject FieldType) cart_db NoSQLDatabase
 [___] (BlueprintBackendObject BlueprintBackendType) cart_db NoSQLDatabase
@@ -22,7 +22,7 @@
 [] (InterfaceObject UserType) _ .error
 
     --> w-tainted: write(cart_db.Cart) {1}
-[] (StructObject UserType) cart shopping_simple.Cart struct{CartID string, TotalQuantity 1 int, LastProductID string, Products []string}
+[] (StructObject UserType) cart shopping_simple.Cart struct{CartID string, LastProductID string, TotalQuantity int, Products []string}
      --> w-tainted: write(cart_db.Cart.CartID) {1}
 [_] (FieldObject FieldType) CartID string
       --> w-tainted: write(cart_db.Cart.CartID) {1}
