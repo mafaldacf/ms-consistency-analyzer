@@ -8,13 +8,27 @@ SHIPMENT_DB.Shipment.OrderID:
 - write <OrderID string (FieldObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
 - write <OrderID string (BasicObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
 - write <OrderID interface{} (InterfaceObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
-- write <OrderID string (BasicObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
-- write <OrderID string (BasicObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
-- write <ref <OrderID string> @ ShipmentService (Reference)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
-- write <OrderID string (FieldObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
-- write <OrderID string (BasicObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
-- write <OrderID interface{} (InterfaceObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
-- write <OrderID string (BasicObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
+- write <orderID string (BasicObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
+- read <orderID string (BasicObject)>
+- read <orderID string (BasicObject)> from <orderID string (BasicObject)>
+- read <ref <OrderID string> @ ShipmentService (Reference)> from <orderID string (BasicObject)>
+- read <OrderID string (BasicObject)> from <orderID string (BasicObject)>
+- read <ref <OrderID string> @ ShipmentService (Reference)> from <orderID string (BasicObject)>
+- read <OrderID string (FieldObject)> from <orderID string (BasicObject)>
+- read <OrderID string (BasicObject)> from <orderID string (BasicObject)>
+- read <OrderID interface{} (InterfaceObject)> from <orderID string (BasicObject)>
+- read <ref <orderID string> @ Frontend (Reference)> from <orderID string (BasicObject)>
+- read <orderID string (BasicObject)> from <orderID string (BasicObject)>
+- read <orderID string (BasicObject)>
+- read <orderID string (BasicObject)> from <orderID string (BasicObject)>
+- read <ref <OrderID string> @ ShipmentService (Reference)> from <orderID string (BasicObject)>
+- read <OrderID string (BasicObject)> from <orderID string (BasicObject)>
+- read <ref <OrderID string> @ ShipmentService (Reference)> from <orderID string (BasicObject)>
+- read <OrderID string (FieldObject)> from <orderID string (BasicObject)>
+- read <OrderID string (BasicObject)> from <orderID string (BasicObject)>
+- read <OrderID interface{} (InterfaceObject)> from <orderID string (BasicObject)>
+- read <ref <orderID string> @ Frontend (Reference)> from <orderID string (BasicObject)>
+- read <orderID string (BasicObject)> from <orderID string (BasicObject)>
 - write <OrderID string (FieldObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
 
 SHIPMENT_DB.Shipment.Status:
@@ -27,11 +41,4 @@ SHIPMENT_DB.Shipment.UserID:
 - write <UserID string (FieldObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
 - write <UserID string (BasicObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
 - write <UserID interface{} (InterfaceObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
-- write <UserID string (BasicObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
-- write <UserID string (BasicObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
-- write <ref <UserID string> @ ShipmentService (Reference)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
-- write <UserID string (FieldObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
-- write <UserID string (BasicObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
-- write <UserID interface{} (InterfaceObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
-- write <UserID string (BasicObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>
 - write <UserID string (FieldObject)> from <shipment shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string} (StructObject)>

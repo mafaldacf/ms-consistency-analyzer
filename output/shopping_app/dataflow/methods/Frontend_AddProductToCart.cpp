@@ -1,15 +1,15 @@
-[] (PointerObject PointerType) f (*shopping_app.FrontendImpl struct{cart_service shopping_app.CartService, order_service shopping_app.OrderService})
-[_] (StructObject UserType) shopping_app.FrontendImpl struct{order_service shopping_app.OrderService, cart_service shopping_app.CartService}
-[__] (FieldObject FieldType) cart_service shopping_app.CartService
-[___] (ServiceObject ServiceType) cart_service shopping_app.CartService
-[__] (FieldObject FieldType) order_service shopping_app.OrderService
-[___] (ServiceObject ServiceType) order_service shopping_app.OrderService
+[0] (PointerObject PointerType) f (*shopping_app.FrontendImpl struct{cart_service shopping_app.CartService, order_service shopping_app.OrderService})
+[_1] (StructObject UserType) shopping_app.FrontendImpl struct{cart_service shopping_app.CartService, order_service shopping_app.OrderService}
+[__2] (FieldObject FieldType) cart_service shopping_app.CartService
+[___3] (ServiceObject ServiceType) cart_service shopping_app.CartService
+[__2] (FieldObject FieldType) order_service shopping_app.OrderService
+[___3] (ServiceObject ServiceType) order_service shopping_app.OrderService
 
-[] (InterfaceObject UserType) ctx context.Context
+[0] (InterfaceObject UserType) ctx context.Context
 
     --> r-tainted: read(cart_db._.cartID) {1}
-[] (BasicObject BasicType) cartID string
+[0] (BasicObject BasicType) cartID string
 
     --> r-tainted: read(product_db._.productID) {1}
-[] (BasicObject BasicType) productID string
+[0] (BasicObject BasicType) productID string
 

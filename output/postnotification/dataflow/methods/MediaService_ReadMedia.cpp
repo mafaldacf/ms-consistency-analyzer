@@ -1,46 +1,46 @@
-[] (PointerObject PointerType) s (*postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase})
-[_] (StructObject UserType) postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase}
-[__] (FieldObject FieldType) mediaDb NoSQLDatabase
-[___] (BlueprintBackendObject BlueprintBackendType) mediaDb NoSQLDatabase
+[0] (PointerObject PointerType) s (*postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase})
+[_1] (StructObject UserType) postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase}
+[__2] (FieldObject FieldType) mediaDb NoSQLDatabase
+[___3] (BlueprintBackendObject BlueprintBackendType) mediaDb NoSQLDatabase
 
-[] (InterfaceObject UserType) ctx context.Context
-[_] (Reference UserType) ref <ctx context.Context> @ StorageService
-[__] (Reference UserType) ref <ctx context.Context> @ UploadService
+[0] (InterfaceObject UserType) ctx context.Context
+[_1] (Reference UserType) ref <ctx context.Context> @ StorageService
+[__2] (Reference UserType) ref <ctx context.Context> @ UploadService
 
     --> r-tainted: read(media_db._.mediaid) {1}
-[] (BasicObject BasicType) mediaID int64
+[0] (BasicObject BasicType) mediaID int64
      --> r-tainted: read(media_db._.mediaid) {1}
-[_] (Reference FieldType) ref <mediaID int64> @ StorageService
+[_1] (Reference FieldType) ref <mediaID int64> @ StorageService
       --> r-tainted: read(media_db._.mediaid) {1}
-[__] (BasicObject BasicType) PostID int64
+[__2] (BasicObject BasicType) PostID int64
 
     --> r-tainted: read(media_db.Media) {1}
-[] (StructObject UserType) media postnotification.Media struct{MediaID int64, Content string}
+[0] (StructObject UserType) media postnotification.Media struct{MediaID int64, Content string}
 
-[] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = media, collection = media}
+[0] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = media, collection = media}
 
-[] (InterfaceObject UserType) err .error
+[0] (InterfaceObject UserType) err .error
 
-[] (SliceObject UserType) query primitive.D
-[_] (StructObject StructType) struct{Key "mediaid" string, Value int64}
-[__] (FieldObject FieldType) Key "mediaid" string
-[___] (BasicObject BasicType) "mediaid" string
-[__] (FieldObject FieldType) Value int64
+[0] (SliceObject UserType) mediaQuery primitive.D
+[_1] (StructObject StructType) struct{Key "mediaid" string, Key "mediaid" string, Value int64, Value int64}
+[__2] (FieldObject FieldType) Key "mediaid" string
+[___3] (BasicObject BasicType) "mediaid" string
+[__2] (FieldObject FieldType) Value int64
        --> r-tainted: read(media_db._.mediaid) {1}
-[___] (BasicObject BasicType) mediaID int64
+[___3] (BasicObject BasicType) mediaID int64
         --> r-tainted: read(media_db._.mediaid) {1}
-[____] (Reference FieldType) ref <mediaID int64> @ StorageService
+[____4] (Reference FieldType) ref <mediaID int64> @ StorageService
          --> r-tainted: read(media_db._.mediaid) {1}
-[_____] (BasicObject BasicType) PostID int64
+[_____5] (BasicObject BasicType) PostID int64
 
     --> r-tainted: read(media_db._) {1}
-[] (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database = media, collection = media}
+[0] (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database = media, collection = media}
      --> r-tainted: read(media_db.Media) {1}
-[_] (StructObject UserType) media postnotification.Media struct{MediaID int64, Content string}
+[_1] (StructObject UserType) media postnotification.Media struct{MediaID int64, Content string}
 
-[] (InterfaceObject UserType) err .error
+[0] (InterfaceObject UserType) err .error
 
-[] (BasicObject BasicType) _ bool
+[0] (BasicObject BasicType) _ bool
 
-[] (InterfaceObject UserType) err .error
+[0] (InterfaceObject UserType) err .error
 

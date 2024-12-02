@@ -1,24 +1,24 @@
-[] (PointerObject PointerType) r (*route.RouteServiceImpl struct{db NoSQLDatabase})
-[_] (StructObject UserType) route.RouteServiceImpl struct{db NoSQLDatabase}
-[__] (FieldObject FieldType) db NoSQLDatabase
-[___] (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+[0] (PointerObject PointerType) r (*route.RouteServiceImpl struct{db NoSQLDatabase})
+[_1] (StructObject UserType) route.RouteServiceImpl struct{db NoSQLDatabase}
+[__2] (FieldObject FieldType) db NoSQLDatabase
+[___3] (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
 
-[] (InterfaceObject UserType) ctx context.Context
+[0] (InterfaceObject UserType) ctx context.Context
 
-[] (ArrayObject ArrayType) ids []string
+[0] (ArrayObject ArrayType) ids []string
 
-[] (ArrayObject ArrayType) routes []route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
-[_] (StructObject UserType) route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
+[0] (ArrayObject ArrayType) routes []route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
+[_1] (StructObject UserType) route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
       --> r-tainted: read(route_db.Route) {1}
-[__] (Reference UserType) ref <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}> @ GetRouteById
+[__2] (Reference UserType) ref <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}> @ GetRouteById
 
-[] (StructObject UserType) route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
+[0] (StructObject UserType) route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
      --> r-tainted: read(route_db.Route) {1}
-[_] (Reference UserType) ref <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}> @ GetRouteById
+[_1] (Reference UserType) ref <route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}> @ GetRouteById
 
-[] (InterfaceObject UserType) _ .error
-[_] (Reference BasicType) ref <nil> @ GetRouteById
+[0] (InterfaceObject UserType) _ .error
+[_1] (Reference BasicType) ref <nil> @ GetRouteById
 
-[] (ArrayObject ArrayType) routes []route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
-[_] (StructObject UserType) route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
+[0] (ArrayObject ArrayType) routes []route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
+[_1] (StructObject UserType) route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
 

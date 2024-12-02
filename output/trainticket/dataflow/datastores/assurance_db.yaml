@@ -34,7 +34,6 @@ ASSURANCE_DB.Assurance.AT:
   @ getAssuranceType (Reference)> from <assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}} (StructObject)>
 - write <assurance.AssuranceType struct{Index int64, Name string, Price float64} (StructObject)>
   from <assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}} (StructObject)>
-- write <at assurance.AssuranceType struct{Index int64, Name string, Price float64} (StructObject)> from <assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}} (StructObject)>
 
 ASSURANCE_DB.Assurance.ID:
 - write <id string (BasicObject)> from <assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}} (StructObject)>

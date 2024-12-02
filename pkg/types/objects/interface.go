@@ -58,10 +58,10 @@ func (v *InterfaceObject) GetDependencies() []Object {
 	return v.GetVariableInfo().GetDependencies()
 }
 
-func (v *InterfaceObject) GetNestedDependencies(nearestFields bool) []Object {
+func (v *InterfaceObject) GetNestedDependencies(includeRefBy bool) []Object {
 	var deps = []Object{v}
 	if v.UnderlyingVariable != nil {
-		deps = append(deps, v.UnderlyingVariable.GetNestedDependencies(nearestFields)...)
+		deps = append(deps, v.UnderlyingVariable.GetNestedDependencies(includeRefBy)...)
 	}
 	return deps
 }

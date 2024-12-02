@@ -11,7 +11,6 @@ POSTS_CACHE.key:
 - read <postID int64 (BasicObject)> from <postIDStr string (BasicObject)>
 - read <ref <postID int64> @ UploadService (Reference)> from <postIDStr string (BasicObject)>
 - read <postID int64 (BasicObject)> from <postIDStr string (BasicObject)>
-- read <postID int64 (BasicObject)> from <postIDStr string (BasicObject)>
 - read <10 int (BasicObject)> from <postIDStr string (BasicObject)>
 
 POSTS_CACHE.value:
@@ -27,5 +26,20 @@ string:
 - read <postID int64 (BasicObject)> from <postIDStr string (BasicObject)>
 - read <ref <postID int64> @ UploadService (Reference)> from <postIDStr string (BasicObject)>
 - read <postID int64 (BasicObject)> from <postIDStr string (BasicObject)>
-- read <postID int64 (BasicObject)> from <postIDStr string (BasicObject)>
 - read <10 int (BasicObject)> from <postIDStr string (BasicObject)>
+- write <string (BasicObject)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructObject)>
+- write <postID_UPLOAD_SVC int64 (BasicObject)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructObject)>
+- write <ref <postID_STORAGE_SVC int64> @ StorageService (Reference)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructObject)>
+- write <postID_STORAGE_SVC int64 (BasicObject)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructObject)>
+- write <ref <PostID int64> @ UploadService (Reference)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructObject)>
+- write <PostID int64 (FieldObject)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructObject)>
+- write <postIDDDDD int64 (BasicObject)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructObject)>
+- write <postID_UPLOAD_SVC int64 (BasicObject)> from <message postnotification.Message struct{ReqID string, PostID string, Timestamp string} (StructObject)>
+- read <string (BasicObject)> from <notifyEvent (*postnotification.Message struct{ReqID string, PostID string, Timestamp string}) (PointerObject)>
+- read <postID_UPLOAD_SVC int64 (BasicObject)> from <notifyEvent (*postnotification.Message struct{ReqID string, PostID string, Timestamp string}) (PointerObject)>
+- read <ref <postID_STORAGE_SVC int64> @ StorageService (Reference)> from <notifyEvent (*postnotification.Message struct{ReqID string, PostID string, Timestamp string}) (PointerObject)>
+- read <postID_STORAGE_SVC int64 (BasicObject)> from <notifyEvent (*postnotification.Message struct{ReqID string, PostID string, Timestamp string}) (PointerObject)>
+- read <ref <PostID int64> @ UploadService (Reference)> from <notifyEvent (*postnotification.Message struct{ReqID string, PostID string, Timestamp string}) (PointerObject)>
+- read <PostID int64 (FieldObject)> from <notifyEvent (*postnotification.Message struct{ReqID string, PostID string, Timestamp string}) (PointerObject)>
+- read <postIDDDDD int64 (BasicObject)> from <notifyEvent (*postnotification.Message struct{ReqID string, PostID string, Timestamp string}) (PointerObject)>
+- read <postID_UPLOAD_SVC int64 (BasicObject)> from <notifyEvent (*postnotification.Message struct{ReqID string, PostID string, Timestamp string}) (PointerObject)>

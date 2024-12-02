@@ -54,7 +54,7 @@ func (v *ServiceObject) GetDependencies() []Object {
 	return v.GetVariableInfo().GetDependencies()
 }
 
-func (v *ServiceObject) GetNestedDependencies(nearestFields bool) []Object {
+func (v *ServiceObject) GetNestedDependencies(includeRefBy bool) []Object {
 	return nil
 }
 

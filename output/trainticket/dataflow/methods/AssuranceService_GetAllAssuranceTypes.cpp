@@ -1,7 +1,7 @@
-[] (PointerObject PointerType) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
-[_] (StructObject UserType) assurance.AssuranceServiceImpl struct{db NoSQLDatabase}
-[__] (FieldObject FieldType) db NoSQLDatabase
-[___] (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+[0] (PointerObject PointerType) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
+[_1] (StructObject UserType) assurance.AssuranceServiceImpl struct{db NoSQLDatabase}
+[__2] (FieldObject FieldType) db NoSQLDatabase
+[___3] (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
 
-[] (InterfaceObject UserType) ctx context.Context
+[0] (InterfaceObject UserType) ctx context.Context
 

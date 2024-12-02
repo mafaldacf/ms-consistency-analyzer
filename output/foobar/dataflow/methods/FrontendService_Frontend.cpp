@@ -1,23 +1,23 @@
-[] (PointerObject PointerType) d (*foobar.FrontendServiceImpl struct{barService bar.BarService, fooService foo.FooService})
-[_] (StructObject UserType) foobar.FrontendServiceImpl struct{fooService foo.FooService, barService bar.BarService}
-[__] (FieldObject FieldType) barService bar.BarService
-[___] (ServiceObject ServiceType) barService bar.BarService
-[__] (FieldObject FieldType) fooService foo.FooService
-[___] (ServiceObject ServiceType) fooService foo.FooService
+[0] (PointerObject PointerType) d (*foobar.FrontendServiceImpl struct{barService bar.BarService, fooService foo.FooService})
+[_1] (StructObject UserType) foobar.FrontendServiceImpl struct{barService bar.BarService, fooService foo.FooService}
+[__2] (FieldObject FieldType) barService bar.BarService
+[___3] (ServiceObject ServiceType) barService bar.BarService
+[__2] (FieldObject FieldType) fooService foo.FooService
+[___3] (ServiceObject ServiceType) fooService foo.FooService
 
-[] (InterfaceObject UserType) ctx context.Context
+[0] (InterfaceObject UserType) ctx context.Context
 
-[] (BasicObject BasicType) f string
-[_] (Reference AddressType) ref <(&"Foo: " string)> @ FooService
-[__] (BasicObject BasicType) "Foo: " string
+[0] (BasicObject BasicType) f string
+[_1] (Reference AddressType) ref <(&"Foo: " string)> @ FooService
+[__2] (BasicObject BasicType) "Foo: " string
 
-[] (InterfaceObject UserType) err1 .error
-[_] (Reference BasicType) ref <nil> @ FooService
+[0] (InterfaceObject UserType) err1 .error
+[_1] (Reference BasicType) ref <nil> @ FooService
 
-[] (BasicObject BasicType) b string
-[_] (Reference AddressType) ref <(&"Bar: " string)> @ BarService
-[__] (BasicObject BasicType) "Bar: " string
+[0] (BasicObject BasicType) b string
+[_1] (Reference AddressType) ref <(&"Bar: " string)> @ BarService
+[__2] (BasicObject BasicType) "Bar: " string
 
-[] (InterfaceObject UserType) err2 .error
-[_] (Reference BasicType) ref <nil> @ BarService
+[0] (InterfaceObject UserType) err2 .error
+[_1] (Reference BasicType) ref <nil> @ BarService
 

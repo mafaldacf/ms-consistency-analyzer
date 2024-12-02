@@ -1,9 +1,9 @@
-[] (InterfaceObject UserType) ctx context.Context
+[0] (InterfaceObject UserType) ctx context.Context
 
-[] (BlueprintBackendObject BlueprintBackendType) mediaDb NoSQLDatabase
+[0] (BlueprintBackendObject BlueprintBackendType) mediaDb NoSQLDatabase
 
-[] (PointerObject PointerType) s (*postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase})
-[_] (StructObject UserType) postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase}
-[__] (FieldObject FieldType) mediaDb NoSQLDatabase
-[___] (BlueprintBackendObject BlueprintBackendType) mediaDb NoSQLDatabase
+[0] (PointerObject PointerType) s (*postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase})
+[_1] (StructObject UserType) postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase}
+[__2] (FieldObject FieldType) mediaDb NoSQLDatabase
+[___3] (BlueprintBackendObject BlueprintBackendType) mediaDb NoSQLDatabase
 

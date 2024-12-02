@@ -50,16 +50,16 @@ func (v *GenericObject) GetDependencies() []Object {
 	return append(v.GetVariableInfo().GetDependencies(), v.Params...)
 }
 
-func (v *GenericObject) GetNestedDependencies(nearestFields bool) []Object {
+func (v *GenericObject) GetNestedDependencies(includeRefBy bool) []Object {
 	var deps = []Object{v}
 	if v.GetVariableInfo().HasReferences() {
-		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
+		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(includeRefBy, v)...)
 	}
-	if v.GetVariableInfo().IsReferencedBy() {
+	if includeRefBy && v.GetVariableInfo().IsReferencedBy() {
 		deps = append(deps, v.GetVariableInfo().GetNestedRefByDependencies(nil)...)
 	}
 	for _, elem := range v.Params {
-		deps = append(deps, elem.GetNestedDependencies(nearestFields)...)
+		deps = append(deps, elem.GetNestedDependencies(includeRefBy)...)
 	}
 	return deps
 }

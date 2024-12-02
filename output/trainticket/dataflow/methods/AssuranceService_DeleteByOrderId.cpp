@@ -1,16 +1,16 @@
-[] (PointerObject PointerType) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
-[_] (StructObject UserType) assurance.AssuranceServiceImpl struct{db NoSQLDatabase}
-[__] (FieldObject FieldType) db NoSQLDatabase
-[___] (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+[0] (PointerObject PointerType) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
+[_1] (StructObject UserType) assurance.AssuranceServiceImpl struct{db NoSQLDatabase}
+[__2] (FieldObject FieldType) db NoSQLDatabase
+[___3] (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
 
-[] (InterfaceObject UserType) ctx context.Context
+[0] (InterfaceObject UserType) ctx context.Context
 
-[] (BasicObject BasicType) order_id string
+[0] (BasicObject BasicType) order_id string
 
-[] (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database = assurance, collection = assurance}
+[0] (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database = assurance, collection = assurance}
 
-[] (InterfaceObject UserType) err .error
+[0] (InterfaceObject UserType) err .error
 
-[] (SliceObject UserType) query primitive.D
-[_] (StructObject StructType) struct{ "orderid" string,  string}
+[0] (SliceObject UserType) query primitive.D
+[_1] (StructObject StructType) struct{ string,  "orderid" string,  string}
 

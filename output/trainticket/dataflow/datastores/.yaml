@@ -16,4 +16,4 @@ WithinPrice: []
 
 float64: []
 
-struct{ "$in" string, primitive.A}: []
+struct{ primitive.A, "$in" string, primitive.A}: []

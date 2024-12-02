@@ -44,7 +44,7 @@ func (v *BackendObject) GetDependencies() []Object {
 	return v.GetVariableInfo().GetDependencies()
 }
 
-func (v *BackendObject) GetNestedDependencies(nearestFields bool) []Object {
+func (v *BackendObject) GetNestedDependencies(includeRefBy bool) []Object {
 	return nil
 }
 

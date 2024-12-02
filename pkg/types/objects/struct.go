@@ -155,7 +155,7 @@ func (v *StructObject) AddOrGetFieldVariable(fieldVariable *FieldObject) {
 	v.attachFieldVariable(fieldVariable)
 	fieldVariable.GetVariableInfo().SetParent(fieldVariable, v)
 
-	v.GetStructType().UpdateFieldAtIfExists(v.NumFieldsList()-1, fieldVariable.GetFieldType())
+	v.GetStructType().UpdateFieldAtIfExists(fieldVariable.GetFieldType())
 }
 
 func (v *StructObject) AddOrGetFieldVariableAndType(fieldVariable *FieldObject) {
@@ -204,16 +204,16 @@ func (v *StructObject) GetDependencies() []Object {
 	return append(v.GetVariableInfo().GetDependencies(), v.GetOrderedFields()...)
 }
 
-func (v *StructObject) GetNestedDependencies(nearestFields bool) []Object {
+func (v *StructObject) GetNestedDependencies(includeRefBy bool) []Object {
 	var deps = []Object{v}
 	if v.GetVariableInfo().HasReferences() {
-		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
+		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(includeRefBy, v)...)
 	}
-	if v.GetVariableInfo().IsReferencedBy() {
+	if includeRefBy && v.GetVariableInfo().IsReferencedBy() {
 		deps = append(deps, v.GetVariableInfo().GetNestedRefByDependencies(nil)...)
 	}
 	for _, elem := range v.GetOrderedFields() {
-		deps = append(deps, elem.GetNestedDependencies(nearestFields)...)
+		deps = append(deps, elem.GetNestedDependencies(includeRefBy)...)
 	}
 	return deps
 }

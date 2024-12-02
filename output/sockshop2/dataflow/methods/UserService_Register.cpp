@@ -1,39 +1,39 @@
-[] (PointerObject PointerType) s (*user.userServiceImpl struct{UserService user.UserService, db NoSQLDatabase})
-[_] (StructObject UserType) user.userServiceImpl struct{db NoSQLDatabase, db NoSQLDatabase}
-[__] (FieldObject FieldType) db NoSQLDatabase
-[___] (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+[0] (PointerObject PointerType) s (*user.userServiceImpl struct{UserService user.UserService, db NoSQLDatabase})
+[_1] (StructObject UserType) user.userServiceImpl struct{UserService user.UserService, db NoSQLDatabase}
+[__2] (FieldObject FieldType) db NoSQLDatabase
+[___3] (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
 
-[] (InterfaceObject UserType) ctx context.Context
+[0] (InterfaceObject UserType) ctx context.Context
 
-[] (BasicObject BasicType) username string
+[0] (BasicObject BasicType) username string
 
-[] (BasicObject BasicType) password string
+[0] (BasicObject BasicType) password string
 
-[] (BasicObject BasicType) email string
+[0] (BasicObject BasicType) email string
 
-[] (BasicObject BasicType) first string
+[0] (BasicObject BasicType) first string
 
-[] (BasicObject BasicType) last string
+[0] (BasicObject BasicType) last string
 
-[] (StructObject UserType) u user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}
-[_] (FieldObject FieldType) Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}
-[__] (StructObject UserType) user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}
-[_] (FieldObject FieldType) Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}
-[__] (StructObject UserType) user.Card struct{LongNum string, Expires string, CCV string, ID string}
-[_] (FieldObject FieldType) Email string
-[__] (BasicObject BasicType) email string
-[_] (FieldObject FieldType) FirstName string
-[__] (BasicObject BasicType) first string
-[_] (FieldObject FieldType) LastName string
-[__] (BasicObject BasicType) last string
-[_] (FieldObject FieldType) Password string
-[__] (BasicObject BasicType) password string
-[_] (FieldObject FieldType) UserID string
-[__] (BasicObject BasicType) UserID string
-[_] (FieldObject FieldType) Username string
-[__] (BasicObject BasicType) username string
+[0] (StructObject UserType) u user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}
+[_1] (FieldObject FieldType) Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}
+[__2] (StructObject UserType) user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}
+[_1] (FieldObject FieldType) Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}
+[__2] (StructObject UserType) user.Card struct{LongNum string, Expires string, CCV string, ID string}
+[_1] (FieldObject FieldType) Email string
+[__2] (BasicObject BasicType) email string
+[_1] (FieldObject FieldType) FirstName string
+[__2] (BasicObject BasicType) first string
+[_1] (FieldObject FieldType) LastName string
+[__2] (BasicObject BasicType) last string
+[_1] (FieldObject FieldType) Password string
+[__2] (BasicObject BasicType) password string
+[_1] (FieldObject FieldType) UserID string
+[__2] (BasicObject BasicType) UserID string
+[_1] (FieldObject FieldType) Username string
+[__2] (BasicObject BasicType) username string
 
-[] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = users, collection = users}
+[0] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = users, collection = users}
 
-[] (InterfaceObject UserType) _ .error
+[0] (InterfaceObject UserType) _ .error
 

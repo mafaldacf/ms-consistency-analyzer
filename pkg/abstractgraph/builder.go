@@ -179,9 +179,13 @@ func (graph *AbstractGraph) referenceCallObjects(parsedCall types.Call, child Ab
 		parentObj.AddReferenceWithID(childObj, child.GetCallee())
 		logger.Logger.Infof("\t\t[REF CALL OBJS - RESULTS] added reference (%d) to child %s: (%s) -> (%s)", parentObj.GetId(), child.GetCallee(), parentObj.GetVariableInfo().String(), childObj.GetVariableInfo().String())
 	}
+
+	/* if parsedCall.GetName() == "StorePostNoSQL" {
+		logger.Logger.Fatalf("HERE!")
+	} */
 }
 
-func (graph *AbstractGraph) referenceQueuePopMethodBlockVars(queueHandler *AbstractQueueHandler, queuePopCall *AbstractDatabaseCall) {
+func (graph *AbstractGraph) referenceQueuePopObjects(queueHandler *AbstractQueueHandler, queuePopCall *AbstractDatabaseCall) {
 	logger.Logger.Infof("[GRAPH REF POP] referencing published vars to pop method call: %s", queuePopCall.GetName())
 	queuePushMethod := getPushMethodIfPublisherChild(queueHandler, queuePopCall)
 	if queuePushMethod == nil {
@@ -197,7 +201,7 @@ func (graph *AbstractGraph) referenceQueuePopMethodBlockVars(queueHandler *Abstr
 		popParam = objects.UnwrapPointerVariable(popParam)
 
 		logger.Logger.Warnf("FIXMEEEEEEEEEE! IDK IF IT IS WORKING IN NOTIFY BECAUSE OF ASSIGNMENTS AND ASSERTS AFTERWARDS")
-		for _, dep := range pushParam.GetNestedDependencies(false) {
+		for _, dep := range pushParam.GetNestedDependencies(true) {
 			if dep.GetVariableInfo().IsUnassigned() {
 				dep.GetVariableInfo().AssignID(graph.getAndIncGIndex())
 				logger.Logger.Debugf("\t\t\t[QUEUE POP - GID DEP] assigned new gid (%d) to (%s)", dep.GetId(), dep.String())
@@ -206,7 +210,7 @@ func (graph *AbstractGraph) referenceQueuePopMethodBlockVars(queueHandler *Abstr
 		popParam.AddReferenceWithID(pushParam, queuePopCall.GetCallerStr())
 		logger.Logger.Infof("\t\t[QUEUE POP - REF BLOCK VAR] added reference (%d) from creator (%s): (%s) -> (%s)", popParam.GetId(), queuePopCall.GetCallerStr(), popParam.GetType().GetName(), popParam.GetVariableInfo().GetName())
 	}
-	//logger.Logger.Fatal("EXIT!")
+	//logger.Logger.Fatalf("EXIT!")
 }
 
 func (graph *AbstractGraph) appendAbstractEdges(parent AbstractNode, targetMethod *types.ParsedMethod) {
@@ -226,7 +230,7 @@ func (graph *AbstractGraph) appendAbstractEdges(parent AbstractNode, targetMetho
 
 			// if root parent is a queue handler (e.g. workerThread) and child is queue pop call
 			if queueHandler, ok := parent.(*AbstractQueueHandler); ok && !queueHandler.IsEnabled() {
-				graph.referenceQueuePopMethodBlockVars(queueHandler, child)
+				graph.referenceQueuePopObjects(queueHandler, child)
 				queueHandler.Enable()
 			}
 			logger.Logger.Infof("[GRAPH] added node for abstract database call with parent (%s): %s", child.GetCallerStr(), child.String())
@@ -242,6 +246,10 @@ func (graph *AbstractGraph) appendAbstractEdges(parent AbstractNode, targetMetho
 			logger.Logger.Infof("[GRAPH] adding node for abstract service call: %s", child.String())
 			graph.referenceCallObjects(parsedCall, child)
 			logger.Logger.Infof("[GRAPH] added node for abstract service call: %s", child.String())
+
+			/* if parsedCall.GetName() == "StorePostNoSQL" {
+				logger.Logger.Fatalf("HERE!")
+			} */
 
 		case *types.ParsedInternalCall:
 			tempChild := &AbstractTempInternalCall{

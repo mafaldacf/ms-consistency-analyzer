@@ -57,17 +57,17 @@ func (v *BasicObject) GetDependencies() []Object {
 	return append(v.GetVariableInfo().GetDependencies(), v.UnderlyingObjects...)
 }
 
-func (v *BasicObject) GetNestedDependencies(nearestFields bool) []Object {
+func (v *BasicObject) GetNestedDependencies(includeRefBy bool) []Object {
 	var deps = []Object{v}
 	if v.GetVariableInfo().HasReferences() {
-		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
+		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(includeRefBy, v)...)
 	}
-	if v.GetVariableInfo().IsReferencedBy() {
+	if includeRefBy && v.GetVariableInfo().IsReferencedBy() {
 		deps = append(deps, v.GetVariableInfo().GetNestedRefByDependencies(nil)...)
 	}
 	for _, elem := range v.UnderlyingObjects {
 		logger.Logger.Tracef("GOT NESTED DEP FOR ELEM %s (%s)", elem.String(), VariableTypeName(elem))
-		deps = append(deps, elem.GetNestedDependencies(nearestFields)...)
+		deps = append(deps, elem.GetNestedDependencies(includeRefBy)...)
 	}
 	return deps
 }

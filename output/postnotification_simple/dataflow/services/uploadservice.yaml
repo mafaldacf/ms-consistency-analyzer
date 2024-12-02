@@ -1,60 +1,58 @@
 (*UploadServiceImpl).UploadPost(ctx context.Context, username string, text string):
   block 2 (IfDone):
-  - ' depth 0 (PointerObject PointerType) u (*postnotification_simple.UploadServiceImpl
-    struct{storageService postnotification_simple.StorageService, notificationsQueue
-    Queue})'
-  - _ depth 1 (StructObject UserType) postnotification_simple.UploadServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue}
-  - __ depth 2 (FieldObject FieldType) notificationsQueue Queue
-  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) notificationsQueue Queue
-  - __ depth 2 (FieldObject FieldType) storageService postnotification_simple.StorageService
-  - ___ depth 3 (ServiceObject ServiceType) storageService postnotification_simple.StorageService
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) username string'
-  - ' depth 0 (BasicObject BasicType) text string --> w-tainted 1x: write(posts_db.Post.Text)'
-  - ' depth 0 (BasicObject BasicType) reqID int64 --> w-tainted 2x: write(notifications_queue.Message.ReqID,
+  - 0 depth 0 (PointerObject PointerType) u (*postnotification_simple.UploadServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue})
+  - _1 depth 1 (StructObject UserType) postnotification_simple.UploadServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue}
+  - __2 depth 2 (FieldObject FieldType) notificationsQueue Queue
+  - ___3 depth 3 (BlueprintBackendObject BlueprintBackendType) notificationsQueue
+    Queue
+  - __4 depth 2 (FieldObject FieldType) storageService postnotification_simple.StorageService
+  - ___5 depth 3 (ServiceObject ServiceType) storageService postnotification_simple.StorageService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) username string
+  - '0 depth 0 (BasicObject BasicType) text string --> w-tainted 1x: write(posts_db.Post.Text)'
+  - '0 depth 0 (BasicObject BasicType) reqID int64 --> w-tainted 2x: write(notifications_queue.Message.ReqID,
     posts_db.Post.ReqID) --> r-tainted 1x: read(notifications_queue.Message.ReqID)'
-  - ' depth 0 (BasicObject BasicType) postID_UploadSVC int64 --> w-tainted 1x: write(notifications_queue.Message.PostID_MESSAGE)
-    --> r-tainted 2x: read(notifications_queue.Message.PostID_MESSAGE, posts_db.Post.PostID)'
-  - '_ depth 1 (Reference BasicType) ref <postID_STORAGE_SVC int64> @ StorageService
+  - '0 depth 0 (BasicObject BasicType) postID_UploadSVC int64 --> w-tainted 2x: write(notifications_queue.Message.PostID_MESSAGE,
+    posts_db.Post.PostID) --> r-tainted 2x: read(notifications_queue.Message.PostID_MESSAGE,
+    posts_db.Post.PostID)'
+  - '_1 depth 1 (Reference BasicType) ref <postID_STORAGE_SVC int64> @ StorageService
     --> w-tainted 2x: write(posts_db.Post.PostID, notifications_queue.Message.PostID_MESSAGE)
     --> r-tainted 2x: read(notifications_queue.Message.PostID_MESSAGE, posts_db.Post.PostID)'
-  - ' depth 0 (InterfaceObject UserType) _ .error'
-  - _ depth 1 (Reference UserType) ref <err .error> @ StorageService
-  - ' depth 0 (StructObject UserType) message postnotification_simple.Message struct{ReqID
+  - 0 depth 0 (InterfaceObject UserType) _ .error
+  - _1 depth 1 (Reference UserType) ref <err .error> @ StorageService
+  - '0 depth 0 (StructObject UserType) message postnotification_simple.Message struct{ReqID
     int64, PostID_MESSAGE int64, Timestamp int64} --> w-tainted 1x: write(notifications_queue.Message)
     --> r-tainted 1x: read(notifications_queue.Message)'
-  - '_ depth 1 (FieldObject FieldType) PostID_MESSAGE int64 --> w-tainted 1x: write(notifications_queue.Message.PostID_MESSAGE)
+  - '_1 depth 1 (FieldObject FieldType) PostID_MESSAGE int64 --> w-tainted 1x: write(notifications_queue.Message.PostID_MESSAGE)
     --> r-tainted 2x: read(notifications_queue.Message.PostID_MESSAGE, posts_db.Post.PostID)'
-  - '_ depth 1 (FieldObject FieldType) ReqID int64 --> w-tainted 1x: write(notifications_queue.Message.ReqID)
+  - '_4 depth 1 (FieldObject FieldType) ReqID int64 --> w-tainted 1x: write(notifications_queue.Message.ReqID)
     --> r-tainted 1x: read(notifications_queue.Message.ReqID)'
-  - ' depth 0 (BasicObject BasicType) _ bool'
-  - ' depth 0 (InterfaceObject UserType) err .error'
+  - 0 depth 0 (BasicObject BasicType) _ bool
+  - 0 depth 0 (InterfaceObject UserType) err .error
 
 .NewNotifyServiceImpl(ctx context.Context, storageService postnotification_simple.StorageService, notificationsQueue Queue):
   block 0 (Body):
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (ServiceObject ServiceType) storageService postnotification_simple.StorageService'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) notificationsQueue Queue'
-  - ' depth 0 (PointerObject PointerType) n (*postnotification_simple.NotifyServiceImpl
-    struct{storageService postnotification_simple.StorageService, notificationsQueue
-    Queue, num_workers 4 int})'
-  - _ depth 1 (StructObject UserType) postnotification_simple.NotifyServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue, num_workers 4 int}
-  - __ depth 2 (FieldObject FieldType) notificationsQueue Queue
-  - __ depth 2 (FieldObject FieldType) num_workers 4 int
-  - ___ depth 3 (BasicObject BasicType) 4 int
-  - __ depth 2 (FieldObject FieldType) storageService postnotification_simple.StorageService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (ServiceObject ServiceType) storageService postnotification_simple.StorageService
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) notificationsQueue Queue
+  - 0 depth 0 (PointerObject PointerType) n (*postnotification_simple.NotifyServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue, num_workers 4 int})
+  - _1 depth 1 (StructObject UserType) postnotification_simple.NotifyServiceImpl struct{storageService postnotification_simple.StorageService, notificationsQueue Queue, num_workers 4 int}
+  - __2 depth 2 (FieldObject FieldType) notificationsQueue Queue
+  - __4 depth 2 (FieldObject FieldType) num_workers 4 int
+  - ___5 depth 3 (BasicObject BasicType) 4 int
+  - __6 depth 2 (FieldObject FieldType) storageService postnotification_simple.StorageService
 
 .NewStorageServiceImpl(ctx context.Context, postsDb NoSQLDatabase):
   block 0 (Body):
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) postsDb NoSQLDatabase'
-  - ' depth 0 (PointerObject PointerType) s (*postnotification_simple.StorageServiceImpl
-    struct{postsDb NoSQLDatabase})'
-  - _ depth 1 (StructObject UserType) postnotification_simple.StorageServiceImpl struct{postsDb NoSQLDatabase}
-  - __ depth 2 (FieldObject FieldType) postsDb NoSQLDatabase
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) postsDb NoSQLDatabase
+  - 0 depth 0 (PointerObject PointerType) s (*postnotification_simple.StorageServiceImpl struct{postsDb NoSQLDatabase})
+  - _1 depth 1 (StructObject UserType) postnotification_simple.StorageServiceImpl
+    struct{postsDb NoSQLDatabase}
+  - __2 depth 2 (FieldObject FieldType) postsDb NoSQLDatabase
 
 .NewUploadServiceImpl(ctx context.Context, storageService postnotification_simple.StorageService, notificationsQueue Queue):
   block 0 (Body):
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (ServiceObject ServiceType) storageService postnotification_simple.StorageService'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) notificationsQueue Queue'
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (ServiceObject ServiceType) storageService postnotification_simple.StorageService
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) notificationsQueue Queue

@@ -17,6 +17,7 @@ type FieldType struct {
 	FieldName     string // set if is struct field
 	FieldLongName string
 	FieldTag      string // set if is struct field
+	Index         int
 }
 
 func NewFieldType(wrappedType Type) *FieldType {

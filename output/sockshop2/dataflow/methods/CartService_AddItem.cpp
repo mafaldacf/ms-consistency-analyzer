@@ -1,30 +1,30 @@
-[] (PointerObject PointerType) s (*cart.cartImpl struct{db NoSQLDatabase})
-[_] (StructObject UserType) cart.cartImpl struct{db NoSQLDatabase}
-[__] (FieldObject FieldType) db NoSQLDatabase
-[___] (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+[0] (PointerObject PointerType) s (*cart.cartImpl struct{db NoSQLDatabase})
+[_1] (StructObject UserType) cart.cartImpl struct{db NoSQLDatabase}
+[__2] (FieldObject FieldType) db NoSQLDatabase
+[___3] (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
 
-[] (InterfaceObject UserType) ctx context.Context
-[_] (Reference UserType) ref <ctx context.Context> @ FrontendService
+[0] (InterfaceObject UserType) ctx context.Context
+[_1] (Reference UserType) ref <ctx context.Context> @ FrontendService
 
-[] (BasicObject BasicType) customerID string
-[_] (Reference BasicType) ref <sessionID string> @ FrontendService
+[0] (BasicObject BasicType) customerID string
+[_1] (Reference BasicType) ref <sessionID string> @ FrontendService
 
-[] (StructObject UserType) item cart.Item struct{ID string, Quantity int, UnitPrice float32}
-[_] (Reference UserType) ref <cart.Item struct{ID string, Quantity int, UnitPrice float32}> @ FrontendService
-[__] (FieldObject FieldType) ID string
-[___] (BasicObject BasicType) ID string
-[__] (FieldObject FieldType) Quantity 1 int
-[___] (BasicObject BasicType) 1 int
-[__] (FieldObject FieldType) UnitPrice float32
-[___] (BasicObject BasicType) Price float32
+[0] (StructObject UserType) item cart.Item struct{ID string, Quantity int, UnitPrice float32}
+[_1] (Reference UserType) ref <cart.Item struct{ID string, Quantity int, UnitPrice float32}> @ FrontendService
+[__2] (FieldObject FieldType) ID string
+[___3] (BasicObject BasicType) ID string
+[__2] (FieldObject FieldType) Quantity 1 int
+[___3] (BasicObject BasicType) 1 int
+[__2] (FieldObject FieldType) UnitPrice float32
+[___3] (BasicObject BasicType) Price float32
 
-[] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = cart, collection = carts}
+[0] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = cart, collection = carts}
 
-[] (InterfaceObject UserType) _ .error
+[0] (InterfaceObject UserType) _ .error
 
-[] (PointerObject PointerType) cart (*cart.cart struct{ID string, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}})
-[_] (StructObject UserType) cart.cart struct{ID string, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}}
-[__] (FieldObject FieldType) ID string
-[___] (BasicObject BasicType) customerID string
-[____] (Reference BasicType) ref <sessionID string> @ FrontendService
+[0] (PointerObject PointerType) cart (*cart.cart struct{ID string, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}})
+[_1] (StructObject UserType) cart.cart struct{ID string, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}}
+[__2] (FieldObject FieldType) ID string
+[___3] (BasicObject BasicType) customerID string
+[____4] (Reference BasicType) ref <sessionID string> @ FrontendService
 

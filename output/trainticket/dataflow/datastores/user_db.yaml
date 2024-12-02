@@ -60,7 +60,9 @@ string:
 - read <ref <ID string> @ PriceService (Reference)> from <id string (BasicObject)>
 - read <ID string (BasicObject)> from <id string (BasicObject)>
 - write <ID string (BasicObject)> from <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructObject)>
+- write <id string (BasicObject)> from <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructObject)>
 - write <ID string (BasicObject)> from <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructObject)>
+- write <id string (BasicObject)> from <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructObject)>
 - read <id string (BasicObject)>
 - read <id string (BasicObject)> from <id string (BasicObject)>
 - read <ref <string> @ StationService (Reference)> from <id string (BasicObject)>

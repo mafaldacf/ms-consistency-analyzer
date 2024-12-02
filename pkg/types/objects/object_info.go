@@ -274,6 +274,9 @@ func (vinfo *ObjectInfo) HasReferences() bool {
 }
 
 func (vinfo *ObjectInfo) IsReferencedBy() bool {
+	if vinfo.Name == "postID_STORAGE_SVC" {
+		logger.Logger.Warnf("HERE: %s", vinfo.String())
+	}
 	return vinfo.ReferencedBy != nil
 }
 
@@ -282,14 +285,15 @@ func (vinfo *ObjectInfo) AssignID(id int64) {
 }
 
 func (vinfo *ObjectInfo) AddReferenceWithID(source Object, target Object, creator string) {
-	logger.Logger.Debugf("[VARS INFO] adding new reference (%s) @ (%s) for variable (%s) with references list (len=%d): %v", target.String(), creator, vinfo.String(), len(vinfo.GetReferences()), vinfo.GetReferences())
-	vinfo.ReferencedBy = append(vinfo.ReferencedBy, source)
+	targetInfo := target.GetVariableInfo()
+	targetInfo.ReferencedBy = append(targetInfo.ReferencedBy, source)
 	vinfo.Id = target.GetId()
 	vinfo.References = append(vinfo.References, &Reference{
 		Creator: creator,
 		Object:  target,
 		Id:      target.GetId(),
 	})
+	logger.Logger.Debugf("[VARS INFO] added new reference (%s) @ (%s) for variable (%s) with references list (len=%d): %v", target.String(), creator, vinfo.String(), len(vinfo.GetReferences()), vinfo.GetReferences())
 }
 
 func (vinfo *ObjectInfo) GetName() string {
@@ -323,7 +327,7 @@ func (vinfo *ObjectInfo) AddParent(current Object, parent Object) {
 	}
 	vinfo.Parents = append(vinfo.Parents, parent)
 }
-func (vinfo *ObjectInfo) GetReferencesNestedDependencies(nearestFields bool, v Object) []Object {
+func (vinfo *ObjectInfo) GetReferencesNestedDependencies(includeRefBy bool, v Object) []Object {
 	var deps []Object
 	for _, ref := range vinfo.References {
 		deps = append(deps, ref.GetNestedDependencies(false)...)

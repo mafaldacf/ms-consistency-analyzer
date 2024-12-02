@@ -1,30 +1,30 @@
-[] (PointerObject PointerType) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
-[_] (StructObject UserType) assurance.AssuranceServiceImpl struct{db NoSQLDatabase}
-[__] (FieldObject FieldType) db NoSQLDatabase
-[___] (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+[0] (PointerObject PointerType) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
+[_1] (StructObject UserType) assurance.AssuranceServiceImpl struct{db NoSQLDatabase}
+[__2] (FieldObject FieldType) db NoSQLDatabase
+[___3] (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
 
-[] (InterfaceObject UserType) ctx context.Context
+[0] (InterfaceObject UserType) ctx context.Context
 
-[] (StructObject UserType) assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
-[_] (FieldObject FieldType) ID string
+[0] (StructObject UserType) assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
+[_1] (FieldObject FieldType) ID string
       --> r-tainted: read(assurance_db._.id) {1}
-[__] (BasicObject BasicType) ID string
+[__2] (BasicObject BasicType) ID string
 
-[] (StructObject UserType) _ assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
+[0] (StructObject UserType) _ assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
      --> r-tainted: read(assurance_db.Assurance) {1}
-[_] (Reference UserType) ref <ass assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}> @ FindAssuranceById
+[_1] (Reference UserType) ref <ass assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}> @ FindAssuranceById
 
-[] (InterfaceObject UserType) err .error
-[_] (Reference BasicType) ref <nil> @ FindAssuranceById
+[0] (InterfaceObject UserType) err .error
+[_1] (Reference BasicType) ref <nil> @ FindAssuranceById
 
-[] (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database = assurance, collection = assurance}
+[0] (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database = assurance, collection = assurance}
 
-[] (InterfaceObject UserType) err .error
+[0] (InterfaceObject UserType) err .error
 
-[] (SliceObject UserType) query primitive.D
-[_] (StructObject StructType) struct{ "id" string,  string}
+[0] (SliceObject UserType) query primitive.D
+[_1] (StructObject StructType) struct{ string,  "id" string,  string}
 
-[] (BasicObject BasicType) ok bool
+[0] (BasicObject BasicType) ok bool
 
-[] (InterfaceObject UserType) err .error
+[0] (InterfaceObject UserType) err .error
 

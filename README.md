@@ -41,16 +41,13 @@ go run main.go -app=postnotification
 go run main.go -app=sockshop2
 go run main.go -app=trainticket
 
-go run main.go -app=postnotification --xcy
-go run main.go -app=postnotification --fk
-go run main.go -app=postnotification --cascade
-go run main.go -app=postnotification --xcy --fk --cascade
-
-go run main.go -app=shopping_simple
-go run main.go -app=shopping_simple --xcy
-go run main.go -app=shopping_simple --cascade
-go run main.go -app=shopping_simple --fk
+go run main.go -app=foobar --xcy --fk --cascade
 go run main.go -app=shopping_simple --xcy --fk --cascade
+go run main.go -app=shopping_app --xcy --fk --cascade
+go run main.go -app=postnotification_simple --xcy --fk --cascade
+go run main.go -app=postnotification --xcy --fk --cascade
+go run main.go -app=sockshop2 --xcy --fk --cascade
+go run main.go -app=trainticket --xcy --fk --cascade
 
 source ~/.venv/bin/activate
 

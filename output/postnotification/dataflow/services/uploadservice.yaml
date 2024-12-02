@@ -1,201 +1,187 @@
 (*UploadServiceImpl).ReadMedia(ctx context.Context, reqID int64, postID int64):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) u (*postnotification.UploadServiceImpl struct{storageService
-    postnotification.StorageService, mediaService postnotification.MediaService, notificationsQueue
-    Queue, timelineCache Cache})'
-  - _ depth 1 (StructObject UserType) postnotification.UploadServiceImpl struct{storageService postnotification.StorageService, mediaService postnotification.MediaService, notificationsQueue Queue, timelineCache Cache}
-  - __ depth 2 (FieldObject FieldType) mediaService postnotification.MediaService
-  - ___ depth 3 (ServiceObject ServiceType) mediaService postnotification.MediaService
-  - __ depth 2 (FieldObject FieldType) notificationsQueue Queue
-  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) notificationsQueue Queue
-  - __ depth 2 (FieldObject FieldType) storageService postnotification.StorageService
-  - ___ depth 3 (ServiceObject ServiceType) storageService postnotification.StorageService
-  - __ depth 2 (FieldObject FieldType) timelineCache Cache
-  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) timelineCache Cache
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) reqID int64'
-  - ' depth 0 (BasicObject BasicType) postID int64 --> r-tainted 1x: read(posts_cache.int64)'
-  - ' depth 0 (StructObject UserType) media postnotification.Media struct{MediaID
-    int64, Content string}'
-  - ' depth 0 (StructObject UserType) media postnotification.Media struct{MediaID
-    int64, Content string}'
-  - _ depth 1 (Reference UserType) ref <media postnotification.Media struct{MediaID int64, Content string}> @ StorageService
-  - '__ depth 2 (Reference UserType) ref <media postnotification.Media struct{MediaID
+  - 0 depth 0 (PointerObject PointerType) u (*postnotification.UploadServiceImpl struct{storageService postnotification.StorageService, mediaService postnotification.MediaService, notificationsQueue Queue, timelineCache Cache})
+  - _1 depth 1 (StructObject UserType) postnotification.UploadServiceImpl struct{storageService postnotification.StorageService, mediaService postnotification.MediaService, notificationsQueue Queue, timelineCache Cache}
+  - __2 depth 2 (FieldObject FieldType) mediaService postnotification.MediaService
+  - ___3 depth 3 (ServiceObject ServiceType) mediaService postnotification.MediaService
+  - __4 depth 2 (FieldObject FieldType) notificationsQueue Queue
+  - ___5 depth 3 (BlueprintBackendObject BlueprintBackendType) notificationsQueue
+    Queue
+  - __6 depth 2 (FieldObject FieldType) storageService postnotification.StorageService
+  - ___7 depth 3 (ServiceObject ServiceType) storageService postnotification.StorageService
+  - __8 depth 2 (FieldObject FieldType) timelineCache Cache
+  - ___9 depth 3 (BlueprintBackendObject BlueprintBackendType) timelineCache Cache
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) reqID int64
+  - '0 depth 0 (BasicObject BasicType) postID int64 --> r-tainted 1x: read(posts_cache.int64)'
+  - 0 depth 0 (StructObject UserType) media postnotification.Media struct{MediaID int64, Content string}
+  - 0 depth 0 (StructObject UserType) media postnotification.Media struct{MediaID int64, Content string}
+  - _1 depth 1 (Reference UserType) ref <media postnotification.Media struct{MediaID int64, Content string}> @ StorageService
+  - '__2 depth 2 (Reference UserType) ref <media postnotification.Media struct{MediaID
     int64, Content string}> @ MediaService --> r-tainted 1x: read(media_db.Media)'
-  - ' depth 0 (InterfaceObject UserType) _ .error'
-  - _ depth 1 (Reference BasicType) ref <nil> @ StorageService
+  - 0 depth 0 (InterfaceObject UserType) _ .error
+  - _1 depth 1 (Reference BasicType) ref <nil> @ StorageService
 
 (*UploadServiceImpl).UploadPost(ctx context.Context, username string, text string):
   block 2 (IfDone):
-  - ' depth 0 (PointerObject PointerType) u (*postnotification.UploadServiceImpl struct{storageService
-    postnotification.StorageService, mediaService postnotification.MediaService, notificationsQueue
-    Queue, timelineCache Cache})'
-  - _ depth 1 (StructObject UserType) postnotification.UploadServiceImpl struct{storageService postnotification.StorageService, mediaService postnotification.MediaService, notificationsQueue Queue, timelineCache Cache}
-  - __ depth 2 (FieldObject FieldType) mediaService postnotification.MediaService
-  - ___ depth 3 (ServiceObject ServiceType) mediaService postnotification.MediaService
-  - __ depth 2 (FieldObject FieldType) notificationsQueue Queue
-  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) notificationsQueue Queue
-  - __ depth 2 (FieldObject FieldType) storageService postnotification.StorageService
-  - ___ depth 3 (ServiceObject ServiceType) storageService postnotification.StorageService
-  - __ depth 2 (FieldObject FieldType) timelineCache Cache
-  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) timelineCache Cache
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) username string'
-  - ' depth 0 (BasicObject BasicType) text string --> w-tainted 1x: write(posts_db.Post.Text)'
-  - ' depth 0 (BasicObject BasicType) reqID int64 --> w-tainted 4x: write(posts_db.Post.ReqID,
+  - 0 depth 0 (PointerObject PointerType) u (*postnotification.UploadServiceImpl struct{storageService postnotification.StorageService, mediaService postnotification.MediaService, notificationsQueue Queue, timelineCache Cache})
+  - _1 depth 1 (StructObject UserType) postnotification.UploadServiceImpl struct{storageService postnotification.StorageService, mediaService postnotification.MediaService, notificationsQueue Queue, timelineCache Cache}
+  - __2 depth 2 (FieldObject FieldType) mediaService postnotification.MediaService
+  - ___3 depth 3 (ServiceObject ServiceType) mediaService postnotification.MediaService
+  - __4 depth 2 (FieldObject FieldType) notificationsQueue Queue
+  - ___5 depth 3 (BlueprintBackendObject BlueprintBackendType) notificationsQueue
+    Queue
+  - __6 depth 2 (FieldObject FieldType) storageService postnotification.StorageService
+  - ___7 depth 3 (ServiceObject ServiceType) storageService postnotification.StorageService
+  - __8 depth 2 (FieldObject FieldType) timelineCache Cache
+  - ___9 depth 3 (BlueprintBackendObject BlueprintBackendType) timelineCache Cache
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) username string
+  - '0 depth 0 (BasicObject BasicType) text string --> w-tainted 1x: write(posts_db.Post.Text)'
+  - '0 depth 0 (BasicObject BasicType) reqID int64 --> w-tainted 4x: write(posts_db.Post.ReqID,
     notifications_queue.Message.ReqID, timeline_cache.key, timeline_cache.value) -->
     r-tainted 1x: read(notifications_queue.Message.ReqID)'
-  - '_ depth 1 (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService -->
-    w-tainted 4x: write(posts_db.Post.ReqID, notifications_queue.Message.ReqID, timeline_cache.key,
-    timeline_cache.value) --> r-tainted 1x: read(notifications_queue.Message.ReqID)'
-  - ' depth 0 (BasicObject BasicType) postID int64 --> w-tainted 6x: write(posts_db.Post.PostID,
+  - '0 depth 0 (BasicObject BasicType) postIDDDDD int64 --> w-tainted 6x: write(posts_db.Post.PostID,
     analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID,
     notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
-    --> r-tainted 2x: read(analytics_queue.TriggerAnalyticsMessage.PostID, notifications_queue.Message.PostID)'
-  - '_ depth 1 (Reference InterfaceType) ref <PostID interface{}> @ NotifyService
+    --> r-tainted 4x: read(analytics_queue.TriggerAnalyticsMessage.PostID, notifications_queue.Message.PostID,
+    posts_db.Post.PostID, analytics_db.Analytics.PostID)'
+  - '0 depth 0 (StructObject UserType) media postnotification.Media struct{MediaID
+    int64, Content "HELLO WORLD!" untyped string} --> w-tainted 1x: write(media_db.Media)'
+  - '_1 depth 1 (FieldObject FieldType) Content "HELLO WORLD!" untyped string -->
+    w-tainted 1x: write(media_db.Media.Content)'
+  - '__2 depth 2 (BasicObject BasicType) HELLO_WORLD_CONST "HELLO WORLD!" untyped
+    string --> w-tainted 1x: write(media_db.Media.Content)'
+  - '0 depth 0 (BasicObject BasicType) timestamp int64 --> w-tainted 1x: write(posts_db.Post.Timestamp)'
+  - '0 depth 0 (ArrayObject ArrayType) mentions []string --> w-tainted 1x: write(posts_db.Post.Mentions)'
+  - '_1 depth 1 (BasicObject BasicType) "alice" string --> w-tainted 1x: write(posts_db.Post.Mentions)'
+  - '_2 depth 1 (BasicObject BasicType) "bob" string --> w-tainted 1x: write(posts_db.Post.Mentions)'
+  - '0 depth 0 (StructObject UserType) post postnotification.Post struct{ReqID int64,
+    PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64,
+    Creator postnotification.Creator struct{Username "some username" string}} -->
+    w-tainted 1x: write(posts_db.Post)'
+  - '_1 depth 1 (FieldObject FieldType) Creator postnotification.Creator struct{Username
+    "some username" string} --> w-tainted 1x: write(posts_db.Post.Creator)'
+  - '__2 depth 2 (StructObject UserType) postnotification.Creator struct{Username
+    "some username" string} --> w-tainted 1x: write(posts_db.Post.Creator)'
+  - '___3 depth 3 (FieldObject FieldType) Username "some username" string --> w-tainted
+    1x: write(posts_db.Post.Creator.Username)'
+  - '____4 depth 4 (BasicObject BasicType) "some username" string --> w-tainted 1x:
+    write(posts_db.Post.Creator.Username)'
+  - '_5 depth 1 (FieldObject FieldType) Mentions []string --> w-tainted 1x: write(posts_db.Post.Mentions)'
+  - '_9 depth 1 (FieldObject FieldType) PostID int64 --> w-tainted 6x: write(posts_db.Post.PostID,
+    analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID,
+    notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
+    --> r-tainted 4x: read(analytics_queue.TriggerAnalyticsMessage.PostID, notifications_queue.Message.PostID,
+    posts_db.Post.PostID, analytics_db.Analytics.PostID)'
+  - '__10 depth 2 (BasicObject BasicType) postID_UPLOAD_SVC int64 --> w-tainted 6x:
+    write(posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID,
+    notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
+    --> r-tainted 4x: read(analytics_queue.TriggerAnalyticsMessage.PostID, notifications_queue.Message.PostID,
+    posts_db.Post.PostID, analytics_db.Analytics.PostID)'
+  - '___11 depth 3 (Reference BasicType) ref <postID_STORAGE_SVC int64> @ StorageService
     --> w-tainted 6x: write(posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID,
     analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.key,
     timeline_cache.value) --> r-tainted 4x: read(analytics_queue.TriggerAnalyticsMessage.PostID,
     notifications_queue.Message.PostID, posts_db.Post.PostID, analytics_db.Analytics.PostID)'
-  - ' depth 0 (StructObject UserType) media postnotification.Media struct{Content
-    "HELLO WORLD!" untyped string, Content string} --> w-tainted 1x: write(media_db.Media)'
-  - '_ depth 1 (FieldObject FieldType) Content "HELLO WORLD!" untyped string --> w-tainted
-    1x: write(media_db.Media.Content)'
-  - '__ depth 2 (BasicObject BasicType) HELLO_WORLD_CONST "HELLO WORLD!" untyped string
-    --> w-tainted 1x: write(media_db.Media.Content)'
-  - ' depth 0 (BasicObject BasicType) timestamp int64 --> w-tainted 1x: write(posts_db.Post.Timestamp)'
-  - ' depth 0 (ArrayObject ArrayType) mentions []string --> w-tainted 1x: write(posts_db.Post.Mentions)'
-  - '_ depth 1 (BasicObject BasicType) "alice" string --> w-tainted 1x: write(posts_db.Post.Mentions)'
-  - '_ depth 1 (BasicObject BasicType) "bob" string --> w-tainted 1x: write(posts_db.Post.Mentions)'
-  - ' depth 0 (StructObject UserType) post postnotification.Post struct{ReqID int64,
-    PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator
-    struct{Username "some username" string}, Creator postnotification.Creator struct{Username
-    string}} --> w-tainted 1x: write(posts_db.Post)'
-  - '_ depth 1 (FieldObject FieldType) Creator postnotification.Creator struct{Username
-    "some username" string} --> w-tainted 1x: write(posts_db.Post.Creator)'
-  - '__ depth 2 (StructObject UserType) postnotification.Creator struct{Username "some
-    username" string} --> w-tainted 1x: write(posts_db.Post.Creator)'
-  - '___ depth 3 (FieldObject FieldType) Username "some username" string --> w-tainted
-    1x: write(posts_db.Post.Creator.Username)'
-  - '____ depth 4 (BasicObject BasicType) "some username" string --> w-tainted 1x:
-    write(posts_db.Post.Creator.Username)'
-  - '_ depth 1 (FieldObject FieldType) Mentions []string --> w-tainted 1x: write(posts_db.Post.Mentions)'
-  - '_ depth 1 (FieldObject FieldType) PostID int64 --> w-tainted 3x: write(posts_db.Post.PostID,
-    analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID)
-    --> r-tainted 1x: read(analytics_queue.TriggerAnalyticsMessage.PostID)'
-  - '_ depth 1 (FieldObject FieldType) ReqID int64 --> w-tainted 1x: write(posts_db.Post.ReqID)'
-  - '_ depth 1 (FieldObject FieldType) Text string --> w-tainted 1x: write(posts_db.Post.Text)'
-  - '_ depth 1 (FieldObject FieldType) Timestamp int64 --> w-tainted 1x: write(posts_db.Post.Timestamp)'
-  - ' depth 0 (BasicObject BasicType) postID2 int64'
-  - '_ depth 1 (Reference BasicType) ref <postID int64> @ StorageService --> w-tainted
-    3x: write(posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID,
-    analytics_db.Analytics.PostID) --> r-tainted 1x: read(analytics_queue.TriggerAnalyticsMessage.PostID)'
-  - '__ depth 2 (Reference FieldType) ref <PostID int64> @ UploadService --> w-tainted
-    3x: write(posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID,
-    analytics_db.Analytics.PostID) --> r-tainted 1x: read(analytics_queue.TriggerAnalyticsMessage.PostID)'
-  - '___ depth 3 (BasicObject BasicType) postID int64 --> w-tainted 6x: write(posts_db.Post.PostID,
+  - '____12 depth 4 (Reference FieldType) ref <PostID int64> @ UploadService --> w-tainted
+    6x: write(posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID,
+    analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.key,
+    timeline_cache.value) --> r-tainted 4x: read(analytics_queue.TriggerAnalyticsMessage.PostID,
+    notifications_queue.Message.PostID, posts_db.Post.PostID, analytics_db.Analytics.PostID)'
+  - '_____13 depth 5 (BasicObject BasicType) postIDDDDD int64 --> w-tainted 6x: write(posts_db.Post.PostID,
     analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID,
     notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
-    --> r-tainted 2x: read(analytics_queue.TriggerAnalyticsMessage.PostID, notifications_queue.Message.PostID)'
-  - ' depth 0 (InterfaceObject UserType) _ .error'
-  - _ depth 1 (Reference UserType) ref <err .error> @ StorageService
-  - ' depth 0 (StructObject UserType) message postnotification.Message struct{ReqID
+    --> r-tainted 4x: read(analytics_queue.TriggerAnalyticsMessage.PostID, notifications_queue.Message.PostID,
+    posts_db.Post.PostID, analytics_db.Analytics.PostID)'
+  - '_14 depth 1 (FieldObject FieldType) ReqID int64 --> w-tainted 1x: write(posts_db.Post.ReqID)'
+  - '_16 depth 1 (FieldObject FieldType) Text string --> w-tainted 1x: write(posts_db.Post.Text)'
+  - '_18 depth 1 (FieldObject FieldType) Timestamp int64 --> w-tainted 1x: write(posts_db.Post.Timestamp)'
+  - '0 depth 0 (BasicObject BasicType) postID_UPLOAD_SVC int64 --> w-tainted 6x: write(posts_db.Post.PostID,
+    analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID,
+    notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
+    --> r-tainted 4x: read(analytics_queue.TriggerAnalyticsMessage.PostID, notifications_queue.Message.PostID,
+    posts_db.Post.PostID, analytics_db.Analytics.PostID)'
+  - 0 depth 0 (InterfaceObject UserType) _ .error
+  - _1 depth 1 (Reference UserType) ref <err .error> @ StorageService
+  - '0 depth 0 (StructObject UserType) message postnotification.Message struct{ReqID
     string, PostID string, Timestamp string} --> w-tainted 1x: write(notifications_queue.Message)
     --> r-tainted 1x: read(notifications_queue.Message)'
-  - '_ depth 1 (FieldObject FieldType) PostID string --> w-tainted 1x: write(notifications_queue.Message.PostID)
-    --> r-tainted 1x: read(notifications_queue.Message.PostID)'
-  - '__ depth 2 (Reference InterfaceType) ref <PostID interface{}> @ NotifyService
-    --> w-tainted 6x: write(posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID,
-    analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.key,
-    timeline_cache.value) --> r-tainted 4x: read(analytics_queue.TriggerAnalyticsMessage.PostID,
-    notifications_queue.Message.PostID, posts_db.Post.PostID, analytics_db.Analytics.PostID)'
-  - '__ depth 2 (BasicObject BasicType) string --> w-tainted 1x: write(notifications_queue.Message.PostID)
-    --> r-tainted 1x: read(notifications_queue.Message.PostID)'
-  - '___ depth 3 (Reference InterfaceType) ref <PostID interface{}> @ NotifyService
-    --> w-tainted 6x: write(posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID,
-    analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.key,
-    timeline_cache.value) --> r-tainted 4x: read(analytics_queue.TriggerAnalyticsMessage.PostID,
-    notifications_queue.Message.PostID, posts_db.Post.PostID, analytics_db.Analytics.PostID)'
-  - '_ depth 1 (FieldObject FieldType) ReqID string --> w-tainted 1x: write(notifications_queue.Message.ReqID)
+  - '_1 depth 1 (FieldObject FieldType) PostID string --> w-tainted 1x: write(notifications_queue.Message.PostID)
+    --> r-tainted 3x: read(notifications_queue.Message.PostID, posts_db.Post.PostID,
+    analytics_db.Analytics.PostID)'
+  - '__2 depth 2 (BasicObject BasicType) string --> w-tainted 1x: write(notifications_queue.Message.PostID)
+    --> r-tainted 3x: read(notifications_queue.Message.PostID, posts_db.Post.PostID,
+    analytics_db.Analytics.PostID)'
+  - '_7 depth 1 (FieldObject FieldType) ReqID string --> w-tainted 1x: write(notifications_queue.Message.ReqID)
     --> r-tainted 1x: read(notifications_queue.Message.ReqID)'
-  - '__ depth 2 (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService
-    --> w-tainted 4x: write(posts_db.Post.ReqID, notifications_queue.Message.ReqID,
-    timeline_cache.key, timeline_cache.value) --> r-tainted 1x: read(notifications_queue.Message.ReqID)'
-  - '__ depth 2 (BasicObject BasicType) string --> w-tainted 1x: write(notifications_queue.Message.ReqID)
+  - '__8 depth 2 (BasicObject BasicType) string --> w-tainted 1x: write(notifications_queue.Message.ReqID)
     --> r-tainted 1x: read(notifications_queue.Message.ReqID)'
-  - '___ depth 3 (Reference InterfaceType) ref <ReqID interface{}> @ NotifyService
-    --> w-tainted 4x: write(posts_db.Post.ReqID, notifications_queue.Message.ReqID,
-    timeline_cache.key, timeline_cache.value) --> r-tainted 1x: read(notifications_queue.Message.ReqID)'
-  - ' depth 0 (BasicObject BasicType) _ bool'
-  - ' depth 0 (InterfaceObject UserType) err .error'
-  - ' depth 0 (BasicObject BasicType) reqIDStr string'
-  - _ depth 1 (BasicObject BasicType) 10 int
-  - ' depth 0 (StructObject UserType) timeline postnotification.Timeline struct{ReqID
+  - 0 depth 0 (BasicObject BasicType) _ bool
+  - 0 depth 0 (InterfaceObject UserType) err .error
+  - 0 depth 0 (BasicObject BasicType) reqIDStr string
+  - _2 depth 1 (BasicObject BasicType) 10 int
+  - '0 depth 0 (StructObject UserType) timeline postnotification.Timeline struct{ReqID
     int64, PostID int64} --> w-tainted 2x: write(timeline_cache.key, timeline_cache.value)'
-  - '_ depth 1 (FieldObject FieldType) PostID int64 --> w-tainted 2x: write(timeline_cache.key,
+  - '_1 depth 1 (FieldObject FieldType) PostID int64 --> w-tainted 2x: write(timeline_cache.key,
     timeline_cache.value)'
-  - '_ depth 1 (FieldObject FieldType) ReqID int64 --> w-tainted 2x: write(timeline_cache.key,
+  - '_6 depth 1 (FieldObject FieldType) ReqID int64 --> w-tainted 2x: write(timeline_cache.key,
     timeline_cache.value)'
 
 .NewAnalyticsServiceImpl(ctx context.Context, analyticsDb NoSQLDatabase, analyticsQueue Queue):
   block 0 (Body):
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) analyticsDb NoSQLDatabase'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) analyticsQueue Queue'
-  - ' depth 0 (PointerObject PointerType) n (*postnotification.AnalyticsServiceImpl
-    struct{analyticsDb NoSQLDatabase, analyticsQueue Queue, numWorkers 4 int})'
-  - _ depth 1 (StructObject UserType) postnotification.AnalyticsServiceImpl struct{analyticsDb NoSQLDatabase, analyticsQueue Queue, numWorkers 4 int}
-  - __ depth 2 (FieldObject FieldType) analyticsDb NoSQLDatabase
-  - __ depth 2 (FieldObject FieldType) analyticsQueue Queue
-  - __ depth 2 (FieldObject FieldType) numWorkers 4 int
-  - ___ depth 3 (BasicObject BasicType) 4 int
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) analyticsDb NoSQLDatabase
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) analyticsQueue Queue
+  - 0 depth 0 (PointerObject PointerType) n (*postnotification.AnalyticsServiceImpl struct{analyticsQueue Queue, analyticsDb NoSQLDatabase, numWorkers 4 int})
+  - _1 depth 1 (StructObject UserType) postnotification.AnalyticsServiceImpl struct{analyticsQueue Queue, analyticsDb NoSQLDatabase, numWorkers 4 int}
+  - __2 depth 2 (FieldObject FieldType) analyticsDb NoSQLDatabase
+  - __4 depth 2 (FieldObject FieldType) analyticsQueue Queue
+  - __6 depth 2 (FieldObject FieldType) numWorkers 4 int
+  - ___7 depth 3 (BasicObject BasicType) 4 int
 
 .NewMediaServiceImpl(ctx context.Context, mediaDb NoSQLDatabase):
   block 0 (Body):
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) mediaDb NoSQLDatabase'
-  - ' depth 0 (PointerObject PointerType) s (*postnotification.MediaServiceImpl struct{mediaDb
-    NoSQLDatabase})'
-  - _ depth 1 (StructObject UserType) postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase}
-  - __ depth 2 (FieldObject FieldType) mediaDb NoSQLDatabase
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) mediaDb NoSQLDatabase
+  - 0 depth 0 (PointerObject PointerType) s (*postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase})
+  - _1 depth 1 (StructObject UserType) postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase}
+  - __2 depth 2 (FieldObject FieldType) mediaDb NoSQLDatabase
 
 .NewNotifyServiceImpl(ctx context.Context, storageService postnotification.StorageService, notificationsQueue Queue):
   block 0 (Body):
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (ServiceObject ServiceType) storageService postnotification.StorageService'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) notificationsQueue Queue'
-  - ' depth 0 (PointerObject PointerType) n (*postnotification.NotifyServiceImpl struct{storageService
-    postnotification.StorageService, notificationsQueue Queue, num_workers 4 int})'
-  - _ depth 1 (StructObject UserType) postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, notificationsQueue Queue, num_workers 4 int}
-  - __ depth 2 (FieldObject FieldType) notificationsQueue Queue
-  - __ depth 2 (FieldObject FieldType) num_workers 4 int
-  - ___ depth 3 (BasicObject BasicType) 4 int
-  - __ depth 2 (FieldObject FieldType) storageService postnotification.StorageService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (ServiceObject ServiceType) storageService postnotification.StorageService
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) notificationsQueue Queue
+  - 0 depth 0 (PointerObject PointerType) n (*postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, notificationsQueue Queue, num_workers 4 int})
+  - _1 depth 1 (StructObject UserType) postnotification.NotifyServiceImpl struct{storageService postnotification.StorageService, notificationsQueue Queue, num_workers 4 int}
+  - __2 depth 2 (FieldObject FieldType) notificationsQueue Queue
+  - __4 depth 2 (FieldObject FieldType) num_workers 4 int
+  - ___5 depth 3 (BasicObject BasicType) 4 int
+  - __6 depth 2 (FieldObject FieldType) storageService postnotification.StorageService
 
 .NewStorageServiceImpl(ctx context.Context, analyticsService postnotification.AnalyticsService, mediaService postnotification.MediaService, posts_cache Cache, postsDb NoSQLDatabase, analyticsQueue Queue)
 :
  block 0 (Body):
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (ServiceObject ServiceType) analyticsService postnotification.AnalyticsService'
-  - ' depth 0 (ServiceObject ServiceType) mediaService postnotification.MediaService'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) posts_cache Cache'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) postsDb NoSQLDatabase'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) analyticsQueue Queue'
-  - ' depth 0 (PointerObject PointerType) s (*postnotification.StorageServiceImpl
-    struct{analyticsService postnotification.AnalyticsService, mediaService postnotification.MediaService,
-    posts_cache Cache, postsDb NoSQLDatabase, analyticsQueue Queue})'
-  - _ depth 1 (StructObject UserType) postnotification.StorageServiceImpl struct{analyticsService postnotification.AnalyticsService, mediaService postnotification.MediaService, posts_cache Cache, postsDb NoSQLDatabase, analyticsQueue Queue}
-  - __ depth 2 (FieldObject FieldType) analyticsQueue Queue
-  - __ depth 2 (FieldObject FieldType) analyticsService postnotification.AnalyticsService
-  - __ depth 2 (FieldObject FieldType) mediaService postnotification.MediaService
-  - __ depth 2 (FieldObject FieldType) postsDb NoSQLDatabase
-  - __ depth 2 (FieldObject FieldType) posts_cache Cache
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (ServiceObject ServiceType) analyticsService postnotification.AnalyticsService
+  - 0 depth 0 (ServiceObject ServiceType) mediaService postnotification.MediaService
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) posts_cache Cache
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) postsDb NoSQLDatabase
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) analyticsQueue Queue
+  - 0 depth 0 (PointerObject PointerType) s (*postnotification.StorageServiceImpl struct{analyticsService postnotification.AnalyticsService, mediaService postnotification.MediaService, posts_cache Cache, postsDb NoSQLDatabase, analyticsQueue Queue})
+  - _1 depth 1 (StructObject UserType) postnotification.StorageServiceImpl struct{analyticsService postnotification.AnalyticsService, mediaService postnotification.MediaService, posts_cache Cache, postsDb NoSQLDatabase, analyticsQueue Queue}
+  - __2 depth 2 (FieldObject FieldType) analyticsQueue Queue
+  - __4 depth 2 (FieldObject FieldType) analyticsService postnotification.AnalyticsService
+  - __6 depth 2 (FieldObject FieldType) mediaService postnotification.MediaService
+  - __8 depth 2 (FieldObject FieldType) postsDb NoSQLDatabase
+  - __10 depth 2 (FieldObject FieldType) posts_cache Cache
 
 .NewUploadServiceImpl(ctx context.Context, storageService postnotification.StorageService, mediaService postnotification.MediaService, notificationsQueue Queue, timelineCache Cache)
 :
  block 0 (Body):
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (ServiceObject ServiceType) storageService postnotification.StorageService'
-  - ' depth 0 (ServiceObject ServiceType) mediaService postnotification.MediaService'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) notificationsQueue Queue'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) timelineCache Cache'
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (ServiceObject ServiceType) storageService postnotification.StorageService
+  - 0 depth 0 (ServiceObject ServiceType) mediaService postnotification.MediaService
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) notificationsQueue Queue
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) timelineCache Cache

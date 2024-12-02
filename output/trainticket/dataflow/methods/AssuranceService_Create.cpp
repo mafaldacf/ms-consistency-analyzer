@@ -1,44 +1,44 @@
-[] (PointerObject PointerType) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
-[_] (StructObject UserType) assurance.AssuranceServiceImpl struct{db NoSQLDatabase}
-[__] (FieldObject FieldType) db NoSQLDatabase
-[___] (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+[0] (PointerObject PointerType) a (*assurance.AssuranceServiceImpl struct{db NoSQLDatabase})
+[_1] (StructObject UserType) assurance.AssuranceServiceImpl struct{db NoSQLDatabase}
+[__2] (FieldObject FieldType) db NoSQLDatabase
+[___3] (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
 
-[] (InterfaceObject UserType) ctx context.Context
+[0] (InterfaceObject UserType) ctx context.Context
 
-[] (BasicObject BasicType) typeindex int64
+[0] (BasicObject BasicType) typeindex int64
 
     --> w-tainted: write(assurance_db.Assurance.OrderID) {1}
-[] (BasicObject BasicType) orderid string
+[0] (BasicObject BasicType) orderid string
 
     --> w-tainted: write(assurance_db.Assurance.AT) {1}
-[] (StructObject UserType) at assurance.AssuranceType struct{Index int64, Name string, Price float64}
+[0] (StructObject UserType) at assurance.AssuranceType struct{Index int64, Name string, Price float64}
      --> w-tainted: write(assurance_db.Assurance.AT) {1}
-[_] (Reference UserType) ref <assurance.AssuranceType struct{Index int64, Name string, Price float64}> @ getAssuranceType
+[_1] (Reference UserType) ref <assurance.AssuranceType struct{Index int64, Name string, Price float64}> @ getAssuranceType
 
-[] (InterfaceObject UserType) err .error
-[_] (Reference BasicType) ref <nil> @ getAssuranceType
+[0] (InterfaceObject UserType) err .error
+[_1] (Reference BasicType) ref <nil> @ getAssuranceType
 
     --> w-tainted: write(assurance_db.Assurance.ID) {1}
-[] (BasicObject BasicType) id string
+[0] (BasicObject BasicType) id string
 
     --> w-tainted: write(assurance_db.Assurance) {1}
-[] (StructObject UserType) assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
+[0] (StructObject UserType) assurance assurance.Assurance struct{ID string, OrderID string, AT assurance.AssuranceType struct{Index int64, Name string, Price float64}}
      --> w-tainted: write(assurance_db.Assurance.AT) {1}
-[_] (FieldObject FieldType) AT assurance.AssuranceType struct{Index int64, Name string, Price float64}
+[_1] (FieldObject FieldType) AT assurance.AssuranceType struct{Index int64, Name string, Price float64}
       --> w-tainted: write(assurance_db.Assurance.AT) {1}
-[__] (StructObject UserType) at assurance.AssuranceType struct{Index int64, Name string, Price float64}
+[__2] (StructObject UserType) at assurance.AssuranceType struct{Index int64, Name string, Price float64}
        --> w-tainted: write(assurance_db.Assurance.AT) {1}
-[___] (Reference UserType) ref <assurance.AssuranceType struct{Index int64, Name string, Price float64}> @ getAssuranceType
+[___3] (Reference UserType) ref <assurance.AssuranceType struct{Index int64, Name string, Price float64}> @ getAssuranceType
      --> w-tainted: write(assurance_db.Assurance.ID) {1}
-[_] (FieldObject FieldType) ID string
+[_1] (FieldObject FieldType) ID string
       --> w-tainted: write(assurance_db.Assurance.ID) {1}
-[__] (BasicObject BasicType) id string
+[__2] (BasicObject BasicType) id string
      --> w-tainted: write(assurance_db.Assurance.OrderID) {1}
-[_] (FieldObject FieldType) OrderID string
+[_1] (FieldObject FieldType) OrderID string
       --> w-tainted: write(assurance_db.Assurance.OrderID) {1}
-[__] (BasicObject BasicType) orderid string
+[__2] (BasicObject BasicType) orderid string
 
-[] (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database = assurance, collection = assurance}
+[0] (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database = assurance, collection = assurance}
 
-[] (InterfaceObject UserType) err .error
+[0] (InterfaceObject UserType) err .error
 

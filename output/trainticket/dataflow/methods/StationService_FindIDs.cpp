@@ -1,24 +1,24 @@
-[] (PointerObject PointerType) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-[_] (StructObject UserType) station.StationServiceImpl struct{stationDB NoSQLDatabase}
-[__] (FieldObject FieldType) stationDB NoSQLDatabase
-[___] (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+[0] (PointerObject PointerType) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
+[_1] (StructObject UserType) station.StationServiceImpl struct{stationDB NoSQLDatabase}
+[__2] (FieldObject FieldType) stationDB NoSQLDatabase
+[___3] (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
 
-[] (InterfaceObject UserType) ctx context.Context
+[0] (InterfaceObject UserType) ctx context.Context
 
-[] (ArrayObject ArrayType) names []string
+[0] (ArrayObject ArrayType) names []string
 
-[] (ArrayObject ArrayType) ids []string
-[_] (BasicObject BasicType) id string
+[0] (ArrayObject ArrayType) ids []string
+[_1] (BasicObject BasicType) id string
       --> r-tainted: read(station_db.string) {1}
-[__] (Reference BasicType) ref <ID string> @ FindID
+[__2] (Reference BasicType) ref <ID string> @ FindID
 
-[] (BasicObject BasicType) id string
+[0] (BasicObject BasicType) id string
      --> r-tainted: read(station_db.string) {1}
-[_] (Reference BasicType) ref <ID string> @ FindID
+[_1] (Reference BasicType) ref <ID string> @ FindID
 
-[] (InterfaceObject UserType) _ .error
-[_] (Reference BasicType) ref <nil> @ FindID
+[0] (InterfaceObject UserType) _ .error
+[_1] (Reference BasicType) ref <nil> @ FindID
 
-[] (ArrayObject ArrayType) ids []string
-[_] (BasicObject BasicType) id string
+[0] (ArrayObject ArrayType) ids []string
+[_1] (BasicObject BasicType) id string
 

@@ -74,7 +74,7 @@
           {
             "struct": {
               "name": "media",
-              "type": "postnotification.Media struct{Content \"HELLO WORLD!\" untyped string, Content string}"
+              "type": "postnotification.Media struct{MediaID int64, Content \"HELLO WORLD!\" untyped string}"
             },
             "struct_fields": {
               "Content": {
@@ -166,7 +166,7 @@
                     },
                     "wrapped_variable": {
                       "basic": {
-                        "name": "postID",
+                        "name": "postID_STORAGE_SVC",
                         "type": "int64",
                         "refs": [
                           {
@@ -261,12 +261,12 @@
                       },
                       {
                         "pointer": {
-                          "name": "event",
+                          "name": "analyticsEvent",
                           "type": "(*postnotification.TriggerAnalyticsMessage struct{PostID string})"
                         },
                         "ptr_to": {
                           "struct": {
-                            "name": "event",
+                            "name": "analyticsEvent",
                             "type": "postnotification.TriggerAnalyticsMessage struct{PostID string}",
                             "refs": [
                               {
@@ -374,7 +374,7 @@
           {
             "struct": {
               "name": "post",
-              "type": "postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username \"some username\" string}, Creator postnotification.Creator struct{Username string}}"
+              "type": "postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username \"some username\" string}}"
             },
             "struct_fields": {
               "Creator": {
@@ -436,7 +436,7 @@
                 },
                 "wrapped_variable": {
                   "basic": {
-                    "name": "postID",
+                    "name": "postIDDDDD",
                     "type": "int64"
                   }
                 }
@@ -483,11 +483,11 @@
         "returns": [
           {
             "basic": {
-              "name": "postID2",
+              "name": "postID_UPLOAD_SVC",
               "type": "int64",
               "refs": [
                 {
-                  "name": "postID",
+                  "name": "postID_STORAGE_SVC",
                   "creator": "StorageService"
                 }
               ]
@@ -527,48 +527,24 @@
               "PostID": {
                 "field": {
                   "name": "PostID",
-                  "type": "string",
-                  "refs": [
-                    {
-                      "name": "PostID",
-                      "creator": "NotifyService"
-                    }
-                  ]
+                  "type": "string"
                 },
                 "wrapped_variable": {
                   "basic": {
                     "name": "",
-                    "type": "string",
-                    "refs": [
-                      {
-                        "name": "PostID",
-                        "creator": "NotifyService"
-                      }
-                    ]
+                    "type": "string"
                   }
                 }
               },
               "ReqID": {
                 "field": {
                   "name": "ReqID",
-                  "type": "string",
-                  "refs": [
-                    {
-                      "name": "ReqID",
-                      "creator": "NotifyService"
-                    }
-                  ]
+                  "type": "string"
                 },
                 "wrapped_variable": {
                   "basic": {
                     "name": "",
-                    "type": "string",
-                    "refs": [
-                      {
-                        "name": "ReqID",
-                        "creator": "NotifyService"
-                      }
-                    ]
+                    "type": "string"
                   }
                 }
               }
@@ -608,64 +584,20 @@
                   },
                   {
                     "pointer": {
-                      "name": "event",
-                      "type": "(*map[string]interface{})"
+                      "name": "notifyEvent",
+                      "type": "(*postnotification.Message struct{ReqID string, PostID string, Timestamp string})"
                     },
                     "ptr_to": {
-                      "map": {
-                        "name": "event",
-                        "type": "map[string]interface{}",
+                      "struct": {
+                        "name": "notifyEvent",
+                        "type": "postnotification.Message struct{ReqID string, PostID string, Timestamp string}",
                         "refs": [
                           {
                             "name": "message",
                             "creator": "NotifyService"
                           }
                         ]
-                      },
-                      "key_values": [
-                        {
-                          "Key": {
-                            "basic": {
-                              "name": "",
-                              "type": "\"ReqID\" string"
-                            }
-                          },
-                          "Value": {
-                            "interface": {
-                              "name": "ReqID",
-                              "type": "interface{}"
-                            }
-                          }
-                        },
-                        {
-                          "Key": {
-                            "basic": {
-                              "name": "",
-                              "type": "\"PostID\" string"
-                            }
-                          },
-                          "Value": {
-                            "interface": {
-                              "name": "PostID",
-                              "type": "interface{}"
-                            }
-                          }
-                        },
-                        {
-                          "Key": {
-                            "basic": {
-                              "name": "",
-                              "type": "\"Timestamp\" string"
-                            }
-                          },
-                          "Value": {
-                            "interface": {
-                              "name": "Timestamp",
-                              "type": "interface{}"
-                            }
-                          }
-                        }
-                      ]
+                      }
                     }
                   }
                 ],
@@ -687,7 +619,7 @@
                 "subscriber": true
               },
               {
-                "method": "(*StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID int64)",
+                "method": "(*StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID_STORAGE_SVC_READ int64)",
                 "depth": 3,
                 "caller": "NotifyService",
                 "edges": [
@@ -710,14 +642,14 @@
                       },
                       {
                         "slice": {
-                          "name": "query",
+                          "name": "postsQuery",
                           "type": "primitive.D"
                         },
                         "slice_variables": [
                           {
                             "struct": {
                               "name": "",
-                              "type": "struct{Key \"postid\" string, Value int64}"
+                              "type": "struct{Key \"postid\" string, Key \"postid\" string, Value int64, Value int64}"
                             },
                             "struct_fields": {
                               "Key": {
@@ -739,11 +671,11 @@
                                 },
                                 "wrapped_variable": {
                                   "basic": {
-                                    "name": "postID",
+                                    "name": "postID_STORAGE_SVC_READ",
                                     "type": "int64",
                                     "refs": [
                                       {
-                                        "name": "postID",
+                                        "name": "postID_NOTIFY_SVC",
                                         "creator": "NotifyService"
                                       }
                                     ]
@@ -807,14 +739,14 @@
                           },
                           {
                             "slice": {
-                              "name": "query",
+                              "name": "analyticsQuery",
                               "type": "primitive.D"
                             },
                             "slice_variables": [
                               {
                                 "struct": {
                                   "name": "",
-                                  "type": "struct{Key \"postid\" string, Value int64}"
+                                  "type": "struct{Key \"postid\" string, Key \"postid\" string, Value int64, Value int64}"
                                 },
                                 "struct_fields": {
                                   "Key": {
@@ -840,7 +772,7 @@
                                         "type": "int64",
                                         "refs": [
                                           {
-                                            "name": "postID",
+                                            "name": "postID_STORAGE_SVC_READ",
                                             "creator": "StorageService"
                                           }
                                         ]
@@ -896,11 +828,11 @@
                       },
                       {
                         "basic": {
-                          "name": "postID",
+                          "name": "postID_STORAGE_SVC_READ",
                           "type": "int64",
                           "refs": [
                             {
-                              "name": "postID",
+                              "name": "postID_NOTIFY_SVC",
                               "creator": "NotifyService"
                             }
                           ]
@@ -950,7 +882,7 @@
                   },
                   {
                     "basic": {
-                      "name": "postID",
+                      "name": "postID_NOTIFY_SVC",
                       "type": "int64"
                     }
                   }
@@ -1037,12 +969,12 @@
                 },
                 "wrapped_variable": {
                   "basic": {
-                    "name": "postID",
+                    "name": "postID_UPLOAD_SVC",
                     "type": "int64",
                     "refs": [
                       {
-                        "name": "PostID",
-                        "creator": "NotifyService"
+                        "name": "postID_STORAGE_SVC",
+                        "creator": "StorageService"
                       }
                     ]
                   }
@@ -1056,13 +988,7 @@
                 "wrapped_variable": {
                   "basic": {
                     "name": "reqID",
-                    "type": "int64",
-                    "refs": [
-                      {
-                        "name": "ReqID",
-                        "creator": "NotifyService"
-                      }
-                    ]
+                    "type": "int64"
                   }
                 }
               }
@@ -1201,14 +1127,14 @@
                   },
                   {
                     "slice": {
-                      "name": "query",
+                      "name": "mediaQuery",
                       "type": "primitive.D"
                     },
                     "slice_variables": [
                       {
                         "struct": {
                           "name": "",
-                          "type": "struct{Key \"mediaid\" string, Value int64}"
+                          "type": "struct{Key \"mediaid\" string, Key \"mediaid\" string, Value int64, Value int64}"
                         },
                         "struct_fields": {
                           "Key": {

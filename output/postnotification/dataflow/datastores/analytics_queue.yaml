@@ -1,54 +1,52 @@
 ANALYTICS_QUEUE._:
-- read <event (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
+- read <analyticsEvent (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
 
 ANALYTICS_QUEUE.TriggerAnalyticsMessage:
 - write <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
 - write <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
   from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
-- read <event postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
-  from <event (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
-- read <ref <message postnotification.TriggerAnalyticsMessage struct{PostID string}>
-  @ AnalyticsService (Reference)> from <event (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
-- read <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
-  from <event (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
+- write <analyticsEvent postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
 - write <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
+  from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
+- read <analyticsEvent postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)> from <analyticsEvent (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
+- read <ref <message postnotification.TriggerAnalyticsMessage struct{PostID string}>
+  @ AnalyticsService (Reference)> from <analyticsEvent (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
+- read <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
+  from <analyticsEvent (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
+- read <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
+  from <analyticsEvent (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
+- write <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
+- write <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
+  from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
+- write <analyticsEvent postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
 - write <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
   from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
 
 ANALYTICS_QUEUE.TriggerAnalyticsMessage.PostID:
 - write <string (BasicObject)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
-- write <postID int64 (BasicObject)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
+- write <postID_STORAGE_SVC int64 (BasicObject)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
 - write <ref <PostID int64> @ UploadService (Reference)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
 - write <PostID int64 (FieldObject)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
-- write <postID int64 (BasicObject)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
-- write <ref <PostID interface{}> @ NotifyService (Reference)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
-- write <PostID interface{} (InterfaceObject)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
-- write <postID int64 (BasicObject)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
-- write <postID int64 (BasicObject)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
-- read <string (BasicObject)> from <event (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
-- read <postID int64 (BasicObject)> from <event (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
-- read <ref <PostID int64> @ UploadService (Reference)> from <event (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
-- read <PostID int64 (FieldObject)> from <event (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
-- read <postID int64 (BasicObject)> from <event (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
-- read <ref <PostID interface{}> @ NotifyService (Reference)> from <event (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
-- read <PostID interface{} (InterfaceObject)> from <event (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
-- read <postID int64 (BasicObject)> from <event (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
-- read <postID int64 (BasicObject)> from <event (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
-- write <postID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postIDDDDD int64 (BasicObject)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
+- write <postID_UPLOAD_SVC int64 (BasicObject)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
+- read <string (BasicObject)> from <analyticsEvent (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
+- read <postID_STORAGE_SVC int64 (BasicObject)> from <analyticsEvent (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
+- read <ref <PostID int64> @ UploadService (Reference)> from <analyticsEvent (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
+- read <PostID int64 (FieldObject)> from <analyticsEvent (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
+- read <postIDDDDD int64 (BasicObject)> from <analyticsEvent (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
+- read <postID_UPLOAD_SVC int64 (BasicObject)> from <analyticsEvent (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
+- write <postID_STORAGE_SVC int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
 - write <ref <PostID int64> @ UploadService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <postID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
 - write <PostID int64 (FieldObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
 - write <PostID int64 (FieldObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <postID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <ref <PostID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <PostID interface{} (InterfaceObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <postID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <postID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <ref <PostID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <PostID interface{} (InterfaceObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <postID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <postID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <ref <PostID int64> @ UploadService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <postID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postID_STORAGE_SVC int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postID_UPLOAD_SVC int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <PostID int64 (FieldObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <PostID int64 (FieldObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postID_STORAGE_SVC int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postID_UPLOAD_SVC int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postIDDDDD int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
 - write <PostID string (FieldObject)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
-- read <PostID string (FieldObject)> from <event (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>
+- write <PostID string (FieldObject)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
+- write <PostID string (BasicObject)> from <message postnotification.TriggerAnalyticsMessage struct{PostID string} (StructObject)>
+- read <PostID string (FieldObject)> from <analyticsEvent (*postnotification.TriggerAnalyticsMessage struct{PostID string}) (PointerObject)>

@@ -1,30 +1,30 @@
-[] (PointerObject PointerType) s (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase})
-[_] (StructObject UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
-[__] (FieldObject FieldType) catalogue_db NoSQLDatabase
-[___] (BlueprintBackendObject BlueprintBackendType) catalogue_db NoSQLDatabase
+[0] (PointerObject PointerType) s (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase})
+[_1] (StructObject UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
+[__2] (FieldObject FieldType) catalogue_db NoSQLDatabase
+[___3] (BlueprintBackendObject BlueprintBackendType) catalogue_db NoSQLDatabase
 
-[] (InterfaceObject UserType) ctx context.Context
+[0] (InterfaceObject UserType) ctx context.Context
 
-[] (ArrayObject ArrayType) tags []string
+[0] (ArrayObject ArrayType) tags []string
 
-[] (BasicObject BasicType) order string
+[0] (BasicObject BasicType) order string
 
-[] (BasicObject BasicType) pageNum int
+[0] (BasicObject BasicType) pageNum int
 
-[] (BasicObject BasicType) pageSize int
+[0] (BasicObject BasicType) pageSize int
 
-[] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = catalogue, collection = catalogue}
+[0] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = catalogue, collection = catalogue}
 
-[] (InterfaceObject UserType) _ .error
+[0] (InterfaceObject UserType) _ .error
 
-[] (ArrayObject ArrayType) allSocks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
+[0] (ArrayObject ArrayType) allSocks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
 
-[] (ArrayObject ArrayType) socks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
+[0] (ArrayObject ArrayType) socks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
 
-[] (SliceObject UserType) filter primitive.D
+[0] (SliceObject UserType) filter primitive.D
 
-[] (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database = catalogue, collection = catalogue}
-[_] (ArrayObject ArrayType) allSocks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
+[0] (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database = catalogue, collection = catalogue}
+[_1] (ArrayObject ArrayType) allSocks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
 
-[] (InterfaceObject UserType) _ .error
+[0] (InterfaceObject UserType) _ .error
 

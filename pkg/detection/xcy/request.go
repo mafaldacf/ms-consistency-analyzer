@@ -16,7 +16,7 @@ import (
 
 type Request struct {
 	EntryNode       abstractgraph.AbstractNode
-	Inconsistencies []*Inconsistency
+	Inconsistencies []*XCYInconsistency
 	Lineages        []*Lineage
 	Operations      []*Operation
 	LineagesStack   *stack.Stack
@@ -42,7 +42,7 @@ func (request *Request) GetWriteOperationsForDatastore(datastore *datastores.Dat
 	return operations
 }
 
-func (request *Request) AddInconsistency(inconsistency *Inconsistency) {
+func (request *Request) AddInconsistency(inconsistency *XCYInconsistency) {
 	request.Inconsistencies = append(request.Inconsistencies, inconsistency)
 }
 
@@ -82,7 +82,7 @@ func (request *Request) PopLineage() *Lineage {
 	return lineage
 }
 
-func (request *Request) GetDependencies() []*Operation {
+func (request *Request) GetXCYDependencies() []*Operation {
 	var dependencies []*Operation
 	for _, op := range request.Operations {
 		if op.Write {
@@ -143,18 +143,26 @@ func (request *Request) SaveReadOperation(call *abstractgraph.AbstractDatabaseCa
 	return read
 }
 
-type Inconsistency struct {
+type XCYInconsistency struct {
 	Write             *Operation
 	Read              *Operation
 	MissingDependency bool
 	Dataflows         []*objects.ObjectDataflow
 }
 
-func (inconsistency *Inconsistency) AppendDataflows(dataflows []*objects.ObjectDataflow) {
+func NewXCYInconsistency(write *Operation, read *Operation, dataflows []*objects.ObjectDataflow) *XCYInconsistency {
+	return &XCYInconsistency{
+		Write:     write,
+		Read:      read,
+		Dataflows: dataflows,
+	}
+}
+
+func (inconsistency *XCYInconsistency) AppendDataflows(dataflows []*objects.ObjectDataflow) {
 	inconsistency.Dataflows = append(inconsistency.Dataflows, dataflows...)
 }
 
-func (inconsistency *Inconsistency) MarshalJSON() ([]byte, error) {
+func (inconsistency *XCYInconsistency) MarshalJSON() ([]byte, error) {
 	var dataflows []string
 	for _, df := range inconsistency.Dataflows {
 		prefix := ""
@@ -178,6 +186,6 @@ func (inconsistency *Inconsistency) MarshalJSON() ([]byte, error) {
 	})
 }
 
-func (i *Inconsistency) String() string {
+func (i *XCYInconsistency) String() string {
 	return fmt.Sprintf("READ = %v / WRITE = %v", i.Read.String(), i.Write.String())
 }

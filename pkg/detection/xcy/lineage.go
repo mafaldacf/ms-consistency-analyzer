@@ -30,7 +30,7 @@ func (l *Lineage) IsRoot() bool {
 	return l.Previous == nil
 }
 
-func (l *Lineage) GetDependenciesByMostRecent() []*Operation {
+func (l *Lineage) GetXCYDependenciesByMostRecent() []*Operation {
 	var dependencies []*Operation
 	// reverse - start from most recent
 	for i := len(l.Operations) - 1; i >= 0; i-- {
@@ -39,7 +39,7 @@ func (l *Lineage) GetDependenciesByMostRecent() []*Operation {
 		}
 	}
 	if !l.IsRoot() {
-		dependencies = append(dependencies, l.Previous.GetDependenciesByMostRecent()...)
+		dependencies = append(dependencies, l.Previous.GetXCYDependenciesByMostRecent()...)
 	}
 	return dependencies
 }

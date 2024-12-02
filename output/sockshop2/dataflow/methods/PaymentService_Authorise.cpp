@@ -1,15 +1,15 @@
-[] (PointerObject PointerType) s (*payment.paymentImpl struct{declineOverAmount float32})
-[_] (StructObject UserType) payment.paymentImpl struct{declineOverAmount 50 float32}
-[__] (FieldObject FieldType) declineOverAmount 50 float32
-[___] (BasicObject BasicType) 50 float32
+[0] (PointerObject PointerType) s (*payment.paymentImpl struct{declineOverAmount float32})
+[_1] (StructObject UserType) payment.paymentImpl struct{declineOverAmount 50 float32}
+[__2] (FieldObject FieldType) declineOverAmount 50 float32
+[___3] (BasicObject BasicType) 50 float32
 
-[] (InterfaceObject UserType) ctx context.Context
+[0] (InterfaceObject UserType) ctx context.Context
 
-[] (BasicObject BasicType) amount float32
+[0] (BasicObject BasicType) amount float32
 
-[] (StructObject UserType) authorization payment.Authorisation struct{Authorised false bool, Message "Payment declined: amount exceeds" string}
-[_] (FieldObject FieldType) Authorised false bool
-[__] (BasicObject BasicType) false bool
-[_] (FieldObject FieldType) Message "Payment declined: amount exceeds" string
-[__] (BasicObject BasicType) "Payment declined: amount exceeds" string
+[0] (StructObject UserType) authorization payment.Authorisation struct{Authorised false bool, Message "Payment declined: amount exceeds" string}
+[_1] (FieldObject FieldType) Authorised false bool
+[__2] (BasicObject BasicType) false bool
+[_1] (FieldObject FieldType) Message "Payment declined: amount exceeds" string
+[__2] (BasicObject BasicType) "Payment declined: amount exceeds" string
 

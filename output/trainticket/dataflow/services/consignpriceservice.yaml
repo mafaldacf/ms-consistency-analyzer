@@ -1,116 +1,108 @@
 ? (*ConsignPriceServiceImpl).CreateAndModifyPriceConfig(ctx context.Context, priceConfig consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64})
 :
  block 16 (IfDone):
-  - ' depth 0 (PointerObject PointerType) c (*consignprice.ConsignPriceServiceImpl
-    struct{db NoSQLDatabase})'
-  - _ depth 1 (StructObject UserType) consignprice.ConsignPriceServiceImpl struct{db NoSQLDatabase}
-  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
-  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (StructObject UserType) priceConfig consignprice.ConsignPrice struct{ID
+  - 0 depth 0 (PointerObject PointerType) c (*consignprice.ConsignPriceServiceImpl struct{db NoSQLDatabase})
+  - _1 depth 1 (StructObject UserType) consignprice.ConsignPriceServiceImpl struct{db NoSQLDatabase}
+  - __2 depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___3 depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - '0 depth 0 (StructObject UserType) priceConfig consignprice.ConsignPrice struct{ID
     string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice
     float64, BeyondPrice float64} --> w-tainted 1x: write(consignprice_db.ConsignPrice)'
-  - '_ depth 1 (FieldObject FieldType) Index int64 --> w-tainted 1x: write(consignprice_db.ConsignPrice.Index)'
-  - '__ depth 2 (BasicObject BasicType) 0 int --> w-tainted 1x: write(consignprice_db.ConsignPrice.Index)'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
-    = consign, collection = consign}'
-  - ' depth 0 (InterfaceObject UserType) err .error'
-  - ' depth 0 (SliceObject UserType) query primitive.D'
-  - _ depth 1 (StructObject StructType) struct{ "index" string, 0 int}
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database
+  - '_1 depth 1 (FieldObject FieldType) Index int64 --> w-tainted 1x: write(consignprice_db.ConsignPrice.Index)'
+  - '__2 depth 2 (BasicObject BasicType) 0 int --> w-tainted 1x: write(consignprice_db.ConsignPrice.Index)'
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database = consign, collection = consign}
+  - 0 depth 0 (InterfaceObject UserType) err .error
+  - 0 depth 0 (SliceObject UserType) query primitive.D
+  - _1 depth 1 (StructObject StructType) struct{ 0 int, "index" string, 0 int}
+  - '0 depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database
     = consign, collection = consign} --> r-tainted 1x: read(consignprice_db._)'
-  - '_ depth 1 (StructObject UserType) cp consignprice.ConsignPrice struct{ID string,
+  - '_1 depth 1 (StructObject UserType) cp consignprice.ConsignPrice struct{ID string,
     Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64,
     BeyondPrice float64} --> r-tainted 1x: read(consignprice_db.ConsignPrice)'
-  - ' depth 0 (InterfaceObject UserType) err .error'
-  - ' depth 0 (BasicObject BasicType) exists bool'
-  - ' depth 0 (InterfaceObject UserType) err .error'
-  - ' depth 0 (BasicObject BasicType) ok bool'
-  - ' depth 0 (InterfaceObject UserType) err .error'
+  - 0 depth 0 (InterfaceObject UserType) err .error
+  - 0 depth 0 (BasicObject BasicType) exists bool
+  - 0 depth 0 (InterfaceObject UserType) err .error
+  - 0 depth 0 (BasicObject BasicType) ok bool
+  - 0 depth 0 (InterfaceObject UserType) err .error
 
 (*ConsignPriceServiceImpl).GetPriceByWeightAndRegion(ctx context.Context, weight float64, isWithinRegion bool):
   block 9 (IfElse):
-  - ' depth 0 (PointerObject PointerType) c (*consignprice.ConsignPriceServiceImpl
-    struct{db NoSQLDatabase})'
-  - _ depth 1 (StructObject UserType) consignprice.ConsignPriceServiceImpl struct{db NoSQLDatabase}
-  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
-  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) weight float64'
-  - ' depth 0 (BasicObject BasicType) isWithinRegion bool'
-  - ' depth 0 (StructObject UserType) cp consignprice.ConsignPrice struct{ID string,
-    Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64,
-    BeyondPrice float64}'
-  - '_ depth 1 (Reference UserType) ref <cp consignprice.ConsignPrice struct{ID string,
+  - 0 depth 0 (PointerObject PointerType) c (*consignprice.ConsignPriceServiceImpl struct{db NoSQLDatabase})
+  - _1 depth 1 (StructObject UserType) consignprice.ConsignPriceServiceImpl struct{db NoSQLDatabase}
+  - __2 depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___3 depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) weight float64
+  - 0 depth 0 (BasicObject BasicType) isWithinRegion bool
+  - 0 depth 0 (StructObject UserType) cp consignprice.ConsignPrice struct{ID string, Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64, BeyondPrice float64}
+  - '_1 depth 1 (Reference UserType) ref <cp consignprice.ConsignPrice struct{ID string,
     Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64,
     BeyondPrice float64}> @ GetPriceConfig --> r-tainted 1x: read(consignprice_db.ConsignPrice)'
-  - _ depth 1 (FieldObject FieldType) InitialPrice float64
-  - __ depth 2 (BasicObject BasicType) InitialPrice float64
-  - ' depth 0 (InterfaceObject UserType) err .error'
-  - _ depth 1 (Reference BasicType) ref <nil> @ GetPriceConfig
-  - ' depth 0 (FieldObject FieldType) price float64'
-  - _ depth 1 (BasicObject BasicType) InitialPrice float64
+  - _2 depth 1 (FieldObject FieldType) InitialPrice float64
+  - __3 depth 2 (BasicObject BasicType) InitialPrice float64
+  - 0 depth 0 (InterfaceObject UserType) err .error
+  - _1 depth 1 (Reference BasicType) ref <nil> @ GetPriceConfig
+  - 0 depth 0 (FieldObject FieldType) price float64
+  - _1 depth 1 (BasicObject BasicType) InitialPrice float64
 
 (*ConsignPriceServiceImpl).GetPriceConfig(ctx context.Context):
   block 11 (IfDone):
-  - ' depth 0 (PointerObject PointerType) c (*consignprice.ConsignPriceServiceImpl
-    struct{db NoSQLDatabase})'
-  - _ depth 1 (StructObject UserType) consignprice.ConsignPriceServiceImpl struct{db NoSQLDatabase}
-  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
-  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - _ depth 1 (Reference UserType) ref <ctx context.Context> @ ConsignPriceService
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
-    = consign, collection = consign}'
-  - ' depth 0 (InterfaceObject UserType) err .error'
-  - ' depth 0 (SliceObject UserType) query primitive.D'
-  - _ depth 1 (StructObject StructType) struct{ "index" string, 0 int}
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database
+  - 0 depth 0 (PointerObject PointerType) c (*consignprice.ConsignPriceServiceImpl struct{db NoSQLDatabase})
+  - _1 depth 1 (StructObject UserType) consignprice.ConsignPriceServiceImpl struct{db NoSQLDatabase}
+  - __2 depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___3 depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - _1 depth 1 (Reference UserType) ref <ctx context.Context> @ ConsignPriceService
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database = consign, collection = consign}
+  - 0 depth 0 (InterfaceObject UserType) err .error
+  - 0 depth 0 (SliceObject UserType) query primitive.D
+  - _1 depth 1 (StructObject StructType) struct{ 0 int, "index" string, 0 int}
+  - '0 depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database
     = consign, collection = consign} --> r-tainted 1x: read(consignprice_db._)'
-  - '_ depth 1 (StructObject UserType) cp consignprice.ConsignPrice struct{ID string,
+  - '_1 depth 1 (StructObject UserType) cp consignprice.ConsignPrice struct{ID string,
     Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64,
     BeyondPrice float64} --> r-tainted 1x: read(consignprice_db.ConsignPrice)'
-  - ' depth 0 (InterfaceObject UserType) err .error'
-  - ' depth 0 (BasicObject BasicType) exists bool'
-  - ' depth 0 (InterfaceObject UserType) err .error'
+  - 0 depth 0 (InterfaceObject UserType) err .error
+  - 0 depth 0 (BasicObject BasicType) exists bool
+  - 0 depth 0 (InterfaceObject UserType) err .error
 
 (*ConsignPriceServiceImpl).GetPriceInfo(ctx context.Context):
   block 11 (IfDone):
-  - ' depth 0 (PointerObject PointerType) c (*consignprice.ConsignPriceServiceImpl
-    struct{db NoSQLDatabase})'
-  - _ depth 1 (StructObject UserType) consignprice.ConsignPriceServiceImpl struct{db NoSQLDatabase}
-  - __ depth 2 (FieldObject FieldType) db NoSQLDatabase
-  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database
-    = consign, collection = consign}'
-  - ' depth 0 (InterfaceObject UserType) err .error'
-  - ' depth 0 (SliceObject UserType) query primitive.D'
-  - _ depth 1 (StructObject StructType) struct{ "index" string, 0 int}
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database
+  - 0 depth 0 (PointerObject PointerType) c (*consignprice.ConsignPriceServiceImpl struct{db NoSQLDatabase})
+  - _1 depth 1 (StructObject UserType) consignprice.ConsignPriceServiceImpl struct{db NoSQLDatabase}
+  - __2 depth 2 (FieldObject FieldType) db NoSQLDatabase
+  - ___3 depth 3 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database = consign, collection = consign}
+  - 0 depth 0 (InterfaceObject UserType) err .error
+  - 0 depth 0 (SliceObject UserType) query primitive.D
+  - _1 depth 1 (StructObject StructType) struct{ 0 int, "index" string, 0 int}
+  - '0 depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database
     = consign, collection = consign} --> r-tainted 1x: read(consignprice_db._)'
-  - '_ depth 1 (StructObject UserType) cp consignprice.ConsignPrice struct{ID string,
+  - '_1 depth 1 (StructObject UserType) cp consignprice.ConsignPrice struct{ID string,
     Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64,
     BeyondPrice float64} --> r-tainted 6x: read(consignprice_db.ConsignPrice, consignprice_db.BeyondPrice,
     consignprice_db.float64, consignprice_db.InitialPrice, consignprice_db.InitialWeight,
     consignprice_db.WithinPrice)'
-  - '__ depth 2 (FieldObject FieldType) BeyondPrice float64 --> r-tainted 1x: read(consignprice_db.BeyondPrice)'
-  - '___ depth 3 (BasicObject BasicType) BeyondPrice float64 --> r-tainted 1x: read(consignprice_db.float64)'
-  - '__ depth 2 (FieldObject FieldType) InitialPrice float64 --> r-tainted 1x: read(consignprice_db.InitialPrice)'
-  - '___ depth 3 (BasicObject BasicType) InitialPrice float64 --> r-tainted 1x: read(consignprice_db.float64)'
-  - '__ depth 2 (FieldObject FieldType) InitialWeight float64 --> r-tainted 1x: read(consignprice_db.InitialWeight)'
-  - '___ depth 3 (BasicObject BasicType) InitialWeight float64 --> r-tainted 1x: read(consignprice_db.float64)'
-  - '__ depth 2 (FieldObject FieldType) WithinPrice float64 --> r-tainted 1x: read(consignprice_db.WithinPrice)'
-  - '___ depth 3 (BasicObject BasicType) WithinPrice float64 --> r-tainted 1x: read(consignprice_db.float64)'
-  - ' depth 0 (InterfaceObject UserType) err .error'
-  - ' depth 0 (BasicObject BasicType) exists bool'
-  - ' depth 0 (InterfaceObject UserType) err .error'
-  - ' depth 0 (BasicObject BasicType) info string'
-  - _ depth 1 (BasicObject BasicType) "The price of weight within %.2f is %.2f. The
+  - '__2 depth 2 (FieldObject FieldType) BeyondPrice float64 --> r-tainted 1x: read(consignprice_db.BeyondPrice)'
+  - '___3 depth 3 (BasicObject BasicType) BeyondPrice float64 --> r-tainted 1x: read(consignprice_db.float64)'
+  - '__4 depth 2 (FieldObject FieldType) InitialPrice float64 --> r-tainted 1x: read(consignprice_db.InitialPrice)'
+  - '___5 depth 3 (BasicObject BasicType) InitialPrice float64 --> r-tainted 1x: read(consignprice_db.float64)'
+  - '__6 depth 2 (FieldObject FieldType) InitialWeight float64 --> r-tainted 1x: read(consignprice_db.InitialWeight)'
+  - '___7 depth 3 (BasicObject BasicType) InitialWeight float64 --> r-tainted 1x:
+    read(consignprice_db.float64)'
+  - '__8 depth 2 (FieldObject FieldType) WithinPrice float64 --> r-tainted 1x: read(consignprice_db.WithinPrice)'
+  - '___9 depth 3 (BasicObject BasicType) WithinPrice float64 --> r-tainted 1x: read(consignprice_db.float64)'
+  - 0 depth 0 (InterfaceObject UserType) err .error
+  - 0 depth 0 (BasicObject BasicType) exists bool
+  - 0 depth 0 (InterfaceObject UserType) err .error
+  - 0 depth 0 (BasicObject BasicType) info string
+  - _1 depth 1 (BasicObject BasicType) "The price of weight within %.2f is %.2f. The
     price of extra weight within the region is %.2f and beyond the region is %.2f"
     string
 
 .NewConsignPriceServiceImpl(ctx context.Context, db NoSQLDatabase):
   block 0 (Body):
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase'
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase

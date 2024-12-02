@@ -2,13 +2,13 @@
 ------------------- FOREIGN KEY ANALYSIS -------------------
 ------------------------------------------------------------
 foreign key read #0:
-- ref:	ANALYTICS_QUEUE.TriggerAnalyticsMessage.PostID
-	@ n.analyticsQueue.Pop(ctx context.Context, event (*postnotification.TriggerAnalyticsMessage struct{PostID string}))
+- ref:	NOTIFICATIONS_QUEUE.Message.PostID
+	@ n.notificationsQueue.Pop(ctx context.Context, notifyEvent (*postnotification.Message struct{ReqID string, PostID string, Timestamp string}))
 - dst:	POSTS_DB.Post.PostID
-	@ collection.FindOne(ctx context.Context, query primitive.D)
+	@ collection.FindOne(ctx context.Context, postsQuery primitive.D)
 
 foreign key read #1:
 - ref:	NOTIFICATIONS_QUEUE.Message.PostID
-	@ n.notificationsQueue.Pop(ctx context.Context, event (*map[string]interface{}))
+	@ n.notificationsQueue.Pop(ctx context.Context, notifyEvent (*postnotification.Message struct{ReqID string, PostID string, Timestamp string}))
 - dst:	ANALYTICS_DB.Analytics.PostID
-	@ collection.FindOne(ctx context.Context, query primitive.D)
+	@ collection.FindOne(ctx context.Context, analyticsQuery primitive.D)

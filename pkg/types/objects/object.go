@@ -25,7 +25,7 @@ type Object interface {
 	GetType() gotypes.Type
 	AssignVariable(variable Object)
 	UpgradeFromPreviousInterface(interfaceVariable *InterfaceObject)
-	GetNestedDependencies(nearestFields bool) []Object //FIXME: nearestFields not used
+	GetNestedDependencies(includeRefBy bool) []Object
 	GetElementAt(index int) Object
 }
 

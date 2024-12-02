@@ -1,6 +1,6 @@
-[] (InterfaceObject UserType) ctx context.Context
+[0] (InterfaceObject UserType) ctx context.Context
 
-[] (BlueprintBackendObject BlueprintBackendType) queue Queue
+[0] (BlueprintBackendObject BlueprintBackendType) queue Queue
 
-[] (ServiceObject ServiceType) shipping shipping.ShippingService
+[0] (ServiceObject ServiceType) shipping shipping.ShippingService
 

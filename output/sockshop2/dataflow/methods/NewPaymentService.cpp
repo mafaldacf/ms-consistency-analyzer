@@ -1,4 +1,4 @@
-[] (InterfaceObject UserType) ctx context.Context
+[0] (InterfaceObject UserType) ctx context.Context
 
-[] (BasicObject BasicType) declineOverAmount string
+[0] (BasicObject BasicType) declineOverAmount string
 

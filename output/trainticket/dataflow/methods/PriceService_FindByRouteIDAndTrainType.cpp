@@ -1,47 +1,47 @@
-[] (PointerObject PointerType) p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase})
-[_] (StructObject UserType) price.PriceServiceImpl struct{priceDB NoSQLDatabase}
-[__] (FieldObject FieldType) priceDB NoSQLDatabase
-[___] (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+[0] (PointerObject PointerType) p (*price.PriceServiceImpl struct{priceDB NoSQLDatabase})
+[_1] (StructObject UserType) price.PriceServiceImpl struct{priceDB NoSQLDatabase}
+[__2] (FieldObject FieldType) priceDB NoSQLDatabase
+[___3] (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
 
-[] (InterfaceObject UserType) ctx context.Context
-[_] (Reference UserType) ref <ctx context.Context> @ PriceService
+[0] (InterfaceObject UserType) ctx context.Context
+[_1] (Reference UserType) ref <ctx context.Context> @ PriceService
 
     --> r-tainted: read(price_db.PriceConfig.RouteID) {1}
-[] (BasicObject BasicType) routeID string
+[0] (BasicObject BasicType) routeID string
      --> r-tainted: read(price_db.PriceConfig.RouteID) {1}
-[_] (Reference SliceType) ref <routeid []string> @ PriceService
+[_1] (Reference SliceType) ref <routeid []string> @ PriceService
       --> r-tainted: read(price_db.PriceConfig.RouteID) {1}
-[__] (BasicObject BasicType) rt string
+[__2] (BasicObject BasicType) rt string
       --> r-tainted: read(price_db.PriceConfig.RouteID) {1}
-[__] (BasicObject BasicType) ":" string
+[__2] (BasicObject BasicType) ":" string
 
     --> r-tainted: read(price_db.PriceConfig.TrainType) {1}
-[] (BasicObject BasicType) trainType string
+[0] (BasicObject BasicType) trainType string
      --> r-tainted: read(price_db.PriceConfig.TrainType) {1}
-[_] (Reference SliceType) ref <trainType []string> @ PriceService
+[_1] (Reference SliceType) ref <trainType []string> @ PriceService
       --> r-tainted: read(price_db.PriceConfig.TrainType) {1}
-[__] (BasicObject BasicType) rt string
+[__2] (BasicObject BasicType) rt string
       --> r-tainted: read(price_db.PriceConfig.TrainType) {1}
-[__] (BasicObject BasicType) ":" string
+[__2] (BasicObject BasicType) ":" string
 
-[] (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database = priceConfig, collection = priceConfig}
+[0] (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database = priceConfig, collection = priceConfig}
 
-[] (InterfaceObject UserType) err .error
+[0] (InterfaceObject UserType) err .error
 
-[] (SliceObject UserType) query primitive.D
-[_] (StructObject StructType) struct{ "$and" string,  primitive.A}
+[0] (SliceObject UserType) query primitive.D
+[_1] (StructObject StructType) struct{ primitive.A,  "$and" string,  primitive.A}
 
     --> r-tainted: read(price_db.PriceConfig) {1}
-[] (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database = priceConfig, collection = priceConfig}
+[0] (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database = priceConfig, collection = priceConfig}
      --> r-tainted: read(price_db.PriceConfig) {1}
-[_] (StructObject UserType) pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
+[_1] (StructObject UserType) pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
 
-[] (InterfaceObject UserType) err .error
+[0] (InterfaceObject UserType) err .error
 
     --> r-tainted: read(price_db.PriceConfig) {1}
-[] (StructObject UserType) pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
+[0] (StructObject UserType) pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
 
-[] (BasicObject BasicType) exists bool
+[0] (BasicObject BasicType) exists bool
 
-[] (InterfaceObject UserType) err .error
+[0] (InterfaceObject UserType) err .error
 

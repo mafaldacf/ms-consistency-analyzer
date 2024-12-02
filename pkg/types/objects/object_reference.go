@@ -64,10 +64,10 @@ func (ref *Reference) GetDependencies() []Object {
 	return nil
 }
 
-func (ref *Reference) GetNestedDependencies(nearestFields bool) []Object {
+func (ref *Reference) GetNestedDependencies(includeRefBy bool) []Object {
 	var deps = []Object{ref}
 	if ref.Object != nil {
-		deps = append(deps, ref.Object.GetNestedDependencies(nearestFields)...)
+		deps = append(deps, ref.Object.GetNestedDependencies(includeRefBy)...)
 	}
 	return deps
 }

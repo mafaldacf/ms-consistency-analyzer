@@ -3,43 +3,44 @@ TIMELINE_CACHE.key:
 - write <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
   from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
 - write <PostID int64 (FieldObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <postID int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <ref <PostID interface{}> @ NotifyService (Reference)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <PostID interface{} (InterfaceObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <postID int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <postID_UPLOAD_SVC int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <ref <postID_STORAGE_SVC int64> @ StorageService (Reference)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <postID_STORAGE_SVC int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <ref <PostID int64> @ UploadService (Reference)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <PostID int64 (FieldObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <postIDDDDD int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <postID_UPLOAD_SVC int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
 - write <ReqID int64 (FieldObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
 - write <reqID int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <ref <ReqID interface{}> @ NotifyService (Reference)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <ReqID interface{} (InterfaceObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
 - write <reqID int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
 - write <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
 - write <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
   from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
 - write <PostID int64 (FieldObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <postID int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <ref <PostID interface{}> @ NotifyService (Reference)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <PostID interface{} (InterfaceObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <postID int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <postID_UPLOAD_SVC int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <ref <postID_STORAGE_SVC int64> @ StorageService (Reference)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <postID_STORAGE_SVC int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <ref <PostID int64> @ UploadService (Reference)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <PostID int64 (FieldObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <postIDDDDD int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <postID_UPLOAD_SVC int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
 - write <ReqID int64 (FieldObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
 - write <reqID int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <ref <ReqID interface{}> @ NotifyService (Reference)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <ReqID interface{} (InterfaceObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
 - write <reqID int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <postID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <ref <PostID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <PostID interface{} (InterfaceObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <postID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <postID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <ref <PostID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <PostID interface{} (InterfaceObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <postID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postID_STORAGE_SVC int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <ref <PostID int64> @ UploadService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postID_STORAGE_SVC int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <ref <PostID int64> @ UploadService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <PostID int64 (FieldObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <PostID int64 (FieldObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postID_STORAGE_SVC int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postID_UPLOAD_SVC int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <PostID int64 (FieldObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <PostID int64 (FieldObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postID_STORAGE_SVC int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postID_UPLOAD_SVC int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postIDDDDD int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
 - write <reqID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <ref <ReqID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <ReqID interface{} (InterfaceObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <reqID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <reqID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <ref <ReqID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <ReqID interface{} (InterfaceObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
 - write <reqID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
 
 TIMELINE_CACHE.value:
@@ -47,41 +48,42 @@ TIMELINE_CACHE.value:
 - write <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
   from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
 - write <PostID int64 (FieldObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <postID int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <ref <PostID interface{}> @ NotifyService (Reference)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <PostID interface{} (InterfaceObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <postID int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <postID_UPLOAD_SVC int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <ref <postID_STORAGE_SVC int64> @ StorageService (Reference)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <postID_STORAGE_SVC int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <ref <PostID int64> @ UploadService (Reference)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <PostID int64 (FieldObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <postIDDDDD int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <postID_UPLOAD_SVC int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
 - write <ReqID int64 (FieldObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
 - write <reqID int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <ref <ReqID interface{}> @ NotifyService (Reference)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <ReqID interface{} (InterfaceObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
 - write <reqID int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
 - write <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
 - write <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
   from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
 - write <PostID int64 (FieldObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <postID int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <ref <PostID interface{}> @ NotifyService (Reference)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <PostID interface{} (InterfaceObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <postID int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <postID_UPLOAD_SVC int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <ref <postID_STORAGE_SVC int64> @ StorageService (Reference)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <postID_STORAGE_SVC int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <ref <PostID int64> @ UploadService (Reference)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <PostID int64 (FieldObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <postIDDDDD int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
+- write <postID_UPLOAD_SVC int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
 - write <ReqID int64 (FieldObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
 - write <reqID int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <ref <ReqID interface{}> @ NotifyService (Reference)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <ReqID interface{} (InterfaceObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
 - write <reqID int64 (BasicObject)> from <timeline postnotification.Timeline struct{ReqID int64, PostID int64} (StructObject)>
-- write <postID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <ref <PostID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <PostID interface{} (InterfaceObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <postID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <postID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <ref <PostID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <PostID interface{} (InterfaceObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <postID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postID_STORAGE_SVC int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <ref <PostID int64> @ UploadService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postID_STORAGE_SVC int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <ref <PostID int64> @ UploadService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <PostID int64 (FieldObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <PostID int64 (FieldObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postID_STORAGE_SVC int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postID_UPLOAD_SVC int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <PostID int64 (FieldObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <PostID int64 (FieldObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postID_STORAGE_SVC int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postID_UPLOAD_SVC int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postIDDDDD int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
 - write <reqID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <ref <ReqID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <ReqID interface{} (InterfaceObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <reqID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <reqID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <ref <ReqID interface{}> @ NotifyService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <ReqID interface{} (InterfaceObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
 - write <reqID int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>

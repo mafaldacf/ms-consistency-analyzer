@@ -14,6 +14,7 @@
 [] (InterfaceObject UserType) ctx context.Context
 [_] (Reference UserType) ref <ctx context.Context> @ UploadService
 
+    --> w-tainted: write(posts_cache.key, posts_cache.value, posts_db.Post.ReqID, notifications_queue.Message.ReqID, timeline_cache.key, timeline_cache.value) {6}       --> w-tainted: write(posts_cache.key, posts_cache.value, posts_db.Post.ReqID, notifications_queue.Message.ReqID, timeline_cache.key, timeline_cache.value) {6} --> r-tainted: read(notifications_queue.Message.ReqID) {1}
 [] (BasicObject BasicType) reqID int64
      --> w-tainted: write(posts_db.Post.ReqID, posts_cache.key, posts_cache.value, notifications_queue.Message.ReqID, timeline_cache.key, timeline_cache.value) {6}         --> w-tainted: write(posts_db.Post.ReqID, posts_cache.key, posts_cache.value, notifications_queue.Message.ReqID, timeline_cache.key, timeline_cache.value) {6} --> r-tainted: read(notifications_queue.Message.ReqID) {1}
 [_] (Reference BasicType) ref <reqID int64> @ UploadService
@@ -23,7 +24,7 @@
     --> w-tainted: write(posts_cache.key, posts_cache.value) {2}
 [] (StructObject UserType) post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}
      --> w-tainted: write(posts_cache.key, posts_cache.value, posts_db.Post) {3}
-[_] (Reference UserType) ref <post postnotification.Post struct{ReqID int64, PostID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}, Creator postnotification.Creator struct{Username string}}> @ UploadService
+[_] (Reference UserType) ref <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username "some username" string}}> @ UploadService
       --> w-tainted: write(posts_db.Post.Creator, posts_cache.key, posts_cache.value) {3}
 [__] (FieldObject FieldType) Creator postnotification.Creator struct{Username "some username" string}
        --> w-tainted: write(posts_cache.key, posts_cache.value, posts_db.Post.Creator) {3}
@@ -60,7 +61,7 @@
 [__] (FieldObject FieldType) Timestamp int64
        --> w-tainted: write(posts_db.Post.Timestamp, posts_cache.key, posts_cache.value) {3}
 [___] (BasicObject BasicType) timestamp int64
-     --> w-tainted: write(posts_cache.key, posts_cache.value) {2}
+     --> w-tainted: write(posts_cache.key, posts_cache.value, posts_db.Post.PostID) {3}
 [_] (FieldObject FieldType) PostID int64
       --> w-tainted: write(posts_db.Post.PostID, posts_cache.key, posts_cache.value, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID) {5}           --> w-tainted: write(posts_db.Post.PostID, posts_cache.key, posts_cache.value, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID) {5} --> r-tainted: read(analytics_queue.TriggerAnalyticsMessage.PostID) {1}
 [__] (Reference FieldType) ref <PostID int64> @ UploadService
@@ -68,7 +69,7 @@
 [___] (BasicObject BasicType) postID int64
         --> w-tainted: write(media_db.Media.PostID, posts_cache.key, posts_cache.value, posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value) {9}               --> w-tainted: write(media_db.Media.PostID, posts_cache.key, posts_cache.value, posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value) {9} --> r-tainted: read(analytics_queue.TriggerAnalyticsMessage.PostID, notifications_queue.Message.PostID, posts_db.Post.PostID, analytics_db.Analytics.PostID) {4}
 [____] (Reference InterfaceType) ref <PostID interface{}> @ NotifyService
-      --> w-tainted: write(posts_cache.key, posts_cache.value) {2}
+      --> w-tainted: write(posts_cache.key, posts_cache.value, posts_db.Post.PostID) {3}
 [__] (BasicObject BasicType) PostID int64
        --> w-tainted: write(posts_db.Post.PostID, posts_cache.key, posts_cache.value, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID) {5}             --> w-tainted: write(posts_db.Post.PostID, posts_cache.key, posts_cache.value, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID) {5} --> r-tainted: read(analytics_queue.TriggerAnalyticsMessage.PostID) {1}
 [___] (Reference FieldType) ref <PostID int64> @ UploadService
@@ -78,7 +79,7 @@
 [_____] (Reference InterfaceType) ref <PostID interface{}> @ NotifyService
 
 [] (BasicObject BasicType) postIDStr string
-     --> w-tainted: write(posts_cache.key, posts_cache.value) {2}
+     --> w-tainted: write(posts_cache.key, posts_cache.value, posts_db.Post.PostID) {3}
 [_] (BasicObject BasicType) PostID int64
       --> w-tainted: write(posts_db.Post.PostID, posts_cache.key, posts_cache.value, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID) {5}           --> w-tainted: write(posts_db.Post.PostID, posts_cache.key, posts_cache.value, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID) {5} --> r-tainted: read(analytics_queue.TriggerAnalyticsMessage.PostID) {1}
 [__] (Reference FieldType) ref <PostID int64> @ UploadService

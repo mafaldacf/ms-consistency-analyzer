@@ -57,15 +57,15 @@ func (v *PointerObject) GetDependencies() []Object {
 	return append(v.GetVariableInfo().GetDependencies(), v.PointerTo)
 }
 
-func (v *PointerObject) GetNestedDependencies(nearestFields bool) []Object {
+func (v *PointerObject) GetNestedDependencies(includeRefBy bool) []Object {
 	var deps = []Object{v}
 	if v.GetVariableInfo().HasReferences() {
-		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
+		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(includeRefBy, v)...)
 	}
-	if v.GetVariableInfo().IsReferencedBy() {
+	if includeRefBy && v.GetVariableInfo().IsReferencedBy() {
 		deps = append(deps, v.GetVariableInfo().GetNestedRefByDependencies(nil)...)
 	}
-	deps = append(deps, v.PointerTo.GetNestedDependencies(nearestFields)...)
+	deps = append(deps, v.PointerTo.GetNestedDependencies(includeRefBy)...)
 	return deps
 }
 

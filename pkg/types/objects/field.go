@@ -16,7 +16,7 @@ type FieldObject struct {
 
 func NewFieldObject(info *ObjectInfo, wrappedObj Object) *FieldObject {
 	return &FieldObject{
-		ObjectInfo: info,
+		ObjectInfo:      info,
 		WrappedVariable: wrappedObj,
 	}
 }
@@ -102,15 +102,15 @@ func (v *FieldObject) GetDependencies() []Object {
 	return append(v.GetVariableInfo().GetDependencies(), v.WrappedVariable)
 }
 
-func (v *FieldObject) GetNestedDependencies(nearestFields bool) []Object {
+func (v *FieldObject) GetNestedDependencies(includeRefBy bool) []Object {
 	var deps = []Object{v}
 	if v.GetVariableInfo().HasReferences() {
-		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
+		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(includeRefBy, v)...)
 	}
-	if v.GetVariableInfo().IsReferencedBy() {
+	if includeRefBy && v.GetVariableInfo().IsReferencedBy() {
 		deps = append(deps, v.GetVariableInfo().GetNestedRefByDependencies(nil)...)
 	}
-	deps = append(deps, v.WrappedVariable.GetNestedDependencies(nearestFields)...)
+	deps = append(deps, v.WrappedVariable.GetNestedDependencies(includeRefBy)...)
 	return deps
 }
 

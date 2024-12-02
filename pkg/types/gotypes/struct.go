@@ -2,17 +2,22 @@ package gotypes
 
 import (
 	"analyzer/pkg/logger"
+	"analyzer/pkg/utils"
 )
 
 type StructType struct {
 	Type           `json:"-"`
 	ParentUserType *UserType
 	FieldTypes     []*FieldType
+	//FieldTypesMap  map[string]*FieldType
 	Methods        map[string]string // maps method name to package path
 }
 
 func NewStructType() *StructType {
-	return &StructType{}
+	return &StructType{
+		//FieldTypesMap: make(map[string]*FieldType),
+		Methods:       make(map[string]string),
+	}
 }
 
 // ------------
@@ -21,12 +26,15 @@ func NewStructType() *StructType {
 
 func (t *StructType) DeepCopy() Type {
 	var fieldTypesCopy []*FieldType
-	var methodsCopy map[string]string = make(map[string]string)
+	//fieldTypesMapCopy := make(map[string]*FieldType)
 	for _, fieldType := range t.FieldTypes {
 		fieldTypeCopy := fieldType.DeepCopy().(*FieldType)
 		fieldTypeCopy.Origin = t
 		fieldTypesCopy = append(fieldTypesCopy, fieldTypeCopy)
+		//fieldTypesMapCopy[fieldType.GetName()] = fieldTypeCopy
 	}
+
+	var methodsCopy map[string]string = make(map[string]string)
 	for k, v := range t.Methods {
 		methodsCopy[k] = v
 	}
@@ -181,15 +189,33 @@ func (t *StructType) GetFieldTypeAt(index int) *FieldType {
 	return t.FieldTypes[index]
 }
 
-func (t *StructType) UpdateFieldAtIfExists(index int, fieldType *FieldType) {
-	if index > len(t.FieldTypes)-1 {
-		return
+func (t *StructType) UpdateFieldAtIfExists(fieldType *FieldType) {
+	logger.Logger.Warnf("[TYPES STRUCT] updating field type at for struct type (%s): NEW [%s] = %s", t.String(), fieldType.LongString(), utils.GetType(fieldType))
+	
+	index := -1
+	// search for the field (created when struct type was created for the first time e.g. for a user type) whose
+	// field name matches the current field type for the field object that is being used
+	for i, ft := range t.FieldTypes {
+		if ft.GetName() == fieldType.GetName() {
+			index = i
+			break
+		}
 	}
-	logger.Logger.Warnf("[TYPES STRUCT] updated field type at index %d for struct type (%s): %s", index, t.String(), fieldType.LongString())
-	t.FieldTypes[index] = fieldType
+	if index != -1 {
+		// update field type with current one
+		t.FieldTypes[index] = fieldType
+	} else {
+		// may happen when we create an object with a nil type (e.g. in ast.CompositeLit == nil for bson.D{{myobjid, 0}})
+		logger.Logger.Warnf("[STRUCT TYPE] could not find index for matching field type: %s", fieldType.String())
+		t.FieldTypes = append(t.FieldTypes, fieldType)
+	}
 }
 
 func (t *StructType) AddOrGetFieldType(field *FieldType) {
+	t.FieldTypes = append(t.FieldTypes, field)
+}
+
+func (t *StructType) AddFieldType(field *FieldType) {
 	t.FieldTypes = append(t.FieldTypes, field)
 }
 

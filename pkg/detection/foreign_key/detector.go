@@ -29,13 +29,18 @@ func (detector *ForeignKeyDetector) Run() {
 	}
 }
 
+// FIXME:
+// checkForeignKeyRead gets all dependencies for the read object
+// for each dependency, it iterates all previous read dataflows
+// if the database field read on a previous (dependent) dataflow matches the current field
+// then we detect a new foreignkey-based read
 func (detector *ForeignKeyDetector) checkForeignKeyRead(obj objects.Object, originField *datastores.Entry, dbCall *abstractgraph.AbstractDatabaseCall) {
 	logger.Logger.Infof("[FOREIGN KEY] check foreign key read for origin field (%s) and object: %s", originField.String(), obj.String())
 	var savedOriginFieldName []string
 	//datastore := dbCall.DbInstance.GetDatastore()
-	for _, dep := range obj.GetNestedDependencies(false) {
+	for _, dep := range obj.GetNestedDependencies(true) {
 		logger.Logger.Debugf("[FOREIGN KEY] \t dep: %s", dep.String())
-		for _, df := range dep.GetVariableInfo().GetAllReadDataflows() {
+		for _, df := range dep.GetVariableInfo().GetAllReadDataflowsExceptDatastore(dbCall.DbInstance.GetName()) { // except filter is just for sanity check
 			logger.Logger.Debugf("[FOREIGN KEY] \t\t df: %s", df.String())
 			refField := df.Field.(*datastores.Entry)
 			for _, refTarget := range refField.References {

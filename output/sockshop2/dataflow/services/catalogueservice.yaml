@@ -1,183 +1,165 @@
 ? (*catalogueImpl).AddSock(ctx context.Context, sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string})
 :
  block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) s (*catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase})'
-  - _ depth 1 (StructObject UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
-  - __ depth 2 (FieldObject FieldType) catalogue_db NoSQLDatabase
-  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) catalogue_db NoSQLDatabase
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - _ depth 1 (Reference UserType) ref <ctx context.Context> @ FrontendService
-  - ' depth 0 (StructObject UserType) sock catalogue.Sock struct{ID string, Name string,
-    Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price
-    float32, Quantity int, Tags []string, TagString string} --> w-tainted 1x: write(catalogue_db.Sock)'
-  - '_ depth 1 (Reference UserType) ref <sock catalogue.Sock struct{ID string, Name
+  - 0 depth 0 (PointerObject PointerType) s (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase})
+  - _1 depth 1 (StructObject UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
+  - __2 depth 2 (FieldObject FieldType) catalogue_db NoSQLDatabase
+  - ___3 depth 3 (BlueprintBackendObject BlueprintBackendType) catalogue_db NoSQLDatabase
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - _1 depth 1 (Reference UserType) ref <ctx context.Context> @ FrontendService
+  - '0 depth 0 (StructObject UserType) sock catalogue.Sock struct{ID string, Name
+    string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string,
+    Price float32, Quantity int, Tags []string, TagString string} --> w-tainted 1x:
+    write(catalogue_db.Sock)'
+  - '_1 depth 1 (Reference UserType) ref <sock catalogue.Sock struct{ID string, Name
     string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string,
     Price float32, Quantity int, Tags []string, TagString string}> @ FrontendService
     --> w-tainted 1x: write(catalogue_db.Sock)'
-  - _ depth 1 (FieldObject FieldType) ID string
-  - __ depth 2 (BasicObject BasicType) ID string
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
-    {database = catalogue, collection = catalogue}'
-  - ' depth 0 (InterfaceObject UserType) _ .error'
+  - _2 depth 1 (FieldObject FieldType) ID string
+  - __3 depth 2 (BasicObject BasicType) ID string
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
+    {database = catalogue, collection = catalogue}
+  - 0 depth 0 (InterfaceObject UserType) _ .error
 
 (*catalogueImpl).AddTags(ctx context.Context, tags []string):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) s (*catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase})'
-  - _ depth 1 (StructObject UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
-  - __ depth 2 (FieldObject FieldType) catalogue_db NoSQLDatabase
-  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) catalogue_db NoSQLDatabase
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (ArrayObject ArrayType) tags []string'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
-    {database = catalogue, collection = catalogue}'
-  - ' depth 0 (InterfaceObject UserType) _ .error'
-  - ' depth 0 (SliceObject UserType) update primitive.D'
-  - _ depth 1 (StructObject StructType) struct{Key "tags" string, Value []string}
-  - __ depth 2 (FieldObject FieldType) Key "tags" string
-  - ___ depth 3 (BasicObject BasicType) "tags" string
-  - __ depth 2 (FieldObject FieldType) Value []string
-  - ' depth 0 (SliceObject UserType) filter primitive.D'
+  - 0 depth 0 (PointerObject PointerType) s (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase})
+  - _1 depth 1 (StructObject UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
+  - __2 depth 2 (FieldObject FieldType) catalogue_db NoSQLDatabase
+  - ___3 depth 3 (BlueprintBackendObject BlueprintBackendType) catalogue_db NoSQLDatabase
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (ArrayObject ArrayType) tags []string
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
+    {database = catalogue, collection = catalogue}
+  - 0 depth 0 (InterfaceObject UserType) _ .error
+  - 0 depth 0 (SliceObject UserType) update primitive.D
+  - _1 depth 1 (StructObject StructType) struct{Key "tags" string, Key "tags" string, Value []string, Value []string}
+  - __2 depth 2 (FieldObject FieldType) Key "tags" string
+  - ___3 depth 3 (BasicObject BasicType) "tags" string
+  - __4 depth 2 (FieldObject FieldType) Value []string
+  - 0 depth 0 (SliceObject UserType) filter primitive.D
 
 (*catalogueImpl).Count(ctx context.Context, tags []string):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) s (*catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase})'
-  - _ depth 1 (StructObject UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
-  - __ depth 2 (FieldObject FieldType) catalogue_db NoSQLDatabase
-  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) catalogue_db NoSQLDatabase
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (ArrayObject ArrayType) tags []string'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
-    {database = catalogue, collection = catalogue}'
-  - ' depth 0 (InterfaceObject UserType) _ .error'
-  - ' depth 0 (ArrayObject ArrayType) socks []catalogue.Sock struct{ID string, Name
-    string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string,
-    Price float32, Quantity int, Tags []string, TagString string}'
-  - ' depth 0 (SliceObject UserType) filter primitive.D'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database
-    = catalogue, collection = catalogue}'
-  - ' depth 0 (InterfaceObject UserType) _ .error'
+  - 0 depth 0 (PointerObject PointerType) s (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase})
+  - _1 depth 1 (StructObject UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
+  - __2 depth 2 (FieldObject FieldType) catalogue_db NoSQLDatabase
+  - ___3 depth 3 (BlueprintBackendObject BlueprintBackendType) catalogue_db NoSQLDatabase
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (ArrayObject ArrayType) tags []string
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
+    {database = catalogue, collection = catalogue}
+  - 0 depth 0 (InterfaceObject UserType) _ .error
+  - 0 depth 0 (ArrayObject ArrayType) socks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
+  - 0 depth 0 (SliceObject UserType) filter primitive.D
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database = catalogue, collection = catalogue}
+  - 0 depth 0 (InterfaceObject UserType) _ .error
 
 (*catalogueImpl).DeleteSock(ctx context.Context, id string):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) s (*catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase})'
-  - _ depth 1 (StructObject UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
-  - __ depth 2 (FieldObject FieldType) catalogue_db NoSQLDatabase
-  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) catalogue_db NoSQLDatabase
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) id string'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
-    {database = catalogue, collection = catalogue}'
-  - ' depth 0 (InterfaceObject UserType) _ .error'
-  - ' depth 0 (SliceObject UserType) query primitive.D'
-  - _ depth 1 (StructObject StructType) struct{Key "id" string, Value string}
-  - __ depth 2 (FieldObject FieldType) Key "id" string
-  - ___ depth 3 (BasicObject BasicType) "id" string
-  - __ depth 2 (FieldObject FieldType) Value string
+  - 0 depth 0 (PointerObject PointerType) s (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase})
+  - _1 depth 1 (StructObject UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
+  - __2 depth 2 (FieldObject FieldType) catalogue_db NoSQLDatabase
+  - ___3 depth 3 (BlueprintBackendObject BlueprintBackendType) catalogue_db NoSQLDatabase
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) id string
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
+    {database = catalogue, collection = catalogue}
+  - 0 depth 0 (InterfaceObject UserType) _ .error
+  - 0 depth 0 (SliceObject UserType) query primitive.D
+  - _1 depth 1 (StructObject StructType) struct{Key "id" string, Key "id" string, Value string, Value string}
+  - __2 depth 2 (FieldObject FieldType) Key "id" string
+  - ___3 depth 3 (BasicObject BasicType) "id" string
+  - __4 depth 2 (FieldObject FieldType) Value string
 
 (*catalogueImpl).Get(ctx context.Context, id string):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) s (*catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase})'
-  - _ depth 1 (StructObject UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
-  - __ depth 2 (FieldObject FieldType) catalogue_db NoSQLDatabase
-  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) catalogue_db NoSQLDatabase
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - _ depth 1 (Reference UserType) ref <ctx context.Context> @ FrontendService
-  - ' depth 0 (BasicObject BasicType) id string --> r-tainted 1x: read(catalogue_db._.id)'
-  - '_ depth 1 (Reference BasicType) ref <itemID string> @ FrontendService --> r-tainted
+  - 0 depth 0 (PointerObject PointerType) s (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase})
+  - _1 depth 1 (StructObject UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
+  - __2 depth 2 (FieldObject FieldType) catalogue_db NoSQLDatabase
+  - ___3 depth 3 (BlueprintBackendObject BlueprintBackendType) catalogue_db NoSQLDatabase
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - _1 depth 1 (Reference UserType) ref <ctx context.Context> @ FrontendService
+  - '0 depth 0 (BasicObject BasicType) id string --> r-tainted 1x: read(catalogue_db._.id)'
+  - '_1 depth 1 (Reference BasicType) ref <itemID string> @ FrontendService --> r-tainted
     1x: read(catalogue_db._.id)'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
-    {database = catalogue, collection = catalogue}'
-  - ' depth 0 (InterfaceObject UserType) _ .error'
-  - ' depth 0 (SliceObject UserType) query primitive.D'
-  - _ depth 1 (StructObject StructType) struct{Key "id" string, Value string}
-  - __ depth 2 (FieldObject FieldType) Key "id" string
-  - ___ depth 3 (BasicObject BasicType) "id" string
-  - __ depth 2 (FieldObject FieldType) Value string
-  - ' depth 0 (StructObject UserType) sock catalogue.Sock struct{ID string, Name string,
-    Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price
-    float32, Quantity int, Tags []string, TagString string} --> r-tainted 8x: read(catalogue_db.Sock,
-    catalogue_db.ImageURL, catalogue_db.[]string, catalogue_db.string, catalogue_db.ImageURL_1,
-    catalogue_db.ImageURL_2, catalogue_db.TagString, catalogue_db.Tags)'
-  - '_ depth 1 (FieldObject FieldType) ImageURL []string --> r-tainted 1x: read(catalogue_db.ImageURL)'
-  - '__ depth 2 (ArrayObject SliceType) []string --> r-tainted 1x: read(catalogue_db.[]string)'
-  - '___ depth 3 (BasicObject BasicType) ImageURL_1 string --> r-tainted 1x: read(catalogue_db.string)'
-  - '___ depth 3 (BasicObject BasicType) ImageURL_2 string --> r-tainted 1x: read(catalogue_db.string)'
-  - '_ depth 1 (FieldObject FieldType) ImageURL_1 string --> r-tainted 1x: read(catalogue_db.ImageURL_1)'
-  - '__ depth 2 (BasicObject BasicType) ImageURL_1 string --> r-tainted 1x: read(catalogue_db.string)'
-  - '_ depth 1 (FieldObject FieldType) ImageURL_2 string --> r-tainted 1x: read(catalogue_db.ImageURL_2)'
-  - '__ depth 2 (BasicObject BasicType) ImageURL_2 string --> r-tainted 1x: read(catalogue_db.string)'
-  - '_ depth 1 (FieldObject FieldType) TagString string --> r-tainted 1x: read(catalogue_db.TagString)'
-  - '__ depth 2 (BasicObject BasicType) TagString string --> r-tainted 1x: read(catalogue_db.string)'
-  - '_ depth 1 (FieldObject FieldType) Tags []string --> r-tainted 1x: read(catalogue_db.Tags)'
-  - '__ depth 2 (SliceObject SliceType) []string --> r-tainted 1x: read(catalogue_db.[]string)'
-  - '___ depth 3 (BasicObject BasicType) TagString string --> r-tainted 1x: read(catalogue_db.string)'
-  - '___ depth 3 (BasicObject BasicType) "," string --> r-tainted 1x: read(catalogue_db.string)'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
+    {database = catalogue, collection = catalogue}
+  - 0 depth 0 (InterfaceObject UserType) _ .error
+  - 0 depth 0 (SliceObject UserType) query primitive.D
+  - _1 depth 1 (StructObject StructType) struct{Key "id" string, Key "id" string, Value string, Value string}
+  - __2 depth 2 (FieldObject FieldType) Key "id" string
+  - ___3 depth 3 (BasicObject BasicType) "id" string
+  - __4 depth 2 (FieldObject FieldType) Value string
+  - '0 depth 0 (StructObject UserType) sock catalogue.Sock struct{ID string, Name
+    string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string,
+    Price float32, Quantity int, Tags []string, TagString string} --> r-tainted 8x:
+    read(catalogue_db.Sock, catalogue_db.ImageURL, catalogue_db.[]string, catalogue_db.string,
+    catalogue_db.ImageURL_1, catalogue_db.ImageURL_2, catalogue_db.TagString, catalogue_db.Tags)'
+  - '_1 depth 1 (FieldObject FieldType) ImageURL []string --> r-tainted 1x: read(catalogue_db.ImageURL)'
+  - '__2 depth 2 (ArrayObject SliceType) []string --> r-tainted 1x: read(catalogue_db.[]string)'
+  - '___3 depth 3 (BasicObject BasicType) ImageURL_1 string --> r-tainted 1x: read(catalogue_db.string)'
+  - '___4 depth 3 (BasicObject BasicType) ImageURL_2 string --> r-tainted 1x: read(catalogue_db.string)'
+  - '_5 depth 1 (FieldObject FieldType) ImageURL_1 string --> r-tainted 1x: read(catalogue_db.ImageURL_1)'
+  - '__6 depth 2 (BasicObject BasicType) ImageURL_1 string --> r-tainted 1x: read(catalogue_db.string)'
+  - '_7 depth 1 (FieldObject FieldType) ImageURL_2 string --> r-tainted 1x: read(catalogue_db.ImageURL_2)'
+  - '__8 depth 2 (BasicObject BasicType) ImageURL_2 string --> r-tainted 1x: read(catalogue_db.string)'
+  - '_9 depth 1 (FieldObject FieldType) TagString string --> r-tainted 1x: read(catalogue_db.TagString)'
+  - '__10 depth 2 (BasicObject BasicType) TagString string --> r-tainted 1x: read(catalogue_db.string)'
+  - '_11 depth 1 (FieldObject FieldType) Tags []string --> r-tainted 1x: read(catalogue_db.Tags)'
+  - '__12 depth 2 (SliceObject SliceType) []string --> r-tainted 1x: read(catalogue_db.[]string)'
+  - '___13 depth 3 (BasicObject BasicType) TagString string --> r-tainted 1x: read(catalogue_db.string)'
+  - '___14 depth 3 (BasicObject BasicType) "," string --> r-tainted 1x: read(catalogue_db.string)'
+  - '0 depth 0 (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database
     = catalogue, collection = catalogue} --> r-tainted 1x: read(catalogue_db._)'
-  - ' depth 0 (InterfaceObject UserType) _ .error'
+  - 0 depth 0 (InterfaceObject UserType) _ .error
 
 (*catalogueImpl).List(ctx context.Context, tags []string, order string, pageNum int, pageSize int):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) s (*catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase})'
-  - _ depth 1 (StructObject UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
-  - __ depth 2 (FieldObject FieldType) catalogue_db NoSQLDatabase
-  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) catalogue_db NoSQLDatabase
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (ArrayObject ArrayType) tags []string'
-  - ' depth 0 (BasicObject BasicType) order string'
-  - ' depth 0 (BasicObject BasicType) pageNum int'
-  - ' depth 0 (BasicObject BasicType) pageSize int'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
-    {database = catalogue, collection = catalogue}'
-  - ' depth 0 (InterfaceObject UserType) _ .error'
-  - ' depth 0 (ArrayObject ArrayType) allSocks []catalogue.Sock struct{ID string,
-    Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2
-    string, Price float32, Quantity int, Tags []string, TagString string}'
-  - ' depth 0 (ArrayObject ArrayType) socks []catalogue.Sock struct{ID string, Name
-    string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string,
-    Price float32, Quantity int, Tags []string, TagString string}'
-  - ' depth 0 (SliceObject UserType) filter primitive.D'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database
-    = catalogue, collection = catalogue}'
-  - ' depth 0 (InterfaceObject UserType) _ .error'
+  - 0 depth 0 (PointerObject PointerType) s (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase})
+  - _1 depth 1 (StructObject UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
+  - __2 depth 2 (FieldObject FieldType) catalogue_db NoSQLDatabase
+  - ___3 depth 3 (BlueprintBackendObject BlueprintBackendType) catalogue_db NoSQLDatabase
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (ArrayObject ArrayType) tags []string
+  - 0 depth 0 (BasicObject BasicType) order string
+  - 0 depth 0 (BasicObject BasicType) pageNum int
+  - 0 depth 0 (BasicObject BasicType) pageSize int
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
+    {database = catalogue, collection = catalogue}
+  - 0 depth 0 (InterfaceObject UserType) _ .error
+  - 0 depth 0 (ArrayObject ArrayType) allSocks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
+  - 0 depth 0 (ArrayObject ArrayType) socks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
+  - 0 depth 0 (SliceObject UserType) filter primitive.D
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database = catalogue, collection = catalogue}
+  - 0 depth 0 (InterfaceObject UserType) _ .error
 
 (*catalogueImpl).Tags(ctx context.Context):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) s (*catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase})'
-  - _ depth 1 (StructObject UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
-  - __ depth 2 (FieldObject FieldType) catalogue_db NoSQLDatabase
-  - ___ depth 3 (BlueprintBackendObject BlueprintBackendType) catalogue_db NoSQLDatabase
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
-    {database = catalogue, collection = catalogue}'
-  - ' depth 0 (InterfaceObject UserType) _ .error'
-  - ' depth 0 (ArrayObject ArrayType) socks []catalogue.Sock struct{ID string, Name
-    string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string,
-    Price float32, Quantity int, Tags []string, TagString string}'
-  - ' depth 0 (SliceObject UserType) projection primitive.D'
-  - _ depth 1 (StructObject StructType) struct{Key "tags" string, Value true bool}
-  - __ depth 2 (FieldObject FieldType) Key "tags" string
-  - ___ depth 3 (BasicObject BasicType) "tags" string
-  - __ depth 2 (FieldObject FieldType) Value true bool
-  - ___ depth 3 (BasicObject BasicType) true bool
-  - ' depth 0 (SliceObject UserType) filter primitive.D'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database
-    = catalogue, collection = catalogue}'
-  - ' depth 0 (InterfaceObject UserType) _ .error'
-  - ' depth 0 (ArrayObject ArrayType) tags []string'
+  - 0 depth 0 (PointerObject PointerType) s (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase})
+  - _1 depth 1 (StructObject UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
+  - __2 depth 2 (FieldObject FieldType) catalogue_db NoSQLDatabase
+  - ___3 depth 3 (BlueprintBackendObject BlueprintBackendType) catalogue_db NoSQLDatabase
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
+    {database = catalogue, collection = catalogue}
+  - 0 depth 0 (InterfaceObject UserType) _ .error
+  - 0 depth 0 (ArrayObject ArrayType) socks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
+  - 0 depth 0 (SliceObject UserType) projection primitive.D
+  - _1 depth 1 (StructObject StructType) struct{Key "tags" string, Key "tags" string, Value true bool, Value true bool}
+  - __2 depth 2 (FieldObject FieldType) Key "tags" string
+  - ___3 depth 3 (BasicObject BasicType) "tags" string
+  - __4 depth 2 (FieldObject FieldType) Value true bool
+  - ___5 depth 3 (BasicObject BasicType) true bool
+  - 0 depth 0 (SliceObject UserType) filter primitive.D
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database = catalogue, collection = catalogue}
+  - 0 depth 0 (InterfaceObject UserType) _ .error
+  - 0 depth 0 (ArrayObject ArrayType) tags []string
 
 .NewCatalogueService(ctx context.Context, catalogue_db NoSQLDatabase):
   block 0 (Body):
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BlueprintBackendObject BlueprintBackendType) catalogue_db NoSQLDatabase'
-  - ' depth 0 (PointerObject PointerType) c (*catalogue.catalogueImpl struct{catalogue_db
-    NoSQLDatabase})'
-  - _ depth 1 (StructObject UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
-  - __ depth 2 (FieldObject FieldType) catalogue_db NoSQLDatabase
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) catalogue_db NoSQLDatabase
+  - 0 depth 0 (PointerObject PointerType) c (*catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase})
+  - _1 depth 1 (StructObject UserType) catalogue.catalogueImpl struct{catalogue_db NoSQLDatabase}
+  - __2 depth 2 (FieldObject FieldType) catalogue_db NoSQLDatabase

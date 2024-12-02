@@ -1,31 +1,29 @@
 (*FrontendServiceImpl).Frontend(ctx context.Context):
   block 5 (IfDone):
-  - ' depth 0 (PointerObject PointerType) d (*foobar.FrontendServiceImpl struct{barService
-    bar.BarService, fooService foo.FooService})'
-  - _ depth 1 (StructObject UserType) foobar.FrontendServiceImpl struct{fooService foo.FooService, barService bar.BarService}
-  - __ depth 2 (FieldObject FieldType) barService bar.BarService
-  - ___ depth 3 (ServiceObject ServiceType) barService bar.BarService
-  - __ depth 2 (FieldObject FieldType) fooService foo.FooService
-  - ___ depth 3 (ServiceObject ServiceType) fooService foo.FooService
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) f string'
-  - '_ depth 1 (Reference AddressType) ref <(&"Foo: " string)> @ FooService'
-  - '__ depth 2 (BasicObject BasicType) "Foo: " string'
-  - ' depth 0 (InterfaceObject UserType) err1 .error'
-  - _ depth 1 (Reference BasicType) ref <nil> @ FooService
-  - ' depth 0 (BasicObject BasicType) b string'
-  - '_ depth 1 (Reference AddressType) ref <(&"Bar: " string)> @ BarService'
-  - '__ depth 2 (BasicObject BasicType) "Bar: " string'
-  - ' depth 0 (InterfaceObject UserType) err2 .error'
-  - _ depth 1 (Reference BasicType) ref <nil> @ BarService
+  - 0 depth 0 (PointerObject PointerType) d (*foobar.FrontendServiceImpl struct{barService bar.BarService, fooService foo.FooService})
+  - _1 depth 1 (StructObject UserType) foobar.FrontendServiceImpl struct{barService bar.BarService, fooService foo.FooService}
+  - __2 depth 2 (FieldObject FieldType) barService bar.BarService
+  - ___3 depth 3 (ServiceObject ServiceType) barService bar.BarService
+  - __4 depth 2 (FieldObject FieldType) fooService foo.FooService
+  - ___5 depth 3 (ServiceObject ServiceType) fooService foo.FooService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) f string
+  - '_1 depth 1 (Reference AddressType) ref <(&"Foo: " string)> @ FooService'
+  - '__2 depth 2 (BasicObject BasicType) "Foo: " string'
+  - 0 depth 0 (InterfaceObject UserType) err1 .error
+  - _1 depth 1 (Reference BasicType) ref <nil> @ FooService
+  - 0 depth 0 (BasicObject BasicType) b string
+  - '_1 depth 1 (Reference AddressType) ref <(&"Bar: " string)> @ BarService'
+  - '__2 depth 2 (BasicObject BasicType) "Bar: " string'
+  - 0 depth 0 (InterfaceObject UserType) err2 .error
+  - _1 depth 1 (Reference BasicType) ref <nil> @ BarService
 
 .NewFrontendServiceImpl(ctx context.Context, fooService foo.FooService, barService bar.BarService):
   block 0 (Body):
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (ServiceObject ServiceType) fooService foo.FooService'
-  - ' depth 0 (ServiceObject ServiceType) barService bar.BarService'
-  - ' depth 0 (PointerObject PointerType) d (*foobar.FrontendServiceImpl struct{fooService
-    foo.FooService, barService bar.BarService})'
-  - _ depth 1 (StructObject UserType) foobar.FrontendServiceImpl struct{fooService foo.FooService, barService bar.BarService}
-  - __ depth 2 (FieldObject FieldType) barService bar.BarService
-  - __ depth 2 (FieldObject FieldType) fooService foo.FooService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (ServiceObject ServiceType) fooService foo.FooService
+  - 0 depth 0 (ServiceObject ServiceType) barService bar.BarService
+  - 0 depth 0 (PointerObject PointerType) d (*foobar.FrontendServiceImpl struct{barService bar.BarService, fooService foo.FooService})
+  - _1 depth 1 (StructObject UserType) foobar.FrontendServiceImpl struct{barService bar.BarService, fooService foo.FooService}
+  - __2 depth 2 (FieldObject FieldType) barService bar.BarService
+  - __4 depth 2 (FieldObject FieldType) fooService foo.FooService

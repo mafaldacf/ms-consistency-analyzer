@@ -37,7 +37,7 @@ func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 			}
 		}
 		if namedType, ok := file.Package.GetNamedType(e.Name); ok {
-			//logger.Logger.Debugf("[LOOKUP AST IDENT] got named type (%s) (type = %s)", namedType.String(), utils.GetType(namedType))
+			logger.Logger.Debugf("[LOOKUP AST IDENT] got named type (%s) (type = %s)", namedType.String(), utils.GetType(namedType))
 			return namedType.DeepCopy()
 		}
 
@@ -88,7 +88,7 @@ func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 		}
 	case *ast.StructType:
 		structType := &gotypes.StructType{Methods: make(map[string]string)}
-		for _, f := range e.Fields.List {
+		for i, f := range e.Fields.List {
 			if len(f.Names) != 1 {
 				logger.Logger.Fatalf("[LOOKUP AST STRUCT] unexpected number of fields (%d) for %s", len(f.Names), typeExpr)
 			}
@@ -99,11 +99,12 @@ func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 				StructField: true,
 				FieldName:   name,
 				FieldTag:    f.Tag.Value,
+				Index: i,
 			}
 			if _, ok := fieldType.WrappedType.(*gotypes.StructType); ok {
 				fieldType.SetEmbedded()
 			}
-			structType.AddOrGetFieldType(fieldType)
+			structType.AddFieldType(fieldType)
 		}
 		return structType
 	case *ast.StarExpr:

@@ -1,28 +1,28 @@
-[] (PointerObject PointerType) s (*postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase})
-[_] (StructObject UserType) postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase}
-[__] (FieldObject FieldType) mediaDb NoSQLDatabase
-[___] (BlueprintBackendObject BlueprintBackendType) mediaDb NoSQLDatabase
+[0] (PointerObject PointerType) s (*postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase})
+[_1] (StructObject UserType) postnotification.MediaServiceImpl struct{mediaDb NoSQLDatabase}
+[__2] (FieldObject FieldType) mediaDb NoSQLDatabase
+[___3] (BlueprintBackendObject BlueprintBackendType) mediaDb NoSQLDatabase
 
-[] (InterfaceObject UserType) ctx context.Context
-[_] (Reference UserType) ref <ctx context.Context> @ UploadService
+[0] (InterfaceObject UserType) ctx context.Context
+[_1] (Reference UserType) ref <ctx context.Context> @ UploadService
 
     --> w-tainted: write(media_db.Media) {1}
-[] (StructObject UserType) media postnotification.Media struct{MediaID int64, Content string}
+[0] (StructObject UserType) media postnotification.Media struct{MediaID int64, Content string}
      --> w-tainted: write(media_db.Media) {1}
-[_] (Reference UserType) ref <media postnotification.Media struct{Content "HELLO WORLD!" untyped string, Content string}> @ UploadService
+[_1] (Reference UserType) ref <media postnotification.Media struct{MediaID int64, Content "HELLO WORLD!" untyped string}> @ UploadService
       --> w-tainted: write(media_db.Media.Content) {1}
-[__] (FieldObject FieldType) Content "HELLO WORLD!" untyped string
+[__2] (FieldObject FieldType) Content "HELLO WORLD!" untyped string
        --> w-tainted: write(media_db.Media.Content) {1}
-[___] (BasicObject BasicType) HELLO_WORLD_CONST "HELLO WORLD!" untyped string
+[___3] (BasicObject BasicType) HELLO_WORLD_CONST "HELLO WORLD!" untyped string
      --> w-tainted: write(media_db.Media.MediaID) {1}
-[_] (FieldObject FieldType) MediaID int64
+[_1] (FieldObject FieldType) MediaID int64
       --> w-tainted: write(media_db.Media.MediaID) {1}
-[__] (BasicObject BasicType) mediaID int64
+[__2] (BasicObject BasicType) mediaID int64
 
     --> w-tainted: write(media_db.Media.MediaID) {1}
-[] (BasicObject BasicType) mediaID int64
+[0] (BasicObject BasicType) mediaID int64
 
-[] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = media, collection = media}
+[0] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = media, collection = media}
 
-[] (InterfaceObject UserType) err .error
+[0] (InterfaceObject UserType) err .error
 

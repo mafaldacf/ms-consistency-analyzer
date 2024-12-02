@@ -4,7 +4,7 @@
 
 (*NotifyServiceImpl).handleMessage(ctx context.Context, message postnotification.Message struct{ReqID string, PostID string, Timestamp string})
 :
-	- SERVICE CALL @ ReadPostNoSQL >> (*postnotification.StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}, postnotification.Analytics struct{PostID int64}, error)
+	- SERVICE CALL @ ReadPostNoSQL >> (*postnotification.StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID_STORAGE_SVC_READ int64) (postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}, postnotification.Analytics struct{PostID int64}, error)
 
 (*NotifyServiceImpl).workerThread(ctx context.Context):
 - DATASTORE CALL @ notifications_queue >> Queue.Pop(ctx context.Context, item interface{})

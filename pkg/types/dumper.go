@@ -88,6 +88,8 @@ func getIndirectDependencies(v objects.Object, i int) ([]objects.Object, string,
 		paddingSpace += " "
 	}
 
+	padding += fmt.Sprintf("%d", i)
+
 	opStr := ""
 
 	visitedOp := make(map[string]bool)
@@ -178,6 +180,8 @@ func (block *Block) Yaml() ([]string, string) {
 			for j := 0; j < depth; j++ {
 				padding += "_"
 			}
+
+			padding += fmt.Sprintf("%d", i)
 
 			/* if i != lastIndex {
 				// last index corresponds to the original variabl from where we got the parameters

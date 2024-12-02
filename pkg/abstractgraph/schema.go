@@ -46,7 +46,7 @@ func saveUnfoldedFieldsToDatastore(variable objects.Object, entryName string, da
 	}
 }
 
-func taintDataflowOp(app *app.App, variable objects.Object, call *AbstractDatabaseCall, datastore *datastores.Datastore, fieldName string, includeNestedFields bool) {
+func taintDataflowWrite(app *app.App, variable objects.Object, call *AbstractDatabaseCall, datastore *datastores.Datastore, fieldName string, includeNestedFields bool) {
 	fmt.Printf("\n------------- TAINT WRITE DATAFLOW FOR CALL %s @ %s -------------\n\n", call.GetMethodStr(), datastore.Name)
 	fmt.Println()
 
@@ -80,7 +80,7 @@ func taintDataflowOp(app *app.App, variable objects.Object, call *AbstractDataba
 	for i, v := range vars {
 		logger.Logger.Infof("[TENTATIVE TAINT WRITE VAR] [%s] %s", utils.GetType(v), v.LongString())
 		dbField := datastore.Schema.GetField(names[i])
-		deps := v.GetNestedDependencies(false)
+		deps := v.GetNestedDependencies(true)
 
 		for _, dep := range deps {
 			logger.Logger.Debugf("visiting dep: %s", dep.String())
@@ -95,12 +95,21 @@ func taintDataflowOp(app *app.App, variable objects.Object, call *AbstractDataba
 				taintedVariables = append(taintedVariables, dep)
 				app.AddTaintedVariableIfNotExists(dbField.GetFullName(), dep)
 			}
+			/* if dep.GetVariableInfo().GetName() == "postID_STORAGE_SVC" {
+				logger.Logger.Warnf("WTF????: %v NESTED DEPENDENCIES = %v", dep.GetVariableInfo().ReferencedBy, dep.GetNestedDependencies(true))
+			}
+			if dep.GetVariableInfo().GetName() == "postID_UPLOAD_SVC" {
+				logger.Logger.Warnf("WTF????: %v NESTED DEPENDENCIES = %v", dep.GetVariableInfo().ReferencedBy, dep.GetNestedDependencies(true))
+			} */
 		}
-
-		/* if v.GetVariableInfo().GetName() == "postID_UploadSVC" {
-			logger.Logger.Fatalf("%s", v.String())
-		} */
 	}
+
+	/* for i, v := range taintedVariables {
+		logger.Logger.Warnf("TAINTED OBJ %d: %v", i, v.String())
+	}
+	if datastore.GetName() == "notifications_queue" {
+		logger.Logger.Fatal("EXIT!")
+	} */
 	fmt.Println()
 }
 
@@ -478,7 +487,7 @@ func doBuildSchema(app *app.App, node AbstractNode) bool {
 		case datastores.Queue:
 			msg := params[1]
 			saveUnfoldedFieldsToDatastore(msg, datastores.ROOT_FIELD_NAME_QUEUE, datastore)
-			taintDataflowOp(app, msg, dbCall, datastore, "", true)
+			taintDataflowWrite(app, msg, dbCall, datastore, "", true)
 			referenceTaintedDataflowForNestedFields(msg, datastore)
 
 		case datastores.NoSQL:
@@ -490,15 +499,15 @@ func doBuildSchema(app *app.App, node AbstractNode) bool {
 					objects.GetReversedNestedFieldsAndNames(param, "", datastore.IsNoSQLDatabase(), datastore.IsQueue())
 				}
 			} */
-			taintDataflowOp(app, doc, dbCall, datastore, "", true)
+			taintDataflowWrite(app, doc, dbCall, datastore, "", true)
 			referenceTaintedDataflowForNestedFields(doc, datastore)
 
 		case datastores.Cache:
 			key, value := params[1], params[2]
 			saveFieldToDatastore(key, datastores.ROOT_FIELD_NAME_CACHE_KEY, datastore)
 			saveFieldToDatastore(value, datastores.ROOT_FIELD_NAME_CACHE_VALUE, datastore)
-			taintDataflowOp(app, value, dbCall, datastore, datastores.ROOT_FIELD_NAME_CACHE_KEY, false)
-			taintDataflowOp(app, value, dbCall, datastore, datastores.ROOT_FIELD_NAME_CACHE_VALUE, false)
+			taintDataflowWrite(app, value, dbCall, datastore, datastores.ROOT_FIELD_NAME_CACHE_KEY, false)
+			taintDataflowWrite(app, value, dbCall, datastore, datastores.ROOT_FIELD_NAME_CACHE_VALUE, false)
 			referenceTaintedDataflowForSingleValue(key, datastore, datastores.ROOT_FIELD_NAME_CACHE_KEY)
 			referenceTaintedDataflowForSingleValue(value, datastore, datastores.ROOT_FIELD_NAME_CACHE_VALUE)
 		}

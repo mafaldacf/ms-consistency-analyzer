@@ -73,16 +73,16 @@ func (op *Operation) HasDatastore(datastore *datastores.Datastore) bool {
 	return op.Datastore == datastore
 }
 
-func (op *Operation) GetAllUnderlyingVariables() []objects.Object {
+func (op *Operation) GetAllUnderlyingVariables(includeRefBy bool) []objects.Object {
 	return append(op.Key.GetNestedDependencies(false), op.Object.GetNestedDependencies(false)...)
 }
 
-func (op *Operation) GetKeyUnderlyingVariables() []objects.Object {
-	return op.Key.GetNestedDependencies(false)
+func (op *Operation) GetKeyUnderlyingVariables(includeRefBy bool) []objects.Object {
+	return op.Key.GetNestedDependencies(includeRefBy)
 }
 
-func (op *Operation) GetObjectUnderlyingVariables() []objects.Object {
-	return op.Object.GetNestedDependencies(false)
+func (op *Operation) GetObjectUnderlyingVariables(includeRefBy bool) []objects.Object {
+	return op.Object.GetNestedDependencies(includeRefBy)
 }
 
 func (op *Operation) GetVisibleDependencies() []*Operation {

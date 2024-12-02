@@ -138,7 +138,7 @@ postnotification:
     error
   - (*postnotification.NotifyServiceImpl).workerThread(ctx context.Context) error
   - (*postnotification.StorageServiceImpl).ReadPostMedia(ctx context.Context, reqID int64, postID int64) (postnotification.Media struct{MediaID int64, Content string}, error)
-  - (*postnotification.StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID int64) (postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}, postnotification.Analytics struct{PostID int64}, error)
+  - (*postnotification.StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID_STORAGE_SVC_READ int64) (postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}, postnotification.Analytics struct{PostID int64}, error)
   - (*postnotification.StorageServiceImpl).StorePostNoSQL(ctx context.Context, reqID int64, post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}) (int64, error)
   - (*postnotification.UploadServiceImpl).ReadMedia(ctx context.Context, reqID int64, postID int64) (postnotification.Media struct{MediaID int64, Content string}, error)
   - (*postnotification.UploadServiceImpl).UploadPost(ctx context.Context, username string, text string) (int64, error)

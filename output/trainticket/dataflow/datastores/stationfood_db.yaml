@@ -9,7 +9,7 @@
 D:
 - read <primitive.D (SliceObject)>
 - read <primitive.D (SliceObject)> from <primitive.D (SliceObject)>
-- read <struct{ "$in" string, primitive.A} (StructObject)> from <primitive.D (SliceObject)>
+- read <struct{ primitive.A, "$in" string, primitive.A} (StructObject)> from <primitive.D (SliceObject)>
 
 STATIONFOOD_DB._:
 - read <res NoSQLCursor {database = stationfood, collection = stationfood} (BlueprintBackendObject)>
@@ -40,7 +40,7 @@ STATIONFOOD_DB.StationFoodStore.StationName:
 - read <station string (BasicObject)> from <station string (BasicObject)>
 - read <primitive.D (SliceObject)>
 - read <primitive.D (SliceObject)> from <primitive.D (SliceObject)>
-- read <struct{ "$in" string, primitive.A} (StructObject)> from <primitive.D (SliceObject)>
+- read <struct{ primitive.A, "$in" string, primitive.A} (StructObject)> from <primitive.D (SliceObject)>
 
 StationFoodStore:
 - read <st stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}} (StructObject)> from <st stationfood.StationFoodStore struct{ID string, StationName string, StoreName string, Telephone string, BusinessTime string, DeliveryFee float64, Foods []food.Food struct{Name string, Price float64}} (StructObject)>

@@ -13,7 +13,7 @@ import (
 	"analyzer/pkg/utils"
 )
 
-func (detector *Detector) dumpOperationYaml(operation *Operation) map[string]interface{} {
+func (detector *XCYDetector) dumpOperationYaml(operation *Operation) map[string]interface{} {
 	data := make(map[string]interface{})
 	data["_operation"] = operation.String()
 	data["visible_dependency_set"] = operation.GetVisibleDependenciesString()
@@ -26,7 +26,7 @@ func (detector *Detector) dumpOperationYaml(operation *Operation) map[string]int
 	return data
 }
 
-func (detector *Detector) dumpInconsistencyYaml(inconsistency *Inconsistency) map[string]interface{} {
+func (detector *XCYDetector) dumpInconsistencyYaml(inconsistency *XCYInconsistency) map[string]interface{} {
 	data := make(map[string]interface{})
 	data["write"] = inconsistency.Write.String()
 	data["read"] = inconsistency.Read.String()
@@ -37,7 +37,7 @@ func (detector *Detector) dumpInconsistencyYaml(inconsistency *Inconsistency) ma
 	return data
 }
 
-func (detector *Detector) dumpLineageYaml(request *Request, lineage *Lineage) map[string]interface{} {
+func (detector *XCYDetector) dumpLineageYaml(request *Request, lineage *Lineage) map[string]interface{} {
 	data := make(map[string]interface{})
 	data["_id"] = lineage.ID
 	var dataOperations []interface{}
@@ -52,7 +52,7 @@ func (detector *Detector) dumpLineageYaml(request *Request, lineage *Lineage) ma
 
 	if detector.HasDetectionMode(DEBUG_LINEAGES) {
 		var dataDependencies []string
-		lineageDependencies := lineage.GetDependenciesByMostRecent()
+		lineageDependencies := lineage.GetXCYDependenciesByMostRecent()
 		for _, op := range lineageDependencies {
 			dataDependencies = append(dataDependencies, op.String())
 		}
@@ -74,7 +74,7 @@ func (detector *Detector) dumpLineageYaml(request *Request, lineage *Lineage) ma
 	return data
 }
 
-func (detector *Detector) dumpRequestYaml(request *Request, includeLineages bool) map[string]interface{} {
+func (detector *XCYDetector) dumpRequestYaml(request *Request, includeLineages bool) map[string]interface{} {
 	data := make(map[string]interface{})
 	data["entry"] = detector.EntryNode.ShortString()
 	data["mode"] = detector.DetectionModeName()

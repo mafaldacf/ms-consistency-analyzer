@@ -1,16 +1,16 @@
-[] (PointerObject PointerType) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
-[_] (StructObject UserType) station.StationServiceImpl struct{stationDB NoSQLDatabase}
-[__] (FieldObject FieldType) stationDB NoSQLDatabase
-[___] (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
+[0] (PointerObject PointerType) s (*station.StationServiceImpl struct{stationDB NoSQLDatabase})
+[_1] (StructObject UserType) station.StationServiceImpl struct{stationDB NoSQLDatabase}
+[__2] (FieldObject FieldType) stationDB NoSQLDatabase
+[___3] (BlueprintBackendObject BlueprintBackendType) db NoSQLDatabase
 
-[] (InterfaceObject UserType) ctx context.Context
+[0] (InterfaceObject UserType) ctx context.Context
 
-[] (BasicObject BasicType) id string
+[0] (BasicObject BasicType) id string
 
-[] (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database = station, collection = station}
+[0] (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database = station, collection = station}
 
-[] (InterfaceObject UserType) err .error
+[0] (InterfaceObject UserType) err .error
 
-[] (SliceObject UserType) query primitive.D
-[_] (StructObject StructType) struct{ "id" string,  string}
+[0] (SliceObject UserType) query primitive.D
+[_1] (StructObject StructType) struct{ string,  "id" string,  string}
 

@@ -83,23 +83,23 @@ func lookupFieldForVariable(variable objects.Object, fieldName string, inAssignm
 	case *objects.PointerObject:
 		return lookupFieldForVariable(v.PointerTo, fieldName, inAssignment)
 	case *objects.GenericObject:
-		logger.Logger.Fatalf("[CFG - LOOKUP VAR] ignoring generic variable (%s)", v.String())
+		logger.Logger.Fatalf("[LOOKUP FIELD] ignoring generic variable (%s)", v.String())
 	case *objects.StructObject:
 		var field *objects.FieldObject
 		field = v.GetFieldByKeyIfExists(fieldName)
 		if field == nil {
-			v.GetStructType().GetFieldTypeByName(fieldName)
+			logger.Logger.Infof("[LOOKUP FIELD] struct object: %s", variable.String())
 			fieldType := v.GetStructType().GetFieldTypeByName(fieldName)
 			field = lookup.CreateVariableFromType(fieldName, fieldType).(*objects.FieldObject)
 			v.SetFieldByKey(fieldName, field)
-			logger.Logger.Warnf("[REVIEW] added new variable (%s) for field (%s) in structure variable (%s) -- fields: %v", field.String(), fieldName, variable.String(), v.GetFieldsMap())
+			logger.Logger.Warnf("[LOOKUP FIELD - REVIEW!!] added new variable (%s) for field (%s) in structure variable (%s) -- fields: %v", field.String(), fieldName, variable.String(), v.GetFieldsMap())
 		}
 		if !inAssignment {
 			return objects.UnwrapFieldVariable(field)
 		}
 		return field
 	default:
-		logger.Logger.Fatalf("[CFG - LOOKUP VAR] unknown variable (%s): %v", objects.VariableTypeName(variable), variable.String())
+		logger.Logger.Fatalf("[LOOKUP FIELD] unknown variable (%s): %v", objects.VariableTypeName(variable), variable.String())
 	}
 	return nil
 }
@@ -116,7 +116,7 @@ func lookupImportedPackageFromIdent(service *service.Service, ident *ast.Ident) 
 	return nil
 }
 
-func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMethod, block *types.Block, expr ast.Expr, expectedType *gotypes.Type, inAssignment bool) (variable objects.Object, packageType *gotypes.PackageType) {
+func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMethod, block *types.Block, expr ast.Expr, expectedType gotypes.Type, inAssignment bool) (variable objects.Object, packageType *gotypes.PackageType) {
 	logger.Logger.Debugf("[CFG - LOOKUP VAR] (%s) visiting expression (%v)", utils.GetType(expr), expr)
 	switch e := expr.(type) {
 	case *ast.CallExpr:
@@ -233,16 +233,23 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 
 		logger.Logger.Debugf("[COMPOSITE LIT] e.Type (%v), and e.Elts (%v)", e.Type, e.Elts)
 		eType := lookup.ComputeTypeForAstExpr(service.GetFile(), e.Type)
+		logger.Logger.Debugf("BEFORE eType = %s", eType.String())
 		eType, eTypeOrUserType := gotypes.UnwrapUserType(eType)
-
+		logger.Logger.Debugf("AFTER eType = %s", eType.String())
+		
 		switch eType.(type) {
 		case *gotypes.StructType:
 			structVariable := objects.NewStructObject(objects.NewObjectInfoInline(eTypeOrUserType))
+			logger.Logger.Debugf("????? struct Type = %s", structVariable.GetType().String())
 			for _, elt := range e.Elts {
 				eltVar, _ := lookupVariableFromAstExpr(service, method, block, elt, nil, false)
 				objects.WrapObjectToField(eltVar, structVariable, false)
 			}
 			logger.Logger.Infof("GOT STRUCT VARIABLE: %s", structVariable.String())
+			if userType, ok := eTypeOrUserType.(*gotypes.UserType); ok && userType.Name == "Post" && service.Name == "UploadService" && method.Name == "UploadPost" {
+				logger.Logger.Warnf("!!!!! struct Type = %s", structVariable.GetType().String())
+				logger.Logger.Warnf("[%s.%s()] eType [%s]: %s", service.Name, method.Name, utils.GetType(eType), eType.String())
+			}
 			return structVariable, nil
 		case *gotypes.ArrayType:
 			arrayVariable := &objects.ArrayObject{

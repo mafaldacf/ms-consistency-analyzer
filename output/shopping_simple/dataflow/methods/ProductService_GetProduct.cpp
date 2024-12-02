@@ -1,53 +1,53 @@
-[] (PointerObject PointerType) s (*shopping_simple.ProductServiceImpl struct{product_db NoSQLDatabase, product_queue Queue, num_workers int})
-[_] (StructObject UserType) shopping_simple.ProductServiceImpl struct{product_db NoSQLDatabase, product_queue Queue, num_workers int}
-[__] (FieldObject FieldType) product_db NoSQLDatabase
-[___] (BlueprintBackendObject BlueprintBackendType) product_db NoSQLDatabase
-[__] (FieldObject FieldType) product_queue Queue
-[___] (BlueprintBackendObject BlueprintBackendType) product_queue Queue
+[0] (PointerObject PointerType) s (*shopping_simple.ProductServiceImpl struct{product_db NoSQLDatabase, product_queue Queue, num_workers int})
+[_1] (StructObject UserType) shopping_simple.ProductServiceImpl struct{product_db NoSQLDatabase, product_queue Queue, num_workers int}
+[__2] (FieldObject FieldType) product_db NoSQLDatabase
+[___3] (BlueprintBackendObject BlueprintBackendType) product_db NoSQLDatabase
+[__2] (FieldObject FieldType) product_queue Queue
+[___3] (BlueprintBackendObject BlueprintBackendType) product_queue Queue
 
-[] (InterfaceObject UserType) ctx context.Context
-[_] (Reference UserType) ref <ctx context.Context> @ Frontend
-[_] (Reference UserType) ref <ctx context.Context> @ CartService
-[__] (Reference UserType) ref <ctx context.Context> @ Frontend
+[0] (InterfaceObject UserType) ctx context.Context
+[_1] (Reference UserType) ref <ctx context.Context> @ Frontend
+[_1] (Reference UserType) ref <ctx context.Context> @ CartService
+[__2] (Reference UserType) ref <ctx context.Context> @ Frontend
 
-    --> r-tainted: read(product_db.Product.ProductID) {1}
-[] (BasicObject BasicType) productID string
+    --> w-tainted: write(cart_db.Cart.Products) {1}       --> w-tainted: write(cart_db.Cart.Products) {1} --> r-tainted: read(product_db.Product.ProductID) {1}
+[0] (BasicObject BasicType) productID string
      --> r-tainted: read(product_db.Product.ProductID) {1}
-[_] (Reference BasicType) ref <productID string> @ Frontend
+[_1] (Reference BasicType) ref <productID string> @ Frontend
      --> w-tainted: write(cart_db.Cart.LastProductID, cart_db.Cart.Products) {2}         --> w-tainted: write(cart_db.Cart.LastProductID, cart_db.Cart.Products) {2} --> r-tainted: read(product_db.Product.ProductID) {1}
-[_] (Reference BasicType) ref <productID string> @ CartService
+[_1] (Reference BasicType) ref <productID string> @ CartService
       --> w-tainted: write(cart_db.Cart.Products) {1}           --> w-tainted: write(cart_db.Cart.Products) {1} --> r-tainted: read(product_db.Product.ProductID) {1}
-[__] (Reference BasicType) ref <productID string> @ Frontend
+[__2] (Reference BasicType) ref <productID string> @ Frontend
 
     --> r-tainted: read(product_db.Product) {1}
-[] (StructObject UserType) product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
+[0] (StructObject UserType) product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
 
-[] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = product_database, collection = product_collection}
+[0] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = product_database, collection = product_collection}
 
-[] (InterfaceObject UserType) _ .error
+[0] (InterfaceObject UserType) _ .error
 
-[] (SliceObject UserType) query primitive.D
-[_] (StructObject StructType) struct{Key "productid" string, Value string}
-[__] (FieldObject FieldType) Key "productid" string
-[___] (BasicObject BasicType) "productid" string
-[__] (FieldObject FieldType) Value string
-       --> r-tainted: read(product_db.Product.ProductID) {1}
-[___] (BasicObject BasicType) productID string
+[0] (SliceObject UserType) query primitive.D
+[_1] (StructObject StructType) struct{Key "productid" string, Key "productid" string, Value string, Value string}
+[__2] (FieldObject FieldType) Key "productid" string
+[___3] (BasicObject BasicType) "productid" string
+[__2] (FieldObject FieldType) Value string
+       --> w-tainted: write(cart_db.Cart.Products) {1}             --> w-tainted: write(cart_db.Cart.Products) {1} --> r-tainted: read(product_db.Product.ProductID) {1}
+[___3] (BasicObject BasicType) productID string
         --> r-tainted: read(product_db.Product.ProductID) {1}
-[____] (Reference BasicType) ref <productID string> @ Frontend
+[____4] (Reference BasicType) ref <productID string> @ Frontend
         --> w-tainted: write(cart_db.Cart.LastProductID, cart_db.Cart.Products) {2}               --> w-tainted: write(cart_db.Cart.LastProductID, cart_db.Cart.Products) {2} --> r-tainted: read(product_db.Product.ProductID) {1}
-[____] (Reference BasicType) ref <productID string> @ CartService
+[____4] (Reference BasicType) ref <productID string> @ CartService
          --> w-tainted: write(cart_db.Cart.Products) {1}                 --> w-tainted: write(cart_db.Cart.Products) {1} --> r-tainted: read(product_db.Product.ProductID) {1}
-[_____] (Reference BasicType) ref <productID string> @ Frontend
+[_____5] (Reference BasicType) ref <productID string> @ Frontend
 
     --> r-tainted: read(product_db.Product) {1}
-[] (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database = product_database, collection = product_collection}
+[0] (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database = product_database, collection = product_collection}
      --> r-tainted: read(product_db.Product) {1}
-[_] (StructObject UserType) product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
+[_1] (StructObject UserType) product shopping_simple.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
 
-[] (InterfaceObject UserType) err .error
+[0] (InterfaceObject UserType) err .error
 
-[] (BasicObject BasicType) exists bool
+[0] (BasicObject BasicType) exists bool
 
-[] (InterfaceObject UserType) err .error
+[0] (InterfaceObject UserType) err .error
 

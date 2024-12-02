@@ -1,406 +1,376 @@
 (*FrontendImpl).AddItem(ctx context.Context, sessionID string, itemID string):
   block 4 (IfDone):
-  - ' depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - _ depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
-  - __ depth 2 (FieldObject FieldType) cart cart.CartService
-  - ___ depth 3 (ServiceObject ServiceType) cart cart.CartService
-  - __ depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
-  - ___ depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
-  - __ depth 2 (FieldObject FieldType) order order.OrderService
-  - ___ depth 3 (ServiceObject ServiceType) order order.OrderService
-  - __ depth 2 (FieldObject FieldType) user user.UserService
-  - ___ depth 3 (ServiceObject ServiceType) user user.UserService
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) sessionID string'
-  - ' depth 0 (BasicObject BasicType) itemID string --> r-tainted 1x: read(catalogue_db._.id)'
-  - ' depth 0 (BasicObject BasicType) sessionID string'
-  - ' depth 0 (StructObject UserType) sock catalogue.Sock struct{ID string, Name string,
-    Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price
-    float32, Quantity int, Tags []string, TagString string}'
-  - '_ depth 1 (Reference UserType) ref <sock catalogue.Sock struct{ID string, Name
+  - 0 depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})
+  - _1 depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
+  - __2 depth 2 (FieldObject FieldType) cart cart.CartService
+  - ___3 depth 3 (ServiceObject ServiceType) cart cart.CartService
+  - __4 depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
+  - ___5 depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
+  - __6 depth 2 (FieldObject FieldType) order order.OrderService
+  - ___7 depth 3 (ServiceObject ServiceType) order order.OrderService
+  - __8 depth 2 (FieldObject FieldType) user user.UserService
+  - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) sessionID string
+  - '0 depth 0 (BasicObject BasicType) itemID string --> r-tainted 1x: read(catalogue_db._.id)'
+  - 0 depth 0 (BasicObject BasicType) sessionID string
+  - 0 depth 0 (StructObject UserType) sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
+  - '_1 depth 1 (Reference UserType) ref <sock catalogue.Sock struct{ID string, Name
     string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string,
     Price float32, Quantity int, Tags []string, TagString string}> @ CatalogueService
     --> r-tainted 8x: read(catalogue_db.Sock, catalogue_db.ImageURL, catalogue_db.[]string,
     catalogue_db.string, catalogue_db.ImageURL_1, catalogue_db.ImageURL_2, catalogue_db.TagString,
     catalogue_db.Tags)'
-  - '__ depth 2 (FieldObject FieldType) ImageURL []string --> r-tainted 1x: read(catalogue_db.ImageURL)'
-  - '___ depth 3 (ArrayObject SliceType) []string --> r-tainted 1x: read(catalogue_db.[]string)'
-  - '____ depth 4 (BasicObject BasicType) ImageURL_1 string --> r-tainted 1x: read(catalogue_db.string)'
-  - '____ depth 4 (BasicObject BasicType) ImageURL_2 string --> r-tainted 1x: read(catalogue_db.string)'
-  - '__ depth 2 (FieldObject FieldType) ImageURL_1 string --> r-tainted 1x: read(catalogue_db.ImageURL_1)'
-  - '___ depth 3 (BasicObject BasicType) ImageURL_1 string --> r-tainted 1x: read(catalogue_db.string)'
-  - '__ depth 2 (FieldObject FieldType) ImageURL_2 string --> r-tainted 1x: read(catalogue_db.ImageURL_2)'
-  - '___ depth 3 (BasicObject BasicType) ImageURL_2 string --> r-tainted 1x: read(catalogue_db.string)'
-  - '__ depth 2 (FieldObject FieldType) TagString string --> r-tainted 1x: read(catalogue_db.TagString)'
-  - '___ depth 3 (BasicObject BasicType) TagString string --> r-tainted 1x: read(catalogue_db.string)'
-  - '__ depth 2 (FieldObject FieldType) Tags []string --> r-tainted 1x: read(catalogue_db.Tags)'
-  - '___ depth 3 (SliceObject SliceType) []string --> r-tainted 1x: read(catalogue_db.[]string)'
-  - '____ depth 4 (BasicObject BasicType) TagString string --> r-tainted 1x: read(catalogue_db.string)'
-  - '____ depth 4 (BasicObject BasicType) "," string --> r-tainted 1x: read(catalogue_db.string)'
-  - _ depth 1 (FieldObject FieldType) ID string
-  - __ depth 2 (BasicObject BasicType) ID string
-  - _ depth 1 (FieldObject FieldType) Price float32
-  - __ depth 2 (BasicObject BasicType) Price float32
-  - ' depth 0 (InterfaceObject UserType) err .error'
-  - _ depth 1 (Reference BasicType) ref <nil> @ CatalogueService
-  - ' depth 0 (StructObject UserType) _ cart.Item struct{ID string, Quantity 1 int,
-    UnitPrice float32}'
-  - _ depth 1 (Reference UserType) ref <item cart.Item struct{ID string, Quantity int, UnitPrice float32}> @ CartService
-  - __ depth 2 (Reference UserType) ref <cart.Item struct{ID string, Quantity int, UnitPrice float32}> @ FrontendService
-  - ___ depth 3 (FieldObject FieldType) ID string
-  - ____ depth 4 (BasicObject BasicType) ID string
-  - ___ depth 3 (FieldObject FieldType) Quantity 1 int
-  - ____ depth 4 (BasicObject BasicType) 1 int
-  - ___ depth 3 (FieldObject FieldType) UnitPrice float32
-  - ____ depth 4 (BasicObject BasicType) Price float32
-  - _ depth 1 (Reference UserType) ref <cart.Item struct{ID string, Quantity int, UnitPrice float32}> @ FrontendService
-  - ' depth 0 (InterfaceObject UserType) err .error'
-  - _ depth 1 (Reference BasicType) ref <nil> @ CartService
+  - '__2 depth 2 (FieldObject FieldType) ImageURL []string --> r-tainted 1x: read(catalogue_db.ImageURL)'
+  - '___3 depth 3 (ArrayObject SliceType) []string --> r-tainted 1x: read(catalogue_db.[]string)'
+  - '____4 depth 4 (BasicObject BasicType) ImageURL_1 string --> r-tainted 1x: read(catalogue_db.string)'
+  - '____5 depth 4 (BasicObject BasicType) ImageURL_2 string --> r-tainted 1x: read(catalogue_db.string)'
+  - '__6 depth 2 (FieldObject FieldType) ImageURL_1 string --> r-tainted 1x: read(catalogue_db.ImageURL_1)'
+  - '___7 depth 3 (BasicObject BasicType) ImageURL_1 string --> r-tainted 1x: read(catalogue_db.string)'
+  - '__8 depth 2 (FieldObject FieldType) ImageURL_2 string --> r-tainted 1x: read(catalogue_db.ImageURL_2)'
+  - '___9 depth 3 (BasicObject BasicType) ImageURL_2 string --> r-tainted 1x: read(catalogue_db.string)'
+  - '__10 depth 2 (FieldObject FieldType) TagString string --> r-tainted 1x: read(catalogue_db.TagString)'
+  - '___11 depth 3 (BasicObject BasicType) TagString string --> r-tainted 1x: read(catalogue_db.string)'
+  - '__12 depth 2 (FieldObject FieldType) Tags []string --> r-tainted 1x: read(catalogue_db.Tags)'
+  - '___13 depth 3 (SliceObject SliceType) []string --> r-tainted 1x: read(catalogue_db.[]string)'
+  - '____14 depth 4 (BasicObject BasicType) TagString string --> r-tainted 1x: read(catalogue_db.string)'
+  - '____15 depth 4 (BasicObject BasicType) "," string --> r-tainted 1x: read(catalogue_db.string)'
+  - _16 depth 1 (FieldObject FieldType) ID string
+  - __17 depth 2 (BasicObject BasicType) ID string
+  - _18 depth 1 (FieldObject FieldType) Price float32
+  - __19 depth 2 (BasicObject BasicType) Price float32
+  - 0 depth 0 (InterfaceObject UserType) err .error
+  - _1 depth 1 (Reference BasicType) ref <nil> @ CatalogueService
+  - 0 depth 0 (StructObject UserType) _ cart.Item struct{ID string, Quantity 1 int, UnitPrice float32}
+  - _1 depth 1 (Reference UserType) ref <item cart.Item struct{ID string, Quantity int, UnitPrice float32}> @ CartService
+  - __2 depth 2 (Reference UserType) ref <cart.Item struct{ID string, Quantity int, UnitPrice float32}> @ FrontendService
+  - ___3 depth 3 (FieldObject FieldType) ID string
+  - ____4 depth 4 (BasicObject BasicType) ID string
+  - ___5 depth 3 (FieldObject FieldType) Quantity 1 int
+  - ____6 depth 4 (BasicObject BasicType) 1 int
+  - ___7 depth 3 (FieldObject FieldType) UnitPrice float32
+  - ____8 depth 4 (BasicObject BasicType) Price float32
+  - _9 depth 1 (Reference UserType) ref <cart.Item struct{ID string, Quantity int, UnitPrice float32}> @ FrontendService
+  - 0 depth 0 (InterfaceObject UserType) err .error
+  - _1 depth 1 (Reference BasicType) ref <nil> @ CartService
 
 (*FrontendImpl).DeleteCart(ctx context.Context, sessionID string):
   block 2 (IfDone):
-  - ' depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - _ depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
-  - __ depth 2 (FieldObject FieldType) cart cart.CartService
-  - ___ depth 3 (ServiceObject ServiceType) cart cart.CartService
-  - __ depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
-  - ___ depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
-  - __ depth 2 (FieldObject FieldType) order order.OrderService
-  - ___ depth 3 (ServiceObject ServiceType) order order.OrderService
-  - __ depth 2 (FieldObject FieldType) user user.UserService
-  - ___ depth 3 (ServiceObject ServiceType) user user.UserService
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) sessionID string'
+  - 0 depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})
+  - _1 depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
+  - __2 depth 2 (FieldObject FieldType) cart cart.CartService
+  - ___3 depth 3 (ServiceObject ServiceType) cart cart.CartService
+  - __4 depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
+  - ___5 depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
+  - __6 depth 2 (FieldObject FieldType) order order.OrderService
+  - ___7 depth 3 (ServiceObject ServiceType) order order.OrderService
+  - __8 depth 2 (FieldObject FieldType) user user.UserService
+  - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) sessionID string
 
 (*FrontendImpl).GetAddress(ctx context.Context, addressID string):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - _ depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
-  - __ depth 2 (FieldObject FieldType) cart cart.CartService
-  - ___ depth 3 (ServiceObject ServiceType) cart cart.CartService
-  - __ depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
-  - ___ depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
-  - __ depth 2 (FieldObject FieldType) order order.OrderService
-  - ___ depth 3 (ServiceObject ServiceType) order order.OrderService
-  - __ depth 2 (FieldObject FieldType) user user.UserService
-  - ___ depth 3 (ServiceObject ServiceType) user user.UserService
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) addressID string'
+  - 0 depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})
+  - _1 depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
+  - __2 depth 2 (FieldObject FieldType) cart cart.CartService
+  - ___3 depth 3 (ServiceObject ServiceType) cart cart.CartService
+  - __4 depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
+  - ___5 depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
+  - __6 depth 2 (FieldObject FieldType) order order.OrderService
+  - ___7 depth 3 (ServiceObject ServiceType) order order.OrderService
+  - __8 depth 2 (FieldObject FieldType) user user.UserService
+  - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) addressID string
 
 (*FrontendImpl).GetCard(ctx context.Context, cardID string):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - _ depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
-  - __ depth 2 (FieldObject FieldType) cart cart.CartService
-  - ___ depth 3 (ServiceObject ServiceType) cart cart.CartService
-  - __ depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
-  - ___ depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
-  - __ depth 2 (FieldObject FieldType) order order.OrderService
-  - ___ depth 3 (ServiceObject ServiceType) order order.OrderService
-  - __ depth 2 (FieldObject FieldType) user user.UserService
-  - ___ depth 3 (ServiceObject ServiceType) user user.UserService
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) cardID string'
+  - 0 depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})
+  - _1 depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
+  - __2 depth 2 (FieldObject FieldType) cart cart.CartService
+  - ___3 depth 3 (ServiceObject ServiceType) cart cart.CartService
+  - __4 depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
+  - ___5 depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
+  - __6 depth 2 (FieldObject FieldType) order order.OrderService
+  - ___7 depth 3 (ServiceObject ServiceType) order order.OrderService
+  - __8 depth 2 (FieldObject FieldType) user user.UserService
+  - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) cardID string
 
 (*FrontendImpl).GetCart(ctx context.Context, sessionID string):
   block 2 (IfDone):
-  - ' depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - _ depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
-  - __ depth 2 (FieldObject FieldType) cart cart.CartService
-  - ___ depth 3 (ServiceObject ServiceType) cart cart.CartService
-  - __ depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
-  - ___ depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
-  - __ depth 2 (FieldObject FieldType) order order.OrderService
-  - ___ depth 3 (ServiceObject ServiceType) order order.OrderService
-  - __ depth 2 (FieldObject FieldType) user user.UserService
-  - ___ depth 3 (ServiceObject ServiceType) user user.UserService
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) sessionID string'
+  - 0 depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})
+  - _1 depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
+  - __2 depth 2 (FieldObject FieldType) cart cart.CartService
+  - ___3 depth 3 (ServiceObject ServiceType) cart cart.CartService
+  - __4 depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
+  - ___5 depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
+  - __6 depth 2 (FieldObject FieldType) order order.OrderService
+  - ___7 depth 3 (ServiceObject ServiceType) order order.OrderService
+  - __8 depth 2 (FieldObject FieldType) user user.UserService
+  - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) sessionID string
 
 (*FrontendImpl).GetOrder(ctx context.Context, orderID string):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - _ depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
-  - __ depth 2 (FieldObject FieldType) cart cart.CartService
-  - ___ depth 3 (ServiceObject ServiceType) cart cart.CartService
-  - __ depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
-  - ___ depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
-  - __ depth 2 (FieldObject FieldType) order order.OrderService
-  - ___ depth 3 (ServiceObject ServiceType) order order.OrderService
-  - __ depth 2 (FieldObject FieldType) user user.UserService
-  - ___ depth 3 (ServiceObject ServiceType) user user.UserService
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) orderID string'
+  - 0 depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})
+  - _1 depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
+  - __2 depth 2 (FieldObject FieldType) cart cart.CartService
+  - ___3 depth 3 (ServiceObject ServiceType) cart cart.CartService
+  - __4 depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
+  - ___5 depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
+  - __6 depth 2 (FieldObject FieldType) order order.OrderService
+  - ___7 depth 3 (ServiceObject ServiceType) order order.OrderService
+  - __8 depth 2 (FieldObject FieldType) user user.UserService
+  - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) orderID string
 
 (*FrontendImpl).GetOrders(ctx context.Context, userID string):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - _ depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
-  - __ depth 2 (FieldObject FieldType) cart cart.CartService
-  - ___ depth 3 (ServiceObject ServiceType) cart cart.CartService
-  - __ depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
-  - ___ depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
-  - __ depth 2 (FieldObject FieldType) order order.OrderService
-  - ___ depth 3 (ServiceObject ServiceType) order order.OrderService
-  - __ depth 2 (FieldObject FieldType) user user.UserService
-  - ___ depth 3 (ServiceObject ServiceType) user user.UserService
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) userID string'
+  - 0 depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})
+  - _1 depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
+  - __2 depth 2 (FieldObject FieldType) cart cart.CartService
+  - ___3 depth 3 (ServiceObject ServiceType) cart cart.CartService
+  - __4 depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
+  - ___5 depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
+  - __6 depth 2 (FieldObject FieldType) order order.OrderService
+  - ___7 depth 3 (ServiceObject ServiceType) order order.OrderService
+  - __8 depth 2 (FieldObject FieldType) user user.UserService
+  - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) userID string
 
 (*FrontendImpl).GetSock(ctx context.Context, itemID string):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - _ depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
-  - __ depth 2 (FieldObject FieldType) cart cart.CartService
-  - ___ depth 3 (ServiceObject ServiceType) cart cart.CartService
-  - __ depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
-  - ___ depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
-  - __ depth 2 (FieldObject FieldType) order order.OrderService
-  - ___ depth 3 (ServiceObject ServiceType) order order.OrderService
-  - __ depth 2 (FieldObject FieldType) user user.UserService
-  - ___ depth 3 (ServiceObject ServiceType) user user.UserService
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) itemID string'
+  - 0 depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})
+  - _1 depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
+  - __2 depth 2 (FieldObject FieldType) cart cart.CartService
+  - ___3 depth 3 (ServiceObject ServiceType) cart cart.CartService
+  - __4 depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
+  - ___5 depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
+  - __6 depth 2 (FieldObject FieldType) order order.OrderService
+  - ___7 depth 3 (ServiceObject ServiceType) order order.OrderService
+  - __8 depth 2 (FieldObject FieldType) user user.UserService
+  - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) itemID string
 
 (*FrontendImpl).GetUser(ctx context.Context, userID string):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - _ depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
-  - __ depth 2 (FieldObject FieldType) cart cart.CartService
-  - ___ depth 3 (ServiceObject ServiceType) cart cart.CartService
-  - __ depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
-  - ___ depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
-  - __ depth 2 (FieldObject FieldType) order order.OrderService
-  - ___ depth 3 (ServiceObject ServiceType) order order.OrderService
-  - __ depth 2 (FieldObject FieldType) user user.UserService
-  - ___ depth 3 (ServiceObject ServiceType) user user.UserService
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) userID string'
+  - 0 depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})
+  - _1 depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
+  - __2 depth 2 (FieldObject FieldType) cart cart.CartService
+  - ___3 depth 3 (ServiceObject ServiceType) cart cart.CartService
+  - __4 depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
+  - ___5 depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
+  - __6 depth 2 (FieldObject FieldType) order order.OrderService
+  - ___7 depth 3 (ServiceObject ServiceType) order order.OrderService
+  - __8 depth 2 (FieldObject FieldType) user user.UserService
+  - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) userID string
 
 (*FrontendImpl).ListItems(ctx context.Context, tags []string, order string, pageNum int, pageSize int):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - _ depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
-  - __ depth 2 (FieldObject FieldType) cart cart.CartService
-  - ___ depth 3 (ServiceObject ServiceType) cart cart.CartService
-  - __ depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
-  - ___ depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
-  - __ depth 2 (FieldObject FieldType) order order.OrderService
-  - ___ depth 3 (ServiceObject ServiceType) order order.OrderService
-  - __ depth 2 (FieldObject FieldType) user user.UserService
-  - ___ depth 3 (ServiceObject ServiceType) user user.UserService
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (ArrayObject ArrayType) tags []string'
-  - ' depth 0 (BasicObject BasicType) order string'
-  - ' depth 0 (BasicObject BasicType) pageNum int'
-  - ' depth 0 (BasicObject BasicType) pageSize int'
+  - 0 depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})
+  - _1 depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
+  - __2 depth 2 (FieldObject FieldType) cart cart.CartService
+  - ___3 depth 3 (ServiceObject ServiceType) cart cart.CartService
+  - __4 depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
+  - ___5 depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
+  - __6 depth 2 (FieldObject FieldType) order order.OrderService
+  - ___7 depth 3 (ServiceObject ServiceType) order order.OrderService
+  - __8 depth 2 (FieldObject FieldType) user user.UserService
+  - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (ArrayObject ArrayType) tags []string
+  - 0 depth 0 (BasicObject BasicType) order string
+  - 0 depth 0 (BasicObject BasicType) pageNum int
+  - 0 depth 0 (BasicObject BasicType) pageSize int
 
 (*FrontendImpl).ListTags(ctx context.Context):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - _ depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
-  - __ depth 2 (FieldObject FieldType) cart cart.CartService
-  - ___ depth 3 (ServiceObject ServiceType) cart cart.CartService
-  - __ depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
-  - ___ depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
-  - __ depth 2 (FieldObject FieldType) order order.OrderService
-  - ___ depth 3 (ServiceObject ServiceType) order order.OrderService
-  - __ depth 2 (FieldObject FieldType) user user.UserService
-  - ___ depth 3 (ServiceObject ServiceType) user user.UserService
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
+  - 0 depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})
+  - _1 depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
+  - __2 depth 2 (FieldObject FieldType) cart cart.CartService
+  - ___3 depth 3 (ServiceObject ServiceType) cart cart.CartService
+  - __4 depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
+  - ___5 depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
+  - __6 depth 2 (FieldObject FieldType) order order.OrderService
+  - ___7 depth 3 (ServiceObject ServiceType) order order.OrderService
+  - __8 depth 2 (FieldObject FieldType) user user.UserService
+  - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
 
 (*FrontendImpl).LoadCatalogue(ctx context.Context):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - _ depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
-  - __ depth 2 (FieldObject FieldType) cart cart.CartService
-  - ___ depth 3 (ServiceObject ServiceType) cart cart.CartService
-  - __ depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
-  - ___ depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
-  - __ depth 2 (FieldObject FieldType) order order.OrderService
-  - ___ depth 3 (ServiceObject ServiceType) order order.OrderService
-  - __ depth 2 (FieldObject FieldType) user user.UserService
-  - ___ depth 3 (ServiceObject ServiceType) user user.UserService
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (StructObject UserType) sock catalogue.Sock struct{ID string, Name string,
-    Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price
-    float32, Quantity int, Tags []string, TagString string} --> w-tainted 1x: write(catalogue_db.Sock)'
+  - 0 depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})
+  - _1 depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
+  - __2 depth 2 (FieldObject FieldType) cart cart.CartService
+  - ___3 depth 3 (ServiceObject ServiceType) cart cart.CartService
+  - __4 depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
+  - ___5 depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
+  - __6 depth 2 (FieldObject FieldType) order order.OrderService
+  - ___7 depth 3 (ServiceObject ServiceType) order order.OrderService
+  - __8 depth 2 (FieldObject FieldType) user user.UserService
+  - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - '0 depth 0 (StructObject UserType) sock catalogue.Sock struct{ID string, Name
+    string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string,
+    Price float32, Quantity int, Tags []string, TagString string} --> w-tainted 1x:
+    write(catalogue_db.Sock)'
 
 (*FrontendImpl).Login(ctx context.Context, sessionID string, username string, password string):
   block 7 (IfDone):
-  - ' depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - _ depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
-  - __ depth 2 (FieldObject FieldType) cart cart.CartService
-  - ___ depth 3 (ServiceObject ServiceType) cart cart.CartService
-  - __ depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
-  - ___ depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
-  - __ depth 2 (FieldObject FieldType) order order.OrderService
-  - ___ depth 3 (ServiceObject ServiceType) order order.OrderService
-  - __ depth 2 (FieldObject FieldType) user user.UserService
-  - ___ depth 3 (ServiceObject ServiceType) user user.UserService
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) sessionID string'
-  - ' depth 0 (BasicObject BasicType) username string'
-  - ' depth 0 (BasicObject BasicType) password string'
-  - ' depth 0 (StructObject UserType) u user.User struct{FirstName string, LastName
-    string, Email string, Username string, Password string, Addresses user.Address
-    struct{Street string, Number string, Country string, City string, PostCode string,
-    ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string,
-    ID string}, UserID string, Salt string}'
-  - _ depth 1 (FieldObject FieldType) UserID string
-  - __ depth 2 (BasicObject BasicType) UserID string
-  - ' depth 0 (InterfaceObject UserType) err .error'
-  - ' depth 0 (InterfaceObject UserType) err .error'
+  - 0 depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})
+  - _1 depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
+  - __2 depth 2 (FieldObject FieldType) cart cart.CartService
+  - ___3 depth 3 (ServiceObject ServiceType) cart cart.CartService
+  - __4 depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
+  - ___5 depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
+  - __6 depth 2 (FieldObject FieldType) order order.OrderService
+  - ___7 depth 3 (ServiceObject ServiceType) order order.OrderService
+  - __8 depth 2 (FieldObject FieldType) user user.UserService
+  - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) sessionID string
+  - 0 depth 0 (BasicObject BasicType) username string
+  - 0 depth 0 (BasicObject BasicType) password string
+  - 0 depth 0 (StructObject UserType) u user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}
+  - _1 depth 1 (FieldObject FieldType) UserID string
+  - __2 depth 2 (BasicObject BasicType) UserID string
+  - 0 depth 0 (InterfaceObject UserType) err .error
+  - 0 depth 0 (InterfaceObject UserType) err .error
 
 (*FrontendImpl).NewOrder(ctx context.Context, userID string, addressID string, cardID string, cartID string):
   block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - _ depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
-  - __ depth 2 (FieldObject FieldType) cart cart.CartService
-  - ___ depth 3 (ServiceObject ServiceType) cart cart.CartService
-  - __ depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
-  - ___ depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
-  - __ depth 2 (FieldObject FieldType) order order.OrderService
-  - ___ depth 3 (ServiceObject ServiceType) order order.OrderService
-  - __ depth 2 (FieldObject FieldType) user user.UserService
-  - ___ depth 3 (ServiceObject ServiceType) user user.UserService
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) userID string'
-  - ' depth 0 (BasicObject BasicType) addressID string'
-  - ' depth 0 (BasicObject BasicType) cardID string'
-  - ' depth 0 (BasicObject BasicType) cartID string'
+  - 0 depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})
+  - _1 depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
+  - __2 depth 2 (FieldObject FieldType) cart cart.CartService
+  - ___3 depth 3 (ServiceObject ServiceType) cart cart.CartService
+  - __4 depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
+  - ___5 depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
+  - __6 depth 2 (FieldObject FieldType) order order.OrderService
+  - ___7 depth 3 (ServiceObject ServiceType) order order.OrderService
+  - __8 depth 2 (FieldObject FieldType) user user.UserService
+  - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) userID string
+  - 0 depth 0 (BasicObject BasicType) addressID string
+  - 0 depth 0 (BasicObject BasicType) cardID string
+  - 0 depth 0 (BasicObject BasicType) cartID string
 
 (*FrontendImpl).PostAddress(ctx context.Context, userID string, address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string})
 :
  block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - _ depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
-  - __ depth 2 (FieldObject FieldType) cart cart.CartService
-  - ___ depth 3 (ServiceObject ServiceType) cart cart.CartService
-  - __ depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
-  - ___ depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
-  - __ depth 2 (FieldObject FieldType) order order.OrderService
-  - ___ depth 3 (ServiceObject ServiceType) order order.OrderService
-  - __ depth 2 (FieldObject FieldType) user user.UserService
-  - ___ depth 3 (ServiceObject ServiceType) user user.UserService
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) userID string'
-  - ' depth 0 (StructObject UserType) address user.Address struct{Street string, Number
-    string, Country string, City string, PostCode string, ID string}'
+  - 0 depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})
+  - _1 depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
+  - __2 depth 2 (FieldObject FieldType) cart cart.CartService
+  - ___3 depth 3 (ServiceObject ServiceType) cart cart.CartService
+  - __4 depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
+  - ___5 depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
+  - __6 depth 2 (FieldObject FieldType) order order.OrderService
+  - ___7 depth 3 (ServiceObject ServiceType) order order.OrderService
+  - __8 depth 2 (FieldObject FieldType) user user.UserService
+  - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) userID string
+  - 0 depth 0 (StructObject UserType) address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}
 
 (*FrontendImpl).PostCard(ctx context.Context, userID string, card user.Card struct{LongNum string, Expires string, CCV string, ID string})
 :
  block 0 (Body):
-  - ' depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - _ depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
-  - __ depth 2 (FieldObject FieldType) cart cart.CartService
-  - ___ depth 3 (ServiceObject ServiceType) cart cart.CartService
-  - __ depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
-  - ___ depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
-  - __ depth 2 (FieldObject FieldType) order order.OrderService
-  - ___ depth 3 (ServiceObject ServiceType) order order.OrderService
-  - __ depth 2 (FieldObject FieldType) user user.UserService
-  - ___ depth 3 (ServiceObject ServiceType) user user.UserService
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) userID string'
-  - ' depth 0 (StructObject UserType) card user.Card struct{LongNum string, Expires
-    string, CCV string, ID string}'
+  - 0 depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})
+  - _1 depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
+  - __2 depth 2 (FieldObject FieldType) cart cart.CartService
+  - ___3 depth 3 (ServiceObject ServiceType) cart cart.CartService
+  - __4 depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
+  - ___5 depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
+  - __6 depth 2 (FieldObject FieldType) order order.OrderService
+  - ___7 depth 3 (ServiceObject ServiceType) order order.OrderService
+  - __8 depth 2 (FieldObject FieldType) user user.UserService
+  - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) userID string
+  - 0 depth 0 (StructObject UserType) card user.Card struct{LongNum string, Expires string, CCV string, ID string}
 
 (*FrontendImpl).Register(ctx context.Context, sessionID string, username string, password string, email string, first string, last string)
 :
  block 6 (IfElse):
-  - ' depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - _ depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
-  - __ depth 2 (FieldObject FieldType) cart cart.CartService
-  - ___ depth 3 (ServiceObject ServiceType) cart cart.CartService
-  - __ depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
-  - ___ depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
-  - __ depth 2 (FieldObject FieldType) order order.OrderService
-  - ___ depth 3 (ServiceObject ServiceType) order order.OrderService
-  - __ depth 2 (FieldObject FieldType) user user.UserService
-  - ___ depth 3 (ServiceObject ServiceType) user user.UserService
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) sessionID string'
-  - ' depth 0 (BasicObject BasicType) username string'
-  - ' depth 0 (BasicObject BasicType) password string'
-  - ' depth 0 (BasicObject BasicType) email string'
-  - ' depth 0 (BasicObject BasicType) first string'
-  - ' depth 0 (BasicObject BasicType) last string'
-  - ' depth 0 (BasicObject BasicType) userID string'
-  - ' depth 0 (InterfaceObject UserType) err .error'
+  - 0 depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})
+  - _1 depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
+  - __2 depth 2 (FieldObject FieldType) cart cart.CartService
+  - ___3 depth 3 (ServiceObject ServiceType) cart cart.CartService
+  - __4 depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
+  - ___5 depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
+  - __6 depth 2 (FieldObject FieldType) order order.OrderService
+  - ___7 depth 3 (ServiceObject ServiceType) order order.OrderService
+  - __8 depth 2 (FieldObject FieldType) user user.UserService
+  - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) sessionID string
+  - 0 depth 0 (BasicObject BasicType) username string
+  - 0 depth 0 (BasicObject BasicType) password string
+  - 0 depth 0 (BasicObject BasicType) email string
+  - 0 depth 0 (BasicObject BasicType) first string
+  - 0 depth 0 (BasicObject BasicType) last string
+  - 0 depth 0 (BasicObject BasicType) userID string
+  - 0 depth 0 (InterfaceObject UserType) err .error
 
 (*FrontendImpl).RemoveItem(ctx context.Context, sessionID string, itemID string):
   block 2 (IfDone):
-  - ' depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - _ depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
-  - __ depth 2 (FieldObject FieldType) cart cart.CartService
-  - ___ depth 3 (ServiceObject ServiceType) cart cart.CartService
-  - __ depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
-  - ___ depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
-  - __ depth 2 (FieldObject FieldType) order order.OrderService
-  - ___ depth 3 (ServiceObject ServiceType) order order.OrderService
-  - __ depth 2 (FieldObject FieldType) user user.UserService
-  - ___ depth 3 (ServiceObject ServiceType) user user.UserService
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) sessionID string'
-  - ' depth 0 (BasicObject BasicType) itemID string'
+  - 0 depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})
+  - _1 depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
+  - __2 depth 2 (FieldObject FieldType) cart cart.CartService
+  - ___3 depth 3 (ServiceObject ServiceType) cart cart.CartService
+  - __4 depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
+  - ___5 depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
+  - __6 depth 2 (FieldObject FieldType) order order.OrderService
+  - ___7 depth 3 (ServiceObject ServiceType) order order.OrderService
+  - __8 depth 2 (FieldObject FieldType) user user.UserService
+  - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) sessionID string
+  - 0 depth 0 (BasicObject BasicType) itemID string
 
 (*FrontendImpl).UpdateItem(ctx context.Context, sessionID string, itemID string, quantity int):
   block 2 (IfDone):
-  - ' depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - _ depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
-  - __ depth 2 (FieldObject FieldType) cart cart.CartService
-  - ___ depth 3 (ServiceObject ServiceType) cart cart.CartService
-  - __ depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
-  - ___ depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
-  - __ depth 2 (FieldObject FieldType) order order.OrderService
-  - ___ depth 3 (ServiceObject ServiceType) order order.OrderService
-  - __ depth 2 (FieldObject FieldType) user user.UserService
-  - ___ depth 3 (ServiceObject ServiceType) user user.UserService
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (BasicObject BasicType) sessionID string'
-  - ' depth 0 (BasicObject BasicType) itemID string'
-  - ' depth 0 (BasicObject BasicType) quantity int'
-  - ' depth 0 (StructObject UserType) item catalogue.Sock struct{ID string, Name string,
-    Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price
-    float32, Quantity int, Tags []string, TagString string}'
-  - _ depth 1 (FieldObject FieldType) ID string
-  - __ depth 2 (BasicObject BasicType) ID string
-  - _ depth 1 (FieldObject FieldType) Price float32
-  - __ depth 2 (BasicObject BasicType) Price float32
-  - ' depth 0 (InterfaceObject UserType) err .error'
+  - 0 depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})
+  - _1 depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
+  - __2 depth 2 (FieldObject FieldType) cart cart.CartService
+  - ___3 depth 3 (ServiceObject ServiceType) cart cart.CartService
+  - __4 depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
+  - ___5 depth 3 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
+  - __6 depth 2 (FieldObject FieldType) order order.OrderService
+  - ___7 depth 3 (ServiceObject ServiceType) order order.OrderService
+  - __8 depth 2 (FieldObject FieldType) user user.UserService
+  - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BasicObject BasicType) sessionID string
+  - 0 depth 0 (BasicObject BasicType) itemID string
+  - 0 depth 0 (BasicObject BasicType) quantity int
+  - 0 depth 0 (StructObject UserType) item catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
+  - _1 depth 1 (FieldObject FieldType) ID string
+  - __2 depth 2 (BasicObject BasicType) ID string
+  - _3 depth 1 (FieldObject FieldType) Price float32
+  - __4 depth 2 (BasicObject BasicType) Price float32
+  - 0 depth 0 (InterfaceObject UserType) err .error
 
 .NewFrontend(ctx context.Context, user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService)
 :
  block 0 (Body):
-  - ' depth 0 (InterfaceObject UserType) ctx context.Context'
-  - ' depth 0 (ServiceObject ServiceType) user user.UserService'
-  - ' depth 0 (ServiceObject ServiceType) catalogue catalogue.CatalogueService'
-  - ' depth 0 (ServiceObject ServiceType) cart cart.CartService'
-  - ' depth 0 (ServiceObject ServiceType) order order.OrderService'
-  - ' depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService,
-    catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})'
-  - _ depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
-  - __ depth 2 (FieldObject FieldType) cart cart.CartService
-  - __ depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
-  - __ depth 2 (FieldObject FieldType) order order.OrderService
-  - __ depth 2 (FieldObject FieldType) user user.UserService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (ServiceObject ServiceType) user user.UserService
+  - 0 depth 0 (ServiceObject ServiceType) catalogue catalogue.CatalogueService
+  - 0 depth 0 (ServiceObject ServiceType) cart cart.CartService
+  - 0 depth 0 (ServiceObject ServiceType) order order.OrderService
+  - 0 depth 0 (PointerObject PointerType) f (*frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService})
+  - _1 depth 1 (StructObject UserType) frontend.FrontendImpl struct{user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService}
+  - __2 depth 2 (FieldObject FieldType) cart cart.CartService
+  - __4 depth 2 (FieldObject FieldType) catalogue catalogue.CatalogueService
+  - __6 depth 2 (FieldObject FieldType) order order.OrderService
+  - __8 depth 2 (FieldObject FieldType) user user.UserService

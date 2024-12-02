@@ -1,6 +1,6 @@
-[] (InterfaceObject UserType) ctx context.Context
+[0] (InterfaceObject UserType) ctx context.Context
 
-[] (BlueprintBackendObject BlueprintBackendType) analytics_db NoSQLDatabase
+[0] (BlueprintBackendObject BlueprintBackendType) analytics_db NoSQLDatabase
 
-[] (BlueprintBackendObject BlueprintBackendType) analytics_queue Queue
+[0] (BlueprintBackendObject BlueprintBackendType) analytics_queue Queue
 

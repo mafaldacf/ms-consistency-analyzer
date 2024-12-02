@@ -2,7 +2,7 @@
 - DATASTORE CALL @ posts_cache >> Cache.Get(ctx context.Context, key string, value interface{}) (err, interface{})
 - SERVICE CALL @ ReadMedia >> (*postnotification.MediaServiceImpl).ReadMedia(ctx context.Context, mediaID int64) (postnotification.Media struct{MediaID int64, Content string}, error)
 
-(*StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID int64):
+(*StorageServiceImpl).ReadPostNoSQL(ctx context.Context, reqID int64, postID_STORAGE_SVC_READ int64):
 - DATASTORE CALL @ posts_db >> NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor, interface{})
 - SERVICE CALL @ ReadAnalytics >> (*postnotification.AnalyticsServiceImpl).ReadAnalytics(ctx context.Context, postID int64) (postnotification.Analytics struct{PostID int64}, error)
 

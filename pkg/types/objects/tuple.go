@@ -80,16 +80,16 @@ func (v *TupleObject) GetDependencies() []Object {
 	return append(v.GetVariableInfo().GetDependencies(), v.Objects...)
 }
 
-func (v *TupleObject) GetNestedDependencies(nearestFields bool) []Object {
+func (v *TupleObject) GetNestedDependencies(includeRefBy bool) []Object {
 	var deps = []Object{v}
 	if v.GetVariableInfo().HasReferences() {
-		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(nearestFields, v)...)
+		deps = append(deps, v.GetVariableInfo().GetReferencesNestedDependencies(includeRefBy, v)...)
 	}
-	if v.GetVariableInfo().IsReferencedBy() {
+	if includeRefBy && v.GetVariableInfo().IsReferencedBy() {
 		deps = append(deps, v.GetVariableInfo().GetNestedRefByDependencies(nil)...)
 	}
 	for _, elem := range v.Objects {
-		deps = append(deps, elem.GetNestedDependencies(nearestFields)...)
+		deps = append(deps, elem.GetNestedDependencies(includeRefBy)...)
 	}
 	return deps
 }
