@@ -47,6 +47,25 @@ func (block *Block) GetLatestInlineFunc(name string) *InlineFunc {
 	return nil
 }
 
+func (block *Block) HasVariable(name string) bool {
+	for i := len(block.Vars) - 1; i >= 0; i-- {
+		if block.Vars[i].GetVariableInfo().Name == name {
+			return true
+		}
+	}
+	return false
+}
+
+func (block *Block) GetObject(name string) objects.Object {
+	for i := len(block.Vars) - 1; i >= 0; i-- {
+		if block.Vars[i].GetVariableInfo().Name == name {
+			return block.Vars[i]
+		}
+	}
+	logger.Logger.Fatalf("[BLOCK] object with name (%s) not found: %v", name, block.Vars)
+	return  nil
+}
+
 func (block *Block) GetVars() []objects.Object {
 	return block.Vars
 }
@@ -193,6 +212,13 @@ func (block *Block) GetNodes() []ast.Node {
 
 func (block *Block) GetSuccs() []*cfg.Block {
 	return block.Block.Succs
+}
+
+func (block *Block) GetNextSuccessorIfExists() *Block {
+	if len(block.Successors) > 0 {
+		return block.Successors[0]
+	}
+	return nil
 }
 
 func (block *Block) AppendVarsFromPredecessor(predecessor *Block) {

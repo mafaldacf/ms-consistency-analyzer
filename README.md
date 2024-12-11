@@ -49,6 +49,10 @@ go run main.go -app=postnotification --xcy --fk --cascade
 go run main.go -app=sockshop2 --xcy --fk --cascade
 go run main.go -app=trainticket --xcy --fk --cascade
 
+# TODO
+go run main.go -app=dsb_sn --xcy --fk --cascade
+go run main.go -app=dsb_hotel --xcy --fk --cascade
+
 source ~/.venv/bin/activate
 
 ./graphs.py --help

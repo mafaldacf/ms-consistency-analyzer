@@ -17,7 +17,7 @@ func SaveObjectToPackage(pkg *types.Package, obj golangtypes.Object) gotypes.Typ
 	if constObj, ok := obj.(*golangtypes.Const); ok {
 		t := LookupAndComputeTypesForGoTypes(pkg, obj.Type())
 		t.(*gotypes.BasicType).Value = constObj.Val().String()
-		v := CreateVariableFromType(obj.Id(), t)
+		v := CreateObjectFromType(obj.Id(), t)
 		if pkg.HasPath(obj.Pkg().Path()) {
 			pkg.AddConstant(v)
 		} else {
@@ -26,7 +26,7 @@ func SaveObjectToPackage(pkg *types.Package, obj golangtypes.Object) gotypes.Typ
 		return t
 	} else if _, ok := obj.(*golangtypes.Var); ok {
 		t := LookupAndComputeTypesForGoTypes(pkg, obj.Type())
-		v := CreateVariableFromType(obj.Id(), t)
+		v := CreateObjectFromType(obj.Id(), t)
 		if pkg.HasPath(obj.Pkg().Path()) {
 			pkg.AddVariable(v)
 		} else {
@@ -179,7 +179,7 @@ func LookupAndComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type) 
 
 // + Compute
 func ComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type, computeIfNotFound bool, visitedNamedTypes map[*golangtypes.Named]bool, typeNameToFuncs map[string][]*golangtypes.Func, serviceTypes map[string]*gotypes.ServiceType) gotypes.Type {
-	logger.Logger.Debugf("[LOOKUP GOTYPES] [%s] %v", utils.GetType(goType), goType)
+	logger.Logger.Debugf("[LOOKUP GOTYPES] [%s] %v", utils.GetType(goType))
 	switch e := goType.(type) {
 	case *golangtypes.Named:
 		name := e.Obj().Name()

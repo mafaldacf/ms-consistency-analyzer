@@ -28,7 +28,7 @@ func GenerateMethodCFG(parsedMethod *types.ParsedMethod) {
 
 	receiver := parsedMethod.GetReceiverIfExists()
 	if receiver != nil {
-		receiver := lookup.CreateVariableFromType(parsedMethod.Receiver.GetName(), parsedMethod.Receiver.GetType())
+		receiver := lookup.CreateObjectFromType(parsedMethod.Receiver.GetName(), parsedMethod.Receiver.GetType())
 		entryBlock.AddVariable(receiver)
 		parsedCfg.HasReceiver = true
 		parsedCfg.ReceiverType = receiver.GetType()
@@ -36,7 +36,7 @@ func GenerateMethodCFG(parsedMethod *types.ParsedMethod) {
 	}
 
 	for i, param := range parsedMethod.Params {
-		v := lookup.CreateVariableFromType(param.GetName(), param.GetType())
+		v := lookup.CreateObjectFromType(param.GetName(), param.GetType())
 		v.GetVariableInfo().IsBlockParam = true
 		v.GetVariableInfo().BlockParamIdx = i
 		entryBlock.Vars = append(entryBlock.Vars, v)
@@ -73,7 +73,7 @@ func GenerateMethodCFGForService(service *service.Service, parsedMethod *types.P
 	parsedMethod.SetParsedCFG(parsedCfg)
 	entryBlock := parsedCfg.GetEntryParsedBlock()
 
-	receiver := lookup.CreateVariableFromType(parsedMethod.Receiver.GetName(), parsedMethod.Receiver.GetType())
+	receiver := lookup.CreateObjectFromType(parsedMethod.Receiver.GetName(), parsedMethod.Receiver.GetType())
 	entryBlock.AddVariable(receiver)
 
 	variable := receiver
@@ -82,13 +82,13 @@ func GenerateMethodCFGForService(service *service.Service, parsedMethod *types.P
 	}
 	if structVar, ok := variable.(*objects.StructObject); ok {
 		for name, f := range service.Fields {
-			structVar.SetFieldByKey(name, lookup.CreateVariableFromType(name, f.GetType()))
+			structVar.SetFieldByKey(name, lookup.CreateObjectFromType(name, f.GetType()))
 		}
 	}
 	logger.Logger.Tracef("[CFG] added service receiver %s (%s) (%s)", receiver.String(), utils.GetType(receiver.(*objects.PointerObject).PointerTo), utils.GetType(receiver.(*objects.PointerObject).PointerTo.GetType()))
 
 	for i, param := range parsedMethod.Params {
-		v := lookup.CreateVariableFromType(param.GetName(), param.GetType())
+		v := lookup.CreateObjectFromType(param.GetName(), param.GetType())
 		v.GetVariableInfo().IsBlockParam = true
 		v.GetVariableInfo().BlockParamIdx = i
 		entryBlock.Vars = append(entryBlock.Vars, v)

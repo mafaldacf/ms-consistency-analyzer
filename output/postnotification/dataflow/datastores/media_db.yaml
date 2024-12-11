@@ -45,16 +45,11 @@ int64:
 - read <postID_UPLOAD_SVC int64 (BasicObject)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
 - read <ref <postID_STORAGE_SVC int64> @ StorageService (Reference)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
 - read <postID_STORAGE_SVC int64 (BasicObject)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
-- read <ref <PostID int64> @ UploadService (Reference)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
-- read <PostID int64 (FieldObject)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
-- read <postIDDDDD int64 (BasicObject)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
-- read <postID_UPLOAD_SVC int64 (BasicObject)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
 - read <postID int64 (BasicObject)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
 - write <postID_STORAGE_SVC int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <ref <PostID int64> @ UploadService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postID_UPLOAD_SVC int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
 - write <postID_STORAGE_SVC int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <ref <PostID int64> @ UploadService (Reference)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
-- write <postIDDDDD int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
+- write <postID_UPLOAD_SVC int64 (BasicObject)> from <post postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}} (StructObject)>
 - read <postID int64 (BasicObject)>
 - read <postID int64 (BasicObject)> from <postID int64 (BasicObject)>
 - read <ref <postID_STORAGE_SVC_READ int64> @ StorageService (Reference)> from <postID int64 (BasicObject)>
@@ -68,10 +63,6 @@ int64:
 - read <postID_UPLOAD_SVC int64 (BasicObject)> from <postID int64 (BasicObject)>
 - read <ref <postID_STORAGE_SVC int64> @ StorageService (Reference)> from <postID int64 (BasicObject)>
 - read <postID_STORAGE_SVC int64 (BasicObject)> from <postID int64 (BasicObject)>
-- read <ref <PostID int64> @ UploadService (Reference)> from <postID int64 (BasicObject)>
-- read <PostID int64 (FieldObject)> from <postID int64 (BasicObject)>
-- read <postIDDDDD int64 (BasicObject)> from <postID int64 (BasicObject)>
-- read <postID_UPLOAD_SVC int64 (BasicObject)> from <postID int64 (BasicObject)>
 - read <postID_STORAGE_SVC_READ int64 (BasicObject)>
 - read <postID_STORAGE_SVC_READ int64 (BasicObject)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
 - read <ref <postID_NOTIFY_SVC int64> @ NotifyService (Reference)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
@@ -83,10 +74,6 @@ int64:
 - read <postID_UPLOAD_SVC int64 (BasicObject)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
 - read <ref <postID_STORAGE_SVC int64> @ StorageService (Reference)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
 - read <postID_STORAGE_SVC int64 (BasicObject)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
-- read <ref <PostID int64> @ UploadService (Reference)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
-- read <PostID int64 (FieldObject)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
-- read <postIDDDDD int64 (BasicObject)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
-- read <postID_UPLOAD_SVC int64 (BasicObject)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
 - read <postID int64 (BasicObject)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
 - read <postID_STORAGE_SVC_READ int64 (BasicObject)>
 - read <postID_STORAGE_SVC_READ int64 (BasicObject)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
@@ -99,8 +86,4 @@ int64:
 - read <postID_UPLOAD_SVC int64 (BasicObject)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
 - read <ref <postID_STORAGE_SVC int64> @ StorageService (Reference)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
 - read <postID_STORAGE_SVC int64 (BasicObject)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
-- read <ref <PostID int64> @ UploadService (Reference)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
-- read <PostID int64 (FieldObject)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
-- read <postIDDDDD int64 (BasicObject)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
-- read <postID_UPLOAD_SVC int64 (BasicObject)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>
 - read <postID int64 (BasicObject)> from <postID_STORAGE_SVC_READ int64 (BasicObject)>

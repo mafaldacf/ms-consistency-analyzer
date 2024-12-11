@@ -1,0 +1,44 @@
+bson:
+- package: bson
+- package path: go.mongodb.org/mongo-driver/bson
+- module: go.mongodb.org/mongo-driver
+
+context:
+- package: context
+- package path: context
+- module: ""
+
+errors:
+- package: errors
+- package path: errors
+- module: ""
+
+fmt:
+- package: fmt
+- package path: fmt
+- module: ""
+
+geoindex:
+- package: geoindex
+- package path: github.com/hailocab/go-geoindex
+- module: github.com/hailocab/go-geoindex
+
+math:
+- package: math
+- package path: math
+- module: ""
+
+sha256:
+- package: sha256
+- package path: crypto/sha256
+- module: ""
+
+strconv:
+- package: strconv
+- package path: strconv
+- module: ""
+
+time:
+- package: time
+- package path: time
+- module: ""

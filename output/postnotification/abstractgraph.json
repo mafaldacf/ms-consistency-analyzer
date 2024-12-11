@@ -147,7 +147,7 @@
                   "type": "postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username string}}",
                   "refs": [
                     {
-                      "name": "post",
+                      "name": "",
                       "creator": "UploadService"
                     }
                   ]
@@ -156,24 +156,12 @@
                   "PostID": {
                     "field": {
                       "name": "PostID",
-                      "type": "int64",
-                      "refs": [
-                        {
-                          "name": "PostID",
-                          "creator": "UploadService"
-                        }
-                      ]
+                      "type": "int64"
                     },
                     "wrapped_variable": {
                       "basic": {
                         "name": "postID_STORAGE_SVC",
-                        "type": "int64",
-                        "refs": [
-                          {
-                            "name": "PostID",
-                            "creator": "UploadService"
-                          }
-                        ]
+                        "type": "int64"
                       }
                     }
                   }
@@ -373,7 +361,7 @@
           },
           {
             "struct": {
-              "name": "post",
+              "name": "",
               "type": "postnotification.Post struct{ReqID int64, PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64, Creator postnotification.Creator struct{Username \"some username\" string}}"
             },
             "struct_fields": {
@@ -427,18 +415,6 @@
                       }
                     }
                   ]
-                }
-              },
-              "PostID": {
-                "field": {
-                  "name": "PostID",
-                  "type": "int64"
-                },
-                "wrapped_variable": {
-                  "basic": {
-                    "name": "postIDDDDD",
-                    "type": "int64"
-                  }
                 }
               },
               "ReqID": {

@@ -75,7 +75,7 @@ func (graph *AbstractGraph) createDummyAbstractServiceCall(node *service.Service
 		Depth:  depth,
 	}
 	for _, p := range method.GetParams() {
-		v := lookup.CreateVariableFromType(p.GetName(), p.GetType())
+		v := lookup.CreateObjectFromType(p.GetName(), p.GetType())
 		call.ParsedCall.Params = append(call.ParsedCall.Params, v)
 		logger.Logger.Debugf("[GRAPH - DUMMY] created variable %s (%s)", v.String(), utils.GetType(v))
 	}

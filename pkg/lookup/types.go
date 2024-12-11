@@ -11,7 +11,7 @@ import (
 	"analyzer/pkg/utils"
 )
 
-func CreateVariableFromType(name string, t gotypes.Type) objects.Object {
+func CreateObjectFromType(name string, t gotypes.Type) objects.Object {
 	logger.Logger.Infof("[LOOKUP] creating variable (%s) for type [%s]: %v", name, utils.GetType(t), t)
 	info := &objects.ObjectInfo{
 		Name: name,
@@ -25,7 +25,7 @@ func CreateVariableFromType(name string, t gotypes.Type) objects.Object {
 	switch e := t.(type) {
 	case *gotypes.UserType:
 		if e.UserType != nil {
-			underlyingVariable := CreateVariableFromType(name, e.UserType)
+			underlyingVariable := CreateObjectFromType(name, e.UserType)
 			if underlyingVariable == nil {
 				logger.Logger.Fatalf("[LOOKUP] unexpected nil underlying variable named (%s) for user type (%s)", name, e.Name)
 			}
@@ -47,15 +47,15 @@ func CreateVariableFromType(name string, t gotypes.Type) objects.Object {
 	case *gotypes.ArrayType:
 		return &objects.ArrayObject{ObjectInfo: info}
 	case *gotypes.AddressType:
-		addressOfVariable := CreateVariableFromType("", e.AddressOf)
+		addressOfVariable := CreateObjectFromType("", e.AddressOf)
 		addressVariable := &objects.AddressObject{
-			ObjectInfo: info, AddressOf: CreateVariableFromType("", e.AddressOf),
+			ObjectInfo: info, AddressOf: CreateObjectFromType("", e.AddressOf),
 		}
 		addressOfVariable.GetVariableInfo().SetParent(addressOfVariable, addressVariable)
 		return addressVariable
 	case *gotypes.PointerType:
 		v := &objects.PointerObject{
-			ObjectInfo: info, PointerTo: CreateVariableFromType("", e.PointerTo),
+			ObjectInfo: info, PointerTo: CreateObjectFromType("", e.PointerTo),
 		}
 		return v
 	case *gotypes.StructType:
@@ -68,7 +68,7 @@ func CreateVariableFromType(name string, t gotypes.Type) objects.Object {
 		return &objects.MapObject{ObjectInfo: info, KeyValues: make(map[objects.Object]objects.Object, 0)}
 	case *gotypes.FieldType:
 		info.Name = e.FieldName
-		wrappedFieldVariable := CreateVariableFromType(name, e.WrappedType)
+		wrappedFieldVariable := CreateObjectFromType(name, e.WrappedType)
 		fieldVariable := &objects.FieldObject{
 			ObjectInfo:      info,
 			WrappedVariable: wrappedFieldVariable,
