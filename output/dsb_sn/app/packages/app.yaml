@@ -55,18 +55,18 @@ socialnetwork:
   - sync
   - time
 - imports (extracted from source files):
+  - (backend) github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - (base64) encoding/base64
+  - (bson) go.mongodb.org/mongo-driver/bson
+  - (json) encoding/json
   - (jwt) github.com/dgrijalva/jwt-go
+  - (rand) math/rand
+  - (sha1) crypto/sha1
   - bytes
   - context
-  - crypto/sha1
-  - encoding/base64
-  - encoding/json
   - errors
   - fmt
-  - github.com/blueprint-uservices/blueprint/runtime/core/backend
-  - go.mongodb.org/mongo-driver/bson
   - log
-  - math/rand
   - net
   - regexp
   - strconv
@@ -85,7 +85,7 @@ socialnetwork:
   - atomic.align64
   - atomic.noCopy
   - context.Context
-  - hash.Hash interface{Size, Sum, Write, BlockSize, Reset, }
+  - hash.Hash interface{BlockSize, Reset, Size, Sum, Write, }
   - jwt-go.StandardClaims struct{Audience string, ExpiresAt int64, Id string, IssuedAt int64, Issuer string, NotBefore int64, Subject string}
   - net.Flags uint
   - net.HardwareAddr []byte

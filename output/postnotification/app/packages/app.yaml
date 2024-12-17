@@ -61,11 +61,11 @@ postnotification:
   - strconv
   - sync
 - imports (extracted from source files):
+  - (backend) github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - (bson) go.mongodb.org/mongo-driver/bson
+  - (common) github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification/common
+  - (rand) math/rand
   - context
-  - github.com/blueprint-uservices/blueprint/examples/postnotification/workflow/postnotification/common
-  - github.com/blueprint-uservices/blueprint/runtime/core/backend
-  - go.mongodb.org/mongo-driver/bson
-  - math/rand
   - strconv
   - sync
 - imported types:

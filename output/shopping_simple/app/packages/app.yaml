@@ -32,9 +32,9 @@ shopping_simple:
   - sync
 - imports (extracted from source files):
   - (backend) github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - (bson) go.mongodb.org/mongo-driver/bson
   - context
   - fmt
-  - go.mongodb.org/mongo-driver/bson
   - sync
 - imported types:
   - .error

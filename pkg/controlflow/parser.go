@@ -66,7 +66,8 @@ func visitBasicBlock(service *service.Service, method *types.ParsedMethod, block
 
 	var visitedRangeType bool
 	var visitedRangeElem bool
-	var rangeElemsType gotypes.Type
+	var rangeKeyType gotypes.Type
+	var rangeValueType gotypes.Type
 
 	for i, node := range block.GetNodes() { //FIXME????
 		/* if block.Block.Kind == cfg.KindBody && i == len(block.GetNodes())-1 {
@@ -93,30 +94,37 @@ func visitBasicBlock(service *service.Service, method *types.ParsedMethod, block
 		succ := block.GetNextSuccessorIfExists()
 		ident, isIdent := node.(*ast.Ident)
 		if succ != nil && succ.Block.Kind == cfg.KindRangeLoop && isIdent { // as soon as we see an ident then we are "preparing" for the succeeding range loop
-			logger.Logger.Warnf("RANGE AHEAD! %v", succ.Block.Succs)
+			logger.Logger.Warnf("RANGE AHEAD (%t, %t)! %v; ELEMS TYPE = %v", visitedRangeType, visitedRangeElem, succ.Block.Succs, rangeValueType)
 			if !visitedRangeType { // range ident
 				visitedRangeType = true
 				rangeObj := block.GetObject(ident.Name)
 				if rangeObjSlice, ok := rangeObj.(*objects.SliceObject); ok {
-					rangeElemsType = rangeObjSlice.GetSliceType().UnderlyingType
+					rangeValueType = rangeObjSlice.GetSliceType().UnderlyingType
 				} else if rangeObjArray, ok := rangeObj.(*objects.ArrayObject); ok {
-					rangeElemsType = rangeObjArray.GetArrayType().ElementsType
+					rangeValueType = rangeObjArray.GetArrayType().ElementsType //FIXME: for some reason the type is SliceType and not ArrayType
+				} else if mapObjArray, ok := rangeObj.(*objects.MapObject); ok {
+					rangeValueType = mapObjArray.GetMapType().ValueType
+					rangeKeyType = mapObjArray.GetMapType().KeyType
 				} else {
 					logger.Logger.Fatalf("[VISITOR BLOCK] unexpected type [%s] for range ident object: %v", utils.GetType(rangeObj), rangeObj)
 				}
+				logger.Logger.Debugf("saved type (%s) for range ahead: %s", utils.GetType(rangeValueType), rangeValueType.String())
 			} else if visitedRangeType && !visitedRangeElem && ident.Name != "_" { // element ident
 				visitedRangeElem = true
-				obj := wrapValueInBasicVariable("0", "int", ident.Name)
+				obj := lookup.CreateObjectFromType(ident.Name, rangeValueType)
 				block.AddVariable(obj)
-			} else { // index ident
-				obj := lookup.CreateObjectFromType(ident.Name, rangeElemsType)
-				block.AddVariable(obj)
+			} else if ident.Name != "_" { // index ident
+				if rangeKeyType == nil {
+					obj := wrapValueInBasicVariable("0", "int", ident.Name)
+					block.AddVariable(obj)
+				} else {
+
+				}
 			}
 		} else {
 			stmts := parseNodeBody(service, method, block, node)
 			deferStmts = append(deferStmts, stmts...)
 		}
-
 	}
 
 	for _, deferStmt := range deferStmts {

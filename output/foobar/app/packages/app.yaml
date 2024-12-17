@@ -94,9 +94,9 @@ foobar:
   - github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/bar
   - github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/foo
 - imports (extracted from source files):
+  - (bar) github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/bar
+  - (foo) github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/foo
   - context
-  - github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/bar
-  - github.com/blueprint-uservices/blueprint/examples/foobar/workflow/foobar/foo
 - imported types:
   - .error
   - bar.BarService

@@ -56,10 +56,10 @@ postnotification_simple:
   - math/rand
   - sync
 - imports (extracted from source files):
+  - (backend) github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - (bson) go.mongodb.org/mongo-driver/bson
+  - (rand) math/rand
   - context
-  - github.com/blueprint-uservices/blueprint/runtime/core/backend
-  - go.mongodb.org/mongo-driver/bson
-  - math/rand
   - sync
 - imported types:
   - .error

@@ -5,6 +5,7 @@ import (
 	"go/ast"
 	golangtypes "go/types"
 	"slices"
+	"strings"
 
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types/gotypes"
@@ -64,9 +65,19 @@ func (p *Package) ImportsByAliasMapStr() string {
 	return str
 }
 
+func getLastWordAfterSlash(input string) string {
+	parts := strings.Split(input, "/")
+	if len(parts) > 0 {
+		return parts[len(parts)-1]
+	}
+	return input
+}
+
 // AddImportedPackageByAliasIfNotExists adds an entry that maps the imported alias to the loaded package
 // The ImportedPackagesByAlias can have many different keys from different source files that map to the same package
+// e.g. in "encoding/json" the alias is just "json"
 func (p *Package) AddImportedPackageByAliasIfNotExists(alias string, pkg *Package) {
+	alias = getLastWordAfterSlash(alias)
 	if existingPkg, exists := p.ImportedPackagesByAlias[alias]; exists && existingPkg != pkg {
 		logger.Logger.Fatalf("[PACKAGE] [%s] a different package (%s) is already imported for alias (%s) (%s)", p.GetName(), existingPkg.GetPackagePath(), alias, pkg.GetPackagePath())
 	}

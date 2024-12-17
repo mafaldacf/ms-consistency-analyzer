@@ -92,8 +92,6 @@ func lookupFieldForVariable(variable objects.Object, fieldName string, inAssignm
 	switch v := variable.(type) {
 	case *objects.PointerObject:
 		return lookupFieldForVariable(v.PointerTo, fieldName, inAssignment)
-	case *objects.GenericObject:
-		logger.Logger.Fatalf("[LOOKUP FIELD] ignoring generic variable (%s)", v.String())
 	case *objects.StructObject:
 		var field *objects.FieldObject
 		field = v.GetFieldByKeyIfExists(fieldName)
@@ -108,8 +106,10 @@ func lookupFieldForVariable(variable objects.Object, fieldName string, inAssignm
 			return objects.UnwrapFieldVariable(field)
 		}
 		return field
+	case *objects.GenericObject:
+		logger.Logger.Fatalf("[LOOKUP FIELD] ignoring generic variable (%s)", v.String())
 	default:
-		logger.Logger.Fatalf("[LOOKUP FIELD] unknown variable (%s): %v", objects.VariableTypeName(variable), variable.String())
+		logger.Logger.Fatalf("[LOOKUP FIELD] unknown type (%s) for variable: %v", objects.VariableTypeName(variable), variable.String())
 	}
 	return nil
 }
@@ -437,31 +437,62 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			return lookup.CreateObjectFromType("", t), nil
 		}
 
-		if e.Op == token.ADD || e.Op == token.MUL || e.Op == token.SUB || e.Op == token.QUO {
+		if e.Y == nil && e.Op == token.MUL { // "*"
 			variable_x, t_x := lookupVariableFromAstExpr(service, method, block, e.X, nil, inAssignment)
-			addrType_x := &gotypes.AddressType{
-				AddressOf: variable_x.GetType(),
+			pointer_variable_x := &objects.PointerObject{
+				PointerTo: variable_x,
+				ObjectInfo: &objects.ObjectInfo{
+					Type: &gotypes.PointerType{
+						PointerTo: variable_x.GetType(),
+					},
+					Id:   objects.VARIABLE_INLINE_ID,
+					Name: variable_x.GetVariableInfo().Name,
+				},
 			}
+			variable_x.GetVariableInfo().SetParent(variable_x, pointer_variable_x)
+			packageType = t_x
+			variable = pointer_variable_x
+	
+		} else if e.Y == nil && e.Op == token.AND { // "&"
+			variable_x, t_x := lookupVariableFromAstExpr(service, method, block, e.X, nil, inAssignment)
 			address_variable_x := &objects.AddressObject{
 				AddressOf: variable_x,
 				ObjectInfo: &objects.ObjectInfo{
-					Type: addrType_x,
+					Type: &gotypes.AddressType{
+						AddressOf: variable_x.GetType(),
+					},
+					Id:   objects.VARIABLE_INLINE_ID,
+					Name: variable_x.GetVariableInfo().Name,
+				},
+			}
+			variable_x.GetVariableInfo().SetParent(variable_x, address_variable_x)
+			packageType = t_x
+			variable = address_variable_x
+
+		} else if e.Op == token.ADD || e.Op == token.SUB || e.Op == token.QUO || e.Op == token.MUL || e.Op == token.AND { // "+", "-", "/", "*", "&"
+			// FIXME!!!
+			variable_x, t_x := lookupVariableFromAstExpr(service, method, block, e.X, nil, inAssignment)
+			address_variable_x := &objects.AddressObject{
+				AddressOf: variable_x,
+				ObjectInfo: &objects.ObjectInfo{
+					Type: &gotypes.AddressType{
+						AddressOf: variable_x.GetType(),
+					},
 					Id:   objects.VARIABLE_INLINE_ID,
 					Name: variable_x.GetVariableInfo().Name,
 				},
 			}
 			variable_x.GetVariableInfo().SetParent(variable_x, address_variable_x)
 
-			variable_y, t_y := lookupVariableFromAstExpr(service, method, block, e.X, nil, inAssignment)
-			addrType_y := &gotypes.AddressType{
-				AddressOf: variable_y.GetType(),
-			}
+			variable_y, t_y := lookupVariableFromAstExpr(service, method, block, e.Y, nil, inAssignment)
 			address_variable_y := &objects.AddressObject{
 				AddressOf: variable_y,
 				ObjectInfo: &objects.ObjectInfo{
-					Type: addrType_y,
+					Type: &gotypes.AddressType{
+						AddressOf: variable_y.GetType(),
+					},
 					Id:   objects.VARIABLE_INLINE_ID,
-					Name: variable_x.GetVariableInfo().Name,
+					Name: variable_y.GetVariableInfo().Name,
 				},
 			}
 			variable_y.GetVariableInfo().SetParent(variable_y, address_variable_y)
@@ -469,8 +500,10 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			if !t_x.IsSameType(t_y) {
 				logger.Logger.Fatalf("x expr (%v) and y expr (%v) differ types (%v vs %v)", e.X, e.Y, t_x, t_y)
 			}
+
 			packageType = t_x
 			variable = address_variable_x
+			
 			logger.Logger.Warnf("FIXMEEEEEEE!!!!!!!!")
 		} else {
 			logger.Logger.Fatalf("unknown token %v for binary expr %v", e.Op, e)
@@ -481,7 +514,20 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		variable, _ := lookupVariableFromAstExpr(service, method, block, e.X, nil, false)
 		variable.GetVariableInfo().Id = objects.VARIABLE_INLINE_ID
 		return variable, nil
-		
+	
+	case *ast.ArrayType: //e.g. []rune
+		elemtsType := lookup.ComputeTypeForAstExpr(service.File, e.Elt)
+		numElemsType := lookup.ComputeTypeForAstExpr(service.File, e.Len)
+		numElemsInt, _ := strconv.Atoi(numElemsType.GetBasicValue())
+		variable = &objects.ArrayObject{
+			ObjectInfo: &objects.ObjectInfo{
+				Type: &gotypes.ArrayType{
+					ElementsType: elemtsType,
+					NumElems: numElemsInt,
+				},
+				Id: objects.VARIABLE_UNASSIGNED_ID,
+			},
+		}
 	case *ast.MapType: //e.g. make(map[string]PriceConfig)
 		keyType := lookup.ComputeTypeForAstExpr(service.File, e.Key)
 		valueType := lookup.ComputeTypeForAstExpr(service.File, e.Value)

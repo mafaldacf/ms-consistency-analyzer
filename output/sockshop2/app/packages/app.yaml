@@ -27,9 +27,9 @@ cart:
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
   - go.mongodb.org/mongo-driver/bson
 - imports (extracted from source files):
+  - (backend) github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - (bson) go.mongodb.org/mongo-driver/bson
   - context
-  - github.com/blueprint-uservices/blueprint/runtime/core/backend
-  - go.mongodb.org/mongo-driver/bson
 - imported types:
   - .error
   - NoSQLCollection interface{NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.NoSQLCollection.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.UpdateMany(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.ReplaceOne(ctx context.Context, filter bson.D, interface{}), NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.NoSQLCollection.DeleteMany(ctx context.Context, filter bson.D)}
@@ -76,9 +76,9 @@ catalogue:
   - go.mongodb.org/mongo-driver/bson
   - strings
 - imports (extracted from source files):
+  - (backend) github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - (bson) go.mongodb.org/mongo-driver/bson
   - context
-  - github.com/blueprint-uservices/blueprint/runtime/core/backend
-  - go.mongodb.org/mongo-driver/bson
   - strings
 - imported types:
   - .error
@@ -131,12 +131,12 @@ frontend:
   - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/user
   - github.com/google/uuid
 - imports (extracted from source files):
+  - (cart) github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/cart
+  - (catalogue) github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/catalogue
+  - (order) github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/order
+  - (user) github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/user
+  - (uuid) github.com/google/uuid
   - context
-  - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/cart
-  - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/catalogue
-  - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/order
-  - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/user
-  - github.com/google/uuid
 - imported types:
   - .error
   - cart.CartService
@@ -210,14 +210,14 @@ order:
   - sync
   - time
 - imports (extracted from source files):
+  - (backend) github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - (bson) go.mongodb.org/mongo-driver/bson
+  - (cart) github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/cart
+  - (payment) github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/payment
+  - (shipping) github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/shipping
+  - (user) github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/user
+  - (uuid) github.com/google/uuid
   - context
-  - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/cart
-  - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/payment
-  - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/shipping
-  - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/user
-  - github.com/blueprint-uservices/blueprint/runtime/core/backend
-  - github.com/google/uuid
-  - go.mongodb.org/mongo-driver/bson
   - sync
   - time
 - imported types:
@@ -312,9 +312,9 @@ queuemaster:
   - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/shipping
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
 - imports (extracted from source files):
+  - (backend) github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - (shipping) github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/shipping
   - context
-  - github.com/blueprint-uservices/blueprint/examples/sockshop2/workflow/shipping
-  - github.com/blueprint-uservices/blueprint/runtime/core/backend
 - imported types:
   - .error
   - Queue interface{Queue.Push(ctx context.Context, item interface{}), Queue.Pop(ctx context.Context, item interface{})}
@@ -351,9 +351,9 @@ shipping:
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
   - go.mongodb.org/mongo-driver/bson
 - imports (extracted from source files):
+  - (backend) github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - (bson) go.mongodb.org/mongo-driver/bson
   - context
-  - github.com/blueprint-uservices/blueprint/runtime/core/backend
-  - go.mongodb.org/mongo-driver/bson
 - imported types:
   - .error
   - NoSQLCollection interface{NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.NoSQLCollection.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.UpdateMany(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.ReplaceOne(ctx context.Context, filter bson.D, interface{}), NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.NoSQLCollection.DeleteMany(ctx context.Context, filter bson.D)}
@@ -402,10 +402,10 @@ user:
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
   - go.mongodb.org/mongo-driver/bson
 - imports (extracted from source files):
+  - (backend) github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - (bson) go.mongodb.org/mongo-driver/bson
   - context
   - errors
-  - github.com/blueprint-uservices/blueprint/runtime/core/backend
-  - go.mongodb.org/mongo-driver/bson
 - imported types:
   - .error
   - NoSQLCollection interface{NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.NoSQLCollection.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.UpdateMany(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.ReplaceOne(ctx context.Context, filter bson.D, interface{}), NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.NoSQLCollection.DeleteMany(ctx context.Context, filter bson.D)}

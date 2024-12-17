@@ -10,8 +10,8 @@ import (
 
 type ArrayObject struct {
 	Object
-	ObjectInfo *ObjectInfo
-	Elements   []Object
+	ObjectInfo  *ObjectInfo
+	Elements    []Object
 }
 
 func (v *ArrayObject) MarshalJSON() ([]byte, error) {
@@ -92,6 +92,13 @@ func (v *ArrayObject) GetArrayType() *gotypes.ArrayType {
 		return userType.UserType.(*gotypes.ArrayType)
 	}
 	return v.ObjectInfo.GetType().(*gotypes.ArrayType)
+}
+
+func (v *ArrayObject) GetSliceType() *gotypes.SliceType {
+	if userType, ok := v.ObjectInfo.GetType().(*gotypes.UserType); ok {
+		return userType.UserType.(*gotypes.SliceType)
+	}
+	return v.ObjectInfo.GetType().(*gotypes.SliceType)
 }
 
 func (v *ArrayObject) GetVariableInfo() *ObjectInfo {

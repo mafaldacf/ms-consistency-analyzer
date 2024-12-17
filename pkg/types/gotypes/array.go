@@ -5,6 +5,7 @@ import "analyzer/pkg/logger"
 type ArrayType struct {
 	Type         `json:"-"`
 	ElementsType Type
+	NumElems     int
 }
 
 // ------------
