@@ -68,14 +68,12 @@
   - '0 depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database
     = trainfood, collection = trainfood} --> r-tainted 1x: read(trainfood_db._)'
   - '_1 depth 1 (StructObject UserType) tf trainfood.TrainFood struct{ID string, TripID
-    string, Foods []food.Food struct{Name string, Price float64}} --> r-tainted 3x:
-    read(trainfood_db.TrainFood, trainfood_db.Foods, trainfood_db.[]food.Food struct{Name
-    string, Price float64})'
+    string, Foods []food.Food struct{Name string, Price float64}} --> r-tainted 2x:
+    read(trainfood_db.TrainFood, trainfood_db.TrainFood.Foods)'
   - '__2 depth 2 (FieldObject FieldType) Foods []food.Food struct{Name string, Price
-    float64} --> r-tainted 1x: read(trainfood_db.Foods)'
+    float64} --> r-tainted 1x: read(trainfood_db.TrainFood.Foods)'
   - '___3 depth 3 (SliceObject SliceType) Foods []food.Food struct{Name string, Price
-    float64} --> r-tainted 1x: read(trainfood_db.[]food.Food struct{Name string, Price
-    float64})'
+    float64} --> r-tainted 1x: read(trainfood_db.TrainFood.Foods)'
   - 0 depth 0 (InterfaceObject UserType) err .error
   - 0 depth 0 (BasicObject BasicType) exists bool
   - 0 depth 0 (InterfaceObject UserType) err .error

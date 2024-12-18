@@ -20,6 +20,10 @@ require github.com/blueprint-uservices/blueprint/examples/postnotification_simpl
 
 require github.com/blueprint-uservices/blueprint/examples/postnotification_simple/wiring v0.0.0
 
+require github.com/blueprint-uservices/blueprint/examples/app_constraints_referential_integrity/workflow v0.0.0 // indirect
+
+require github.com/blueprint-uservices/blueprint/examples/app_constraints_referential_integrity/wiring v0.0.0
+
 require github.com/blueprint-uservices/blueprint/examples/shopping_app/workflow v0.0.0 // indirect
 
 require github.com/blueprint-uservices/blueprint/examples/shopping_app/wiring v0.0.0
@@ -118,6 +122,12 @@ replace github.com/blueprint-uservices/blueprint/examples/postnotification_simpl
 replace github.com/blueprint-uservices/blueprint/examples/postnotification_simple/workflow => ./blueprint/examples/postnotification_simple/workflow
 
 replace github.com/blueprint-uservices/blueprint/examples/postnotification_simple/wiring => ./blueprint/examples/postnotification_simple/wiring
+
+replace github.com/blueprint-uservices/blueprint/examples/app_constraints_referential_integrity => ./blueprint/examples/app_constraints_referential_integrity
+
+replace github.com/blueprint-uservices/blueprint/examples/app_constraints_referential_integrity/workflow => ./blueprint/examples/app_constraints_referential_integrity/workflow
+
+replace github.com/blueprint-uservices/blueprint/examples/app_constraints_referential_integrity/wiring => ./blueprint/examples/app_constraints_referential_integrity/wiring
 
 replace github.com/blueprint-uservices/blueprint/examples/shopping_app => ./blueprint/examples/shopping_app
 

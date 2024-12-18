@@ -175,9 +175,21 @@ func (graph *AbstractGraph) referenceCallObjects(parsedCall types.Call, child Ab
 	}
 	liveBlock := parsedCall.GetMethod().(*types.ParsedMethod).GetParsedCfg().GetLastLiveBlock() //FIXME: check comment in GetLastLiveBlock function
 	for i, childObj := range liveBlock.GetResults() {
-		parentObj := parsedCall.GetReturn(i)
-		parentObj.AddReferenceWithID(childObj, child.GetCallee())
-		logger.Logger.Infof("\t\t[REF CALL OBJS - RESULTS] added reference (%d) to child %s: (%s) -> (%s)", parentObj.GetId(), child.GetCallee(), parentObj.GetVariableInfo().String(), childObj.GetVariableInfo().String())
+		if tupleChildObj, ok := childObj.(*objects.TupleObject); ok { //FIXME: sometimes this is giving a tuple (WITH NO OBJECT INFO!!!)!!
+			for j, tupleElem := range tupleChildObj.Objects {
+				parentObj := parsedCall.GetReturn(j)
+				parentObj.AddReferenceWithID(tupleElem, child.GetCallee())
+				logger.Logger.Infof("\t\t[REF CALL OBJS - RESULTS] added reference (%d) to child %s: (%v) -> (%v)", parentObj.GetId(), child.GetCallee(), parentObj.GetVariableInfo(), tupleElem.GetVariableInfo())
+			}
+		} else {
+			parentObj := parsedCall.GetReturn(i)
+			parentObj.AddReferenceWithID(childObj, child.GetCallee())
+			//FIXME: for some reason the chid has no info!!
+			if childObj.GetVariableInfo() == nil {
+				logger.Logger.Fatal("????")
+			}
+			logger.Logger.Infof("\t\t[REF CALL OBJS - RESULTS] added reference (%d) to child %s: (%s) -> (%s)", parentObj.GetId(), child.GetCallee(), parentObj.GetVariableInfo().String(), childObj.GetVariableInfo().String())
+		}
 	}
 
 	/* if parsedCall.GetName() == "StorePostNoSQL" {

@@ -93,23 +93,30 @@
   - __4 depth 2 (FieldObject FieldType) Value string
   - '0 depth 0 (StructObject UserType) sock catalogue.Sock struct{ID string, Name
     string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string,
-    Price float32, Quantity int, Tags []string, TagString string} --> r-tainted 8x:
-    read(catalogue_db.Sock, catalogue_db.ImageURL, catalogue_db.[]string, catalogue_db.string,
-    catalogue_db.ImageURL_1, catalogue_db.ImageURL_2, catalogue_db.TagString, catalogue_db.Tags)'
-  - '_1 depth 1 (FieldObject FieldType) ImageURL []string --> r-tainted 1x: read(catalogue_db.ImageURL)'
-  - '__2 depth 2 (ArrayObject SliceType) []string --> r-tainted 1x: read(catalogue_db.[]string)'
-  - '___3 depth 3 (BasicObject BasicType) ImageURL_1 string --> r-tainted 1x: read(catalogue_db.string)'
-  - '___4 depth 3 (BasicObject BasicType) ImageURL_2 string --> r-tainted 1x: read(catalogue_db.string)'
-  - '_5 depth 1 (FieldObject FieldType) ImageURL_1 string --> r-tainted 1x: read(catalogue_db.ImageURL_1)'
-  - '__6 depth 2 (BasicObject BasicType) ImageURL_1 string --> r-tainted 1x: read(catalogue_db.string)'
-  - '_7 depth 1 (FieldObject FieldType) ImageURL_2 string --> r-tainted 1x: read(catalogue_db.ImageURL_2)'
-  - '__8 depth 2 (BasicObject BasicType) ImageURL_2 string --> r-tainted 1x: read(catalogue_db.string)'
-  - '_9 depth 1 (FieldObject FieldType) TagString string --> r-tainted 1x: read(catalogue_db.TagString)'
-  - '__10 depth 2 (BasicObject BasicType) TagString string --> r-tainted 1x: read(catalogue_db.string)'
-  - '_11 depth 1 (FieldObject FieldType) Tags []string --> r-tainted 1x: read(catalogue_db.Tags)'
-  - '__12 depth 2 (SliceObject SliceType) []string --> r-tainted 1x: read(catalogue_db.[]string)'
-  - '___13 depth 3 (BasicObject BasicType) TagString string --> r-tainted 1x: read(catalogue_db.string)'
-  - '___14 depth 3 (BasicObject BasicType) "," string --> r-tainted 1x: read(catalogue_db.string)'
+    Price float32, Quantity int, Tags []string, TagString string} --> r-tainted 7x:
+    read(catalogue_db.Sock, catalogue_db.Sock.ImageURL, catalogue_db.Sock.string,
+    catalogue_db.Sock.ImageURL_1, catalogue_db.Sock.ImageURL_2, catalogue_db.Sock.TagString,
+    catalogue_db.Sock.Tags)'
+  - '_1 depth 1 (FieldObject FieldType) ImageURL []string --> r-tainted 1x: read(catalogue_db.Sock.ImageURL)'
+  - '__2 depth 2 (ArrayObject SliceType) []string --> r-tainted 1x: read(catalogue_db.Sock.ImageURL)'
+  - '___3 depth 3 (BasicObject BasicType) ImageURL_1 string --> r-tainted 2x: read(catalogue_db.Sock.string,
+    catalogue_db.Sock.ImageURL_1)'
+  - '___4 depth 3 (BasicObject BasicType) ImageURL_2 string --> r-tainted 2x: read(catalogue_db.Sock.string,
+    catalogue_db.Sock.ImageURL_2)'
+  - '_5 depth 1 (FieldObject FieldType) ImageURL_1 string --> r-tainted 1x: read(catalogue_db.Sock.ImageURL_1)'
+  - '__6 depth 2 (BasicObject BasicType) ImageURL_1 string --> r-tainted 2x: read(catalogue_db.Sock.string,
+    catalogue_db.Sock.ImageURL_1)'
+  - '_7 depth 1 (FieldObject FieldType) ImageURL_2 string --> r-tainted 1x: read(catalogue_db.Sock.ImageURL_2)'
+  - '__8 depth 2 (BasicObject BasicType) ImageURL_2 string --> r-tainted 2x: read(catalogue_db.Sock.string,
+    catalogue_db.Sock.ImageURL_2)'
+  - '_9 depth 1 (FieldObject FieldType) TagString string --> r-tainted 1x: read(catalogue_db.Sock.TagString)'
+  - '__10 depth 2 (BasicObject BasicType) TagString string --> r-tainted 2x: read(catalogue_db.Sock.TagString,
+    catalogue_db.Sock.string)'
+  - '_11 depth 1 (FieldObject FieldType) Tags []string --> r-tainted 1x: read(catalogue_db.Sock.Tags)'
+  - '__12 depth 2 (SliceObject SliceType) []string --> r-tainted 1x: read(catalogue_db.Sock.Tags)'
+  - '___13 depth 3 (BasicObject BasicType) TagString string --> r-tainted 2x: read(catalogue_db.Sock.TagString,
+    catalogue_db.Sock.string)'
+  - '___14 depth 3 (BasicObject BasicType) "," string --> r-tainted 1x: read(catalogue_db.Sock.string)'
   - '0 depth 0 (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database
     = catalogue, collection = catalogue} --> r-tainted 1x: read(catalogue_db._)'
   - 0 depth 0 (InterfaceObject UserType) _ .error

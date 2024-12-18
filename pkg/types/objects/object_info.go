@@ -154,6 +154,9 @@ func (vinfo *ObjectInfo) GetAllReadDataflows() []*ObjectDataflow {
 }
 
 func (vinfo *ObjectInfo) Copy(force bool) *ObjectInfo {
+	if vinfo == nil {
+		logger.Logger.Fatal("?????")
+	}
 	// skip deep copy, especially since we can have references and dataflows
 	if !force {
 		return vinfo
@@ -184,6 +187,10 @@ func (vinfo *ObjectInfo) Copy(force bool) *ObjectInfo {
 }
 
 func (vinfo *ObjectInfo) DeepCopy() *ObjectInfo {
+	if vinfo == nil {
+		logger.Logger.Fatal("?????")
+	}
+
 	var dataflows []*ObjectDataflow
 	for _, df := range vinfo.Dataflows {
 		dataflows = append(dataflows, df.DeepCopy())

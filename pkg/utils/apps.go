@@ -6,6 +6,7 @@ import (
 	specs_foobar "github.com/blueprint-uservices/blueprint/examples/foobar/wiring/specs"
 	specs_postnotification "github.com/blueprint-uservices/blueprint/examples/postnotification/wiring/specs"
 	specs_postnotification_simple "github.com/blueprint-uservices/blueprint/examples/postnotification_simple/wiring/specs"
+	specs_app_constraints_referential_integrity "github.com/blueprint-uservices/blueprint/examples/app_constraints_referential_integrity/wiring/specs"
 	specs_shopping_app "github.com/blueprint-uservices/blueprint/examples/shopping_app/wiring/specs"
 	specs_shopping_simple "github.com/blueprint-uservices/blueprint/examples/shopping_simple/wiring/specs"
 	specs_sockshop2 "github.com/blueprint-uservices/blueprint/examples/sockshop2/wiring/specs"
@@ -20,7 +21,7 @@ const (
 	PATH_BLUEPRINT_CORE_BACKEND string = "github.com/blueprint-uservices/blueprint/runtime/core/backend"
 )
 
-var Apps = []string{"postnotification", "trainticket", "shopping_app", "shopping_simple", "sockshop2", "foobar", "dsb_hotel", "dsb_sn", "postnotification_simple"}
+var Apps = []string{"postnotification", "trainticket", "shopping_app", "shopping_simple", "sockshop2", "foobar", "dsb_hotel", "dsb_sn", "postnotification_simple", "app_constraints_referential_integrity"}
 
 type AppInfo struct {
 	PackagePath   string
@@ -28,15 +29,16 @@ type AppInfo struct {
 }
 
 var APPS_INFO = map[string]AppInfo{
-	"postnotification":        {PATH_BLUEPRINT_EXAMPLES + "postnotification/workflow/postnotification", specs_postnotification.Docker},
-	"postnotification_simple": {PATH_BLUEPRINT_EXAMPLES + "postnotification_simple/workflow/postnotification_simple", specs_postnotification_simple.Docker},
-	"foobar":                  {PATH_BLUEPRINT_EXAMPLES + "foobar/workflow/foobar", specs_foobar.Docker},
-	"sockshop2":               {PATH_BLUEPRINT_EXAMPLES + "sockshop2/workflow", specs_sockshop2.Docker},
-	"trainticket":             {PATH_BLUEPRINT_EXAMPLES + "train_ticket/workflow", specs_trainticket.Docker},
-	"shopping_app":            {PATH_BLUEPRINT_EXAMPLES + "shopping_app/workflow", specs_shopping_app.Docker},
-	"shopping_simple":         {PATH_BLUEPRINT_EXAMPLES + "shopping_simple/workflow", specs_shopping_simple.Docker},
-	"dsb_hotel":               {PATH_BLUEPRINT_EXAMPLES + "dsb_hotel/workflow/hotelreservation", dsb_hotel.Original},
-	"dsb_sn":                  {PATH_BLUEPRINT_EXAMPLES + "dsb_sn/workflow/socialnetwork", dsb_sn.Docker},
+	"postnotification":                      {PATH_BLUEPRINT_EXAMPLES + "postnotification/workflow/postnotification", specs_postnotification.Docker},
+	"postnotification_simple":               {PATH_BLUEPRINT_EXAMPLES + "postnotification_simple/workflow/postnotification_simple", specs_postnotification_simple.Docker},
+	"app_constraints_referential_integrity": {PATH_BLUEPRINT_EXAMPLES + "app_constraints_referential_integrity/workflow/app_constraints_referential_integrity", specs_app_constraints_referential_integrity.Docker},
+	"foobar":                                {PATH_BLUEPRINT_EXAMPLES + "foobar/workflow/foobar", specs_foobar.Docker},
+	"sockshop2":                             {PATH_BLUEPRINT_EXAMPLES + "sockshop2/workflow", specs_sockshop2.Docker},
+	"trainticket":                           {PATH_BLUEPRINT_EXAMPLES + "train_ticket/workflow", specs_trainticket.Docker},
+	"shopping_app":                          {PATH_BLUEPRINT_EXAMPLES + "shopping_app/workflow", specs_shopping_app.Docker},
+	"shopping_simple":                       {PATH_BLUEPRINT_EXAMPLES + "shopping_simple/workflow", specs_shopping_simple.Docker},
+	"dsb_hotel":                             {PATH_BLUEPRINT_EXAMPLES + "dsb_hotel/workflow/hotelreservation", dsb_hotel.Original},
+	"dsb_sn":                                {PATH_BLUEPRINT_EXAMPLES + "dsb_sn/workflow/socialnetwork", dsb_sn.Docker},
 }
 
 func LoadAppPath(app string) string {

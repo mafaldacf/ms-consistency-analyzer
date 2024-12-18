@@ -114,10 +114,9 @@
   - '0 depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database
     = station, collection = station} --> r-tainted 1x: read(station_db.Station)'
   - '_1 depth 1 (StructObject UserType) st station.Station struct{ID string, Name
-    string, StayTime int64} --> r-tainted 3x: read(station_db.Station, station_db.ID,
-    station_db.string)'
-  - '__2 depth 2 (FieldObject FieldType) ID string --> r-tainted 1x: read(station_db.ID)'
-  - '___3 depth 3 (BasicObject BasicType) ID string --> r-tainted 1x: read(station_db.string)'
+    string, StayTime int64} --> r-tainted 2x: read(station_db.Station, station_db.Station.ID)'
+  - '__2 depth 2 (FieldObject FieldType) ID string --> r-tainted 1x: read(station_db.Station.ID)'
+  - '___3 depth 3 (BasicObject BasicType) ID string --> r-tainted 1x: read(station_db.Station.ID)'
   - 0 depth 0 (InterfaceObject UserType) err .error
   - 0 depth 0 (BasicObject BasicType) exists bool
   - 0 depth 0 (InterfaceObject UserType) err .error
@@ -133,7 +132,7 @@
   - 0 depth 0 (ArrayObject ArrayType) ids []string
   - _1 depth 1 (BasicObject BasicType) id string
   - '__2 depth 2 (Reference BasicType) ref <ID string> @ FindID --> r-tainted 1x:
-    read(station_db.string)'
+    read(station_db.Station.ID)'
   - 0 depth 0 (InterfaceObject UserType) _ .error
   - _1 depth 1 (Reference BasicType) ref <nil> @ FindID
   - 0 depth 0 (ArrayObject ArrayType) ids []string

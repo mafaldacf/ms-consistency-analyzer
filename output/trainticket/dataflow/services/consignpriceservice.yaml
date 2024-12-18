@@ -82,18 +82,18 @@
     = consign, collection = consign} --> r-tainted 1x: read(consignprice_db._)'
   - '_1 depth 1 (StructObject UserType) cp consignprice.ConsignPrice struct{ID string,
     Index int64, InitialWeight float64, InitialPrice float64, WithinPrice float64,
-    BeyondPrice float64} --> r-tainted 6x: read(consignprice_db.ConsignPrice, consignprice_db.BeyondPrice,
-    consignprice_db.float64, consignprice_db.InitialPrice, consignprice_db.InitialWeight,
-    consignprice_db.WithinPrice)'
-  - '__2 depth 2 (FieldObject FieldType) BeyondPrice float64 --> r-tainted 1x: read(consignprice_db.BeyondPrice)'
-  - '___3 depth 3 (BasicObject BasicType) BeyondPrice float64 --> r-tainted 1x: read(consignprice_db.float64)'
-  - '__4 depth 2 (FieldObject FieldType) InitialPrice float64 --> r-tainted 1x: read(consignprice_db.InitialPrice)'
-  - '___5 depth 3 (BasicObject BasicType) InitialPrice float64 --> r-tainted 1x: read(consignprice_db.float64)'
-  - '__6 depth 2 (FieldObject FieldType) InitialWeight float64 --> r-tainted 1x: read(consignprice_db.InitialWeight)'
+    BeyondPrice float64} --> r-tainted 5x: read(consignprice_db.ConsignPrice, consignprice_db.ConsignPrice.BeyondPrice,
+    consignprice_db.ConsignPrice.InitialPrice, consignprice_db.ConsignPrice.InitialWeight,
+    consignprice_db.ConsignPrice.WithinPrice)'
+  - '__2 depth 2 (FieldObject FieldType) BeyondPrice float64 --> r-tainted 1x: read(consignprice_db.ConsignPrice.BeyondPrice)'
+  - '___3 depth 3 (BasicObject BasicType) BeyondPrice float64 --> r-tainted 1x: read(consignprice_db.ConsignPrice.BeyondPrice)'
+  - '__4 depth 2 (FieldObject FieldType) InitialPrice float64 --> r-tainted 1x: read(consignprice_db.ConsignPrice.InitialPrice)'
+  - '___5 depth 3 (BasicObject BasicType) InitialPrice float64 --> r-tainted 1x: read(consignprice_db.ConsignPrice.InitialPrice)'
+  - '__6 depth 2 (FieldObject FieldType) InitialWeight float64 --> r-tainted 1x: read(consignprice_db.ConsignPrice.InitialWeight)'
   - '___7 depth 3 (BasicObject BasicType) InitialWeight float64 --> r-tainted 1x:
-    read(consignprice_db.float64)'
-  - '__8 depth 2 (FieldObject FieldType) WithinPrice float64 --> r-tainted 1x: read(consignprice_db.WithinPrice)'
-  - '___9 depth 3 (BasicObject BasicType) WithinPrice float64 --> r-tainted 1x: read(consignprice_db.float64)'
+    read(consignprice_db.ConsignPrice.InitialWeight)'
+  - '__8 depth 2 (FieldObject FieldType) WithinPrice float64 --> r-tainted 1x: read(consignprice_db.ConsignPrice.WithinPrice)'
+  - '___9 depth 3 (BasicObject BasicType) WithinPrice float64 --> r-tainted 1x: read(consignprice_db.ConsignPrice.WithinPrice)'
   - 0 depth 0 (InterfaceObject UserType) err .error
   - 0 depth 0 (BasicObject BasicType) exists bool
   - 0 depth 0 (InterfaceObject UserType) err .error

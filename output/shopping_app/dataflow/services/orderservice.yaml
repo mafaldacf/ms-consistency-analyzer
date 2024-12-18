@@ -75,7 +75,7 @@
     --> r-tainted 1x: read(analytics_queue.AnalyticsMessage.ProductCategory)'
   - '___4 depth 3 (Reference InterfaceType) ref <ProductCategory interface{}> @ AnalyticsService
     --> w-tainted 2x: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories)
-    --> r-tainted 2x: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.interface{})'
+    --> r-tainted 2x: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.interface{})'
   - 0 depth 0 (InterfaceObject UserType) _ .error
   - _1 depth 1 (Reference UserType) ref <err .error> @ ProductService
   - '0 depth 0 (StructObject UserType) analyticsMessage shopping_app.AnalyticsMessage
@@ -85,7 +85,7 @@
     --> r-tainted 1x: read(analytics_queue.AnalyticsMessage.ProductCategory)'
   - '__2 depth 2 (Reference InterfaceType) ref <ProductCategory interface{}> @ AnalyticsService
     --> w-tainted 2x: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories)
-    --> r-tainted 2x: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.interface{})'
+    --> r-tainted 2x: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.interface{})'
   - '_5 depth 1 (FieldObject FieldType) UserID string --> w-tainted 1x: write(analytics_queue.AnalyticsMessage.UserID)
     --> r-tainted 1x: read(analytics_queue.AnalyticsMessage.UserID)'
   - '__6 depth 2 (Reference InterfaceType) ref <UserID interface{}> @ AnalyticsService

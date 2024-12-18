@@ -9,11 +9,11 @@
 
 [0] (ArrayObject ArrayType) ids []string
 [_1] (BasicObject BasicType) id string
-      --> r-tainted: read(station_db.string) {1}
+      --> r-tainted: read(station_db.Station.ID) {1}
 [__2] (Reference BasicType) ref <ID string> @ FindID
 
 [0] (BasicObject BasicType) id string
-     --> r-tainted: read(station_db.string) {1}
+     --> r-tainted: read(station_db.Station.ID) {1}
 [_1] (Reference BasicType) ref <ID string> @ FindID
 
 [0] (InterfaceObject UserType) _ .error

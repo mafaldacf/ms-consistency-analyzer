@@ -41,9 +41,9 @@
     = route, collection = route} --> r-tainted 1x: read(route_db.Route)'
   - '_1 depth 1 (StructObject UserType) old_route route.Route struct{ID string, Stations
     []string, Distances []int64, StartStation string, EndStation string} --> r-tainted
-    3x: read(route_db.Route, route_db.ID, route_db.string)'
-  - '__2 depth 2 (FieldObject FieldType) ID string --> r-tainted 1x: read(route_db.ID)'
-  - '___3 depth 3 (BasicObject BasicType) ID string --> r-tainted 1x: read(route_db.string)'
+    2x: read(route_db.Route, route_db.Route.ID)'
+  - '__2 depth 2 (FieldObject FieldType) ID string --> r-tainted 1x: read(route_db.Route.ID)'
+  - '___3 depth 3 (BasicObject BasicType) ID string --> r-tainted 1x: read(route_db.Route.ID)'
   - 0 depth 0 (InterfaceObject UserType) err .error
 
 (*RouteServiceImpl).DeleteRoute(ctx context.Context, id string):

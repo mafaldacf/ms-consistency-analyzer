@@ -66,11 +66,11 @@
 
     --> r-tainted: read(route_db.Route) {1}
 [0] (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database = route, collection = route}
-     --> r-tainted: read(route_db.Route, route_db.ID, route_db.string) {3}
+     --> r-tainted: read(route_db.Route, route_db.Route.ID) {2}
 [_1] (StructObject UserType) old_route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
-      --> r-tainted: read(route_db.ID) {1}
+      --> r-tainted: read(route_db.Route.ID) {1}
 [__2] (FieldObject FieldType) ID string
-       --> r-tainted: read(route_db.string) {1}
+       --> r-tainted: read(route_db.Route.ID) {1}
 [___3] (BasicObject BasicType) ID string
 
 [0] (InterfaceObject UserType) err .error

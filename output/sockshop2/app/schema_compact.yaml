@@ -1,0 +1,67 @@
+CART_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- dependencies: []
+- schema:
+  - fields: []
+  - unfolded_fields: []
+  - foreign_fields: []
+
+CATALOGUE_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- dependencies: []
+- schema:
+  - fields:
+    - _: catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
+    - Sock: catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
+  - unfolded_fields:
+    - _.id: string
+    - Sock: catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
+    - Sock.ID: string
+    - Sock.Name: string
+    - Sock.Description: string
+    - Sock.ImageURL: '[]string'
+    - Sock.ImageURL_1: string
+    - Sock.ImageURL_2: string
+    - Sock.Price: float32
+    - Sock.Quantity: int
+    - Sock.Tags: '[]string'
+    - Sock.TagString: string
+  - foreign_fields: []
+
+ORDER_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- dependencies: []
+- schema:
+  - fields: []
+  - unfolded_fields: []
+  - foreign_fields: []
+
+SHIPDB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- dependencies: []
+- schema:
+  - fields: []
+  - unfolded_fields: []
+  - foreign_fields: []
+
+SHIPQUEUE:
+- type: Queue
+- kind: RabbitMQ
+- dependencies: []
+- schema:
+  - fields: []
+  - unfolded_fields: []
+  - foreign_fields: []
+
+USER_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- dependencies: []
+- schema:
+  - fields: []
+  - unfolded_fields: []
+  - foreign_fields: []

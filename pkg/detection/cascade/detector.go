@@ -36,20 +36,22 @@ func (detector *CascadeDetector) analyzeNodes(lastServiceCallNode *abstractgraph
 		// (i) message broker (queue)
 		// (ii) RPC
 		// NOTE: for now, we ony consider message brokers
-
+		
 		// 3. TODO LATER: to be more precise, we can check which object was deleted and if that specific reference to that object was deleted aswell
-
+		
 		deleteOp := &deleteOperation{
 			call:      dbCall,
 			datastore: dbCall.DbInstance.GetDatastore(),
 		}
-
+		
+		logger.Logger.Infof("[CASCADE DETECTOR] searching dependencies for datastore (%s)", dbCall.DbInstance.GetDatastore().GetName())
 		for _, datastoreInstance := range detector.getApp().GetDbInstances() {
 			dependentDatastore := datastoreInstance.GetDatastore()
 			// discard current datastore
 			if dependentDatastore != deleteOp.datastore {
 				// found a datastore that has fields referencing the current one
 				if dependentDatastore.IsReferencingDatastore(deleteOp.datastore) {
+					logger.Logger.Infof("[CASCADE DETECTOR] found dependency for datastore (%s): %s", deleteOp.datastore.GetName(), dependentDatastore.GetName())
 					for _, service := range detector.getApp().GetServices() {
 						if service.HasDatastore(dependentDatastore) {
 							deleteDep := &deleteDependency{
@@ -76,7 +78,8 @@ func (detector *CascadeDetector) analyzeNodes(lastServiceCallNode *abstractgraph
 
 func (detector *CascadeDetector) searchCascadingDeletes(deleteOp *deleteOperation, lastServiceCallNode *abstractgraph.AbstractServiceCall, deleteCall *abstractgraph.AbstractDatabaseCall, child_idx int) {
 	logger.Logger.Infof("[CASCADE DETECTOR] searching for cascading deletes originating @ (%s, %s): %s", deleteCall.GetCallerStr(), deleteCall.DbInstance.GetDatastore().GetName(), deleteCall.LongString())
-	for idx := child_idx + 1; idx < len(lastServiceCallNode.GetChildren()); idx++ {
+	numServiceCalls := len(lastServiceCallNode.GetChildren())
+	for idx := child_idx + 1; idx < numServiceCalls; idx++ {
 		node := lastServiceCallNode.GetChildren()[idx]
 		// found call that pushes notifications
 		if pushCall, ok := node.(*abstractgraph.AbstractDatabaseCall); ok && pushCall.DbInstance.GetDatastore().IsQueue() && pushCall.ParsedCall.Method.IsWrite() {
@@ -97,6 +100,7 @@ func (detector *CascadeDetector) searchCascadingDeletes(deleteOp *deleteOperatio
 			}
 		}
 	}
+	
 }
 
 func (detector *CascadeDetector) Results() string {
@@ -106,7 +110,7 @@ func (detector *CascadeDetector) Results() string {
 
 	for i, op := range detector.getDeleteOperations() {
 		results += fmt.Sprintf("(#%0d) %s: %s\n", i, op.getCall().GetCallerStr(), op.call.ShortString())
-		results += "\tmissing cascading deletes:\n"
+		results += fmt.Sprintf("\tmissing %d cascading deletes\n", len(op.getDependencies()))
 		for _, dep := range op.getDependencies() {
 			if !dep.cascading {
 				results += fmt.Sprintf("\t- %s\n", dep.LongString())

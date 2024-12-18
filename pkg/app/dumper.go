@@ -19,7 +19,7 @@ func (app *App) Dump() {
 	app.dumpYamlPackages()
 	app.dumpYamlServices()
 	app.dumpYamlCalls()
-	app.dumpYamlDatastores()
+	app.DumpYamlSchema(false)
 	app.dumpYamlDataflow()
 }
 
@@ -168,7 +168,7 @@ func (app *App) dumpYamlDataflow() {
 	}
 }
 
-func (app *App) dumpYamlDatastores() {
+func (app *App) DumpYamlSchema(compactSchema bool) {
 	data := make(map[string]utils.OrderedProperties)
 	for _, datastore := range app.Databases {
 		schema := utils.NewOrderedPropertyList()
@@ -225,7 +225,12 @@ func (app *App) dumpYamlDatastores() {
 		props.AddOrderedProperty("schema", schema.Result())
 		data[strings.ToUpper(datastore.GetName())] = props.Result()
 	}
-	utils.DumpToYamlFile(data, app.Name, "app/schema")
+
+	if compactSchema {
+		utils.DumpToYamlFile(data, app.Name, "app/schema_compact")
+	} else {
+		utils.DumpToYamlFile(data, app.Name, "app/schema")
+	}
 }
 
 func (app *App) dumpYamlServices() {

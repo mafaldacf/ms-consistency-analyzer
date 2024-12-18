@@ -139,7 +139,7 @@ def search_all_trace_filenames(app):
     names = [os.path.splitext(os.path.basename(file))[0] for file in files]
     return names
 
-ALL_APPS = ['postnotification', 'postnotification_simple', 'trainticket', 'shopping_app', 'shopping_simple', 'sockshop2', 'foobar']
+ALL_APPS = ['postnotification', 'postnotification_simple', 'trainticket', 'shopping_app', 'shopping_simple', 'sockshop2', 'foobar', 'app_constraints_referential_integrity']
 ALL_GRAPHS = ['app', 'call']
 
 def get_app_list(app_arg):

@@ -10,6 +10,7 @@ import (
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
+	"analyzer/pkg/types/gotypes"
 	"analyzer/pkg/types/objects"
 	"analyzer/pkg/utils"
 )
@@ -175,22 +176,28 @@ func TaintDataflowReadNoSQL(app *app.App, obj objects.Object, call *AbstractData
 	obj = getTargetVariableIfNoSQLCursorRead(datastore, obj)
 	deps := obj.GetNestedDependencies(false)
 	logger.Logger.Infof("[TENTATIVE TAINT READ (DOC) VAR] [%s] NUM DEPS = %d @ %s", utils.GetType(obj), len(deps), obj.LongString())
+	var prefix string
 	for _, dep := range deps {
 		if !slices.Contains(taintedVariables, dep) {
-			typeName := dep.GetType().GetName()
+			typeName := prefix + dep.GetType().GetName()
 
-			if queryField {
-				df := obj.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, dep, obj, field, false)
-				app.AddDataflow(df, call.ParsedCall)
-			} else {
-				entry := datastores.NewEntry(typeName, typeName, 0, datastore)
-				df := obj.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, dep, obj, entry, false)
-				app.AddDataflow(df, call.ParsedCall)
-			}
-			logger.Logger.Debugf("\t\t[TAINT READ (DOC) INDIRECT] <unnamed> ---> (%02d) %s [%s]", dep.GetId(), dep.String(), utils.GetType(dep))
-
+			taintDataflowReadNoSQLHelper(app, obj, dep, field, call, datastore, typeName, queryField)
 			taintedVariables = append(taintedVariables, dep)
-			app.AddTaintedVariableIfNotExists(dep.GetType().GetName(), dep)
+
+			if fieldObj, ok := dep.(*objects.FieldObject); ok {
+				// if it is a nested field then it was captured in "deps" and will be visited eventually
+				// otherwise, we want to capture any other types e.g. BasicObjects to ensure the typeName aka fieldName assigned is the same as the upper field
+				if _, underlyingIsNestedField := fieldObj.WrappedVariable.(*objects.FieldObject); !underlyingIsNestedField {
+					taintDataflowReadNoSQLHelper(app, obj, fieldObj.WrappedVariable, field, call, datastore, typeName, queryField)
+					taintedVariables = append(taintedVariables, fieldObj.WrappedVariable)
+				}
+			}
+
+			if structObj, ok := dep.(*objects.StructObject); ok {
+				if userType, ok := structObj.GetType().(*gotypes.UserType); ok {
+					prefix += userType.GetName() + "."
+				}
+			}
 		}
 	}
 
@@ -199,6 +206,20 @@ func TaintDataflowReadNoSQL(app *app.App, obj objects.Object, call *AbstractData
 	}
 
 	fmt.Println()
+}
+
+func taintDataflowReadNoSQLHelper(app *app.App, obj objects.Object, dep objects.Object, field datastores.Field, call *AbstractDatabaseCall, datastore *datastores.Datastore, typeName string, queryField bool) {
+	if queryField { // query
+		//logger.Logger.Debugf("query field? YES! for typename = %s", typeName)
+		df := obj.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, dep, obj, field, false)
+		app.AddDataflow(df, call.ParsedCall)
+	} else { // cursor
+		//logger.Logger.Debugf("query field? NO! for typename = %s", typeName)
+		entry := datastores.NewEntry(typeName, typeName, 0, datastore)
+		df := obj.GetVariableInfo().SetIndirectDataflow(datastore.Name, call.Service, dep, obj, entry, false)
+		app.AddDataflow(df, call.ParsedCall)
+	}
+	app.AddTaintedVariableIfNotExists(dep.GetType().GetName(), dep)
 }
 
 // aka TaintDataflowReadUnnamed

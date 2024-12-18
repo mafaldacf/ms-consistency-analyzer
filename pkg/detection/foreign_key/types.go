@@ -27,6 +27,16 @@ func (detector *ForeignKeyDetector) addForeignKeyRead(read *ForeignKeyRead) {
 	detector.reads = append(detector.reads, read)
 }
 
+func (detector *ForeignKeyDetector) getUsedForeignReferencesForFieldInDatastore(fieldName string, datastore *datastores.Datastore) []string {
+	var foreignReference []string
+	for _, read := range detector.reads {
+		if read.refField.Datastore == datastore && read.refField.GetFullName() == fieldName {
+			foreignReference = append(foreignReference, read.originField.GetFullName())
+		}
+	}
+	return foreignReference
+}
+
 type ForeignKeyRead struct {
 	refField     *datastores.Entry // field that is referencing
 	originField  *datastores.Entry // field that is being referenced

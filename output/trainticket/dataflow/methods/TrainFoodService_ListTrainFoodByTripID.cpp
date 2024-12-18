@@ -14,20 +14,20 @@
 
     --> r-tainted: read(trainfood_db._) {1}
 [0] (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database = trainfood, collection = trainfood}
-     --> r-tainted: read(trainfood_db.TrainFood, trainfood_db.Foods, trainfood_db.[]food.Food struct{Name string, Price float64}) {3}
+     --> r-tainted: read(trainfood_db.TrainFood, trainfood_db.TrainFood.Foods) {2}
 [_1] (StructObject UserType) tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}}
-      --> r-tainted: read(trainfood_db.Foods) {1}
+      --> r-tainted: read(trainfood_db.TrainFood.Foods) {1}
 [__2] (FieldObject FieldType) Foods []food.Food struct{Name string, Price float64}
-       --> r-tainted: read(trainfood_db.[]food.Food struct{Name string, Price float64}) {1}
+       --> r-tainted: read(trainfood_db.TrainFood.Foods) {1}
 [___3] (SliceObject SliceType) Foods []food.Food struct{Name string, Price float64}
 
 [0] (InterfaceObject UserType) err .error
 
-    --> r-tainted: read(trainfood_db.TrainFood, trainfood_db.Foods, trainfood_db.[]food.Food struct{Name string, Price float64}) {3}
+    --> r-tainted: read(trainfood_db.TrainFood, trainfood_db.TrainFood.Foods) {2}
 [0] (StructObject UserType) tf trainfood.TrainFood struct{ID string, TripID string, Foods []food.Food struct{Name string, Price float64}}
-     --> r-tainted: read(trainfood_db.Foods) {1}
+     --> r-tainted: read(trainfood_db.TrainFood.Foods) {1}
 [_1] (FieldObject FieldType) Foods []food.Food struct{Name string, Price float64}
-      --> r-tainted: read(trainfood_db.[]food.Food struct{Name string, Price float64}) {1}
+      --> r-tainted: read(trainfood_db.TrainFood.Foods) {1}
 [__2] (SliceObject SliceType) Foods []food.Food struct{Name string, Price float64}
 
 [0] (BasicObject BasicType) exists bool

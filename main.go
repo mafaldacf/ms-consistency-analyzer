@@ -121,6 +121,9 @@ func initAnalyzer(appName string, xcyDetection bool, cascadeDetection bool, fore
 		detector.Run()
 		results := detector.Results()
 		summary += results + "\n\n"
+
+		detector.CompactSchema()
+		app.DumpYamlSchema(true)
 	}
 
 	bold_light_red := "\033[1;31m"

@@ -96,7 +96,7 @@
 [_1] (FieldObject FieldType) Category string
       --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory) {1}           --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory) {1} --> r-tainted: read(analytics_queue.AnalyticsMessage.ProductCategory) {1}
 [__2] (BasicObject BasicType) Category string
-       --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2}             --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2} --> r-tainted: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.interface{}) {2}
+       --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2}             --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2} --> r-tainted: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.interface{}) {2}
 [___3] (Reference InterfaceType) ref <ProductCategory interface{}> @ AnalyticsService
 
 [0] (InterfaceObject UserType) _ .error
@@ -106,11 +106,11 @@
 [0] (StructObject UserType) analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string}
      --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory) {1}         --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory) {1} --> r-tainted: read(analytics_queue.AnalyticsMessage.ProductCategory) {1}
 [_1] (FieldObject FieldType) ProductCategory string
-      --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2}           --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2} --> r-tainted: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.interface{}) {2}
+      --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2}           --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2} --> r-tainted: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.interface{}) {2}
 [__2] (Reference InterfaceType) ref <ProductCategory interface{}> @ AnalyticsService
       --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory) {1}           --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory) {1} --> r-tainted: read(analytics_queue.AnalyticsMessage.ProductCategory) {1}
 [__2] (BasicObject BasicType) Category string
-       --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2}             --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2} --> r-tainted: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.interface{}) {2}
+       --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2}             --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2} --> r-tainted: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.interface{}) {2}
 [___3] (Reference InterfaceType) ref <ProductCategory interface{}> @ AnalyticsService
      --> w-tainted: write(analytics_queue.AnalyticsMessage.UserID) {1}         --> w-tainted: write(analytics_queue.AnalyticsMessage.UserID) {1} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID) {1}
 [_1] (FieldObject FieldType) UserID string

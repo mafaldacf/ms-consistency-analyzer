@@ -48,6 +48,7 @@ go run main.go -app=postnotification_simple --xcy --fk --cascade
 go run main.go -app=postnotification --xcy --fk --cascade
 go run main.go -app=sockshop2 --xcy --fk --cascade
 go run main.go -app=trainticket --xcy --fk --cascade
+go run main.go -app=app_constraints_referential_integrity --xcy --fk --cascade
 
 # TODO
 go run main.go -app=dsb_sn --xcy --fk --cascade
@@ -65,19 +66,23 @@ source ~/.venv/bin/activate
 ./graphs.py --app postnotification
 ./graphs.py --app sockshop2
 ./graphs.py --app trainticket
+./graphs.py --app app_constraints_referential_integrity
+./graphs.py --app app_constraints_specialization
 ```
 
 ## Summary
 
-| Application Name          | Runs          | XCY Analysis  | Cascade Analysis  | Foreign Key Analysis  |
-|---------------------------|---------------|---------------|-------------------|-----------------------|
-| `foobar`                  | **YES**       | 0             | 0                 | 0                     |
-| `shopping_simple`         | **YES**       | 0             | 1                 | 0                     |
-| `shopping_app`            | **YES**       | 1             | 0                 | 1                     |
-| `postnotification_simple` | **YES**       | 1             | 0                 | 1                     |
-| `postnotification`        | **YES**       | 2             | 0                 | 2                     |
-| `sockshop2`               | **YES**       | 0             | 0                 | 0                     |
-| `trainticket`             | **YES**       | 0             | 13                | 0                     |
+| Application Name                          | Runs          | XCY Analysis  | Cascade Analysis  | Foreign Key Analysis  |
+|-------------------------------------------|---------------|---------------|-------------------|-----------------------|
+| `foobar`                                  | **YES**       | 0             | 0                 | 0                     |
+| `shopping_simple`                         | **YES**       | 0             | 1;1               | 0                     |
+| `shopping_app`                            | **YES**       | 1             | 0                 | 1                     |
+| `postnotification_simple`                 | **YES**       | 1             | 0                 | 1                     |
+| `postnotification`                        | **YES**       | 2             | 0                 | 2                     |
+| `sockshop2`                               | **YES**       | 0             | 0                 | 0                     |
+| `trainticket`                             | **YES**       | 0             | 13;0              | 0                     |
+| `app_constraints_referential_integrity`   | **YES**       | 0             | 2;1               | 1                     |
+| `app_constraints_specialization`          | **YES**       | 0             | 2;1               | 1                     |
 
 ## Structure
 

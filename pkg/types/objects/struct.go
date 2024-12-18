@@ -297,7 +297,7 @@ func (v *StructObject) attachReferenceToFields(target Object, creator string) {
 }
 
 func (v *StructObject) AddReferenceWithID(target Object, creator string) {
-	logger.Logger.Infof("[VARS STRUCT - REF] trying to reference struct variable type (%s) for target type (%s) for variables: \n\t\t\t\t\t - current: %s \n\t\t\t\t\t - target: %s", utils.GetType(v), utils.GetType(target), v.String(), target.String())
+	logger.Logger.Infof("[VARS STRUCT - REF] trying to reference struct variable type (%s) for target type (%s) for variables: \n\t\t\t\t\t - current [%s]: %s (INFO = %v) \n\t\t\t\t\t - target [%s]: %s (INFO = %v)", utils.GetType(v), utils.GetType(target), utils.GetType(v), v.String(), v.GetVariableInfo(), utils.GetType(target), target.String(), target.GetVariableInfo())
 	v.ObjectInfo.AddReferenceWithID(v, target, creator)
 
 	// target can also have its own references e.g.

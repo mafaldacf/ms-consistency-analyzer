@@ -20,20 +20,20 @@
 
     --> r-tainted: read(station_db.Station) {1}
 [0] (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database = station, collection = station}
-     --> r-tainted: read(station_db.Station, station_db.ID, station_db.string) {3}
+     --> r-tainted: read(station_db.Station, station_db.Station.ID) {2}
 [_1] (StructObject UserType) st station.Station struct{ID string, Name string, StayTime int64}
-      --> r-tainted: read(station_db.ID) {1}
+      --> r-tainted: read(station_db.Station.ID) {1}
 [__2] (FieldObject FieldType) ID string
-       --> r-tainted: read(station_db.string) {1}
+       --> r-tainted: read(station_db.Station.ID) {1}
 [___3] (BasicObject BasicType) ID string
 
 [0] (InterfaceObject UserType) err .error
 
-    --> r-tainted: read(station_db.Station, station_db.ID, station_db.string) {3}
+    --> r-tainted: read(station_db.Station, station_db.Station.ID) {2}
 [0] (StructObject UserType) st station.Station struct{ID string, Name string, StayTime int64}
-     --> r-tainted: read(station_db.ID) {1}
+     --> r-tainted: read(station_db.Station.ID) {1}
 [_1] (FieldObject FieldType) ID string
-      --> r-tainted: read(station_db.string) {1}
+      --> r-tainted: read(station_db.Station.ID) {1}
 [__2] (BasicObject BasicType) ID string
 
 [0] (BasicObject BasicType) exists bool

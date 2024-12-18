@@ -30,12 +30,12 @@
   - 0 depth 0 (StructObject UserType) message shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string}
   - _1 depth 1 (Reference UserType) ref <workerMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string}> @ AnalyticsService
   - '__2 depth 2 (FieldObject FieldType) ProductCategory string --> w-tainted 1x:
-    write(analytics_db.Analytics.Categories) --> r-tainted 1x: read(analytics_db.ProductCategory)'
+    write(analytics_db.Analytics.Categories) --> r-tainted 1x: read(analytics_db.Analytics.ProductCategory)'
   - '___3 depth 3 (BasicObject BasicType) ProductCategory string --> w-tainted 1x:
-    write(analytics_db.Analytics.Categories) --> r-tainted 1x: read(analytics_db.string)'
+    write(analytics_db.Analytics.Categories) --> r-tainted 1x: read(analytics_db.Analytics.ProductCategory)'
   - '____4 depth 4 (InterfaceObject InterfaceType) ProductCategory interface{} -->
     w-tainted 2x: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories)
-    --> r-tainted 2x: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.interface{})'
+    --> r-tainted 2x: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.interface{})'
   - '__5 depth 2 (FieldObject FieldType) UserID string --> w-tainted 1x: write(analytics_db.Analytics.UserID)
     --> r-tainted 1x: read(analytics_db._.userID)'
   - '___6 depth 3 (BasicObject BasicType) UserID string --> w-tainted 1x: write(analytics_db.Analytics.UserID)
@@ -46,11 +46,11 @@
     3x: read(analytics_queue.AnalyticsMessage.UserID, analytics_db._.userID, shipment_queue.ShipmentMessage.UserID)'
   - _8 depth 1 (FieldObject FieldType) ProductCategory string
   - '__9 depth 2 (Reference FieldType) ref <ProductCategory string> @ AnalyticsService
-    --> w-tainted 1x: write(analytics_db.Analytics.Categories) --> r-tainted 1x: read(analytics_db.ProductCategory)'
+    --> w-tainted 1x: write(analytics_db.Analytics.Categories) --> r-tainted 1x: read(analytics_db.Analytics.ProductCategory)'
   - '__12 depth 2 (BasicObject BasicType) ProductCategory string --> w-tainted 1x:
-    write(analytics_db.Analytics.Categories) --> r-tainted 1x: read(analytics_db.string)'
+    write(analytics_db.Analytics.Categories) --> r-tainted 1x: read(analytics_db.Analytics.string)'
   - '___13 depth 3 (Reference FieldType) ref <ProductCategory string> @ AnalyticsService
-    --> w-tainted 1x: write(analytics_db.Analytics.Categories) --> r-tainted 1x: read(analytics_db.ProductCategory)'
+    --> w-tainted 1x: write(analytics_db.Analytics.Categories) --> r-tainted 1x: read(analytics_db.Analytics.ProductCategory)'
   - _16 depth 1 (FieldObject FieldType) UserID string
   - '__17 depth 2 (Reference FieldType) ref <UserID string> @ AnalyticsService -->
     w-tainted 1x: write(analytics_db.Analytics.UserID) --> r-tainted 1x: read(analytics_db._.userID)'
@@ -62,11 +62,11 @@
     {database = analytics_database, collection = analytics_collection}
   - 0 depth 0 (InterfaceObject UserType) _ .error
   - '0 depth 0 (StructObject UserType) analytics shopping_app.Analytics struct{UserID
-    string, Categories []string} --> r-tainted 6x: read(analytics_db.Analytics, analytics_db.Categories,
-    analytics_db.[]string, analytics_db.string, analytics_db.ProductCategory, analytics_db.interface{})'
-  - '_1 depth 1 (FieldObject FieldType) Categories []string --> r-tainted 1x: read(analytics_db.Categories)'
+    string, Categories []string} --> r-tainted 5x: read(analytics_db.Analytics, analytics_db.Analytics.Categories,
+    analytics_db.Analytics.string, analytics_db.Analytics.ProductCategory, analytics_db.Analytics.interface{})'
+  - '_1 depth 1 (FieldObject FieldType) Categories []string --> r-tainted 1x: read(analytics_db.Analytics.Categories)'
   - '__2 depth 2 (SliceObject SliceType) Categories []string --> w-tainted 1x: write(analytics_db.Analytics.Categories)
-    --> r-tainted 1x: read(analytics_db.[]string)'
+    --> r-tainted 1x: read(analytics_db.Analytics.Categories)'
   - 0 depth 0 (SliceObject UserType) query primitive.D
   - _1 depth 1 (StructObject StructType) struct{Key "userID" string, Key "userID" string, Value string, Value string}
   - __2 depth 2 (FieldObject FieldType) Key "userID" string

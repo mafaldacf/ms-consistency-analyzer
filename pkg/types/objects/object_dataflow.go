@@ -109,7 +109,7 @@ func (v *ObjectInfo) SetDirectDataflow(datastore string, service string, variabl
 		Write:     write,
 	}
 	v.Dataflows = append(v.Dataflows, df)
-	logger.Logger.Warnf("[DIRECT DATAFLOW - %s] (%d) %s", strings.ToUpper(df.GetOpString()), df.Variable.GetId(), df.Variable.String())
+	logger.Logger.Warnf("[DIRECT DATAFLOW - %s @ %s] (%d) [%s] %s", strings.ToUpper(df.GetOpString()), field.GetFullName(), df.Variable.GetId(), utils.GetType(df.Variable), df.Variable.String())
 	return df
 }
 
@@ -124,7 +124,7 @@ func (v *ObjectInfo) SetIndirectDataflow(datastore string, service string, curre
 	}
 	current.GetVariableInfo().IndirectDataflows = append(current.GetVariableInfo().IndirectDataflows, df)
 	v.Dataflows = append(v.Dataflows, df)
-	logger.Logger.Warnf("\t\t[INDIRECT DATAFLOW - %s] (%d) %s", strings.ToUpper(df.GetOpString()), df.Variable.GetId(), df.Variable.String())
+	logger.Logger.Warnf("\t\t[INDIRECT DATAFLOW - %s @ %s] (%d) [%s] %s", strings.ToUpper(df.GetOpString()), field.GetFullName(), df.Variable.GetId(), utils.GetType(df.Variable), df.Variable.String())
 	return df
 }
 

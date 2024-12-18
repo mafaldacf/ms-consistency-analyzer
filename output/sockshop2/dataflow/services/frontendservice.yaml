@@ -18,23 +18,29 @@
   - '_1 depth 1 (Reference UserType) ref <sock catalogue.Sock struct{ID string, Name
     string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string,
     Price float32, Quantity int, Tags []string, TagString string}> @ CatalogueService
-    --> r-tainted 8x: read(catalogue_db.Sock, catalogue_db.ImageURL, catalogue_db.[]string,
-    catalogue_db.string, catalogue_db.ImageURL_1, catalogue_db.ImageURL_2, catalogue_db.TagString,
-    catalogue_db.Tags)'
-  - '__2 depth 2 (FieldObject FieldType) ImageURL []string --> r-tainted 1x: read(catalogue_db.ImageURL)'
-  - '___3 depth 3 (ArrayObject SliceType) []string --> r-tainted 1x: read(catalogue_db.[]string)'
-  - '____4 depth 4 (BasicObject BasicType) ImageURL_1 string --> r-tainted 1x: read(catalogue_db.string)'
-  - '____5 depth 4 (BasicObject BasicType) ImageURL_2 string --> r-tainted 1x: read(catalogue_db.string)'
-  - '__6 depth 2 (FieldObject FieldType) ImageURL_1 string --> r-tainted 1x: read(catalogue_db.ImageURL_1)'
-  - '___7 depth 3 (BasicObject BasicType) ImageURL_1 string --> r-tainted 1x: read(catalogue_db.string)'
-  - '__8 depth 2 (FieldObject FieldType) ImageURL_2 string --> r-tainted 1x: read(catalogue_db.ImageURL_2)'
-  - '___9 depth 3 (BasicObject BasicType) ImageURL_2 string --> r-tainted 1x: read(catalogue_db.string)'
-  - '__10 depth 2 (FieldObject FieldType) TagString string --> r-tainted 1x: read(catalogue_db.TagString)'
-  - '___11 depth 3 (BasicObject BasicType) TagString string --> r-tainted 1x: read(catalogue_db.string)'
-  - '__12 depth 2 (FieldObject FieldType) Tags []string --> r-tainted 1x: read(catalogue_db.Tags)'
-  - '___13 depth 3 (SliceObject SliceType) []string --> r-tainted 1x: read(catalogue_db.[]string)'
-  - '____14 depth 4 (BasicObject BasicType) TagString string --> r-tainted 1x: read(catalogue_db.string)'
-  - '____15 depth 4 (BasicObject BasicType) "," string --> r-tainted 1x: read(catalogue_db.string)'
+    --> r-tainted 7x: read(catalogue_db.Sock, catalogue_db.Sock.ImageURL, catalogue_db.Sock.string,
+    catalogue_db.Sock.ImageURL_1, catalogue_db.Sock.ImageURL_2, catalogue_db.Sock.TagString,
+    catalogue_db.Sock.Tags)'
+  - '__2 depth 2 (FieldObject FieldType) ImageURL []string --> r-tainted 1x: read(catalogue_db.Sock.ImageURL)'
+  - '___3 depth 3 (ArrayObject SliceType) []string --> r-tainted 1x: read(catalogue_db.Sock.ImageURL)'
+  - '____4 depth 4 (BasicObject BasicType) ImageURL_1 string --> r-tainted 2x: read(catalogue_db.Sock.string,
+    catalogue_db.Sock.ImageURL_1)'
+  - '____5 depth 4 (BasicObject BasicType) ImageURL_2 string --> r-tainted 2x: read(catalogue_db.Sock.string,
+    catalogue_db.Sock.ImageURL_2)'
+  - '__6 depth 2 (FieldObject FieldType) ImageURL_1 string --> r-tainted 1x: read(catalogue_db.Sock.ImageURL_1)'
+  - '___7 depth 3 (BasicObject BasicType) ImageURL_1 string --> r-tainted 2x: read(catalogue_db.Sock.string,
+    catalogue_db.Sock.ImageURL_1)'
+  - '__8 depth 2 (FieldObject FieldType) ImageURL_2 string --> r-tainted 1x: read(catalogue_db.Sock.ImageURL_2)'
+  - '___9 depth 3 (BasicObject BasicType) ImageURL_2 string --> r-tainted 2x: read(catalogue_db.Sock.string,
+    catalogue_db.Sock.ImageURL_2)'
+  - '__10 depth 2 (FieldObject FieldType) TagString string --> r-tainted 1x: read(catalogue_db.Sock.TagString)'
+  - '___11 depth 3 (BasicObject BasicType) TagString string --> r-tainted 2x: read(catalogue_db.Sock.TagString,
+    catalogue_db.Sock.string)'
+  - '__12 depth 2 (FieldObject FieldType) Tags []string --> r-tainted 1x: read(catalogue_db.Sock.Tags)'
+  - '___13 depth 3 (SliceObject SliceType) []string --> r-tainted 1x: read(catalogue_db.Sock.Tags)'
+  - '____14 depth 4 (BasicObject BasicType) TagString string --> r-tainted 2x: read(catalogue_db.Sock.TagString,
+    catalogue_db.Sock.string)'
+  - '____15 depth 4 (BasicObject BasicType) "," string --> r-tainted 1x: read(catalogue_db.Sock.string)'
   - _16 depth 1 (FieldObject FieldType) ID string
   - __17 depth 2 (BasicObject BasicType) ID string
   - _18 depth 1 (FieldObject FieldType) Price float32

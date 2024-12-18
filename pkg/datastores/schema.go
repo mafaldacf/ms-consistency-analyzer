@@ -31,6 +31,21 @@ func NewEntry(name string, t string, id int64, datastore *Datastore) *Entry {
 	}
 }
 
+func (s *Schema) GetAllFields() []Field {
+	var fields []Field
+	for _, field := range s.Fields {
+		if !slices.Contains(fields, field) {
+			fields = append(fields, field)
+		}
+	}
+	for _, unfoldedField := range s.UnfoldedFields {
+		if !slices.Contains(fields, unfoldedField) {
+			fields = append(fields, unfoldedField)
+		}
+	}
+	return fields
+}
+
 func (s *Schema) GetRootFieldName() string {
 	//logger.Logger.Infof("SCHEMA: %v", s.Fields)
 	// FIXME: better to have an additional bool for the fields that state if they are root or no, but for now we have:

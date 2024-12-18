@@ -41,13 +41,22 @@ func (detector *ForeignKeyDetector) checkForeignKeyRead(obj objects.Object, orig
 	for _, dep := range obj.GetNestedDependencies(true) {
 		logger.Logger.Debugf("[FOREIGN KEY] \t dep: %s", dep.String())
 		for _, df := range dep.GetVariableInfo().GetAllReadDataflowsExceptDatastore(dbCall.DbInstance.GetName()) { // except filter is just for sanity check
-			logger.Logger.Debugf("[FOREIGN KEY] \t\t df: %s", df.String())
+			//FIXME: for some reason there are some "loose" fields that
+			// are not associated anymore with the (un)folded fields of the datastore schema
+			// and which also unexpectedly do not have any References
+			// so right now we are just getting the full name of the field that we want for the current dataflow
+			// and then we get the field that is actually attached to the schema to get the correct References
 			refField := df.Field.(*datastores.Entry)
-			for _, refTarget := range refField.References {
-				if !slices.Contains(savedOriginFieldName, originField.GetFullName()) && refTarget == originField {
-					read := newForeignKeyRead(refField, originField, detector.app.GetDataflowForObjectDataflow(df).GetDatabaseCall(), dbCall.ParsedCall)
-					detector.addForeignKeyRead(read)
-					savedOriginFieldName = append(savedOriginFieldName, originField.GetFullName())
+			for _, field := range df.Field.GetDatastore().Schema.UnfoldedFields {
+				if field.GetFullName() == refField.GetFullName() {
+					attachedRefField := field.(*datastores.Entry)
+					for _, refTarget := range attachedRefField.References {
+						if !slices.Contains(savedOriginFieldName, originField.GetFullName()) && refTarget == originField {
+							read := newForeignKeyRead(attachedRefField, originField, detector.app.GetDataflowForObjectDataflow(df).GetDatabaseCall(), dbCall.ParsedCall)
+							detector.addForeignKeyRead(read)
+							savedOriginFieldName = append(savedOriginFieldName, originField.GetFullName())
+						}
+					}
 				}
 			}
 		}
@@ -57,10 +66,10 @@ func (detector *ForeignKeyDetector) checkForeignKeyRead(obj objects.Object, orig
 func (detector *ForeignKeyDetector) analyzeNodes(lastServiceCallNode *abstractgraph.AbstractServiceCall, node abstractgraph.AbstractNode) {
 	if dbCall, ok := node.(*abstractgraph.AbstractDatabaseCall); ok {
 		if dbCall.ParsedCall.Method.IsRead() {
-			logger.Logger.Infof("[FOREIGN KEY] analyzing %s: %s", utils.GetType(dbCall), dbCall.String())
+			logger.Logger.Infof("[FOREIGN KEY] analyzing %s @ %s: %s", utils.GetType(dbCall), dbCall.DbInstance.GetName(), dbCall.String())
 			datastore := dbCall.DbInstance.GetDatastore()
 			params := dbCall.GetParams()
-			//returns := dbCall.GetReturns()
+			returns := dbCall.GetReturns()
 
 			switch datastore.Type {
 			case datastores.Queue:
@@ -71,25 +80,18 @@ func (detector *ForeignKeyDetector) analyzeNodes(lastServiceCallNode *abstractgr
 				}
 				abstractgraph.TaintDataflowReadQueue(detector.app, msg, dbCall, datastore, datastores.ROOT_FIELD_NAME_QUEUE)
 			case datastores.NoSQL:
+				cursor, query := returns[0], params[1]
 
-				query := params[1]
 				queryObjs := abstractgraph.GetNoSQLQueryDocument(datastore, query)
 				for _, qObj := range queryObjs {
 					logger.Logger.Infof("[QUERY OBJ] %s", qObj.String())
 					field := datastore.Schema.GetField(qObj.FieldName).(*datastores.Entry)
 					detector.checkForeignKeyRead(qObj.Object, field, dbCall)
 				}
+
+				abstractgraph.TaintDataflowReadNoSQL(detector.app, cursor, dbCall, datastore, datastores.ROOT_FIELD_NAME_NOSQL, false)
 				for _, obj := range queryObjs {
 					logger.Logger.Infof("[QUERY OBJ] %s", obj.String())
-					/* for _, df := range obj.Value.GetVariableInfo().GetAllDataflows() {
-						logger.Logger.Warnf("[df] %s", df.String())
-					}
-					for _, dep := range obj.Value.GetNestedDependencies(false) {
-						logger.Logger.Infof("\t[QUERY DEP] %s", dep.String())
-						for _, df := range dep.GetVariableInfo().GetAllWriteDataflowsForDatastore("notifications_queue") {
-							logger.Logger.Warnf("\t[df] %s", df.String())
-						}
-					} */
 					abstractgraph.TaintDataflowReadNoSQL(detector.app, obj.Object, dbCall, datastore, obj.FieldName, true)
 				}
 			case datastores.Cache:
@@ -105,12 +107,12 @@ func (detector *ForeignKeyDetector) analyzeNodes(lastServiceCallNode *abstractgr
 				logger.Logger.Fatalf("[FOREIGN KEY] TODO: %s", dbCall.String())
 			}
 		}
-		if dbCall.ParsedCall.Method.IsWrite() {
-			logger.Logger.Warnf("[FOREIGN KEY] analyzing %s: %s", utils.GetType(dbCall), dbCall.String())
-		}
-	} else {
-		logger.Logger.Debugf("[FOREIGN KEY] analyzing %s: %s", utils.GetType(node), node.String())
-	}
+		/* if dbCall.ParsedCall.Method.IsWrite() {
+			logger.Logger.Warnf("[FOREIGN KEY] skipping %s: %s", utils.GetType(dbCall), dbCall.String())
+		} */
+	}/*  else {
+		logger.Logger.Debugf("[FOREIGN KEY] skipping %s: %s", utils.GetType(node), node.String())
+	} */
 	for _, child := range node.GetChildren() {
 		detector.analyzeNodes(lastServiceCallNode, child)
 	}
@@ -144,4 +146,19 @@ func (detector *ForeignKeyDetector) save(results string) {
 		logger.Logger.Fatalf("[FOREIGN KEY] error writing data to %s: %s", path, err.Error())
 	}
 	logger.Logger.Tracef("[FOREIGN KEY] saved cascading detection results to %s", path)
+}
+
+func (detector *ForeignKeyDetector) CompactSchema() {
+	for _, ds := range detector.app.Databases {
+		for _, unfoldedField := range ds.GetDatastore().Schema.GetAllFields() {
+			var refsToKeep []datastores.Field
+			foreignReferences := detector.getUsedForeignReferencesForFieldInDatastore(unfoldedField.GetFullName(), ds.GetDatastore())
+			for _, ref := range unfoldedField.(*datastores.Entry).References {
+				if slices.Contains(foreignReferences, ref.GetFullName()) {
+					refsToKeep = append(refsToKeep, ref)
+				}
+			}
+			unfoldedField.(*datastores.Entry).References = refsToKeep
+		}
+	}
 }
