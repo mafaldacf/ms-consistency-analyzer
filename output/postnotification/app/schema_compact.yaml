@@ -56,8 +56,8 @@ NOTIFICATIONS_QUEUE:
     - Message.Timestamp: string
   - foreign_fields:
     - Message.PostID:
-      - ANALYTICS_DB.Analytics.PostID
-      - POSTS_DB.Post.PostID
+      - ANALYTICS_DB.Analytics.PostID * {FOREIGN KEY, MANDATORY}
+      - POSTS_DB.Post.PostID * {FOREIGN KEY, MANDATORY}
 
 POSTS_CACHE:
 - type: Cache

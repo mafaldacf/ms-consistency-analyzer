@@ -6,3 +6,5 @@
 
 [0] (ServiceObject ServiceType) fulltimeService app_constraints_specialization.FulltimeService
 
+[0] (ServiceObject ServiceType) internService app_constraints_specialization.InternService
+

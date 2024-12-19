@@ -82,6 +82,11 @@ BILLING_DB.Bill.ProductID:
 
 BILLING_DB.Bill.Quantity:
 - write <quantity int (BasicObject)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)} (StructObject)>
+- write <Quantity int (FieldObject)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)} (StructObject)>
+
+BILLING_DB.Bill.TotalCost:
+- write <quantity (&int) (AddressObject)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)} (StructObject)>
+- write <quantity int (BasicObject)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)} (StructObject)>
 - write <ref <quantity int> @ OrderService (Reference)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)} (StructObject)>
 - write <quantity int (BasicObject)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)} (StructObject)>
 - write <ref <quantity int> @ Frontend (Reference)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)} (StructObject)>
@@ -105,17 +110,6 @@ BILLING_DB.Bill.Quantity:
 - write <quantity int (BasicObject)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructObject)>
 - write <quantity int (BasicObject)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructObject)>
 - write <quantity int (BasicObject)> from <stock shopping_app.Stock struct{ProductID string, Quantity int} (StructObject)>
-- write <quantity int (BasicObject)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)} (StructObject)>
-- write <ref <quantity int> @ OrderService (Reference)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)} (StructObject)>
-- write <quantity int (BasicObject)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)} (StructObject)>
-- write <ref <quantity int> @ Frontend (Reference)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)} (StructObject)>
-- write <quantity int (BasicObject)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)} (StructObject)>
-- write <quantity int (BasicObject)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)} (StructObject)>
-- write <quantity int (BasicObject)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)} (StructObject)>
-- write <Quantity int (FieldObject)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)} (StructObject)>
-
-BILLING_DB.Bill.TotalCost:
-- write <quantity (&int) (AddressObject)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)} (StructObject)>
 - write <TotalCost (&int) (FieldObject)> from <bill shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)} (StructObject)>
 
 BILLING_DB.Bill.UserID:

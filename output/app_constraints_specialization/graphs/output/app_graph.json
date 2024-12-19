@@ -17,6 +17,10 @@
       "type": "service"
     },
     {
+      "id": "InternService",
+      "type": "service"
+    },
+    {
       "id": "employees_db MongoDB",
       "type": "datastore"
     },
@@ -26,6 +30,10 @@
     },
     {
       "id": "fulltimes_db MongoDB",
+      "type": "datastore"
+    },
+    {
+      "id": "interns_db MongoDB",
       "type": "datastore"
     }
   ],
@@ -37,6 +45,10 @@
     {
       "caller": "EmployeeService",
       "callee": "FulltimeService"
+    },
+    {
+      "caller": "EmployeeService",
+      "callee": "InternService"
     },
     {
       "caller": "EmployeeService",
@@ -59,8 +71,16 @@
       "callee": "FulltimeService"
     },
     {
+      "caller": "Frontend",
+      "callee": "InternService"
+    },
+    {
       "caller": "FulltimeService",
       "callee": "fulltimes_db MongoDB"
+    },
+    {
+      "caller": "InternService",
+      "callee": "interns_db MongoDB"
     }
   ]
 }

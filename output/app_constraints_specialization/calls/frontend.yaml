@@ -6,14 +6,20 @@
 :
 	- SERVICE CALL @ CreateEmployeeFulltime >> (*app_constraints_specialization.EmployeeServiceImpl).CreateEmployeeFulltime(ctx context.Context, employeeID string, name string, IBAN string, fulltimeID string, salary string, position string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}, app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}, error)
 
-.NewEmployeeServiceImpl(ctx context.Context, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, employeesDB NoSQLDatabase)
+(*FrontendImpl).CreateEmployeeIntern(ctx context.Context, employeeID string, name string, IBAN string, internID string, mentorID string, stipend string, duration string)
+:
+	- SERVICE CALL @ CreateEmployeeIntern >> (*app_constraints_specialization.EmployeeServiceImpl).CreateEmployeeIntern(ctx context.Context, employeeID string, name string, IBAN string, internID string, mentorID string, stipend string, duration string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}, app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string}, error)
+
+.NewEmployeeServiceImpl(ctx context.Context, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, internService app_constraints_specialization.InternService, employeesDB NoSQLDatabase)
 :
  []
 
 .NewFreelancerServiceImpl(ctx context.Context, freelancersDB NoSQLDatabase): []
 
-.NewFrontendImpl(ctx context.Context, employeeService app_constraints_specialization.EmployeeService, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService)
+.NewFrontendImpl(ctx context.Context, employeeService app_constraints_specialization.EmployeeService, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, internService app_constraints_specialization.InternService)
 :
  []
 
 .NewFulltimeServiceImpl(ctx context.Context, fulltimesDB NoSQLDatabase): []
+
+.NewInternServiceImpl(ctx context.Context, internsDB NoSQLDatabase): []

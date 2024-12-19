@@ -17,6 +17,7 @@ type ObjectDataflow struct {
 	Variable       Object
 	IndirectSource Object
 	Field          datastores.Field
+	RequestIdx     int
 }
 
 func (df *ObjectDataflow) GetOpString() string {
@@ -24,6 +25,10 @@ func (df *ObjectDataflow) GetOpString() string {
 		return "write"
 	}
 	return "read"
+}
+
+func (df *ObjectDataflow) InRequestIndex(requestIdx int) bool {
+	return df.RequestIdx == requestIdx
 }
 
 func (df *ObjectDataflow) HasVariable(variable Object) bool {
@@ -99,21 +104,22 @@ func (df *ObjectDataflow) GetDatastore() string {
 	return df.Datastore
 }
 
-func (v *ObjectInfo) SetDirectDataflow(datastore string, service string, variable Object, field datastores.Field, write bool) *ObjectDataflow {
+func (v *ObjectInfo) SetDirectDataflow(datastore string, service string, variable Object, field datastores.Field, write bool, requestIdx int) *ObjectDataflow {
 	df := &ObjectDataflow{
-		Direct:    true,
-		Variable:  variable,
-		Datastore: datastore,
-		Service:   service,
-		Field:     field,
-		Write:     write,
+		Direct:     true,
+		Variable:   variable,
+		Datastore:  datastore,
+		Service:    service,
+		Field:      field,
+		Write:      write,
+		RequestIdx: requestIdx,
 	}
 	v.Dataflows = append(v.Dataflows, df)
-	logger.Logger.Warnf("[DIRECT DATAFLOW - %s @ %s] (%d) [%s] %s", strings.ToUpper(df.GetOpString()), field.GetFullName(), df.Variable.GetId(), utils.GetType(df.Variable), df.Variable.String())
+	logger.Logger.Warnf("[DIRECT DATAFLOW (REQ %d) - %s @ %s] (%d) [%s] %s", requestIdx, strings.ToUpper(df.GetOpString()), field.GetFullName(), df.Variable.GetId(), utils.GetType(df.Variable), df.Variable.String())
 	return df
 }
 
-func (v *ObjectInfo) SetIndirectDataflow(datastore string, service string, current Object, source Object, field datastores.Field, write bool) *ObjectDataflow {
+func (v *ObjectInfo) SetIndirectDataflow(datastore string, service string, current Object, source Object, field datastores.Field, write bool, requestIdx int) *ObjectDataflow {
 	df := &ObjectDataflow{
 		Variable:       current,
 		IndirectSource: source,
@@ -121,10 +127,11 @@ func (v *ObjectInfo) SetIndirectDataflow(datastore string, service string, curre
 		Service:        service,
 		Field:          field,
 		Write:          write,
+		RequestIdx:     requestIdx,
 	}
 	current.GetVariableInfo().IndirectDataflows = append(current.GetVariableInfo().IndirectDataflows, df)
 	v.Dataflows = append(v.Dataflows, df)
-	logger.Logger.Warnf("\t\t[INDIRECT DATAFLOW - %s @ %s] (%d) [%s] %s", strings.ToUpper(df.GetOpString()), field.GetFullName(), df.Variable.GetId(), utils.GetType(df.Variable), df.Variable.String())
+	logger.Logger.Warnf("\t\t[INDIRECT DATAFLOW (REQ %d) - %s @ %s] (%d) [%s] %s", requestIdx, strings.ToUpper(df.GetOpString()), field.GetFullName(), df.Variable.GetId(), utils.GetType(df.Variable), df.Variable.String())
 	return df
 }
 

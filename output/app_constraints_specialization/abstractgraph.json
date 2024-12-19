@@ -888,5 +888,492 @@
         }
       }
     ]
+  },
+  {
+    "method": "(*FrontendImpl).CreateEmployeeIntern(ctx context.Context, employeeID string, name string, IBAN string, internID string, mentorID string, stipend string, duration string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "(*EmployeeServiceImpl).CreateEmployeeIntern(ctx context.Context, employeeID string, name string, IBAN string, internID string, mentorID string, stipend string, duration string)",
+        "depth": 1,
+        "caller": "Frontend",
+        "edges": [
+          {
+            "method": "NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{})",
+            "depth": 2,
+            "caller": "EmployeeService",
+            "params": [
+              {
+                "interface": {
+                  "name": "ctx",
+                  "type": "context.Context",
+                  "refs": [
+                    {
+                      "name": "ctx",
+                      "creator": "Frontend"
+                    }
+                  ]
+                }
+              },
+              {
+                "struct": {
+                  "name": "employee",
+                  "type": "app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization \"intern\" string}"
+                },
+                "struct_fields": {
+                  "EmployeeID": {
+                    "field": {
+                      "name": "EmployeeID",
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "basic": {
+                        "name": "employeeID",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "employeeID",
+                            "creator": "Frontend"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "IBAN": {
+                    "field": {
+                      "name": "IBAN",
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "basic": {
+                        "name": "IBAN",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "IBAN",
+                            "creator": "Frontend"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "Name": {
+                    "field": {
+                      "name": "Name",
+                      "type": "string"
+                    },
+                    "wrapped_variable": {
+                      "basic": {
+                        "name": "name",
+                        "type": "string",
+                        "refs": [
+                          {
+                            "name": "name",
+                            "creator": "Frontend"
+                          }
+                        ]
+                      }
+                    }
+                  },
+                  "Specialization": {
+                    "field": {
+                      "name": "Specialization",
+                      "type": "\"intern\" string"
+                    },
+                    "wrapped_variable": {
+                      "basic": {
+                        "name": "",
+                        "type": "\"intern\" string"
+                      }
+                    }
+                  }
+                }
+              }
+            ],
+            "returns": [
+              {
+                "interface": {
+                  "name": "err",
+                  "type": ".error"
+                }
+              }
+            ],
+            "datastore": "employees_db"
+          },
+          {
+            "method": "(*InternServiceImpl).CreateIntern(ctx context.Context, employeeID string, internID string, mentorID string, stipend string, duration string)",
+            "depth": 2,
+            "caller": "EmployeeService",
+            "edges": [
+              {
+                "method": "NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{})",
+                "depth": 3,
+                "caller": "InternService",
+                "params": [
+                  {
+                    "interface": {
+                      "name": "ctx",
+                      "type": "context.Context",
+                      "refs": [
+                        {
+                          "name": "ctx",
+                          "creator": "EmployeeService"
+                        }
+                      ]
+                    }
+                  },
+                  {
+                    "struct": {
+                      "name": "employee",
+                      "type": "app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string}"
+                    },
+                    "struct_fields": {
+                      "Duration": {
+                        "field": {
+                          "name": "Duration",
+                          "type": "string"
+                        },
+                        "wrapped_variable": {
+                          "basic": {
+                            "name": "duration",
+                            "type": "string",
+                            "refs": [
+                              {
+                                "name": "duration",
+                                "creator": "EmployeeService"
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "EmployeeID": {
+                        "field": {
+                          "name": "EmployeeID",
+                          "type": "string"
+                        },
+                        "wrapped_variable": {
+                          "basic": {
+                            "name": "employeeID",
+                            "type": "string",
+                            "refs": [
+                              {
+                                "name": "employeeID",
+                                "creator": "EmployeeService"
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "InternID": {
+                        "field": {
+                          "name": "InternID",
+                          "type": "string"
+                        },
+                        "wrapped_variable": {
+                          "basic": {
+                            "name": "internID",
+                            "type": "string",
+                            "refs": [
+                              {
+                                "name": "internID",
+                                "creator": "EmployeeService"
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "Mentor": {
+                        "field": {
+                          "name": "Mentor",
+                          "type": "string"
+                        },
+                        "wrapped_variable": {
+                          "basic": {
+                            "name": "mentorID",
+                            "type": "string",
+                            "refs": [
+                              {
+                                "name": "mentorID",
+                                "creator": "EmployeeService"
+                              }
+                            ]
+                          }
+                        }
+                      },
+                      "Stipend": {
+                        "field": {
+                          "name": "Stipend",
+                          "type": "string"
+                        },
+                        "wrapped_variable": {
+                          "basic": {
+                            "name": "stipend",
+                            "type": "string",
+                            "refs": [
+                              {
+                                "name": "stipend",
+                                "creator": "EmployeeService"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                ],
+                "returns": [
+                  {
+                    "interface": {
+                      "name": "err",
+                      "type": ".error"
+                    }
+                  }
+                ],
+                "datastore": "interns_db"
+              }
+            ],
+            "params": [
+              {
+                "interface": {
+                  "name": "ctx",
+                  "type": "context.Context",
+                  "refs": [
+                    {
+                      "name": "ctx",
+                      "creator": "Frontend"
+                    }
+                  ]
+                }
+              },
+              {
+                "basic": {
+                  "name": "employeeID",
+                  "type": "string",
+                  "refs": [
+                    {
+                      "name": "employeeID",
+                      "creator": "Frontend"
+                    }
+                  ]
+                }
+              },
+              {
+                "basic": {
+                  "name": "internID",
+                  "type": "string",
+                  "refs": [
+                    {
+                      "name": "internID",
+                      "creator": "Frontend"
+                    }
+                  ]
+                }
+              },
+              {
+                "basic": {
+                  "name": "mentorID",
+                  "type": "string",
+                  "refs": [
+                    {
+                      "name": "mentorID",
+                      "creator": "Frontend"
+                    }
+                  ]
+                }
+              },
+              {
+                "basic": {
+                  "name": "stipend",
+                  "type": "string",
+                  "refs": [
+                    {
+                      "name": "stipend",
+                      "creator": "Frontend"
+                    }
+                  ]
+                }
+              },
+              {
+                "basic": {
+                  "name": "duration",
+                  "type": "string",
+                  "refs": [
+                    {
+                      "name": "duration",
+                      "creator": "Frontend"
+                    }
+                  ]
+                }
+              }
+            ],
+            "returns": [
+              {
+                "struct": {
+                  "name": "intern",
+                  "type": "app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string}",
+                  "refs": [
+                    {
+                      "name": "employee",
+                      "creator": "InternService"
+                    }
+                  ]
+                }
+              },
+              {
+                "interface": {
+                  "name": "err",
+                  "type": ".error",
+                  "refs": [
+                    {
+                      "name": "err",
+                      "creator": "InternService"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        ],
+        "params": [
+          {
+            "interface": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "basic": {
+              "name": "employeeID",
+              "type": "string"
+            }
+          },
+          {
+            "basic": {
+              "name": "name",
+              "type": "string"
+            }
+          },
+          {
+            "basic": {
+              "name": "IBAN",
+              "type": "string"
+            }
+          },
+          {
+            "basic": {
+              "name": "internID",
+              "type": "string"
+            }
+          },
+          {
+            "basic": {
+              "name": "mentorID",
+              "type": "string"
+            }
+          },
+          {
+            "basic": {
+              "name": "stipend",
+              "type": "string"
+            }
+          },
+          {
+            "basic": {
+              "name": "duration",
+              "type": "string"
+            }
+          }
+        ],
+        "returns": [
+          {
+            "struct": {
+              "name": "employee",
+              "type": "app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}",
+              "refs": [
+                {
+                  "name": "employee",
+                  "creator": "EmployeeService"
+                }
+              ]
+            }
+          },
+          {
+            "struct": {
+              "name": "intern",
+              "type": "app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string}",
+              "refs": [
+                {
+                  "name": "intern",
+                  "creator": "EmployeeService"
+                }
+              ]
+            }
+          },
+          {
+            "interface": {
+              "name": "err",
+              "type": ".error",
+              "refs": [
+                {
+                  "name": "",
+                  "creator": "EmployeeService"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "params": [
+      {
+        "interface": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "basic": {
+          "name": "employeeID",
+          "type": "string"
+        }
+      },
+      {
+        "basic": {
+          "name": "name",
+          "type": "string"
+        }
+      },
+      {
+        "basic": {
+          "name": "IBAN",
+          "type": "string"
+        }
+      },
+      {
+        "basic": {
+          "name": "internID",
+          "type": "string"
+        }
+      },
+      {
+        "basic": {
+          "name": "mentorID",
+          "type": "string"
+        }
+      },
+      {
+        "basic": {
+          "name": "stipend",
+          "type": "string"
+        }
+      },
+      {
+        "basic": {
+          "name": "duration",
+          "type": "string"
+        }
+      }
+    ]
   }
 ]

@@ -15,11 +15,11 @@ CART_DB:
     - Cart.Products: '[]string'
   - foreign_fields:
     - Cart:
-      - PRODUCT_DB.Product.ProductID
+      - PRODUCT_DB.Product.ProductID * {FOREIGN KEY, MANDATORY}
     - Cart.LastProductID:
-      - PRODUCT_DB.Product.ProductID
+      - PRODUCT_DB.Product.ProductID * {FOREIGN KEY, MANDATORY}
     - Cart.Products:
-      - PRODUCT_DB.Product.ProductID
+      - PRODUCT_DB.Product.ProductID * {FOREIGN KEY, MANDATORY}
 
 PRODUCT_DB:
 - type: NoSQLDatabase

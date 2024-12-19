@@ -8,3 +8,4 @@ assets/postnotification/datastores_old.yaml
 **/.DS_Store
 .idea
 .vscode
+.trash

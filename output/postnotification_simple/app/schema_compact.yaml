@@ -14,7 +14,7 @@ NOTIFICATIONS_QUEUE:
     - Message.Timestamp: int64
   - foreign_fields:
     - Message.PostID_MESSAGE:
-      - POSTS_DB.Post.PostID
+      - POSTS_DB.Post.PostID * {FOREIGN KEY, MANDATORY}
 
 POSTS_DB:
 - type: NoSQLDatabase

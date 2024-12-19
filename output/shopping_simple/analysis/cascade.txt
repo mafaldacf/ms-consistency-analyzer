@@ -2,5 +2,5 @@
 -------------------- CASCADING ANALYSIS --------------------
 ------------------------------------------------------------
 (#0) ProductService: product_db.DeleteOne()
-	missing cascading deletes:
+	missing 1 cascading deletes
 	- (CartService, cart_db)

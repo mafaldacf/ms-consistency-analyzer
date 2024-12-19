@@ -122,7 +122,7 @@ SHIPMENT_QUEUE:
     - ShipmentMessage.UserID: string
   - foreign_fields:
     - ShipmentMessage.OrderID:
-      - ORDER_DB.Order.OrderID
+      - ORDER_DB.Order.OrderID * {FOREIGN KEY, MANDATORY}
 
 STOCK_DB:
 - type: NoSQLDatabase

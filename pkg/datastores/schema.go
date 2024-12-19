@@ -193,6 +193,7 @@ type Field interface {
 	HasUnknownType() bool
 	SetType(t string)
 	AddReference(Field)
+	AddMandatoryReference(Field)
 	GetDatastoreName() string
 	GetDatastore() *Datastore
 	IsNamed(other string) bool
@@ -210,6 +211,7 @@ type Entry struct {
 	Type       string
 	Datastore  *Datastore
 	References []Field
+	MandatoryRefs []Field // aka Total Participation
 	Id         int64
 }
 type ForeignEntry struct {
@@ -275,6 +277,9 @@ func (f *Entry) HasUnknownType() bool {
 }
 func (f *Entry) SetType(t string) {
 	f.Type = t
+}
+func (f *Entry) AddMandatoryReference(ref Field) {
+	f.MandatoryRefs = append(f.MandatoryRefs, ref)
 }
 
 // Foreign Key

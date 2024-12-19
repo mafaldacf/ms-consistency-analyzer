@@ -66,19 +66,21 @@
   - 0 depth 0 (BasicObject BasicType) res bool
   - 0 depth 0 (InterfaceObject UserType) err .error
 
-.NewEmployeeServiceImpl(ctx context.Context, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, employeesDB NoSQLDatabase)
+.NewEmployeeServiceImpl(ctx context.Context, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, internService app_constraints_specialization.InternService, employeesDB NoSQLDatabase)
 :
  block 0 (Body):
   - 0 depth 0 (InterfaceObject UserType) ctx context.Context
   - 0 depth 0 (ServiceObject ServiceType) freelancerService app_constraints_specialization.FreelancerService
   - 0 depth 0 (ServiceObject ServiceType) fulltimeService app_constraints_specialization.FulltimeService
+  - 0 depth 0 (ServiceObject ServiceType) internService app_constraints_specialization.InternService
   - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) employeesDB NoSQLDatabase
-  - 0 depth 0 (PointerObject PointerType) s (*app_constraints_specialization.EmployeeServiceImpl struct{freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, employeesDB NoSQLDatabase})
+  - 0 depth 0 (PointerObject PointerType) s (*app_constraints_specialization.EmployeeServiceImpl struct{freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, internService app_constraints_specialization.InternService, employeesDB NoSQLDatabase})
   - _1 depth 1 (StructObject UserType) app_constraints_specialization.EmployeeServiceImpl
-    struct{freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, employeesDB NoSQLDatabase}
+    struct{freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, internService app_constraints_specialization.InternService, employeesDB NoSQLDatabase}
   - __2 depth 2 (FieldObject FieldType) employeesDB NoSQLDatabase
   - __4 depth 2 (FieldObject FieldType) freelancerService app_constraints_specialization.FreelancerService
   - __6 depth 2 (FieldObject FieldType) fulltimeService app_constraints_specialization.FulltimeService
+  - __8 depth 2 (FieldObject FieldType) internService app_constraints_specialization.InternService
 
 .NewFreelancerServiceImpl(ctx context.Context, freelancersDB NoSQLDatabase):
   block 0 (Body):
@@ -89,13 +91,14 @@
     struct{freelancersDB NoSQLDatabase}
   - __2 depth 2 (FieldObject FieldType) freelancersDB NoSQLDatabase
 
-.NewFrontendImpl(ctx context.Context, employeeService app_constraints_specialization.EmployeeService, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService)
+.NewFrontendImpl(ctx context.Context, employeeService app_constraints_specialization.EmployeeService, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, internService app_constraints_specialization.InternService)
 :
  block 0 (Body):
   - 0 depth 0 (InterfaceObject UserType) ctx context.Context
   - 0 depth 0 (ServiceObject ServiceType) employeeService app_constraints_specialization.EmployeeService
   - 0 depth 0 (ServiceObject ServiceType) freelancerService app_constraints_specialization.FreelancerService
   - 0 depth 0 (ServiceObject ServiceType) fulltimeService app_constraints_specialization.FulltimeService
+  - 0 depth 0 (ServiceObject ServiceType) internService app_constraints_specialization.InternService
 
 .NewFulltimeServiceImpl(ctx context.Context, fulltimesDB NoSQLDatabase):
   block 0 (Body):
@@ -105,3 +108,12 @@
   - _1 depth 1 (StructObject UserType) app_constraints_specialization.FulltimeServiceImpl
     struct{fulltimesDB NoSQLDatabase}
   - __2 depth 2 (FieldObject FieldType) fulltimesDB NoSQLDatabase
+
+.NewInternServiceImpl(ctx context.Context, internsDB NoSQLDatabase):
+  block 0 (Body):
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) internsDB NoSQLDatabase
+  - 0 depth 0 (PointerObject PointerType) s (*app_constraints_specialization.InternServiceImpl struct{internsDB NoSQLDatabase})
+  - _1 depth 1 (StructObject UserType) app_constraints_specialization.InternServiceImpl
+    struct{internsDB NoSQLDatabase}
+  - __2 depth 2 (FieldObject FieldType) internsDB NoSQLDatabase

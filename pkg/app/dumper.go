@@ -193,7 +193,11 @@ func (app *App) DumpYamlSchema(compactSchema bool) {
 			if len(entry.References) > 0 {
 				var lst []string
 				for _, r := range entry.References {
-					lst = append(lst, r.GetFullName())
+					if slices.Contains(entry.MandatoryRefs, r) {
+						lst = append(lst, r.GetFullName() + " * {FOREIGN KEY, MANDATORY}")
+					} else {
+						lst = append(lst, r.GetFullName())
+					}
 					if !slices.Contains(dependencies, r.GetDatastoreName()) {
 						dependencies = append(dependencies, r.GetDatastoreName())
 					}
@@ -207,7 +211,11 @@ func (app *App) DumpYamlSchema(compactSchema bool) {
 			if len(entry.References) > 0 {
 				var lst []string
 				for _, r := range entry.References {
-					lst = append(lst, r.GetFullName())
+					if slices.Contains(entry.MandatoryRefs, r) {
+						lst = append(lst, r.GetFullName() + " * {FOREIGN KEY, MANDATORY}")
+					} else {
+						lst = append(lst, r.GetFullName())
+					}
 					if !slices.Contains(dependencies, r.GetDatastoreName()) {
 						dependencies = append(dependencies, r.GetDatastoreName())
 					}

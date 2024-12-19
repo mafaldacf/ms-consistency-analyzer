@@ -31,9 +31,9 @@ FREELANCERS_DB:
     - Freelancer.Terms: string
   - foreign_fields:
     - Freelancer:
-      - EMPLOYEES_DB.Employee.EmployeeID
+      - EMPLOYEES_DB.Employee.EmployeeID * {FOREIGN KEY, MANDATORY}
     - Freelancer.EmployeeID:
-      - EMPLOYEES_DB.Employee.EmployeeID
+      - EMPLOYEES_DB.Employee.EmployeeID * {FOREIGN KEY, MANDATORY}
 
 FULLTIMES_DB:
 - type: NoSQLDatabase
@@ -52,6 +52,28 @@ FULLTIMES_DB:
     - Fulltime.Position: string
   - foreign_fields:
     - Fulltime:
-      - EMPLOYEES_DB.Employee.EmployeeID
+      - EMPLOYEES_DB.Employee.EmployeeID * {FOREIGN KEY, MANDATORY}
     - Fulltime.EmployeeID:
-      - EMPLOYEES_DB.Employee.EmployeeID
+      - EMPLOYEES_DB.Employee.EmployeeID * {FOREIGN KEY, MANDATORY}
+
+INTERNS_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- dependencies:
+  - employees_db
+- schema:
+  - fields:
+    - _: app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string}
+    - Intern: app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string}
+  - unfolded_fields:
+    - Intern: app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string}
+    - Intern.EmployeeID: string
+    - Intern.InternID: string
+    - Intern.Stipend: string
+    - Intern.Duration: string
+    - Intern.Mentor: string
+  - foreign_fields:
+    - Intern:
+      - EMPLOYEES_DB.Employee.EmployeeID * {FOREIGN KEY, MANDATORY}
+    - Intern.EmployeeID:
+      - EMPLOYEES_DB.Employee.EmployeeID * {FOREIGN KEY, MANDATORY}

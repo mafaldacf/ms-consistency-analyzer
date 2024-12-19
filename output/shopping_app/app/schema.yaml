@@ -16,16 +16,16 @@ ANALYTICS_DB:
     - Analytics.Categories: '[]string'
   - foreign_fields:
     - Analytics:
-      - ANALYTICS_QUEUE.AnalyticsMessage.ProductCategory
-      - ANALYTICS_QUEUE.AnalyticsMessage.UserID
-      - BILLING_DB.Bill.UserID
-      - ORDER_DB.Order.UserID
+      - ANALYTICS_QUEUE.AnalyticsMessage.ProductCategory * {FOREIGN KEY, MANDATORY}
+      - ANALYTICS_QUEUE.AnalyticsMessage.UserID * {FOREIGN KEY, MANDATORY}
+      - BILLING_DB.Bill.UserID * {FOREIGN KEY, MANDATORY}
+      - ORDER_DB.Order.UserID * {FOREIGN KEY, MANDATORY}
     - Analytics.UserID:
-      - ANALYTICS_QUEUE.AnalyticsMessage.UserID
-      - BILLING_DB.Bill.UserID
-      - ORDER_DB.Order.UserID
+      - ANALYTICS_QUEUE.AnalyticsMessage.UserID * {FOREIGN KEY, MANDATORY}
+      - BILLING_DB.Bill.UserID * {FOREIGN KEY, MANDATORY}
+      - ORDER_DB.Order.UserID * {FOREIGN KEY, MANDATORY}
     - Analytics.Categories:
-      - ANALYTICS_QUEUE.AnalyticsMessage.ProductCategory
+      - ANALYTICS_QUEUE.AnalyticsMessage.ProductCategory * {FOREIGN KEY, MANDATORY}
 
 ANALYTICS_QUEUE:
 - type: Queue
@@ -43,11 +43,11 @@ ANALYTICS_QUEUE:
     - AnalyticsMessage.ProductCategory: string
   - foreign_fields:
     - AnalyticsMessage:
-      - BILLING_DB.Bill.UserID
-      - ORDER_DB.Order.UserID
+      - BILLING_DB.Bill.UserID * {FOREIGN KEY, MANDATORY}
+      - ORDER_DB.Order.UserID * {FOREIGN KEY, MANDATORY}
     - AnalyticsMessage.UserID:
-      - BILLING_DB.Bill.UserID
-      - ORDER_DB.Order.UserID
+      - BILLING_DB.Bill.UserID * {FOREIGN KEY, MANDATORY}
+      - ORDER_DB.Order.UserID * {FOREIGN KEY, MANDATORY}
 
 BILLING_DB:
 - type: NoSQLDatabase
@@ -68,22 +68,22 @@ BILLING_DB:
     - Bill.TotalCost: (&int)
   - foreign_fields:
     - Bill:
-      - ORDER_DB.Order.ProductID
-      - ORDER_DB.Order.Quantity
-      - ORDER_DB.Order.UserID
-      - STOCK_DB.Stock.ProductID
-      - STOCK_DB.Stock.Quantity
+      - ORDER_DB.Order.ProductID * {FOREIGN KEY, MANDATORY}
+      - ORDER_DB.Order.Quantity * {FOREIGN KEY, MANDATORY}
+      - ORDER_DB.Order.UserID * {FOREIGN KEY, MANDATORY}
+      - STOCK_DB.Stock.ProductID * {FOREIGN KEY, MANDATORY}
+      - STOCK_DB.Stock.Quantity * {FOREIGN KEY, MANDATORY}
     - Bill.UserID:
-      - ORDER_DB.Order.UserID
+      - ORDER_DB.Order.UserID * {FOREIGN KEY, MANDATORY}
     - Bill.ProductID:
-      - ORDER_DB.Order.ProductID
-      - STOCK_DB.Stock.ProductID
+      - ORDER_DB.Order.ProductID * {FOREIGN KEY, MANDATORY}
+      - STOCK_DB.Stock.ProductID * {FOREIGN KEY, MANDATORY}
     - Bill.Quantity:
-      - ORDER_DB.Order.Quantity
-      - STOCK_DB.Stock.Quantity
+      - ORDER_DB.Order.Quantity * {FOREIGN KEY, MANDATORY}
+      - STOCK_DB.Stock.Quantity * {FOREIGN KEY, MANDATORY}
     - Bill.TotalCost:
-      - ORDER_DB.Order.Quantity
-      - STOCK_DB.Stock.Quantity
+      - ORDER_DB.Order.Quantity * {FOREIGN KEY, MANDATORY}
+      - STOCK_DB.Stock.Quantity * {FOREIGN KEY, MANDATORY}
 
 CART_DB:
 - type: NoSQLDatabase
@@ -152,22 +152,22 @@ SHIPMENT_DB:
     - Shipment.Status: '"pending" string'
   - foreign_fields:
     - Shipment:
-      - ANALYTICS_QUEUE.AnalyticsMessage.UserID
-      - BILLING_DB.Bill.UserID
-      - ORDER_DB.Order.OrderID
-      - ORDER_DB.Order.UserID
+      - ANALYTICS_QUEUE.AnalyticsMessage.UserID * {FOREIGN KEY, MANDATORY}
+      - BILLING_DB.Bill.UserID * {FOREIGN KEY, MANDATORY}
+      - ORDER_DB.Order.OrderID * {FOREIGN KEY, MANDATORY}
+      - ORDER_DB.Order.UserID * {FOREIGN KEY, MANDATORY}
       - ORDER_DB._.orderID
-      - SHIPMENT_QUEUE.ShipmentMessage.OrderID
-      - SHIPMENT_QUEUE.ShipmentMessage.UserID
+      - SHIPMENT_QUEUE.ShipmentMessage.OrderID * {FOREIGN KEY, MANDATORY}
+      - SHIPMENT_QUEUE.ShipmentMessage.UserID * {FOREIGN KEY, MANDATORY}
     - Shipment.OrderID:
-      - ORDER_DB.Order.OrderID
+      - ORDER_DB.Order.OrderID * {FOREIGN KEY, MANDATORY}
       - ORDER_DB._.orderID
-      - SHIPMENT_QUEUE.ShipmentMessage.OrderID
+      - SHIPMENT_QUEUE.ShipmentMessage.OrderID * {FOREIGN KEY, MANDATORY}
     - Shipment.UserID:
-      - ANALYTICS_QUEUE.AnalyticsMessage.UserID
-      - BILLING_DB.Bill.UserID
-      - ORDER_DB.Order.UserID
-      - SHIPMENT_QUEUE.ShipmentMessage.UserID
+      - ANALYTICS_QUEUE.AnalyticsMessage.UserID * {FOREIGN KEY, MANDATORY}
+      - BILLING_DB.Bill.UserID * {FOREIGN KEY, MANDATORY}
+      - ORDER_DB.Order.UserID * {FOREIGN KEY, MANDATORY}
+      - SHIPMENT_QUEUE.ShipmentMessage.UserID * {FOREIGN KEY, MANDATORY}
 
 SHIPMENT_QUEUE:
 - type: Queue
@@ -187,22 +187,22 @@ SHIPMENT_QUEUE:
     - ShipmentMessage.UserID: string
   - foreign_fields:
     - ShipmentMessage:
-      - ANALYTICS_DB.Analytics.UserID
-      - ANALYTICS_DB._.userID
-      - ANALYTICS_QUEUE.AnalyticsMessage.UserID
-      - BILLING_DB.Bill.UserID
-      - ORDER_DB.Order.OrderID
-      - ORDER_DB.Order.UserID
+      - ANALYTICS_DB.Analytics.UserID * {FOREIGN KEY, MANDATORY}
+      - ANALYTICS_DB._.userID * {FOREIGN KEY, MANDATORY}
+      - ANALYTICS_QUEUE.AnalyticsMessage.UserID * {FOREIGN KEY, MANDATORY}
+      - BILLING_DB.Bill.UserID * {FOREIGN KEY, MANDATORY}
+      - ORDER_DB.Order.OrderID * {FOREIGN KEY, MANDATORY}
+      - ORDER_DB.Order.UserID * {FOREIGN KEY, MANDATORY}
       - ORDER_DB._.orderID
     - ShipmentMessage.OrderID:
-      - ORDER_DB.Order.OrderID
+      - ORDER_DB.Order.OrderID * {FOREIGN KEY, MANDATORY}
       - ORDER_DB._.orderID
     - ShipmentMessage.UserID:
-      - ANALYTICS_DB.Analytics.UserID
-      - ANALYTICS_DB._.userID
-      - ANALYTICS_QUEUE.AnalyticsMessage.UserID
-      - BILLING_DB.Bill.UserID
-      - ORDER_DB.Order.UserID
+      - ANALYTICS_DB.Analytics.UserID * {FOREIGN KEY, MANDATORY}
+      - ANALYTICS_DB._.userID * {FOREIGN KEY, MANDATORY}
+      - ANALYTICS_QUEUE.AnalyticsMessage.UserID * {FOREIGN KEY, MANDATORY}
+      - BILLING_DB.Bill.UserID * {FOREIGN KEY, MANDATORY}
+      - ORDER_DB.Order.UserID * {FOREIGN KEY, MANDATORY}
 
 STOCK_DB:
 - type: NoSQLDatabase
@@ -219,9 +219,9 @@ STOCK_DB:
     - Stock.Quantity: int
   - foreign_fields:
     - Stock:
-      - ORDER_DB.Order.ProductID
-      - ORDER_DB.Order.Quantity
+      - ORDER_DB.Order.ProductID * {FOREIGN KEY, MANDATORY}
+      - ORDER_DB.Order.Quantity * {FOREIGN KEY, MANDATORY}
     - Stock.ProductID:
-      - ORDER_DB.Order.ProductID
+      - ORDER_DB.Order.ProductID * {FOREIGN KEY, MANDATORY}
     - Stock.Quantity:
-      - ORDER_DB.Order.Quantity
+      - ORDER_DB.Order.Quantity * {FOREIGN KEY, MANDATORY}

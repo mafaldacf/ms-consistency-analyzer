@@ -3,9 +3,11 @@ EmployeeService:
     employeesDB: NoSQLDatabase
     freelancerService: FreelancerService
     fulltimeService: FulltimeService
+    internService: InternService
 - services:
     FreelancerService: app_constraints_specialization.FreelancerService
     FulltimeService: app_constraints_specialization.FulltimeService
+    InternService: app_constraints_specialization.InternService
 - datastores:
     employees_db: employees_db MongoDB (NoSQLDatabase)
 
@@ -21,10 +23,12 @@ Frontend:
     employeeService: EmployeeService
     freelancerService: FreelancerService
     fulltimeService: FulltimeService
+    internService: InternService
 - services:
     EmployeeService: app_constraints_specialization.EmployeeService
     FreelancerService: app_constraints_specialization.FreelancerService
     FulltimeService: app_constraints_specialization.FulltimeService
+    InternService: app_constraints_specialization.InternService
 - datastores: {}
 
 FulltimeService:
@@ -33,3 +37,10 @@ FulltimeService:
 - services: {}
 - datastores:
     fulltimes_db: fulltimes_db MongoDB (NoSQLDatabase)
+
+InternService:
+- fields:
+    internsDB: NoSQLDatabase
+- services: {}
+- datastores:
+    interns_db: interns_db MongoDB (NoSQLDatabase)

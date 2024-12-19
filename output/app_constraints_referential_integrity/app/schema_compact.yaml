@@ -15,7 +15,7 @@ ACCOUNTS_DB:
     - Account.Timestamp: int64
   - foreign_fields:
     - Account.Username:
-      - USERS_DB.User.Username
+      - USERS_DB.User.Username * {FOREIGN KEY, MANDATORY}
 
 USERS_DB:
 - type: NoSQLDatabase

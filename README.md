@@ -55,6 +55,8 @@ go run main.go -app=app_constraints_specialization --xcy --fk --cascade
 go run main.go -app=dsb_sn --xcy --fk --cascade
 go run main.go -app=dsb_hotel --xcy --fk --cascade
 
+#FIXME: XCY analysis doesn't work if we enable "app.ResetAllDataflows()" in abstractgraph/schema.go
+
 source ~/.venv/bin/activate
 
 ./graphs.py --help
@@ -83,7 +85,7 @@ source ~/.venv/bin/activate
 | `sockshop2`                               | **YES**       | 0             | 0                 | 0                     |
 | `trainticket`                             | **YES**       | 0             | 13;0              | 0                     |
 | `app_constraints_referential_integrity`   | **YES**       | 0             | 2;1               | 1                     |
-| `app_constraints_specialization`          | **YES**       | 0             | 2;1               | 1                     |
+| `app_constraints_specialization`          | **YES**       | 0             | 0                 | 0                     |
 
 ## Structure
 

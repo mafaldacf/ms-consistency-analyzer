@@ -13,11 +13,11 @@ ANALYTICS_DB:
     - Analytics.PostID: int64
   - foreign_fields:
     - Analytics:
-      - ANALYTICS_QUEUE.TriggerAnalyticsMessage.PostID
-      - POSTS_DB.Post.PostID
+      - ANALYTICS_QUEUE.TriggerAnalyticsMessage.PostID * {FOREIGN KEY, MANDATORY}
+      - POSTS_DB.Post.PostID * {FOREIGN KEY, MANDATORY}
     - Analytics.PostID:
-      - ANALYTICS_QUEUE.TriggerAnalyticsMessage.PostID
-      - POSTS_DB.Post.PostID
+      - ANALYTICS_QUEUE.TriggerAnalyticsMessage.PostID * {FOREIGN KEY, MANDATORY}
+      - POSTS_DB.Post.PostID * {FOREIGN KEY, MANDATORY}
 
 ANALYTICS_QUEUE:
 - type: Queue
@@ -33,9 +33,9 @@ ANALYTICS_QUEUE:
     - TriggerAnalyticsMessage.PostID: string
   - foreign_fields:
     - TriggerAnalyticsMessage:
-      - POSTS_DB.Post.PostID
+      - POSTS_DB.Post.PostID * {FOREIGN KEY, MANDATORY}
     - TriggerAnalyticsMessage.PostID:
-      - POSTS_DB.Post.PostID
+      - POSTS_DB.Post.PostID * {FOREIGN KEY, MANDATORY}
 
 MEDIA_DB:
 - type: NoSQLDatabase
@@ -70,16 +70,16 @@ NOTIFICATIONS_QUEUE:
     - Message.Timestamp: string
   - foreign_fields:
     - Message:
-      - ANALYTICS_DB.Analytics.PostID
-      - ANALYTICS_QUEUE.TriggerAnalyticsMessage.PostID
-      - POSTS_DB.Post.PostID
-      - POSTS_DB.Post.ReqID
+      - ANALYTICS_DB.Analytics.PostID * {FOREIGN KEY, MANDATORY}
+      - ANALYTICS_QUEUE.TriggerAnalyticsMessage.PostID * {FOREIGN KEY, MANDATORY}
+      - POSTS_DB.Post.PostID * {FOREIGN KEY, MANDATORY}
+      - POSTS_DB.Post.ReqID * {FOREIGN KEY, MANDATORY}
     - Message.ReqID:
-      - POSTS_DB.Post.ReqID
+      - POSTS_DB.Post.ReqID * {FOREIGN KEY, MANDATORY}
     - Message.PostID:
-      - ANALYTICS_DB.Analytics.PostID
-      - ANALYTICS_QUEUE.TriggerAnalyticsMessage.PostID
-      - POSTS_DB.Post.PostID
+      - ANALYTICS_DB.Analytics.PostID * {FOREIGN KEY, MANDATORY}
+      - ANALYTICS_QUEUE.TriggerAnalyticsMessage.PostID * {FOREIGN KEY, MANDATORY}
+      - POSTS_DB.Post.PostID * {FOREIGN KEY, MANDATORY}
 
 POSTS_CACHE:
 - type: Cache
@@ -127,12 +127,12 @@ TIMELINE_CACHE:
   - unfolded_fields: []
   - foreign_fields:
     - key:
-      - NOTIFICATIONS_QUEUE.Message.ReqID
-      - POSTS_DB.Post.ReqID
+      - NOTIFICATIONS_QUEUE.Message.ReqID * {FOREIGN KEY, MANDATORY}
+      - POSTS_DB.Post.ReqID * {FOREIGN KEY, MANDATORY}
     - value:
-      - ANALYTICS_DB.Analytics.PostID
-      - ANALYTICS_QUEUE.TriggerAnalyticsMessage.PostID
-      - NOTIFICATIONS_QUEUE.Message.PostID
-      - NOTIFICATIONS_QUEUE.Message.ReqID
-      - POSTS_DB.Post.PostID
-      - POSTS_DB.Post.ReqID
+      - ANALYTICS_DB.Analytics.PostID * {FOREIGN KEY, MANDATORY}
+      - ANALYTICS_QUEUE.TriggerAnalyticsMessage.PostID * {FOREIGN KEY, MANDATORY}
+      - NOTIFICATIONS_QUEUE.Message.PostID * {FOREIGN KEY, MANDATORY}
+      - NOTIFICATIONS_QUEUE.Message.ReqID * {FOREIGN KEY, MANDATORY}
+      - POSTS_DB.Post.PostID * {FOREIGN KEY, MANDATORY}
+      - POSTS_DB.Post.ReqID * {FOREIGN KEY, MANDATORY}

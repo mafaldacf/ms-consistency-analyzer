@@ -15,12 +15,12 @@ ACCOUNTS_DB:
     - Account.Timestamp: int64
   - foreign_fields:
     - Account:
-      - USERS_DB.User.ReqID
-      - USERS_DB.User.Username
+      - USERS_DB.User.ReqID * {FOREIGN KEY, MANDATORY}
+      - USERS_DB.User.Username * {FOREIGN KEY, MANDATORY}
     - Account.ReqID:
-      - USERS_DB.User.ReqID
+      - USERS_DB.User.ReqID * {FOREIGN KEY, MANDATORY}
     - Account.Username:
-      - USERS_DB.User.Username
+      - USERS_DB.User.Username * {FOREIGN KEY, MANDATORY}
 
 USERS_DB:
 - type: NoSQLDatabase

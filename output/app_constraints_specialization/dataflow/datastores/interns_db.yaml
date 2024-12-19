@@ -1,0 +1,89 @@
+INTERNS_DB.Intern:
+- write <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+  from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <intern app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <intern app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+
+INTERNS_DB.Intern.Duration:
+- write <duration string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <ref <duration string> @ EmployeeService (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <duration string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <ref <duration string> @ Frontend (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <duration string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <duration string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <duration string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <ref <duration string> @ EmployeeService (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <duration string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <ref <duration string> @ Frontend (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <duration string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <duration string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <Duration string (FieldObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+
+INTERNS_DB.Intern.EmployeeID:
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <ref <employeeID string> @ EmployeeService (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <ref <employeeID string> @ Frontend (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "intern" string} (StructObject)>
+- write <ref <employeeID string> @ Frontend (Reference)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "intern" string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "intern" string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "intern" string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "intern" string} (StructObject)>
+- write <ref <employeeID string> @ Frontend (Reference)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "intern" string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "intern" string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "intern" string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <ref <employeeID string> @ EmployeeService (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <ref <employeeID string> @ Frontend (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <EmployeeID string (FieldObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+
+INTERNS_DB.Intern.InternID:
+- write <internID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <ref <internID string> @ EmployeeService (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <internID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <ref <internID string> @ Frontend (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <internID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <internID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <internID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <ref <internID string> @ EmployeeService (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <internID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <ref <internID string> @ Frontend (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <internID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <internID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <InternID string (FieldObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+
+INTERNS_DB.Intern.Mentor:
+- write <mentorID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <ref <mentorID string> @ EmployeeService (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <mentorID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <ref <mentorID string> @ Frontend (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <mentorID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <mentorID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <mentorID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <ref <mentorID string> @ EmployeeService (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <mentorID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <ref <mentorID string> @ Frontend (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <mentorID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <mentorID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <Mentor string (FieldObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+
+INTERNS_DB.Intern.Stipend:
+- write <stipend string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <ref <stipend string> @ EmployeeService (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <stipend string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <ref <stipend string> @ Frontend (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <stipend string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <stipend string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <stipend string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <ref <stipend string> @ EmployeeService (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <stipend string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <ref <stipend string> @ Frontend (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <stipend string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <stipend string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
+- write <Stipend string (FieldObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>

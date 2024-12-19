@@ -76,15 +76,14 @@
     --> r-tainted 3x: read(notifications_queue.Message.PostID, posts_db.Post.PostID,
     analytics_db.Analytics.PostID)'
   - '_____5 depth 5 (BasicObject BasicType) postID_UPLOAD_SVC int64 --> w-tainted
-    5x: write(posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID,
-    notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
-    --> r-tainted 3x: read(notifications_queue.Message.PostID, posts_db.Post.PostID,
-    analytics_db.Analytics.PostID)'
+    4x: write(posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID,
+    notifications_queue.Message.PostID, timeline_cache.value) --> r-tainted 3x: read(notifications_queue.Message.PostID,
+    posts_db.Post.PostID, analytics_db.Analytics.PostID)'
   - '______6 depth 6 (Reference BasicType) ref <postID_STORAGE_SVC int64> @ StorageService
-    --> w-tainted 6x: write(posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID,
-    analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.key,
-    timeline_cache.value) --> r-tainted 4x: read(analytics_queue.TriggerAnalyticsMessage.PostID,
-    notifications_queue.Message.PostID, posts_db.Post.PostID, analytics_db.Analytics.PostID)'
+    --> w-tainted 5x: write(posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID,
+    analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.value)
+    --> r-tainted 4x: read(analytics_queue.TriggerAnalyticsMessage.PostID, notifications_queue.Message.PostID,
+    posts_db.Post.PostID, analytics_db.Analytics.PostID)'
   - '0 depth 0 (StructObject UserType) post postnotification.Post struct{ReqID int64,
     PostID int64, MediaID int64, Text string, Mentions []string, Timestamp int64,
     Creator postnotification.Creator struct{Username string}} --> r-tainted 1x: read(posts_db.Post)'
@@ -158,16 +157,14 @@
   - '__14 depth 2 (FieldObject FieldType) Timestamp int64 --> w-tainted 1x: write(posts_db.Post.Timestamp)'
   - '___15 depth 3 (BasicObject BasicType) timestamp int64 --> w-tainted 1x: write(posts_db.Post.Timestamp)'
   - '_16 depth 1 (FieldObject FieldType) PostID int64 --> w-tainted 1x: write(posts_db.Post.PostID)'
-  - '__17 depth 2 (BasicObject BasicType) postID_STORAGE_SVC int64 --> w-tainted 6x:
+  - '__17 depth 2 (BasicObject BasicType) postID_STORAGE_SVC int64 --> w-tainted 5x:
     write(posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID,
-    notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
-    --> r-tainted 4x: read(analytics_queue.TriggerAnalyticsMessage.PostID, notifications_queue.Message.PostID,
-    posts_db.Post.PostID, analytics_db.Analytics.PostID)'
-  - '0 depth 0 (BasicObject BasicType) postID_STORAGE_SVC int64 --> w-tainted 6x:
+    notifications_queue.Message.PostID, timeline_cache.value) --> r-tainted 4x: read(analytics_queue.TriggerAnalyticsMessage.PostID,
+    notifications_queue.Message.PostID, posts_db.Post.PostID, analytics_db.Analytics.PostID)'
+  - '0 depth 0 (BasicObject BasicType) postID_STORAGE_SVC int64 --> w-tainted 5x:
     write(posts_db.Post.PostID, analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID,
-    notifications_queue.Message.PostID, timeline_cache.key, timeline_cache.value)
-    --> r-tainted 4x: read(analytics_queue.TriggerAnalyticsMessage.PostID, notifications_queue.Message.PostID,
-    posts_db.Post.PostID, analytics_db.Analytics.PostID)'
+    notifications_queue.Message.PostID, timeline_cache.value) --> r-tainted 4x: read(analytics_queue.TriggerAnalyticsMessage.PostID,
+    notifications_queue.Message.PostID, posts_db.Post.PostID, analytics_db.Analytics.PostID)'
   - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
     {database = post, collection = post}
   - 0 depth 0 (InterfaceObject UserType) err .error

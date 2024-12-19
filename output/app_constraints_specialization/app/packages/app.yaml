@@ -24,6 +24,7 @@ app_constraints_specialization:
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/app_constraints_specialization/workflow/app_constraints_specialization/FreelancerService.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/app_constraints_specialization/workflow/app_constraints_specialization/Frontend.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/app_constraints_specialization/workflow/app_constraints_specialization/FulltimeService.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/app_constraints_specialization/workflow/app_constraints_specialization/InternService.go
   - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/app_constraints_specialization/workflow/app_constraints_specialization/models.go
 - imports (extracted from package):
   - context
@@ -47,15 +48,18 @@ app_constraints_specialization:
 - declared types:
   - app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}
   - app_constraints_specialization.EmployeeService
-  - app_constraints_specialization.EmployeeServiceImpl struct{freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, employeesDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - app_constraints_specialization.EmployeeServiceImpl struct{freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, internService app_constraints_specialization.InternService, employeesDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
   - app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}
   - app_constraints_specialization.FreelancerService
   - app_constraints_specialization.FreelancerServiceImpl struct{freelancersDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
   - app_constraints_specialization.Frontend
-  - app_constraints_specialization.FrontendImpl struct{employeeService app_constraints_specialization.EmployeeService, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService}
+  - app_constraints_specialization.FrontendImpl struct{employeeService app_constraints_specialization.EmployeeService, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, internService app_constraints_specialization.InternService}
   - app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}
   - app_constraints_specialization.FulltimeService
   - app_constraints_specialization.FulltimeServiceImpl struct{fulltimesDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string}
+  - app_constraints_specialization.InternService
+  - app_constraints_specialization.InternServiceImpl struct{internsDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
 - declared variables: []
 - declared constants: []
 - service types:
@@ -63,6 +67,7 @@ app_constraints_specialization:
   - app_constraints_specialization.FreelancerService
   - app_constraints_specialization.Frontend
   - app_constraints_specialization.FulltimeService
+  - app_constraints_specialization.InternService
 - datastore types:
   - NoSQLCollection interface{NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.NoSQLCollection.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.UpdateMany(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.ReplaceOne(ctx context.Context, filter bson.D, interface{}), NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.NoSQLCollection.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.NoSQLCursor.One(ctx context.Context, obj interface{}),
@@ -71,16 +76,22 @@ app_constraints_specialization:
 - parsed methods:
   - (*app_constraints_specialization.EmployeeServiceImpl).CreateEmployeeFreelancer(ctx context.Context, employeeID string, name string, IBAN string, freelancerID string, rate string, terms string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}, app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}, error)
   - (*app_constraints_specialization.EmployeeServiceImpl).CreateEmployeeFulltime(ctx context.Context, employeeID string, name string, IBAN string, fulltimeID string, salary string, position string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}, app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}, error)
+  - (*app_constraints_specialization.EmployeeServiceImpl).CreateEmployeeIntern(ctx context.Context, employeeID string, name string, IBAN string, internID string, mentorID string, stipend string, duration string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}, app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string}, error)
   - (*app_constraints_specialization.FreelancerServiceImpl).CreateFreelancer(ctx context.Context, employeeID string, freelancerID string, rate string, terms string) (app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}, error)
   - (*app_constraints_specialization.FreelancerServiceImpl).GetFreelancer(ctx context.Context, freelancerID string) (app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}, error)
   - (*app_constraints_specialization.FrontendImpl).CreateEmployeeFreelancer(ctx context.Context, employeeID string, name string, IBAN string, freelancerID string, rate string, terms string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}, app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}, error)
   - (*app_constraints_specialization.FrontendImpl).CreateEmployeeFulltime(ctx context.Context, employeeID string, name string, IBAN string, fulltimeID string, salary string, position string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}, app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}, error)
+  - (*app_constraints_specialization.FrontendImpl).CreateEmployeeIntern(ctx context.Context, employeeID string, name string, IBAN string, internID string, mentorID string, stipend string, duration string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}, app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string}, error)
   - (*app_constraints_specialization.FulltimeServiceImpl).CreateFulltime(ctx context.Context, employeeID string, freelancerID string, salary string, position string) (app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}, error)
   - (*app_constraints_specialization.FulltimeServiceImpl).GetFulltime(ctx context.Context, fulltimeID string) (app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}, error)
-  - app_constraints_specialization.NewEmployeeServiceImpl(ctx context.Context, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, employeesDB NoSQLDatabase) (app_constraints_specialization.EmployeeService, error)
+  - (*app_constraints_specialization.InternServiceImpl).CreateIntern(ctx context.Context, employeeID string, internID string, mentorID string, stipend string, duration string) (app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string}, error)
+  - (*app_constraints_specialization.InternServiceImpl).GetIntern(ctx context.Context, internID string) (app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string}, error)
+  - app_constraints_specialization.NewEmployeeServiceImpl(ctx context.Context, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, internService app_constraints_specialization.InternService, employeesDB NoSQLDatabase)
+    (app_constraints_specialization.EmployeeService, error)
   - app_constraints_specialization.NewFreelancerServiceImpl(ctx context.Context, freelancersDB NoSQLDatabase) (app_constraints_specialization.FreelancerService, error)
-  - app_constraints_specialization.NewFrontendImpl(ctx context.Context, employeeService app_constraints_specialization.EmployeeService, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService) (app_constraints_specialization.Frontend, error)
+  - app_constraints_specialization.NewFrontendImpl(ctx context.Context, employeeService app_constraints_specialization.EmployeeService, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, internService app_constraints_specialization.InternService) (app_constraints_specialization.Frontend, error)
   - app_constraints_specialization.NewFulltimeServiceImpl(ctx context.Context, fulltimesDB NoSQLDatabase) (app_constraints_specialization.FulltimeService, error)
+  - app_constraints_specialization.NewInternServiceImpl(ctx context.Context, internsDB NoSQLDatabase) (app_constraints_specialization.InternService, error)
 
 common:
 - package: common
