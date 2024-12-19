@@ -24,6 +24,10 @@ require github.com/blueprint-uservices/blueprint/examples/app_constraints_refere
 
 require github.com/blueprint-uservices/blueprint/examples/app_constraints_referential_integrity/wiring v0.0.0
 
+require github.com/blueprint-uservices/blueprint/examples/app_constraints_specialization/workflow v0.0.0 // indirect
+
+require github.com/blueprint-uservices/blueprint/examples/app_constraints_specialization/wiring v0.0.0
+
 require github.com/blueprint-uservices/blueprint/examples/shopping_app/workflow v0.0.0 // indirect
 
 require github.com/blueprint-uservices/blueprint/examples/shopping_app/wiring v0.0.0
@@ -128,6 +132,12 @@ replace github.com/blueprint-uservices/blueprint/examples/app_constraints_refere
 replace github.com/blueprint-uservices/blueprint/examples/app_constraints_referential_integrity/workflow => ./blueprint/examples/app_constraints_referential_integrity/workflow
 
 replace github.com/blueprint-uservices/blueprint/examples/app_constraints_referential_integrity/wiring => ./blueprint/examples/app_constraints_referential_integrity/wiring
+
+replace github.com/blueprint-uservices/blueprint/examples/app_constraints_specialization => ./blueprint/examples/app_constraints_specialization
+
+replace github.com/blueprint-uservices/blueprint/examples/app_constraints_specialization/workflow => ./blueprint/examples/app_constraints_specialization/workflow
+
+replace github.com/blueprint-uservices/blueprint/examples/app_constraints_specialization/wiring => ./blueprint/examples/app_constraints_specialization/wiring
 
 replace github.com/blueprint-uservices/blueprint/examples/shopping_app => ./blueprint/examples/shopping_app
 

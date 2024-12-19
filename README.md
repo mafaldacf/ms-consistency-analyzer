@@ -49,6 +49,7 @@ go run main.go -app=postnotification --xcy --fk --cascade
 go run main.go -app=sockshop2 --xcy --fk --cascade
 go run main.go -app=trainticket --xcy --fk --cascade
 go run main.go -app=app_constraints_referential_integrity --xcy --fk --cascade
+go run main.go -app=app_constraints_specialization --xcy --fk --cascade
 
 # TODO
 go run main.go -app=dsb_sn --xcy --fk --cascade

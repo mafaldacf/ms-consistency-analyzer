@@ -1,0 +1,18 @@
+? (*FreelancerServiceImpl).CreateFreelancer(ctx context.Context, employeeID string, freelancerID string, rate string, terms string)
+:
+	- DATASTORE CALL @ freelancers_db >> NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}) interface{}
+
+(*FreelancerServiceImpl).GetFreelancer(ctx context.Context, freelancerID string):
+- DATASTORE CALL @ freelancers_db >> NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor, interface{})
+
+.NewEmployeeServiceImpl(ctx context.Context, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, employeesDB NoSQLDatabase)
+:
+ []
+
+.NewFreelancerServiceImpl(ctx context.Context, freelancersDB NoSQLDatabase): []
+
+.NewFrontendImpl(ctx context.Context, employeeService app_constraints_specialization.EmployeeService, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService)
+:
+ []
+
+.NewFulltimeServiceImpl(ctx context.Context, fulltimesDB NoSQLDatabase): []

@@ -1,0 +1,35 @@
+EmployeeService:
+- fields:
+    employeesDB: NoSQLDatabase
+    freelancerService: FreelancerService
+    fulltimeService: FulltimeService
+- services:
+    FreelancerService: app_constraints_specialization.FreelancerService
+    FulltimeService: app_constraints_specialization.FulltimeService
+- datastores:
+    employees_db: employees_db MongoDB (NoSQLDatabase)
+
+FreelancerService:
+- fields:
+    freelancersDB: NoSQLDatabase
+- services: {}
+- datastores:
+    freelancers_db: freelancers_db MongoDB (NoSQLDatabase)
+
+Frontend:
+- fields:
+    employeeService: EmployeeService
+    freelancerService: FreelancerService
+    fulltimeService: FulltimeService
+- services:
+    EmployeeService: app_constraints_specialization.EmployeeService
+    FreelancerService: app_constraints_specialization.FreelancerService
+    FulltimeService: app_constraints_specialization.FulltimeService
+- datastores: {}
+
+FulltimeService:
+- fields:
+    fulltimesDB: NoSQLDatabase
+- services: {}
+- datastores:
+    fulltimes_db: fulltimes_db MongoDB (NoSQLDatabase)

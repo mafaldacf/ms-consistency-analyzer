@@ -7,6 +7,7 @@ import (
 	specs_postnotification "github.com/blueprint-uservices/blueprint/examples/postnotification/wiring/specs"
 	specs_postnotification_simple "github.com/blueprint-uservices/blueprint/examples/postnotification_simple/wiring/specs"
 	specs_app_constraints_referential_integrity "github.com/blueprint-uservices/blueprint/examples/app_constraints_referential_integrity/wiring/specs"
+	spec_app_constraints_specialization "github.com/blueprint-uservices/blueprint/examples/app_constraints_specialization/wiring/specs"
 	specs_shopping_app "github.com/blueprint-uservices/blueprint/examples/shopping_app/wiring/specs"
 	specs_shopping_simple "github.com/blueprint-uservices/blueprint/examples/shopping_simple/wiring/specs"
 	specs_sockshop2 "github.com/blueprint-uservices/blueprint/examples/sockshop2/wiring/specs"
@@ -21,7 +22,7 @@ const (
 	PATH_BLUEPRINT_CORE_BACKEND string = "github.com/blueprint-uservices/blueprint/runtime/core/backend"
 )
 
-var Apps = []string{"postnotification", "trainticket", "shopping_app", "shopping_simple", "sockshop2", "foobar", "dsb_hotel", "dsb_sn", "postnotification_simple", "app_constraints_referential_integrity"}
+var Apps = []string{"postnotification", "trainticket", "shopping_app", "shopping_simple", "sockshop2", "foobar", "dsb_hotel", "dsb_sn", "postnotification_simple", "app_constraints_referential_integrity", "app_constraints_specialization"}
 
 type AppInfo struct {
 	PackagePath   string
@@ -32,6 +33,7 @@ var APPS_INFO = map[string]AppInfo{
 	"postnotification":                      {PATH_BLUEPRINT_EXAMPLES + "postnotification/workflow/postnotification", specs_postnotification.Docker},
 	"postnotification_simple":               {PATH_BLUEPRINT_EXAMPLES + "postnotification_simple/workflow/postnotification_simple", specs_postnotification_simple.Docker},
 	"app_constraints_referential_integrity": {PATH_BLUEPRINT_EXAMPLES + "app_constraints_referential_integrity/workflow/app_constraints_referential_integrity", specs_app_constraints_referential_integrity.Docker},
+	"app_constraints_specialization": 		 {PATH_BLUEPRINT_EXAMPLES + "app_constraints_specialization/workflow/app_constraints_specialization", spec_app_constraints_specialization.Docker},
 	"foobar":                                {PATH_BLUEPRINT_EXAMPLES + "foobar/workflow/foobar", specs_foobar.Docker},
 	"sockshop2":                             {PATH_BLUEPRINT_EXAMPLES + "sockshop2/workflow", specs_sockshop2.Docker},
 	"trainticket":                           {PATH_BLUEPRINT_EXAMPLES + "train_ticket/workflow", specs_trainticket.Docker},

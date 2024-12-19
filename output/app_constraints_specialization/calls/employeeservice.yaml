@@ -1,0 +1,22 @@
+? (*EmployeeServiceImpl).CreateEmployeeFreelancer(ctx context.Context, employeeID string, name string, IBAN string, freelancerID string, rate string, terms string)
+:
+	- DATASTORE CALL @ employees_db >> NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}) interface{}
+  - SERVICE CALL @ CreateFreelancer >> (*app_constraints_specialization.FreelancerServiceImpl).CreateFreelancer(ctx context.Context, employeeID string, freelancerID string, rate string, terms string)
+    (app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}, error)
+
+(*EmployeeServiceImpl).CreateEmployeeFulltime(ctx context.Context, employeeID string, name string, IBAN string, fulltimeID string, salary string, position string)
+:
+	- DATASTORE CALL @ employees_db >> NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}) interface{}
+  - SERVICE CALL @ CreateFulltime >> (*app_constraints_specialization.FulltimeServiceImpl).CreateFulltime(ctx context.Context, employeeID string, freelancerID string, salary string, position string) (app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}, error)
+
+.NewEmployeeServiceImpl(ctx context.Context, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, employeesDB NoSQLDatabase)
+:
+ []
+
+.NewFreelancerServiceImpl(ctx context.Context, freelancersDB NoSQLDatabase): []
+
+.NewFrontendImpl(ctx context.Context, employeeService app_constraints_specialization.EmployeeService, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService)
+:
+ []
+
+.NewFulltimeServiceImpl(ctx context.Context, fulltimesDB NoSQLDatabase): []

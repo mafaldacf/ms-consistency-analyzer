@@ -1,0 +1,57 @@
+EMPLOYEES_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- dependencies: []
+- schema:
+  - fields:
+    - _: app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "freelancer" string}
+    - Employee: app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "freelancer" string}
+  - unfolded_fields:
+    - Employee: app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "freelancer" string}
+    - Employee.EmployeeID: string
+    - Employee.Name: string
+    - Employee.IBAN: string
+    - Employee.Specialization: '"freelancer" string'
+  - foreign_fields: []
+
+FREELANCERS_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- dependencies:
+  - employees_db
+- schema:
+  - fields:
+    - _: app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}
+    - Freelancer: app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}
+  - unfolded_fields:
+    - Freelancer: app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}
+    - Freelancer.EmployeeID: string
+    - Freelancer.FreelancerID: string
+    - Freelancer.Rate: string
+    - Freelancer.Terms: string
+  - foreign_fields:
+    - Freelancer:
+      - EMPLOYEES_DB.Employee.EmployeeID
+    - Freelancer.EmployeeID:
+      - EMPLOYEES_DB.Employee.EmployeeID
+
+FULLTIMES_DB:
+- type: NoSQLDatabase
+- kind: MongoDB
+- dependencies:
+  - employees_db
+- schema:
+  - fields:
+    - _: app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}
+    - Fulltime: app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}
+  - unfolded_fields:
+    - Fulltime: app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}
+    - Fulltime.EmployeeID: string
+    - Fulltime.FulltimeID: string
+    - Fulltime.Salary: string
+    - Fulltime.Position: string
+  - foreign_fields:
+    - Fulltime:
+      - EMPLOYEES_DB.Employee.EmployeeID
+    - Fulltime.EmployeeID:
+      - EMPLOYEES_DB.Employee.EmployeeID

@@ -1,0 +1,108 @@
+"":
+- package: ""
+- package path: github.com/blueprint-uservices/blueprint/examples/app_constraints_specialization/workflow/app_constraints_specialization/...
+- module: ""
+- files: []
+- imports (extracted from package): []
+- imports (extracted from source files): []
+- imported types: []
+- imported constants: []
+- imported variables: []
+- declared types: []
+- declared variables: []
+- declared constants: []
+- service types: []
+- datastore types: []
+- parsed methods: []
+
+app_constraints_specialization:
+- package: app_constraints_specialization
+- package path: github.com/blueprint-uservices/blueprint/examples/app_constraints_specialization/workflow/app_constraints_specialization
+- module: github.com/blueprint-uservices/blueprint/examples/app_constraints_specialization/workflow
+- files:
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/app_constraints_specialization/workflow/app_constraints_specialization/EmployeeService.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/app_constraints_specialization/workflow/app_constraints_specialization/FreelancerService.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/app_constraints_specialization/workflow/app_constraints_specialization/Frontend.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/app_constraints_specialization/workflow/app_constraints_specialization/FulltimeService.go
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/app_constraints_specialization/workflow/app_constraints_specialization/models.go
+- imports (extracted from package):
+  - context
+  - github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - go.mongodb.org/mongo-driver/bson
+- imports (extracted from source files):
+  - (backend) github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - (bson) go.mongodb.org/mongo-driver/bson
+  - context
+- imported types:
+  - .error
+  - NoSQLCollection interface{NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.NoSQLCollection.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.UpdateMany(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.ReplaceOne(ctx context.Context, filter bson.D, interface{}), NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.NoSQLCollection.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCursor interface{NoSQLDatabase.NoSQLCursor.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.NoSQLCursor.All(ctx context.Context, obj interface{})}
+  - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
+  - context.Context
+  - primitive.D
+  - primitive.E
+- imported constants: []
+- imported variables: []
+- declared types:
+  - app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}
+  - app_constraints_specialization.EmployeeService
+  - app_constraints_specialization.EmployeeServiceImpl struct{freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, employeesDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}
+  - app_constraints_specialization.FreelancerService
+  - app_constraints_specialization.FreelancerServiceImpl struct{freelancersDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - app_constraints_specialization.Frontend
+  - app_constraints_specialization.FrontendImpl struct{employeeService app_constraints_specialization.EmployeeService, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService}
+  - app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}
+  - app_constraints_specialization.FulltimeService
+  - app_constraints_specialization.FulltimeServiceImpl struct{fulltimesDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+- declared variables: []
+- declared constants: []
+- service types:
+  - app_constraints_specialization.EmployeeService
+  - app_constraints_specialization.FreelancerService
+  - app_constraints_specialization.Frontend
+  - app_constraints_specialization.FulltimeService
+- datastore types:
+  - NoSQLCollection interface{NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.NoSQLCollection.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.UpdateMany(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.ReplaceOne(ctx context.Context, filter bson.D, interface{}), NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.NoSQLCollection.DeleteMany(ctx context.Context, filter bson.D)}
+  - NoSQLCursor interface{NoSQLDatabase.NoSQLCursor.One(ctx context.Context, obj interface{}),
+    NoSQLDatabase.NoSQLCursor.All(ctx context.Context, obj interface{})}
+  - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
+- parsed methods:
+  - (*app_constraints_specialization.EmployeeServiceImpl).CreateEmployeeFreelancer(ctx context.Context, employeeID string, name string, IBAN string, freelancerID string, rate string, terms string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}, app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}, error)
+  - (*app_constraints_specialization.EmployeeServiceImpl).CreateEmployeeFulltime(ctx context.Context, employeeID string, name string, IBAN string, fulltimeID string, salary string, position string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}, app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}, error)
+  - (*app_constraints_specialization.FreelancerServiceImpl).CreateFreelancer(ctx context.Context, employeeID string, freelancerID string, rate string, terms string) (app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}, error)
+  - (*app_constraints_specialization.FreelancerServiceImpl).GetFreelancer(ctx context.Context, freelancerID string) (app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}, error)
+  - (*app_constraints_specialization.FrontendImpl).CreateEmployeeFreelancer(ctx context.Context, employeeID string, name string, IBAN string, freelancerID string, rate string, terms string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}, app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}, error)
+  - (*app_constraints_specialization.FrontendImpl).CreateEmployeeFulltime(ctx context.Context, employeeID string, name string, IBAN string, fulltimeID string, salary string, position string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}, app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}, error)
+  - (*app_constraints_specialization.FulltimeServiceImpl).CreateFulltime(ctx context.Context, employeeID string, freelancerID string, salary string, position string) (app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}, error)
+  - (*app_constraints_specialization.FulltimeServiceImpl).GetFulltime(ctx context.Context, fulltimeID string) (app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}, error)
+  - app_constraints_specialization.NewEmployeeServiceImpl(ctx context.Context, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, employeesDB NoSQLDatabase) (app_constraints_specialization.EmployeeService, error)
+  - app_constraints_specialization.NewFreelancerServiceImpl(ctx context.Context, freelancersDB NoSQLDatabase) (app_constraints_specialization.FreelancerService, error)
+  - app_constraints_specialization.NewFrontendImpl(ctx context.Context, employeeService app_constraints_specialization.EmployeeService, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService) (app_constraints_specialization.Frontend, error)
+  - app_constraints_specialization.NewFulltimeServiceImpl(ctx context.Context, fulltimesDB NoSQLDatabase) (app_constraints_specialization.FulltimeService, error)
+
+common:
+- package: common
+- package path: github.com/blueprint-uservices/blueprint/examples/app_constraints_specialization/workflow/app_constraints_specialization/common
+- module: github.com/blueprint-uservices/blueprint/examples/app_constraints_specialization/workflow
+- files:
+  - /Users/mafaldacf/workspace/ms-consistency-analyzer/blueprint/examples/app_constraints_specialization/workflow/app_constraints_specialization/common/utils.go
+- imports (extracted from package):
+  - strconv
+- imports (extracted from source files):
+  - strconv
+- imported types:
+  - .error
+- imported constants: []
+- imported variables: []
+- declared types: []
+- declared variables:
+  - HelloWorld_Variable string
+- declared constants:
+  - HELLO_WORLD_CONST "HELLO WORLD!" untyped string
+- service types: []
+- datastore types: []
+- parsed methods:
+  - common.Int64ToString(i int64) string
+  - common.StringToInt64(s string) (int64, error)
