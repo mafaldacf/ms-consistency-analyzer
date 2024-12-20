@@ -47,14 +47,27 @@ func saveUnfoldedFieldsToDatastore(variable objects.Object, entryName string, da
 	}
 }
 
+func computeSchemaFieldName(object objects.Object, fieldName string) string {
+	if fieldName == "" {
+		return object.GetType().GetName()
+	}
+	return fieldName
+}
+
+func computeSchemaFieldNameRoot(datastore *datastores.Datastore, fieldName string) string {
+	if fieldName == "" {
+		return datastore.Schema.GetRootUnfoldedField().GetName()
+	}
+	return fieldName
+}
+
 func TaintDataflowWrite(app *app.App, variable objects.Object, call *AbstractDatabaseCall, datastore *datastores.Datastore, fieldName string, includeNestedFields bool, requestIdx int) {
 	fmt.Printf("\n------------- TAINT WRITE DATAFLOW FOR CALL %s @ %s -------------\n\n", call.GetMethodStr(), datastore.Name)
 	fmt.Println()
 
 	// taint direct dataflow
-	if fieldName == "" {
-		fieldName = variable.GetType().GetName()
-	}
+	fieldName = computeSchemaFieldName(variable, fieldName)
+
 	rootField := datastore.Schema.GetField(fieldName)
 	logger.Logger.Infof("[TAINT WRITE] got root field for name (%s): %s", fieldName, rootField.String())
 	df := variable.GetVariableInfo().SetDirectDataflow(datastore.Name, call.Service, variable, rootField, true, requestIdx)
@@ -66,9 +79,8 @@ func TaintDataflowWrite(app *app.App, variable objects.Object, call *AbstractDat
 	var taintedVariables []objects.Object
 
 	// taint indirect dataflow
-	if fieldName == "" {
-		fieldName = datastore.Schema.GetRootUnfoldedField().GetName()
-	}
+	fieldName = computeSchemaFieldNameRoot(datastore, fieldName)
+	
 	var vars []objects.Object
 	var names []string
 	if includeNestedFields {
@@ -96,21 +108,8 @@ func TaintDataflowWrite(app *app.App, variable objects.Object, call *AbstractDat
 				taintedVariables = append(taintedVariables, dep)
 				app.AddTaintedVariableIfNotExists(dbField.GetFullName(), dep)
 			}
-			/* if dep.GetVariableInfo().GetName() == "postID_STORAGE_SVC" {
-				logger.Logger.Warnf("WTF????: %v NESTED DEPENDENCIES = %v", dep.GetVariableInfo().ReferencedBy, dep.GetNestedDependencies(true))
-			}
-			if dep.GetVariableInfo().GetName() == "postID_UPLOAD_SVC" {
-				logger.Logger.Warnf("WTF????: %v NESTED DEPENDENCIES = %v", dep.GetVariableInfo().ReferencedBy, dep.GetNestedDependencies(true))
-			} */
 		}
 	}
-
-	/* for i, v := range taintedVariables {
-		logger.Logger.Warnf("TAINTED OBJ %d: %v", i, v.String())
-	}
-	if datastore.GetName() == "notifications_queue" {
-		logger.Logger.Fatal("EXIT!")
-	} */
 	fmt.Println()
 }
 

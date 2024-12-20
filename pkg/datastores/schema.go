@@ -197,6 +197,7 @@ type Field interface {
 	GetDatastoreName() string
 	GetDatastore() *Datastore
 	IsNamed(other string) bool
+	GetMandatoryReferences() []Field
 }
 type Key struct {
 	Field
@@ -280,6 +281,9 @@ func (f *Entry) SetType(t string) {
 }
 func (f *Entry) AddMandatoryReference(ref Field) {
 	f.MandatoryRefs = append(f.MandatoryRefs, ref)
+}
+func (f *Entry) GetMandatoryReferences() []Field {
+	return f.MandatoryRefs
 }
 
 // Foreign Key

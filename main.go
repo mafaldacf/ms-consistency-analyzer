@@ -11,6 +11,7 @@ import (
 	"analyzer/pkg/datastores"
 	"analyzer/pkg/detection/cascade"
 	"analyzer/pkg/detection/foreign_key"
+	"analyzer/pkg/detection/specialization"
 	"analyzer/pkg/detection/xcy"
 	"analyzer/pkg/frameworks/blueprint"
 	"analyzer/pkg/logger"
@@ -24,12 +25,13 @@ func main() {
 	xcyDetection := flag.Bool("xcy", false, "Enable detection of xcy dependencies and inconsistencies")
 	foreignKeyDetection := flag.Bool("fk", false, "Enable detection of anomalies in foreign key constraints")
 	cascadeDetection := flag.Bool("cascade", false, "Enable detection of the absence of cascading delete logic")
+	specializationDetection := flag.Bool("specialization", false, "Enable detection of removals in mandatory specializations")
 	flag.Parse()
 	if *allFlag == "true" || *allFlag == "True" || *allFlag == "1" {
 		for _, app := range utils.Apps {
 			logger.Logger.Infof(fmt.Sprintf("running analyzer for '%s'...", app))
 			time.Sleep(1500 * time.Millisecond)
-			initAnalyzer(app, *xcyDetection, *cascadeDetection, *foreignKeyDetection)
+			initAnalyzer(app, *xcyDetection, *cascadeDetection, *foreignKeyDetection, *specializationDetection)
 			fmt.Println()
 			fmt.Println()
 		}
@@ -39,10 +41,10 @@ func main() {
 		logger.Logger.Fatal(fmt.Sprintf("invalid app name (%s) must provide an application name using the -app flag for one of the available applications: %v", *appName, utils.Apps))
 
 	}
-	initAnalyzer(*appName, *xcyDetection, *cascadeDetection, *foreignKeyDetection)
+	initAnalyzer(*appName, *xcyDetection, *cascadeDetection, *foreignKeyDetection, *specializationDetection)
 }
 
-func initAnalyzer(appName string, xcyDetection bool, cascadeDetection bool, foreignKeyDetection bool) {
+func initAnalyzer(appName string, xcyDetection bool, cascadeDetection bool, foreignKeyDetection bool, specializationDetection bool) {
 	servicesInfo, databaseInstances, frontends := blueprint.LoadWiring(appName)
 
 	app, err := app.InitApp(appName, servicesInfo)
@@ -123,6 +125,20 @@ func initAnalyzer(appName string, xcyDetection bool, cascadeDetection bool, fore
 		summary += results + "\n\n"
 
 		detector.CompactSchema()
+		app.DumpYamlSchema(true)
+	}
+
+	if specializationDetection {
+		fmt.Println()
+		fmt.Println(" ------------------------------------------------------------------------------------------------------------------ ")
+		fmt.Println(" ----------------------------------- CHECK REMOVALS IN MANDATORY SPECIALIZATIONS ---------------------------------- ")
+		fmt.Println(" ------------------------------------------------------------------------------------------------------------------ ")
+		fmt.Println()
+		detector := specialization.NewDetector(app, abstractGraph)
+		detector.Run()
+		results := detector.Results()
+		summary += results + "\n\n"
+
 		app.DumpYamlSchema(true)
 	}
 

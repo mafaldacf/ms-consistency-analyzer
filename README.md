@@ -44,12 +44,12 @@ go run main.go -app=trainticket
 go run main.go -app=foobar --xcy --fk --cascade
 go run main.go -app=shopping_simple --xcy --fk --cascade
 go run main.go -app=shopping_app --xcy --fk --cascade
-go run main.go -app=postnotification_simple --xcy --fk --cascade
+go run main.go -app=postnotification_simple --xcy --fk --cascade --specialization
 go run main.go -app=postnotification --xcy --fk --cascade
 go run main.go -app=sockshop2 --xcy --fk --cascade
 go run main.go -app=trainticket --xcy --fk --cascade
 go run main.go -app=app_constraints_referential_integrity --xcy --fk --cascade
-go run main.go -app=app_constraints_specialization --xcy --fk --cascade
+go run main.go -app=app_constraints_specialization --xcy --fk --cascade --specialization
 
 # TODO
 go run main.go -app=dsb_sn --xcy --fk --cascade

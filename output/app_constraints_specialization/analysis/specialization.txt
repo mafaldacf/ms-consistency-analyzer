@@ -1,0 +1,6 @@
+------------------------------------------------------------
+------------------ SPECIALIZATION ANALYSIS -----------------
+------------------------------------------------------------
+removed mandatory entities:
+- (#0) FREELANCERS_DB.Freelancer 
+	@ collection.DeleteOne(ctx context.Context, filter primitive.D)

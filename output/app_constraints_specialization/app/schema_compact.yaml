@@ -4,20 +4,21 @@ EMPLOYEES_DB:
 - dependencies: []
 - schema:
   - fields:
-    - _: app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "freelancer" string}
-    - Employee: app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "freelancer" string}
+    - _: app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "freelancer" string}
+    - Employee: app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "freelancer" string}
   - unfolded_fields:
-    - Employee: app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "freelancer" string}
+    - Employee: app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "freelancer" string}
     - Employee.EmployeeID: string
     - Employee.Name: string
     - Employee.IBAN: string
-    - Employee.Specialization: '"freelancer" string'
+    - Employee.SpecFlag: '"freelancer" string'
   - foreign_fields: []
 
 FREELANCERS_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
-- dependencies: []
+- dependencies:
+  - employees_db
 - schema:
   - fields:
     - _: app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}
@@ -28,12 +29,17 @@ FREELANCERS_DB:
     - Freelancer.FreelancerID: string
     - Freelancer.Rate: string
     - Freelancer.Terms: string
-  - foreign_fields: []
+  - foreign_fields:
+    - Freelancer:
+      - EMPLOYEES_DB.Employee.EmployeeID * {FOREIGN KEY, MANDATORY}
+    - Freelancer.EmployeeID:
+      - EMPLOYEES_DB.Employee.EmployeeID * {FOREIGN KEY, MANDATORY}
 
 FULLTIMES_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
-- dependencies: []
+- dependencies:
+  - employees_db
 - schema:
   - fields:
     - _: app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}
@@ -44,12 +50,17 @@ FULLTIMES_DB:
     - Fulltime.FulltimeID: string
     - Fulltime.Salary: string
     - Fulltime.Position: string
-  - foreign_fields: []
+  - foreign_fields:
+    - Fulltime:
+      - EMPLOYEES_DB.Employee.EmployeeID * {FOREIGN KEY, MANDATORY}
+    - Fulltime.EmployeeID:
+      - EMPLOYEES_DB.Employee.EmployeeID * {FOREIGN KEY, MANDATORY}
 
 INTERNS_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
-- dependencies: []
+- dependencies:
+  - employees_db
 - schema:
   - fields:
     - _: app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string}
@@ -61,4 +72,8 @@ INTERNS_DB:
     - Intern.Stipend: string
     - Intern.Duration: string
     - Intern.Mentor: string
-  - foreign_fields: []
+  - foreign_fields:
+    - Intern:
+      - EMPLOYEES_DB.Employee.EmployeeID * {FOREIGN KEY, MANDATORY}
+    - Intern.EmployeeID:
+      - EMPLOYEES_DB.Employee.EmployeeID * {FOREIGN KEY, MANDATORY}
