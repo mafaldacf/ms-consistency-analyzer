@@ -385,15 +385,15 @@ func referenceTaintedDataflowForNestedField(writtenVariable objects.Object, data
 	for _, dep := range deps {
 		for _, df := range dep.GetVariableInfo().GetAllDataflows() {
 			if df.Datastore != datastore.Name {
-				if df.RequestIdx == requestIdx {
-					logger.Logger.Infof("\t\t[SCHEMA REFERENCE] setting MANDATORY ref: (%s) -> (%s)", dbField.GetFullName(), df.Field.GetFullName())
-					dbField.(*datastores.Entry).MandatoryRefs = append(dbField.(*datastores.Entry).MandatoryRefs, df.Field)
-				} else {
-					logger.Logger.Warnf("\t\t[SCHEMA REFERENCE] ignoring MANDATORY ref (%d -> %d): (%s) -> (%s)", requestIdx, df.RequestIdx, dbField.GetFullName(), df.Field.GetFullName())
+				var mandatoryPrefix string
+				if df.InRequestIndex(requestIdx) {
+					mandatoryPrefix = "* [MANDATORY]"
+					dbField.AddMandatoryReference(df.Field)
 				}
 				datastore.Schema.AddForeignReferenceToField(dbField, df.Field)
 				datastore.AddReferencingDatastoreIfNotExists(df.Field.GetDatastore())
-				logger.Logger.Debugf("\t\t[SCHEMA REFERENCE] (%s -> %s) from dependency [%s]: %s", dbField.GetFullName(), df.Field.GetFullName(), utils.GetType(dep), dep.String())
+				//logger.Logger.Fatalf("%s: %s", datastore.GetName(), datastore.ReferencedByDatastores[0].GetName())
+				logger.Logger.Debugf("[SCHEMA REFERENCE] %s (%s -> %s) from dependency [%s]: %s", mandatoryPrefix, dbField.GetFullName(), df.Field.GetFullName(), utils.GetType(dep), dep.String())
 			}
 		}
 
@@ -468,11 +468,6 @@ var writtenDatastores = make(map[string]bool, 0)
 func doBuildSchema(app *app.App, node AbstractNode, requestIdx int) bool {
 	if dbCall, ok := node.(*AbstractDatabaseCall); ok && dbCall.ParsedCall.Method.IsRead() {
 		datastore := dbCall.DbInstance.GetDatastore()
-		/* if found := writtenDatastores[datastore.Name]; !found {
-			logger.Logger.Warnf("[SCHEMA] skipping read for abstract node: %s", dbCall.String())
-			pendingNodes = append(pendingNodes, &pendingNode{dbCall: dbCall})
-			return false
-		} */
 		params := dbCall.GetParams()
 		returns := dbCall.GetReturns()
 		switch datastore.Type {
@@ -492,8 +487,7 @@ func doBuildSchema(app *app.App, node AbstractNode, requestIdx int) bool {
 			TaintDataflowReadCache(app, value, datastores.ROOT_FIELD_NAME_CACHE_VALUE, dbCall, datastore, requestIdx)
 		}
 
-	}
-	if dbCall, ok := node.(*AbstractDatabaseCall); ok && dbCall.ParsedCall.Method.IsWrite() {
+	} else if dbCall, ok := node.(*AbstractDatabaseCall); ok && dbCall.ParsedCall.Method.IsWrite() {
 		datastore := dbCall.DbInstance.GetDatastore()
 		if found := writtenDatastores[datastore.Name]; !found {
 			writtenDatastores[datastore.Name] = true
@@ -511,12 +505,6 @@ func doBuildSchema(app *app.App, node AbstractNode, requestIdx int) bool {
 		case datastores.NoSQL:
 			doc := params[1]
 			saveUnfoldedFieldsToDatastore(doc, datastores.ROOT_FIELD_NAME_NOSQL, datastore)
-			/* for i, param := range params {
-				logger.Logger.Debugf("BUILD SCHEMA!!! (%d) (%s)", i, utils.GetType(param))
-				if _, ok := param.(*objects.StructObject); ok {
-					objects.GetReversedNestedFieldsAndNames(param, "", datastore.IsNoSQLDatabase(), datastore.IsQueue())
-				}
-			} */
 			TaintDataflowWrite(app, doc, dbCall, datastore, "", true, requestIdx)
 			referenceTaintedDataflowForAllNestedFields(doc, datastore, requestIdx)
 
@@ -529,16 +517,6 @@ func doBuildSchema(app *app.App, node AbstractNode, requestIdx int) bool {
 			referenceTaintedDataflowForNestedField(key, datastore, datastores.ROOT_FIELD_NAME_CACHE_KEY, requestIdx)
 			referenceTaintedDataflowForNestedField(value, datastore, datastores.ROOT_FIELD_NAME_CACHE_VALUE, requestIdx)
 		}
-
-		/* if _, exists := pendingDBs[datastore]; exists {
-			l := len(pendingNodes)
-			for i := 0; i < l; i++ {
-				pending := pendingNodes[i]
-				if !pending.done {
-					pending.done = doBuildSchema(app, pending.dbCall, requestIdx)
-				}
-			}
-		} */
 	}
 
 	visitedNodes = append(visitedNodes, node)

@@ -12,3 +12,8 @@ strconv:
 - package: strconv
 - package path: strconv
 - module: ""
+
+sync:
+- package: sync
+- package path: sync
+- module: ""

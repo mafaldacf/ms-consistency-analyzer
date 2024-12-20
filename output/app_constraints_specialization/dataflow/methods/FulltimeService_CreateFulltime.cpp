@@ -6,6 +6,8 @@
 [0] (InterfaceObject UserType) ctx context.Context
 [_1] (Reference UserType) ref <ctx context.Context> @ EmployeeService
 [__2] (Reference UserType) ref <ctx context.Context> @ Frontend
+[_1] (Reference UserType) ref <ctx context.Context> @ EmployeeService
+[__2] (Reference UserType) ref <ctx context.Context> @ Frontend
 
     --> w-tainted: write(fulltimes_db.Fulltime.EmployeeID, employees_db.Employee.EmployeeID) {2}
 [0] (BasicObject BasicType) employeeID string
@@ -13,9 +15,17 @@
 [_1] (Reference BasicType) ref <employeeID string> @ EmployeeService
       --> w-tainted: write(employees_db.Employee.EmployeeID, fulltimes_db.Fulltime.EmployeeID) {2}
 [__2] (Reference BasicType) ref <employeeID string> @ Frontend
+     --> w-tainted: write(fulltimes_db.Fulltime.EmployeeID) {1}
+[_1] (Reference BasicType) ref <employeeID string> @ EmployeeService
+      --> w-tainted: write(fulltimes_db.Fulltime.EmployeeID) {1}
+[__2] (Reference BasicType) ref <employeeID string> @ Frontend
 
     --> w-tainted: write(fulltimes_db.Fulltime.FulltimeID) {1}
-[0] (BasicObject BasicType) freelancerID string
+[0] (BasicObject BasicType) fulltimeID string
+     --> w-tainted: write(fulltimes_db.Fulltime.FulltimeID) {1}
+[_1] (Reference BasicType) ref <fulltimeID string> @ EmployeeService
+      --> w-tainted: write(fulltimes_db.Fulltime.FulltimeID) {1}
+[__2] (Reference BasicType) ref <fulltimeID string> @ Frontend
      --> w-tainted: write(fulltimes_db.Fulltime.FulltimeID) {1}
 [_1] (Reference BasicType) ref <fulltimeID string> @ EmployeeService
       --> w-tainted: write(fulltimes_db.Fulltime.FulltimeID) {1}
@@ -27,9 +37,17 @@
 [_1] (Reference BasicType) ref <salary string> @ EmployeeService
       --> w-tainted: write(fulltimes_db.Fulltime.Salary) {1}
 [__2] (Reference BasicType) ref <salary string> @ Frontend
+     --> w-tainted: write(fulltimes_db.Fulltime.Salary) {1}
+[_1] (Reference BasicType) ref <salary string> @ EmployeeService
+      --> w-tainted: write(fulltimes_db.Fulltime.Salary) {1}
+[__2] (Reference BasicType) ref <salary string> @ Frontend
 
     --> w-tainted: write(fulltimes_db.Fulltime.Position) {1}
 [0] (BasicObject BasicType) position string
+     --> w-tainted: write(fulltimes_db.Fulltime.Position) {1}
+[_1] (Reference BasicType) ref <position string> @ EmployeeService
+      --> w-tainted: write(fulltimes_db.Fulltime.Position) {1}
+[__2] (Reference BasicType) ref <position string> @ Frontend
      --> w-tainted: write(fulltimes_db.Fulltime.Position) {1}
 [_1] (Reference BasicType) ref <position string> @ EmployeeService
       --> w-tainted: write(fulltimes_db.Fulltime.Position) {1}
@@ -45,10 +63,18 @@
 [___3] (Reference BasicType) ref <employeeID string> @ EmployeeService
         --> w-tainted: write(employees_db.Employee.EmployeeID, fulltimes_db.Fulltime.EmployeeID) {2}
 [____4] (Reference BasicType) ref <employeeID string> @ Frontend
+       --> w-tainted: write(fulltimes_db.Fulltime.EmployeeID) {1}
+[___3] (Reference BasicType) ref <employeeID string> @ EmployeeService
+        --> w-tainted: write(fulltimes_db.Fulltime.EmployeeID) {1}
+[____4] (Reference BasicType) ref <employeeID string> @ Frontend
      --> w-tainted: write(fulltimes_db.Fulltime.FulltimeID) {1}
 [_1] (FieldObject FieldType) FulltimeID string
       --> w-tainted: write(fulltimes_db.Fulltime.FulltimeID) {1}
-[__2] (BasicObject BasicType) freelancerID string
+[__2] (BasicObject BasicType) fulltimeID string
+       --> w-tainted: write(fulltimes_db.Fulltime.FulltimeID) {1}
+[___3] (Reference BasicType) ref <fulltimeID string> @ EmployeeService
+        --> w-tainted: write(fulltimes_db.Fulltime.FulltimeID) {1}
+[____4] (Reference BasicType) ref <fulltimeID string> @ Frontend
        --> w-tainted: write(fulltimes_db.Fulltime.FulltimeID) {1}
 [___3] (Reference BasicType) ref <fulltimeID string> @ EmployeeService
         --> w-tainted: write(fulltimes_db.Fulltime.FulltimeID) {1}
@@ -61,10 +87,18 @@
 [___3] (Reference BasicType) ref <position string> @ EmployeeService
         --> w-tainted: write(fulltimes_db.Fulltime.Position) {1}
 [____4] (Reference BasicType) ref <position string> @ Frontend
+       --> w-tainted: write(fulltimes_db.Fulltime.Position) {1}
+[___3] (Reference BasicType) ref <position string> @ EmployeeService
+        --> w-tainted: write(fulltimes_db.Fulltime.Position) {1}
+[____4] (Reference BasicType) ref <position string> @ Frontend
      --> w-tainted: write(fulltimes_db.Fulltime.Salary) {1}
 [_1] (FieldObject FieldType) Salary string
       --> w-tainted: write(fulltimes_db.Fulltime.Salary) {1}
 [__2] (BasicObject BasicType) salary string
+       --> w-tainted: write(fulltimes_db.Fulltime.Salary) {1}
+[___3] (Reference BasicType) ref <salary string> @ EmployeeService
+        --> w-tainted: write(fulltimes_db.Fulltime.Salary) {1}
+[____4] (Reference BasicType) ref <salary string> @ Frontend
        --> w-tainted: write(fulltimes_db.Fulltime.Salary) {1}
 [___3] (Reference BasicType) ref <salary string> @ EmployeeService
         --> w-tainted: write(fulltimes_db.Fulltime.Salary) {1}

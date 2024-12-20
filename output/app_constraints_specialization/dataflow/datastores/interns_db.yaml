@@ -27,14 +27,14 @@ INTERNS_DB.Intern.EmployeeID:
 - write <ref <employeeID string> @ Frontend (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
 - write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
 - write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
-- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "intern" string} (StructObject)>
-- write <ref <employeeID string> @ Frontend (Reference)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "intern" string} (StructObject)>
-- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "intern" string} (StructObject)>
-- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "intern" string} (StructObject)>
-- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "intern" string} (StructObject)>
-- write <ref <employeeID string> @ Frontend (Reference)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "intern" string} (StructObject)>
-- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "intern" string} (StructObject)>
-- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "intern" string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "intern" string} (StructObject)>
+- write <ref <employeeID string> @ Frontend (Reference)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "intern" string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "intern" string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "intern" string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "intern" string} (StructObject)>
+- write <ref <employeeID string> @ Frontend (Reference)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "intern" string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "intern" string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "intern" string} (StructObject)>
 - write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
 - write <ref <employeeID string> @ EmployeeService (Reference)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>
 - write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string} (StructObject)>

@@ -33,9 +33,9 @@
 [0] (BasicObject BasicType) duration string
 
     --> w-tainted: write(employees_db.Employee) {1}
-[0] (StructObject UserType) employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}
+[0] (StructObject UserType) employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag string}
      --> w-tainted: write(employees_db.Employee) {1}
-[_1] (Reference UserType) ref <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "intern" string}> @ EmployeeService
+[_1] (Reference UserType) ref <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "intern" string}> @ EmployeeService
       --> w-tainted: write(employees_db.Employee.EmployeeID) {1}
 [__2] (FieldObject FieldType) EmployeeID string
        --> w-tainted: write(employees_db.Employee.EmployeeID, interns_db.Intern.EmployeeID) {2}
@@ -54,9 +54,9 @@
 [___3] (BasicObject BasicType) name string
         --> w-tainted: write(employees_db.Employee.Name) {1}
 [____4] (Reference BasicType) ref <name string> @ Frontend
-      --> w-tainted: write(employees_db.Employee.Specialization) {1}
-[__2] (FieldObject FieldType) Specialization "intern" string
-       --> w-tainted: write(employees_db.Employee.Specialization) {1}
+      --> w-tainted: write(employees_db.Employee.SpecFlag) {1}
+[__2] (FieldObject FieldType) SpecFlag "intern" string
+       --> w-tainted: write(employees_db.Employee.SpecFlag) {1}
 [___3] (BasicObject BasicType) "intern" string
 
     --> w-tainted: write(interns_db.Intern) {1}

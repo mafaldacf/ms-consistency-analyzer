@@ -4,14 +4,14 @@ EMPLOYEES_DB:
 - dependencies: []
 - schema:
   - fields:
-    - _: app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "freelancer" string}
-    - Employee: app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "freelancer" string}
+    - _: app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "freelancer" string}
+    - Employee: app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "freelancer" string}
   - unfolded_fields:
-    - Employee: app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "freelancer" string}
+    - Employee: app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "freelancer" string}
     - Employee.EmployeeID: string
     - Employee.Name: string
     - Employee.IBAN: string
-    - Employee.Specialization: '"freelancer" string'
+    - Employee.SpecFlag: '"freelancer" string'
   - foreign_fields: []
 
 FREELANCERS_DB:

@@ -34,14 +34,14 @@
   - '_1 depth 1 (Reference BasicType) ref <terms string> @ Frontend --> w-tainted
     1x: write(freelancers_db.Freelancer.Terms)'
   - '0 depth 0 (StructObject UserType) employee app_constraints_specialization.Employee
-    struct{EmployeeID string, Name string, IBAN string, Specialization "freelancer"
-    string} --> w-tainted 1x: write(employees_db.Employee)'
+    struct{EmployeeID string, Name string, IBAN string, SpecFlag "freelancer" string}
+    --> w-tainted 1x: write(employees_db.Employee)'
   - '_1 depth 1 (FieldObject FieldType) EmployeeID string --> w-tainted 1x: write(employees_db.Employee.EmployeeID)'
   - '_4 depth 1 (FieldObject FieldType) IBAN string --> w-tainted 1x: write(employees_db.Employee.IBAN)'
   - '_7 depth 1 (FieldObject FieldType) Name string --> w-tainted 1x: write(employees_db.Employee.Name)'
-  - '_10 depth 1 (FieldObject FieldType) Specialization "freelancer" string --> w-tainted
-    1x: write(employees_db.Employee.Specialization)'
-  - '__11 depth 2 (BasicObject BasicType) "freelancer" string --> w-tainted 1x: write(employees_db.Employee.Specialization)'
+  - '_10 depth 1 (FieldObject FieldType) SpecFlag "freelancer" string --> w-tainted
+    1x: write(employees_db.Employee.SpecFlag)'
+  - '__11 depth 2 (BasicObject BasicType) "freelancer" string --> w-tainted 1x: write(employees_db.Employee.SpecFlag)'
   - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
     {database = employees, collection = employees}
   - 0 depth 0 (InterfaceObject UserType) err .error
@@ -108,14 +108,14 @@
   - '_1 depth 1 (Reference BasicType) ref <position string> @ Frontend --> w-tainted
     1x: write(fulltimes_db.Fulltime.Position)'
   - '0 depth 0 (StructObject UserType) employee app_constraints_specialization.Employee
-    struct{EmployeeID string, Name string, IBAN string, Specialization "fulltime"
-    string} --> w-tainted 1x: write(employees_db.Employee)'
+    struct{EmployeeID string, Name string, IBAN string, SpecFlag "fulltime" string}
+    --> w-tainted 1x: write(employees_db.Employee)'
   - '_1 depth 1 (FieldObject FieldType) EmployeeID string --> w-tainted 1x: write(employees_db.Employee.EmployeeID)'
   - '_4 depth 1 (FieldObject FieldType) IBAN string --> w-tainted 1x: write(employees_db.Employee.IBAN)'
   - '_7 depth 1 (FieldObject FieldType) Name string --> w-tainted 1x: write(employees_db.Employee.Name)'
-  - '_10 depth 1 (FieldObject FieldType) Specialization "fulltime" string --> w-tainted
-    1x: write(employees_db.Employee.Specialization)'
-  - '__11 depth 2 (BasicObject BasicType) "fulltime" string --> w-tainted 1x: write(employees_db.Employee.Specialization)'
+  - '_10 depth 1 (FieldObject FieldType) SpecFlag "fulltime" string --> w-tainted
+    1x: write(employees_db.Employee.SpecFlag)'
+  - '__11 depth 2 (BasicObject BasicType) "fulltime" string --> w-tainted 1x: write(employees_db.Employee.SpecFlag)'
   - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
     {database = employees, collection = employees}
   - 0 depth 0 (InterfaceObject UserType) err .error
@@ -131,18 +131,34 @@
     employees_db.Employee.EmployeeID)'
   - '____4 depth 4 (Reference BasicType) ref <employeeID string> @ EmployeeService
     --> w-tainted 2x: write(employees_db.Employee.EmployeeID, fulltimes_db.Fulltime.EmployeeID)'
-  - '__6 depth 2 (FieldObject FieldType) FulltimeID string --> w-tainted 1x: write(fulltimes_db.Fulltime.FulltimeID)'
-  - '___7 depth 3 (BasicObject BasicType) freelancerID string --> w-tainted 1x: write(fulltimes_db.Fulltime.FulltimeID)'
-  - '____8 depth 4 (Reference BasicType) ref <fulltimeID string> @ EmployeeService
+  - '____6 depth 4 (Reference BasicType) ref <employeeID string> @ EmployeeService
+    --> w-tainted 1x: write(fulltimes_db.Fulltime.EmployeeID)'
+  - '_____7 depth 5 (Reference BasicType) ref <employeeID string> @ Frontend --> w-tainted
+    1x: write(fulltimes_db.Fulltime.EmployeeID)'
+  - '__8 depth 2 (FieldObject FieldType) FulltimeID string --> w-tainted 1x: write(fulltimes_db.Fulltime.FulltimeID)'
+  - '___9 depth 3 (BasicObject BasicType) fulltimeID string --> w-tainted 1x: write(fulltimes_db.Fulltime.FulltimeID)'
+  - '____10 depth 4 (Reference BasicType) ref <fulltimeID string> @ EmployeeService
     --> w-tainted 1x: write(fulltimes_db.Fulltime.FulltimeID)'
-  - '__10 depth 2 (FieldObject FieldType) Position string --> w-tainted 1x: write(fulltimes_db.Fulltime.Position)'
-  - '___11 depth 3 (BasicObject BasicType) position string --> w-tainted 1x: write(fulltimes_db.Fulltime.Position)'
-  - '____12 depth 4 (Reference BasicType) ref <position string> @ EmployeeService
+  - '____12 depth 4 (Reference BasicType) ref <fulltimeID string> @ EmployeeService
+    --> w-tainted 1x: write(fulltimes_db.Fulltime.FulltimeID)'
+  - '_____13 depth 5 (Reference BasicType) ref <fulltimeID string> @ Frontend -->
+    w-tainted 1x: write(fulltimes_db.Fulltime.FulltimeID)'
+  - '__14 depth 2 (FieldObject FieldType) Position string --> w-tainted 1x: write(fulltimes_db.Fulltime.Position)'
+  - '___15 depth 3 (BasicObject BasicType) position string --> w-tainted 1x: write(fulltimes_db.Fulltime.Position)'
+  - '____16 depth 4 (Reference BasicType) ref <position string> @ EmployeeService
     --> w-tainted 1x: write(fulltimes_db.Fulltime.Position)'
-  - '__14 depth 2 (FieldObject FieldType) Salary string --> w-tainted 1x: write(fulltimes_db.Fulltime.Salary)'
-  - '___15 depth 3 (BasicObject BasicType) salary string --> w-tainted 1x: write(fulltimes_db.Fulltime.Salary)'
-  - '____16 depth 4 (Reference BasicType) ref <salary string> @ EmployeeService -->
+  - '____18 depth 4 (Reference BasicType) ref <position string> @ EmployeeService
+    --> w-tainted 1x: write(fulltimes_db.Fulltime.Position)'
+  - '_____19 depth 5 (Reference BasicType) ref <position string> @ Frontend --> w-tainted
+    1x: write(fulltimes_db.Fulltime.Position)'
+  - '__20 depth 2 (FieldObject FieldType) Salary string --> w-tainted 1x: write(fulltimes_db.Fulltime.Salary)'
+  - '___21 depth 3 (BasicObject BasicType) salary string --> w-tainted 1x: write(fulltimes_db.Fulltime.Salary)'
+  - '____22 depth 4 (Reference BasicType) ref <salary string> @ EmployeeService -->
     w-tainted 1x: write(fulltimes_db.Fulltime.Salary)'
+  - '____24 depth 4 (Reference BasicType) ref <salary string> @ EmployeeService -->
+    w-tainted 1x: write(fulltimes_db.Fulltime.Salary)'
+  - '_____25 depth 5 (Reference BasicType) ref <salary string> @ Frontend --> w-tainted
+    1x: write(fulltimes_db.Fulltime.Salary)'
   - 0 depth 0 (InterfaceObject UserType) err .error
   - _1 depth 1 (Reference UserType) ref <err .error> @ FulltimeService
 
@@ -185,14 +201,14 @@
   - '_1 depth 1 (Reference BasicType) ref <duration string> @ Frontend --> w-tainted
     1x: write(interns_db.Intern.Duration)'
   - '0 depth 0 (StructObject UserType) employee app_constraints_specialization.Employee
-    struct{EmployeeID string, Name string, IBAN string, Specialization "intern" string}
+    struct{EmployeeID string, Name string, IBAN string, SpecFlag "intern" string}
     --> w-tainted 1x: write(employees_db.Employee)'
   - '_1 depth 1 (FieldObject FieldType) EmployeeID string --> w-tainted 1x: write(employees_db.Employee.EmployeeID)'
   - '_4 depth 1 (FieldObject FieldType) IBAN string --> w-tainted 1x: write(employees_db.Employee.IBAN)'
   - '_7 depth 1 (FieldObject FieldType) Name string --> w-tainted 1x: write(employees_db.Employee.Name)'
-  - '_10 depth 1 (FieldObject FieldType) Specialization "intern" string --> w-tainted
-    1x: write(employees_db.Employee.Specialization)'
-  - '__11 depth 2 (BasicObject BasicType) "intern" string --> w-tainted 1x: write(employees_db.Employee.Specialization)'
+  - '_10 depth 1 (FieldObject FieldType) SpecFlag "intern" string --> w-tainted 1x:
+    write(employees_db.Employee.SpecFlag)'
+  - '__11 depth 2 (BasicObject BasicType) "intern" string --> w-tainted 1x: write(employees_db.Employee.SpecFlag)'
   - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
     {database = employees, collection = employees}
   - 0 depth 0 (InterfaceObject UserType) err .error
@@ -226,6 +242,48 @@
     w-tainted 1x: write(interns_db.Intern.Stipend)'
   - 0 depth 0 (InterfaceObject UserType) err .error
   - _1 depth 1 (Reference UserType) ref <err .error> @ InternService
+
+(*EmployeeServiceImpl).PromoteFreelancerToFulltime(ctx context.Context, employeeID string, name string, IBAN string, fulltimeID string, salary string, position string)
+:
+ block 5 (IfDone):
+  - 0 depth 0 (PointerObject PointerType) s (*app_constraints_specialization.EmployeeServiceImpl struct{freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, internService app_constraints_specialization.InternService, employeesDB NoSQLDatabase})
+  - _1 depth 1 (StructObject UserType) app_constraints_specialization.EmployeeServiceImpl
+    struct{freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, internService app_constraints_specialization.InternService, employeesDB NoSQLDatabase}
+  - __2 depth 2 (FieldObject FieldType) employeesDB NoSQLDatabase
+  - ___3 depth 3 (BlueprintBackendObject BlueprintBackendType) employeesDB NoSQLDatabase
+  - __4 depth 2 (FieldObject FieldType) freelancerService app_constraints_specialization.FreelancerService
+  - ___5 depth 3 (ServiceObject ServiceType) freelancerService app_constraints_specialization.FreelancerService
+  - __6 depth 2 (FieldObject FieldType) fulltimeService app_constraints_specialization.FulltimeService
+  - ___7 depth 3 (ServiceObject ServiceType) fulltimeService app_constraints_specialization.FulltimeService
+  - __8 depth 2 (FieldObject FieldType) internService app_constraints_specialization.InternService
+  - ___9 depth 3 (ServiceObject ServiceType) internService app_constraints_specialization.InternService
+  - 0 depth 0 (InterfaceObject UserType) ctx context.Context
+  - _1 depth 1 (Reference UserType) ref <ctx context.Context> @ Frontend
+  - '0 depth 0 (BasicObject BasicType) employeeID string --> w-tainted 1x: write(fulltimes_db.Fulltime.EmployeeID)'
+  - '_1 depth 1 (Reference BasicType) ref <employeeID string> @ Frontend --> w-tainted
+    1x: write(fulltimes_db.Fulltime.EmployeeID)'
+  - 0 depth 0 (BasicObject BasicType) name string
+  - _1 depth 1 (Reference BasicType) ref <name string> @ Frontend
+  - 0 depth 0 (BasicObject BasicType) IBAN string
+  - _1 depth 1 (Reference BasicType) ref <IBAN string> @ Frontend
+  - '0 depth 0 (BasicObject BasicType) fulltimeID string --> w-tainted 1x: write(fulltimes_db.Fulltime.FulltimeID)'
+  - '_1 depth 1 (Reference BasicType) ref <fulltimeID string> @ Frontend --> w-tainted
+    1x: write(fulltimes_db.Fulltime.FulltimeID)'
+  - '0 depth 0 (BasicObject BasicType) salary string --> w-tainted 1x: write(fulltimes_db.Fulltime.Salary)'
+  - '_1 depth 1 (Reference BasicType) ref <salary string> @ Frontend --> w-tainted
+    1x: write(fulltimes_db.Fulltime.Salary)'
+  - '0 depth 0 (BasicObject BasicType) position string --> w-tainted 1x: write(fulltimes_db.Fulltime.Position)'
+  - '_1 depth 1 (Reference BasicType) ref <position string> @ Frontend --> w-tainted
+    1x: write(fulltimes_db.Fulltime.Position)'
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
+    {database = employees, collection = employees}
+  - 0 depth 0 (InterfaceObject UserType) err .error
+  - 0 depth 0 (StructObject UserType) fulltime app_constraints_specialization.Fulltime
+    struct{EmployeeID string, FulltimeID string, Salary string, Position string}
+  - 0 depth 0 (BasicObject BasicType) err1 error
+  - 0 depth 0 (BasicObject BasicType) err2 error
+  - 0 depth 0 (BasicObject BasicType) err3 error
+  - 0 depth 0 (StructObject UserType) wg sync.WaitGroup
 
 .NewEmployeeServiceImpl(ctx context.Context, freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, internService app_constraints_specialization.InternService, employeesDB NoSQLDatabase)
 :

@@ -30,23 +30,30 @@ app_constraints_specialization:
   - context
   - github.com/blueprint-uservices/blueprint/runtime/core/backend
   - go.mongodb.org/mongo-driver/bson
+  - sync
 - imports (extracted from source files):
   - (backend) github.com/blueprint-uservices/blueprint/runtime/core/backend
   - (bson) go.mongodb.org/mongo-driver/bson
   - context
+  - sync
 - imported types:
   - .error
   - NoSQLCollection interface{NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.NoSQLCollection.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.UpdateMany(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.ReplaceOne(ctx context.Context, filter bson.D, interface{}), NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.NoSQLCollection.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.NoSQLCursor.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.NoSQLCursor.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
+  - atomic.Uint64
+  - atomic.align64
+  - atomic.noCopy
   - context.Context
   - primitive.D
   - primitive.E
+  - sync.WaitGroup
+  - sync.noCopy
 - imported constants: []
 - imported variables: []
 - declared types:
-  - app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}
+  - app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag string}
   - app_constraints_specialization.EmployeeService
   - app_constraints_specialization.EmployeeServiceImpl struct{freelancerService app_constraints_specialization.FreelancerService, fulltimeService app_constraints_specialization.FulltimeService, internService app_constraints_specialization.InternService, employeesDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
   - app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}
@@ -74,15 +81,18 @@ app_constraints_specialization:
     NoSQLDatabase.NoSQLCursor.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
 - parsed methods:
-  - (*app_constraints_specialization.EmployeeServiceImpl).CreateEmployeeFreelancer(ctx context.Context, employeeID string, name string, IBAN string, freelancerID string, rate string, terms string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}, app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}, error)
-  - (*app_constraints_specialization.EmployeeServiceImpl).CreateEmployeeFulltime(ctx context.Context, employeeID string, name string, IBAN string, fulltimeID string, salary string, position string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}, app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}, error)
-  - (*app_constraints_specialization.EmployeeServiceImpl).CreateEmployeeIntern(ctx context.Context, employeeID string, name string, IBAN string, internID string, mentorID string, stipend string, duration string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}, app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string}, error)
+  - (*app_constraints_specialization.EmployeeServiceImpl).CreateEmployeeFreelancer(ctx context.Context, employeeID string, name string, IBAN string, freelancerID string, rate string, terms string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag string}, app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}, error)
+  - (*app_constraints_specialization.EmployeeServiceImpl).CreateEmployeeFulltime(ctx context.Context, employeeID string, name string, IBAN string, fulltimeID string, salary string, position string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag string}, app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}, error)
+  - (*app_constraints_specialization.EmployeeServiceImpl).CreateEmployeeIntern(ctx context.Context, employeeID string, name string, IBAN string, internID string, mentorID string, stipend string, duration string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag string}, app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string}, error)
+  - (*app_constraints_specialization.EmployeeServiceImpl).PromoteFreelancerToFulltime(ctx context.Context, employeeID string, name string, IBAN string, fulltimeID string, salary string, position string) (app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}, error)
   - (*app_constraints_specialization.FreelancerServiceImpl).CreateFreelancer(ctx context.Context, employeeID string, freelancerID string, rate string, terms string) (app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}, error)
+  - (*app_constraints_specialization.FreelancerServiceImpl).DeleteFreelancer(ctx context.Context, employeeID string) error
   - (*app_constraints_specialization.FreelancerServiceImpl).GetFreelancer(ctx context.Context, freelancerID string) (app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}, error)
-  - (*app_constraints_specialization.FrontendImpl).CreateEmployeeFreelancer(ctx context.Context, employeeID string, name string, IBAN string, freelancerID string, rate string, terms string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}, app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}, error)
-  - (*app_constraints_specialization.FrontendImpl).CreateEmployeeFulltime(ctx context.Context, employeeID string, name string, IBAN string, fulltimeID string, salary string, position string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}, app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}, error)
-  - (*app_constraints_specialization.FrontendImpl).CreateEmployeeIntern(ctx context.Context, employeeID string, name string, IBAN string, internID string, mentorID string, stipend string, duration string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization string}, app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string}, error)
-  - (*app_constraints_specialization.FulltimeServiceImpl).CreateFulltime(ctx context.Context, employeeID string, freelancerID string, salary string, position string) (app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}, error)
+  - (*app_constraints_specialization.FrontendImpl).CreateEmployeeFreelancer(ctx context.Context, employeeID string, name string, IBAN string, freelancerID string, rate string, terms string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag string}, app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string}, error)
+  - (*app_constraints_specialization.FrontendImpl).CreateEmployeeFulltime(ctx context.Context, employeeID string, name string, IBAN string, fulltimeID string, salary string, position string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag string}, app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}, error)
+  - (*app_constraints_specialization.FrontendImpl).CreateEmployeeIntern(ctx context.Context, employeeID string, name string, IBAN string, internID string, mentorID string, stipend string, duration string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag string}, app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string}, error)
+  - (*app_constraints_specialization.FrontendImpl).PromoteFreelancerToFulltime(ctx context.Context, employeeID string, name string, IBAN string, fulltimeID string, salary string, position string) (app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}, error)
+  - (*app_constraints_specialization.FulltimeServiceImpl).CreateFulltime(ctx context.Context, employeeID string, fulltimeID string, salary string, position string) (app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}, error)
   - (*app_constraints_specialization.FulltimeServiceImpl).GetFulltime(ctx context.Context, fulltimeID string) (app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}, error)
   - (*app_constraints_specialization.InternServiceImpl).CreateIntern(ctx context.Context, employeeID string, internID string, mentorID string, stipend string, duration string) (app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string}, error)
   - (*app_constraints_specialization.InternServiceImpl).GetIntern(ctx context.Context, internID string) (app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string}, error)

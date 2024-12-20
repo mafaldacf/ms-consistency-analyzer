@@ -11,14 +11,14 @@ FREELANCERS_DB.Freelancer.EmployeeID:
 - write <ref <employeeID string> @ Frontend (Reference)> from <employee app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string} (StructObject)>
 - write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string} (StructObject)>
 - write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string} (StructObject)>
-- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "freelancer" string} (StructObject)>
-- write <ref <employeeID string> @ Frontend (Reference)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "freelancer" string} (StructObject)>
-- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "freelancer" string} (StructObject)>
-- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "freelancer" string} (StructObject)>
-- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "freelancer" string} (StructObject)>
-- write <ref <employeeID string> @ Frontend (Reference)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "freelancer" string} (StructObject)>
-- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "freelancer" string} (StructObject)>
-- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "freelancer" string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "freelancer" string} (StructObject)>
+- write <ref <employeeID string> @ Frontend (Reference)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "freelancer" string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "freelancer" string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "freelancer" string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "freelancer" string} (StructObject)>
+- write <ref <employeeID string> @ Frontend (Reference)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "freelancer" string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "freelancer" string} (StructObject)>
+- write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "freelancer" string} (StructObject)>
 - write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string} (StructObject)>
 - write <ref <employeeID string> @ EmployeeService (Reference)> from <employee app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string} (StructObject)>
 - write <employeeID string (BasicObject)> from <employee app_constraints_specialization.Freelancer struct{EmployeeID string, FreelancerID string, Rate string, Terms string} (StructObject)>

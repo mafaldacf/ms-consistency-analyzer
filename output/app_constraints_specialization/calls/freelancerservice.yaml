@@ -2,6 +2,9 @@
 :
 	- DATASTORE CALL @ freelancers_db >> NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}) interface{}
 
+(*FreelancerServiceImpl).DeleteFreelancer(ctx context.Context, employeeID string):
+- DATASTORE CALL @ freelancers_db >> NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D) interface{}
+
 (*FreelancerServiceImpl).GetFreelancer(ctx context.Context, freelancerID string):
 - DATASTORE CALL @ freelancers_db >> NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D) (NoSQLCursor, interface{})
 

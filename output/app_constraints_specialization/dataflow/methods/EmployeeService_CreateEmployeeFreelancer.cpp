@@ -43,7 +43,7 @@
 [_1] (Reference BasicType) ref <terms string> @ Frontend
 
     --> w-tainted: write(employees_db.Employee) {1}
-[0] (StructObject UserType) employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, Specialization "freelancer" string}
+[0] (StructObject UserType) employee app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag "freelancer" string}
      --> w-tainted: write(employees_db.Employee.EmployeeID) {1}
 [_1] (FieldObject FieldType) EmployeeID string
       --> w-tainted: write(employees_db.Employee.EmployeeID, freelancers_db.Freelancer.EmployeeID) {2}
@@ -62,9 +62,9 @@
 [__2] (BasicObject BasicType) name string
        --> w-tainted: write(employees_db.Employee.Name) {1}
 [___3] (Reference BasicType) ref <name string> @ Frontend
-     --> w-tainted: write(employees_db.Employee.Specialization) {1}
-[_1] (FieldObject FieldType) Specialization "freelancer" string
-      --> w-tainted: write(employees_db.Employee.Specialization) {1}
+     --> w-tainted: write(employees_db.Employee.SpecFlag) {1}
+[_1] (FieldObject FieldType) SpecFlag "freelancer" string
+      --> w-tainted: write(employees_db.Employee.SpecFlag) {1}
 [__2] (BasicObject BasicType) "freelancer" string
 
 [0] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = employees, collection = employees}

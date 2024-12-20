@@ -514,6 +514,11 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		variable, _ := lookupVariableFromAstExpr(service, method, block, e.X, nil, false)
 		variable.GetVariableInfo().Id = objects.VARIABLE_INLINE_ID
 		return variable, nil
+
+	case *ast.ChanType:
+		variable, _ := lookupVariableFromAstExpr(service, method, block, e.Value, nil, false)
+		variable.GetVariableInfo().Id = objects.VARIABLE_INLINE_ID
+		return variable, nil
 	
 	case *ast.ArrayType: //e.g. []rune
 		elemtsType := lookup.ComputeTypeForAstExpr(service.File, e.Elt)
