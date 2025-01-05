@@ -13,14 +13,14 @@ ACCOUNTS_DB:
     - Account.AccountID: string
     - Account.Username: string
     - Account.Timestamp: int64
-  - foreign_fields:
+  - foreign_references:
     - Account:
-      - USERS_DB.User.ReqID * {FOREIGN KEY, MANDATORY}
-      - USERS_DB.User.Username * {FOREIGN KEY, MANDATORY}
+      - USERS_DB.User.ReqID * {MANDATORY}
+      - USERS_DB.User.Username * {MANDATORY}
     - Account.ReqID:
-      - USERS_DB.User.ReqID * {FOREIGN KEY, MANDATORY}
+      - USERS_DB.User.ReqID * {MANDATORY}
     - Account.Username:
-      - USERS_DB.User.Username * {FOREIGN KEY, MANDATORY}
+      - USERS_DB.User.Username * {MANDATORY}
 
 USERS_DB:
 - type: NoSQLDatabase
@@ -36,4 +36,4 @@ USERS_DB:
     - User.UserID: string
     - User.Username: string
     - User.Timestamp: int64
-  - foreign_fields: []
+  - foreign_references: []

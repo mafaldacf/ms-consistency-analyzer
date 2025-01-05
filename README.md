@@ -71,6 +71,9 @@ source ~/.venv/bin/activate
 ./graphs.py --app trainticket
 ./graphs.py --app app_constraints_referential_integrity
 ./graphs.py --app app_constraints_specialization
+
+./graphs.py --app dsb_sn
+./graphs.py --app dsb_hotel
 ```
 
 ## Summary

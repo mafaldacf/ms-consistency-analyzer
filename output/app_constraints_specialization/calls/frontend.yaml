@@ -10,6 +10,9 @@
 :
 	- SERVICE CALL @ CreateEmployeeIntern >> (*app_constraints_specialization.EmployeeServiceImpl).CreateEmployeeIntern(ctx context.Context, employeeID string, name string, IBAN string, internID string, mentorID string, stipend string, duration string) (app_constraints_specialization.Employee struct{EmployeeID string, Name string, IBAN string, SpecFlag string}, app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string}, error)
 
+(*FrontendImpl).DeleteEmployee(ctx context.Context, employeeID string):
+- SERVICE CALL @ DeleteEmployee >> (*app_constraints_specialization.EmployeeServiceImpl).DeleteEmployee(ctx context.Context, employeeID string) error
+
 (*FrontendImpl).PromoteFreelancerToFulltime(ctx context.Context, employeeID string, name string, IBAN string, fulltimeID string, salary string, position string)
 :
 	- SERVICE CALL @ PromoteFreelancerToFulltime >> (*app_constraints_specialization.EmployeeServiceImpl).PromoteFreelancerToFulltime(ctx context.Context, employeeID string, name string, IBAN string, fulltimeID string, salary string, position string) (app_constraints_specialization.Fulltime struct{EmployeeID string, FulltimeID string, Salary string, Position string}, error)

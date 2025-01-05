@@ -27,13 +27,14 @@ func (detector *SpecializationDetector) Run() {
 	}
 }
 
-func (detector *SpecializationDetector) schemaHasMandatoryField(datastore *datastores.Datastore) bool {
+func (detector *SpecializationDetector) schemaHasMandatoryField(datastore *datastores.Datastore) (bool, []*mandatoryField) {
+	var mandatoryFields []*mandatoryField
 	for _, field := range datastore.Schema.GetAllFields() {
-		if len(field.GetMandatoryReferences()) > 0 {
-			return true
+		for _, mandatoryRef := range field.GetMandatoryReferences(){
+			mandatoryFields = append(mandatoryFields, newMandatoryField(field, mandatoryRef))
 		}
 	}
-	return false
+	return len(mandatoryFields) > 0, mandatoryFields
 }
 
 func (detector *SpecializationDetector) analyzeNodes(lastServiceCallNode *abstractgraph.AbstractServiceCall, node abstractgraph.AbstractNode, requestIdx int) {
@@ -64,8 +65,9 @@ func (detector *SpecializationDetector) analyzeNodes(lastServiceCallNode *abstra
 			case datastores.NoSQL:
 				/* doc := params[1]
 				abstractgraph.TaintDataflowWrite(detector.app, doc, dbCall, datastore, "", true, requestIdx) */
-				if detector.schemaHasMandatoryField(datastore) {
-					detector.addRemovedMandatoryEntity(newRemovedMandatoryEntity(dbCall.ParsedCall))
+				hasMandatoryFields, _ := detector.schemaHasMandatoryField(datastore)
+				if hasMandatoryFields {
+					detector.addRemovedMandatoryEntity(newRemovedMandatoryEntity(dbCall.ParsedCall, nil)) // FIXME: IN THE FUTURE, REPLACE NIL MANDATORY FIELDS
 				}
 			default:
 				logger.Logger.Fatalf("[SPECIALIZATION > DELETE] TODO: %s", dbCall.String())
@@ -86,6 +88,9 @@ func (detector *SpecializationDetector) Results() string {
 	}
 	for i, rme := range detector.rmes {
 		results += fmt.Sprintf("- (#%d) %s", i, rme.String())
+		for _, mandatoryField := range rme.mandatoryFields { // AT THE MOMENT MANDATORY FIELDS IS ALWAYS NIL SO WE NEVER PRINT THIS
+			results += fmt.Sprintf("\t\t %s REFERENCES %s * {MANDATORY}", mandatoryField.field.GetFullName(), mandatoryField.mandatoryRef.GetFullName())
+		}
 		if i < len(detector.rmes)-1 {
 			results += "\n" // enforce empty line between each foreign key read result
 		}

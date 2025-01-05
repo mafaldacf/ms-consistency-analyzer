@@ -14,6 +14,9 @@
 	- DATASTORE CALL @ employees_db >> NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}) interface{}
   - SERVICE CALL @ CreateIntern >> (*app_constraints_specialization.InternServiceImpl).CreateIntern(ctx context.Context, employeeID string, internID string, mentorID string, stipend string, duration string) (app_constraints_specialization.Intern struct{EmployeeID string, InternID string, Stipend string, Duration string, Mentor string}, error)
 
+(*EmployeeServiceImpl).DeleteEmployee(ctx context.Context, employeeID string):
+- DATASTORE CALL @ employees_db >> NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D) interface{}
+
 (*EmployeeServiceImpl).PromoteFreelancerToFulltime(ctx context.Context, employeeID string, name string, IBAN string, fulltimeID string, salary string, position string)
 :
 	- DATASTORE CALL @ employees_db >> NoSQLDatabase.NoSQLCollection.UpdateOne(ctx context.Context, filter bson.D, update bson.D) (int, interface{})

@@ -5,6 +5,7 @@ import (
 
 	"analyzer/pkg/abstractgraph"
 	"analyzer/pkg/app"
+	"analyzer/pkg/datastores"
 	"analyzer/pkg/types"
 )
 
@@ -26,13 +27,27 @@ func (detector *SpecializationDetector) addRemovedMandatoryEntity(rme *RemovedMa
 	detector.rmes = append(detector.rmes, rme)
 }
 
-type RemovedMandatoryEntity struct {
-	dbCall *types.ParsedDatabaseCall
+type mandatoryField struct {
+	field        datastores.Field
+	mandatoryRef datastores.Field
 }
 
-func newRemovedMandatoryEntity(dbCall *types.ParsedDatabaseCall) *RemovedMandatoryEntity {
+type RemovedMandatoryEntity struct {
+	dbCall          *types.ParsedDatabaseCall
+	mandatoryFields []*mandatoryField
+}
+
+func newMandatoryField(field datastores.Field, mandatoryRef datastores.Field) *mandatoryField {
+	return &mandatoryField{
+		field:        field,
+		mandatoryRef: mandatoryRef,
+	}
+}
+
+func newRemovedMandatoryEntity(dbCall *types.ParsedDatabaseCall, mandatoryFields []*mandatoryField) *RemovedMandatoryEntity {
 	return &RemovedMandatoryEntity{
-		dbCall: dbCall,
+		dbCall:          dbCall,
+		mandatoryFields: mandatoryFields,
 	}
 }
 

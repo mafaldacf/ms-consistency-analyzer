@@ -12,7 +12,7 @@ EMPLOYEES_DB:
     - Employee.Name: string
     - Employee.IBAN: string
     - Employee.SpecFlag: '"freelancer" string'
-  - foreign_fields: []
+  - foreign_references: []
 
 FREELANCERS_DB:
 - type: NoSQLDatabase
@@ -29,11 +29,11 @@ FREELANCERS_DB:
     - Freelancer.FreelancerID: string
     - Freelancer.Rate: string
     - Freelancer.Terms: string
-  - foreign_fields:
+  - foreign_references:
     - Freelancer:
-      - EMPLOYEES_DB.Employee.EmployeeID * {FOREIGN KEY, MANDATORY}
+      - EMPLOYEES_DB.Employee.EmployeeID * {MANDATORY}
     - Freelancer.EmployeeID:
-      - EMPLOYEES_DB.Employee.EmployeeID * {FOREIGN KEY, MANDATORY}
+      - EMPLOYEES_DB.Employee.EmployeeID * {MANDATORY}
 
 FULLTIMES_DB:
 - type: NoSQLDatabase
@@ -50,11 +50,11 @@ FULLTIMES_DB:
     - Fulltime.FulltimeID: string
     - Fulltime.Salary: string
     - Fulltime.Position: string
-  - foreign_fields:
+  - foreign_references:
     - Fulltime:
-      - EMPLOYEES_DB.Employee.EmployeeID * {FOREIGN KEY, MANDATORY}
+      - EMPLOYEES_DB.Employee.EmployeeID * {MANDATORY}
     - Fulltime.EmployeeID:
-      - EMPLOYEES_DB.Employee.EmployeeID * {FOREIGN KEY, MANDATORY}
+      - EMPLOYEES_DB.Employee.EmployeeID * {MANDATORY}
 
 INTERNS_DB:
 - type: NoSQLDatabase
@@ -72,8 +72,8 @@ INTERNS_DB:
     - Intern.Stipend: string
     - Intern.Duration: string
     - Intern.Mentor: string
-  - foreign_fields:
+  - foreign_references:
     - Intern:
-      - EMPLOYEES_DB.Employee.EmployeeID * {FOREIGN KEY, MANDATORY}
+      - EMPLOYEES_DB.Employee.EmployeeID * {MANDATORY}
     - Intern.EmployeeID:
-      - EMPLOYEES_DB.Employee.EmployeeID * {FOREIGN KEY, MANDATORY}
+      - EMPLOYEES_DB.Employee.EmployeeID * {MANDATORY}

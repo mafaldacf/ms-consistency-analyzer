@@ -188,13 +188,13 @@ func (app *App) DumpYamlSchema(compactSchema bool) {
 		var dependencies []string
 
 		propsForeignKeys := utils.NewOrderedPropertyList()
-		for _, f := range datastore.GetDatastore().Schema.Fields {
+		for _, f := range datastore.GetDatastore().Schema.GetAllFields() {
 			entry := f.(*datastores.Entry)
 			if len(entry.References) > 0 {
 				var lst []string
 				for _, r := range entry.References {
 					if slices.Contains(entry.MandatoryRefs, r) {
-						lst = append(lst, r.GetFullName() + " * {FOREIGN KEY, MANDATORY}")
+						lst = append(lst, r.GetFullName() + " * {MANDATORY}")
 					} else {
 						lst = append(lst, r.GetFullName())
 					}
@@ -206,25 +206,7 @@ func (app *App) DumpYamlSchema(compactSchema bool) {
 				propsForeignKeys.AddOrderedProperty(entry.GetName(), lst)
 			}
 		}
-		for _, f := range datastore.GetDatastore().Schema.UnfoldedFields {
-			entry := f.(*datastores.Entry)
-			if len(entry.References) > 0 {
-				var lst []string
-				for _, r := range entry.References {
-					if slices.Contains(entry.MandatoryRefs, r) {
-						lst = append(lst, r.GetFullName() + " * {FOREIGN KEY, MANDATORY}")
-					} else {
-						lst = append(lst, r.GetFullName())
-					}
-					if !slices.Contains(dependencies, r.GetDatastoreName()) {
-						dependencies = append(dependencies, r.GetDatastoreName())
-					}
-				}
-				sort.Strings(lst)
-				propsForeignKeys.AddOrderedProperty(entry.GetName(), lst)
-			}
-		}
-		schema.AddOrderedProperty("foreign_fields", propsForeignKeys.Result())
+		schema.AddOrderedProperty("foreign_references", propsForeignKeys.Result())
 
 		props := utils.NewOrderedPropertyList()
 		props.AddOrderedProperty("type", datastore.GetDatastore().GetTypeString())
