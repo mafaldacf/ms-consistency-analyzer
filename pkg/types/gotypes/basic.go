@@ -4,18 +4,27 @@ import (
 	"fmt"
 	"strings"
 
+	"analyzer/pkg/logger"
 	"analyzer/pkg/utils"
 )
 
 type BasicType struct {
-	Type  `json:"-"`
-	Name  string
-	Value string
+	Type     `json:"-"`
+	Name     string
+	Value    string
+	NotValue bool
 }
 
 // ------------
 // Type Methods
 // ------------
+
+func NewBasicType(name string, value string) *BasicType {
+	return &BasicType{
+		Name:  name,
+		Value: value,
+	}
+}
 
 func (t *BasicType) DeepCopy() Type {
 	return &BasicType{
@@ -59,6 +68,19 @@ func (t *BasicType) AddValue(value string) {
 	}
 	t.Value = utils.AddValue(t.Name, t.Value, value)
 }
+
+func (t *BasicType) InvertBool() {
+	if t.Value == "true" {
+		t.Value = "false"
+	} else if t.Value == "false" {
+		t.Value = "true"
+	} else {
+		logger.Logger.Warnf("[BASIC TYPE] found dynamic boolean (value='%s') for basic type: %s", t.Value, t.String())
+	}
+
+	t.NotValue = !t.NotValue
+}
+
 func (t *BasicType) GetNestedFieldTypes(prefix string, noSQL bool) ([]Type, []string) {
 	return nil, nil
 }

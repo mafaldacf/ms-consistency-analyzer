@@ -92,7 +92,7 @@ func visitBasicBlock(service *service.Service, method *types.ParsedMethod, block
 		logger.Logger.Warnf("\n----------------------------------------------\nPARSING BLOCK [%d] W/ KIND = %s; NODE [%d]: %v \n\t@ METHOD: %s.%s\n%s\n----------------------------------------------", block.Block.Index, block.Block.Kind.String(), i, node, service.Name, method.Name, initialObjsStr)
 		
 		succ := block.GetNextSuccessorIfExists()
-		ident, isIdent := node.(*ast.Ident)
+		/* ident, isIdent := node.(*ast.Ident)
 		if succ != nil && succ.Block.Kind == cfg.KindRangeLoop && isIdent { // as soon as we see an ident then we are "preparing" for the succeeding range loop
 			logger.Logger.Warnf("RANGE AHEAD (%t, %t)! %v; ELEMS TYPE = %v", visitedRangeType, visitedRangeElem, succ.Block.Succs, rangeValueType)
 			if !visitedRangeType { // range ident
@@ -117,15 +117,67 @@ func visitBasicBlock(service *service.Service, method *types.ParsedMethod, block
 				if rangeKeyType == nil {
 					obj := wrapValueInBasicVariable("0", "int", ident.Name)
 					block.AddVariable(obj)
-				} else {
-
 				}
 			}
 		} else {
 			stmts := parseNodeBody(service, method, block, node)
 			deferStmts = append(deferStmts, stmts...)
+		} */
+
+		var parsingLoop bool
+		if succ != nil && succ.Block.Kind == cfg.KindRangeLoop { // as soon as we see an ident then we are "preparing" for the succeeding range loop
+			logger.Logger.Warnf("RANGE AHEAD (%t, %t)! %v; ELEMS TYPE = %v", visitedRangeType, visitedRangeElem, succ.Block.Succs, rangeValueType)
+
+			if !visitedRangeType { // range object
+				var rangeObj objects.Object
+				if expr, ok := node.(ast.Expr); ok {
+					rangeObj, _ = lookupVariableFromAstExpr(service, method, block, expr, nil, false)
+
+					visitedRangeType = true
+					if rangeObjSlice, ok := rangeObj.(*objects.SliceObject); ok {
+						rangeValueType = rangeObjSlice.GetSliceType().UnderlyingType
+					} else if rangeObjArray, ok := rangeObj.(*objects.ArrayObject); ok {
+						rangeValueType = rangeObjArray.GetArrayType().ElementsType //FIXME: for some reason the type is SliceType and not ArrayType
+					} else if mapObjArray, ok := rangeObj.(*objects.MapObject); ok {
+						rangeValueType = mapObjArray.GetMapType().ValueType
+						rangeKeyType = mapObjArray.GetMapType().KeyType
+					} else {
+						logger.Logger.Fatalf("[VISITOR BLOCK] unexpected type [%s] for range ident object: %v", utils.GetType(rangeObj), rangeObj)
+					}
+					parsingLoop = true
+					logger.Logger.Debugf("saved type (%s) for range ahead: %s", utils.GetType(rangeValueType), rangeValueType.String())
+
+				} else {
+					// we are still in the expr for the previous block and not on the expr for the range object
+					logger.Logger.Debugf("[VISITOR BLOCK] skipping ast type (%s) for node: %v", utils.GetType(node), node)
+				}
+
+			} else {
+				ident, ok := node.(*ast.Ident)
+				if !ok {
+					logger.Logger.Fatalf("[CFG - VISIT BASIC BLOCK] unexpected type (%s) for node: %v", utils.GetType(node), node)
+				}
+				if visitedRangeType && !visitedRangeElem && ident.Name != "_" { // element ident
+					visitedRangeElem = true
+					obj := lookup.CreateObjectFromType(ident.Name, rangeValueType)
+					block.AddVariable(obj)
+					parsingLoop = true
+				} else if ident.Name != "_" { // index ident
+					if rangeKeyType == nil {
+						obj := wrapValueInBasicVariable("0", "int", ident.Name)
+						block.AddVariable(obj)
+					}
+					parsingLoop = true
+				}
+			}
+		} 
+		
+		if !parsingLoop {
+			stmts := parseNodeBody(service, method, block, node)
+			deferStmts = append(deferStmts, stmts...)
 		}
 	}
+
 
 	for _, deferStmt := range deferStmts {
 		parseAndSaveCall(service, method, block, deferStmt.Call)
@@ -222,6 +274,9 @@ func assignLeftValues(service *service.Service, method *types.ParsedMethod, bloc
 			} else if assignStmt.Tok == token.ADD_ASSIGN { // +=
 				lvariable := block.GetLastestVariable(e.Name)
 				lvariable.GetType().AddValue(rvariable.GetType().GetBasicValue())
+			} else if assignStmt.Tok == token.SHL_ASSIGN { // <<=
+				lvariable := block.GetLastestVariable(e.Name)
+				logger.Logger.Warnf("[CFG - ASSIGN LEFT] ignoring token (%v) for lvariable (%s) in assignment: %v", assignStmt.Tok, lvariable.String(), assignStmt)
 			} else {
 				logger.Logger.Fatalf("[CFG - ASSIGN LEFT] [%s] unexpected token (%v) for assignment: %v", service.GetName(), assignStmt.Tok, assignStmt)
 			}
@@ -812,10 +867,7 @@ func wrapInTupleVariable(varsToWrap ...objects.Object) *objects.TupleObject {
 func wrapInBasicVariable(variable objects.Object, typeName string) *objects.BasicObject {
 	return &objects.BasicObject{
 		ObjectInfo: &objects.ObjectInfo{
-			Type: &gotypes.BasicType{
-				Name:  typeName,
-				Value: variable.GetType().GetBasicValue(),
-			},
+			Type : gotypes.NewBasicType(typeName, variable.GetType().GetBasicValue()),
 			Id: objects.VARIABLE_UNASSIGNED_ID,
 		},
 	}
@@ -892,14 +944,8 @@ func parseBuiltInGoTypeCall(service *service.Service, method *types.ParsedMethod
 
 	deps := getFuncCallDeps(service, method, block, callExpr)
 	switch funcIdent.Name {
-	case "byte":
-		return wrapInBasicVariable(deps[0], "byte")
-	case "string":
-		return wrapInBasicVariable(deps[0], "string")
-	case "float32":
-		return wrapInBasicVariable(deps[0], "float32")
-	case "int64":
-		return wrapInBasicVariable(deps[0], "int64")
+	case "byte", "string", "float32", "int64", "uint16", "uint64":
+		return wrapInBasicVariable(deps[0], funcIdent.Name)
 	default:
 		logger.Logger.Fatalf("[CFG] [%s] unexpected built-in go type (%s) for function call (%v)", service.GetName(), funcIdent.Name, callExpr)
 	}

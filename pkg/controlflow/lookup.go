@@ -29,7 +29,7 @@ func computeArrayIndex(expr ast.Expr, block *types.Block) int {
 			valStr := basicObj.GetBasicType().Value
 			index, err := strconv.Atoi(valStr)
 			if err != nil {
-				logger.Logger.Fatalf("error converting index (%s): %s", valStr, err.Error())
+				logger.Logger.Fatalf("error converting index (%s) in expr (%v): %s", valStr, expr, err.Error())
 			}
 			return index
 		}
@@ -47,9 +47,7 @@ func lookupVariableFromIdentIfExists(service *service.Service, block *types.Bloc
 	}
 
 	if utils.IsBuiltInGoType(ident.Name) {
-		basicType := &gotypes.BasicType{
-			Name: ident.Name,
-		}
+		basicType := gotypes.NewBasicType(ident.Name, "")
 		variable := &objects.BasicObject{
 			ObjectInfo: &objects.ObjectInfo{
 				Type: basicType,
@@ -61,10 +59,7 @@ func lookupVariableFromIdentIfExists(service *service.Service, block *types.Bloc
 
 	if utils.IsBuiltInConstValue(ident.Name) {
 		typeName := utils.GetBuiltInConstTypeName(ident.Name)
-		basicType := &gotypes.BasicType{
-			Name:  typeName,
-			Value: ident.Name,
-		}
+		basicType := gotypes.NewBasicType(typeName, ident.Name)
 		variable := &objects.BasicObject{
 			ObjectInfo: &objects.ObjectInfo{
 				Type: basicType,
@@ -370,6 +365,20 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 				logger.Logger.Warnf("[CFG - LOOKUP VAR] got map %v with unassigned value for key %s \n\t\t\t\t\t\t\t => created new variable for key named (%s): %s", mapVar.String(), key.String(), key.GetType().GetBasicValue(), variable.String())
 			}
 		}
+
+	case *ast.StarExpr: // e.g. *post
+		if !objOnExpr(e, block) {
+			t := lookup.LookupTypesForGoTypes(service.GetPackage(), service.GetPackage().TypesInfo.Types[e].Type)
+			return lookup.CreateObjectFromType("", t), nil
+		}
+
+		variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, nil, inAssignment)
+		if ptrVariable, ok := variable.(*objects.PointerObject); ok {
+			return ptrVariable.PointerTo, packageType
+		}
+
+		logger.Logger.Fatalf("unknown token (%v) for star expr %v: [%s] %v", e.Star, e, utils.GetType(service.GetPackage().TypesInfo.Types[e].Type), service.GetPackage().TypesInfo.Types[e])
+
 	case *ast.UnaryExpr:
 		logger.Logger.Debugf("[CFG - LOOKUP VAR] UNARY EXPR for [%s]: %v", utils.GetType(service.GetPackage().TypesInfo.Types[e].Type), service.GetPackage().TypesInfo.Types[e])
 
@@ -409,27 +418,27 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			}
 			variable.GetVariableInfo().SetParent(variable, pointerVariable)
 			return pointerVariable, packageType */
+		} else if e.Op == token.NOT { // e.g. !exists
+			variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, nil, inAssignment)
+			if basicVariable, ok := variable.(*objects.BasicObject); ok {
+				basicVariable.GetBasicType().InvertBool()
+			} else {
+				logger.Logger.Fatalf("[LOOKUP] unexpected type (%s) for object: %v", utils.GetType(variable), variable.String())
+			}
+			return variable, packageType
+		} else if e.Op == token.ARROW { // e.g. err_post_channel <- err
+			variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, nil, inAssignment)
+			logger.Logger.Warnf("[LOOKUP] ignoring unary expr with token (%v): %v", e.Op, e)
+			return variable, packageType
 		}
+
+
 		if !objOnExpr(e, block) {
 			t := lookup.LookupTypesForGoTypes(service.GetPackage(), service.GetPackage().TypesInfo.Types[e].Type)
 			return lookup.CreateObjectFromType("", t), nil
 		}
-		
-		logger.Logger.Fatalf("unknown token %v for unary expr %v: [%s] %v", e.Op, e, utils.GetType(service.GetPackage().TypesInfo.Types[e].Type), service.GetPackage().TypesInfo.Types[e])
 
-	case *ast.StarExpr: // e.g. *post
-		if !objOnExpr(e, block) {
-			t := lookup.LookupTypesForGoTypes(service.GetPackage(), service.GetPackage().TypesInfo.Types[e].Type)
-			return lookup.CreateObjectFromType("", t), nil
-		}
-
-		variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, nil, inAssignment)
-		if ptrVariable, ok := variable.(*objects.PointerObject); ok {
-			return ptrVariable.PointerTo, packageType
-		}
-
-		logger.Logger.Fatalf("unknown token (%v) for star expr %v: [%s] %v", e.Star, e, utils.GetType(service.GetPackage().TypesInfo.Types[e].Type), service.GetPackage().TypesInfo.Types[e])
-
+		logger.Logger.Fatalf("unknown token (%v) for unary expr %v: [%s] %v", e.Op, e, utils.GetType(service.GetPackage().TypesInfo.Types[e].Type), service.GetPackage().TypesInfo.Types[e])
 
 	case *ast.BinaryExpr:
 		if !objOnExpr(e, block) {
@@ -437,39 +446,9 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			return lookup.CreateObjectFromType("", t), nil
 		}
 
-		if e.Y == nil && e.Op == token.MUL { // "*"
-			variable_x, t_x := lookupVariableFromAstExpr(service, method, block, e.X, nil, inAssignment)
-			pointer_variable_x := &objects.PointerObject{
-				PointerTo: variable_x,
-				ObjectInfo: &objects.ObjectInfo{
-					Type: &gotypes.PointerType{
-						PointerTo: variable_x.GetType(),
-					},
-					Id:   objects.VARIABLE_INLINE_ID,
-					Name: variable_x.GetVariableInfo().Name,
-				},
-			}
-			variable_x.GetVariableInfo().SetParent(variable_x, pointer_variable_x)
-			packageType = t_x
-			variable = pointer_variable_x
-	
-		} else if e.Y == nil && e.Op == token.AND { // "&"
-			variable_x, t_x := lookupVariableFromAstExpr(service, method, block, e.X, nil, inAssignment)
-			address_variable_x := &objects.AddressObject{
-				AddressOf: variable_x,
-				ObjectInfo: &objects.ObjectInfo{
-					Type: &gotypes.AddressType{
-						AddressOf: variable_x.GetType(),
-					},
-					Id:   objects.VARIABLE_INLINE_ID,
-					Name: variable_x.GetVariableInfo().Name,
-				},
-			}
-			variable_x.GetVariableInfo().SetParent(variable_x, address_variable_x)
-			packageType = t_x
-			variable = address_variable_x
+		if e.Op == token.ADD || e.Op == token.SUB || e.Op == token.QUO || e.Op == token.MUL || e.Op == token.AND || // "+", "-", "/", "*", "&"
+			e.Op == token.LEQ || e.Op == token.GEQ || e.Op == token.NEQ || e.Op == token.EQL { // "<=", ">=", "!=", "=="
 
-		} else if e.Op == token.ADD || e.Op == token.SUB || e.Op == token.QUO || e.Op == token.MUL || e.Op == token.AND { // "+", "-", "/", "*", "&"
 			// FIXME!!!
 			variable_x, t_x := lookupVariableFromAstExpr(service, method, block, e.X, nil, inAssignment)
 			address_variable_x := &objects.AddressObject{
@@ -503,7 +482,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 
 			packageType = t_x
 			variable = address_variable_x
-			
+
 			logger.Logger.Warnf("FIXMEEEEEEE!!!!!!!!")
 		} else {
 			logger.Logger.Fatalf("unknown token %v for binary expr %v", e.Op, e)
@@ -519,7 +498,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		variable, _ := lookupVariableFromAstExpr(service, method, block, e.Value, nil, false)
 		variable.GetVariableInfo().Id = objects.VARIABLE_INLINE_ID
 		return variable, nil
-	
+
 	case *ast.ArrayType: //e.g. []rune
 		elemtsType := lookup.ComputeTypeForAstExpr(service.File, e.Elt)
 		numElemsType := lookup.ComputeTypeForAstExpr(service.File, e.Len)
@@ -528,7 +507,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			ObjectInfo: &objects.ObjectInfo{
 				Type: &gotypes.ArrayType{
 					ElementsType: elemtsType,
-					NumElems: numElemsInt,
+					NumElems:     numElemsInt,
 				},
 				Id: objects.VARIABLE_UNASSIGNED_ID,
 			},

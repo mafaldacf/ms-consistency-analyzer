@@ -12,14 +12,14 @@ NOTIFICATIONS_QUEUE:
     - Message.ReqID: int64
     - Message.PostID_MESSAGE: int64
     - Message.Timestamp: int64
-  - foreign_fields:
+  - foreign_references:
     - Message:
-      - POSTS_DB.Post.PostID * {FOREIGN KEY, MANDATORY}
-      - POSTS_DB.Post.ReqID * {FOREIGN KEY, MANDATORY}
+      - POSTS_DB.Post.PostID * {MANDATORY}
+      - POSTS_DB.Post.ReqID * {MANDATORY}
     - Message.ReqID:
-      - POSTS_DB.Post.ReqID * {FOREIGN KEY, MANDATORY}
+      - POSTS_DB.Post.ReqID * {MANDATORY}
     - Message.PostID_MESSAGE:
-      - POSTS_DB.Post.PostID * {FOREIGN KEY, MANDATORY}
+      - POSTS_DB.Post.PostID * {MANDATORY}
 
 POSTS_DB:
 - type: NoSQLDatabase
@@ -39,4 +39,4 @@ POSTS_DB:
     - Post.Timestamp: int64
     - Post.Creator: postnotification_simple.Creator struct{Username "some username" string}
     - Post.Creator.Username: '"some username" string'
-  - foreign_fields: []
+  - foreign_references: []

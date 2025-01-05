@@ -13,13 +13,13 @@ CART_DB:
     - Cart.LastProductID: string
     - Cart.TotalQuantity: int
     - Cart.Products: '[]string'
-  - foreign_fields:
+  - foreign_references:
     - Cart:
-      - PRODUCT_DB.Product.ProductID * {FOREIGN KEY, MANDATORY}
+      - PRODUCT_DB.Product.ProductID * {MANDATORY}
     - Cart.LastProductID:
-      - PRODUCT_DB.Product.ProductID * {FOREIGN KEY, MANDATORY}
+      - PRODUCT_DB.Product.ProductID * {MANDATORY}
     - Cart.Products:
-      - PRODUCT_DB.Product.ProductID * {FOREIGN KEY, MANDATORY}
+      - PRODUCT_DB.Product.ProductID * {MANDATORY}
 
 PRODUCT_DB:
 - type: NoSQLDatabase
@@ -35,7 +35,7 @@ PRODUCT_DB:
     - Product.Description: string
     - Product.PricePerUnit: int
     - Product.Category: string
-  - foreign_fields: []
+  - foreign_references: []
 
 PRODUCT_QUEUE:
 - type: Queue
@@ -44,4 +44,4 @@ PRODUCT_QUEUE:
 - schema:
   - fields: []
   - unfolded_fields: []
-  - foreign_fields: []
+  - foreign_references: []

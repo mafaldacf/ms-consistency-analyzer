@@ -78,17 +78,17 @@ source ~/.venv/bin/activate
 
 ## Summary
 
-| Application Name                          | Runs          | XCY Analysis  | Cascade Analysis  | Foreign Key Analysis  |
-|-------------------------------------------|---------------|---------------|-------------------|-----------------------|
-| `foobar`                                  | **YES**       | 0             | 0                 | 0                     |
-| `shopping_simple`                         | **YES**       | 0             | 1;1               | 0                     |
-| `shopping_app`                            | **YES**       | 1             | 0                 | 1                     |
-| `postnotification_simple`                 | **YES**       | 1             | 0                 | 1                     |
-| `postnotification`                        | **YES**       | 2             | 0                 | 2                     |
-| `sockshop2`                               | **YES**       | 0             | 0                 | 0                     |
-| `trainticket`                             | **YES**       | 0             | 13;0              | 0                     |
-| `app_constraints_referential_integrity`   | **YES**       | 0             | 2;1               | 1                     |
-| `app_constraints_specialization`          | **YES**       | 0             | 0                 | 0                     |
+| Application Name                          | Runs          | XCY Analysis  | Cascade Analysis  | Foreign Key Analysis  | Specialization |
+|-------------------------------------------|---------------|---------------|-------------------|-----------------------|----------------|
+| `foobar`                                  | **YES**       | 0             | 0                 | 0                     | 0              |
+| `shopping_simple`                         | **YES**       | 0             | 1;1               | 0                     | 0              |
+| `shopping_app`                            | **YES**       | 1             | 0                 | 1                     | 0              |
+| `postnotification_simple`                 | **YES**       | 1             | 0                 | 1                     | 0              |
+| `postnotification`                        | **YES**       | 2             | 0                 | 2                     | 0              |
+| `sockshop2`                               | **YES**       | 0             | 0                 | 0                     | 0              |
+| `trainticket`                             | **YES**       | 0             | 13;0              | 0                     | 0              |
+| `app_constraints_referential_integrity`   | **YES**       | 0             | 2;1               | 1                     | 0              |
+| `app_constraints_specialization`          | **YES**       | 0             | 2;3               | 0                     | 1              |
 
 ## Structure
 

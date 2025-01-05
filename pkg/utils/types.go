@@ -68,10 +68,11 @@ func GetType(node interface{}) string {
 	if node == nil {
 		pc, file, line, ok := runtime.Caller(1)
 		if !ok {
-			logger.Logger.Fatal("[UTILS TYPE] INVALID TYPE FOR <nil> and unable to retrieve caller information")
+			logger.Logger.Warnf("[UTILS TYPE] INVALID TYPE FOR <nil> and unable to retrieve caller information")
 		}
 		callerFunc := runtime.FuncForPC(pc).Name()
-		logger.Logger.Fatalf("[UTILS TYPE] INVALID TYPE FOR <nil> (caller: %s) \n\t\t\t\t\t %s:%d", callerFunc, file, line)
+		logger.Logger.Warnf("[UTILS TYPE] INVALID TYPE FOR <nil> (caller: %s) \n\t\t\t\t\t %s:%d", callerFunc, file, line)
+		return ""
 	}
 	return reflect.TypeOf(node).Elem().Name()
 }

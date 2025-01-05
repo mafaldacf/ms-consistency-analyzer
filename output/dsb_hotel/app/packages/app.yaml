@@ -41,14 +41,14 @@ hotelreservation:
   - strconv
   - time
 - imports (extracted from source files):
+  - (backend) github.com/blueprint-uservices/blueprint/runtime/core/backend
+  - (bson) go.mongodb.org/mongo-driver/bson
   - (geoindex) github.com/hailocab/go-geoindex
+  - (go-geoindex) github.com/hailocab/go-geoindex
+  - (sha256) crypto/sha256
   - context
-  - crypto/sha256
   - errors
   - fmt
-  - github.com/blueprint-uservices/blueprint/runtime/core/backend
-  - github.com/hailocab/go-geoindex
-  - go.mongodb.org/mongo-driver/bson
   - math
   - strconv
   - time
@@ -61,14 +61,14 @@ hotelreservation:
     NoSQLDatabase.NoSQLCursor.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
   - context.Context
-  - go-geoindex.ClusteringIndex struct{streetLevel (*go-geoindex.PointsIndex struct{index (*go-geoindex.geoIndex struct{resolution go-geoindex.Meters float64, index map[go-geoindex.cell struct{x int, y int}]interface{}, newEntry interface{}}), currentPosition map[string]go-geoindex.Point
-    interface{Id, Lat, Lon, }}), cityLevel (*go-geoindex.CountIndex struct{index (*go-geoindex.geoIndex struct{resolution go-geoindex.Meters float64, index map[go-geoindex.cell struct{x int, y int}]interface{}, newEntry interface{}}), currentPosition map[string]go-geoindex.Point
-    interface{Id, Lat, Lon, }}), worldLevel (*go-geoindex.CountIndex struct{index (*go-geoindex.geoIndex struct{resolution go-geoindex.Meters float64, index map[go-geoindex.cell struct{x int, y int}]interface{}, newEntry interface{}}), currentPosition map[string]go-geoindex.Point
-    interface{Id, Lat, Lon, }})}
-  - go-geoindex.CountIndex struct{index (*go-geoindex.geoIndex struct{resolution go-geoindex.Meters float64, index map[go-geoindex.cell struct{x int, y int}]interface{}, newEntry interface{}}), currentPosition map[string]go-geoindex.Point interface{Id, Lat, Lon, }}
+  - go-geoindex.ClusteringIndex struct{streetLevel (*go-geoindex.PointsIndex struct{index (*go-geoindex.geoIndex struct{resolution go-geoindex.Meters float64, index map[go-geoindex.cell struct{x int, y int}]interface{}, newEntry interface{}}), currentPosition map[string]hotelreservation.Point
+    struct{Pid string, Plat float64, Plon float64}}), cityLevel (*go-geoindex.CountIndex struct{index (*go-geoindex.geoIndex struct{resolution go-geoindex.Meters float64, index map[go-geoindex.cell struct{x int, y int}]interface{}, newEntry interface{}}),
+    currentPosition map[string]hotelreservation.Point struct{Pid string, Plat float64, Plon float64}}), worldLevel (*go-geoindex.CountIndex struct{index (*go-geoindex.geoIndex struct{resolution go-geoindex.Meters float64, index map[go-geoindex.cell struct{x int, y int}]interface{}, newEntry interface{}}), currentPosition map[string]hotelreservation.Point
+    struct{Pid string, Plat float64, Plon float64}})}
+  - go-geoindex.CountIndex struct{index (*go-geoindex.geoIndex struct{resolution go-geoindex.Meters float64, index map[go-geoindex.cell struct{x int, y int}]interface{}, newEntry interface{}}), currentPosition map[string]hotelreservation.Point struct{Pid string, Plat float64, Plon float64}}
   - go-geoindex.Meters float64
-  - go-geoindex.Point interface{Id, Lat, Lon, }
-  - go-geoindex.PointsIndex struct{index (*go-geoindex.geoIndex struct{resolution go-geoindex.Meters float64, index map[go-geoindex.cell struct{x int, y int}]interface{}, newEntry interface{}}), currentPosition map[string]go-geoindex.Point interface{Lon, Id, Lat, }}
+  - go-geoindex.Point interface{Lon, Id, Lat, }
+  - go-geoindex.PointsIndex struct{index (*go-geoindex.geoIndex struct{resolution go-geoindex.Meters float64, index map[go-geoindex.cell struct{x int, y int}]interface{}, newEntry interface{}}), currentPosition map[string]hotelreservation.Point struct{Pid string, Plat float64, Plon float64}}
   - go-geoindex.cell struct{x int, y int}
   - go-geoindex.geoIndex struct{resolution go-geoindex.Meters float64, index map[go-geoindex.cell struct{x int, y int}]interface{}, newEntry interface{}}
   - primitive.D
@@ -84,10 +84,10 @@ hotelreservation:
   - hotelreservation.FrontEndService
   - hotelreservation.FrontEndServiceImpl struct{searchService hotelreservation.SearchService, profileService hotelreservation.ProfileService, recommendationService hotelreservation.RecommendationService, userService hotelreservation.UserService, reservationService hotelreservation.ReservationService}
   - hotelreservation.GeoService
-  - hotelreservation.GeoServiceImpl struct{geoDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, index (*go-geoindex.ClusteringIndex struct{streetLevel (*go-geoindex.PointsIndex struct{index (*go-geoindex.geoIndex struct{resolution go-geoindex.Meters float64, index map[go-geoindex.cell struct{x int, y int}]interface{}, newEntry interface{}}), currentPosition map[string]go-geoindex.Point
-    interface{Lon, Id, Lat, }}), cityLevel (*go-geoindex.CountIndex struct{index (*go-geoindex.geoIndex struct{resolution go-geoindex.Meters float64, index map[go-geoindex.cell struct{x int, y int}]interface{}, newEntry interface{}}), currentPosition map[string]go-geoindex.Point
-    interface{Id, Lat, Lon, }}), worldLevel (*go-geoindex.CountIndex struct{index (*go-geoindex.geoIndex struct{resolution go-geoindex.Meters float64, index map[go-geoindex.cell struct{x int, y int}]interface{}, newEntry interface{}}), currentPosition map[string]go-geoindex.Point
-    interface{Id, Lat, Lon, }})})}
+  - hotelreservation.GeoServiceImpl struct{geoDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, index (*go-geoindex.ClusteringIndex struct{streetLevel (*go-geoindex.PointsIndex struct{index (*go-geoindex.geoIndex struct{resolution go-geoindex.Meters float64, index map[go-geoindex.cell struct{x int, y int}]interface{}, newEntry interface{}}), currentPosition map[string]hotelreservation.Point
+    struct{Pid string, Plat float64, Plon float64}}), cityLevel (*go-geoindex.CountIndex struct{index (*go-geoindex.geoIndex struct{resolution go-geoindex.Meters float64, index map[go-geoindex.cell struct{x int, y int}]interface{}, newEntry interface{}}),
+    currentPosition map[string]hotelreservation.Point struct{Pid string, Plat float64, Plon float64}}), worldLevel (*go-geoindex.CountIndex struct{index (*go-geoindex.geoIndex struct{resolution go-geoindex.Meters float64, index map[go-geoindex.cell struct{x int, y int}]interface{}, newEntry interface{}}), currentPosition map[string]hotelreservation.Point
+    struct{Pid string, Plat float64, Plon float64}})})}
   - hotelreservation.Hotel struct{HId string, HLat float64, HLon float64, HRate float64, HPrice float64}
   - hotelreservation.HotelNumber struct{HotelId string, Number int64}
   - hotelreservation.HotelProfile struct{ID string, Name string, PhoneNumber string, Description string, Address hotelreservation.Address struct{StreetNumber string, StreetName string, City string, State string, Country string, PostalCode string, Lat float64, Lon float64}}

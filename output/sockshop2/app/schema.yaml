@@ -5,7 +5,7 @@ CART_DB:
 - schema:
   - fields: []
   - unfolded_fields: []
-  - foreign_fields: []
+  - foreign_references: []
 
 CATALOGUE_DB:
 - type: NoSQLDatabase
@@ -28,7 +28,7 @@ CATALOGUE_DB:
     - Sock.Quantity: int
     - Sock.Tags: '[]string'
     - Sock.TagString: string
-  - foreign_fields: []
+  - foreign_references: []
 
 ORDER_DB:
 - type: NoSQLDatabase
@@ -37,7 +37,7 @@ ORDER_DB:
 - schema:
   - fields: []
   - unfolded_fields: []
-  - foreign_fields: []
+  - foreign_references: []
 
 SHIPDB:
 - type: NoSQLDatabase
@@ -46,7 +46,7 @@ SHIPDB:
 - schema:
   - fields: []
   - unfolded_fields: []
-  - foreign_fields: []
+  - foreign_references: []
 
 SHIPQUEUE:
 - type: Queue
@@ -55,7 +55,7 @@ SHIPQUEUE:
 - schema:
   - fields: []
   - unfolded_fields: []
-  - foreign_fields: []
+  - foreign_references: []
 
 USER_DB:
 - type: NoSQLDatabase
@@ -64,4 +64,4 @@ USER_DB:
 - schema:
   - fields: []
   - unfolded_fields: []
-  - foreign_fields: []
+  - foreign_references: []
