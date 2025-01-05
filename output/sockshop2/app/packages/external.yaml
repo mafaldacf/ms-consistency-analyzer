@@ -13,6 +13,11 @@ errors:
 - package path: errors
 - module: ""
 
+slices:
+- package: slices
+- package path: slices
+- module: ""
+
 strings:
 - package: strings
 - package path: strings

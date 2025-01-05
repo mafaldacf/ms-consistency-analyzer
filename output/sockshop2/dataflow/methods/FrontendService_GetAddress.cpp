@@ -11,5 +11,6 @@
 
 [0] (InterfaceObject UserType) ctx context.Context
 
+    --> r-tainted: read(user_db._.addresses) {1}
 [0] (BasicObject BasicType) addressID string
 

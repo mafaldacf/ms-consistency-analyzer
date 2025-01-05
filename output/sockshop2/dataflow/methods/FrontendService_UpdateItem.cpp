@@ -13,15 +13,47 @@
 
 [0] (BasicObject BasicType) sessionID string
 
+    --> r-tainted: read(catalogue_db._.id) {1}
 [0] (BasicObject BasicType) itemID string
 
 [0] (BasicObject BasicType) quantity int
 
 [0] (StructObject UserType) item catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
+     --> r-tainted: read(catalogue_db.Sock, catalogue_db.Sock.ImageURL, catalogue_db.Sock.string, catalogue_db.Sock.ImageURL_1, catalogue_db.Sock.ImageURL_2, catalogue_db.Sock.TagString, catalogue_db.Sock.Tags) {7}
+[_1] (Reference UserType) ref <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}> @ CatalogueService
+      --> r-tainted: read(catalogue_db.Sock.ImageURL) {1}
+[__2] (FieldObject FieldType) ImageURL []string
+       --> r-tainted: read(catalogue_db.Sock.ImageURL) {1}
+[___3] (ArrayObject SliceType) []string
+        --> r-tainted: read(catalogue_db.Sock.string, catalogue_db.Sock.ImageURL_1) {2}
+[____4] (BasicObject BasicType) ImageURL_1 string
+        --> r-tainted: read(catalogue_db.Sock.string, catalogue_db.Sock.ImageURL_2) {2}
+[____4] (BasicObject BasicType) ImageURL_2 string
+      --> r-tainted: read(catalogue_db.Sock.ImageURL_1) {1}
+[__2] (FieldObject FieldType) ImageURL_1 string
+       --> r-tainted: read(catalogue_db.Sock.string, catalogue_db.Sock.ImageURL_1) {2}
+[___3] (BasicObject BasicType) ImageURL_1 string
+      --> r-tainted: read(catalogue_db.Sock.ImageURL_2) {1}
+[__2] (FieldObject FieldType) ImageURL_2 string
+       --> r-tainted: read(catalogue_db.Sock.string, catalogue_db.Sock.ImageURL_2) {2}
+[___3] (BasicObject BasicType) ImageURL_2 string
+      --> r-tainted: read(catalogue_db.Sock.TagString) {1}
+[__2] (FieldObject FieldType) TagString string
+       --> r-tainted: read(catalogue_db.Sock.TagString, catalogue_db.Sock.string) {2}
+[___3] (BasicObject BasicType) TagString string
+      --> r-tainted: read(catalogue_db.Sock.Tags) {1}
+[__2] (FieldObject FieldType) Tags []string
+       --> r-tainted: read(catalogue_db.Sock.Tags) {1}
+[___3] (SliceObject SliceType) []string
+        --> r-tainted: read(catalogue_db.Sock.TagString, catalogue_db.Sock.string) {2}
+[____4] (BasicObject BasicType) TagString string
+        --> r-tainted: read(catalogue_db.Sock.string) {1}
+[____4] (BasicObject BasicType) "," string
 [_1] (FieldObject FieldType) ID string
 [__2] (BasicObject BasicType) ID string
 [_1] (FieldObject FieldType) Price float32
 [__2] (BasicObject BasicType) Price float32
 
 [0] (InterfaceObject UserType) err .error
+[_1] (Reference BasicType) ref <nil> @ CatalogueService
 

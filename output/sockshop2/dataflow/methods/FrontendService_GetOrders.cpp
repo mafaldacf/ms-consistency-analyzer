@@ -11,5 +11,6 @@
 
 [0] (InterfaceObject UserType) ctx context.Context
 
+    --> r-tainted: read(order_db._.customerid) {1}
 [0] (BasicObject BasicType) userID string
 

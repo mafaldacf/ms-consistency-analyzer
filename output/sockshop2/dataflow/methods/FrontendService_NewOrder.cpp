@@ -11,10 +11,13 @@
 
 [0] (InterfaceObject UserType) ctx context.Context
 
+    --> w-tainted: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.CustomerID) {3}       --> w-tainted: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.CustomerID) {3} --> r-tainted: read(user_db._.userid, shipqueue.Shipment.Name) {2}
 [0] (BasicObject BasicType) userID string
 
+    --> r-tainted: read(user_db._.addresses) {1}
 [0] (BasicObject BasicType) addressID string
 
+    --> r-tainted: read(user_db._.cards) {1}
 [0] (BasicObject BasicType) cardID string
 
 [0] (BasicObject BasicType) cartID string

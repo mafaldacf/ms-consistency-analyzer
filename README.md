@@ -85,7 +85,7 @@ source ~/.venv/bin/activate
 | `shopping_app`                            | **YES**       | 1             | 0                 | 1                     | 0              |
 | `postnotification_simple`                 | **YES**       | 1             | 0                 | 1                     | 0              |
 | `postnotification`                        | **YES**       | 2             | 0                 | 2                     | 0              |
-| `sockshop2`                               | **YES**       | 0             | 0                 | 0                     | 0              |
+| `sockshop2`                               | **YES**       | 0             | 4;0               | 0                     | 0              |
 | `trainticket`                             | **YES**       | 0             | 13;0              | 0                     | 0              |
 | `app_constraints_referential_integrity`   | **YES**       | 0             | 2;1               | 1                     | 0              |
 | `app_constraints_specialization`          | **YES**       | 0             | 2;3               | 0                     | 1              |

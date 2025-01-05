@@ -4,11 +4,13 @@
 [___3] (BlueprintBackendObject BlueprintBackendType) catalogue_db NoSQLDatabase
 
 [0] (InterfaceObject UserType) ctx context.Context
+[_1] (Reference UserType) ref <ctx context.Context> @ FrontendService
 
 [0] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = catalogue, collection = catalogue}
 
 [0] (InterfaceObject UserType) _ .error
 
+    --> r-tainted: read(catalogue_db.[]catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}) {1}
 [0] (ArrayObject ArrayType) socks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
 
 [0] (SliceObject UserType) projection primitive.D
@@ -20,7 +22,9 @@
 
 [0] (SliceObject UserType) filter primitive.D
 
+    --> r-tainted: read(catalogue_db._) {1}
 [0] (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database = catalogue, collection = catalogue}
+     --> r-tainted: read(catalogue_db.[]catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}) {1}
 [_1] (ArrayObject ArrayType) socks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
 
 [0] (InterfaceObject UserType) _ .error

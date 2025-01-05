@@ -49,14 +49,14 @@
   - _1 depth 1 (Reference BasicType) ref <nil> @ CatalogueService
   - 0 depth 0 (StructObject UserType) _ cart.Item struct{ID string, Quantity 1 int, UnitPrice float32}
   - _1 depth 1 (Reference UserType) ref <item cart.Item struct{ID string, Quantity int, UnitPrice float32}> @ CartService
-  - __2 depth 2 (Reference UserType) ref <cart.Item struct{ID string, Quantity int, UnitPrice float32}> @ FrontendService
+  - __2 depth 2 (Reference UserType) ref <cart.Item struct{ID string, Quantity 1 int, UnitPrice float32}> @ FrontendService
   - ___3 depth 3 (FieldObject FieldType) ID string
   - ____4 depth 4 (BasicObject BasicType) ID string
   - ___5 depth 3 (FieldObject FieldType) Quantity 1 int
   - ____6 depth 4 (BasicObject BasicType) 1 int
   - ___7 depth 3 (FieldObject FieldType) UnitPrice float32
   - ____8 depth 4 (BasicObject BasicType) Price float32
-  - _9 depth 1 (Reference UserType) ref <cart.Item struct{ID string, Quantity int, UnitPrice float32}> @ FrontendService
+  - _9 depth 1 (Reference UserType) ref <cart.Item struct{ID string, Quantity 1 int, UnitPrice float32}> @ FrontendService
   - 0 depth 0 (InterfaceObject UserType) err .error
   - _1 depth 1 (Reference BasicType) ref <nil> @ CartService
 
@@ -88,7 +88,7 @@
   - __8 depth 2 (FieldObject FieldType) user user.UserService
   - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
   - 0 depth 0 (InterfaceObject UserType) ctx context.Context
-  - 0 depth 0 (BasicObject BasicType) addressID string
+  - '0 depth 0 (BasicObject BasicType) addressID string --> r-tainted 1x: read(user_db._.addresses)'
 
 (*FrontendImpl).GetCard(ctx context.Context, cardID string):
   block 0 (Body):
@@ -103,7 +103,7 @@
   - __8 depth 2 (FieldObject FieldType) user user.UserService
   - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
   - 0 depth 0 (InterfaceObject UserType) ctx context.Context
-  - 0 depth 0 (BasicObject BasicType) cardID string
+  - '0 depth 0 (BasicObject BasicType) cardID string --> r-tainted 1x: read(user_db._.cards)'
 
 (*FrontendImpl).GetCart(ctx context.Context, sessionID string):
   block 2 (IfDone):
@@ -133,7 +133,7 @@
   - __8 depth 2 (FieldObject FieldType) user user.UserService
   - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
   - 0 depth 0 (InterfaceObject UserType) ctx context.Context
-  - 0 depth 0 (BasicObject BasicType) orderID string
+  - '0 depth 0 (BasicObject BasicType) orderID string --> r-tainted 1x: read(order_db._.id)'
 
 (*FrontendImpl).GetOrders(ctx context.Context, userID string):
   block 0 (Body):
@@ -148,7 +148,7 @@
   - __8 depth 2 (FieldObject FieldType) user user.UserService
   - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
   - 0 depth 0 (InterfaceObject UserType) ctx context.Context
-  - 0 depth 0 (BasicObject BasicType) userID string
+  - '0 depth 0 (BasicObject BasicType) userID string --> r-tainted 1x: read(order_db._.customerid)'
 
 (*FrontendImpl).GetSock(ctx context.Context, itemID string):
   block 0 (Body):
@@ -163,7 +163,7 @@
   - __8 depth 2 (FieldObject FieldType) user user.UserService
   - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
   - 0 depth 0 (InterfaceObject UserType) ctx context.Context
-  - 0 depth 0 (BasicObject BasicType) itemID string
+  - '0 depth 0 (BasicObject BasicType) itemID string --> r-tainted 1x: read(catalogue_db._.id)'
 
 (*FrontendImpl).GetUser(ctx context.Context, userID string):
   block 0 (Body):
@@ -178,7 +178,7 @@
   - __8 depth 2 (FieldObject FieldType) user user.UserService
   - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
   - 0 depth 0 (InterfaceObject UserType) ctx context.Context
-  - 0 depth 0 (BasicObject BasicType) userID string
+  - '0 depth 0 (BasicObject BasicType) userID string --> r-tainted 1x: read(user_db._.userid)'
 
 (*FrontendImpl).ListItems(ctx context.Context, tags []string, order string, pageNum int, pageSize int):
   block 0 (Body):
@@ -244,13 +244,20 @@
   - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
   - 0 depth 0 (InterfaceObject UserType) ctx context.Context
   - 0 depth 0 (BasicObject BasicType) sessionID string
-  - 0 depth 0 (BasicObject BasicType) username string
+  - '0 depth 0 (BasicObject BasicType) username string --> r-tainted 1x: read(user_db._.username)'
   - 0 depth 0 (BasicObject BasicType) password string
   - 0 depth 0 (StructObject UserType) u user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}
-  - _1 depth 1 (FieldObject FieldType) UserID string
-  - __2 depth 2 (BasicObject BasicType) UserID string
+  - '_1 depth 1 (Reference UserType) ref <user user.User struct{FirstName string,
+    LastName string, Email string, Username string, Password string, Addresses user.Address
+    struct{Street string, Number string, Country string, City string, PostCode string,
+    ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string,
+    ID string}, UserID string, Salt string}> @ UserService --> r-tainted 1x: read(user_db.User)'
+  - _2 depth 1 (FieldObject FieldType) UserID string
+  - __3 depth 2 (BasicObject BasicType) UserID string
   - 0 depth 0 (InterfaceObject UserType) err .error
+  - _1 depth 1 (Reference BasicType) ref <nil> @ UserService
   - 0 depth 0 (InterfaceObject UserType) err .error
+  - _1 depth 1 (Reference UserType) ref <.error> @ CartService
 
 (*FrontendImpl).NewOrder(ctx context.Context, userID string, addressID string, cardID string, cartID string):
   block 0 (Body):
@@ -265,9 +272,11 @@
   - __8 depth 2 (FieldObject FieldType) user user.UserService
   - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
   - 0 depth 0 (InterfaceObject UserType) ctx context.Context
-  - 0 depth 0 (BasicObject BasicType) userID string
-  - 0 depth 0 (BasicObject BasicType) addressID string
-  - 0 depth 0 (BasicObject BasicType) cardID string
+  - '0 depth 0 (BasicObject BasicType) userID string --> w-tainted 3x: write(shipqueue.Shipment.Name,
+    shipdb.Shipment.Name, order_db.Order.CustomerID) --> r-tainted 2x: read(user_db._.userid,
+    shipqueue.Shipment.Name)'
+  - '0 depth 0 (BasicObject BasicType) addressID string --> r-tainted 1x: read(user_db._.addresses)'
+  - '0 depth 0 (BasicObject BasicType) cardID string --> r-tainted 1x: read(user_db._.cards)'
   - 0 depth 0 (BasicObject BasicType) cartID string
 
 (*FrontendImpl).PostAddress(ctx context.Context, userID string, address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string})
@@ -319,13 +328,15 @@
   - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
   - 0 depth 0 (InterfaceObject UserType) ctx context.Context
   - 0 depth 0 (BasicObject BasicType) sessionID string
-  - 0 depth 0 (BasicObject BasicType) username string
-  - 0 depth 0 (BasicObject BasicType) password string
-  - 0 depth 0 (BasicObject BasicType) email string
-  - 0 depth 0 (BasicObject BasicType) first string
-  - 0 depth 0 (BasicObject BasicType) last string
+  - '0 depth 0 (BasicObject BasicType) username string --> w-tainted 1x: write(user_db.User.Username)'
+  - '0 depth 0 (BasicObject BasicType) password string --> w-tainted 1x: write(user_db.User.Password)'
+  - '0 depth 0 (BasicObject BasicType) email string --> w-tainted 1x: write(user_db.User.Email)'
+  - '0 depth 0 (BasicObject BasicType) first string --> w-tainted 1x: write(user_db.User.FirstName)'
+  - '0 depth 0 (BasicObject BasicType) last string --> w-tainted 1x: write(user_db.User.LastName)'
   - 0 depth 0 (BasicObject BasicType) userID string
+  - _1 depth 1 (Reference BasicType) ref <UserID string> @ UserService
   - 0 depth 0 (InterfaceObject UserType) err .error
+  - _1 depth 1 (Reference BasicType) ref <nil> @ UserService
 
 (*FrontendImpl).RemoveItem(ctx context.Context, sessionID string, itemID string):
   block 2 (IfDone):
@@ -357,14 +368,41 @@
   - ___9 depth 3 (ServiceObject ServiceType) user user.UserService
   - 0 depth 0 (InterfaceObject UserType) ctx context.Context
   - 0 depth 0 (BasicObject BasicType) sessionID string
-  - 0 depth 0 (BasicObject BasicType) itemID string
+  - '0 depth 0 (BasicObject BasicType) itemID string --> r-tainted 1x: read(catalogue_db._.id)'
   - 0 depth 0 (BasicObject BasicType) quantity int
   - 0 depth 0 (StructObject UserType) item catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
-  - _1 depth 1 (FieldObject FieldType) ID string
-  - __2 depth 2 (BasicObject BasicType) ID string
-  - _3 depth 1 (FieldObject FieldType) Price float32
-  - __4 depth 2 (BasicObject BasicType) Price float32
+  - '_1 depth 1 (Reference UserType) ref <sock catalogue.Sock struct{ID string, Name
+    string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string,
+    Price float32, Quantity int, Tags []string, TagString string}> @ CatalogueService
+    --> r-tainted 7x: read(catalogue_db.Sock, catalogue_db.Sock.ImageURL, catalogue_db.Sock.string,
+    catalogue_db.Sock.ImageURL_1, catalogue_db.Sock.ImageURL_2, catalogue_db.Sock.TagString,
+    catalogue_db.Sock.Tags)'
+  - '__2 depth 2 (FieldObject FieldType) ImageURL []string --> r-tainted 1x: read(catalogue_db.Sock.ImageURL)'
+  - '___3 depth 3 (ArrayObject SliceType) []string --> r-tainted 1x: read(catalogue_db.Sock.ImageURL)'
+  - '____4 depth 4 (BasicObject BasicType) ImageURL_1 string --> r-tainted 2x: read(catalogue_db.Sock.string,
+    catalogue_db.Sock.ImageURL_1)'
+  - '____5 depth 4 (BasicObject BasicType) ImageURL_2 string --> r-tainted 2x: read(catalogue_db.Sock.string,
+    catalogue_db.Sock.ImageURL_2)'
+  - '__6 depth 2 (FieldObject FieldType) ImageURL_1 string --> r-tainted 1x: read(catalogue_db.Sock.ImageURL_1)'
+  - '___7 depth 3 (BasicObject BasicType) ImageURL_1 string --> r-tainted 2x: read(catalogue_db.Sock.string,
+    catalogue_db.Sock.ImageURL_1)'
+  - '__8 depth 2 (FieldObject FieldType) ImageURL_2 string --> r-tainted 1x: read(catalogue_db.Sock.ImageURL_2)'
+  - '___9 depth 3 (BasicObject BasicType) ImageURL_2 string --> r-tainted 2x: read(catalogue_db.Sock.string,
+    catalogue_db.Sock.ImageURL_2)'
+  - '__10 depth 2 (FieldObject FieldType) TagString string --> r-tainted 1x: read(catalogue_db.Sock.TagString)'
+  - '___11 depth 3 (BasicObject BasicType) TagString string --> r-tainted 2x: read(catalogue_db.Sock.TagString,
+    catalogue_db.Sock.string)'
+  - '__12 depth 2 (FieldObject FieldType) Tags []string --> r-tainted 1x: read(catalogue_db.Sock.Tags)'
+  - '___13 depth 3 (SliceObject SliceType) []string --> r-tainted 1x: read(catalogue_db.Sock.Tags)'
+  - '____14 depth 4 (BasicObject BasicType) TagString string --> r-tainted 2x: read(catalogue_db.Sock.TagString,
+    catalogue_db.Sock.string)'
+  - '____15 depth 4 (BasicObject BasicType) "," string --> r-tainted 1x: read(catalogue_db.Sock.string)'
+  - _16 depth 1 (FieldObject FieldType) ID string
+  - __17 depth 2 (BasicObject BasicType) ID string
+  - _18 depth 1 (FieldObject FieldType) Price float32
+  - __19 depth 2 (BasicObject BasicType) Price float32
   - 0 depth 0 (InterfaceObject UserType) err .error
+  - _1 depth 1 (Reference BasicType) ref <nil> @ CatalogueService
 
 .NewFrontend(ctx context.Context, user user.UserService, catalogue catalogue.CatalogueService, cart cart.CartService, order order.OrderService)
 :

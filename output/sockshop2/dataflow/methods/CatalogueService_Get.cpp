@@ -5,9 +5,15 @@
 
 [0] (InterfaceObject UserType) ctx context.Context
 [_1] (Reference UserType) ref <ctx context.Context> @ FrontendService
+[_1] (Reference UserType) ref <ctx context.Context> @ FrontendService
+[_1] (Reference UserType) ref <ctx context.Context> @ FrontendService
 
     --> r-tainted: read(catalogue_db._.id) {1}
 [0] (BasicObject BasicType) id string
+     --> r-tainted: read(catalogue_db._.id) {1}
+[_1] (Reference BasicType) ref <itemID string> @ FrontendService
+     --> r-tainted: read(catalogue_db._.id) {1}
+[_1] (Reference BasicType) ref <itemID string> @ FrontendService
      --> r-tainted: read(catalogue_db._.id) {1}
 [_1] (Reference BasicType) ref <itemID string> @ FrontendService
 
@@ -22,6 +28,10 @@
 [__2] (FieldObject FieldType) Value string
        --> r-tainted: read(catalogue_db._.id) {1}
 [___3] (BasicObject BasicType) id string
+        --> r-tainted: read(catalogue_db._.id) {1}
+[____4] (Reference BasicType) ref <itemID string> @ FrontendService
+        --> r-tainted: read(catalogue_db._.id) {1}
+[____4] (Reference BasicType) ref <itemID string> @ FrontendService
         --> r-tainted: read(catalogue_db._.id) {1}
 [____4] (Reference BasicType) ref <itemID string> @ FrontendService
 

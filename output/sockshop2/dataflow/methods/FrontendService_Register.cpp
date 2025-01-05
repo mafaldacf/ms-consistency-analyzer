@@ -13,17 +13,24 @@
 
 [0] (BasicObject BasicType) sessionID string
 
+    --> w-tainted: write(user_db.User.Username) {1}
 [0] (BasicObject BasicType) username string
 
+    --> w-tainted: write(user_db.User.Password) {1}
 [0] (BasicObject BasicType) password string
 
+    --> w-tainted: write(user_db.User.Email) {1}
 [0] (BasicObject BasicType) email string
 
+    --> w-tainted: write(user_db.User.FirstName) {1}
 [0] (BasicObject BasicType) first string
 
+    --> w-tainted: write(user_db.User.LastName) {1}
 [0] (BasicObject BasicType) last string
 
 [0] (BasicObject BasicType) userID string
+[_1] (Reference BasicType) ref <UserID string> @ UserService
 
 [0] (InterfaceObject UserType) err .error
+[_1] (Reference BasicType) ref <nil> @ UserService
 

@@ -35,8 +35,60 @@ ORDER_DB:
 - kind: MongoDB
 - dependencies: []
 - schema:
-  - fields: []
-  - unfolded_fields: []
+  - fields:
+    - _: order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address
+        struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32}
+    - Order: order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address
+        struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32}
+  - unfolded_fields:
+    - _.id: string
+    - _.customerid: string
+    - Order: order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address
+        struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32}
+    - Order.ID: string
+    - Order.CustomerID: string
+    - Order.Customer: user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards
+        user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID
+        string, Salt string}
+    - Order.Customer.FirstName: string
+    - Order.Customer.LastName: string
+    - Order.Customer.Email: string
+    - Order.Customer.Username: string
+    - Order.Customer.Password: string
+    - Order.Customer.Addresses: user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}
+    - Order.Customer.Addresses.Street: string
+    - Order.Customer.Addresses.Number: string
+    - Order.Customer.Addresses.Country: string
+    - Order.Customer.Addresses.City: string
+    - Order.Customer.Addresses.PostCode: string
+    - Order.Customer.Addresses.ID: string
+    - Order.Customer.Cards: user.Card struct{LongNum string, Expires string, CCV string, ID string}
+    - Order.Customer.Cards.LongNum: string
+    - Order.Customer.Cards.Expires: string
+    - Order.Customer.Cards.CCV: string
+    - Order.Customer.Cards.ID: string
+    - Order.Customer.UserID: string
+    - Order.Customer.Salt: string
+    - Order.Address: user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}
+    - Order.Address.Street: string
+    - Order.Address.Number: string
+    - Order.Address.Country: string
+    - Order.Address.City: string
+    - Order.Address.PostCode: string
+    - Order.Address.ID: string
+    - Order.Card: user.Card struct{LongNum string, Expires string, CCV string, ID string}
+    - Order.Card.LongNum: string
+    - Order.Card.Expires: string
+    - Order.Card.CCV: string
+    - Order.Card.ID: string
+    - Order.Items: '[]cart.Item struct{ID string, Quantity int, UnitPrice float32}'
+    - Order.Shipment: shipping.Shipment struct{ID string, Name string, Status "awaiting
+        shipment" string}
+    - Order.Shipment.ID: string
+    - Order.Shipment.Name: string
+    - Order.Shipment.Status: '"awaiting shipment" string'
+    - Order.Date: string
+    - Order.Total: 10 float32
   - foreign_references: []
 
 SHIPDB:
@@ -44,8 +96,14 @@ SHIPDB:
 - kind: MongoDB
 - dependencies: []
 - schema:
-  - fields: []
-  - unfolded_fields: []
+  - fields:
+    - _: shipping.Shipment struct{ID string, Name string, Status string}
+    - Shipment: shipping.Shipment struct{ID string, Name string, Status string}
+  - unfolded_fields:
+    - Shipment: shipping.Shipment struct{ID string, Name string, Status string}
+    - Shipment.ID: string
+    - Shipment.Name: string
+    - Shipment.Status: string
   - foreign_references: []
 
 SHIPQUEUE:
@@ -53,8 +111,14 @@ SHIPQUEUE:
 - kind: RabbitMQ
 - dependencies: []
 - schema:
-  - fields: []
-  - unfolded_fields: []
+  - fields:
+    - _: shipping.Shipment struct{ID string, Name string, Status string}
+    - Shipment: shipping.Shipment struct{ID string, Name string, Status string}
+  - unfolded_fields:
+    - Shipment: shipping.Shipment struct{ID string, Name string, Status string}
+    - Shipment.ID: string
+    - Shipment.Name: string
+    - Shipment.Status: string
   - foreign_references: []
 
 USER_DB:
@@ -62,6 +126,38 @@ USER_DB:
 - kind: MongoDB
 - dependencies: []
 - schema:
-  - fields: []
-  - unfolded_fields: []
+  - fields:
+    - _: user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card
+        struct{LongNum string, Expires string, CCV string, ID string}, UserID string,
+        Salt string}
+    - User: user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card
+        struct{LongNum string, Expires string, CCV string, ID string}, UserID string,
+        Salt string}
+  - unfolded_fields:
+    - _.userid: string
+    - _.addresses: string
+    - _.cards: string
+    - _.username: string
+    - User: user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card
+        struct{LongNum string, Expires string, CCV string, ID string}, UserID string,
+        Salt string}
+    - User.FirstName: string
+    - User.LastName: string
+    - User.Email: string
+    - User.Username: string
+    - User.Password: string
+    - User.Addresses: user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}
+    - User.Addresses.Street: string
+    - User.Addresses.Number: string
+    - User.Addresses.Country: string
+    - User.Addresses.City: string
+    - User.Addresses.PostCode: string
+    - User.Addresses.ID: string
+    - User.Cards: user.Card struct{LongNum string, Expires string, CCV string, ID string}
+    - User.Cards.LongNum: string
+    - User.Cards.Expires: string
+    - User.Cards.CCV: string
+    - User.Cards.ID: string
+    - User.UserID: string
+    - User.Salt: string
   - foreign_references: []

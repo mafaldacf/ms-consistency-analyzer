@@ -4,8 +4,13 @@
 [___3] (BasicObject BasicType) 50 float32
 
 [0] (InterfaceObject UserType) ctx context.Context
+[_1] (Reference UserType) ref <ctx context.Context> @ OrderService
+[__2] (Reference UserType) ref <ctx context.Context> @ FrontendService
 
+    --> w-tainted: write(order_db.Order.Total) {1}
 [0] (BasicObject BasicType) amount float32
+     --> w-tainted: write(order_db.Order.Total) {1}
+[_1] (Reference BasicType) ref <amount 10 float32> @ OrderService
 
 [0] (StructObject UserType) authorization payment.Authorisation struct{Authorised false bool, Message "Payment declined: amount exceeds" string}
 [_1] (FieldObject FieldType) Authorised false bool
