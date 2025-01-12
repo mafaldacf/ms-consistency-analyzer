@@ -33,15 +33,15 @@ BILLING_DB:
 - dependencies: []
 - schema:
   - fields:
-    - _: shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)}
-    - Bill: shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)}
+    - _: shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost }
+    - Bill: shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost }
   - unfolded_fields:
-    - Bill: shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)}
+    - Bill: shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost }
     - Bill.UserID: string
     - Bill.ProductID: string
     - Bill.Quantity: int
     - Bill.PricePerUnit: int
-    - Bill.TotalCost: (&int)
+    - Bill.TotalCost: ""
   - foreign_references: []
 
 CART_DB:
@@ -110,8 +110,7 @@ SHIPMENT_DB:
 SHIPMENT_QUEUE:
 - type: Queue
 - kind: RabbitMQ
-- dependencies:
-  - order_db
+- dependencies: []
 - schema:
   - fields:
     - _: shopping_app.ShipmentMessage struct{OrderID string, UserID string}
@@ -120,9 +119,7 @@ SHIPMENT_QUEUE:
     - ShipmentMessage: shopping_app.ShipmentMessage struct{OrderID string, UserID string}
     - ShipmentMessage.OrderID: string
     - ShipmentMessage.UserID: string
-  - foreign_references:
-    - ShipmentMessage.OrderID:
-      - ORDER_DB.Order.OrderID * {MANDATORY}
+  - foreign_references: []
 
 STOCK_DB:
 - type: NoSQLDatabase

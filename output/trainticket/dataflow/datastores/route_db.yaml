@@ -14,12 +14,12 @@ ROUTE_DB._.endstation:
 ROUTE_DB._.id:
 - read <id string (BasicObject)>
 - read <id string (BasicObject)> from <id string (BasicObject)>
-- read <ref <string> @ RouteService (Reference)> from <id string (BasicObject)>
-- read <string (BasicObject)> from <id string (BasicObject)>
+- read <ref <* string> @ RouteService (Reference)> from <id string (BasicObject)>
+- read <* string (BasicObject)> from <id string (BasicObject)>
 - read <id string (BasicObject)>
 - read <id string (BasicObject)> from <id string (BasicObject)>
-- read <ref <string> @ RouteService (Reference)> from <id string (BasicObject)>
-- read <string (BasicObject)> from <id string (BasicObject)>
+- read <ref <* string> @ RouteService (Reference)> from <id string (BasicObject)>
+- read <* string (BasicObject)> from <id string (BasicObject)>
 
 ROUTE_DB._.startstation:
 - read <start string (BasicObject)>

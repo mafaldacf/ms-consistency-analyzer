@@ -5,7 +5,7 @@ import "analyzer/pkg/logger"
 type ArrayType struct {
 	Type         `json:"-"`
 	ElementsType Type
-	NumElems     int
+	NumElems     int // value set to -1 means that array has no length specified
 }
 
 // ------------

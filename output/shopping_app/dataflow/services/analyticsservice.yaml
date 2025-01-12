@@ -31,19 +31,16 @@
   - _1 depth 1 (Reference UserType) ref <workerMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string}> @ AnalyticsService
   - '__2 depth 2 (FieldObject FieldType) ProductCategory string --> w-tainted 1x:
     write(analytics_db.Analytics.Categories) --> r-tainted 1x: read(analytics_db.Analytics.ProductCategory)'
-  - '___3 depth 3 (BasicObject BasicType) ProductCategory string --> w-tainted 1x:
-    write(analytics_db.Analytics.Categories) --> r-tainted 1x: read(analytics_db.Analytics.ProductCategory)'
-  - '____4 depth 4 (InterfaceObject InterfaceType) ProductCategory interface{} -->
-    w-tainted 2x: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories)
-    --> r-tainted 2x: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.interface{})'
+  - '___3 depth 3 (BasicObject BasicType) * string --> w-tainted 1x: write(analytics_db.Analytics.Categories)
+    --> r-tainted 1x: read(analytics_db.Analytics.ProductCategory)'
+  - '____4 depth 4 (InterfaceObject InterfaceType) * interface{} --> w-tainted 1x:
+    write(analytics_db.Analytics.Categories) --> r-tainted 1x: read(analytics_db.Analytics.interface{})'
   - '__5 depth 2 (FieldObject FieldType) UserID string --> w-tainted 1x: write(analytics_db.Analytics.UserID)
     --> r-tainted 1x: read(analytics_db._.userID)'
-  - '___6 depth 3 (BasicObject BasicType) UserID string --> w-tainted 1x: write(analytics_db.Analytics.UserID)
+  - '___6 depth 3 (BasicObject BasicType) * string --> w-tainted 1x: write(analytics_db.Analytics.UserID)
     --> r-tainted 1x: read(analytics_db._.userID)'
-  - '____7 depth 4 (InterfaceObject InterfaceType) UserID interface{} --> w-tainted
-    5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID,
-    analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) --> r-tainted
-    3x: read(analytics_queue.AnalyticsMessage.UserID, analytics_db._.userID, shipment_queue.ShipmentMessage.UserID)'
+  - '____7 depth 4 (InterfaceObject InterfaceType) * interface{} --> w-tainted 1x:
+    write(analytics_db.Analytics.UserID) --> r-tainted 1x: read(analytics_db._.userID)'
   - _8 depth 1 (FieldObject FieldType) ProductCategory string
   - '__9 depth 2 (Reference FieldType) ref <ProductCategory string> @ AnalyticsService
     --> w-tainted 1x: write(analytics_db.Analytics.Categories) --> r-tainted 1x: read(analytics_db.Analytics.ProductCategory)'

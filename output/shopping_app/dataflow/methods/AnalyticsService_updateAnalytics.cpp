@@ -15,45 +15,45 @@
       --> w-tainted: write(analytics_db.Analytics.Categories) {1}           --> w-tainted: write(analytics_db.Analytics.Categories) {1} --> r-tainted: read(analytics_db.Analytics.ProductCategory) {1}
 [__2] (FieldObject FieldType) ProductCategory string
        --> w-tainted: write(analytics_db.Analytics.Categories) {1}             --> w-tainted: write(analytics_db.Analytics.Categories) {1} --> r-tainted: read(analytics_db.Analytics.ProductCategory) {1}
-[___3] (BasicObject BasicType) ProductCategory string
-        --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2}               --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2} --> r-tainted: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.interface{}) {2}
-[____4] (InterfaceObject InterfaceType) ProductCategory interface{}
+[___3] (BasicObject BasicType) * string
+        --> w-tainted: write(analytics_db.Analytics.Categories) {1}               --> w-tainted: write(analytics_db.Analytics.Categories) {1} --> r-tainted: read(analytics_db.Analytics.interface{}) {1}
+[____4] (InterfaceObject InterfaceType) * interface{}
       --> w-tainted: write(analytics_db.Analytics.UserID) {1}           --> w-tainted: write(analytics_db.Analytics.UserID) {1} --> r-tainted: read(analytics_db._.userID) {1}
 [__2] (FieldObject FieldType) UserID string
        --> w-tainted: write(analytics_db.Analytics.UserID) {1}             --> w-tainted: write(analytics_db.Analytics.UserID) {1} --> r-tainted: read(analytics_db._.userID) {1}
-[___3] (BasicObject BasicType) UserID string
-        --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) {5}               --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) {5} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, analytics_db._.userID, shipment_queue.ShipmentMessage.UserID) {3}
-[____4] (InterfaceObject InterfaceType) UserID interface{}
+[___3] (BasicObject BasicType) * string
+        --> w-tainted: write(analytics_db.Analytics.UserID) {1}               --> w-tainted: write(analytics_db.Analytics.UserID) {1} --> r-tainted: read(analytics_db._.userID) {1}
+[____4] (InterfaceObject InterfaceType) * interface{}
 [_1] (FieldObject FieldType) ProductCategory string
       --> w-tainted: write(analytics_db.Analytics.Categories) {1}           --> w-tainted: write(analytics_db.Analytics.Categories) {1} --> r-tainted: read(analytics_db.Analytics.ProductCategory) {1}
 [__2] (Reference FieldType) ref <ProductCategory string> @ AnalyticsService
        --> w-tainted: write(analytics_db.Analytics.Categories) {1}             --> w-tainted: write(analytics_db.Analytics.Categories) {1} --> r-tainted: read(analytics_db.Analytics.ProductCategory) {1}
-[___3] (BasicObject BasicType) ProductCategory string
-        --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2}               --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2} --> r-tainted: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.interface{}) {2}
-[____4] (InterfaceObject InterfaceType) ProductCategory interface{}
+[___3] (BasicObject BasicType) * string
+        --> w-tainted: write(analytics_db.Analytics.Categories) {1}               --> w-tainted: write(analytics_db.Analytics.Categories) {1} --> r-tainted: read(analytics_db.Analytics.interface{}) {1}
+[____4] (InterfaceObject InterfaceType) * interface{}
       --> w-tainted: write(analytics_db.Analytics.Categories) {1}           --> w-tainted: write(analytics_db.Analytics.Categories) {1} --> r-tainted: read(analytics_db.Analytics.string) {1}
 [__2] (BasicObject BasicType) ProductCategory string
        --> w-tainted: write(analytics_db.Analytics.Categories) {1}             --> w-tainted: write(analytics_db.Analytics.Categories) {1} --> r-tainted: read(analytics_db.Analytics.ProductCategory) {1}
 [___3] (Reference FieldType) ref <ProductCategory string> @ AnalyticsService
         --> w-tainted: write(analytics_db.Analytics.Categories) {1}               --> w-tainted: write(analytics_db.Analytics.Categories) {1} --> r-tainted: read(analytics_db.Analytics.ProductCategory) {1}
-[____4] (BasicObject BasicType) ProductCategory string
-         --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2}                 --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2} --> r-tainted: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.interface{}) {2}
-[_____5] (InterfaceObject InterfaceType) ProductCategory interface{}
+[____4] (BasicObject BasicType) * string
+         --> w-tainted: write(analytics_db.Analytics.Categories) {1}                 --> w-tainted: write(analytics_db.Analytics.Categories) {1} --> r-tainted: read(analytics_db.Analytics.interface{}) {1}
+[_____5] (InterfaceObject InterfaceType) * interface{}
 [_1] (FieldObject FieldType) UserID string
       --> w-tainted: write(analytics_db.Analytics.UserID) {1}           --> w-tainted: write(analytics_db.Analytics.UserID) {1} --> r-tainted: read(analytics_db._.userID) {1}
 [__2] (Reference FieldType) ref <UserID string> @ AnalyticsService
        --> w-tainted: write(analytics_db.Analytics.UserID) {1}             --> w-tainted: write(analytics_db.Analytics.UserID) {1} --> r-tainted: read(analytics_db._.userID) {1}
-[___3] (BasicObject BasicType) UserID string
-        --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) {5}               --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) {5} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, analytics_db._.userID, shipment_queue.ShipmentMessage.UserID) {3}
-[____4] (InterfaceObject InterfaceType) UserID interface{}
+[___3] (BasicObject BasicType) * string
+        --> w-tainted: write(analytics_db.Analytics.UserID) {1}               --> w-tainted: write(analytics_db.Analytics.UserID) {1} --> r-tainted: read(analytics_db._.userID) {1}
+[____4] (InterfaceObject InterfaceType) * interface{}
       --> w-tainted: write(analytics_db.Analytics.UserID) {1}           --> w-tainted: write(analytics_db.Analytics.UserID) {1} --> r-tainted: read(analytics_db._.userID) {1}
 [__2] (BasicObject BasicType) UserID string
        --> w-tainted: write(analytics_db.Analytics.UserID) {1}             --> w-tainted: write(analytics_db.Analytics.UserID) {1} --> r-tainted: read(analytics_db._.userID) {1}
 [___3] (Reference FieldType) ref <UserID string> @ AnalyticsService
         --> w-tainted: write(analytics_db.Analytics.UserID) {1}               --> w-tainted: write(analytics_db.Analytics.UserID) {1} --> r-tainted: read(analytics_db._.userID) {1}
-[____4] (BasicObject BasicType) UserID string
-         --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) {5}                 --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) {5} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, analytics_db._.userID, shipment_queue.ShipmentMessage.UserID) {3}
-[_____5] (InterfaceObject InterfaceType) UserID interface{}
+[____4] (BasicObject BasicType) * string
+         --> w-tainted: write(analytics_db.Analytics.UserID) {1}                 --> w-tainted: write(analytics_db.Analytics.UserID) {1} --> r-tainted: read(analytics_db._.userID) {1}
+[_____5] (InterfaceObject InterfaceType) * interface{}
 
 [0] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = analytics_database, collection = analytics_collection}
 
@@ -70,9 +70,9 @@
         --> w-tainted: write(analytics_db.Analytics.Categories) {1}               --> w-tainted: write(analytics_db.Analytics.Categories) {1} --> r-tainted: read(analytics_db.Analytics.ProductCategory) {1}
 [____4] (Reference FieldType) ref <ProductCategory string> @ AnalyticsService
          --> w-tainted: write(analytics_db.Analytics.Categories) {1}                 --> w-tainted: write(analytics_db.Analytics.Categories) {1} --> r-tainted: read(analytics_db.Analytics.ProductCategory) {1}
-[_____5] (BasicObject BasicType) ProductCategory string
-          --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2}                   --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2} --> r-tainted: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.interface{}) {2}
-[______6] (InterfaceObject InterfaceType) ProductCategory interface{}
+[_____5] (BasicObject BasicType) * string
+          --> w-tainted: write(analytics_db.Analytics.Categories) {1}                   --> w-tainted: write(analytics_db.Analytics.Categories) {1} --> r-tainted: read(analytics_db.Analytics.interface{}) {1}
+[______6] (InterfaceObject InterfaceType) * interface{}
 
 [0] (SliceObject UserType) query primitive.D
 [_1] (StructObject StructType) struct{Key "userID" string, Key "userID" string, Value string, Value string}
@@ -84,9 +84,9 @@
         --> w-tainted: write(analytics_db.Analytics.UserID) {1}               --> w-tainted: write(analytics_db.Analytics.UserID) {1} --> r-tainted: read(analytics_db._.userID) {1}
 [____4] (Reference FieldType) ref <UserID string> @ AnalyticsService
          --> w-tainted: write(analytics_db.Analytics.UserID) {1}                 --> w-tainted: write(analytics_db.Analytics.UserID) {1} --> r-tainted: read(analytics_db._.userID) {1}
-[_____5] (BasicObject BasicType) UserID string
-          --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) {5}                   --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) {5} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, analytics_db._.userID, shipment_queue.ShipmentMessage.UserID) {3}
-[______6] (InterfaceObject InterfaceType) UserID interface{}
+[_____5] (BasicObject BasicType) * string
+          --> w-tainted: write(analytics_db.Analytics.UserID) {1}                   --> w-tainted: write(analytics_db.Analytics.UserID) {1} --> r-tainted: read(analytics_db._.userID) {1}
+[______6] (InterfaceObject InterfaceType) * interface{}
 
     --> r-tainted: read(analytics_db._) {1}
 [0] (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database = analytics_database, collection = analytics_collection}
@@ -101,9 +101,9 @@
          --> w-tainted: write(analytics_db.Analytics.Categories) {1}                 --> w-tainted: write(analytics_db.Analytics.Categories) {1} --> r-tainted: read(analytics_db.Analytics.ProductCategory) {1}
 [_____5] (Reference FieldType) ref <ProductCategory string> @ AnalyticsService
           --> w-tainted: write(analytics_db.Analytics.Categories) {1}                   --> w-tainted: write(analytics_db.Analytics.Categories) {1} --> r-tainted: read(analytics_db.Analytics.ProductCategory) {1}
-[______6] (BasicObject BasicType) ProductCategory string
-           --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2}                     --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2} --> r-tainted: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.interface{}) {2}
-[_______7] (InterfaceObject InterfaceType) ProductCategory interface{}
+[______6] (BasicObject BasicType) * string
+           --> w-tainted: write(analytics_db.Analytics.Categories) {1}                     --> w-tainted: write(analytics_db.Analytics.Categories) {1} --> r-tainted: read(analytics_db.Analytics.interface{}) {1}
+[_______7] (InterfaceObject InterfaceType) * interface{}
 
 [0] (InterfaceObject UserType) _ .error
 
@@ -118,9 +118,9 @@
         --> w-tainted: write(analytics_db.Analytics.Categories) {1}               --> w-tainted: write(analytics_db.Analytics.Categories) {1} --> r-tainted: read(analytics_db.Analytics.ProductCategory) {1}
 [____4] (Reference FieldType) ref <ProductCategory string> @ AnalyticsService
          --> w-tainted: write(analytics_db.Analytics.Categories) {1}                 --> w-tainted: write(analytics_db.Analytics.Categories) {1} --> r-tainted: read(analytics_db.Analytics.ProductCategory) {1}
-[_____5] (BasicObject BasicType) ProductCategory string
-          --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2}                   --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2} --> r-tainted: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.interface{}) {2}
-[______6] (InterfaceObject InterfaceType) ProductCategory interface{}
+[_____5] (BasicObject BasicType) * string
+          --> w-tainted: write(analytics_db.Analytics.Categories) {1}                   --> w-tainted: write(analytics_db.Analytics.Categories) {1} --> r-tainted: read(analytics_db.Analytics.interface{}) {1}
+[______6] (InterfaceObject InterfaceType) * interface{}
      --> w-tainted: write(analytics_db.Analytics.UserID) {1}
 [_1] (FieldObject FieldType) UserID string
       --> w-tainted: write(analytics_db.Analytics.UserID) {1}           --> w-tainted: write(analytics_db.Analytics.UserID) {1} --> r-tainted: read(analytics_db._.userID) {1}
@@ -128,7 +128,7 @@
        --> w-tainted: write(analytics_db.Analytics.UserID) {1}             --> w-tainted: write(analytics_db.Analytics.UserID) {1} --> r-tainted: read(analytics_db._.userID) {1}
 [___3] (Reference FieldType) ref <UserID string> @ AnalyticsService
         --> w-tainted: write(analytics_db.Analytics.UserID) {1}               --> w-tainted: write(analytics_db.Analytics.UserID) {1} --> r-tainted: read(analytics_db._.userID) {1}
-[____4] (BasicObject BasicType) UserID string
-         --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) {5}                 --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) {5} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, analytics_db._.userID, shipment_queue.ShipmentMessage.UserID) {3}
-[_____5] (InterfaceObject InterfaceType) UserID interface{}
+[____4] (BasicObject BasicType) * string
+         --> w-tainted: write(analytics_db.Analytics.UserID) {1}                 --> w-tainted: write(analytics_db.Analytics.UserID) {1} --> r-tainted: read(analytics_db._.userID) {1}
+[_____5] (InterfaceObject InterfaceType) * interface{}
 

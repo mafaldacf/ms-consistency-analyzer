@@ -9,7 +9,7 @@
     --> r-tainted: read(route_db._.id) {1}
 [0] (BasicObject BasicType) id string
      --> r-tainted: read(route_db._.id) {1}
-[_1] (Reference BasicType) ref <string> @ RouteService
+[_1] (Reference BasicType) ref <* string> @ RouteService
 
 [0] (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database = route, collection = route}
 

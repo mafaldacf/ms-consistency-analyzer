@@ -35,18 +35,15 @@
   - _1 depth 1 (Reference UserType) ref <workerMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string}> @ ShipmentService
   - '__2 depth 2 (FieldObject FieldType) OrderID string --> w-tainted 1x: write(shipment_db.Shipment.OrderID)
     --> r-tainted 2x: read(order_db._.orderID, order_db.Order.OrderID)'
-  - '___3 depth 3 (BasicObject BasicType) OrderID string --> w-tainted 1x: write(shipment_db.Shipment.OrderID)
+  - '___3 depth 3 (BasicObject BasicType) * string --> w-tainted 1x: write(shipment_db.Shipment.OrderID)
     --> r-tainted 2x: read(order_db._.orderID, order_db.Order.OrderID)'
-  - '____4 depth 4 (InterfaceObject InterfaceType) OrderID interface{} --> w-tainted
-    3x: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID)
-    --> r-tainted 3x: read(order_db._.orderID, shipment_queue.ShipmentMessage.OrderID,
+  - '____4 depth 4 (InterfaceObject InterfaceType) * interface{} --> w-tainted 1x:
+    write(shipment_db.Shipment.OrderID) --> r-tainted 2x: read(order_db._.orderID,
     order_db.Order.OrderID)'
   - '__5 depth 2 (FieldObject FieldType) UserID string --> w-tainted 1x: write(shipment_db.Shipment.UserID)'
-  - '___6 depth 3 (BasicObject BasicType) UserID string --> w-tainted 1x: write(shipment_db.Shipment.UserID)'
-  - '____7 depth 4 (InterfaceObject InterfaceType) UserID interface{} --> w-tainted
-    5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID,
-    shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID) --> r-tainted
-    2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)'
+  - '___6 depth 3 (BasicObject BasicType) * string --> w-tainted 1x: write(shipment_db.Shipment.UserID)'
+  - '____7 depth 4 (InterfaceObject InterfaceType) * interface{} --> w-tainted 1x:
+    write(shipment_db.Shipment.UserID)'
   - _8 depth 1 (FieldObject FieldType) OrderID string
   - '__9 depth 2 (Reference FieldType) ref <OrderID string> @ ShipmentService -->
     w-tainted 1x: write(shipment_db.Shipment.OrderID) --> r-tainted 2x: read(order_db._.orderID,

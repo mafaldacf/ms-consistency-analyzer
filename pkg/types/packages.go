@@ -132,11 +132,18 @@ func (p *Package) GetDeclaredConstant(typeNameIdent *ast.Ident) objects.Object {
 }
 
 func (p *Package) GetDeclaredVariableOrConstIfExists(name string) objects.Object {
+	logger.Logger.Debugf("[PACKAGE DECLS] looking for variable or const named (%s) in package named (%s): %s", name, p.String(), p.PackagePath)
 	if v, ok := p.DeclaredVariables[name]; ok {
+		return v
+	}
+	if v, ok := p.DeclaredVariables[p.PackagePath + "." + name]; ok {
 		return v
 	}
 	logger.Logger.Warnf("[BLOCK] variable (%s) does not exist in declared variables list: %v", name, p.DeclaredVariables)
 	if v, ok := p.DeclaredConstants[name]; ok {
+		return v
+	}
+	if v, ok := p.DeclaredConstants[p.PackagePath + "." + name]; ok {
 		return v
 	}
 	logger.Logger.Warnf("[BLOCK] variable (%s) does not exist in declared constants list: %v", name, p.DeclaredVariables)

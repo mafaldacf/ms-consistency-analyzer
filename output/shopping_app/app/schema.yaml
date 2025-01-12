@@ -1,10 +1,7 @@
 ANALYTICS_DB:
 - type: NoSQLDatabase
 - kind: MongoDB
-- dependencies:
-  - analytics_queue
-  - order_db
-  - billing_db
+- dependencies: []
 - schema:
   - fields:
     - _: shopping_app.Analytics struct{UserID string, Categories []string}
@@ -14,18 +11,7 @@ ANALYTICS_DB:
     - Analytics: shopping_app.Analytics struct{UserID string, Categories []string}
     - Analytics.UserID: string
     - Analytics.Categories: '[]string'
-  - foreign_references:
-    - Analytics:
-      - ANALYTICS_QUEUE.AnalyticsMessage.ProductCategory * {MANDATORY}
-      - ANALYTICS_QUEUE.AnalyticsMessage.UserID * {MANDATORY}
-      - BILLING_DB.Bill.UserID * {MANDATORY}
-      - ORDER_DB.Order.UserID * {MANDATORY}
-    - Analytics.UserID:
-      - ANALYTICS_QUEUE.AnalyticsMessage.UserID * {MANDATORY}
-      - BILLING_DB.Bill.UserID * {MANDATORY}
-      - ORDER_DB.Order.UserID * {MANDATORY}
-    - Analytics.Categories:
-      - ANALYTICS_QUEUE.AnalyticsMessage.ProductCategory * {MANDATORY}
+  - foreign_references: []
 
 ANALYTICS_QUEUE:
 - type: Queue
@@ -57,15 +43,15 @@ BILLING_DB:
   - stock_db
 - schema:
   - fields:
-    - _: shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)}
-    - Bill: shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)}
+    - _: shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost }
+    - Bill: shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost }
   - unfolded_fields:
-    - Bill: shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)}
+    - Bill: shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost }
     - Bill.UserID: string
     - Bill.ProductID: string
     - Bill.Quantity: int
     - Bill.PricePerUnit: int
-    - Bill.TotalCost: (&int)
+    - Bill.TotalCost: ""
   - foreign_references:
     - Bill:
       - ORDER_DB.Order.ProductID * {MANDATORY}
@@ -138,9 +124,6 @@ SHIPMENT_DB:
 - kind: MongoDB
 - dependencies:
   - order_db
-  - shipment_queue
-  - billing_db
-  - analytics_queue
 - schema:
   - fields:
     - _: shopping_app.Shipment struct{OrderID string, UserID string, Status "pending" string}
@@ -152,31 +135,17 @@ SHIPMENT_DB:
     - Shipment.Status: '"pending" string'
   - foreign_references:
     - Shipment:
-      - ANALYTICS_QUEUE.AnalyticsMessage.UserID * {MANDATORY}
-      - BILLING_DB.Bill.UserID * {MANDATORY}
-      - ORDER_DB.Order.OrderID * {MANDATORY}
-      - ORDER_DB.Order.UserID * {MANDATORY}
       - ORDER_DB._.orderID
-      - SHIPMENT_QUEUE.ShipmentMessage.OrderID * {MANDATORY}
-      - SHIPMENT_QUEUE.ShipmentMessage.UserID * {MANDATORY}
     - Shipment.OrderID:
-      - ORDER_DB.Order.OrderID * {MANDATORY}
       - ORDER_DB._.orderID
-      - SHIPMENT_QUEUE.ShipmentMessage.OrderID * {MANDATORY}
-    - Shipment.UserID:
-      - ANALYTICS_QUEUE.AnalyticsMessage.UserID * {MANDATORY}
-      - BILLING_DB.Bill.UserID * {MANDATORY}
-      - ORDER_DB.Order.UserID * {MANDATORY}
-      - SHIPMENT_QUEUE.ShipmentMessage.UserID * {MANDATORY}
 
 SHIPMENT_QUEUE:
 - type: Queue
 - kind: RabbitMQ
 - dependencies:
   - order_db
-  - billing_db
   - analytics_queue
-  - analytics_db
+  - billing_db
 - schema:
   - fields:
     - _: shopping_app.ShipmentMessage struct{OrderID string, UserID string}
@@ -187,19 +156,13 @@ SHIPMENT_QUEUE:
     - ShipmentMessage.UserID: string
   - foreign_references:
     - ShipmentMessage:
-      - ANALYTICS_DB.Analytics.UserID * {MANDATORY}
-      - ANALYTICS_DB._.userID * {MANDATORY}
       - ANALYTICS_QUEUE.AnalyticsMessage.UserID * {MANDATORY}
       - BILLING_DB.Bill.UserID * {MANDATORY}
       - ORDER_DB.Order.OrderID * {MANDATORY}
       - ORDER_DB.Order.UserID * {MANDATORY}
-      - ORDER_DB._.orderID
     - ShipmentMessage.OrderID:
       - ORDER_DB.Order.OrderID * {MANDATORY}
-      - ORDER_DB._.orderID
     - ShipmentMessage.UserID:
-      - ANALYTICS_DB.Analytics.UserID * {MANDATORY}
-      - ANALYTICS_DB._.userID * {MANDATORY}
       - ANALYTICS_QUEUE.AnalyticsMessage.UserID * {MANDATORY}
       - BILLING_DB.Bill.UserID * {MANDATORY}
       - ORDER_DB.Order.UserID * {MANDATORY}

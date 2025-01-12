@@ -29,6 +29,8 @@ type ObjectInfo struct {
 
 	Dataflows         []*ObjectDataflow
 	IndirectDataflows []*ObjectDataflow
+
+	Dynamic bool
 }
 
 func NewObjectInfoInline(t gotypes.Type) *ObjectInfo {
@@ -36,6 +38,14 @@ func NewObjectInfoInline(t gotypes.Type) *ObjectInfo {
 		Type: t,
 		Id:   VARIABLE_INLINE_ID,
 	}
+}
+
+func (vinfo *ObjectInfo) SetDynamic() {
+	vinfo.Dynamic = true
+}
+
+func (vinfo *ObjectInfo) IsDynamic() bool {
+	return vinfo.Dynamic == true
 }
 
 func (vinfo *ObjectInfo) ResetAllDataflows() {

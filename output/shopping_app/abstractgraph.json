@@ -500,10 +500,6 @@
                           {
                             "name": "cartID",
                             "creator": "Frontend"
-                          },
-                          {
-                            "name": "OrderID",
-                            "creator": "ShipmentService"
                           }
                         ]
                       }
@@ -570,14 +566,6 @@
                           {
                             "name": "userID",
                             "creator": "Frontend"
-                          },
-                          {
-                            "name": "UserID",
-                            "creator": "AnalyticsService"
-                          },
-                          {
-                            "name": "UserID",
-                            "creator": "ShipmentService"
                           }
                         ]
                       }
@@ -752,7 +740,7 @@
                   {
                     "struct": {
                       "name": "bill",
-                      "type": "shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost (\u0026int)}"
+                      "type": "shopping_app.Bill struct{UserID string, ProductID string, Quantity int, PricePerUnit int, TotalCost }"
                     },
                     "struct_fields": {
                       "PricePerUnit": {
@@ -812,24 +800,12 @@
                       "TotalCost": {
                         "field": {
                           "name": "TotalCost",
-                          "type": "(\u0026int)"
+                          "type": ""
                         },
                         "wrapped_variable": {
-                          "address": {
-                            "name": "quantity",
-                            "type": "(\u0026int)"
-                          },
-                          "addr_of": {
-                            "basic": {
-                              "name": "quantity",
-                              "type": "int",
-                              "refs": [
-                                {
-                                  "name": "quantity",
-                                  "creator": "OrderService"
-                                }
-                              ]
-                            }
+                          "basic": {
+                            "name": "",
+                            "type": ""
                           }
                         }
                       },
@@ -1095,13 +1071,7 @@
                     "wrapped_variable": {
                       "basic": {
                         "name": "Category",
-                        "type": "string",
-                        "refs": [
-                          {
-                            "name": "ProductCategory",
-                            "creator": "AnalyticsService"
-                          }
-                        ]
+                        "type": "string"
                       }
                     }
                   }
@@ -1147,37 +1117,19 @@
                   "ProductCategory": {
                     "field": {
                       "name": "ProductCategory",
-                      "type": "string",
-                      "refs": [
-                        {
-                          "name": "ProductCategory",
-                          "creator": "AnalyticsService"
-                        }
-                      ]
+                      "type": "string"
                     },
                     "wrapped_variable": {
                       "basic": {
                         "name": "Category",
-                        "type": "string",
-                        "refs": [
-                          {
-                            "name": "ProductCategory",
-                            "creator": "AnalyticsService"
-                          }
-                        ]
+                        "type": "string"
                       }
                     }
                   },
                   "UserID": {
                     "field": {
                       "name": "UserID",
-                      "type": "string",
-                      "refs": [
-                        {
-                          "name": "UserID",
-                          "creator": "AnalyticsService"
-                        }
-                      ]
+                      "type": "string"
                     },
                     "wrapped_variable": {
                       "basic": {
@@ -1187,14 +1139,6 @@
                           {
                             "name": "userID",
                             "creator": "Frontend"
-                          },
-                          {
-                            "name": "UserID",
-                            "creator": "AnalyticsService"
-                          },
-                          {
-                            "name": "UserID",
-                            "creator": "ShipmentService"
                           }
                         ]
                       }
@@ -1250,36 +1194,7 @@
                               }
                             ]
                           },
-                          "key_values": [
-                            {
-                              "Key": {
-                                "basic": {
-                                  "name": "",
-                                  "type": "\"UserID\" string"
-                                }
-                              },
-                              "Value": {
-                                "interface": {
-                                  "name": "UserID",
-                                  "type": "interface{}"
-                                }
-                              }
-                            },
-                            {
-                              "Key": {
-                                "basic": {
-                                  "name": "",
-                                  "type": "\"ProductCategory\" string"
-                                }
-                              },
-                              "Value": {
-                                "interface": {
-                                  "name": "ProductCategory",
-                                  "type": "interface{}"
-                                }
-                              }
-                            }
-                          ]
+                          "key_values": null
                         }
                       }
                     ],
@@ -1541,13 +1456,7 @@
                   "OrderID": {
                     "field": {
                       "name": "OrderID",
-                      "type": "string",
-                      "refs": [
-                        {
-                          "name": "OrderID",
-                          "creator": "ShipmentService"
-                        }
-                      ]
+                      "type": "string"
                     },
                     "wrapped_variable": {
                       "basic": {
@@ -1557,10 +1466,6 @@
                           {
                             "name": "cartID",
                             "creator": "Frontend"
-                          },
-                          {
-                            "name": "OrderID",
-                            "creator": "ShipmentService"
                           }
                         ]
                       }
@@ -1569,13 +1474,7 @@
                   "UserID": {
                     "field": {
                       "name": "UserID",
-                      "type": "string",
-                      "refs": [
-                        {
-                          "name": "UserID",
-                          "creator": "ShipmentService"
-                        }
-                      ]
+                      "type": "string"
                     },
                     "wrapped_variable": {
                       "basic": {
@@ -1585,14 +1484,6 @@
                           {
                             "name": "userID",
                             "creator": "Frontend"
-                          },
-                          {
-                            "name": "UserID",
-                            "creator": "AnalyticsService"
-                          },
-                          {
-                            "name": "UserID",
-                            "creator": "ShipmentService"
                           }
                         ]
                       }
@@ -1648,36 +1539,7 @@
                               }
                             ]
                           },
-                          "key_values": [
-                            {
-                              "Key": {
-                                "basic": {
-                                  "name": "",
-                                  "type": "\"OrderID\" string"
-                                }
-                              },
-                              "Value": {
-                                "interface": {
-                                  "name": "OrderID",
-                                  "type": "interface{}"
-                                }
-                              }
-                            },
-                            {
-                              "Key": {
-                                "basic": {
-                                  "name": "",
-                                  "type": "\"UserID\" string"
-                                }
-                              },
-                              "Value": {
-                                "interface": {
-                                  "name": "UserID",
-                                  "type": "interface{}"
-                                }
-                              }
-                            }
-                          ]
+                          "key_values": null
                         }
                       }
                     ],

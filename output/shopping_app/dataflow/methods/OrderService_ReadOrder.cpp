@@ -25,9 +25,9 @@
       --> w-tainted: write(shipment_db.Shipment.OrderID) {1}           --> w-tainted: write(shipment_db.Shipment.OrderID) {1} --> r-tainted: read(order_db._.orderID, order_db.Order.OrderID) {2}
 [__2] (Reference FieldType) ref <OrderID string> @ ShipmentService
        --> w-tainted: write(shipment_db.Shipment.OrderID) {1}             --> w-tainted: write(shipment_db.Shipment.OrderID) {1} --> r-tainted: read(order_db._.orderID, order_db.Order.OrderID) {2}
-[___3] (BasicObject BasicType) OrderID string
-        --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID) {3}               --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID) {3} --> r-tainted: read(order_db._.orderID, shipment_queue.ShipmentMessage.OrderID, order_db.Order.OrderID) {3}
-[____4] (InterfaceObject InterfaceType) OrderID interface{}
+[___3] (BasicObject BasicType) * string
+        --> w-tainted: write(shipment_db.Shipment.OrderID) {1}               --> w-tainted: write(shipment_db.Shipment.OrderID) {1} --> r-tainted: read(order_db._.orderID, order_db.Order.OrderID) {2}
+[____4] (InterfaceObject InterfaceType) * interface{}
      --> r-tainted: read(order_db._.orderID, order_db.Order.OrderID) {2}
 [_1] (Reference BasicType) ref <orderID string> @ Frontend
 
@@ -50,9 +50,9 @@
          --> w-tainted: write(shipment_db.Shipment.OrderID) {1}                 --> w-tainted: write(shipment_db.Shipment.OrderID) {1} --> r-tainted: read(order_db._.orderID, order_db.Order.OrderID) {2}
 [_____5] (Reference FieldType) ref <OrderID string> @ ShipmentService
           --> w-tainted: write(shipment_db.Shipment.OrderID) {1}                   --> w-tainted: write(shipment_db.Shipment.OrderID) {1} --> r-tainted: read(order_db._.orderID, order_db.Order.OrderID) {2}
-[______6] (BasicObject BasicType) OrderID string
-           --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID) {3}                     --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID) {3} --> r-tainted: read(order_db._.orderID, shipment_queue.ShipmentMessage.OrderID, order_db.Order.OrderID) {3}
-[_______7] (InterfaceObject InterfaceType) OrderID interface{}
+[______6] (BasicObject BasicType) * string
+           --> w-tainted: write(shipment_db.Shipment.OrderID) {1}                     --> w-tainted: write(shipment_db.Shipment.OrderID) {1} --> r-tainted: read(order_db._.orderID, order_db.Order.OrderID) {2}
+[_______7] (InterfaceObject InterfaceType) * interface{}
         --> r-tainted: read(order_db._.orderID, order_db.Order.OrderID) {2}
 [____4] (Reference BasicType) ref <orderID string> @ Frontend
 

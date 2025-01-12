@@ -3,8 +3,8 @@
 - write <ProductCategory string (BasicObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
 - write <ref <ProductCategory string> @ AnalyticsService (Reference)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
 - write <ProductCategory string (FieldObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
-- write <ProductCategory string (BasicObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
-- write <ProductCategory interface{} (InterfaceObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
+- write <* string (BasicObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
+- write <* interface{} (InterfaceObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
 
 ANALYTICS_DB._:
 - read <result NoSQLCursor {database = analytics_database, collection = analytics_collection} (BlueprintBackendObject)>
@@ -14,13 +14,13 @@ ANALYTICS_DB._.userID:
 - read <UserID string (BasicObject)> from <UserID string (BasicObject)>
 - read <ref <UserID string> @ AnalyticsService (Reference)> from <UserID string (BasicObject)>
 - read <UserID string (FieldObject)> from <UserID string (BasicObject)>
-- read <UserID string (BasicObject)> from <UserID string (BasicObject)>
-- read <UserID interface{} (InterfaceObject)> from <UserID string (BasicObject)>
+- read <* string (BasicObject)> from <UserID string (BasicObject)>
+- read <* interface{} (InterfaceObject)> from <UserID string (BasicObject)>
 - write <UserID string (BasicObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
 - write <ref <UserID string> @ AnalyticsService (Reference)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
 - write <UserID string (FieldObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
-- write <UserID string (BasicObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
-- write <UserID interface{} (InterfaceObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
+- write <* string (BasicObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
+- write <* interface{} (InterfaceObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
 
 ANALYTICS_DB.Analytics:
 - write <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
@@ -31,8 +31,8 @@ ANALYTICS_DB.Analytics.Categories:
 - write <ProductCategory string (BasicObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
 - write <ref <ProductCategory string> @ AnalyticsService (Reference)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
 - write <ProductCategory string (FieldObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
-- write <ProductCategory string (BasicObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
-- write <ProductCategory interface{} (InterfaceObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
+- write <* string (BasicObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
+- write <* interface{} (InterfaceObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
 - write <Categories []string (FieldObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
 
 ANALYTICS_DB.Analytics.UserID:
@@ -40,13 +40,13 @@ ANALYTICS_DB.Analytics.UserID:
 - read <UserID string (BasicObject)> from <UserID string (BasicObject)>
 - read <ref <UserID string> @ AnalyticsService (Reference)> from <UserID string (BasicObject)>
 - read <UserID string (FieldObject)> from <UserID string (BasicObject)>
-- read <UserID string (BasicObject)> from <UserID string (BasicObject)>
-- read <UserID interface{} (InterfaceObject)> from <UserID string (BasicObject)>
+- read <* string (BasicObject)> from <UserID string (BasicObject)>
+- read <* interface{} (InterfaceObject)> from <UserID string (BasicObject)>
 - write <UserID string (BasicObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
 - write <ref <UserID string> @ AnalyticsService (Reference)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
 - write <UserID string (FieldObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
-- write <UserID string (BasicObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
-- write <UserID interface{} (InterfaceObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
+- write <* string (BasicObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
+- write <* interface{} (InterfaceObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
 - write <UserID string (FieldObject)> from <updatedAnalytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
 
 Analytics:
@@ -56,5 +56,5 @@ Analytics:
 - read <ProductCategory string (BasicObject)> from <analytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
 - read <ref <ProductCategory string> @ AnalyticsService (Reference)> from <analytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
 - read <ProductCategory string (FieldObject)> from <analytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
-- read <ProductCategory string (BasicObject)> from <analytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
-- read <ProductCategory interface{} (InterfaceObject)> from <analytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
+- read <* string (BasicObject)> from <analytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>
+- read <* interface{} (InterfaceObject)> from <analytics shopping_app.Analytics struct{UserID string, Categories []string} (StructObject)>

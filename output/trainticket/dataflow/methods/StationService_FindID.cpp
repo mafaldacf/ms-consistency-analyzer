@@ -9,7 +9,7 @@
     --> r-tainted: read(station_db.Station.Name) {1}
 [0] (BasicObject BasicType) name string
      --> r-tainted: read(station_db.Station.Name) {1}
-[_1] (Reference BasicType) ref <string> @ StationService
+[_1] (Reference BasicType) ref <* string> @ StationService
 
 [0] (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database = station, collection = station}
 

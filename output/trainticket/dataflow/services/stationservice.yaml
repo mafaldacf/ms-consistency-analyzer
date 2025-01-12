@@ -65,7 +65,7 @@
   - _1 depth 1 (Reference UserType) ref <ctx context.Context> @ StationService
   - '0 depth 0 (BasicObject BasicType) id string --> r-tainted 2x: read(station_db._.id,
     station_db.Station.ID)'
-  - '_1 depth 1 (Reference BasicType) ref <string> @ StationService --> r-tainted
+  - '_1 depth 1 (Reference BasicType) ref <* string> @ StationService --> r-tainted
     2x: read(station_db._.id, station_db.Station.ID)'
   - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database = station, collection = station}
   - 0 depth 0 (InterfaceObject UserType) err .error
@@ -105,7 +105,7 @@
   - 0 depth 0 (InterfaceObject UserType) ctx context.Context
   - _1 depth 1 (Reference UserType) ref <ctx context.Context> @ StationService
   - '0 depth 0 (BasicObject BasicType) name string --> r-tainted 1x: read(station_db.Station.Name)'
-  - '_1 depth 1 (Reference BasicType) ref <string> @ StationService --> r-tainted
+  - '_1 depth 1 (Reference BasicType) ref <* string> @ StationService --> r-tainted
     1x: read(station_db.Station.Name)'
   - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database = station, collection = station}
   - 0 depth 0 (InterfaceObject UserType) err .error

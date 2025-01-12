@@ -14,12 +14,6 @@ ANALYTICS_QUEUE.AnalyticsMessage:
 
 ANALYTICS_QUEUE.AnalyticsMessage.ProductCategory:
 - write <Category string (BasicObject)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructObject)>
-- write <ref <ProductCategory interface{}> @ AnalyticsService (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructObject)>
-- write <ProductCategory interface{} (InterfaceObject)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructObject)>
 - read <Category string (BasicObject)> from <event (*map[string]interface{}) (PointerObject)>
-- read <ref <ProductCategory interface{}> @ AnalyticsService (Reference)> from <event (*map[string]interface{}) (PointerObject)>
-- read <ProductCategory interface{} (InterfaceObject)> from <event (*map[string]interface{}) (PointerObject)>
 - write <ProductCategory string (FieldObject)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructObject)>
-- write <ref <ProductCategory interface{}> @ AnalyticsService (Reference)> from <analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string} (StructObject)>
 - read <ProductCategory string (FieldObject)> from <event (*map[string]interface{}) (PointerObject)>
-- read <ref <ProductCategory interface{}> @ AnalyticsService (Reference)> from <event (*map[string]interface{}) (PointerObject)>

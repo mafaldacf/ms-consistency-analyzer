@@ -9,6 +9,7 @@ import (
 type InterfaceType struct {
 	Type           `json:"-"`
 	Content        string
+	OriginType     Type //TODO
 	ParentUserType *UserType
 	Methods        map[string]string // maps method name to package path
 }
@@ -27,9 +28,9 @@ func (t *InterfaceType) DeepCopy() Type {
 		parentUserTypeCopy = t.ParentUserType.DeepCopy().(*UserType)
 	}
 	return &InterfaceType{
-		Content: t.Content,
+		Content:        t.Content,
 		ParentUserType: parentUserTypeCopy,
-		Methods: methodsCopy,
+		Methods:        methodsCopy,
 	}
 }
 
@@ -70,6 +71,13 @@ func (t *InterfaceType) AddValue(value string) {
 }
 func (t *InterfaceType) GetParentUserType() *UserType {
 	return t.ParentUserType
+}
+func (t *InterfaceType) GetParentType() Type { //TODO
+	logger.Logger.Warnf("[INTERFACE] InterfaceType.GetParentType() TODO!!!!!")
+	if t.Type != nil {
+		return t.Type
+	}
+	return t
 }
 func (t *InterfaceType) SetParentUserType(userType *UserType) {
 	t.ParentUserType = userType

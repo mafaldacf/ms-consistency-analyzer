@@ -17,45 +17,45 @@
       --> w-tainted: write(shipment_db.Shipment.OrderID) {1}           --> w-tainted: write(shipment_db.Shipment.OrderID) {1} --> r-tainted: read(order_db._.orderID, order_db.Order.OrderID) {2}
 [__2] (FieldObject FieldType) OrderID string
        --> w-tainted: write(shipment_db.Shipment.OrderID) {1}             --> w-tainted: write(shipment_db.Shipment.OrderID) {1} --> r-tainted: read(order_db._.orderID, order_db.Order.OrderID) {2}
-[___3] (BasicObject BasicType) OrderID string
-        --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID) {3}               --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID) {3} --> r-tainted: read(order_db._.orderID, shipment_queue.ShipmentMessage.OrderID, order_db.Order.OrderID) {3}
-[____4] (InterfaceObject InterfaceType) OrderID interface{}
+[___3] (BasicObject BasicType) * string
+        --> w-tainted: write(shipment_db.Shipment.OrderID) {1}               --> w-tainted: write(shipment_db.Shipment.OrderID) {1} --> r-tainted: read(order_db._.orderID, order_db.Order.OrderID) {2}
+[____4] (InterfaceObject InterfaceType) * interface{}
       --> w-tainted: write(shipment_db.Shipment.UserID) {1}
 [__2] (FieldObject FieldType) UserID string
        --> w-tainted: write(shipment_db.Shipment.UserID) {1}
-[___3] (BasicObject BasicType) UserID string
-        --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID) {5}               --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID) {5} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {2}
-[____4] (InterfaceObject InterfaceType) UserID interface{}
+[___3] (BasicObject BasicType) * string
+        --> w-tainted: write(shipment_db.Shipment.UserID) {1}
+[____4] (InterfaceObject InterfaceType) * interface{}
 [_1] (FieldObject FieldType) OrderID string
       --> w-tainted: write(shipment_db.Shipment.OrderID) {1}           --> w-tainted: write(shipment_db.Shipment.OrderID) {1} --> r-tainted: read(order_db._.orderID, order_db.Order.OrderID) {2}
 [__2] (Reference FieldType) ref <OrderID string> @ ShipmentService
        --> w-tainted: write(shipment_db.Shipment.OrderID) {1}             --> w-tainted: write(shipment_db.Shipment.OrderID) {1} --> r-tainted: read(order_db._.orderID, order_db.Order.OrderID) {2}
-[___3] (BasicObject BasicType) OrderID string
-        --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID) {3}               --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID) {3} --> r-tainted: read(order_db._.orderID, shipment_queue.ShipmentMessage.OrderID, order_db.Order.OrderID) {3}
-[____4] (InterfaceObject InterfaceType) OrderID interface{}
+[___3] (BasicObject BasicType) * string
+        --> w-tainted: write(shipment_db.Shipment.OrderID) {1}               --> w-tainted: write(shipment_db.Shipment.OrderID) {1} --> r-tainted: read(order_db._.orderID, order_db.Order.OrderID) {2}
+[____4] (InterfaceObject InterfaceType) * interface{}
       --> w-tainted: write(shipment_db.Shipment.OrderID) {1}           --> w-tainted: write(shipment_db.Shipment.OrderID) {1} --> r-tainted: read(order_db._.orderID, order_db.Order.OrderID) {2}
 [__2] (BasicObject BasicType) OrderID string
        --> w-tainted: write(shipment_db.Shipment.OrderID) {1}             --> w-tainted: write(shipment_db.Shipment.OrderID) {1} --> r-tainted: read(order_db._.orderID, order_db.Order.OrderID) {2}
 [___3] (Reference FieldType) ref <OrderID string> @ ShipmentService
         --> w-tainted: write(shipment_db.Shipment.OrderID) {1}               --> w-tainted: write(shipment_db.Shipment.OrderID) {1} --> r-tainted: read(order_db._.orderID, order_db.Order.OrderID) {2}
-[____4] (BasicObject BasicType) OrderID string
-         --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID) {3}                 --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID) {3} --> r-tainted: read(order_db._.orderID, shipment_queue.ShipmentMessage.OrderID, order_db.Order.OrderID) {3}
-[_____5] (InterfaceObject InterfaceType) OrderID interface{}
+[____4] (BasicObject BasicType) * string
+         --> w-tainted: write(shipment_db.Shipment.OrderID) {1}                 --> w-tainted: write(shipment_db.Shipment.OrderID) {1} --> r-tainted: read(order_db._.orderID, order_db.Order.OrderID) {2}
+[_____5] (InterfaceObject InterfaceType) * interface{}
 [_1] (FieldObject FieldType) UserID string
       --> w-tainted: write(shipment_db.Shipment.UserID) {1}
 [__2] (Reference FieldType) ref <UserID string> @ ShipmentService
        --> w-tainted: write(shipment_db.Shipment.UserID) {1}
-[___3] (BasicObject BasicType) UserID string
-        --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID) {5}               --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID) {5} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {2}
-[____4] (InterfaceObject InterfaceType) UserID interface{}
+[___3] (BasicObject BasicType) * string
+        --> w-tainted: write(shipment_db.Shipment.UserID) {1}
+[____4] (InterfaceObject InterfaceType) * interface{}
       --> w-tainted: write(shipment_db.Shipment.UserID) {1}
 [__2] (BasicObject BasicType) UserID string
        --> w-tainted: write(shipment_db.Shipment.UserID) {1}
 [___3] (Reference FieldType) ref <UserID string> @ ShipmentService
         --> w-tainted: write(shipment_db.Shipment.UserID) {1}
-[____4] (BasicObject BasicType) UserID string
-         --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID) {5}                 --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID) {5} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {2}
-[_____5] (InterfaceObject InterfaceType) UserID interface{}
+[____4] (BasicObject BasicType) * string
+         --> w-tainted: write(shipment_db.Shipment.UserID) {1}
+[_____5] (InterfaceObject InterfaceType) * interface{}
 
 [0] (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection {database = shipment_database, collection = shipment_collection}
 
@@ -70,9 +70,9 @@
        --> w-tainted: write(shipment_db.Shipment.OrderID) {1}             --> w-tainted: write(shipment_db.Shipment.OrderID) {1} --> r-tainted: read(order_db._.orderID, order_db.Order.OrderID) {2}
 [___3] (Reference FieldType) ref <OrderID string> @ ShipmentService
         --> w-tainted: write(shipment_db.Shipment.OrderID) {1}               --> w-tainted: write(shipment_db.Shipment.OrderID) {1} --> r-tainted: read(order_db._.orderID, order_db.Order.OrderID) {2}
-[____4] (BasicObject BasicType) OrderID string
-         --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID) {3}                 --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID) {3} --> r-tainted: read(order_db._.orderID, shipment_queue.ShipmentMessage.OrderID, order_db.Order.OrderID) {3}
-[_____5] (InterfaceObject InterfaceType) OrderID interface{}
+[____4] (BasicObject BasicType) * string
+         --> w-tainted: write(shipment_db.Shipment.OrderID) {1}                 --> w-tainted: write(shipment_db.Shipment.OrderID) {1} --> r-tainted: read(order_db._.orderID, order_db.Order.OrderID) {2}
+[_____5] (InterfaceObject InterfaceType) * interface{}
      --> w-tainted: write(shipment_db.Shipment.Status) {1}
 [_1] (FieldObject FieldType) Status "pending" string
       --> w-tainted: write(shipment_db.Shipment.Status) {1}
@@ -84,7 +84,7 @@
        --> w-tainted: write(shipment_db.Shipment.UserID) {1}
 [___3] (Reference FieldType) ref <UserID string> @ ShipmentService
         --> w-tainted: write(shipment_db.Shipment.UserID) {1}
-[____4] (BasicObject BasicType) UserID string
-         --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID) {5}                 --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID) {5} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {2}
-[_____5] (InterfaceObject InterfaceType) UserID interface{}
+[____4] (BasicObject BasicType) * string
+         --> w-tainted: write(shipment_db.Shipment.UserID) {1}
+[_____5] (InterfaceObject InterfaceType) * interface{}
 

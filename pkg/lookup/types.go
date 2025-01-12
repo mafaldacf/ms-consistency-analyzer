@@ -11,6 +11,12 @@ import (
 	"analyzer/pkg/utils"
 )
 
+func CreateDynamicObjectFromType(t gotypes.Type) objects.Object {
+	obj := CreateObjectFromType("*", t)
+	obj.GetVariableInfo().SetDynamic()
+	return obj
+}
+
 func CreateObjectFromType(name string, t gotypes.Type) objects.Object {
 	logger.Logger.Infof("[LOOKUP] creating variable (%s) for type [%s]: %v", name, utils.GetType(t), t)
 	info := &objects.ObjectInfo{

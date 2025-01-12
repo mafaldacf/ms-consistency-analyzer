@@ -12,6 +12,7 @@ type MapObject struct {
 	Object
 	ObjectInfo *ObjectInfo
 	KeyValues  map[Object]Object
+	DynamicKeyValues map[Object]Object
 }
 
 /* func (v *MapVariable) MarshalJSON() ([]byte, error) {
@@ -80,6 +81,13 @@ func (v *MapObject) AddKeyValue(key Object, value Object) {
 
 func (v *MapObject) GetId() int64 {
 	return v.ObjectInfo.GetId()
+}
+
+func (v *MapObject) AddDynamicKeyValue(key Object, value Object) {
+	if v.DynamicKeyValues == nil {
+		v.DynamicKeyValues = make(map[Object]Object)
+	}
+	v.DynamicKeyValues[key] = value
 }
 
 func (v *MapObject) GetType() gotypes.Type {

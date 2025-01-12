@@ -18,14 +18,6 @@
     4x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID,
     shipment_queue.ShipmentMessage.UserID) --> r-tainted 2x: read(analytics_queue.AnalyticsMessage.UserID,
     shipment_queue.ShipmentMessage.UserID)'
-  - '__3 depth 2 (Reference InterfaceType) ref <UserID interface{}> @ AnalyticsService
-    --> w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID,
-    analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) --> r-tainted
-    3x: read(analytics_queue.AnalyticsMessage.UserID, analytics_db._.userID, shipment_queue.ShipmentMessage.UserID)'
-  - '__4 depth 2 (Reference InterfaceType) ref <UserID interface{}> @ ShipmentService
-    --> w-tainted 5x: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID,
-    shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID) --> r-tainted
-    2x: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID)'
   - '0 depth 0 (BasicObject BasicType) productID string --> w-tainted 3x: write(billing_db.Bill.ProductID,
     order_db.Order.ProductID, stock_db.Stock.ProductID) --> r-tainted 1x: read(product_db._.productID)'
   - '_1 depth 1 (Reference BasicType) ref <productID string> @ OrderService --> w-tainted
@@ -37,10 +29,11 @@
   - '0 depth 0 (BasicObject BasicType) quantity int --> w-tainted 4x: write(billing_db.Bill.Quantity,
     order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.TotalCost)'
   - '_1 depth 1 (Reference BasicType) ref <quantity int> @ OrderService --> w-tainted
-    3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.TotalCost)'
+    3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.Quantity)'
   - '__2 depth 2 (Reference BasicType) ref <quantity int> @ Frontend --> w-tainted
-    3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.TotalCost)'
-  - '0 depth 0 (BasicObject BasicType) pricePerUnit int --> w-tainted 1x: write(billing_db.Bill.PricePerUnit)'
+    3x: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.Quantity)'
+  - '0 depth 0 (BasicObject BasicType) pricePerUnit int --> w-tainted 2x: write(billing_db.Bill.PricePerUnit,
+    billing_db.Bill.TotalCost)'
   - '_1 depth 1 (Reference BasicType) ref <price int> @ OrderService --> w-tainted
     1x: write(billing_db.Bill.PricePerUnit)'
   - '__2 depth 2 (Reference BasicType) ref <price int> @ Frontend --> w-tainted 1x:
@@ -49,14 +42,14 @@
     {database = bill_database, collection = bill_collection}
   - 0 depth 0 (InterfaceObject UserType) _ .error
   - '0 depth 0 (StructObject UserType) bill shopping_app.Bill struct{UserID string,
-    ProductID string, Quantity int, PricePerUnit int, TotalCost (&int)} --> w-tainted
-    1x: write(billing_db.Bill)'
+    ProductID string, Quantity int, PricePerUnit int, TotalCost } --> w-tainted 1x:
+    write(billing_db.Bill)'
   - '_1 depth 1 (FieldObject FieldType) PricePerUnit int --> w-tainted 1x: write(billing_db.Bill.PricePerUnit)'
   - '_5 depth 1 (FieldObject FieldType) ProductID string --> w-tainted 1x: write(billing_db.Bill.ProductID)'
   - '_9 depth 1 (FieldObject FieldType) Quantity int --> w-tainted 1x: write(billing_db.Bill.Quantity)'
-  - '_13 depth 1 (FieldObject FieldType) TotalCost (&int) --> w-tainted 1x: write(billing_db.Bill.TotalCost)'
-  - '__14 depth 2 (AddressObject AddressType) quantity (&int) --> w-tainted 1x: write(billing_db.Bill.TotalCost)'
-  - '_18 depth 1 (FieldObject FieldType) UserID string --> w-tainted 1x: write(billing_db.Bill.UserID)'
+  - '_13 depth 1 (FieldObject FieldType) TotalCost  --> w-tainted 1x: write(billing_db.Bill.TotalCost)'
+  - '__14 depth 2 (BasicObject BasicType)  --> w-tainted 1x: write(billing_db.Bill.TotalCost)'
+  - '_21 depth 1 (FieldObject FieldType) UserID string --> w-tainted 1x: write(billing_db.Bill.UserID)'
 
 .NewAnalyticsServiceImpl(ctx context.Context, analytics_db NoSQLDatabase, analytics_queue Queue):
   block 0 (Body):

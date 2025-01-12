@@ -20,26 +20,20 @@
 [0] (BasicObject BasicType) cartID string
      --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID) {2}         --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID) {2} --> r-tainted: read(shipment_queue.ShipmentMessage.OrderID) {1}
 [_1] (Reference BasicType) ref <cartID string> @ Frontend
-     --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID) {3}         --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID) {3} --> r-tainted: read(order_db._.orderID, shipment_queue.ShipmentMessage.OrderID, order_db.Order.OrderID) {3}
-[_1] (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService
 
     --> w-tainted: write(order_db.Order.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, billing_db.Bill.UserID) {4}       --> w-tainted: write(order_db.Order.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, billing_db.Bill.UserID) {4} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {2}
 [0] (BasicObject BasicType) userID string
      --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {4}         --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {4} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {2}
 [_1] (Reference BasicType) ref <userID string> @ Frontend
-     --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) {5}         --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) {5} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, analytics_db._.userID, shipment_queue.ShipmentMessage.UserID) {3}
-[_1] (Reference InterfaceType) ref <UserID interface{}> @ AnalyticsService
-     --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID) {5}         --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID) {5} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {2}
-[_1] (Reference InterfaceType) ref <UserID interface{}> @ ShipmentService
 
     --> w-tainted: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID) {3}       --> w-tainted: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID) {3} --> r-tainted: read(product_db._.productID) {1}
 [0] (BasicObject BasicType) productID string
      --> w-tainted: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID) {3}         --> w-tainted: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID) {3} --> r-tainted: read(product_db._.productID) {1}
 [_1] (Reference BasicType) ref <productID string> @ Frontend
 
-    --> w-tainted: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.TotalCost) {3}
+    --> w-tainted: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.Quantity) {3}
 [0] (BasicObject BasicType) quantity int
-     --> w-tainted: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.TotalCost) {3}
+     --> w-tainted: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.Quantity) {3}
 [_1] (Reference BasicType) ref <quantity int> @ Frontend
 
     --> w-tainted: write(billing_db.Bill.PricePerUnit) {1}
@@ -59,8 +53,6 @@
 [__2] (BasicObject BasicType) cartID string
        --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID) {2}             --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID) {2} --> r-tainted: read(shipment_queue.ShipmentMessage.OrderID) {1}
 [___3] (Reference BasicType) ref <cartID string> @ Frontend
-       --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID) {3}             --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID) {3} --> r-tainted: read(order_db._.orderID, shipment_queue.ShipmentMessage.OrderID, order_db.Order.OrderID) {3}
-[___3] (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService
      --> w-tainted: write(order_db.Order.ProductID) {1}
 [_1] (FieldObject FieldType) ProductID string
       --> w-tainted: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID) {3}           --> w-tainted: write(order_db.Order.ProductID, stock_db.Stock.ProductID, billing_db.Bill.ProductID) {3} --> r-tainted: read(product_db._.productID) {1}
@@ -69,9 +61,9 @@
 [___3] (Reference BasicType) ref <productID string> @ Frontend
      --> w-tainted: write(order_db.Order.Quantity) {1}
 [_1] (FieldObject FieldType) Quantity int
-      --> w-tainted: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.TotalCost) {3}
+      --> w-tainted: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.Quantity) {3}
 [__2] (BasicObject BasicType) quantity int
-       --> w-tainted: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.TotalCost) {3}
+       --> w-tainted: write(order_db.Order.Quantity, stock_db.Stock.Quantity, billing_db.Bill.Quantity) {3}
 [___3] (Reference BasicType) ref <quantity int> @ Frontend
      --> w-tainted: write(order_db.Order.Timestamp) {1}
 [_1] (FieldObject FieldType) Timestamp 1 int
@@ -83,10 +75,6 @@
 [__2] (BasicObject BasicType) userID string
        --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {4}             --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {4} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {2}
 [___3] (Reference BasicType) ref <userID string> @ Frontend
-       --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) {5}             --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) {5} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, analytics_db._.userID, shipment_queue.ShipmentMessage.UserID) {3}
-[___3] (Reference InterfaceType) ref <UserID interface{}> @ AnalyticsService
-       --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID) {5}             --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID) {5} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {2}
-[___3] (Reference InterfaceType) ref <UserID interface{}> @ ShipmentService
 
 [0] (StructObject UserType) product shopping_app.Product struct{ProductID string, Description string, PricePerUnit int, Category string}
 
@@ -96,8 +84,6 @@
 [_1] (FieldObject FieldType) Category string
       --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory) {1}           --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory) {1} --> r-tainted: read(analytics_queue.AnalyticsMessage.ProductCategory) {1}
 [__2] (BasicObject BasicType) Category string
-       --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2}             --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2} --> r-tainted: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.interface{}) {2}
-[___3] (Reference InterfaceType) ref <ProductCategory interface{}> @ AnalyticsService
 
 [0] (InterfaceObject UserType) _ .error
 [_1] (Reference UserType) ref <err .error> @ ProductService
@@ -106,47 +92,27 @@
 [0] (StructObject UserType) analyticsMessage shopping_app.AnalyticsMessage struct{UserID string, ProductCategory string}
      --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory) {1}         --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory) {1} --> r-tainted: read(analytics_queue.AnalyticsMessage.ProductCategory) {1}
 [_1] (FieldObject FieldType) ProductCategory string
-      --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2}           --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2} --> r-tainted: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.interface{}) {2}
-[__2] (Reference InterfaceType) ref <ProductCategory interface{}> @ AnalyticsService
       --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory) {1}           --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory) {1} --> r-tainted: read(analytics_queue.AnalyticsMessage.ProductCategory) {1}
 [__2] (BasicObject BasicType) Category string
-       --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2}             --> w-tainted: write(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.Categories) {2} --> r-tainted: read(analytics_queue.AnalyticsMessage.ProductCategory, analytics_db.Analytics.interface{}) {2}
-[___3] (Reference InterfaceType) ref <ProductCategory interface{}> @ AnalyticsService
      --> w-tainted: write(analytics_queue.AnalyticsMessage.UserID) {1}         --> w-tainted: write(analytics_queue.AnalyticsMessage.UserID) {1} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID) {1}
 [_1] (FieldObject FieldType) UserID string
-      --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) {5}           --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) {5} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, analytics_db._.userID, shipment_queue.ShipmentMessage.UserID) {3}
-[__2] (Reference InterfaceType) ref <UserID interface{}> @ AnalyticsService
       --> w-tainted: write(order_db.Order.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, billing_db.Bill.UserID) {4}           --> w-tainted: write(order_db.Order.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, billing_db.Bill.UserID) {4} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {2}
 [__2] (BasicObject BasicType) userID string
        --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {4}             --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {4} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {2}
 [___3] (Reference BasicType) ref <userID string> @ Frontend
-       --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) {5}             --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) {5} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, analytics_db._.userID, shipment_queue.ShipmentMessage.UserID) {3}
-[___3] (Reference InterfaceType) ref <UserID interface{}> @ AnalyticsService
-       --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID) {5}             --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID) {5} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {2}
-[___3] (Reference InterfaceType) ref <UserID interface{}> @ ShipmentService
 
     --> w-tainted: write(shipment_queue.ShipmentMessage) {1}       --> w-tainted: write(shipment_queue.ShipmentMessage) {1} --> r-tainted: read(shipment_queue.ShipmentMessage) {1}
 [0] (StructObject UserType) shipmentMessage shopping_app.ShipmentMessage struct{OrderID string, UserID string}
      --> w-tainted: write(shipment_queue.ShipmentMessage.OrderID) {1}         --> w-tainted: write(shipment_queue.ShipmentMessage.OrderID) {1} --> r-tainted: read(shipment_queue.ShipmentMessage.OrderID) {1}
 [_1] (FieldObject FieldType) OrderID string
-      --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID) {3}           --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID) {3} --> r-tainted: read(order_db._.orderID, shipment_queue.ShipmentMessage.OrderID, order_db.Order.OrderID) {3}
-[__2] (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService
       --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID) {2}           --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID) {2} --> r-tainted: read(shipment_queue.ShipmentMessage.OrderID) {1}
 [__2] (BasicObject BasicType) cartID string
        --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID) {2}             --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID) {2} --> r-tainted: read(shipment_queue.ShipmentMessage.OrderID) {1}
 [___3] (Reference BasicType) ref <cartID string> @ Frontend
-       --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID) {3}             --> w-tainted: write(order_db.Order.OrderID, shipment_queue.ShipmentMessage.OrderID, shipment_db.Shipment.OrderID) {3} --> r-tainted: read(order_db._.orderID, shipment_queue.ShipmentMessage.OrderID, order_db.Order.OrderID) {3}
-[___3] (Reference InterfaceType) ref <OrderID interface{}> @ ShipmentService
      --> w-tainted: write(shipment_queue.ShipmentMessage.UserID) {1}         --> w-tainted: write(shipment_queue.ShipmentMessage.UserID) {1} --> r-tainted: read(shipment_queue.ShipmentMessage.UserID) {1}
 [_1] (FieldObject FieldType) UserID string
-      --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID) {5}           --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID) {5} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {2}
-[__2] (Reference InterfaceType) ref <UserID interface{}> @ ShipmentService
       --> w-tainted: write(order_db.Order.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, billing_db.Bill.UserID) {4}           --> w-tainted: write(order_db.Order.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, billing_db.Bill.UserID) {4} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {2}
 [__2] (BasicObject BasicType) userID string
        --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {4}             --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {4} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {2}
 [___3] (Reference BasicType) ref <userID string> @ Frontend
-       --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) {5}             --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, analytics_db.Analytics.UserID, shipment_queue.ShipmentMessage.UserID) {5} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, analytics_db._.userID, shipment_queue.ShipmentMessage.UserID) {3}
-[___3] (Reference InterfaceType) ref <UserID interface{}> @ AnalyticsService
-       --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID) {5}             --> w-tainted: write(order_db.Order.UserID, billing_db.Bill.UserID, analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID, shipment_db.Shipment.UserID) {5} --> r-tainted: read(analytics_queue.AnalyticsMessage.UserID, shipment_queue.ShipmentMessage.UserID) {2}
-[___3] (Reference InterfaceType) ref <UserID interface{}> @ ShipmentService
 

@@ -10,8 +10,9 @@ import (
 
 type ArrayObject struct {
 	Object
-	ObjectInfo  *ObjectInfo
-	Elements    []Object
+	ObjectInfo      *ObjectInfo
+	Elements        []Object
+	DynamicElements []Object
 }
 
 func (v *ArrayObject) MarshalJSON() ([]byte, error) {
@@ -26,6 +27,10 @@ func (v *ArrayObject) MarshalJSON() ([]byte, error) {
 
 func (v *ArrayObject) String() string {
 	return v.ObjectInfo.String()
+}
+
+func (v *ArrayObject) AddDynamicElement(obj Object) {
+	v.DynamicElements = append(v.DynamicElements, obj)
 }
 
 func (v *ArrayObject) UpgradeToSlice() *SliceObject {

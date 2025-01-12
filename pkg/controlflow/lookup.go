@@ -15,27 +15,27 @@ import (
 	"analyzer/pkg/utils"
 )
 
-func computeArrayIndex(expr ast.Expr, block *types.Block) int {
+func computeArrayIndex(expr ast.Expr, block *types.Block) (int, bool) {
 	switch e := expr.(type) {
 	case *ast.BasicLit:
 		index, err := strconv.Atoi(e.Value)
 		if err != nil {
-			logger.Logger.Fatalf("error converting index (%s): %s", e.Value, err.Error())
+			logger.Logger.Warnf("error converting index (%s): %s", e.Value, err.Error())
 		}
-		return index
+		return index, true
 	case *ast.Ident:
 		obj := block.GetObject(e.Name)
 		if basicObj, ok := obj.(*objects.BasicObject); ok {
 			valStr := basicObj.GetBasicType().Value
 			index, err := strconv.Atoi(valStr)
 			if err != nil {
-				logger.Logger.Fatalf("error converting index (%s) in expr (%v): %s", valStr, expr, err.Error())
+				logger.Logger.Warnf("error converting index (%s) in expr (%v): %s", valStr, expr, err.Error())
 			}
-			return index
+			return index, true
 		}
 	}
-	logger.Logger.Fatalf("could not compute index for expr (%s) with type (%s)", expr, utils.GetType(expr))
-	return 0
+	logger.Logger.Warnf("could not compute index for expr (%s) with type (%s)", expr, utils.GetType(expr))
+	return -1, false
 }
 
 func lookupVariableFromIdentIfExists(service *service.Service, block *types.Block, ident *ast.Ident) objects.Object {
@@ -54,6 +54,7 @@ func lookupVariableFromIdentIfExists(service *service.Service, block *types.Bloc
 				Id:   objects.VARIABLE_INLINE_ID,
 			},
 		}
+		logger.Logger.Debugf("variable is builtin go value type: %s", variable.String())
 		return variable
 	}
 
@@ -66,11 +67,13 @@ func lookupVariableFromIdentIfExists(service *service.Service, block *types.Bloc
 				Id:   objects.VARIABLE_INLINE_ID,
 			},
 		}
+		logger.Logger.Debugf("variable is builtin go const type: %s", variable.String())
 		return variable
 	}
 
 	variable := block.GetLastestVariableIfExists(ident.Name)
 	if variable != nil {
+		logger.Logger.Debugf("variable found in block declarations: %s", variable.String())
 		return variable
 	}
 	// if its not a variable in the block then it can be either
@@ -78,6 +81,7 @@ func lookupVariableFromIdentIfExists(service *service.Service, block *types.Bloc
 	// 2. a ident from a import (which is dealt with in the switch case for the selectorExpr)
 	variable = service.GetPackage().GetDeclaredVariableOrConstIfExists(ident.Name)
 	if variable != nil {
+		logger.Logger.Debugf("variable found in package declarations: %s", variable.String())
 		return variable
 	}
 	return nil
@@ -329,14 +333,27 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		}
 	case *ast.TypeAssertExpr:
 		variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, nil, inAssignment)
-		assertedType := lookup.ComputeTypeForAstExpr(service.File, e.Type)
+
+		// in a switch case we have nil types for e.g. f.(type)
+		var assertedType gotypes.Type
+		if e.Type == nil {
+			logger.Logger.Debugf("[CFG - LOOKUP VAR] found nil type in TypeAssertExpr: %v", e)
+		} else {
+			assertedType = lookup.ComputeTypeForAstExpr(service.File, e.Type)
+		}
 		if interfaceVariable, ok := variable.(*objects.InterfaceObject); ok {
 			// FIXME: it is creating two duplicates:
 			// (i) InterfaceVariable during lookup with e.g. BasicType after UpgradeToAssertedType
 			// (ii) The e.g. BasicVariable after UpgradeFromPreviousInterface with e.g. the BasicType
 			//interfaceVariable.UpgradeToAssertedType(assertedType)
-			newVariable := lookup.CreateObjectFromType(variable.GetVariableInfo().GetName(), assertedType)
-			newVariable.UpgradeFromPreviousInterface(interfaceVariable)
+
+			var newVariable objects.Object
+			if assertedType != nil {
+				newVariable = lookup.CreateObjectFromType(variable.GetVariableInfo().GetName(), assertedType)
+				newVariable.UpgradeFromPreviousInterface(interfaceVariable) //idk why this is here
+			} else {
+				newVariable = lookup.CreateObjectFromType(variable.GetVariableInfo().GetName(), interfaceVariable.GetInterfaceType().GetParentUserType())
+			}
 			block.AddVariable(newVariable)
 			logger.Logger.Warnf("[FIXME - ASSERT!!!!] CREATED NEW VARIABLE (%s): %s", objects.VariableTypeName(newVariable), newVariable.String())
 			return newVariable, nil
@@ -349,19 +366,29 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			logger.Logger.Fatalf("[CFG - LOOKUP VAR] nil variable for index expr: %v (e.X type = %s)", e, utils.GetType(e.X))
 		}
 		if arrayVar, ok := variable.(*objects.ArrayObject); ok {
-			variable = arrayVar.GetElementAtIfExists(computeArrayIndex(e.Index, block))
-			if variable == nil {
-				variable = lookup.CreateObjectFromType("", arrayVar.GetArrayType().ElementsType)
+			arrayIndex, ok := computeArrayIndex(e.Index, block)
+			if ok {
+				variable = arrayVar.GetElementAtIfExists(arrayIndex)
+				if variable == nil {
+					ok = false
+				}
+			}
+
+			if !ok {
+				elemsType := arrayVar.GetArrayType().ElementsType
+				variable = lookup.CreateDynamicObjectFromType(elemsType)
+				arrayVar.AddDynamicElement(variable)
 				logger.Logger.Warnf("CREATED VARIABLE FROM NIL ARRAY ELEMENT %s | %s", variable.String(), arrayVar.String())
 			}
 		}
 		if mapVar, ok := variable.(*objects.MapObject); ok {
 			key, _ := lookupVariableFromAstExpr(service, method, block, e.Index, nil, false)
 			variable, ok = mapVar.KeyValues[key]
+			
 			if !ok {
-				t := mapVar.GetMapType().GetValueType()
-				variable = lookup.CreateObjectFromType(key.GetType().GetBasicValue(), t)
-				mapVar.AddKeyValuePair(key, variable)
+				valueType := mapVar.GetMapType().GetValueType()
+				variable = lookup.CreateDynamicObjectFromType(valueType)
+				mapVar.AddDynamicKeyValue(key, variable)
 				logger.Logger.Warnf("[CFG - LOOKUP VAR] got map %v with unassigned value for key %s \n\t\t\t\t\t\t\t => created new variable for key named (%s): %s", mapVar.String(), key.String(), key.GetType().GetBasicValue(), variable.String())
 			}
 		}
@@ -446,8 +473,27 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			return lookup.CreateObjectFromType("", t), nil
 		}
 
-		if e.Op == token.ADD || e.Op == token.SUB || e.Op == token.QUO || e.Op == token.MUL || e.Op == token.AND || // "+", "-", "/", "*", "&"
-			e.Op == token.LEQ || e.Op == token.GEQ || e.Op == token.NEQ || e.Op == token.EQL { // "<=", ">=", "!=", "=="
+		if e.Op == token.ADD || e.Op == token.SUB || e.Op == token.QUO || e.Op == token.MUL || e.Op == token.AND { // "+", "-", "/", "*", "&"
+			objX, _ := lookupVariableFromAstExpr(service, method, block, e.X, nil, inAssignment)
+			objY, _ := lookupVariableFromAstExpr(service, method, block, e.Y, nil, inAssignment)
+			typeX := objX.GetType()
+			typeY := objX.GetType()
+			if typeX.IsSameType(typeY) {
+				basicTypeX, ok1 := objX.GetType().(*gotypes.BasicType)
+				basicTypeY, ok2 := objY.GetType().(*gotypes.BasicType)
+				if ok1 && ok2 {
+					variable = &objects.BasicObject{
+						//FIXME: this operations should differ for the types of x and y (e.g. integers, strings, etc)
+						ObjectInfo: objects.NewObjectInfoInline(gotypes.NewBasicType("", basicTypeX.GetBasicValue()+basicTypeY.GetBasicValue())),
+						UnderlyingObjects: []objects.Object{objX, objY},
+					}
+				} else {
+					logger.Logger.Fatalf("[LOOKUP] one of the types of objects X (%s) or Y (%s) in BinaryExpr are not BasicType: %v", utils.GetType(typeX), utils.GetType(typeY), e)
+				}
+			} else {
+				logger.Logger.Fatalf("x expr (%v) and y expr (%v) differ types (%v vs %v)", e.X, e.Y, typeX, typeY)
+			}
+		} else if e.Op == token.LEQ || e.Op == token.GEQ || e.Op == token.NEQ || e.Op == token.EQL { // "<=", ">=", "!=", "=="
 
 			// FIXME!!!
 			variable_x, t_x := lookupVariableFromAstExpr(service, method, block, e.X, nil, inAssignment)
@@ -499,10 +545,19 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		variable.GetVariableInfo().Id = objects.VARIABLE_INLINE_ID
 		return variable, nil
 
-	case *ast.ArrayType: //e.g. []rune
+	case *ast.ArrayType: //e.g. []rune 
 		elemtsType := lookup.ComputeTypeForAstExpr(service.File, e.Elt)
-		numElemsType := lookup.ComputeTypeForAstExpr(service.File, e.Len)
-		numElemsInt, _ := strconv.Atoi(numElemsType.GetBasicValue())
+
+		// when length is not specified then e.len is nil
+		var numElemsInt int
+		if e.Len == nil {
+			logger.Logger.Warnf("e.LEN IS NIL!")
+			numElemsInt = -1
+		} else {
+			numElemsType := lookup.ComputeTypeForAstExpr(service.File, e.Len)
+			numElemsInt, _ = strconv.Atoi(numElemsType.GetBasicValue())
+		}
+
 		variable = &objects.ArrayObject{
 			ObjectInfo: &objects.ObjectInfo{
 				Type: &gotypes.ArrayType{
