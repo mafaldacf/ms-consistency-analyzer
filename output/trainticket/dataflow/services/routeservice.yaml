@@ -33,8 +33,6 @@
   - '__8 depth 2 (BasicObject BasicType) StartStation string --> w-tainted 1x: write(route_db.Route.StartStation)'
   - '_9 depth 1 (FieldObject FieldType) Stations []string --> w-tainted 1x: write(route_db.Route.Stations)'
   - '__10 depth 2 (SliceObject SliceType) stations []string --> w-tainted 1x: write(route_db.Route.Stations)'
-  - '___11 depth 3 (BasicObject BasicType) StationList string --> w-tainted 1x: write(route_db.Route.Stations)'
-  - '___12 depth 3 (BasicObject BasicType) "," string --> w-tainted 1x: write(route_db.Route.Stations)'
   - 0 depth 0 (BasicObject BasicType) MAXIDLEN 32 int
   - 0 depth 0 (BasicObject BasicType) old_exists false bool
   - '0 depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database

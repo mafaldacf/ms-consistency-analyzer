@@ -58,7 +58,6 @@ Sock:
 - read <TagString string (BasicObject)> from <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} (StructObject)>
 - read <Tags []string (FieldObject)> from <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} (StructObject)>
 - read <[]string (SliceObject)> from <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} (StructObject)>
-- read <TagString string (BasicObject)> from <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} (StructObject)>
 - read <"," string (BasicObject)> from <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} (StructObject)>
 - read <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} (StructObject)> from <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} (StructObject)>
 - read <ImageURL []string (FieldObject)> from <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} (StructObject)>
@@ -73,7 +72,6 @@ Sock:
 - read <TagString string (BasicObject)> from <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} (StructObject)>
 - read <Tags []string (FieldObject)> from <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} (StructObject)>
 - read <[]string (SliceObject)> from <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} (StructObject)>
-- read <TagString string (BasicObject)> from <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} (StructObject)>
 - read <"," string (BasicObject)> from <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} (StructObject)>
 - read <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} (StructObject)> from <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} (StructObject)>
 - read <ImageURL []string (FieldObject)> from <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} (StructObject)>
@@ -88,7 +86,6 @@ Sock:
 - read <TagString string (BasicObject)> from <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} (StructObject)>
 - read <Tags []string (FieldObject)> from <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} (StructObject)>
 - read <[]string (SliceObject)> from <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} (StructObject)>
-- read <TagString string (BasicObject)> from <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} (StructObject)>
 - read <"," string (BasicObject)> from <sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string} (StructObject)>
 
 string:
@@ -168,17 +165,17 @@ string:
 - write <customerID string (BasicObject)> from <order order.Order struct{ID string, CustomerID string, Customer user.User struct{FirstName string, LastName string, Email string, Username string, Password string, Addresses user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Cards user.Card struct{LongNum string, Expires string, CCV string, ID string}, UserID string, Salt string}, Address user.Address struct{Street string, Number string, Country string, City string, PostCode string, ID string}, Card user.Card struct{LongNum string, Expires string, CCV string, ID string}, Items []cart.Item struct{ID string, Quantity int, UnitPrice float32}, Shipment shipping.Shipment struct{ID string, Name string, Status "awaiting shipment" string}, Date string, Total 10 float32} (StructObject)>
 - read <addressid string (BasicObject)>
 - read <addressid string (BasicObject)> from <addressid string (BasicObject)>
-- read <ref <addressID string> @ OrderService (Reference)> from <addressid string (BasicObject)>
-- read <addressID string (BasicObject)> from <addressid string (BasicObject)>
 - read <ref <addressID string> @ FrontendService (Reference)> from <addressid string (BasicObject)>
+- read <addressID string (BasicObject)> from <addressid string (BasicObject)>
+- read <ref <addressID string> @ OrderService (Reference)> from <addressid string (BasicObject)>
 - read <addressID string (BasicObject)> from <addressid string (BasicObject)>
 - read <ref <addressID string> @ FrontendService (Reference)> from <addressid string (BasicObject)>
 - read <addressID string (BasicObject)> from <addressid string (BasicObject)>
 - read <addressid string (BasicObject)>
 - read <addressid string (BasicObject)> from <addressid string (BasicObject)>
-- read <ref <addressID string> @ OrderService (Reference)> from <addressid string (BasicObject)>
-- read <addressID string (BasicObject)> from <addressid string (BasicObject)>
 - read <ref <addressID string> @ FrontendService (Reference)> from <addressid string (BasicObject)>
+- read <addressID string (BasicObject)> from <addressid string (BasicObject)>
+- read <ref <addressID string> @ OrderService (Reference)> from <addressid string (BasicObject)>
 - read <addressID string (BasicObject)> from <addressid string (BasicObject)>
 - read <ref <addressID string> @ FrontendService (Reference)> from <addressid string (BasicObject)>
 - read <addressID string (BasicObject)> from <addressid string (BasicObject)>

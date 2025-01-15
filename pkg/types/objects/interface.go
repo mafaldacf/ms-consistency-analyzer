@@ -60,8 +60,9 @@ func (v *InterfaceObject) GetDependencies() []Object {
 
 func (v *InterfaceObject) GetNestedDependencies(includeRefBy bool) []Object {
 	var deps = []Object{v}
-	if v.UnderlyingVariable != nil {
-		deps = append(deps, v.UnderlyingVariable.GetNestedDependencies(includeRefBy)...)
+	for _, elem := range v.GetDependencies() { // to include underlying dependencies from variable info
+		logger.Logger.Debugf("[INTERFACE OBJECT] GOT NESTED DEP (INC/ VINFO) FOR ELEM %s (%s)", elem.String(), VariableTypeName(elem))
+		deps = append(deps, elem.GetNestedDependencies(includeRefBy)...)
 	}
 	return deps
 }

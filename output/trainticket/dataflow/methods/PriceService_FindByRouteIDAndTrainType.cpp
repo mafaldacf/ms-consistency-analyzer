@@ -10,19 +10,11 @@
 [0] (BasicObject BasicType) routeID string
      --> r-tainted: read(price_db.PriceConfig.RouteID) {1}
 [_1] (Reference SliceType) ref <routeid []string> @ PriceService
-      --> r-tainted: read(price_db.PriceConfig.RouteID) {1}
-[__2] (BasicObject BasicType) rt string
-      --> r-tainted: read(price_db.PriceConfig.RouteID) {1}
-[__2] (BasicObject BasicType) ":" string
 
     --> r-tainted: read(price_db.PriceConfig.TrainType) {1}
 [0] (BasicObject BasicType) trainType string
      --> r-tainted: read(price_db.PriceConfig.TrainType) {1}
 [_1] (Reference SliceType) ref <trainType []string> @ PriceService
-      --> r-tainted: read(price_db.PriceConfig.TrainType) {1}
-[__2] (BasicObject BasicType) rt string
-      --> r-tainted: read(price_db.PriceConfig.TrainType) {1}
-[__2] (BasicObject BasicType) ":" string
 
 [0] (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database = priceConfig, collection = priceConfig}
 

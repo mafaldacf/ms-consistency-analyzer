@@ -82,7 +82,7 @@ source ~/.venv/bin/activate
 |-------------------------------------------|---------------|---------------|-------------------|-----------------------|----------------|
 | `foobar`                                  | **YES**       | 0             | 0                 | 0                     | 0              |
 | `shopping_simple`                         | **YES**       | 0             | 1;1               | 0                     | 0              |
-| `shopping_app`                            | **YES**       | 1             | 0                 | 1                     | 0              |
+| `shopping_app`                            | **YES**       | 1?            | 0                 | 1?                    | 0              |
 | `postnotification_simple`                 | **YES**       | 1             | 0                 | 1                     | 0              |
 | `postnotification`                        | **YES**       | 2             | 0                 | 2                     | 0              |
 | `sockshop2`                               | **YES**       | 0             | 4;0               | 0                     | 0              |

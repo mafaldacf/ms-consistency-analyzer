@@ -214,7 +214,7 @@ func (p *Package) GetImportedPackage(pkgPath string) *Package {
 	}
 	imptPkg, ok := p.ImportedPackages[pkgPath]
 	if !ok {
-		logger.Logger.Fatalf("package (%s) not found in imports of package (%s)", pkgPath, p.PackagePath)
+		logger.Logger.Fatalf("package (%s) not found in imports of package (%s): %v", pkgPath, p.PackagePath, p.ImportedPackages)
 	}
 	return imptPkg
 }

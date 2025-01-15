@@ -74,13 +74,9 @@
   - '0 depth 0 (BasicObject BasicType) routeID string --> r-tainted 1x: read(price_db.PriceConfig.RouteID)'
   - '_1 depth 1 (Reference SliceType) ref <routeid []string> @ PriceService --> r-tainted
     1x: read(price_db.PriceConfig.RouteID)'
-  - '__2 depth 2 (BasicObject BasicType) rt string --> r-tainted 1x: read(price_db.PriceConfig.RouteID)'
-  - '__3 depth 2 (BasicObject BasicType) ":" string --> r-tainted 1x: read(price_db.PriceConfig.RouteID)'
   - '0 depth 0 (BasicObject BasicType) trainType string --> r-tainted 1x: read(price_db.PriceConfig.TrainType)'
   - '_1 depth 1 (Reference SliceType) ref <trainType []string> @ PriceService -->
     r-tainted 1x: read(price_db.PriceConfig.TrainType)'
-  - '__2 depth 2 (BasicObject BasicType) rt string --> r-tainted 1x: read(price_db.PriceConfig.TrainType)'
-  - '__3 depth 2 (BasicObject BasicType) ":" string --> r-tainted 1x: read(price_db.PriceConfig.TrainType)'
   - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) coll NoSQLCollection {database = priceConfig, collection = priceConfig}
   - 0 depth 0 (InterfaceObject UserType) err .error
   - 0 depth 0 (SliceObject UserType) query primitive.D
@@ -111,11 +107,7 @@
   - 0 depth 0 (SliceObject SliceType) pieces []string
   - _2 depth 1 (BasicObject BasicType) ":" string
   - '0 depth 0 (SliceObject SliceType) routeid []string --> r-tainted 1x: read(price_db.PriceConfig.RouteID)'
-  - '_1 depth 1 (BasicObject BasicType) rt string --> r-tainted 1x: read(price_db.PriceConfig.RouteID)'
-  - '_2 depth 1 (BasicObject BasicType) ":" string --> r-tainted 1x: read(price_db.PriceConfig.RouteID)'
   - '0 depth 0 (SliceObject SliceType) trainType []string --> r-tainted 1x: read(price_db.PriceConfig.TrainType)'
-  - '_1 depth 1 (BasicObject BasicType) rt string --> r-tainted 1x: read(price_db.PriceConfig.TrainType)'
-  - '_2 depth 1 (BasicObject BasicType) ":" string --> r-tainted 1x: read(price_db.PriceConfig.TrainType)'
   - 0 depth 0 (InterfaceObject UserType) _ .error
   - _1 depth 1 (Reference BasicType) ref <nil> @ FindByRouteIDAndTrainType
 

@@ -40,28 +40,20 @@ PRICE_DB.PriceConfig.RouteID:
 - read <routeID string (BasicObject)> from <routeID string (BasicObject)>
 - read <ref <routeid []string> @ PriceService (Reference)> from <routeID string (BasicObject)>
 - read <routeid []string (SliceObject)> from <routeID string (BasicObject)>
-- read <rt string (BasicObject)> from <routeID string (BasicObject)>
-- read <":" string (BasicObject)> from <routeID string (BasicObject)>
 - read <routeID string (BasicObject)>
 - read <routeID string (BasicObject)> from <routeID string (BasicObject)>
 - read <ref <routeid []string> @ PriceService (Reference)> from <routeID string (BasicObject)>
 - read <routeid []string (SliceObject)> from <routeID string (BasicObject)>
-- read <rt string (BasicObject)> from <routeID string (BasicObject)>
-- read <":" string (BasicObject)> from <routeID string (BasicObject)>
 
 PRICE_DB.PriceConfig.TrainType:
 - read <trainType string (BasicObject)>
 - read <trainType string (BasicObject)> from <trainType string (BasicObject)>
 - read <ref <trainType []string> @ PriceService (Reference)> from <trainType string (BasicObject)>
 - read <trainType []string (SliceObject)> from <trainType string (BasicObject)>
-- read <rt string (BasicObject)> from <trainType string (BasicObject)>
-- read <":" string (BasicObject)> from <trainType string (BasicObject)>
 - read <trainType string (BasicObject)>
 - read <trainType string (BasicObject)> from <trainType string (BasicObject)>
 - read <ref <trainType []string> @ PriceService (Reference)> from <trainType string (BasicObject)>
 - read <trainType []string (SliceObject)> from <trainType string (BasicObject)>
-- read <rt string (BasicObject)> from <trainType string (BasicObject)>
-- read <":" string (BasicObject)> from <trainType string (BasicObject)>
 
 PriceConfig:
 - read <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructObject)> from <pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64} (StructObject)>

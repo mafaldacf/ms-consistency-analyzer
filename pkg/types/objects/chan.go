@@ -55,6 +55,10 @@ func (v *ChanObject) GetNestedDependencies(includeRefBy bool) []Object {
 	if includeRefBy && v.GetVariableInfo().IsReferencedBy() {
 		deps = append(deps, v.GetVariableInfo().GetNestedRefByDependencies(nil)...)
 	}
+	for _, elem := range v.GetDependencies() { // to include underlying dependencies from variable info
+		logger.Logger.Debugf("[CHAN OBJECT] GOT NESTED DEP (INC/ VINFO) FOR ELEM %s (%s)", elem.String(), VariableTypeName(elem))
+		deps = append(deps, elem.GetNestedDependencies(includeRefBy)...)
+	}
 	return deps
 }
 

@@ -45,7 +45,7 @@ func (vinfo *ObjectInfo) SetDynamic() {
 }
 
 func (vinfo *ObjectInfo) IsDynamic() bool {
-	return vinfo.Dynamic == true
+	return vinfo.Dynamic
 }
 
 func (vinfo *ObjectInfo) ResetAllDataflows() {
@@ -63,6 +63,14 @@ func (vinfo *ObjectInfo) SetType(t gotypes.Type) {
 
 func (vinfo *ObjectInfo) GetDataflows() []*ObjectDataflow {
 	return vinfo.Dataflows
+}
+
+func (vinfo *ObjectInfo) AddDependency(dep Object) {
+	vinfo.Dependencies = append(vinfo.Dependencies, dep)
+}
+
+func (vinfo *ObjectInfo) AddDependencies(deps []Object) {
+	vinfo.Dependencies = append(vinfo.Dependencies, deps...)
 }
 
 func (vinfo *ObjectInfo) GetIndirectDataflows() []*ObjectDataflow {

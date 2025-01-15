@@ -85,29 +85,22 @@ func AddVariableInfoDependencies(variable Object, deps []Object) {
 	variable.GetVariableInfo().Dependencies = append(variable.GetVariableInfo().Dependencies, deps...)
 }
 
-func AddUnderlyingDependencies(variable Object, deps []Object) bool {
-	variableType, _ := gotypes.UnwrapUserAndFieldTypes(variable.GetType())
+func AddUnderlyingDepsFromFuncCall(obj Object, deps []Object) bool {
+	objType, _ := gotypes.UnwrapUserAndFieldTypes(obj.GetType())
 
-	if _, ok := variableType.(*gotypes.GenericType); ok {
-		genericVariable, _ := variable.(*GenericObject)
+	if _, ok := objType.(*gotypes.GenericType); ok {
+		genericVariable, _ := obj.(*GenericObject)
 		genericVariable.Params = append(genericVariable.Params, deps...)
 		return true
-	}
-	if _, ok := variableType.(*gotypes.BasicType); ok {
-		basicVariable, _ := variable.(*BasicObject)
-		basicVariable.UnderlyingObjects = append(basicVariable.UnderlyingObjects, deps...)
-		return true
-	}
-	if _, ok := variableType.(*gotypes.InterfaceType); ok {
-		interfaceVariable, _ := variable.(*InterfaceObject)
+	} else if _, ok := objType.(*gotypes.InterfaceType); ok {
+		interfaceVariable, _ := obj.(*InterfaceObject)
 		if interfaceVariable.UnderlyingVariable != nil || len(deps) > 1 {
 			return false
 		}
 		interfaceVariable.UnderlyingVariable = deps[0]
 		return true
-	}
-	if sliceType, ok := variableType.(*gotypes.SliceType); ok {
-		sliceVariable, _ := variable.(*SliceObject)
+		/* } else if sliceType, ok := objType.(*gotypes.SliceType); ok {
+		sliceVariable, _ := obj.(*SliceObject)
 		for _, dep := range deps {
 			depType, _ := gotypes.UnwrapUserAndFieldTypes(dep.GetType())
 			if !sliceType.UnderlyingType.IsSameType(depType) {
@@ -117,6 +110,14 @@ func AddUnderlyingDependencies(variable Object, deps []Object) bool {
 		}
 		sliceVariable.Elements = append(sliceVariable.Elements, deps...)
 		return true
+		*/
+		/* } else if _, ok := objType.(*gotypes.BasicType); ok {
+		basicVariable, _ := obj.(*BasicObject)
+		basicVariable.UnderlyingObjects = append(basicVariable.UnderlyingObjects, deps...)
+		return true
+		*/
+	} else {
+		obj.GetVariableInfo().AddDependencies(deps)
 	}
 	return false
 }

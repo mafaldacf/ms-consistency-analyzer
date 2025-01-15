@@ -37,6 +37,12 @@
 [__2] (Reference BasicType) ref <postID int64> @ UploadService
      --> r-tainted: read(posts_cache.int) {1}
 [_1] (BasicObject BasicType) 10 int
+     --> r-tainted: read(posts_cache.int64) {1}
+[_1] (BasicObject BasicType) postID int64
+      --> r-tainted: read(posts_cache.int64) {1}
+[__2] (Reference BasicType) ref <postID int64> @ UploadService
+     --> r-tainted: read(posts_cache.int) {1}
+[_1] (BasicObject BasicType) 10 int
 
 [0] (StructObject UserType) media postnotification.Media struct{MediaID int64, Content string}
 

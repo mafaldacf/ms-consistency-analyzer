@@ -116,12 +116,9 @@
   - '__8 depth 2 (BasicObject BasicType) ImageURL_2 string --> r-tainted 2x: read(catalogue_db.Sock.string,
     catalogue_db.Sock.ImageURL_2)'
   - '_9 depth 1 (FieldObject FieldType) TagString string --> r-tainted 1x: read(catalogue_db.Sock.TagString)'
-  - '__10 depth 2 (BasicObject BasicType) TagString string --> r-tainted 2x: read(catalogue_db.Sock.TagString,
-    catalogue_db.Sock.string)'
+  - '__10 depth 2 (BasicObject BasicType) TagString string --> r-tainted 1x: read(catalogue_db.Sock.TagString)'
   - '_11 depth 1 (FieldObject FieldType) Tags []string --> r-tainted 1x: read(catalogue_db.Sock.Tags)'
   - '__12 depth 2 (SliceObject SliceType) []string --> r-tainted 1x: read(catalogue_db.Sock.Tags)'
-  - '___13 depth 3 (BasicObject BasicType) TagString string --> r-tainted 2x: read(catalogue_db.Sock.TagString,
-    catalogue_db.Sock.string)'
   - '___14 depth 3 (BasicObject BasicType) "," string --> r-tainted 1x: read(catalogue_db.Sock.string)'
   - '0 depth 0 (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database
     = catalogue, collection = catalogue} --> r-tainted 1x: read(catalogue_db._)'

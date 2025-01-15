@@ -15,7 +15,7 @@ import (
 	"analyzer/pkg/utils"
 )
 
-func computeArrayIndex(expr ast.Expr, block *types.Block) (int, bool) {
+func computeArrayIndexFromExpr(expr ast.Expr, block *types.Block) (int, bool) {
 	switch e := expr.(type) {
 	case *ast.BasicLit:
 		index, err := strconv.Atoi(e.Value)
@@ -24,8 +24,8 @@ func computeArrayIndex(expr ast.Expr, block *types.Block) (int, bool) {
 		}
 		return index, true
 	case *ast.Ident:
-		obj := block.GetObject(e.Name)
-		if basicObj, ok := obj.(*objects.BasicObject); ok {
+		obj := block.GetObject(e.Name) //FIXME: should actually look for all possible objects in package to include global ones
+		if basicObj, ok := getUnderlyingBasicObjectIfExists(obj); ok {
 			valStr := basicObj.GetBasicType().Value
 			index, err := strconv.Atoi(valStr)
 			if err != nil {
@@ -36,6 +36,27 @@ func computeArrayIndex(expr ast.Expr, block *types.Block) (int, bool) {
 	}
 	logger.Logger.Warnf("could not compute index for expr (%s) with type (%s)", expr, utils.GetType(expr))
 	return -1, false
+}
+
+func computeArrayIndexFromObject(obj objects.Object) (int, bool) {
+	valStr := obj.GetType().GetBasicValue()
+	index, err := strconv.Atoi(valStr)
+	if err != nil {
+		return index, true
+	}
+	logger.Logger.Warnf("error converting index (%s) from object (%s): %s", valStr, obj.String(), err.Error())
+	return -1, false
+}
+
+func getUnderlyingBasicObjectIfExists(obj objects.Object) (*objects.BasicObject, bool) {
+	if addressObj, ok := obj.(*objects.AddressObject); ok {
+		return getUnderlyingBasicObjectIfExists(addressObj.AddressOf)
+	} else if pointerObj, ok := obj.(*objects.PointerObject); ok {
+		return getUnderlyingBasicObjectIfExists(pointerObj.PointerTo)
+	} else if basicObj, ok := obj.(*objects.BasicObject); ok {
+		return basicObj, true
+	}
+	return nil, false
 }
 
 func lookupVariableFromIdentIfExists(service *service.Service, block *types.Block, ident *ast.Ident) objects.Object {
@@ -366,7 +387,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			logger.Logger.Fatalf("[CFG - LOOKUP VAR] nil variable for index expr: %v (e.X type = %s)", e, utils.GetType(e.X))
 		}
 		if arrayVar, ok := variable.(*objects.ArrayObject); ok {
-			arrayIndex, ok := computeArrayIndex(e.Index, block)
+			arrayIndex, ok := computeArrayIndexFromExpr(e.Index, block)
 			if ok {
 				variable = arrayVar.GetElementAtIfExists(arrayIndex)
 				if variable == nil {
@@ -384,7 +405,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		if mapVar, ok := variable.(*objects.MapObject); ok {
 			key, _ := lookupVariableFromAstExpr(service, method, block, e.Index, nil, false)
 			variable, ok = mapVar.KeyValues[key]
-			
+
 			if !ok {
 				valueType := mapVar.GetMapType().GetValueType()
 				variable = lookup.CreateDynamicObjectFromType(valueType)
@@ -459,7 +480,6 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			return variable, packageType
 		}
 
-
 		if !objOnExpr(e, block) {
 			t := lookup.LookupTypesForGoTypes(service.GetPackage(), service.GetPackage().TypesInfo.Types[e].Type)
 			return lookup.CreateObjectFromType("", t), nil
@@ -484,7 +504,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 				if ok1 && ok2 {
 					variable = &objects.BasicObject{
 						//FIXME: this operations should differ for the types of x and y (e.g. integers, strings, etc)
-						ObjectInfo: objects.NewObjectInfoInline(gotypes.NewBasicType("", basicTypeX.GetBasicValue()+basicTypeY.GetBasicValue())),
+						ObjectInfo:        objects.NewObjectInfoInline(gotypes.NewBasicType("", basicTypeX.GetBasicValue()+basicTypeY.GetBasicValue())),
 						UnderlyingObjects: []objects.Object{objX, objY},
 					}
 				} else {
@@ -545,7 +565,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 		variable.GetVariableInfo().Id = objects.VARIABLE_INLINE_ID
 		return variable, nil
 
-	case *ast.ArrayType: //e.g. []rune 
+	case *ast.ArrayType: //e.g. []rune
 		elemtsType := lookup.ComputeTypeForAstExpr(service.File, e.Elt)
 
 		// when length is not specified then e.len is nil

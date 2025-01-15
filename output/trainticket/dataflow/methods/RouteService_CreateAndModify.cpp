@@ -32,6 +32,10 @@
 [_1] (BasicObject BasicType) StationList string
      --> w-tainted: write(route_db.Route.Stations) {1}
 [_1] (BasicObject BasicType) "," string
+     --> w-tainted: write(route_db.Route.Stations) {1}
+[_1] (BasicObject BasicType) StationList string
+     --> w-tainted: write(route_db.Route.Stations) {1}
+[_1] (BasicObject BasicType) "," string
 
     --> w-tainted: write(route_db.Route) {1}
 [0] (StructObject UserType) route route.Route struct{ID string, Stations []string, Distances []int64, StartStation string, EndStation string}
@@ -55,6 +59,10 @@
 [_1] (FieldObject FieldType) Stations []string
       --> w-tainted: write(route_db.Route.Stations) {1}
 [__2] (SliceObject SliceType) stations []string
+       --> w-tainted: write(route_db.Route.Stations) {1}
+[___3] (BasicObject BasicType) StationList string
+       --> w-tainted: write(route_db.Route.Stations) {1}
+[___3] (BasicObject BasicType) "," string
        --> w-tainted: write(route_db.Route.Stations) {1}
 [___3] (BasicObject BasicType) StationList string
        --> w-tainted: write(route_db.Route.Stations) {1}

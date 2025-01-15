@@ -83,6 +83,7 @@ func (v *MapObject) GetId() int64 {
 	return v.ObjectInfo.GetId()
 }
 
+// this only makes sense when key is an object with BasicType
 func (v *MapObject) AddDynamicKeyValue(key Object, value Object) {
 	if v.DynamicKeyValues == nil {
 		v.DynamicKeyValues = make(map[Object]Object)
@@ -130,7 +131,8 @@ func (v *MapObject) GetNestedDependencies(includeRefBy bool) []Object {
 	if includeRefBy && v.GetVariableInfo().IsReferencedBy() {
 		deps = append(deps, v.GetVariableInfo().GetNestedRefByDependencies(nil)...)
 	}
-	for _, elem := range v.KeyValues {
+	for _, elem := range v.GetDependencies() { // to include underlying dependencies from variable info
+		logger.Logger.Debugf("[MAP OBJECT] GOT NESTED DEP (INC/ VINFO) FOR ELEM %s (%s)", elem.String(), VariableTypeName(elem))
 		deps = append(deps, elem.GetNestedDependencies(includeRefBy)...)
 	}
 	return deps

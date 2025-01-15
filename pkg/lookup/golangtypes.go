@@ -179,7 +179,7 @@ func LookupAndComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type) 
 
 // + Compute
 func ComputeTypesForGoTypes(p *types.Package, goType golangtypes.Type, computeIfNotFound bool, visitedNamedTypes map[*golangtypes.Named]bool, typeNameToFuncs map[string][]*golangtypes.Func, serviceTypes map[string]*gotypes.ServiceType) gotypes.Type {
-	logger.Logger.Debugf("[LOOKUP GOTYPES] [%s] %v", utils.GetType(goType))
+	logger.Logger.Debugf("[LOOKUP GOTYPES] [%s] %v", utils.GetType(goType), goType)
 	switch e := goType.(type) {
 	case *golangtypes.Named:
 		name := e.Obj().Name()

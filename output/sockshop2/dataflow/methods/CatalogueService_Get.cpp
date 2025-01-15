@@ -55,13 +55,17 @@
 [__2] (BasicObject BasicType) ImageURL_2 string
      --> r-tainted: read(catalogue_db.Sock.TagString) {1}
 [_1] (FieldObject FieldType) TagString string
-      --> r-tainted: read(catalogue_db.Sock.TagString, catalogue_db.Sock.string) {2}
+      --> r-tainted: read(catalogue_db.Sock.TagString) {1}
 [__2] (BasicObject BasicType) TagString string
      --> r-tainted: read(catalogue_db.Sock.Tags) {1}
 [_1] (FieldObject FieldType) Tags []string
       --> r-tainted: read(catalogue_db.Sock.Tags) {1}
 [__2] (SliceObject SliceType) []string
-       --> r-tainted: read(catalogue_db.Sock.TagString, catalogue_db.Sock.string) {2}
+       --> r-tainted: read(catalogue_db.Sock.TagString) {1}
+[___3] (BasicObject BasicType) TagString string
+       --> r-tainted: read(catalogue_db.Sock.string) {1}
+[___3] (BasicObject BasicType) "," string
+       --> r-tainted: read(catalogue_db.Sock.TagString) {1}
 [___3] (BasicObject BasicType) TagString string
        --> r-tainted: read(catalogue_db.Sock.string) {1}
 [___3] (BasicObject BasicType) "," string
@@ -88,13 +92,17 @@
 [___3] (BasicObject BasicType) ImageURL_2 string
       --> r-tainted: read(catalogue_db.Sock.TagString) {1}
 [__2] (FieldObject FieldType) TagString string
-       --> r-tainted: read(catalogue_db.Sock.TagString, catalogue_db.Sock.string) {2}
+       --> r-tainted: read(catalogue_db.Sock.TagString) {1}
 [___3] (BasicObject BasicType) TagString string
       --> r-tainted: read(catalogue_db.Sock.Tags) {1}
 [__2] (FieldObject FieldType) Tags []string
        --> r-tainted: read(catalogue_db.Sock.Tags) {1}
 [___3] (SliceObject SliceType) []string
-        --> r-tainted: read(catalogue_db.Sock.TagString, catalogue_db.Sock.string) {2}
+        --> r-tainted: read(catalogue_db.Sock.TagString) {1}
+[____4] (BasicObject BasicType) TagString string
+        --> r-tainted: read(catalogue_db.Sock.string) {1}
+[____4] (BasicObject BasicType) "," string
+        --> r-tainted: read(catalogue_db.Sock.TagString) {1}
 [____4] (BasicObject BasicType) TagString string
         --> r-tainted: read(catalogue_db.Sock.string) {1}
 [____4] (BasicObject BasicType) "," string

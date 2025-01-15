@@ -1,8 +1,8 @@
 ------------------------------------------------------------
 -------------------- CASCADING ANALYSIS --------------------
 ------------------------------------------------------------
-(#0) AccountService: accounts_db.DeleteOne()
-	missing 0 cascading deletes
-(#1) UserService: users_db.DeleteOne()
+(#0) UserService: users_db.DeleteOne()
 	missing 1 cascading deletes
 	- (AccountService, accounts_db)
+(#1) AccountService: accounts_db.DeleteOne()
+	missing 0 cascading deletes

@@ -98,16 +98,16 @@
     analytics_db.Analytics.PostID, notifications_queue.Message.PostID, timeline_cache.value)
     --> r-tainted 4x: read(analytics_queue.TriggerAnalyticsMessage.PostID, notifications_queue.Message.PostID,
     posts_db.Post.PostID, analytics_db.Analytics.PostID)'
-  - '_6 depth 1 (Reference UserType) ref <message postnotification.TriggerAnalyticsMessage
+  - '_7 depth 1 (Reference UserType) ref <message postnotification.TriggerAnalyticsMessage
     struct{PostID string}> @ AnalyticsService --> w-tainted 1x: write(analytics_queue.TriggerAnalyticsMessage)
     --> r-tainted 1x: read(analytics_queue.TriggerAnalyticsMessage)'
-  - '_10 depth 1 (FieldObject FieldType) PostID string --> w-tainted 1x: write(analytics_queue.TriggerAnalyticsMessage.PostID)'
-  - '__11 depth 2 (Reference FieldType) ref <PostID string> @ AnalyticsService -->
+  - '_12 depth 1 (FieldObject FieldType) PostID string --> w-tainted 1x: write(analytics_queue.TriggerAnalyticsMessage.PostID)'
+  - '__13 depth 2 (Reference FieldType) ref <PostID string> @ AnalyticsService -->
     w-tainted 2x: write(analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID)
     --> r-tainted 1x: read(analytics_queue.TriggerAnalyticsMessage.PostID)'
-  - '__14 depth 2 (BasicObject BasicType) PostID string --> w-tainted 2x: write(analytics_queue.TriggerAnalyticsMessage.PostID,
+  - '__17 depth 2 (BasicObject BasicType) PostID string --> w-tainted 2x: write(analytics_queue.TriggerAnalyticsMessage.PostID,
     analytics_db.Analytics.PostID)'
-  - '___15 depth 3 (Reference FieldType) ref <PostID string> @ AnalyticsService -->
+  - '___18 depth 3 (Reference FieldType) ref <PostID string> @ AnalyticsService -->
     w-tainted 2x: write(analytics_queue.TriggerAnalyticsMessage.PostID, analytics_db.Analytics.PostID)
     --> r-tainted 1x: read(analytics_queue.TriggerAnalyticsMessage.PostID)'
   - '0 depth 0 (BasicObject BasicType) postID int64 --> w-tainted 1x: write(analytics_db.Analytics.PostID)'

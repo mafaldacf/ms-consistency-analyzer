@@ -68,4 +68,13 @@
 [_1] (BasicObject BasicType) WithinPrice float64
      --> r-tainted: read(consignprice_db.ConsignPrice.BeyondPrice) {1}
 [_1] (BasicObject BasicType) BeyondPrice float64
+[_1] (BasicObject BasicType) "The price of weight within %.2f is %.2f. The price of extra weight within the region is %.2f and beyond the region is %.2f" string
+     --> r-tainted: read(consignprice_db.ConsignPrice.InitialWeight) {1}
+[_1] (BasicObject BasicType) InitialWeight float64
+     --> r-tainted: read(consignprice_db.ConsignPrice.InitialPrice) {1}
+[_1] (BasicObject BasicType) InitialPrice float64
+     --> r-tainted: read(consignprice_db.ConsignPrice.WithinPrice) {1}
+[_1] (BasicObject BasicType) WithinPrice float64
+     --> r-tainted: read(consignprice_db.ConsignPrice.BeyondPrice) {1}
+[_1] (BasicObject BasicType) BeyondPrice float64
 

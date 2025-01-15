@@ -69,6 +69,13 @@ func (v *ArrayObject) GetElements() []Object {
 	return v.Elements
 }
 
+func (v *ArrayObject) SetElementAt(idx int, elem Object) {
+	if idx > len(v.Elements) - 1 {
+		logger.Logger.Fatalf("[ARRAY OBJECT] attempted to set new element (%s) at index (%d) out of bounds for array with elements: %v", elem.String(), idx, v.Elements)
+	}
+	v.Elements[idx] = elem
+}
+
 func (v *ArrayObject) AppendElements(varElements Object) {
 	if varElementsSlice, ok := varElements.(*ArrayObject); ok {
 		v.Elements = append(v.Elements, varElementsSlice.GetElements()...)
@@ -145,7 +152,8 @@ func (v *ArrayObject) GetNestedDependencies(includeRefBy bool) []Object {
 	if includeRefBy && v.GetVariableInfo().IsReferencedBy() {
 		deps = append(deps, v.GetVariableInfo().GetNestedRefByDependencies(nil)...)
 	}
-	for _, elem := range v.Elements {
+	for _, elem := range v.GetDependencies() { // to include underlying dependencies from variable info
+		logger.Logger.Debugf("[ARRAY OBJECT] GOT NESTED DEP (INC/ VINFO) FOR ELEM %s (%s)", elem.String(), VariableTypeName(elem))
 		deps = append(deps, elem.GetNestedDependencies(includeRefBy)...)
 	}
 	return deps

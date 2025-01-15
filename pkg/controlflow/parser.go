@@ -90,7 +90,7 @@ func visitBasicBlock(service *service.Service, method *types.ParsedMethod, block
 		}
 
 		logger.Logger.Warnf("\n----------------------------------------------\nPARSING BLOCK [%d] W/ KIND = %s; NODE [%d]: %v \n\t@ METHOD: %s.%s\n%s\n----------------------------------------------", block.Block.Index, block.Block.Kind.String(), i, node, service.Name, method.Name, initialObjsStr)
-		
+
 		succ := block.GetNextSuccessorIfExists()
 		/* ident, isIdent := node.(*ast.Ident)
 		if succ != nil && succ.Block.Kind == cfg.KindRangeLoop && isIdent { // as soon as we see an ident then we are "preparing" for the succeeding range loop
@@ -170,14 +170,13 @@ func visitBasicBlock(service *service.Service, method *types.ParsedMethod, block
 					parsingLoop = true
 				}
 			}
-		} 
-		
+		}
+
 		if !parsingLoop {
 			stmts := parseNodeBody(service, method, block, node)
 			deferStmts = append(deferStmts, stmts...)
 		}
 	}
-
 
 	for _, deferStmt := range deferStmts {
 		parseAndSaveCall(service, method, block, deferStmt.Call)
@@ -259,7 +258,7 @@ func assignLeftValues(service *service.Service, method *types.ParsedMethod, bloc
 					}
 				} else { // already exists (token.ASSIGN)
 					logger.Logger.Warnf("[CFG - ASSIGN LEFT] FIX ME!!!! WE SHOULD SEARCH FOR THE LEFT VARIABLE THAT ALREADY EXISTS IN THE BLOCK")
-					lvariable := rvariable.Copy(true)
+					lvariable := rvariable.Copy(true) // new version
 					lvariable.GetVariableInfo().SetName(e.Name)
 					lvariable.GetVariableInfo().SetUnassigned()
 					block.AddVariable(lvariable)
@@ -282,6 +281,7 @@ func assignLeftValues(service *service.Service, method *types.ParsedMethod, bloc
 			}
 		case *ast.SelectorExpr:
 			lvariable, _ := lookupVariableFromAstExpr(service, method, block, e, nil, true)
+			//newLeftVariable := lvariable.Copy(true) // new version
 			switch ee := lvariable.(type) {
 			case *objects.FieldObject:
 				lvariable.AssignVariable(rvariable)
@@ -290,10 +290,33 @@ func assignLeftValues(service *service.Service, method *types.ParsedMethod, bloc
 			}
 		case *ast.IndexExpr: // e.g. res[rt] = pc
 			lvariable, _ := lookupVariableFromAstExpr(service, method, block, e.X, nil, true)
+			//newLeftVariable := lvariable.Copy(true) // new version
 			switch ee := lvariable.(type) {
 			case *objects.MapObject:
+				keyVariable, _ := lookupVariableFromAstExpr(service, method, block, e.Index, nil, true)
+				if basicObj, ok := getUnderlyingBasicObjectIfExists(keyVariable); ok {
+					ee.AddKeyValue(basicObj, rvariable)
+				} else {
+					ee.AddDynamicKeyValue(keyVariable, rvariable)
+				}
+			case *objects.ArrayObject:
 				idxVariable, _ := lookupVariableFromAstExpr(service, method, block, e.Index, nil, true)
-				ee.AddKeyValue(idxVariable, rvariable)
+				idx, ok := computeArrayIndexFromObject(idxVariable)
+				if ok {
+					ee.SetElementAt(idx, rvariable)
+				} else {
+					ee.AddDynamicElement(rvariable)
+					rvariable.GetVariableInfo().SetDynamic()
+				}
+			case *objects.SliceObject:
+				idxVariable, _ := lookupVariableFromAstExpr(service, method, block, e.Index, nil, true)
+				idx, ok := computeArrayIndexFromObject(idxVariable)
+				if ok {
+					ee.SetElementAt(idx, rvariable)
+				} else {
+					ee.AddDynamicElement(rvariable)
+					rvariable.GetVariableInfo().SetDynamic()
+				}
 			default:
 				logger.Logger.Fatalf("[CFG - ASSIGN LEFT] [%s] unsupported left variable type (%s): %v", service.GetName(), utils.GetType(ee), lvariable.String())
 			}
@@ -508,10 +531,10 @@ func computeExternalFuncCallReturns(service *service.Service, callExpr *ast.Call
 				tupleVar.Objects = append(tupleVar.Objects, newVar)
 				newVar.GetVariableInfo().SetParent(newVar, tupleVar)
 			} else {
-				logger.Logger.Warnf("[CFG CALLS] call returns tuple with len %d and depends on %d variables", len(signatureResults.(*gotypes.TupleType).Types), len(deps))
+				logger.Logger.Warnf("[CFG CALLS] call returns tuple with len %d and depends on %d variables: %v", len(signatureResults.(*gotypes.TupleType).Types), len(deps), deps)
 				for _, t := range signatureResults.(*gotypes.TupleType).Types {
 					newVar := lookup.CreateObjectFromType("", t)
-					ok := objects.AddUnderlyingDependencies(newVar, deps)
+					ok := objects.AddUnderlyingDepsFromFuncCall(newVar, deps)
 					if !ok {
 						logger.Logger.Warnf("[CFG CALLS] cannot keep variable (%s) (%s) for underlying deps list with len (%d): %v", objects.VariableTypeName(newVar), newVar.String(), len(deps), deps)
 						/* newVar = &objects.GenericVariable{
@@ -867,8 +890,8 @@ func wrapInTupleVariable(varsToWrap ...objects.Object) *objects.TupleObject {
 func wrapInBasicVariable(variable objects.Object, typeName string) *objects.BasicObject {
 	return &objects.BasicObject{
 		ObjectInfo: &objects.ObjectInfo{
-			Type : gotypes.NewBasicType(typeName, variable.GetType().GetBasicValue()),
-			Id: objects.VARIABLE_UNASSIGNED_ID,
+			Type: gotypes.NewBasicType(typeName, variable.GetType().GetBasicValue()),
+			Id:   objects.VARIABLE_UNASSIGNED_ID,
 		},
 	}
 }

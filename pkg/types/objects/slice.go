@@ -10,8 +10,9 @@ import (
 
 type SliceObject struct {
 	Object
-	ObjectInfo *ObjectInfo
-	Elements   []Object
+	ObjectInfo      *ObjectInfo
+	Elements        []Object
+	DynamicElements []Object
 }
 
 func (v *SliceObject) MarshalJSON() ([]byte, error) {
@@ -22,6 +23,17 @@ func (v *SliceObject) MarshalJSON() ([]byte, error) {
 		ObjectInfo: v.ObjectInfo,
 		Elements:   v.Elements,
 	})
+}
+
+func (v *SliceObject) SetElementAt(idx int, elem Object) {
+	if idx > len(v.Elements)-1 {
+		logger.Logger.Fatalf("[ARRAY OBJECT] attempted to set new element (%s) at index (%d) out of bounds for array with elements: %v", elem.String(), idx, v.Elements)
+	}
+	v.Elements[idx] = elem
+}
+
+func (v *SliceObject) AddDynamicElement(obj Object) {
+	v.DynamicElements = append(v.DynamicElements, obj)
 }
 
 func (v *SliceObject) GetVariableInfo() *ObjectInfo {
@@ -105,7 +117,8 @@ func (v *SliceObject) GetNestedDependencies(includeRefBy bool) []Object {
 	if includeRefBy && v.GetVariableInfo().IsReferencedBy() {
 		deps = append(deps, v.GetVariableInfo().GetNestedRefByDependencies(nil)...)
 	}
-	for _, elem := range v.Elements {
+	for _, elem := range v.GetDependencies() { // to include underlying dependencies from variable info
+		logger.Logger.Debugf("[SLICE OBJECT] GOT NESTED DEP (INC/ VINFO) FOR ELEM %s (%s)", elem.String(), VariableTypeName(elem))
 		deps = append(deps, elem.GetNestedDependencies(includeRefBy)...)
 	}
 	return deps

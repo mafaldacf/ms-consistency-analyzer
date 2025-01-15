@@ -17,20 +17,14 @@
 [0] (SliceObject SliceType) pieces []string
 [_1] (BasicObject BasicType) rt string
 [_1] (BasicObject BasicType) ":" string
+[_1] (BasicObject BasicType) rt string
+[_1] (BasicObject BasicType) ":" string
 
     --> r-tainted: read(price_db.PriceConfig.RouteID) {1}
 [0] (SliceObject SliceType) routeid []string
-     --> r-tainted: read(price_db.PriceConfig.RouteID) {1}
-[_1] (BasicObject BasicType) rt string
-     --> r-tainted: read(price_db.PriceConfig.RouteID) {1}
-[_1] (BasicObject BasicType) ":" string
 
     --> r-tainted: read(price_db.PriceConfig.TrainType) {1}
 [0] (SliceObject SliceType) trainType []string
-     --> r-tainted: read(price_db.PriceConfig.TrainType) {1}
-[_1] (BasicObject BasicType) rt string
-     --> r-tainted: read(price_db.PriceConfig.TrainType) {1}
-[_1] (BasicObject BasicType) ":" string
 
 [0] (StructObject UserType) pc price.PriceConfig struct{ID string, TrainType string, RouteID string, BasicPriceRate float64, FirstClassPriceRate float64}
      --> r-tainted: read(price_db.PriceConfig) {1}
