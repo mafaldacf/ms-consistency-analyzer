@@ -1,5 +1,147 @@
 [
   {
+    "method": "(*FrontendImpl).DeleteAccount(ctx context.Context, accountID string)",
+    "depth": 0,
+    "caller": "Client",
+    "edges": [
+      {
+        "method": "(*AccountServiceImpl).DeleteAccount(ctx context.Context, accountID string)",
+        "depth": 1,
+        "caller": "Frontend",
+        "edges": [
+          {
+            "method": "NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D)",
+            "depth": 2,
+            "caller": "AccountService",
+            "params": [
+              {
+                "interface": {
+                  "name": "ctx",
+                  "type": "context.Context",
+                  "refs": [
+                    {
+                      "name": "ctx",
+                      "creator": "Frontend"
+                    }
+                  ]
+                }
+              },
+              {
+                "slice": {
+                  "name": "filter",
+                  "type": "primitive.D"
+                },
+                "slice_variables": [
+                  {
+                    "struct": {
+                      "name": "",
+                      "type": "struct{Key \"accountID\" string, Key \"accountID\" string, Value string, Value string}"
+                    },
+                    "struct_fields": {
+                      "Key": {
+                        "field": {
+                          "name": "Key",
+                          "type": "\"accountID\" string"
+                        },
+                        "wrapped_variable": {
+                          "basic": {
+                            "name": "",
+                            "type": "\"accountID\" string"
+                          }
+                        }
+                      },
+                      "Value": {
+                        "field": {
+                          "name": "Value",
+                          "type": "string"
+                        },
+                        "wrapped_variable": {
+                          "basic": {
+                            "name": "accountID",
+                            "type": "string",
+                            "refs": [
+                              {
+                                "name": "accountID",
+                                "creator": "Frontend"
+                              }
+                            ]
+                          }
+                        }
+                      }
+                    }
+                  }
+                ]
+              }
+            ],
+            "returns": [
+              {
+                "interface": {
+                  "name": "err",
+                  "type": ".error"
+                }
+              }
+            ],
+            "datastore": "accounts_db"
+          }
+        ],
+        "params": [
+          {
+            "interface": {
+              "name": "ctx",
+              "type": "context.Context"
+            }
+          },
+          {
+            "basic": {
+              "name": "accountID",
+              "type": "string"
+            }
+          }
+        ],
+        "returns": [
+          {
+            "basic": {
+              "name": "ok",
+              "type": "bool",
+              "refs": [
+                {
+                  "name": "",
+                  "creator": "AccountService"
+                }
+              ]
+            }
+          },
+          {
+            "interface": {
+              "name": "err",
+              "type": ".error",
+              "refs": [
+                {
+                  "name": "err",
+                  "creator": "AccountService"
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "params": [
+      {
+        "interface": {
+          "name": "ctx",
+          "type": "context.Context"
+        }
+      },
+      {
+        "basic": {
+          "name": "accountID",
+          "type": "string"
+        }
+      }
+    ]
+  },
+  {
     "method": "(*FrontendImpl).ReadAccountUser(ctx context.Context, accountID string)",
     "depth": 0,
     "caller": "Client",
@@ -934,148 +1076,6 @@
               "refs": [
                 {
                   "name": "account",
-                  "creator": "AccountService"
-                }
-              ]
-            }
-          },
-          {
-            "interface": {
-              "name": "err",
-              "type": ".error",
-              "refs": [
-                {
-                  "name": "err",
-                  "creator": "AccountService"
-                }
-              ]
-            }
-          }
-        ]
-      }
-    ],
-    "params": [
-      {
-        "interface": {
-          "name": "ctx",
-          "type": "context.Context"
-        }
-      },
-      {
-        "basic": {
-          "name": "accountID",
-          "type": "string"
-        }
-      }
-    ]
-  },
-  {
-    "method": "(*FrontendImpl).DeleteAccount(ctx context.Context, accountID string)",
-    "depth": 0,
-    "caller": "Client",
-    "edges": [
-      {
-        "method": "(*AccountServiceImpl).DeleteAccount(ctx context.Context, accountID string)",
-        "depth": 1,
-        "caller": "Frontend",
-        "edges": [
-          {
-            "method": "NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D)",
-            "depth": 2,
-            "caller": "AccountService",
-            "params": [
-              {
-                "interface": {
-                  "name": "ctx",
-                  "type": "context.Context",
-                  "refs": [
-                    {
-                      "name": "ctx",
-                      "creator": "Frontend"
-                    }
-                  ]
-                }
-              },
-              {
-                "slice": {
-                  "name": "filter",
-                  "type": "primitive.D"
-                },
-                "slice_variables": [
-                  {
-                    "struct": {
-                      "name": "",
-                      "type": "struct{Key \"accountID\" string, Key \"accountID\" string, Value string, Value string}"
-                    },
-                    "struct_fields": {
-                      "Key": {
-                        "field": {
-                          "name": "Key",
-                          "type": "\"accountID\" string"
-                        },
-                        "wrapped_variable": {
-                          "basic": {
-                            "name": "",
-                            "type": "\"accountID\" string"
-                          }
-                        }
-                      },
-                      "Value": {
-                        "field": {
-                          "name": "Value",
-                          "type": "string"
-                        },
-                        "wrapped_variable": {
-                          "basic": {
-                            "name": "accountID",
-                            "type": "string",
-                            "refs": [
-                              {
-                                "name": "accountID",
-                                "creator": "Frontend"
-                              }
-                            ]
-                          }
-                        }
-                      }
-                    }
-                  }
-                ]
-              }
-            ],
-            "returns": [
-              {
-                "interface": {
-                  "name": "err",
-                  "type": ".error"
-                }
-              }
-            ],
-            "datastore": "accounts_db"
-          }
-        ],
-        "params": [
-          {
-            "interface": {
-              "name": "ctx",
-              "type": "context.Context"
-            }
-          },
-          {
-            "basic": {
-              "name": "accountID",
-              "type": "string"
-            }
-          }
-        ],
-        "returns": [
-          {
-            "basic": {
-              "name": "ok",
-              "type": "bool",
-              "refs": [
-                {
-                  "name": "",
                   "creator": "AccountService"
                 }
               ]

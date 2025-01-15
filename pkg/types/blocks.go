@@ -22,7 +22,7 @@ type Block struct {
 	Index      int
 	Successors []*Block
 
-	Vars        []objects.Object
+	Objs        []objects.Object
 	Results     []objects.Object
 	InlineFuncs []*InlineFunc // declared inline blocks (NOT ANONYMOUS)
 	Info        *BlockInfo
@@ -48,8 +48,8 @@ func (block *Block) GetLatestInlineFunc(name string) *InlineFunc {
 }
 
 func (block *Block) HasVariable(name string) bool {
-	for i := len(block.Vars) - 1; i >= 0; i-- {
-		if block.Vars[i].GetVariableInfo().Name == name {
+	for i := len(block.Objs) - 1; i >= 0; i-- {
+		if block.Objs[i].GetVariableInfo().Name == name {
 			return true
 		}
 	}
@@ -57,24 +57,24 @@ func (block *Block) HasVariable(name string) bool {
 }
 
 func (block *Block) GetObject(name string) objects.Object {
-	for i := len(block.Vars) - 1; i >= 0; i-- {
-		if block.Vars[i].GetVariableInfo().Name == name {
-			return block.Vars[i]
+	for i := len(block.Objs) - 1; i >= 0; i-- {
+		if block.Objs[i].GetVariableInfo().Name == name {
+			return block.Objs[i]
 		}
 	}
-	logger.Logger.Fatalf("[BLOCK] object with name (%s) not found: %v", name, block.Vars)
-	return  nil
+	logger.Logger.Fatalf("[BLOCK] object with name (%s) not found: %v", name, block.Objs)
+	return nil
 }
 
 func (block *Block) GetVars() []objects.Object {
-	return block.Vars
+	return block.Objs
 }
 
 func (block *Block) VarsString() string {
 	s := "variables = ["
-	for i, v := range block.Vars {
+	for i, v := range block.Objs {
 		s += v.String()
-		if i < len(block.Vars)-1 {
+		if i < len(block.Objs)-1 {
 			s += ", "
 		}
 
@@ -84,12 +84,12 @@ func (block *Block) VarsString() string {
 
 func (block *Block) DeepCopy() *Block {
 	var copyVars []objects.Object
-	for _, v := range block.Vars {
+	for _, v := range block.Objs {
 		copyVars = append(copyVars, v.DeepCopy())
 	}
 	return &Block{
 		Block: block.Block,
-		Vars:  copyVars,
+		Objs:  copyVars,
 		Info:  block.Info,
 	}
 }
@@ -100,10 +100,10 @@ func (block *Block) AddResult(variable objects.Object) {
 }
 
 func (block *Block) GetVariableAt(index int) objects.Object {
-	if index < len(block.Vars) {
-		return block.Vars[index]
+	if index < len(block.Objs) {
+		return block.Objs[index]
 	}
-	logger.Logger.Fatalf("[BLOCK] received index (%d) but block vars (%s) is length (%d)", index, block.String(), len(block.Vars))
+	logger.Logger.Fatalf("[BLOCK] received index (%d) but block vars (%s) is length (%d)", index, block.String(), len(block.Objs))
 	return nil
 }
 
@@ -126,7 +126,7 @@ type BlockInfo struct {
 }
 
 func (block *Block) GetVariables() []objects.Object {
-	return block.Vars
+	return block.Objs
 }
 
 func (block *Block) GetResults() []objects.Object {
@@ -135,35 +135,35 @@ func (block *Block) GetResults() []objects.Object {
 
 func (block *Block) GetFirstResult() objects.Object {
 	if len(block.Results) == 0 {
-		logger.Logger.Fatalf("[BLOCKS] block has no results: %s", block.String())
+		logger.Logger.Fatalf("[BLOCKS (%d)] block has no results: %s", block.Block.Index, block.String())
 	}
 	return block.Results[0]
 }
 
 func (block *Block) GetReceiver() objects.Object {
-	if len(block.Vars) == 0 {
+	if len(block.Objs) == 0 {
 		logger.Logger.Fatalf("[BLOCKS] unexpected empty CFG block (%v)", block)
 	}
-	return block.Vars[0]
+	return block.Objs[0]
 }
 
 func (block *Block) UpdateReceiver(v objects.Object) {
-	if len(block.Vars) == 0 {
+	if len(block.Objs) == 0 {
 		logger.Logger.Fatalf("[BLOCKS] unexpected empty CFG block (%v)", block)
 	}
-	block.Vars[0] = v
+	block.Objs[0] = v
 }
 
 func (block *Block) IsReceiverVariable(v objects.Object) bool {
-	if len(block.Vars) > 0 {
-		return block.Vars[0] == v
+	if len(block.Objs) > 0 {
+		return block.Objs[0] == v
 	}
 	return false
 }
 
 func (block *Block) GetLastestVariable(name string) objects.Object {
-	for i := len(block.Vars) - 1; i >= 0; i-- {
-		v := block.Vars[i]
+	for i := len(block.Objs) - 1; i >= 0; i-- {
+		v := block.Objs[i]
 		if name == v.GetVariableInfo().GetName() {
 			return v
 		}
@@ -173,19 +173,19 @@ func (block *Block) GetLastestVariable(name string) objects.Object {
 }
 
 func (block *Block) GetLastestVariableIfExists(name string) objects.Object {
-	for i := len(block.Vars) - 1; i >= 0; i-- {
-		v := block.Vars[i]
+	for i := len(block.Objs) - 1; i >= 0; i-- {
+		v := block.Objs[i]
 		if name == v.GetVariableInfo().GetName() {
 			return v
 		}
 	}
-	logger.Logger.Debugf("[BLOCK] variable (%s) does not exist in block with vars lst: %v", name, block.Vars)
+	logger.Logger.Debugf("[BLOCK] variable (%s) does not exist in block with vars lst: %v", name, block.Objs)
 	return nil
 }
 
 func (block *Block) AddVariables(objects []objects.Object) {
 	logger.Logger.Tracef("[BLOCK] added variables to block: %s", objects)
-	block.Vars = append(block.Vars, objects...)
+	block.Objs = append(block.Objs, objects...)
 }
 
 func (block *Block) AddVariable(variable objects.Object) {
@@ -195,7 +195,7 @@ func (block *Block) AddVariable(variable objects.Object) {
 	}
 
 	logger.Logger.Debugf("[BLOCK (%d)] added new variable: \n\t\t\t\t\t\t - (%s) %s", block.Block.Index, objects.VariableTypeName(variable), variable.LongString())
-	block.Vars = append(block.Vars, variable)
+	block.Objs = append(block.Objs, variable)
 }
 
 func (block *Block) GetPosition() token.Pos {
@@ -222,8 +222,8 @@ func (block *Block) GetNextSuccessorIfExists() *Block {
 }
 
 func (block *Block) AppendVarsFromPredecessor(predecessor *Block) {
-	logger.Logger.Tracef("[BLOCK] copying vars %d -> %d: %v -> %v", predecessor.GetIndex(), block.GetIndex(), predecessor.Vars, block.Vars)
-	block.Vars = append(predecessor.Vars, block.Vars...)
+	logger.Logger.Tracef("[BLOCK] copying vars %d -> %d: %v -> %v", predecessor.GetIndex(), block.GetIndex(), predecessor.Objs, block.Objs)
+	block.Objs = append(predecessor.Objs, block.Objs...)
 }
 
 func (block *Block) AppendInlineFuncsFromPredecessor(predecessor *Block) {
@@ -233,9 +233,9 @@ func (block *Block) AppendInlineFuncsFromPredecessor(predecessor *Block) {
 
 func (block *Block) String() string {
 	str := fmt.Sprintf("Block %d [%s] (", block.Block.Index, block.Block.Kind)
-	for i, v := range block.Vars {
+	for i, v := range block.Objs {
 		str += v.GetVariableInfo().GetName()
-		if i < len(block.Vars)-1 {
+		if i < len(block.Objs)-1 {
 			str += ", "
 		}
 	}

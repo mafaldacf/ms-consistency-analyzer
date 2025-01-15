@@ -162,7 +162,7 @@ func (block *Block) Yaml() ([]string, string) {
 	data := []string{}
 	visited := make(map[objects.Object]bool)
 	allBlockVarsStr := ""
-	for _, v := range block.Vars {
+	for _, v := range block.Objs {
 		deps, blockVarsStr, depths := getIndirectDependencies(v, 0)
 		allBlockVarsStr += blockVarsStr + "\n"
 		/* slices.Reverse(deps) */

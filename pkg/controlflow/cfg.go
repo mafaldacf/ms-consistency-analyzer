@@ -39,7 +39,15 @@ func GenerateMethodCFG(parsedMethod *types.ParsedMethod) {
 		v := lookup.CreateObjectFromType(param.GetName(), param.GetType())
 		v.GetVariableInfo().IsBlockParam = true
 		v.GetVariableInfo().BlockParamIdx = i
-		entryBlock.Vars = append(entryBlock.Vars, v)
+		entryBlock.Objs = append(entryBlock.Objs, v)
+	}
+
+	for _, ret := range parsedMethod.Returns {
+		// return values can also be declared by providing a name when declaring the function
+		if ret.GetName() != "" {
+			v := lookup.CreateObjectFromType(ret.GetName(), ret.GetType())
+			entryBlock.Objs = append(entryBlock.Objs, v)
+		}
 	}
 
 	/* if parsedMethod.GetName() == "ReadPostMedia" {
@@ -47,7 +55,7 @@ func GenerateMethodCFG(parsedMethod *types.ParsedMethod) {
 	} */
 
 	// note that parameters also include receiver
-	logger.Logger.Infof("[CFG] parsed CFG with receiver (%v) and (%d) initial variables for method (%s)", receiver, len(entryBlock.Vars), parsedMethod.String())
+	logger.Logger.Infof("[CFG] parsed CFG with receiver (%v) and (%d) initial variables for method (%s)", receiver, len(entryBlock.Objs), parsedMethod.String())
 }
 
 func InitServiceReceiverFieldsForParsedCFG(service *service.Service, parsedMethod *types.ParsedMethod) {
@@ -91,11 +99,11 @@ func GenerateMethodCFGForService(service *service.Service, parsedMethod *types.P
 		v := lookup.CreateObjectFromType(param.GetName(), param.GetType())
 		v.GetVariableInfo().IsBlockParam = true
 		v.GetVariableInfo().BlockParamIdx = i
-		entryBlock.Vars = append(entryBlock.Vars, v)
+		entryBlock.Objs = append(entryBlock.Objs, v)
 	}
 
 	// note that parameters also include receiver
-	logger.Logger.Infof("[CFG] parsed CFG with (%d) initial variables for method (%s) in service (%s)", len(entryBlock.Vars), parsedCfg.FullMethod, service.GetName())
+	logger.Logger.Infof("[CFG] parsed CFG with (%d) initial variables for method (%s) in service (%s)", len(entryBlock.Objs), parsedCfg.FullMethod, service.GetName())
 }
 
 // https://github.com/coder/go-tools/blob/master/go/analysis/passes/ctrlflow/ctrlflow_test.go

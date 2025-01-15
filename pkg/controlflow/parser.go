@@ -82,9 +82,9 @@ func visitBasicBlock(service *service.Service, method *types.ParsedMethod, block
 		} */
 
 		initialObjsStr := ""
-		for i, obj := range block.Vars {
+		for i, obj := range block.Objs {
 			initialObjsStr += fmt.Sprintf("\t (#%d) %s", i, obj.String())
-			if i < len(block.Vars)-1 {
+			if i < len(block.Objs)-1 {
 				initialObjsStr += "\n"
 			}
 		}
@@ -783,7 +783,7 @@ func parseCallToVariableInBlock(service *service.Service, method *types.ParsedMe
 		logger.Logger.Infof("[CFG CALLS] found Cache or Queue datastore call (%s) to instance (%s) -- returned tuple: %s", parsedCall.Name, parsedCall.DbInstance.String(), tupleVar.String())
 		return tupleVar
 	}
-	logger.Logger.Fatalf("[CFG CALLS] unable to parse call to variable (%s) with type (%s) in call expr fun: %v\nBLOCK VARS: %v", variable.String(), utils.GetType(variable), callExpr.Fun, block.Vars)
+	logger.Logger.Fatalf("[CFG CALLS] unable to parse call to variable (%s) with type (%s) in call expr fun: %v\nBLOCK VARS: %v", variable.String(), utils.GetType(variable), callExpr.Fun, block.Objs)
 	return nil
 }
 
