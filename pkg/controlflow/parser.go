@@ -281,16 +281,17 @@ func assignLeftValues(service *service.Service, method *types.ParsedMethod, bloc
 			}
 		case *ast.SelectorExpr:
 			lvariable, _ := lookupVariableFromAstExpr(service, method, block, e, nil, true)
-			//newLeftVariable := lvariable.Copy(true) // new version
 			switch ee := lvariable.(type) {
 			case *objects.FieldObject:
+				logger.Logger.Debugf("[CFG - ASSIGN LEFT] got lvariable (%s) in assignStmt: %v", lvariable.String(), assignStmt)
+				//newLeftVariable := lvariable.NewVersion()
 				lvariable.AssignVariable(rvariable)
 			default:
 				logger.Logger.Fatalf("[CFG - ASSIGN LEFT] [%s] unsupported left variable type (%s): %v", service.GetName(), utils.GetType(ee), lvariable.String())
 			}
 		case *ast.IndexExpr: // e.g. res[rt] = pc
 			lvariable, _ := lookupVariableFromAstExpr(service, method, block, e.X, nil, true)
-			//newLeftVariable := lvariable.Copy(true) // new version
+			//newLeftVariable := lvariable.NewVersion()
 			switch ee := lvariable.(type) {
 			case *objects.MapObject:
 				keyVariable, _ := lookupVariableFromAstExpr(service, method, block, e.Index, nil, true)

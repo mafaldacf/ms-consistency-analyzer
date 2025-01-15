@@ -155,6 +155,17 @@ func (v *SliceObject) LongString() string {
 	return s + ")"
 }
 
+func (v *SliceObject) NewVersion() Object {
+	copy := &SliceObject{
+		ObjectInfo: v.ObjectInfo.Copy(true),
+	}
+	for k, v := range v.Elements { // FIXME: this is not 100% correct
+		copy.Elements[k] = v
+		copy.Elements[k].GetVariableInfo().SetParent(copy.Elements[k], copy)
+	}
+	return copy
+}
+
 func (v *SliceObject) Copy(force bool) Object {
 	copy := &SliceObject{ObjectInfo: v.ObjectInfo.Copy(force)}
 	for _, v := range v.Elements {

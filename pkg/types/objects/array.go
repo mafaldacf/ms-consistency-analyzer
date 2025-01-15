@@ -159,6 +159,17 @@ func (v *ArrayObject) GetNestedDependencies(includeRefBy bool) []Object {
 	return deps
 }
 
+func (v *ArrayObject) NewVersion() Object {
+	copy := &ArrayObject{
+		ObjectInfo: v.ObjectInfo.Copy(true),
+	}
+	for k, v := range v.Elements { // FIXME: this is not 100% correct
+		copy.Elements[k] = v
+		copy.Elements[k].GetVariableInfo().SetParent(copy.Elements[k], copy)
+	}
+	return copy
+}
+
 func (v *ArrayObject) Copy(force bool) Object {
 	copy := &ArrayObject{
 		ObjectInfo: v.ObjectInfo.Copy(force),

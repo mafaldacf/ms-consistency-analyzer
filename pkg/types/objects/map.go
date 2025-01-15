@@ -138,9 +138,23 @@ func (v *MapObject) GetNestedDependencies(includeRefBy bool) []Object {
 	return deps
 }
 
+func (v *MapObject) NewVersion() Object {
+	copy := &MapObject{
+		KeyValues:  make(map[Object]Object, 0),
+		DynamicKeyValues: make(map[Object]Object),
+		ObjectInfo: v.ObjectInfo.Copy(true),
+	}
+	for k, v := range v.KeyValues { // FIXME: this is not 100% correct
+		copy.KeyValues[k] = v
+		copy.KeyValues[k].GetVariableInfo().SetParent(copy.KeyValues[k], copy)
+	}
+	return copy
+}
+
 func (v *MapObject) Copy(force bool) Object {
 	copy := &MapObject{
 		KeyValues:  make(map[Object]Object, 0),
+		DynamicKeyValues: make(map[Object]Object),
 		ObjectInfo: v.ObjectInfo.Copy(force),
 	}
 	for k, v := range v.KeyValues {
@@ -154,6 +168,7 @@ func (v *MapObject) DeepCopy() Object {
 	logger.Logger.Debugf("[VARS MAP - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
 	copy := &MapObject{
 		KeyValues:  make(map[Object]Object, 0),
+		DynamicKeyValues: make(map[Object]Object),
 		ObjectInfo: v.ObjectInfo.DeepCopy(),
 	}
 	for k, v := range v.KeyValues {

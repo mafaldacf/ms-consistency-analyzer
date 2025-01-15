@@ -122,6 +122,15 @@ func (v *FieldObject) AddReferenceWithID(target Object, creator string) {
 	v.WrappedVariable.AddReferenceWithID(target, creator)
 }
 
+/* func (v *FieldObject) NewVersion() Object {
+	copy := &FieldObject{
+		ObjectInfo:      v.ObjectInfo.Copy(true),
+		WrappedVariable: v.WrappedVariable.Copy(true),
+	}
+	copy.WrappedVariable.GetVariableInfo().SetParent(v.WrappedVariable, copy)
+	return copy
+} */
+
 func (v *FieldObject) Copy(force bool) Object {
 	copy := &FieldObject{
 		ObjectInfo:      v.ObjectInfo.Copy(force),

@@ -219,6 +219,22 @@ func (v *StructObject) GetNestedDependencies(includeRefBy bool) []Object {
 	return deps
 }
 
+func (v *StructObject) NewVersion() Object {
+	copy := &StructObject{
+		ObjectInfo: v.ObjectInfo.Copy(true),
+		fields:     make(map[string]Object),
+	}
+	for n, p := range v.GetFieldsMap() { // FIXME: this is not 100% correct
+		copy.SetFieldByKey(n, p)
+		copy.GetFieldByKey(n).GetVariableInfo().SetParent(copy.GetFieldByKey(n), copy)
+	}
+	for _, f := range v.GetFieldsList() {
+		copy.AddFieldToList(f)
+	}
+	return copy
+}
+
+
 func (v *StructObject) Copy(force bool) Object {
 	logger.Logger.Debugf("[VARS STRUCT - COPY] (%s) %s", VariableTypeName(v), v.String())
 	copy := &StructObject{
