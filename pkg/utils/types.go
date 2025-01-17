@@ -24,7 +24,7 @@ var builtInTypes = []string{
 }
 
 var builtInConsts = []string{"true", "false"}
-var builtInFuncs = []string{"make", "println", "append", "len"}
+var builtInFuncs = []string{"make", "println", "append", "len", "delete"}
 
 func AddValue(valueType string, s1 string, s2 string) string {
 	switch valueType {

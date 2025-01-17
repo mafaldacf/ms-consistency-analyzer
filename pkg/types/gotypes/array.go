@@ -1,6 +1,10 @@
 package gotypes
 
-import "analyzer/pkg/logger"
+import (
+	"runtime"
+
+	"analyzer/pkg/logger"
+)
 
 type ArrayType struct {
 	Type         `json:"-"`
@@ -16,6 +20,11 @@ func (t *ArrayType) DeepCopy() Type {
 	return &ArrayType{
 		ElementsType: t.ElementsType,
 	}
+}
+
+func (t *ArrayType) ElementsTypeIsInterface() bool {
+	_, ok := t.ElementsType.(*InterfaceType)
+	return ok
 }
 
 func (t *ArrayType) IsSameType(other Type) bool {
@@ -41,6 +50,14 @@ func (t *ArrayType) GetLongName() string {
 	return t.String()
 }
 func (t *ArrayType) GetBasicValue() string {
+	pc, file, line, ok := runtime.Caller(1)
+	if !ok {
+		logger.Logger.Fatalf("unable to get value for array type %s", t.String())
+	}
+	callerFunc := runtime.FuncForPC(pc).Name()
+	logger.Logger.Fatalf("unable to get value for array type (%s)... caller: %s %s:%d", t.String(), callerFunc, file, line)
+	return ""
+
 	logger.Logger.Fatalf("unable to get value for array type %s", t.String())
 	return ""
 }

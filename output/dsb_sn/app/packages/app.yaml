@@ -76,8 +76,8 @@ socialnetwork:
 - imported types:
   - .error
   - Cache interface{Cache.Put(ctx context.Context, key string, value interface{}),
-    Cache.Get(ctx context.Context, key string, value interface{})}
-  - NoSQLCollection interface{NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.NoSQLCollection.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.UpdateMany(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.ReplaceOne(ctx context.Context, filter bson.D, interface{}), NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.NoSQLCollection.DeleteMany(ctx context.Context, filter bson.D)}
+    Cache.Get(ctx context.Context, key string, value interface{}), Cache.Mget(ctx context.Context, key []string, key []interface{})}
+  - NoSQLCollection interface{NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.NoSQLCollection.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.UpdateMany(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.ReplaceOne(ctx context.Context, filter bson.D, interface{}), NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.NoSQLCollection.InsertMany(ctx context.Context, key []interface{}), NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.NoSQLCollection.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.NoSQLCursor.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.NoSQLCursor.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -85,7 +85,7 @@ socialnetwork:
   - atomic.align64
   - atomic.noCopy
   - context.Context
-  - hash.Hash interface{Write, BlockSize, Reset, Size, Sum, }
+  - hash.Hash interface{BlockSize, Reset, Size, Sum, Write, }
   - jwt-go.StandardClaims struct{Audience string, ExpiresAt int64, Id string, IssuedAt int64, Issuer string, NotBefore int64, Subject string}
   - net.Flags uint
   - net.HardwareAddr []byte
@@ -107,8 +107,8 @@ socialnetwork:
   - socialnetwork.FolloweeInfo struct{FolloweeID int64, Timestamp int64}
   - socialnetwork.FollowerInfo struct{FollowerID int64, Timestamp int64}
   - socialnetwork.HomeTimelineService
-  - socialnetwork.HomeTimelineServiceImpl struct{homeTimelineCache Cache interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{})}, postStorageService socialnetwork.PostStorageService,
-    socialGraphService socialnetwork.SocialGraphService}
+  - socialnetwork.HomeTimelineServiceImpl struct{homeTimelineCache Cache interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{}), Cache.Mget(ctx context.Context, key []string, key []interface{})}, postStorageService socialnetwork.PostStorageService, socialGraphService
+    socialnetwork.SocialGraphService}
   - socialnetwork.LoginObj struct{UserID int64, Password string, Salt string}
   - socialnetwork.Media struct{MediaID int64, MediaType string}
   - socialnetwork.MediaService
@@ -117,11 +117,11 @@ socialnetwork:
     struct{UserID int64, Username string}, Medias []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType int64}
   - socialnetwork.PostInfo struct{PostID int64, Timestamp int64}
   - socialnetwork.PostStorageService
-  - socialnetwork.PostStorageServiceImpl struct{postStorageCache Cache interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{})}, postStorageDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, CacheHits int64, NumReqs
+  - socialnetwork.PostStorageServiceImpl struct{postStorageCache Cache interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{}), Cache.Mget(ctx context.Context, key []string, key []interface{})}, postStorageDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, CacheHits int64, NumReqs
     int64, CacheMiss int64}
   - socialnetwork.PostType int64
   - socialnetwork.SocialGraphService
-  - socialnetwork.SocialGraphServiceImpl struct{socialGraphCache Cache interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{})}, socialGraphDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, userIDService socialnetwork.UserIDService}
+  - socialnetwork.SocialGraphServiceImpl struct{socialGraphCache Cache interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{}), Cache.Mget(ctx context.Context, key []string, key []interface{})}, socialGraphDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, userIDService socialnetwork.UserIDService}
   - socialnetwork.TextService
   - socialnetwork.TextServiceImpl struct{urlShortenService socialnetwork.UrlShortenService, userMentionService socialnetwork.UserMentionService}
   - socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}
@@ -131,18 +131,18 @@ socialnetwork:
   - socialnetwork.UrlShortenServiceImpl struct{urlShortenDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, hostname string}
   - socialnetwork.User struct{UserID int64, FirstName string, LastName string, Username string, PwdHashed string, Salt string}
   - socialnetwork.UserIDService
-  - socialnetwork.UserIDServiceImpl struct{userCache Cache interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{})}, userDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - socialnetwork.UserIDServiceImpl struct{userCache Cache interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{}), Cache.Mget(ctx context.Context, key []string, key []interface{})}, userDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
   - socialnetwork.UserInfo struct{UserID int64, Followers []socialnetwork.FollowerInfo struct{FollowerID int64, Timestamp int64}, Followees []socialnetwork.FolloweeInfo
     struct{FolloweeID int64, Timestamp int64}}
   - socialnetwork.UserMention struct{UserID int64, Username string}
   - socialnetwork.UserMentionService
-  - socialnetwork.UserMentionServiceImpl struct{userCache Cache interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{})}, userDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - socialnetwork.UserMentionServiceImpl struct{userCache Cache interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{}), Cache.Mget(ctx context.Context, key []string, key []interface{})}, userDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
   - socialnetwork.UserPosts struct{UserID int64, Posts []socialnetwork.PostInfo struct{PostID int64, Timestamp int64}}
   - socialnetwork.UserService
-  - socialnetwork.UserServiceImpl struct{machine_id string, counter int64, current_timestamp int64, secret string, userCache Cache interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{})}, userDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, socialGraphService
-    socialnetwork.SocialGraphService}
+  - socialnetwork.UserServiceImpl struct{machine_id string, counter int64, current_timestamp int64, secret string, userCache Cache interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{}), Cache.Mget(ctx context.Context, key []string, key []interface{})},
+    userDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, socialGraphService socialnetwork.SocialGraphService}
   - socialnetwork.UserTimelineService
-  - socialnetwork.UserTimelineServiceImpl struct{userTimelineCache Cache interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{})}, userTimelineDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, postStorageService
+  - socialnetwork.UserTimelineServiceImpl struct{userTimelineCache Cache interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{}), Cache.Mget(ctx context.Context, key []string, key []interface{})}, userTimelineDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, postStorageService
     socialnetwork.PostStorageService, CacheHits int64, CacheMiss int64, NumRequests
     int64}
   - socialnetwork.Wrk2APIService
@@ -172,8 +172,8 @@ socialnetwork:
   - socialnetwork.Wrk2APIService
 - datastore types:
   - Cache interface{Cache.Put(ctx context.Context, key string, value interface{}),
-    Cache.Get(ctx context.Context, key string, value interface{})}
-  - NoSQLCollection interface{NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.NoSQLCollection.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.UpdateMany(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.ReplaceOne(ctx context.Context, filter bson.D, interface{}), NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.NoSQLCollection.DeleteMany(ctx context.Context, filter bson.D)}
+    Cache.Get(ctx context.Context, key string, value interface{}), Cache.Mget(ctx context.Context, key []string, key []interface{})}
+  - NoSQLCollection interface{NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.NoSQLCollection.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.UpdateMany(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.ReplaceOne(ctx context.Context, filter bson.D, interface{}), NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.NoSQLCollection.InsertMany(ctx context.Context, key []interface{}), NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.NoSQLCollection.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.NoSQLCursor.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.NoSQLCursor.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -237,5 +237,4 @@ socialnetwork:
   - socialnetwork.NewWrk2APIServiceImpl(ctx context.Context, userService socialnetwork.UserService, composePostService socialnetwork.ComposePostService, userTimelineService socialnetwork.UserTimelineService, homeTimelineService socialnetwork.HomeTimelineService, socialGraphService socialnetwork.SocialGraphService)
     (socialnetwork.Wrk2APIService, error)
   - socialnetwork.handleFormats(jsonQuery string) (bdoc primitive.D, err error)
-  - socialnetwork.lower(f interface{}) interface{}
   - socialnetwork.parseNoSQLDBQuery(query string) (primitive.D, error)

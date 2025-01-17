@@ -187,7 +187,7 @@ func (b *BackendMethod) GetWrittenObjectIndex() int {
 	switch b.FullName() {
 	case "Cache.Put":
 		return 2
-	case "NoSQLDatabase.NoSQLCollection.InsertOne", "NoSQLDatabase.NoSQLCollection.UpdateOne", "NoSQLDatabase.NoSQLCollection.UpdateMany":
+	case "NoSQLDatabase.NoSQLCollection.InsertOne", "NoSQLDatabase.NoSQLCollection.InsertMany", "NoSQLDatabase.NoSQLCollection.UpdateOne", "NoSQLDatabase.NoSQLCollection.UpdateMany":
 		return 1
 	case "NoSQLDatabase.NoSQLCollection.Upsert", "NoSQLDatabase.NoSQLCollection.ReplaceOne":
 		return 2
@@ -201,7 +201,7 @@ func (b *BackendMethod) GetWrittenObjectIndex() int {
 
 func (b *BackendMethod) GetReadObjectIndex() int {
 	switch b.FullName() {
-	case "Cache.Get":
+	case "Cache.Get", "Cache.Mget":
 		return 2
 	case "NoSQLDatabase.NoSQLCollection.FindOne", "NoSQLDatabase.NoSQLCollection.FindMany":
 		return -1
@@ -218,7 +218,7 @@ func (b *BackendMethod) GetWrittenKeyIndex() int {
 	switch b.FullName() {
 	case "Cache.Put":
 		return 1
-	case "NoSQLDatabase.NoSQLCollection.InsertOne", "NoSQLDatabase.NoSQLCollection.UpdateOne", "NoSQLDatabase.NoSQLCollection.UpdateMany", 
+	case "NoSQLDatabase.NoSQLCollection.InsertOne", "NoSQLDatabase.NoSQLCollection.InsertMany", "NoSQLDatabase.NoSQLCollection.UpdateOne", "NoSQLDatabase.NoSQLCollection.UpdateMany",
 		"NoSQLDatabase.NoSQLCollection.Upsert", "NoSQLDatabase.NoSQLCollection.ReplaceOne":
 		return 1
 	case "Queue.Push":
@@ -231,7 +231,7 @@ func (b *BackendMethod) GetWrittenKeyIndex() int {
 
 func (b *BackendMethod) GetReadKeyIndex() int {
 	switch b.FullName() {
-	case "Cache.Get":
+	case "Cache.Get", "Cache.Mget":
 		return 1
 	case "NoSQLDatabase.NoSQLCollection.FindOne", "NoSQLDatabase.NoSQLCollection.FindMany":
 		return 1
@@ -259,6 +259,11 @@ func BuildBackendComponentMethods(name string) []*BackendMethod {
 		methods = append(methods, &BackendMethod{Name: "Get", Backend: "Cache", Operation: OP_READ,
 			Params:  []*types.MethodField{&ctxParam, &keyParam, &valueParam},
 			Returns: []*types.MethodField{&boolReturn, &errorReturn},
+		})
+		// Mget(ctx context.Context, keys []string, values []interface{}) error
+		methods = append(methods, &BackendMethod{Name: "Mget", Backend: "Cache", Operation: OP_READ,
+			Params:  []*types.MethodField{&ctxParam, &keysParam, &valuesParam},
+			Returns: []*types.MethodField{&errorReturn},
 		})
 	case "Queue":
 		// Push(ctx context.Context, item interface{}) (bool, error)
@@ -327,6 +332,11 @@ func buildBackendNoSQLCollectionMethods() []*BackendMethod {
 		Params:  []*types.MethodField{&ctxParam, &docParam},
 		Returns: []*types.MethodField{&errorReturn},
 	})
+	// InsertMany(ctx context.Context, documents []interface{}) error
+	methods = append(methods, &BackendMethod{Name: "InsertMany", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Operation: OP_WRITE,
+		Params:  []*types.MethodField{&ctxParam, &docsParam},
+		Returns: []*types.MethodField{&errorReturn},
+	})
 	// DeleteOne(ctx context.Context, filter bson.D) error
 	methods = append(methods, &BackendMethod{Name: "DeleteOne", Backend: "NoSQLDatabase", Component: "NoSQLCollection", Operation: OP_DELETE,
 		Params:  []*types.MethodField{&ctxParam, &filterParam},
@@ -373,10 +383,28 @@ var keyParam = types.MethodField{
 		},
 	},
 }
+var keysParam = types.MethodField{
+	FieldInfo: types.FieldInfo{
+		Name: "key",
+		Type: &gotypes.SliceType{
+			UnderlyingType: &gotypes.BasicType{
+				Name: "string",
+			},
+		},
+	},
+}
 var valueParam = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Name: "value",
 		Type: &gotypes.InterfaceType{Methods: make(map[string]string)},
+	},
+}
+var valuesParam = types.MethodField{
+	FieldInfo: types.FieldInfo{
+		Name: "key",
+		Type: &gotypes.SliceType{
+			UnderlyingType: &gotypes.InterfaceType{Methods: make(map[string]string)},
+		},
 	},
 }
 var itemParam = types.MethodField{
@@ -389,6 +417,14 @@ var docParam = types.MethodField{
 	FieldInfo: types.FieldInfo{
 		Name: "document",
 		Type: &gotypes.InterfaceType{Methods: make(map[string]string)},
+	},
+}
+var docsParam = types.MethodField{
+	FieldInfo: types.FieldInfo{
+		Name: "key",
+		Type: &gotypes.SliceType{
+			UnderlyingType: &gotypes.InterfaceType{Methods: make(map[string]string)},
+		},
 	},
 }
 var objParam = types.MethodField{

@@ -3,6 +3,7 @@ package controlflow
 import (
 	"go/ast"
 	"go/token"
+	golangtypes "go/types"
 	"strconv"
 	"strings"
 
@@ -164,6 +165,21 @@ func objOnExpr(expr ast.Expr, block *types.Block) bool {
 	return false
 }
 
+// FIXME: THIS IS DUPLICATED
+func findTypeFromSelectedImportedPackage(pkg *types.Package, typeExpr ast.Expr) gotypes.Type {
+	goType := pkg.GetTypeInfo(typeExpr)
+	logger.Logger.Infof("GO GOTYPE [%s]: %s", utils.GetType(goType), goType.String())
+
+	if goNamedType, ok := goType.(*golangtypes.Named); ok {
+		t := pkg.GetImportedTypeIfExists(goNamedType.String())
+		if t != nil {
+			logger.Logger.Debugf("GOT TYPE [%s]: %s", utils.GetType(t), t.String())
+			return t
+		}
+	}
+	return nil
+}
+
 func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMethod, block *types.Block, expr ast.Expr, expectedType gotypes.Type, inAssignment bool) (variable objects.Object, packageType *gotypes.PackageType) {
 	logger.Logger.Infof("[CFG - LOOKUP OBJ] (%s) visiting expression (%v)", utils.GetType(expr), expr)
 	if service.GetPackage().TypesInfo.Types[expr].Type != nil {
@@ -202,6 +218,13 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 	case *ast.SelectorExpr:
 		variable, packageType = lookupVariableFromAstExpr(service, method, block, e.X, nil, inAssignment)
 		if packageType != nil {
+			t := findTypeFromSelectedImportedPackage(service.GetPackage(), expr)
+			if t != nil {
+				variable = lookup.CreateObjectFromType("", t)
+				return variable, nil
+			}
+
+
 			importedPkg := service.GetPackage().GetImportedPackage(packageType.Path)
 			if importedPkg.IsExternalPackage() {
 				// note that variable can be either inline and thus we need to compute if type not found
@@ -373,7 +396,8 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 				newVariable = lookup.CreateObjectFromType(variable.GetVariableInfo().GetName(), assertedType)
 				newVariable.UpgradeFromPreviousInterface(interfaceVariable) //idk why this is here
 			} else {
-				newVariable = lookup.CreateObjectFromType(variable.GetVariableInfo().GetName(), interfaceVariable.GetInterfaceType().GetParentUserType())
+				newType := interfaceVariable.GetInterfaceType() //FIXME: should we actually get the user type?
+				newVariable = lookup.CreateObjectFromType(variable.GetVariableInfo().GetName(), newType)
 			}
 			block.AddVariable(newVariable)
 			logger.Logger.Warnf("[FIXME - ASSERT!!!!] CREATED NEW VARIABLE (%s): %s", objects.VariableTypeName(newVariable), newVariable.String())

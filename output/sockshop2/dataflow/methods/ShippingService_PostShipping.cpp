@@ -21,7 +21,7 @@
 [__2] (FieldObject FieldType) Name string
        --> w-tainted: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.CustomerID, order_db.Order.Shipment) {4}             --> w-tainted: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.CustomerID, order_db.Order.Shipment) {4} --> r-tainted: read(shipqueue.Shipment.Name, user_db._.userid) {2}
 [___3] (BasicObject BasicType) customerID string
-        --> w-tainted: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.CustomerID) {3}               --> w-tainted: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.CustomerID) {3} --> r-tainted: read(user_db._.userid, shipqueue.Shipment.Name) {2}
+        --> w-tainted: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.Shipment) {3}               --> w-tainted: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.Shipment) {3} --> r-tainted: read(user_db._.userid, shipqueue.Shipment.Name) {2}
 [____4] (Reference BasicType) ref <userID string> @ FrontendService
       --> w-tainted: write(shipqueue.Shipment.Status, shipdb.Shipment.Status, order_db.Order.Shipment) {3}           --> w-tainted: write(shipqueue.Shipment.Status, shipdb.Shipment.Status, order_db.Order.Shipment) {3} --> r-tainted: read(shipqueue.Shipment.Status) {1}
 [__2] (FieldObject FieldType) Status "awaiting shipment" string

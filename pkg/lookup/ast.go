@@ -2,6 +2,7 @@ package lookup
 
 import (
 	"go/ast"
+	golangtypes "go/types"
 
 	"analyzer/pkg/logger"
 	"analyzer/pkg/types"
@@ -27,6 +28,21 @@ func GetAllSelectorIdents(expr ast.Expr) ([]*ast.Ident, string) {
 	return nil, ""
 }
 
+// FIXME: THIS IS DUPLICATED
+func findTypeFromSelectedImportedPackage(pkg *types.Package, typeExpr ast.Expr) gotypes.Type {
+	goType := pkg.GetTypeInfo(typeExpr)
+	logger.Logger.Infof("GO GOTYPE [%s]: %s", utils.GetType(goType), goType.String())
+
+	if goNamedType, ok := goType.(*golangtypes.Named); ok {
+		t := pkg.GetImportedTypeIfExists(goNamedType.String())
+		if t != nil {
+			logger.Logger.Debugf("GOT TYPE [%s]: %s", utils.GetType(t), t.String())
+			return t
+		}
+	}
+	return nil
+}
+
 func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 	logger.Logger.Debugf("[LOOKUP - COMPUTE TYPE AST] (%s) visiting type expr (%v)", utils.GetType(typeExpr), typeExpr)
 	switch e := typeExpr.(type) {
@@ -44,6 +60,11 @@ func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 		logger.Logger.Fatalf("[LOOKUP AST IDENT] cannot compute type for ident (%s)", e)
 	case *ast.SelectorExpr:
 		if ident, ok := e.X.(*ast.Ident); ok {
+			t := findTypeFromSelectedImportedPackage(file.Package, typeExpr)
+			if t != nil {
+				return t
+			}
+
 			// left ident is the package alias
 			impt := file.GetImport(ident.Name)
 			imptPath := impt.GetPackagePath() + "." + e.Sel.Name
@@ -64,7 +85,7 @@ func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 			}
 
 			logger.Logger.Warnf("------------ !!! DID NOT FIND IMPORTED TYPE NAMED (%s) FROM PACKAGE (%s)", e.Sel.Name, impt.Alias)
-			t := FindDefTypesAndAddToPackage(file.Package, nil, goType, nil, nil, nil)
+			t = FindDefTypesAndAddToPackage(file.Package, nil, goType, nil, nil, nil)
 			logger.Logger.Warnf("------------  !!! FOUND AND ADDED NEW TYPE (%s) TO IMPORTS OF PACKAGE (%s)", t.String(), file.Package.Name)
 			return t
 		}
@@ -99,7 +120,7 @@ func ComputeTypeForAstExpr(file *types.File, typeExpr ast.Expr) gotypes.Type {
 				StructField: true,
 				FieldName:   name,
 				FieldTag:    f.Tag.Value,
-				Index: i,
+				Index:       i,
 			}
 			if _, ok := fieldType.WrappedType.(*gotypes.StructType); ok {
 				fieldType.SetEmbedded()

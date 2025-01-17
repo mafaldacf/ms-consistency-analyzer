@@ -34,6 +34,9 @@ func (v *ArrayObject) AddDynamicElement(obj Object) {
 }
 
 func (v *ArrayObject) UpgradeToSlice() *SliceObject {
+	if v.ObjectInfo.Name == "usermentions" {
+		logger.Logger.Infof("[ARRAY] upgrading array object to slice: %s", v.String())
+	}
 	v.ObjectInfo.Type = &gotypes.SliceType{
 		UnderlyingType: v.GetArrayType().ElementsType,
 	}
@@ -70,17 +73,22 @@ func (v *ArrayObject) GetElements() []Object {
 }
 
 func (v *ArrayObject) SetElementAt(idx int, elem Object) {
-	if idx > len(v.Elements) - 1 {
-		logger.Logger.Fatalf("[ARRAY OBJECT] attempted to set new element (%s) at index (%d) out of bounds for array with elements: %v", elem.String(), idx, v.Elements)
+	if idx > len(v.Elements)-1 { // this can actually happen if length is a dynamic value
+		logger.Logger.Warnf("[ARRAY OBJECT] setting new element (%s) at index (%d) out of bounds for array with elements: %v", elem.String(), idx, v.Elements)
+	}
+	for i := len(v.Elements); i <= idx; i++ {
+		v.Elements = append(v.Elements, nil)
 	}
 	v.Elements[idx] = elem
 }
 
-func (v *ArrayObject) AppendElements(varElements Object) {
+func (v *ArrayObject) AppendElement(varElements Object) {
 	if varElementsSlice, ok := varElements.(*ArrayObject); ok {
 		v.Elements = append(v.Elements, varElementsSlice.GetElements()...)
 	} else {
 		if v.GetArrayType().ElementsType.IsSameType(varElements.GetType()) {
+			v.Elements = append(v.Elements, varElements)
+		} else if v.GetArrayType().ElementsTypeIsInterface() { // if array is []interface{} then we can include anything
 			v.Elements = append(v.Elements, varElements)
 		} else {
 			logger.Logger.Fatalf("[VARS SLICE] slice variable underlying type (%s) does not match elements type (%s)", utils.GetType(v.GetArrayType().ElementsType), utils.GetType(varElements.GetType()))
@@ -102,6 +110,9 @@ func (v *ArrayObject) GetType() gotypes.Type {
 func (v *ArrayObject) GetArrayType() *gotypes.ArrayType {
 	if userType, ok := v.ObjectInfo.GetType().(*gotypes.UserType); ok {
 		return userType.UserType.(*gotypes.ArrayType)
+	}
+	if sliceType, ok := v.ObjectInfo.GetType().(*gotypes.SliceType); ok {
+		logger.Logger.Fatalf("GOT SLICE TYPE (%s) FOR ARRAY OBJECT: %s", sliceType.String(), v.String())
 	}
 	return v.ObjectInfo.GetType().(*gotypes.ArrayType)
 }

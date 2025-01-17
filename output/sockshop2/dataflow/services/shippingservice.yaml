@@ -44,7 +44,7 @@
     shipdb.Shipment.Name, order_db.Order.CustomerID, order_db.Order.Shipment) -->
     r-tainted 2x: read(shipqueue.Shipment.Name, user_db._.userid)'
   - '____6 depth 4 (Reference BasicType) ref <userID string> @ FrontendService -->
-    w-tainted 3x: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.CustomerID)
+    w-tainted 3x: write(shipqueue.Shipment.Name, shipdb.Shipment.Name, order_db.Order.Shipment)
     --> r-tainted 2x: read(user_db._.userid, shipqueue.Shipment.Name)'
   - '__7 depth 2 (FieldObject FieldType) Status "awaiting shipment" string --> w-tainted
     3x: write(shipqueue.Shipment.Status, shipdb.Shipment.Status, order_db.Order.Shipment)

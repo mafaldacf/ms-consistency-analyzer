@@ -55,8 +55,8 @@ hotelreservation:
 - imported types:
   - .error
   - Cache interface{Cache.Put(ctx context.Context, key string, value interface{}),
-    Cache.Get(ctx context.Context, key string, value interface{})}
-  - NoSQLCollection interface{NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.NoSQLCollection.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.UpdateMany(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.ReplaceOne(ctx context.Context, filter bson.D, interface{}), NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.NoSQLCollection.DeleteMany(ctx context.Context, filter bson.D)}
+    Cache.Get(ctx context.Context, key string, value interface{}), Cache.Mget(ctx context.Context, key []string, key []interface{})}
+  - NoSQLCollection interface{NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.NoSQLCollection.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.UpdateMany(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.ReplaceOne(ctx context.Context, filter bson.D, interface{}), NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.NoSQLCollection.InsertMany(ctx context.Context, key []interface{}), NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.NoSQLCollection.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.NoSQLCursor.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.NoSQLCursor.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
@@ -67,7 +67,7 @@ hotelreservation:
     struct{Pid string, Plat float64, Plon float64}})}
   - go-geoindex.CountIndex struct{index (*go-geoindex.geoIndex struct{resolution go-geoindex.Meters float64, index map[go-geoindex.cell struct{x int, y int}]interface{}, newEntry interface{}}), currentPosition map[string]hotelreservation.Point struct{Pid string, Plat float64, Plon float64}}
   - go-geoindex.Meters float64
-  - go-geoindex.Point interface{Id, Lat, Lon, }
+  - go-geoindex.Point interface{Lat, Lon, Id, }
   - go-geoindex.PointsIndex struct{index (*go-geoindex.geoIndex struct{resolution go-geoindex.Meters float64, index map[go-geoindex.cell struct{x int, y int}]interface{}, newEntry interface{}}), currentPosition map[string]hotelreservation.Point struct{Pid string, Plat float64, Plon float64}}
   - go-geoindex.cell struct{x int, y int}
   - go-geoindex.geoIndex struct{resolution go-geoindex.Meters float64, index map[go-geoindex.cell struct{x int, y int}]interface{}, newEntry interface{}}
@@ -93,16 +93,16 @@ hotelreservation:
   - hotelreservation.HotelProfile struct{ID string, Name string, PhoneNumber string, Description string, Address hotelreservation.Address struct{StreetNumber string, StreetName string, City string, State string, Country string, PostalCode string, Lat float64, Lon float64}}
   - hotelreservation.Point struct{Pid string, Plat float64, Plon float64}
   - hotelreservation.ProfileService
-  - hotelreservation.ProfileServiceImpl struct{profileCache Cache interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{})}, profileDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - hotelreservation.ProfileServiceImpl struct{profileCache Cache interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{}), Cache.Mget(ctx context.Context, key []string, key []interface{})}, profileDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
   - hotelreservation.RatePlan struct{HotelID string, Code string, InDate string, OutDate string, RType hotelreservation.RoomType struct{BookableRate float64, Code string, RoomDescription string, TotalRate float64, TotalRateInclusive float64}}
   - hotelreservation.RateService
-  - hotelreservation.RateServiceImpl struct{rateCache Cache interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{})}, rateDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
+  - hotelreservation.RateServiceImpl struct{rateCache Cache interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{}), Cache.Mget(ctx context.Context, key []string, key []interface{})}, rateDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}}
   - hotelreservation.RecommendationService
   - hotelreservation.RecommendationServiceImpl struct{recommendDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, hotels map[string]hotelreservation.Hotel
     struct{HId string, HLat float64, HLon float64, HRate float64, HPrice float64}}
   - hotelreservation.Reservation struct{HotelId string, CustomerName string, InDate string, OutDate string, Number int64}
   - hotelreservation.ReservationService
-  - hotelreservation.ReservationServiceImpl struct{reserveCache Cache interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{})}, reserveDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, CacheHits int64, NumRequests
+  - hotelreservation.ReservationServiceImpl struct{reserveCache Cache interface{Cache.Put(ctx context.Context, key string, value interface{}), Cache.Get(ctx context.Context, key string, value interface{}), Cache.Mget(ctx context.Context, key []string, key []interface{})}, reserveDB NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}, CacheHits int64, NumRequests
     int64}
   - hotelreservation.RoomType struct{BookableRate float64, Code string, RoomDescription string, TotalRate float64, TotalRateInclusive float64}
   - hotelreservation.SearchService
@@ -125,8 +125,8 @@ hotelreservation:
   - hotelreservation.UserService
 - datastore types:
   - Cache interface{Cache.Put(ctx context.Context, key string, value interface{}),
-    Cache.Get(ctx context.Context, key string, value interface{})}
-  - NoSQLCollection interface{NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.NoSQLCollection.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.UpdateMany(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.ReplaceOne(ctx context.Context, filter bson.D, interface{}), NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.NoSQLCollection.DeleteMany(ctx context.Context, filter bson.D)}
+    Cache.Get(ctx context.Context, key string, value interface{}), Cache.Mget(ctx context.Context, key []string, key []interface{})}
+  - NoSQLCollection interface{NoSQLDatabase.NoSQLCollection.FindOne(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.FindMany(ctx context.Context, filter bson.D, projection bson.D), NoSQLDatabase.NoSQLCollection.Upsert(ctx context.Context, filter bson.D, document interface{}), NoSQLDatabase.NoSQLCollection.UpdateOne(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.UpdateMany(ctx context.Context, filter bson.D, update bson.D), NoSQLDatabase.NoSQLCollection.ReplaceOne(ctx context.Context, filter bson.D, interface{}), NoSQLDatabase.NoSQLCollection.InsertOne(ctx context.Context, document interface{}), NoSQLDatabase.NoSQLCollection.InsertMany(ctx context.Context, key []interface{}), NoSQLDatabase.NoSQLCollection.DeleteOne(ctx context.Context, filter bson.D), NoSQLDatabase.NoSQLCollection.DeleteMany(ctx context.Context, filter bson.D)}
   - NoSQLCursor interface{NoSQLDatabase.NoSQLCursor.One(ctx context.Context, obj interface{}),
     NoSQLDatabase.NoSQLCursor.All(ctx context.Context, obj interface{})}
   - NoSQLDatabase interface{NoSQLDatabase.GetCollection(ctx context.Context, db_name string, collection_name string)}
