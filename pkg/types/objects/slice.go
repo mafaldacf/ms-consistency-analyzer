@@ -177,7 +177,7 @@ func (v *SliceObject) Copy(force bool) Object {
 }
 
 func (v *SliceObject) DeepCopy() Object {
-	logger.Logger.Fatalf("[VARS SLICE - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
+	logger.Logger.Warnf("[VARS SLICE - DEEP COPY] (%s) %s", VariableTypeName(v), v.String())
 	copy := &SliceObject{ObjectInfo: v.ObjectInfo.DeepCopy()}
 	for _, v := range v.Elements {
 		newElem := v.DeepCopy()

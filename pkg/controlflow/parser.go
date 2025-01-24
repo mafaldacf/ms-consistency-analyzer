@@ -137,7 +137,7 @@ func visitBasicBlock(service *service.Service, method *types.ParsedMethod, block
 					if rangeObjSlice, ok := rangeObj.(*objects.SliceObject); ok {
 						rangeValueType = rangeObjSlice.GetSliceType().UnderlyingType
 					} else if rangeObjArray, ok := rangeObj.(*objects.ArrayObject); ok {
-						rangeValueType = rangeObjArray.GetArrayType().ElementsType //FIXME: for some reason the type is SliceType and not ArrayType
+						rangeValueType = rangeObjArray.GetElementsType() //FIXME: for some reason the type is SliceType and not ArrayType
 					} else if mapObjArray, ok := rangeObj.(*objects.MapObject); ok {
 						rangeValueType = mapObjArray.GetMapType().ValueType
 						rangeKeyType = mapObjArray.GetMapType().KeyType
@@ -562,14 +562,19 @@ func computeExternalFuncCallReturns(service *service.Service, callExpr *ast.Call
 }
 
 func saveCallToStructOrInterface(service *service.Service, method *types.ParsedMethod, block *types.Block, callExpr *ast.CallExpr, leftVariableTypeName string, methodName string, pkgPath string) (*types.ParsedInternalCall, *objects.TupleObject, *objects.TupleObject) {
+	logger.Logger.Debugf("[CFG CALLS] [%s] saving call in (%s) for ast CallExpr: %v", service.GetName(), method.GetName(), callExpr)
 	if pkgPath == "" {
 		logger.Logger.Debugf("FIX ME: WE ENCOUNTER BUILT-IN PACKAGES e.g. err.Error() -> string")
 		tupleVar := computeInternalFuncCallReturns(service, callExpr, nil)
 		return nil, nil, tupleVar
 	}
+	var parsedMethod *types.ParsedMethod
 
-	pkg := service.GetPackage().GetImportedPackage(pkgPath)
-	parsedMethod := pkg.GetParsedMethodIfExists(methodName, leftVariableTypeName)
+	pkg := service.GetPackage().GetImportedPackageIfExists(pkgPath)
+
+	if pkg != nil {
+		parsedMethod = pkg.GetParsedMethodIfExists(methodName, leftVariableTypeName)
+	}
 
 	if parsedMethod != nil {
 		logger.Logger.Warnf("[CFG CALLS] [%s] !!!!!!!!!!!! GOT PARSED METHOD (%s): %v", service.GetName(), methodName, parsedMethod.GetParsedCfg())

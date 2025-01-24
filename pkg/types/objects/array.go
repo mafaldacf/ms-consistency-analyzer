@@ -86,7 +86,7 @@ func (v *ArrayObject) AppendElement(varElements Object) {
 	if varElementsSlice, ok := varElements.(*ArrayObject); ok {
 		v.Elements = append(v.Elements, varElementsSlice.GetElements()...)
 	} else {
-		if v.GetArrayType().ElementsType.IsSameType(varElements.GetType()) {
+		if v.GetElementsType().IsSameType(varElements.GetType()) {
 			v.Elements = append(v.Elements, varElements)
 		} else if v.GetArrayType().ElementsTypeIsInterface() { // if array is []interface{} then we can include anything
 			v.Elements = append(v.Elements, varElements)
@@ -115,6 +115,37 @@ func (v *ArrayObject) GetArrayType() *gotypes.ArrayType {
 		logger.Logger.Fatalf("GOT SLICE TYPE (%s) FOR ARRAY OBJECT: %s", sliceType.String(), v.String())
 	}
 	return v.ObjectInfo.GetType().(*gotypes.ArrayType)
+}
+
+func (v *ArrayObject) GetArrayOrSliceType() gotypes.Type {
+	if userType, ok := v.ObjectInfo.GetType().(*gotypes.UserType); ok {
+		return userType.UserType.(*gotypes.ArrayType)
+	}
+	if sliceType, ok := v.ObjectInfo.GetType().(*gotypes.SliceType); ok {
+		logger.Logger.Warnf("GOT SLICE TYPE (%s) FOR ARRAY OBJECT: %s", sliceType.String(), v.String())
+		return sliceType
+	}
+	return v.ObjectInfo.GetType().(*gotypes.ArrayType)
+}
+
+func (v *ArrayObject) GetElementsType() gotypes.Type {
+	var t gotypes.Type
+	if userType, ok := v.ObjectInfo.GetType().(*gotypes.UserType); ok {
+		t = userType.UserType
+		if t == nil {
+			logger.Logger.Fatalf("[ARRAY OBJECT] got unexpected nil underlying user type: %s", userType.String())
+		}
+	} else {
+		t = v.GetType()
+	}
+	if arrayType, ok := t.(*gotypes.ArrayType); ok {
+		return arrayType.ElementsType
+	} else if sliceType, ok := t.(*gotypes.SliceType); ok {
+		logger.Logger.Warnf("GOT SLICE TYPE (%s) FOR ARRAY OBJECT: %s", sliceType.String(), v.String())
+		return sliceType.UnderlyingType
+	}
+	logger.Logger.Fatalf("[ARRAY OBJECT] attempted to get elements type but got unexpected obj type [%s] for object: %s", utils.GetType(t), v.String())
+	return nil
 }
 
 func (v *ArrayObject) GetSliceType() *gotypes.SliceType {

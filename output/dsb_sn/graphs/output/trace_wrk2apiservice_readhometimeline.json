@@ -1,0 +1,76 @@
+{
+  "nodes": [
+    {
+      "id": "Client",
+      "type": "client"
+    },
+    {
+      "id": "HomeTimelineService",
+      "type": "service"
+    },
+    {
+      "id": "PostStorageService",
+      "type": "service"
+    },
+    {
+      "id": "Wrk2APIService",
+      "type": "service"
+    },
+    {
+      "id": "hometimeline_cache ",
+      "type": "datastore"
+    },
+    {
+      "id": "post_cache ",
+      "type": "datastore"
+    },
+    {
+      "id": "post_db MongoDB",
+      "type": "datastore"
+    }
+  ],
+  "edges": [
+    {
+      "caller": "Client",
+      "callee": "Wrk2APIService",
+      "call": "ReadHomeTimeline",
+      "depth": 0
+    },
+    {
+      "caller": "HomeTimelineService",
+      "callee": "PostStorageService",
+      "call": "ReadPosts",
+      "depth": 2
+    },
+    {
+      "caller": "HomeTimelineService",
+      "callee": "hometimeline_cache ",
+      "call": "Get",
+      "depth": 2
+    },
+    {
+      "caller": "PostStorageService",
+      "callee": "post_cache ",
+      "call": "Mget",
+      "depth": 3
+    },
+    {
+      "caller": "PostStorageService",
+      "callee": "post_cache ",
+      "call": "Put",
+      "depth": 3
+    },
+    {
+      "caller": "PostStorageService",
+      "callee": "post_db MongoDB",
+      "call": "FindMany",
+      "depth": 3
+    },
+    {
+      "caller": "Wrk2APIService",
+      "callee": "HomeTimelineService",
+      "call": "ReadHomeTimeline",
+      "depth": 1
+    }
+  ]
+}

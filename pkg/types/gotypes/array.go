@@ -57,16 +57,15 @@ func (t *ArrayType) GetBasicValue() string {
 	callerFunc := runtime.FuncForPC(pc).Name()
 	logger.Logger.Fatalf("unable to get value for array type (%s)... caller: %s %s:%d", t.String(), callerFunc, file, line)
 	return ""
-
-	logger.Logger.Fatalf("unable to get value for array type %s", t.String())
-	return ""
 }
 func (t *ArrayType) AddValue(value string) {
 	logger.Logger.Fatalf("unable to add value for array type %s", t.String())
 }
 func (t *ArrayType) GetNestedFieldTypes(prefix string, noSQL bool) ([]Type, []string) {
 	logger.Logger.Warnf("[TYPES ARRAY] attempted to get nested fields and variables: %s", t.String())
-	return nil, nil
+	var nestedTypes = []Type{t.ElementsType}
+	var nestedIDs = []string{prefix + ".*"}
+	return nestedTypes, nestedIDs
 }
 
 // -------------

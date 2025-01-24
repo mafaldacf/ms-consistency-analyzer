@@ -1,0 +1,68 @@
+'[]interface{}':
+- read <retvals []interface{} (ArrayObject)>
+- read <retvals []interface{} (ArrayObject)> from <retvals []interface{} (ArrayObject)>
+- read <* (*socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions []socialnetwork.UserMention struct{UserID int64, Username string}, Medias []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType int64}) (PointerObject)> from <retvals []interface{} (ArrayObject)>
+- read <* socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions []socialnetwork.UserMention struct{UserID int64, Username string}, Medias []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType int64} (StructObject)> from <retvals []interface{} (ArrayObject)>
+- read <retvals []interface{} (ArrayObject)>
+- read <retvals []interface{} (ArrayObject)> from <retvals []interface{} (ArrayObject)>
+- read <* (*socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions []socialnetwork.UserMention struct{UserID int64, Username string}, Medias []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType int64}) (PointerObject)> from <retvals []interface{} (ArrayObject)>
+- read <* socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions []socialnetwork.UserMention struct{UserID int64, Username string}, Medias []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType int64} (StructObject)> from <retvals []interface{} (ArrayObject)>
+- read <retvals []interface{} (ArrayObject)>
+- read <retvals []interface{} (ArrayObject)> from <retvals []interface{} (ArrayObject)>
+- read <* (*int64) (PointerObject)> from <retvals []interface{} (ArrayObject)>
+- read <* int64 (BasicObject)> from <retvals []interface{} (ArrayObject)>
+
+'[]string':
+- read <keys []string (ArrayObject)>
+- read <keys []string (ArrayObject)> from <keys []string (ArrayObject)>
+- read <string (BasicObject)> from <keys []string (ArrayObject)>
+- read <pid int64 (BasicObject)> from <keys []string (ArrayObject)>
+- read <10 int (BasicObject)> from <keys []string (ArrayObject)>
+- read <keys []string (ArrayObject)>
+- read <keys []string (ArrayObject)> from <keys []string (ArrayObject)>
+- read <string (BasicObject)> from <keys []string (ArrayObject)>
+- read <pid int64 (BasicObject)> from <keys []string (ArrayObject)>
+- read <10 int (BasicObject)> from <keys []string (ArrayObject)>
+- read <keys []string (ArrayObject)>
+- read <keys []string (ArrayObject)> from <keys []string (ArrayObject)>
+- read <:UserID (BasicObject)> from <keys []string (ArrayObject)>
+- read <name string (BasicObject)> from <keys []string (ArrayObject)>
+- read <":UserID" string (BasicObject)> from <keys []string (ArrayObject)>
+
+POST_CACHE.key:
+- read <keys []string (ArrayObject)>
+- read <keys []string (ArrayObject)> from <keys []string (ArrayObject)>
+- read <string (BasicObject)> from <keys []string (ArrayObject)>
+- read <pid int64 (BasicObject)> from <keys []string (ArrayObject)>
+- read <10 int (BasicObject)> from <keys []string (ArrayObject)>
+- read <keys []string (ArrayObject)>
+- read <keys []string (ArrayObject)> from <keys []string (ArrayObject)>
+- read <string (BasicObject)> from <keys []string (ArrayObject)>
+- read <pid int64 (BasicObject)> from <keys []string (ArrayObject)>
+- read <10 int (BasicObject)> from <keys []string (ArrayObject)>
+- write <string (BasicObject)>
+- write <string (BasicObject)> from <string (BasicObject)>
+- write <PostID int64 (BasicObject)> from <string (BasicObject)>
+- write <10 int (BasicObject)> from <string (BasicObject)>
+- write <string (BasicObject)>
+- write <string (BasicObject)> from <string (BasicObject)>
+- write <PostID int64 (BasicObject)> from <string (BasicObject)>
+- write <10 int (BasicObject)> from <string (BasicObject)>
+
+POST_CACHE.value:
+- read <retvals []interface{} (ArrayObject)>
+- read <retvals []interface{} (ArrayObject)> from <retvals []interface{} (ArrayObject)>
+- read <* (*socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions []socialnetwork.UserMention struct{UserID int64, Username string}, Medias []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType int64}) (PointerObject)> from <retvals []interface{} (ArrayObject)>
+- read <* socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions []socialnetwork.UserMention struct{UserID int64, Username string}, Medias []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType int64} (StructObject)> from <retvals []interface{} (ArrayObject)>
+- read <retvals []interface{} (ArrayObject)>
+- read <retvals []interface{} (ArrayObject)> from <retvals []interface{} (ArrayObject)>
+- read <* (*socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions []socialnetwork.UserMention struct{UserID int64, Username string}, Medias []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType int64}) (PointerObject)> from <retvals []interface{} (ArrayObject)>
+- read <* socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions []socialnetwork.UserMention struct{UserID int64, Username string}, Medias []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType int64} (StructObject)> from <retvals []interface{} (ArrayObject)>
+- write <new_post socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions []socialnetwork.UserMention struct{UserID int64, Username string}, Medias []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType int64} (StructObject)>
+- write <new_post socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions []socialnetwork.UserMention struct{UserID int64, Username string}, Medias []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType int64} (StructObject)> from <new_post socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions []socialnetwork.UserMention struct{UserID int64, Username string}, Medias []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType int64} (StructObject)>
+- write <PostID int64 (FieldObject)> from <new_post socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions []socialnetwork.UserMention struct{UserID int64, Username string}, Medias []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType int64} (StructObject)>
+- write <PostID int64 (BasicObject)> from <new_post socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions []socialnetwork.UserMention struct{UserID int64, Username string}, Medias []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType int64} (StructObject)>
+- write <new_post socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions []socialnetwork.UserMention struct{UserID int64, Username string}, Medias []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType int64} (StructObject)>
+- write <new_post socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions []socialnetwork.UserMention struct{UserID int64, Username string}, Medias []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType int64} (StructObject)> from <new_post socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions []socialnetwork.UserMention struct{UserID int64, Username string}, Medias []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType int64} (StructObject)>
+- write <PostID int64 (FieldObject)> from <new_post socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions []socialnetwork.UserMention struct{UserID int64, Username string}, Medias []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType int64} (StructObject)>
+- write <PostID int64 (BasicObject)> from <new_post socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions []socialnetwork.UserMention struct{UserID int64, Username string}, Medias []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType int64} (StructObject)>

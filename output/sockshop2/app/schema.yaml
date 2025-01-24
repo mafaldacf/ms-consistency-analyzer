@@ -85,6 +85,7 @@ ORDER_DB:
     - Order.Card.CCV: string
     - Order.Card.ID: string
     - Order.Items: '[]cart.Item struct{ID string, Quantity int, UnitPrice float32}'
+    - Order.Items.*: cart.Item struct{ID string, Quantity int, UnitPrice float32}
     - Order.Shipment: shipping.Shipment struct{ID string, Name string, Status "awaiting
         shipment" string}
     - Order.Shipment.ID: string

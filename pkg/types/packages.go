@@ -201,10 +201,16 @@ func (p *Package) GetDeclaredType(name string) gotypes.Type {
 	return decl
 }
 
-func (p *Package) GetImportedPackageIfExists(alias string) *Package {
-	if pkg, ok := p.ImportedPackages[alias]; ok {
+func (p *Package) GetImportedPackageIfExists(pkgPath string) *Package {
+	if pkgPath == p.PackagePath {
+		return p
+	}
+
+	if pkg, ok := p.ImportedPackages[pkgPath]; ok {
 		return pkg
 	}
+
+	logger.Logger.Warnf("ignoring... package (%s) not found in imports of package (%s): %v", pkgPath, p.PackagePath, p.ImportedPackages)
 	return nil
 }
 

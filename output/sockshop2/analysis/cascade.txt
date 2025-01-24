@@ -5,7 +5,7 @@
 	missing 0 cascading deletes
 (#1) CartService: cart_db.DeleteOne()
 	missing 0 cascading deletes
-(#2) CartService: cart_db.DeleteMany()
+(#2) CartService: cart_db.DeleteOne()
 	missing 0 cascading deletes
-(#3) CartService: cart_db.DeleteOne()
+(#3) CartService: cart_db.DeleteMany()
 	missing 0 cascading deletes

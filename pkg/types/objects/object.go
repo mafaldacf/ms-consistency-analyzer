@@ -155,6 +155,24 @@ func GetReversedNestedFieldsAndNames(variable Object, fieldName string, noSQL bo
 		slices.Reverse(variables)
 		slices.Reverse(names)
 		return variables, names
+	} else if arrayObj, ok := variable.(*ArrayObject); ok { //FIXME: fix the names that are provided for the elements
+		objs := []Object{arrayObj}
+		names := []string{fieldName}
+
+		for idx, elem := range arrayObj.Elements {
+			logger.Logger.Debugf("[REVERSE NESTED FIELDS W/ NAMES] appending array elem at index %d: %s", idx, elem)
+			objs = append(objs, elem)
+			names = append(names,  fieldName + ".*")
+		}
+		for _, dynamicElem := range arrayObj.DynamicElements {
+			logger.Logger.Debugf("[REVERSE NESTED FIELDS W/ NAMES] appending dynamic array elem at index: %s", dynamicElem)
+			objs = append(objs, dynamicElem)
+			names = append(names, fieldName + ".*")
+		}
+		slices.Reverse(objs)
+		slices.Reverse(names)
+		logger.Logger.Debugf("[REVERSE NESTED FIELDS W/ NAMES] returning objects and names:\n \t\t\t- %s\n \t\t\t- %s", objs, names)
+		return objs, names
 	} else if addressVariable, ok := variable.(*AddressObject); ok {
 		return GetReversedNestedFieldsAndNames(addressVariable.AddressOf, fieldName, noSQL, queue)
 	} else if pointerVariable, ok := variable.(*PointerObject); ok {

@@ -22,7 +22,7 @@ const (
 	PATH_BLUEPRINT_CORE_BACKEND string = "github.com/blueprint-uservices/blueprint/runtime/core/backend"
 )
 
-var Apps = []string{"postnotification", "trainticket", "shopping_app", "shopping_simple", "sockshop2", "foobar", "dsb_hotel", "dsb_sn", "postnotification_simple", "app_constraints_referential_integrity", "app_constraints_specialization"}
+var Apps = []string{"foobar", "shopping_simple", "shopping_app", "postnotification_simple", "postnotification", "sockshop2", "trainticket", "app_constraints_referential_integrity", "app_constraints_specialization", "dsb_sn", "dsb_hotel"}
 
 type AppInfo struct {
 	PackagePath   string

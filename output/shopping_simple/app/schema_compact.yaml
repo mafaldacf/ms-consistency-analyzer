@@ -12,6 +12,7 @@ CART_DB:
     - Cart.LastProductID: string
     - Cart.TotalQuantity: int
     - Cart.Products: '[]string'
+    - Cart.Products.*: string
   - foreign_references: []
 
 PRODUCT_DB:

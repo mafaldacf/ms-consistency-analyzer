@@ -420,7 +420,7 @@ func lookupVariableFromAstExpr(service *service.Service, method *types.ParsedMet
 			}
 
 			if !ok {
-				elemsType := arrayVar.GetArrayType().ElementsType
+				elemsType := arrayVar.GetElementsType()
 				variable = lookup.CreateDynamicObjectFromType(elemsType)
 				arrayVar.AddDynamicElement(variable)
 				logger.Logger.Warnf("CREATED VARIABLE FROM NIL ARRAY ELEMENT %s | %s", variable.String(), arrayVar.String())

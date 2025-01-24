@@ -1,0 +1,31 @@
+(*Post): []
+
+'[]socialnetwork.FolloweeInfo struct{FolloweeID int64, Timestamp int64}': []
+
+'[]socialnetwork.PostInfo struct{PostID int64, Timestamp int64}': []
+
+FolloweeID: []
+
+FolloweeInfo: []
+
+FollowerID: []
+
+FollowerInfo: []
+
+Followers: []
+
+Post: []
+
+PostID: []
+
+PostInfo: []
+
+Posts: []
+
+Timestamp: []
+
+UserID: []
+
+bool: []
+
+int: []
