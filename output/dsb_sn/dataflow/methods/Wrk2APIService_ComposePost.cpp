@@ -13,12 +13,10 @@
 
 [0] (InterfaceObject UserType) ctx context.Context
 
-    --> w-tainted: write(usertimeline_db.UserPosts.UserID, usertimeline_cache.key, social_cache.key) {3}       --> w-tainted: write(usertimeline_db.UserPosts.UserID, usertimeline_cache.key, social_cache.key) {3} --> r-tainted: read(usertimeline_db._.userid, usertimeline_cache.int64, social_cache.int64) {3}
 [0] (BasicObject BasicType) userId int64
 
 [0] (BasicObject BasicType) username string
 
-    --> w-tainted: write(post_db.Post.PostType) {1}
 [0] (BasicObject BasicType) post_type int64
 
 [0] (BasicObject BasicType) text string
@@ -27,6 +25,5 @@
 
 [0] (ArrayObject ArrayType) media_ids []int64
 
-    --> w-tainted: write(post_db.Post.ReqID) {1}
 [0] (BasicObject BasicType) reqID int64
 

@@ -16,14 +16,13 @@
 [___3] (BlueprintBackendObject BlueprintBackendType) userDB NoSQLDatabase
 
 [0] (BasicObject BasicType) length int
-[_1] (Reference BasicType) ref <32 int> @ UserService
 
-    --> w-tainted: write(user_db.User.Salt) {1}
 [0] (ArrayObject ArrayType) b []rune
-     --> w-tainted: write(user_db.User.Salt) {1}
 [_1] (SliceObject SliceType) github.com/blueprint-uservices/blueprint/examples/dsb_sn/workflow/socialnetwork.letterRunes []rune
 
 [0] (BasicObject BasicType) i rune
+[_1] (ArrayObject ArrayType) b []rune
+[__2] (SliceObject SliceType) github.com/blueprint-uservices/blueprint/examples/dsb_sn/workflow/socialnetwork.letterRunes []rune
 
 [0] (PointerObject PointerType) u (*socialnetwork.UserServiceImpl struct{machine_id string, counter int64, current_timestamp int64, secret string, userCache Cache, userDB NoSQLDatabase, socialGraphService socialnetwork.SocialGraphService})
 [_1] (StructObject UserType) socialnetwork.UserServiceImpl struct{machine_id string, counter 0 int, current_timestamp int64, secret string, userCache Cache, userDB NoSQLDatabase, socialGraphService socialnetwork.SocialGraphService}
@@ -43,12 +42,11 @@
 [___3] (BlueprintBackendObject BlueprintBackendType) userDB NoSQLDatabase
 
 [0] (BasicObject BasicType) length int
-[_1] (Reference BasicType) ref <32 int> @ UserService
 
-    --> w-tainted: write(user_db.User.Salt) {1}
 [0] (ArrayObject ArrayType) b []rune
-     --> w-tainted: write(user_db.User.Salt) {1}
 [_1] (SliceObject SliceType) github.com/blueprint-uservices/blueprint/examples/dsb_sn/workflow/socialnetwork.letterRunes []rune
 
 [0] (BasicObject BasicType) i rune
+[_1] (ArrayObject ArrayType) b []rune
+[__2] (SliceObject SliceType) github.com/blueprint-uservices/blueprint/examples/dsb_sn/workflow/socialnetwork.letterRunes []rune
 

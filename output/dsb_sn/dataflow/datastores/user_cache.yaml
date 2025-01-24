@@ -333,6 +333,17 @@ USER_CACHE.key:
 - read <keys []string (ArrayObject)> from <keys []string (ArrayObject)>
 - read <:UserID (BasicObject)> from <keys []string (ArrayObject)>
 - read <name string (BasicObject)> from <keys []string (ArrayObject)>
+- read <usernames []string (ArrayObject)> from <keys []string (ArrayObject)>
+- read <ref <usernames []string> @ TextService (Reference)> from <keys []string (ArrayObject)>
+- read <usernames []string (ArrayObject)> from <keys []string (ArrayObject)>
+- read <m string (BasicObject)> from <keys []string (ArrayObject)>
+- read <matches []string (SliceObject)> from <keys []string (ArrayObject)>
+- read <text string (BasicObject)> from <keys []string (ArrayObject)>
+- read <ref <text string> @ ComposePostService (Reference)> from <keys []string (ArrayObject)>
+- read <text string (BasicObject)> from <keys []string (ArrayObject)>
+- read <ref <text string> @ Wrk2APIService (Reference)> from <keys []string (ArrayObject)>
+- read <text string (BasicObject)> from <keys []string (ArrayObject)>
+- read <int (BasicObject)> from <keys []string (ArrayObject)>
 - read <":UserID" string (BasicObject)> from <keys []string (ArrayObject)>
 
 USER_CACHE.value:

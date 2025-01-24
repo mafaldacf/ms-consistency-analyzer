@@ -1,6 +1,5 @@
 (*HomeTimelineServiceImpl).ReadHomeTimeline(ctx context.Context, reqID int64, userID int64, start int64, stop int64):
 - DATASTORE CALL @ hometimeline_cache >> Cache.Get(ctx context.Context, key string, value interface{}) (err, interface{})
-- SERVICE CALL @ ReadPosts >> (*socialnetwork.PostStorageServiceImpl).ReadPosts(ctx context.Context, reqID int64, postIDs []int64) ([]socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions []socialnetwork.UserMention struct{UserID int64, Username string}, Medias []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType int64}, error)
 
 (*HomeTimelineServiceImpl).WriteHomeTimeline(ctx context.Context, reqID int64, postID int64, userID int64, timestamp int64, userMentionIDs []int64)
 :

@@ -4,8 +4,8 @@ HOMETIMELINE_CACHE:
 - dependencies: []
 - schema:
   - fields:
-    - key: string
-    - value: '[]socialnetwork.PostInfo struct{PostID int64, Timestamp int64}'
+    - key: <unknown type>
+    - value: <unknown type>
   - unfolded_fields: []
   - foreign_references: []
 
@@ -14,9 +14,7 @@ POST_CACHE:
 - kind: ""
 - dependencies: []
 - schema:
-  - fields:
-    - key: string
-    - value: Post
+  - fields: []
   - unfolded_fields: []
   - foreign_references: []
 
@@ -25,32 +23,8 @@ POST_DB:
 - kind: MongoDB
 - dependencies: []
 - schema:
-  - fields:
-    - _: socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions []socialnetwork.UserMention
-        struct{UserID int64, Username string}, Medias []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType int64}
-    - Post: socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions
-        []socialnetwork.UserMention struct{UserID int64, Username string}, Medias
-        []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL
-        struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType
-        int64}
-  - unfolded_fields:
-    - Post: socialnetwork.Post struct{PostID int64, Creator socialnetwork.Creator struct{UserID int64, Username string}, ReqID int64, Text string, UserMentions
-        []socialnetwork.UserMention struct{UserID int64, Username string}, Medias
-        []socialnetwork.Media struct{MediaID int64, MediaType string}, Urls []socialnetwork.URL
-        struct{ShortenedUrl string, ExpandedUrl string}, Timestamp int64, PostType
-        int64}
-    - Post.PostID: int64
-    - Post.Creator: socialnetwork.Creator struct{UserID int64, Username string}
-    - Post.Creator.UserID: int64
-    - Post.Creator.Username: string
-    - Post.ReqID: int64
-    - Post.Text: string
-    - Post.UserMentions: '[]socialnetwork.UserMention struct{UserID int64, Username
-        string}'
-    - Post.Medias: '[]socialnetwork.Media struct{MediaID int64, MediaType string}'
-    - Post.Urls: '[]socialnetwork.URL struct{ShortenedUrl string, ExpandedUrl string}'
-    - Post.Timestamp: int64
-    - Post.PostType: int64
+  - fields: []
+  - unfolded_fields: []
   - foreign_references: []
 
 SOCIAL_CACHE:
@@ -58,9 +32,7 @@ SOCIAL_CACHE:
 - kind: ""
 - dependencies: []
 - schema:
-  - fields:
-    - key: ""
-    - value: '[]socialnetwork.FolloweeInfo struct{FolloweeID int64, Timestamp int64}'
+  - fields: []
   - unfolded_fields: []
   - foreign_references: []
 
@@ -69,21 +41,8 @@ SOCIAL_DB:
 - kind: MongoDB
 - dependencies: []
 - schema:
-  - fields:
-    - _: socialnetwork.UserInfo struct{UserID int64, Followers []socialnetwork.FollowerInfo struct{FollowerID int64, Timestamp int64}, Followees []socialnetwork.FolloweeInfo
-        struct{FolloweeID int64, Timestamp int64}}
-    - UserInfo: socialnetwork.UserInfo struct{UserID int64, Followers []socialnetwork.FollowerInfo struct{FollowerID int64, Timestamp int64}, Followees []socialnetwork.FolloweeInfo
-        struct{FolloweeID int64, Timestamp int64}}
-  - unfolded_fields:
-    - UserInfo: socialnetwork.UserInfo struct{UserID int64, Followers []socialnetwork.FollowerInfo struct{FollowerID int64, Timestamp int64}, Followees []socialnetwork.FolloweeInfo
-        struct{FolloweeID int64, Timestamp int64}}
-    - UserInfo.UserID: int64
-    - UserInfo.Followers: '[]socialnetwork.FollowerInfo struct{FollowerID int64, Timestamp
-        int64}'
-    - UserInfo.Followers.*: socialnetwork.FollowerInfo struct{FollowerID int64, Timestamp int64}
-    - UserInfo.Followees: '[]socialnetwork.FolloweeInfo struct{FolloweeID int64, Timestamp
-        int64}'
-    - UserInfo.Followees.*: socialnetwork.FolloweeInfo struct{FolloweeID int64, Timestamp int64}
+  - fields: []
+  - unfolded_fields: []
   - foreign_references: []
 
 URLSHORTEN_DB:
@@ -91,12 +50,8 @@ URLSHORTEN_DB:
 - kind: MongoDB
 - dependencies: []
 - schema:
-  - fields:
-    - _: '[]interface{}'
-    - '[]interface{}': '[]interface{}'
-  - unfolded_fields:
-    - '[]interface{}': '[]interface{}'
-    - '[]interface{}.*': interface{}
+  - fields: []
+  - unfolded_fields: []
   - foreign_references: []
 
 USER_CACHE:
@@ -104,9 +59,7 @@ USER_CACHE:
 - kind: ""
 - dependencies: []
 - schema:
-  - fields:
-    - key: ""
-    - value: UserID
+  - fields: []
   - unfolded_fields: []
   - foreign_references: []
 
@@ -115,18 +68,8 @@ USER_DB:
 - kind: MongoDB
 - dependencies: []
 - schema:
-  - fields:
-    - _: socialnetwork.User struct{UserID int64, FirstName string, LastName string, Username string, PwdHashed string, Salt string}
-    - User: socialnetwork.User struct{UserID int64, FirstName string, LastName string, Username string, PwdHashed string, Salt string}
-  - unfolded_fields:
-    - _.username: string
-    - User: socialnetwork.User struct{UserID int64, FirstName string, LastName string, Username string, PwdHashed string, Salt string}
-    - User.UserID: int64
-    - User.FirstName: string
-    - User.LastName: string
-    - User.Username: string
-    - User.PwdHashed: string
-    - User.Salt: string
+  - fields: []
+  - unfolded_fields: []
   - foreign_references: []
 
 USERTIMELINE_CACHE:
@@ -134,9 +77,7 @@ USERTIMELINE_CACHE:
 - kind: ""
 - dependencies: []
 - schema:
-  - fields:
-    - key: string
-    - value: '[]int64'
+  - fields: []
   - unfolded_fields: []
   - foreign_references: []
 
@@ -145,13 +86,6 @@ USERTIMELINE_DB:
 - kind: MongoDB
 - dependencies: []
 - schema:
-  - fields:
-    - _: socialnetwork.UserPosts struct{UserID int64, Posts []socialnetwork.PostInfo struct{PostID int64, Timestamp int64}}
-    - UserPosts: socialnetwork.UserPosts struct{UserID int64, Posts []socialnetwork.PostInfo struct{PostID int64, Timestamp int64}}
-  - unfolded_fields:
-    - _.userid: int64
-    - UserPosts: socialnetwork.UserPosts struct{UserID int64, Posts []socialnetwork.PostInfo struct{PostID int64, Timestamp int64}}
-    - UserPosts.UserID: int64
-    - UserPosts.Posts: '[]socialnetwork.PostInfo struct{PostID int64, Timestamp int64}'
-    - UserPosts.Posts.*: socialnetwork.PostInfo struct{PostID int64, Timestamp int64}
+  - fields: []
+  - unfolded_fields: []
   - foreign_references: []

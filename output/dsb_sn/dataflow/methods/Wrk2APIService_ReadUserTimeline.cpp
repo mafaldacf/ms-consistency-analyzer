@@ -13,7 +13,6 @@
 
 [0] (InterfaceObject UserType) ctx context.Context
 
-    --> w-tainted: write(usertimeline_cache.key) {1}       --> w-tainted: write(usertimeline_cache.key) {1} --> r-tainted: read(usertimeline_cache.int64) {1}
 [0] (BasicObject BasicType) userId int64
 
 [0] (BasicObject BasicType) start int64

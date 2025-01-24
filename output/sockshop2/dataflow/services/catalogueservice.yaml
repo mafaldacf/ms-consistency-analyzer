@@ -151,8 +151,8 @@
     Quantity int, Tags []string, TagString string})'
   - 0 depth 0 (ArrayObject ArrayType) socks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
   - _1 depth 1 (StructObject UserType) sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
-  - __2 depth 2 (FieldObject FieldType) Tags []string
-  - ___3 depth 3 (SliceObject SliceType) Tags []string
+  - __3 depth 2 (FieldObject FieldType) Tags []string
+  - ___4 depth 3 (SliceObject SliceType) Tags []string
   - 0 depth 0 (SliceObject UserType) filter primitive.D
   - '0 depth 0 (BlueprintBackendObject BlueprintBackendType) result NoSQLCursor {database
     = catalogue, collection = catalogue} --> r-tainted 1x: read(catalogue_db._)'

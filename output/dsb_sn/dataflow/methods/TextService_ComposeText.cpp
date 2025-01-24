@@ -6,19 +6,10 @@
 [___3] (ServiceObject ServiceType) userMentionService socialnetwork.UserMentionService
 
 [0] (InterfaceObject UserType) ctx context.Context
-[_1] (Reference UserType) ref <ctx context.Context> @ ComposePostService
-[__2] (Reference UserType) ref <ctx context.Context> @ Wrk2APIService
 
-    --> w-tainted: write(post_db.Post.ReqID) {1}
 [0] (BasicObject BasicType) reqID int64
-     --> w-tainted: write(post_db.Post.ReqID) {1}
-[_1] (Reference BasicType) ref <reqID int64> @ ComposePostService
-      --> w-tainted: write(post_db.Post.ReqID) {1}
-[__2] (Reference BasicType) ref <reqID int64> @ Wrk2APIService
 
 [0] (BasicObject BasicType) text string
-[_1] (Reference BasicType) ref <text string> @ ComposePostService
-[__2] (Reference BasicType) ref <text string> @ Wrk2APIService
 
 [0] (PointerObject PointerType) r (*regexp.Regexp struct{expr string, prog (*syntax.Prog struct{Inst []syntax.Inst struct{Op syntax.InstOp uint8, Out uint32, Arg uint32, Rune []rune}, Start int, NumCap int}), onepass (*regexp.onePassProg struct{Inst []regexp.onePassInst struct{Inst syntax.Inst struct{Op syntax.InstOp uint8, Out uint32, Arg uint32, Rune []rune}, Next []uint32}, Start int, NumCap int}), numSubexp int, maxBitStateLen int, subexpNames []string, prefix string, prefixBytes []byte, prefixRune rune, prefixEnd uint32, mpool int, matchcap int, prefixComplete bool, cond syntax.EmptyOp uint8, minInputLen int, longest bool})
 [_1] (BasicObject BasicType) `@[a-zA-Z0-9-_]+` string
@@ -27,18 +18,24 @@
 
 [0] (SliceObject SliceType) matches []string
 [_1] (BasicObject BasicType) text string
-[__2] (Reference BasicType) ref <text string> @ ComposePostService
-[___3] (Reference BasicType) ref <text string> @ Wrk2APIService
 [_1] (BasicObject BasicType) int
 [_1] (BasicObject BasicType) text string
-[__2] (Reference BasicType) ref <text string> @ ComposePostService
-[___3] (Reference BasicType) ref <text string> @ Wrk2APIService
 [_1] (BasicObject BasicType) int
 
 [0] (ArrayObject ArrayType) usernames []string
 [_1] (BasicObject BasicType) m string
+[__2] (SliceObject SliceType) matches []string
+[___3] (BasicObject BasicType) text string
+[___3] (BasicObject BasicType) int
+[___3] (BasicObject BasicType) text string
+[___3] (BasicObject BasicType) int
 
 [0] (BasicObject BasicType) m string
+[_1] (SliceObject SliceType) matches []string
+[__2] (BasicObject BasicType) text string
+[__2] (BasicObject BasicType) int
+[__2] (BasicObject BasicType) text string
+[__2] (BasicObject BasicType) int
 
 [0] (ArrayObject ArrayType) usernames []string
 [_1] (BasicObject BasicType) m string
@@ -51,19 +48,10 @@
 [___3] (ServiceObject ServiceType) userMentionService socialnetwork.UserMentionService
 
 [0] (InterfaceObject UserType) ctx context.Context
-[_1] (Reference UserType) ref <ctx context.Context> @ ComposePostService
-[__2] (Reference UserType) ref <ctx context.Context> @ Wrk2APIService
 
-    --> w-tainted: write(post_db.Post.ReqID) {1}
 [0] (BasicObject BasicType) reqID int64
-     --> w-tainted: write(post_db.Post.ReqID) {1}
-[_1] (Reference BasicType) ref <reqID int64> @ ComposePostService
-      --> w-tainted: write(post_db.Post.ReqID) {1}
-[__2] (Reference BasicType) ref <reqID int64> @ Wrk2APIService
 
 [0] (BasicObject BasicType) text string
-[_1] (Reference BasicType) ref <text string> @ ComposePostService
-[__2] (Reference BasicType) ref <text string> @ Wrk2APIService
 
 [0] (PointerObject PointerType) r (*regexp.Regexp struct{expr string, prog (*syntax.Prog struct{Inst []syntax.Inst struct{Op syntax.InstOp uint8, Out uint32, Arg uint32, Rune []rune}, Start int, NumCap int}), onepass (*regexp.onePassProg struct{Inst []regexp.onePassInst struct{Inst syntax.Inst struct{Op syntax.InstOp uint8, Out uint32, Arg uint32, Rune []rune}, Next []uint32}, Start int, NumCap int}), numSubexp int, maxBitStateLen int, subexpNames []string, prefix string, prefixBytes []byte, prefixRune rune, prefixEnd uint32, mpool int, matchcap int, prefixComplete bool, cond syntax.EmptyOp uint8, minInputLen int, longest bool})
 [_1] (BasicObject BasicType) `@[a-zA-Z0-9-_]+` string
@@ -72,18 +60,24 @@
 
 [0] (SliceObject SliceType) matches []string
 [_1] (BasicObject BasicType) text string
-[__2] (Reference BasicType) ref <text string> @ ComposePostService
-[___3] (Reference BasicType) ref <text string> @ Wrk2APIService
 [_1] (BasicObject BasicType) int
 [_1] (BasicObject BasicType) text string
-[__2] (Reference BasicType) ref <text string> @ ComposePostService
-[___3] (Reference BasicType) ref <text string> @ Wrk2APIService
 [_1] (BasicObject BasicType) int
 
 [0] (ArrayObject ArrayType) usernames []string
 [_1] (BasicObject BasicType) m string
+[__2] (SliceObject SliceType) matches []string
+[___3] (BasicObject BasicType) text string
+[___3] (BasicObject BasicType) int
+[___3] (BasicObject BasicType) text string
+[___3] (BasicObject BasicType) int
 
 [0] (BasicObject BasicType) m string
+[_1] (SliceObject SliceType) matches []string
+[__2] (BasicObject BasicType) text string
+[__2] (BasicObject BasicType) int
+[__2] (BasicObject BasicType) text string
+[__2] (BasicObject BasicType) int
 
 [0] (PointerObject PointerType) url_re (*regexp.Regexp struct{expr string, prog (*syntax.Prog struct{Inst []syntax.Inst struct{Op syntax.InstOp uint8, Out uint32, Arg uint32, Rune []rune}, Start int, NumCap int}), onepass (*regexp.onePassProg struct{Inst []regexp.onePassInst struct{Inst syntax.Inst struct{Op syntax.InstOp uint8, Out uint32, Arg uint32, Rune []rune}, Next []uint32}, Start int, NumCap int}), numSubexp int, maxBitStateLen int, subexpNames []string, prefix string, prefixBytes []byte, prefixRune rune, prefixEnd uint32, mpool int, matchcap int, prefixComplete bool, cond syntax.EmptyOp uint8, minInputLen int, longest bool})
 [_1] (BasicObject BasicType) `(http://|https://)([a-zA-Z0-9_!~*'().&=+$%-]+)` string
@@ -92,12 +86,8 @@
 
 [0] (SliceObject SliceType) url_strings []string
 [_1] (BasicObject BasicType) text string
-[__2] (Reference BasicType) ref <text string> @ ComposePostService
-[___3] (Reference BasicType) ref <text string> @ Wrk2APIService
 [_1] (BasicObject BasicType) int
 [_1] (BasicObject BasicType) text string
-[__2] (Reference BasicType) ref <text string> @ ComposePostService
-[___3] (Reference BasicType) ref <text string> @ Wrk2APIService
 [_1] (BasicObject BasicType) int
 
 [0] (BasicObject BasicType) err1 error
@@ -113,6 +103,11 @@
 [0] (BasicObject BasicType) updated_text string
 
 [0] (BasicObject BasicType) idx string
+[_1] (SliceObject SliceType) url_strings []string
+[__2] (BasicObject BasicType) text string
+[__2] (BasicObject BasicType) int
+[__2] (BasicObject BasicType) text string
+[__2] (BasicObject BasicType) int
 
 [0] (BasicObject BasicType) url_string 0 int
 
@@ -132,19 +127,10 @@
 [___3] (ServiceObject ServiceType) userMentionService socialnetwork.UserMentionService
 
 [0] (InterfaceObject UserType) ctx context.Context
-[_1] (Reference UserType) ref <ctx context.Context> @ ComposePostService
-[__2] (Reference UserType) ref <ctx context.Context> @ Wrk2APIService
 
-    --> w-tainted: write(post_db.Post.ReqID) {1}
 [0] (BasicObject BasicType) reqID int64
-     --> w-tainted: write(post_db.Post.ReqID) {1}
-[_1] (Reference BasicType) ref <reqID int64> @ ComposePostService
-      --> w-tainted: write(post_db.Post.ReqID) {1}
-[__2] (Reference BasicType) ref <reqID int64> @ Wrk2APIService
 
 [0] (BasicObject BasicType) text string
-[_1] (Reference BasicType) ref <text string> @ ComposePostService
-[__2] (Reference BasicType) ref <text string> @ Wrk2APIService
 
 [0] (PointerObject PointerType) r (*regexp.Regexp struct{expr string, prog (*syntax.Prog struct{Inst []syntax.Inst struct{Op syntax.InstOp uint8, Out uint32, Arg uint32, Rune []rune}, Start int, NumCap int}), onepass (*regexp.onePassProg struct{Inst []regexp.onePassInst struct{Inst syntax.Inst struct{Op syntax.InstOp uint8, Out uint32, Arg uint32, Rune []rune}, Next []uint32}, Start int, NumCap int}), numSubexp int, maxBitStateLen int, subexpNames []string, prefix string, prefixBytes []byte, prefixRune rune, prefixEnd uint32, mpool int, matchcap int, prefixComplete bool, cond syntax.EmptyOp uint8, minInputLen int, longest bool})
 [_1] (BasicObject BasicType) `@[a-zA-Z0-9-_]+` string
@@ -153,18 +139,24 @@
 
 [0] (SliceObject SliceType) matches []string
 [_1] (BasicObject BasicType) text string
-[__2] (Reference BasicType) ref <text string> @ ComposePostService
-[___3] (Reference BasicType) ref <text string> @ Wrk2APIService
 [_1] (BasicObject BasicType) int
 [_1] (BasicObject BasicType) text string
-[__2] (Reference BasicType) ref <text string> @ ComposePostService
-[___3] (Reference BasicType) ref <text string> @ Wrk2APIService
 [_1] (BasicObject BasicType) int
 
 [0] (ArrayObject ArrayType) usernames []string
 [_1] (BasicObject BasicType) m string
+[__2] (SliceObject SliceType) matches []string
+[___3] (BasicObject BasicType) text string
+[___3] (BasicObject BasicType) int
+[___3] (BasicObject BasicType) text string
+[___3] (BasicObject BasicType) int
 
 [0] (BasicObject BasicType) m string
+[_1] (SliceObject SliceType) matches []string
+[__2] (BasicObject BasicType) text string
+[__2] (BasicObject BasicType) int
+[__2] (BasicObject BasicType) text string
+[__2] (BasicObject BasicType) int
 
 [0] (ArrayObject ArrayType) usernames []string
 [_1] (BasicObject BasicType) m string
@@ -177,19 +169,10 @@
 [___3] (ServiceObject ServiceType) userMentionService socialnetwork.UserMentionService
 
 [0] (InterfaceObject UserType) ctx context.Context
-[_1] (Reference UserType) ref <ctx context.Context> @ ComposePostService
-[__2] (Reference UserType) ref <ctx context.Context> @ Wrk2APIService
 
-    --> w-tainted: write(post_db.Post.ReqID) {1}
 [0] (BasicObject BasicType) reqID int64
-     --> w-tainted: write(post_db.Post.ReqID) {1}
-[_1] (Reference BasicType) ref <reqID int64> @ ComposePostService
-      --> w-tainted: write(post_db.Post.ReqID) {1}
-[__2] (Reference BasicType) ref <reqID int64> @ Wrk2APIService
 
 [0] (BasicObject BasicType) text string
-[_1] (Reference BasicType) ref <text string> @ ComposePostService
-[__2] (Reference BasicType) ref <text string> @ Wrk2APIService
 
 [0] (PointerObject PointerType) r (*regexp.Regexp struct{expr string, prog (*syntax.Prog struct{Inst []syntax.Inst struct{Op syntax.InstOp uint8, Out uint32, Arg uint32, Rune []rune}, Start int, NumCap int}), onepass (*regexp.onePassProg struct{Inst []regexp.onePassInst struct{Inst syntax.Inst struct{Op syntax.InstOp uint8, Out uint32, Arg uint32, Rune []rune}, Next []uint32}, Start int, NumCap int}), numSubexp int, maxBitStateLen int, subexpNames []string, prefix string, prefixBytes []byte, prefixRune rune, prefixEnd uint32, mpool int, matchcap int, prefixComplete bool, cond syntax.EmptyOp uint8, minInputLen int, longest bool})
 [_1] (BasicObject BasicType) `@[a-zA-Z0-9-_]+` string
@@ -198,18 +181,24 @@
 
 [0] (SliceObject SliceType) matches []string
 [_1] (BasicObject BasicType) text string
-[__2] (Reference BasicType) ref <text string> @ ComposePostService
-[___3] (Reference BasicType) ref <text string> @ Wrk2APIService
 [_1] (BasicObject BasicType) int
 [_1] (BasicObject BasicType) text string
-[__2] (Reference BasicType) ref <text string> @ ComposePostService
-[___3] (Reference BasicType) ref <text string> @ Wrk2APIService
 [_1] (BasicObject BasicType) int
 
 [0] (ArrayObject ArrayType) usernames []string
 [_1] (BasicObject BasicType) m string
+[__2] (SliceObject SliceType) matches []string
+[___3] (BasicObject BasicType) text string
+[___3] (BasicObject BasicType) int
+[___3] (BasicObject BasicType) text string
+[___3] (BasicObject BasicType) int
 
 [0] (BasicObject BasicType) m string
+[_1] (SliceObject SliceType) matches []string
+[__2] (BasicObject BasicType) text string
+[__2] (BasicObject BasicType) int
+[__2] (BasicObject BasicType) text string
+[__2] (BasicObject BasicType) int
 
 [0] (PointerObject PointerType) url_re (*regexp.Regexp struct{expr string, prog (*syntax.Prog struct{Inst []syntax.Inst struct{Op syntax.InstOp uint8, Out uint32, Arg uint32, Rune []rune}, Start int, NumCap int}), onepass (*regexp.onePassProg struct{Inst []regexp.onePassInst struct{Inst syntax.Inst struct{Op syntax.InstOp uint8, Out uint32, Arg uint32, Rune []rune}, Next []uint32}, Start int, NumCap int}), numSubexp int, maxBitStateLen int, subexpNames []string, prefix string, prefixBytes []byte, prefixRune rune, prefixEnd uint32, mpool int, matchcap int, prefixComplete bool, cond syntax.EmptyOp uint8, minInputLen int, longest bool})
 [_1] (BasicObject BasicType) `(http://|https://)([a-zA-Z0-9_!~*'().&=+$%-]+)` string
@@ -218,12 +207,8 @@
 
 [0] (SliceObject SliceType) url_strings []string
 [_1] (BasicObject BasicType) text string
-[__2] (Reference BasicType) ref <text string> @ ComposePostService
-[___3] (Reference BasicType) ref <text string> @ Wrk2APIService
 [_1] (BasicObject BasicType) int
 [_1] (BasicObject BasicType) text string
-[__2] (Reference BasicType) ref <text string> @ ComposePostService
-[___3] (Reference BasicType) ref <text string> @ Wrk2APIService
 [_1] (BasicObject BasicType) int
 
 [0] (BasicObject BasicType) err1 error
@@ -239,6 +224,11 @@
 [0] (BasicObject BasicType) updated_text string
 
 [0] (BasicObject BasicType) idx string
+[_1] (SliceObject SliceType) url_strings []string
+[__2] (BasicObject BasicType) text string
+[__2] (BasicObject BasicType) int
+[__2] (BasicObject BasicType) text string
+[__2] (BasicObject BasicType) int
 
 [0] (BasicObject BasicType) url_string 0 int
 

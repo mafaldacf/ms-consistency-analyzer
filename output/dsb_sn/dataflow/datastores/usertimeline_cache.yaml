@@ -2,10 +2,6 @@
 - read <post_infos (*[]socialnetwork.PostInfo struct{PostID int64, Timestamp int64}) (PointerObject)>
 - read <post_infos (*[]socialnetwork.PostInfo struct{PostID int64, Timestamp int64}) (PointerObject)> from <post_infos (*[]socialnetwork.PostInfo struct{PostID int64, Timestamp int64}) (PointerObject)>
 - read <post_infos []socialnetwork.PostInfo struct{PostID int64, Timestamp int64} (ArrayObject)> from <post_infos (*[]socialnetwork.PostInfo struct{PostID int64, Timestamp int64}) (PointerObject)>
-- read <postInfos (*[]socialnetwork.PostInfo struct{PostID int64, Timestamp int64}) (PointerObject)>
-- read <postInfos (*[]socialnetwork.PostInfo struct{PostID int64, Timestamp int64}) (PointerObject)> from <postInfos (*[]socialnetwork.PostInfo struct{PostID int64, Timestamp int64}) (PointerObject)>
-- read <postInfos []socialnetwork.PostInfo struct{PostID int64, Timestamp int64} (ArrayObject)>
-  from <postInfos (*[]socialnetwork.PostInfo struct{PostID int64, Timestamp int64}) (PointerObject)>
 - read <postInfo (*[]socialnetwork.PostInfo struct{PostID int64, Timestamp int64}) (PointerObject)>
 - read <postInfo (*[]socialnetwork.PostInfo struct{PostID int64, Timestamp int64}) (PointerObject)> from <postInfo (*[]socialnetwork.PostInfo struct{PostID int64, Timestamp int64}) (PointerObject)>
 - read <postInfo []socialnetwork.PostInfo struct{PostID int64, Timestamp int64} (ArrayObject)>
@@ -35,6 +31,18 @@
 - read <timestamp int64 (BasicObject)> from <posts (*[]socialnetwork.PostInfo struct{PostID int64, Timestamp int64}) (PointerObject)>
 - read <ref <timestamp int64> @ ComposePostService (Reference)> from <posts (*[]socialnetwork.PostInfo struct{PostID int64, Timestamp int64}) (PointerObject)>
 - read <timestamp int64 (BasicObject)> from <posts (*[]socialnetwork.PostInfo struct{PostID int64, Timestamp int64}) (PointerObject)>
+
+'[]int64':
+- write <post_ids []int64 (ArrayObject)>
+- write <post_ids []int64 (ArrayObject)> from <post_ids []int64 (ArrayObject)>
+- write <postIDs []int64 (ArrayObject)> from <post_ids []int64 (ArrayObject)>
+- write <PostID int64 (BasicObject)> from <post_ids []int64 (ArrayObject)>
+- write <PostID int64 (BasicObject)> from <post_ids []int64 (ArrayObject)>
+- write <post_ids []int64 (ArrayObject)>
+- write <post_ids []int64 (ArrayObject)> from <post_ids []int64 (ArrayObject)>
+- write <postIDs []int64 (ArrayObject)> from <post_ids []int64 (ArrayObject)>
+- write <PostID int64 (BasicObject)> from <post_ids []int64 (ArrayObject)>
+- write <PostID int64 (BasicObject)> from <post_ids []int64 (ArrayObject)>
 
 USERTIMELINE_CACHE.key:
 - read <userIDStr string (BasicObject)>
@@ -352,8 +360,14 @@ string:
 - read <id_str string (BasicObject)>
 - read <id_str string (BasicObject)> from <id_str string (BasicObject)>
 - read <id bool (BasicObject)> from <id_str string (BasicObject)>
+- read <followers_set map[int64]bool (MapObject)> from <id_str string (BasicObject)>
+- read <true bool (BasicObject)> from <id_str string (BasicObject)>
+- read <true bool (BasicObject)> from <id_str string (BasicObject)>
 - read <10 int (BasicObject)> from <id_str string (BasicObject)>
 - write <id_str string (BasicObject)>
 - write <id_str string (BasicObject)> from <id_str string (BasicObject)>
 - write <id bool (BasicObject)> from <id_str string (BasicObject)>
+- write <followers_set map[int64]bool (MapObject)> from <id_str string (BasicObject)>
+- write <true bool (BasicObject)> from <id_str string (BasicObject)>
+- write <true bool (BasicObject)> from <id_str string (BasicObject)>
 - write <10 int (BasicObject)> from <id_str string (BasicObject)>

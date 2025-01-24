@@ -30,6 +30,7 @@
 [0] (InterfaceObject UserType) err .error
 
 [0] (StructObject UserType) f socialnetwork.FolloweeInfo struct{FolloweeID int64, Timestamp int64}
+[_1] (ArrayObject ArrayType) followeeInfos []socialnetwork.FolloweeInfo struct{FolloweeID int64, Timestamp int64}
 [_1] (FieldObject FieldType) FolloweeID int64
 [__2] (BasicObject BasicType) FolloweeID int64
 
@@ -69,6 +70,7 @@
 [0] (InterfaceObject UserType) err .error
 
 [0] (StructObject UserType) f socialnetwork.FolloweeInfo struct{FolloweeID int64, Timestamp int64}
+[_1] (ArrayObject ArrayType) followeeInfos []socialnetwork.FolloweeInfo struct{FolloweeID int64, Timestamp int64}
 [_1] (FieldObject FieldType) FolloweeID int64
 [__2] (BasicObject BasicType) FolloweeID int64
 

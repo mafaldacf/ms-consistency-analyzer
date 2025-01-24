@@ -27,6 +27,8 @@
 
 [0] (ArrayObject ArrayType) socks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
 [_1] (StructObject UserType) sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
+      --> r-tainted: read(catalogue_db.[]catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}) {1}
+[__2] (ArrayObject ArrayType) allSocks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
 [__2] (FieldObject FieldType) Tags []string
 [___3] (SliceObject SliceType) Tags []string
 
@@ -40,8 +42,12 @@
 [0] (InterfaceObject UserType) _ .error
 
 [0] (StructObject UserType) sock catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
+     --> r-tainted: read(catalogue_db.[]catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}) {1}
+[_1] (ArrayObject ArrayType) allSocks []catalogue.Sock struct{ID string, Name string, Description string, ImageURL []string, ImageURL_1 string, ImageURL_2 string, Price float32, Quantity int, Tags []string, TagString string}
 [_1] (FieldObject FieldType) Tags []string
 [__2] (SliceObject SliceType) Tags []string
 
 [0] (BasicObject BasicType) tag string
+[_1] (ArrayObject ArrayType) tags []string
+[__2] (Reference ArrayType) ref <tags []string> @ FrontendService
 

@@ -16,18 +16,6 @@
 [___3] (BlueprintBackendObject BlueprintBackendType) userDB NoSQLDatabase
 
 [0] (ArrayObject ArrayType) pwd []byte
-[_1] (Reference BasicType) ref <byte> @ UserService
-[__2] (BasicObject BasicType) 
-[___3] (BasicObject BasicType) password string
-[____4] (Reference BasicType) ref <password string> @ Wrk2APIService
-       --> w-tainted: write(user_db.User.Salt) {1}
-[___3] (BasicObject BasicType) salt string
-        --> w-tainted: write(user_db.User.Salt) {1}
-[____4] (Reference BasicType) ref <string> @ genRandomStr
-         --> w-tainted: write(user_db.User.Salt) {1}
-[_____5] (ArrayObject ArrayType) b []rune
-          --> w-tainted: write(user_db.User.Salt) {1}
-[______6] (SliceObject SliceType) github.com/blueprint-uservices/blueprint/examples/dsb_sn/workflow/socialnetwork.letterRunes []rune
 
 [0] (InterfaceObject UserType) hasher hash.Hash interface{ interface{BlockSize() int; Reset(); Size() int; Sum(b []byte) []byte; io.Writer} }
 

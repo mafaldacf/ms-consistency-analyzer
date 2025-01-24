@@ -4,10 +4,8 @@
 [___3] (BasicObject BasicType) 1 int
 [__2] (FieldObject FieldType) current_timestamp int64
 [___3] (BasicObject BasicType) timestamp int64
-[____4] (Reference BasicType) ref <timestamp int64> @ UniqueIdService
 [__2] (FieldObject FieldType) machine_id string
 [___3] (BasicObject BasicType) string
 
 [0] (BasicObject BasicType) timestamp int64
-[_1] (Reference BasicType) ref <timestamp int64> @ UniqueIdService
 

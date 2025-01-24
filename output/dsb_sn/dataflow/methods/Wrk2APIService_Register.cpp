@@ -13,18 +13,14 @@
 
 [0] (InterfaceObject UserType) ctx context.Context
 
-    --> w-tainted: write(user_db.User.FirstName) {1}
 [0] (BasicObject BasicType) firstName string
 
-    --> w-tainted: write(user_db.User.LastName) {1}
 [0] (BasicObject BasicType) lastName string
 
-    --> w-tainted: write(user_db.User.Username) {1}       --> w-tainted: write(user_db.User.Username) {1} --> r-tainted: read(user_db._.username) {1}
 [0] (BasicObject BasicType) username string
 
 [0] (BasicObject BasicType) password string
 
-    --> w-tainted: write(user_db.User.UserID, social_db.UserInfo.UserID) {2}
 [0] (BasicObject BasicType) userId int64
 
 [0] (BasicObject BasicType) reqID int64

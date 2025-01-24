@@ -24,6 +24,7 @@ func NewDetector(app *app.App, graph *abstractgraph.AbstractGraph) *ForeignKeyDe
 func (detector *ForeignKeyDetector) Run() {
 	detector.app.ResetAllDataflows()
 	for requestIdx, entry := range detector.getGraph().Nodes {
+		logger.Logger.Infof("[FOREIGN KEY] iteration #%d for entry: %s", requestIdx, entry.GetMethodStr())
 		detector.analyzeNodes(entry.(*abstractgraph.AbstractServiceCall), entry, requestIdx)
 		detector.app.ResetAllDataflows()
 	}

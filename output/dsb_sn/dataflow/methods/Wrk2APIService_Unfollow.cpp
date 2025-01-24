@@ -13,16 +13,12 @@
 
 [0] (InterfaceObject UserType) ctx context.Context
 
-    --> w-tainted: write(user_cache.key) {1}       --> w-tainted: write(user_cache.key) {1} --> r-tainted: read(user_cache.string, user_db._.username) {2}
 [0] (BasicObject BasicType) username string
 
-    --> w-tainted: write(user_cache.key) {1}       --> w-tainted: write(user_cache.key) {1} --> r-tainted: read(user_cache.string, user_db._.username) {2}
 [0] (BasicObject BasicType) followeeName string
 
-    --> r-tainted: read(social_cache.int64) {1}
 [0] (BasicObject BasicType) userId int64
 
-    --> r-tainted: read(social_cache.int64) {1}
 [0] (BasicObject BasicType) followeeID int64
 
 [0] (BasicObject BasicType) reqID int64

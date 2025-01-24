@@ -7,66 +7,26 @@
   - __4 depth 2 (FieldObject FieldType) userDB NoSQLDatabase
   - ___5 depth 3 (BlueprintBackendObject BlueprintBackendType) userDB NoSQLDatabase
   - 0 depth 0 (InterfaceObject UserType) ctx context.Context
-  - _1 depth 1 (Reference UserType) ref <ctx context.Context> @ SocialGraphService
-  - __2 depth 2 (Reference UserType) ref <ctx context.Context> @ Wrk2APIService
-  - _3 depth 1 (Reference UserType) ref <ctx context.Context> @ SocialGraphService
-  - _5 depth 1 (Reference UserType) ref <ctx context.Context> @ SocialGraphService
-  - __6 depth 2 (Reference UserType) ref <ctx context.Context> @ Wrk2APIService
-  - _7 depth 1 (Reference UserType) ref <ctx context.Context> @ SocialGraphService
   - 0 depth 0 (BasicObject BasicType) reqID int64
-  - _1 depth 1 (Reference BasicType) ref <reqID int64> @ SocialGraphService
-  - __2 depth 2 (Reference BasicType) ref <reqID int64> @ Wrk2APIService
-  - _3 depth 1 (Reference BasicType) ref <reqID int64> @ SocialGraphService
-  - _5 depth 1 (Reference BasicType) ref <reqID int64> @ SocialGraphService
-  - __6 depth 2 (Reference BasicType) ref <reqID int64> @ Wrk2APIService
-  - _7 depth 1 (Reference BasicType) ref <reqID int64> @ SocialGraphService
-  - '0 depth 0 (BasicObject BasicType) username string --> w-tainted 1x: write(user_cache.key)
-    --> r-tainted 2x: read(user_db._.username, user_cache.string)'
-  - '_1 depth 1 (Reference BasicType) ref <username string> @ SocialGraphService -->
-    w-tainted 1x: write(user_cache.key) --> r-tainted 2x: read(user_cache.string,
-    user_db._.username)'
-  - '__2 depth 2 (Reference BasicType) ref <username string> @ Wrk2APIService -->
-    w-tainted 1x: write(user_cache.key) --> r-tainted 2x: read(user_cache.string,
-    user_db._.username)'
-  - '_3 depth 1 (Reference BasicType) ref <followee_name string> @ SocialGraphService
-    --> w-tainted 1x: write(user_cache.key) --> r-tainted 2x: read(user_cache.string,
-    user_db._.username)'
-  - '__4 depth 2 (Reference BasicType) ref <followeeName string> @ Wrk2APIService
-    --> w-tainted 1x: write(user_cache.key) --> r-tainted 2x: read(user_cache.string,
-    user_db._.username)'
-  - '_5 depth 1 (Reference BasicType) ref <username string> @ SocialGraphService -->
-    w-tainted 1x: write(user_cache.key) --> r-tainted 2x: read(user_cache.string,
-    user_db._.username)'
-  - '__6 depth 2 (Reference BasicType) ref <username string> @ Wrk2APIService -->
-    w-tainted 1x: write(user_cache.key) --> r-tainted 2x: read(user_cache.string,
-    user_db._.username)'
-  - '_7 depth 1 (Reference BasicType) ref <followee_name string> @ SocialGraphService
-    --> w-tainted 1x: write(user_cache.key) --> r-tainted 2x: read(user_cache.string,
-    user_db._.username)'
-  - '__8 depth 2 (Reference BasicType) ref <followeeName string> @ Wrk2APIService
-    --> w-tainted 1x: write(user_cache.key) --> r-tainted 2x: read(user_cache.string,
-    user_db._.username)'
-  - '0 depth 0 (BasicObject BasicType) user_id int64 --> r-tainted 1x: read(user_cache.int64)'
-  - '_1 depth 1 (BasicObject BasicType) int64 --> r-tainted 1x: read(user_cache.int64)'
+  - 0 depth 0 (BasicObject BasicType) username string
+  - 0 depth 0 (BasicObject BasicType) user_id int64
+  - _1 depth 1 (BasicObject BasicType) int64
   - 0 depth 0 (BasicObject BasicType) exists bool
   - 0 depth 0 (InterfaceObject UserType) err .error
-  - '0 depth 0 (StructObject UserType) user socialnetwork.User struct{UserID int64,
-    FirstName string, LastName string, Username string, PwdHashed string, Salt string}
-    --> r-tainted 2x: read(user_db.User, user_db.User.UserID)'
-  - '_1 depth 1 (FieldObject FieldType) UserID int64 --> r-tainted 1x: read(user_db.User.UserID)'
-  - '__2 depth 2 (BasicObject BasicType) UserID int64 --> r-tainted 1x: read(user_db.User.UserID)'
+  - 0 depth 0 (StructObject UserType) user socialnetwork.User struct{UserID int64, FirstName string, LastName string, Username string, PwdHashed string, Salt string}
+  - _1 depth 1 (FieldObject FieldType) UserID int64
+  - __2 depth 2 (BasicObject BasicType) UserID int64
   - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) collection NoSQLCollection
     {database = user, collection = user}
   - 0 depth 0 (InterfaceObject UserType) err .error
   - 0 depth 0 (SliceObject UserType) query primitive.D
   - _1 depth 1 (StructObject StructType) struct{ string, "username" string, string}
-  - '0 depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database
-    = user, collection = user} --> r-tainted 1x: read(user_db._)'
+  - 0 depth 0 (BlueprintBackendObject BlueprintBackendType) res NoSQLCursor {database = user, collection = user}
   - 0 depth 0 (InterfaceObject UserType) err .error
   - 0 depth 0 (BasicObject BasicType) result bool
   - 0 depth 0 (InterfaceObject UserType) err .error
-  - '0 depth 0 (FieldObject FieldType) user_id int64 --> w-tainted 1x: write(user_cache.value)'
-  - '_1 depth 1 (BasicObject BasicType) UserID int64 --> w-tainted 1x: write(user_cache.value)'
+  - 0 depth 0 (FieldObject FieldType) user_id int64
+  - _1 depth 1 (BasicObject BasicType) UserID int64
   - 0 depth 0 (InterfaceObject UserType) err .error
 
 .GetMachineID():
@@ -74,8 +34,8 @@
   - 0 depth 0 (SliceObject SliceType) interfaces []net.Interface struct{Index int, MTU int, Name string, HardwareAddr net.HardwareAddr []byte, Flags net.Flags uint}
   - 0 depth 0 (InterfaceObject UserType) err .error
   - 0 depth 0 (StructObject UserType) i net.Interface struct{Index int, MTU int, Name string, HardwareAddr net.HardwareAddr []byte, Flags net.Flags uint}
-  - _1 depth 1 (FieldObject FieldType) HardwareAddr net.HardwareAddr []byte
-  - __2 depth 2 (SliceObject UserType) HardwareAddr net.HardwareAddr []byte
+  - _2 depth 1 (FieldObject FieldType) HardwareAddr net.HardwareAddr []byte
+  - __3 depth 2 (SliceObject UserType) HardwareAddr net.HardwareAddr []byte
   - 0 depth 0 (BasicObject BasicType) mac 0 uint64
   - 0 depth 0 (BasicObject BasicType) j byte
   - 0 depth 0 (BasicObject BasicType) b 0 int
@@ -195,50 +155,12 @@
 .handleFormats(jsonQuery string):
   block 8 (IfDone):
   - 0 depth 0 (BasicObject BasicType) jsonQuery string
-  - _1 depth 1 (Reference BasicType) ref <query string> @ MediaService
-  - __2 depth 2 (Reference BasicType) ref <query string> @ UserMentionService
-  - __3 depth 2 (Reference BasicType) ref <update string> @ UserTimelineService
-  - '___4 depth 3 (BasicObject BasicType) `{"$push": {"Posts": {"$each": [{"PostID":
-    %s, "Timestamp": %s}], "$position": 0}}}` string'
-  - ___5 depth 3 (BasicObject BasicType) postIDstr string
-  - '____6 depth 4 (BasicObject BasicType) postID int64 --> w-tainted 2x: write(post_db.Post.PostID,
-    usertimeline_db.UserPosts.Posts) --> r-tainted 1x: read(usertimeline_cache.int64)'
-  - '_____7 depth 5 (Reference BasicType) ref <uniqueID int64> @ ComposePostService
-    --> w-tainted 2x: write(post_db.Post.PostID, usertimeline_db.UserPosts.Posts)
-    --> r-tainted 2x: read(usertimeline_cache.int64, hometimeline_cache.int64)'
-  - ____8 depth 4 (BasicObject BasicType) 10 int
-  - ___12 depth 3 (BasicObject BasicType) timestampstr string
-  - '____13 depth 4 (BasicObject BasicType) timestamp int64 --> w-tainted 1x: write(usertimeline_db.UserPosts.Posts)
-    --> r-tainted 1x: read(usertimeline_cache.int64)'
-  - '_____14 depth 5 (Reference BasicType) ref <timestamp int64> @ ComposePostService
-    --> w-tainted 1x: write(usertimeline_db.UserPosts.Posts) --> r-tainted 2x: read(usertimeline_cache.int64,
-    hometimeline_cache.int64)'
-  - ____15 depth 4 (BasicObject BasicType) 10 int
-  - __34 depth 2 (Reference BasicType) ref <query string> @ SocialGraphService
-  - __35 depth 2 (Reference BasicType) ref <query string> @ PostStorageService
-  - __36 depth 2 (Reference BasicType) ref <query string> @ UserTimelineService
-  - '___37 depth 3 (BasicObject BasicType) `{"UserID": %[1]d}` string'
-  - '___38 depth 3 (BasicObject BasicType) userID int64 --> w-tainted 1x: write(usertimeline_cache.key)
-    --> r-tainted 1x: read(usertimeline_cache.int64)'
-  - '____39 depth 4 (Reference BasicType) ref <userId int64> @ Wrk2APIService -->
-    w-tainted 1x: write(usertimeline_cache.key) --> r-tainted 1x: read(usertimeline_cache.int64)'
-  - __43 depth 2 (Reference BasicType) ref <projection string> @ UserTimelineService
-  - '___44 depth 3 (BasicObject BasicType) `{"posts": {"$slice": [0, %[1]d]}}` string'
-  - ___45 depth 3 (BasicObject BasicType) stop int64
-  - ____46 depth 4 (Reference BasicType) ref <stop int64> @ Wrk2APIService
-  - __50 depth 2 (Reference BasicType) ref <query string> @ PostStorageService
-  - _51 depth 1 (Reference BasicType) ref <query string> @ MediaService
-  - _101 depth 1 (Reference BasicType) ref <query string> @ MediaService
-  - _151 depth 1 (Reference BasicType) ref <query string> @ MediaService
-  - _201 depth 1 (Reference BasicType) ref <query string> @ MediaService
-  - _251 depth 1 (Reference BasicType) ref <query string> @ MediaService
-  - _301 depth 1 (Reference BasicType) ref <query string> @ MediaService
   - 0 depth 0 (SliceObject UserType) bdoc primitive.D
   - 0 depth 0 (BasicObject BasicType) err error
   - 0 depth 0 (InterfaceObject InterfaceType) f interface{}
   - 0 depth 0 (InterfaceObject UserType) err .error
   - _1 depth 1 (BasicObject BasicType) byte
-  - _353 depth 1 (PointerObject PointerType) f (*interface{})
+  - _3 depth 1 (PointerObject PointerType) f (*interface{})
   - 0 depth 0 (SliceObject SliceType) lowerQuery []byte
   - 0 depth 0 (InterfaceObject UserType) err .error
   - 0 depth 0 (InterfaceObject UserType) err .error
@@ -248,34 +170,3 @@
 .parseNoSQLDBQuery(query string):
   block 0 (Body):
   - 0 depth 0 (BasicObject BasicType) query string
-  - _1 depth 1 (Reference BasicType) ref <query string> @ UserMentionService
-  - _2 depth 1 (Reference BasicType) ref <update string> @ UserTimelineService
-  - '__3 depth 2 (BasicObject BasicType) `{"$push": {"Posts": {"$each": [{"PostID":
-    %s, "Timestamp": %s}], "$position": 0}}}` string'
-  - __4 depth 2 (BasicObject BasicType) postIDstr string
-  - '___5 depth 3 (BasicObject BasicType) postID int64 --> w-tainted 2x: write(post_db.Post.PostID,
-    usertimeline_db.UserPosts.Posts) --> r-tainted 1x: read(usertimeline_cache.int64)'
-  - '____6 depth 4 (Reference BasicType) ref <uniqueID int64> @ ComposePostService
-    --> w-tainted 2x: write(post_db.Post.PostID, usertimeline_db.UserPosts.Posts)
-    --> r-tainted 2x: read(usertimeline_cache.int64, hometimeline_cache.int64)'
-  - ___7 depth 3 (BasicObject BasicType) 10 int
-  - __11 depth 2 (BasicObject BasicType) timestampstr string
-  - '___12 depth 3 (BasicObject BasicType) timestamp int64 --> w-tainted 1x: write(usertimeline_db.UserPosts.Posts)
-    --> r-tainted 1x: read(usertimeline_cache.int64)'
-  - '____13 depth 4 (Reference BasicType) ref <timestamp int64> @ ComposePostService
-    --> w-tainted 1x: write(usertimeline_db.UserPosts.Posts) --> r-tainted 2x: read(usertimeline_cache.int64,
-    hometimeline_cache.int64)'
-  - ___14 depth 3 (BasicObject BasicType) 10 int
-  - _33 depth 1 (Reference BasicType) ref <query string> @ SocialGraphService
-  - _34 depth 1 (Reference BasicType) ref <query string> @ PostStorageService
-  - _35 depth 1 (Reference BasicType) ref <query string> @ UserTimelineService
-  - '__36 depth 2 (BasicObject BasicType) `{"UserID": %[1]d}` string'
-  - '__37 depth 2 (BasicObject BasicType) userID int64 --> w-tainted 1x: write(usertimeline_cache.key)
-    --> r-tainted 1x: read(usertimeline_cache.int64)'
-  - '___38 depth 3 (Reference BasicType) ref <userId int64> @ Wrk2APIService --> w-tainted
-    1x: write(usertimeline_cache.key) --> r-tainted 1x: read(usertimeline_cache.int64)'
-  - _42 depth 1 (Reference BasicType) ref <projection string> @ UserTimelineService
-  - '__43 depth 2 (BasicObject BasicType) `{"posts": {"$slice": [0, %[1]d]}}` string'
-  - __44 depth 2 (BasicObject BasicType) stop int64
-  - ___45 depth 3 (Reference BasicType) ref <stop int64> @ Wrk2APIService
-  - _49 depth 1 (Reference BasicType) ref <query string> @ PostStorageService
