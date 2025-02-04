@@ -9,5 +9,7 @@ assets/postnotification/datastores_old.yaml
 .idea
 .vscode
 .trash
-ms_z3_analysis.py
-wasm/**
+.z3
+.wasm
+.cmd
+COMMANDS.md

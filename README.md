@@ -1,4 +1,4 @@
-# Microservices Consistency Analyzer
+# Microservices Consistency Analyzer (MSCA)
 
 **Microservices Consistency Analyzer** is a toolkit that statically analyzes microservice applications written in frameworks (e.g. [Service Weaver](https://dl.acm.org/doi/10.1145/3593856.3595909) and [Blueprint](https://dl.acm.org/doi/10.1145/3600006.3613138)) that introduce a new modular approach for building and deploying microservices. The goal is to detect potential consistency violations at configuration time by leveraging the global view over the entire application, including the relationship between services and operations to underlying databases. At the moment, the toolkit supports Blueprint ([code](https://github.com/Blueprint-uServices/blueprint)), and is capable of capturing _cross-service inconsistencies_, introduced in [Antipode](https://dl.acm.org/doi/10.1145/3600006.3613176). In the future, we aim to support a wide variety of similar frameworks and capture additional consistency anomalies.
 
@@ -15,74 +15,63 @@ git submodule update --init --recursive
 
 - [Golang](https://go.dev/doc/install) >= 1.22.2
 
-## How to Run
+## Getting Started
 
-Available applications:
-- `foobar`
-- `shopping_simple`
-- `shopping_app`
-- `postnotification_simple`
-- `postnotification`
-- `sockshop2`
-- `trainticket`
-
+Install python requirements (use venv if needed):
 ```zsh
 python3 -m venv ~/.venv
 source ~/.venv/bin/activate
 pip3 install -r requirements.txt
+```
 
+## Running the Tool
+
+Available applications:
+- `foobar`
+- `shopping_app`
+- `shopping_simple`
+- `postnotification`
+- `postnotification_simple`
+- `trainticket`
+- `sockshop2`
+- `dsb_sn`
+- `dsb_hotel`
+- `app_constraints_referential_integrity`
+- `app_constraints_specialization`
+
+Run the code analyzer:
+```zsh
 go run main.go --help
 
-go run main.go -app=foobar
-go run main.go -app=shopping_simple
-go run main.go -app=shopping_app
-go run main.go -app=postnotification_simple
-go run main.go -app=postnotification
-go run main.go -app=sockshop2
-go run main.go -app=trainticket
+# usage
+go run main.go -app=APP_NAME [--xcy] [--fk] [--cascade] [--specialization]
 
-go run main.go -app=foobar --xcy --fk --cascade
-go run main.go -app=shopping_simple --xcy --fk --cascade
-go run main.go -app=shopping_app --xcy --fk --cascade
-go run main.go -app=postnotification_simple --xcy --fk --cascade --specialization
+# example
+go run main.go -app=foobar
 go run main.go -app=postnotification --xcy --fk --cascade
-go run main.go -app=sockshop2 --xcy --fk --cascade
-go run main.go -app=trainticket --xcy --fk --cascade
-go run main.go -app=app_constraints_referential_integrity --xcy --fk --cascade
 go run main.go -app=app_constraints_specialization --xcy --fk --cascade --specialization
 
-go run main.go -app=dsb_sn --xcy --fk --cascade
-
-# TODO
-go run main.go -app=dsb_hotel --xcy --fk --cascade
-
-
+# all applications and detection patterns
 go run main.go -all=true --xcy --fk --cascade
+```
 
-#FIXME: XCY analysis doesn't work if we enable "app.ResetAllDataflows()" in abstractgraph/schema.go
-
-source ~/.venv/bin/activate
-
+Run the graph builder:
+```zsh
 ./graphs.py --help
-# usage: graphs.py [-h] [--app {postnotification,postnotification_simple,trainticket,shopping_app,shopping_simple,sockshop2,foobar}] [--graph {app,call}] [--labeled] [--all]
 
+# usage
+graphs.py [-h] [--app {postnotification,postnotification_simple,trainticket,shopping_app,shopping_simple,sockshop2,foobar}] [--graph {app,call}] [--labeled] [--all]
+
+# example
 ./graphs.py --app foobar
-./graphs.py --app shopping_simple
-./graphs.py --app shopping_app
-./graphs.py --app postnotification_simple
 ./graphs.py --app postnotification
-./graphs.py --app sockshop2
-./graphs.py --app trainticket
-./graphs.py --app app_constraints_referential_integrity
 ./graphs.py --app app_constraints_specialization
 
-./graphs.py --app dsb_sn
-./graphs.py --app dsb_hotel
-
+# all applications
 ./graphs.py --all
 ```
 
-## Summary
+## Results
 
 | Application Name                          | Runs          | XCY Analysis  | Cascade Analysis  | Foreign Key Analysis  | Specialization |
 |-------------------------------------------|---------------|---------------|-------------------|-----------------------|----------------|
