@@ -1,0 +1,10 @@
+------------------------------------------------------------
+-------------------- CASCADING ANALYSIS --------------------
+------------------------------------------------------------
+(#0) FreelancerService: freelancers_db.DeleteOne()
+	missing 0 cascading deletes
+(#1) EmployeeService: employees_db.DeleteOne()
+	missing 3 cascading deletes
+	- (FreelancerService, freelancers_db)
+	- (InternService, interns_db)
+	- (FulltimeService, fulltimes_db)

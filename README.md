@@ -37,7 +37,7 @@ Available applications:
 - `dsb_sn`
 - `dsb_hotel`
 - `app_constraints_referential_integrity`
-- `app_constraints_specialization`
+- `employee_app`
 
 Run the code analyzer:
 ```zsh
@@ -46,10 +46,22 @@ go run main.go --help
 # usage
 go run main.go -app=APP_NAME [--xcy] [--fk] [--cascade] [--specialization]
 
-# example
-go run main.go -app=foobar
-go run main.go -app=postnotification --xcy --fk --cascade
-go run main.go -app=app_constraints_specialization --xcy --fk --cascade --specialization
+# Cross-Service Inconsistency (XCY)
+go run main.go --app postnotification --xcy
+# Referential Integrity Constraint: Invalid Foreign Key
+go run main.go --app postnotification --fk
+# Referential Integrity Constraint: Absence of Cascading Deletes
+go run main.go --app shopping_simple --cascade
+# Specialization Constraint: Violation of Mandatory and Disjoint Constraints
+go run main.go --app employee_app --specialization
+
+# Domain (Numerical) Constraints
+go run main.go --app TODO --numerical_individual
+go run main.go --app TODO --numerical_req_effects
+# Unicity Constraints
+go run main.go --app TODO --unicity_individual
+go run main.go --app TODO --unicity_req_effects
+
 
 # all applications and detection patterns
 go run main.go -all=true --xcy --fk --cascade
@@ -65,7 +77,7 @@ graphs.py [-h] [--app {postnotification,postnotification_simple,trainticket,shop
 # example
 ./graphs.py --app foobar
 ./graphs.py --app postnotification
-./graphs.py --app app_constraints_specialization
+./graphs.py --app employee_app
 
 # all applications
 ./graphs.py --all
@@ -85,7 +97,7 @@ graphs.py [-h] [--app {postnotification,postnotification_simple,trainticket,shop
 | `dsb_sn`                                  | **YES**       | 0             | 0                 | 0                     | 0              |
 | `dsb_hotel`                               | **NO**        | -             | -                 | -                     | -              |
 | `app_constraints_referential_integrity`   | **YES**       | 0             | 2;1               | 1                     | 0              |
-| `app_constraints_specialization`          | **YES**       | 0             | 2;3               | 0                     | 1              |
+| `employee_app`          | **YES**       | 0             | 2;3               | 0                     | 1              |
 
 ## Structure
 
